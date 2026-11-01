@@ -2217,6 +2217,20 @@ enum messages: string
     // the two copy buttons of a detail table of a calculator page
     case CALCULATOR_COPY_JSON = 'calculator_copy_json';
     case CALCULATOR_COPY_CSV = 'calculator_copy_csv';
+    case CALCULATOR_DIAGRAM_FINAL = 'calculator_diagram_final';
+    // the label of the field for the name of a case above the save button and the reason if the api does not name one
+    case CALCULATOR_CASE_NAME = 'calculator_case_name';
+    case CALCULATOR_CASE_FAILED = 'calculator_case_failed';
+    // the column headers of the target positions and the heading of the formulas of the pdf report of a calculator page
+    case CALCULATOR_REPORT_QUANTITY = 'calculator_report_quantity';
+    case CALCULATOR_REPORT_SECURITY = 'calculator_report_security';
+    case CALCULATOR_REPORT_ISIN = 'calculator_report_isin';
+    case CALCULATOR_REPORT_CURRENCY = 'calculator_report_currency';
+    case CALCULATOR_REPORT_PRICE = 'calculator_report_price';
+    case CALCULATOR_REPORT_FX_RATE = 'calculator_report_fx_rate';
+    case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
+    case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
+    case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page

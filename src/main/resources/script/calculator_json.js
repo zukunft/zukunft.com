@@ -46,6 +46,10 @@
     const HOST_ID = 'calcPage';
     const SEED_ID = 'seed';
     const SETTINGS_ID = 'calcPageSettings';
+    // the field of the name of a case, the api that creates a case and the url var of the page phrase, the same as url_var ID
+    const CASE_FIELD_ID = 'caseName';
+    const CASE_ROUTE = '/api/updatePut/';
+    const ID_VAR = 'id';
     // the url var of a number field and of its save vars, the same as url_var NUMERIC_VALUE, GROUP, PRE, NAME and PHRASE
     const NUMBER_VAR = 'n';
     // in front of the phrase id of a selector option without a number, the same as ui_list CALC_OPTION_PHRASE
@@ -60,7 +64,9 @@
     // the word of a value of the check table, the same as words EXPECTED
     const EXPECTED_WORD = 'expected';
     // the size of a line diagram, the same as html_base DIAGRAM_*
-    const DIAGRAM = {width: 760, height: 200, left: 70, right: 12, top: 12, bottom: 24};
+    const DIAGRAM = {width: 760, height: 200, left: 70, right: 12, top: 12, bottom: 24, point: '2.4'};
+    // the mark of a line in the legend, the same as ui_list CALC_DIAGRAM_MARK
+    const DIAGRAM_MARK = '●';
     // the unit of a number field that shows a stored ratio in percent, the same as sandbox_value UNIT_PERCENT
     const UNIT_PERCENT = '%';
     const GROUP_VAR = 'g';
@@ -76,7 +82,7 @@
         addButton: 'btn btn-outline-primary btn-sm', removeButton: 'btn btn-outline-secondary btn-sm', imports: 'imports',
         warnings: 'warnings', warning: 'warn',
         button: 'btn btn-outline-primary', chart: 'chart', legend: 'legend', statusOk: 'pill ok', statusFail: 'pill fail',
-        // the colours of the flagged columns, the first once, then the others cycling (styles::CALC_COLUMN_COLOURS)
+        // the colours of the flagged columns, the first for a single column, the others cycling for the instances (styles::CALC_COLUMN_COLOURS)
         colours: ['col-first', 'col-1', 'col-2', 'col-3', 'col-4']
     };
     // a warning ignores only the float noise of a calculation, the same as ui_list CALC_WARNING_DECIMALS
@@ -97,6 +103,8 @@
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
         details: 'calculator_details', sources: 'calculator_sources',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
+        diagram_final: 'calculator_diagram_final',
+        case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
         check_calculated: 'calculator_check_calculated', check_status: 'calculator_check_status',
         check_match: 'calculator_check_match', check_differs: 'calculator_check_differs',
@@ -111,7 +119,7 @@
     }
     const KW = settings.keywords || {};
     // the phrases of a value that make it a property of a field and not the number of the field (ui_list::CALC_FIELD_PROPERTIES)
-    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence, KW.decimals];
+    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence, KW.decimals, KW.result_width];
     const VERB = settings.verbs || {};
     // the names of the phrase types that decide the unit and the format of a number
     const PT = settings.phrase_types || {};
@@ -1209,8 +1217,8 @@
         return result;
     }
 
-    /* plus: true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero; sub: the sub text behind the number (ui_list::calculator_cell) */
-    function cellHtml(entry, formats, signed, withUnit, decimals, plus, sub) {
+    /* plus: true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero; sub: the sub text behind the number; colour: the colour style of the column of a detail table (ui_list::calculator_cell) */
+    function cellHtml(entry, formats, signed, withUnit, decimals, plus, sub, colour) {
         let text = '';
         if (entry !== null) {
             text = esc(numberText(entry, formats, withUnit, decimals));
@@ -1225,7 +1233,7 @@
                 text += block('span', esc(sub), STYLE.sub);
             }
         }
-        return block('td', text, STYLE.number);
+        return block('td', text, (STYLE.number + ' ' + (colour || '')).trim());
     }
 
     /* the decimals of the value with exactly these names and the keyword calculator decimals, null if there is none (ui_list::decimals_of) */
@@ -1559,7 +1567,7 @@
         if (inputs.length > 0 || assumptions.length > 0) {
             const heading = ownText((group(KW.input) || {}).name, KW.label) || TEXTS[TXT.inputs];
             result = block('div', block('h2', esc(heading)) + fields(inputs, false)
-                + block('div', warningTexts(), STYLE.warnings) + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
+                + block('div', warningTexts(), STYLE.warnings) + caseField() + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
             const listed = assumptions.map(function (item) {
                 return item.to;
             });
@@ -1570,6 +1578,95 @@
             }
         }
         return block('aside', result, STYLE.panel);
+    }
+
+    /* the name of the case that the page shows, empty for the default case e.g. Miller family of the triple Miller family portfolio split */
+    function caseName() {
+        return page.verb === VERB.of && page.from === base ? page.to : '';
+    }
+
+    /* the field for the name of a case, only for a page that is built from another phrase, of which a case is another kind */
+    function caseField() {
+        const input = '<input type="text" id="' + CASE_FIELD_ID + '" value="' + esc(caseName()) + '">';
+        return base === null ? '' : block('div', '<label for="' + CASE_FIELD_ID + '">' + esc(TEXTS[TXT.case_name]) + '</label>' + input, STYLE.field);
+    }
+
+    /* the updatePut message of a new case without a database id: the word of the name, the triple of the case, the triples and the values of the page with the triple of the case instead of the page phrase and with the entered numbers; the results are calculated by the backend */
+    function caseMessage(name) {
+        const caseTriple = name + ' ' + base;
+        const pageTriples = (seed.triples || []).filter(function (t) {
+            return t.from === page.name;
+        }).map(function (t) {
+            return {name: t.name.replace(page.name, caseTriple), from: caseTriple, verb: t.verb, to: t.to};
+        });
+        const values = pool.filter(function (e) {
+            return !e.result && e.words.indexOf(page.name) >= 0;
+        }).map(function (e) {
+            const json = {
+                words: e.words.map(function (w) {
+                    return w === page.name ? caseTriple : w;
+                }),
+                number: Number(e.number)
+            };
+            // a source exists already, and only its id makes the new value keep the source
+            if (e.source && sources.has(e.source)) {
+                json.source_id = sources.get(e.source).id;
+            }
+            return json;
+        });
+        return {
+            pod: seed.pod,
+            type: 'updatePut',
+            user_id: seed.user_id,
+            user: seed.user,
+            version: seed.version,
+            timestamp: new Date().toISOString(),
+            body: {
+                words: [{name: name}],
+                triples: [{name: caseTriple, from: base, verb: VERB.of, to: name}].concat(pageTriples),
+                values: values
+            }
+        };
+    }
+
+    /* show why a case has not been saved below the warnings of the inputs */
+    function caseProblem(text) {
+        host.querySelector('div.' + STYLE.warnings).insertAdjacentHTML('beforeend', block('div', esc(text), STYLE.warning));
+    }
+
+    /* a new case name first creates the case by the updatePut api and then opens its page, which loads the new database ids, so that the next save updates the values by the normal form */
+    function saveCase(event) {
+        const name = document.getElementById(CASE_FIELD_ID)?.value.trim() || '';
+        if (event.target.id === FORM && name !== '' && name !== caseName()) {
+            event.preventDefault();
+            const token = event.target.querySelector('input[name="token"]').value;
+            fetch(CASE_ROUTE, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type': 'application/json', 'X-CSRF-Token': token},
+                body: JSON.stringify(caseMessage(name))
+            }).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                const id = json.body?.triples?.[0]?.id;
+                if (id) {
+                    const url = new URL(location.href);
+                    // the phrase id of a triple is negative
+                    url.searchParams.set(ID_VAR, String(-id));
+                    location.assign(url.toString());
+                } else {
+                    caseProblem(json.message || TEXTS[TXT.case_failed]);
+                }
+            }).catch(function (error) {
+                caseProblem(error.message);
+            });
+        }
+    }
+
+    /* the own hint of a table item below the table (ui_list::calculator_table_hint) */
+    function tableHint(name) {
+        const hint = ownText(name, KW.hint);
+        return hint ? block('p', esc(hint), STYLE.hint) : '';
     }
 
     function table(head, rows) {
@@ -1621,29 +1718,32 @@
     /* the columns of a table with their text, where the column of a repeated input is shown once per instance (calculator::columns) */
     function columns(list) {
         const result = [];
-        let colours = 0;
         list.forEach(function (c) {
-            const repeated = items(KW.input).some(function (i) {
-                return i.to === c.to && hasFlag(i, KW.repeat);
-            });
+            const repeated = isRepeated(c.to);
             const hasColour = hasFlag(c, KW.colour);
             const isPhrase = hasFlag(c, KW.phrase_column);
-            (repeated ? kinds(c.to) : [c.to]).forEach(function (to) {
+            (repeated ? kinds(c.to) : [c.to]).forEach(function (to, pos) {
                 // a column can name an instance shorter e.g. First for the first child
                 const short = repeated ? subItems(c.name, VERB.has).find(function (sub) {
                     return sub.to === to;
                 }) : undefined;
                 const text = repeated ? (short === undefined ? capital(phraseLabel(to)) : label(short)) : label(c);
-                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(colours++) : '', repeated: repeated, isPhrase: isPhrase, plus: hasFlag(c, KW.signed), hasUnit: hasFlag(c, KW.column_unit)});
+                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(repeated, pos) : '', repeated: repeated, isPhrase: isPhrase, plus: hasFlag(c, KW.signed), hasUnit: hasFlag(c, KW.column_unit)});
             });
         });
         return result;
     }
 
     /* the colour style of a column: the first colour once, then the others cycling (calculator::column_colour) */
-    function columnColour(pos) {
+    function isRepeated(name) {
+        return items(KW.input).some(function (i) {
+            return i.to === name && hasFlag(i, KW.repeat);
+        });
+    }
+
+    function columnColour(repeated, pos) {
         const cycle = STYLE.colours.length - 1;
-        return STYLE.colours[pos === 0 ? 0 : 1 + (pos - 1) % cycle];
+        return STYLE.colours[repeated ? 1 + pos % cycle : 0];
     }
 
     /* the unit if all numbers except the shares have one unit, else an empty string (ui_list::calculation_table_unit) */
@@ -1692,10 +1792,12 @@
                 rows.filter(function (r) {
                     return r.grp === g;
                 }).forEach(function (r) {
-                    const signed = groupSigned || hasFlag(r.row, KW.signed);
+                    // a flagged row shows the plus sign like a flagged column, a flagged group only the style of the sign
+                    const plus = hasFlag(r.row, KW.signed);
+                    const signed = groupSigned && !plus;
                     const decimals = decimalsOf([r.row.to]);
                     const cells = r.cells.map(function (e, i) {
-                        return cellHtml(e, formats[i], signed, withUnit, decimals);
+                        return cellHtml(e, formats[i], signed, withUnit, decimals, plus);
                     }).join('');
                     const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row);
                     body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
@@ -1801,18 +1903,31 @@
         return result;
     }
 
-    /* the buttons of a list or a detail table at their place, without a function so far (ui_list::calculator_buttons) */
+    /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far (ui_list::calculator_buttons) */
     function buttons(item) {
-        const labels = [];
+        let labels = [];
+        let report = null;
+        let copy = [];
         if (item !== null && item !== undefined) {
-            [KW.file_import, KW.download, KW.report].forEach(function (keyword) {
-                const prop = property(item.name, keyword);
-                labels.push(prop === null ? null : ownText(prop.name, KW.label));
+            labels = [KW.file_import, KW.download].map(function (keyword) {
+                return buttonLabel(item, keyword);
             });
+            report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
-                labels.push(TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]);
+                copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
             }
         }
+        const link = report ? '<a href="' + esc(settings.report) + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
+        return plainButtons(labels) + link + plainButtons(copy);
+    }
+
+    /* the label of the triple from the item to the button keyword, null if the item has no such button (calculator::button_label) */
+    function buttonLabel(item, keyword) {
+        const prop = property(item.name, keyword);
+        return prop === null ? null : ownText(prop.name, KW.label);
+    }
+
+    function plainButtons(labels) {
         return labels.filter(function (text) {
             return text;
         }).map(function (text) {
@@ -1855,28 +1970,41 @@
         const head = block('th', esc(TEXTS[TXT.check_value])) + [TXT.check_expected, TXT.check_calculated, TXT.check_status].map(function (id) {
             return block('th', esc(TEXTS[id]), STYLE.number);
         }).join('');
-        return rows.length === 0 ? '' : block('details', block('summary', esc(ownText(grp.name, KW.label) || '')) + table(head, body));
+        return rows.length === 0 ? '' : block('details', block('summary', esc(ownText(grp.name, KW.label) || '')) + table(head, body) + tableHint(grp.name));
     }
 
-    /* the svg of a line along the numbers with a line at zero and at the biggest number (html_base::line_diagram) */
-    function lineDiagram(nums, first, last, maxText) {
-        const max = Math.max.apply(null, [1].concat(nums.map(Math.abs)));
+    /* the svg of the lines along the numbers with a line at zero and at the biggest number (html_base::line_diagram) */
+    function lineDiagram(series, first, last, maxText) {
+        const all = series.reduce(function (list, s) {
+            return list.concat(s.nums);
+        }, []);
+        const max = Math.max.apply(null, [1].concat(all.map(Math.abs)));
         const half = (DIAGRAM.height - DIAGRAM.top - DIAGRAM.bottom) / 2;
         const yOf = function (num) {
             return DIAGRAM.top + half * (1 - num / max);
         };
         const xEnd = DIAGRAM.width - DIAGRAM.right;
-        const points = nums.map(function (num, k) {
-            const x = DIAGRAM.left + k * (xEnd - DIAGRAM.left) / Math.max(1, nums.length - 1);
-            return x.toFixed(1) + ',' + yOf(num).toFixed(1);
-        }).join(' ');
         const lines = [max, 0, -max].map(function (num) {
             const y = yOf(num).toFixed(1);
             return '<line x1="' + DIAGRAM.left + '" x2="' + xEnd + '" y1="' + y + '" y2="' + y + '"/>';
         }).join('');
-        return '<svg viewBox="0 0 ' + DIAGRAM.width + ' ' + DIAGRAM.height + '" role="img">' + lines
-            + '<text x="0" y="' + (yOf(max) + 4).toFixed(1) + '">' + esc(maxText) + '</text>'
-            + '<polyline points="' + points + '"/>'
+        const scale = ['+' + maxText, '0', '-' + maxText].map(function (text, k) {
+            return '<text x="' + (DIAGRAM.left - 6) + '" y="' + (yOf([max, 0, -max][k]) + 4).toFixed(1) + '" text-anchor="end">' + esc(text) + '</text>';
+        }).join('');
+        const groups = series.map(function (s) {
+            const xy = s.nums.map(function (num, k) {
+                const x = DIAGRAM.left + k * (xEnd - DIAGRAM.left) / Math.max(1, s.nums.length - 1);
+                return [x.toFixed(1), yOf(num).toFixed(1)];
+            });
+            const circles = xy.map(function (p, k) {
+                return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + DIAGRAM.point + '"><title>' + esc(s.titles[k]) + '</title></circle>';
+            }).join('');
+            const points = xy.map(function (p) {
+                return p.join(',');
+            }).join(' ');
+            return block('g', '<polyline points="' + points + '"/>' + circles, s.colour);
+        }).join('');
+        return '<svg viewBox="0 0 ' + DIAGRAM.width + ' ' + DIAGRAM.height + '" role="img">' + lines + scale + groups
             + '<text x="' + DIAGRAM.left + '" y="' + (DIAGRAM.height - 6) + '">' + esc(first) + '</text>'
             + '<text x="' + xEnd + '" y="' + (DIAGRAM.height - 6) + '" text-anchor="end">' + esc(last) + '</text></svg>';
     }
@@ -1887,19 +2015,53 @@
         items(KW.detail).forEach(function (tbl) {
             subItems(tbl.name, VERB.has).forEach(function (col) {
                 const title = ownText(col.name, KW.diagram);
+                const lines = title ? diagramLines(col) : [];
                 const rows = title ? rankedRows(tbl).filter(function (row) {
-                    return generalEntry([row, col.to, filterOf(col)], [], true) !== null;
+                    return lines.every(function (line) {
+                        return generalEntry([row, col.to, line.filter], [], true) !== null;
+                    });
                 }) : [];
                 if (rows.length > 1) {
-                    const nums = rows.map(function (row) {
-                        return Number(generalEntry([row, col.to, filterOf(col)], [], true).number);
+                    const series = lines.map(function (line) {
+                        const entries = rows.map(function (row) {
+                            return generalEntry([row, col.to, line.filter], [], true);
+                        });
+                        const nums = entries.map(function (e) {
+                            return Number(e.number);
+                        });
+                        const unit = unitOf(entries[entries.length - 1]);
+                        const unitText = unit === '' ? '' : ' ' + unit;
+                        const titles = nums.map(function (num, k) {
+                            return line.text + ', ' + rows[k] + ': ' + formatNumber(num, 2) + unitText;
+                        });
+                        return {nums: nums, colour: line.colour, titles: titles, unitText: unitText, text: line.text};
                     });
-                    const maxText = formatNumber(Math.max.apply(null, [1].concat(nums.map(Math.abs))), 0);
-                    const svg = lineDiagram(nums, rows[0], rows[rows.length - 1], maxText);
-                    const legend = label(col) + ' ' + formatNumber(nums[nums.length - 1], 2);
-                    result += block('details', block('summary', esc(title)) + block('div', svg, STYLE.chart) + block('div', esc(legend), STYLE.legend));
+                    const all = series.reduce(function (list, s) {
+                        return list.concat(s.nums);
+                    }, []);
+                    const maxText = formatNumber(Math.max.apply(null, [1].concat(all.map(Math.abs))), 0);
+                    const svg = lineDiagram(series, rows[0], rows[rows.length - 1], maxText);
+                    const legend = series.map(function (s) {
+                        const final = s.text + ' ' + TEXTS[TXT.diagram_final] + ' ' + formatNumber(s.nums[s.nums.length - 1], 2) + s.unitText;
+                        return block('span', block('span', DIAGRAM_MARK, s.colour) + ' ' + esc(final));
+                    }).join('');
+                    result += block('details', block('summary', esc(title)) + block('div', svg, STYLE.chart) + block('div', legend, STYLE.legend));
                 }
             });
+        });
+        return result;
+    }
+
+    /* per line of a diagram its filter, colour and label: one line per instance if the filter of the column is an instance of a repeated input (calculator::diagram_lines) */
+    function diagramLines(col) {
+        const flt = filterOf(col);
+        let result = [{filter: flt, colour: '', text: label(col)}];
+        phrases.forEach(function (p) {
+            if (flt !== null && p.verb === VERB.is && p.from === flt && isRepeated(p.to)) {
+                result = kinds(p.to).map(function (instance, pos) {
+                    return {filter: instance, colour: columnColour(true, pos), text: capital(phraseLabel(instance))};
+                });
+            }
         });
         return result;
     }
@@ -1951,14 +2113,14 @@
                 const tds = cells[j].map(function (e, i) {
                     return cols[i].isPhrase
                         ? block('td', esc(phraseCell(r[1][1], cols[i])))
-                        : cellHtml(e, formats[i], false, false, cellDecimals(r[1][1], cols[i]), cols[i].plus, columnUnit(e, r[1][1], cols[i]));
+                        : cellHtml(e, formats[i], false, false, cellDecimals(r[1][1], cols[i]), cols[i].plus, columnUnit(e, r[1][1], cols[i]), cols[i].colour);
                 }).join('');
-                const number = numbered ? block('td', String(j + 1)) : '';
+                const number = numbered ? block('td', String(j + 1), STYLE.number) : '';
                 // a numbered table shows the hint of the row phrase e.g. the full name of a ticker (calculator::phrase_hint)
                 const sub = numbered ? ownText(r[1][1], KW.hint) : '';
                 return block('tr', number + block('td', esc(r[0]) + (sub ? block('span', esc(sub), STYLE.sub) : '')) + tds, r[2] ? STYLE.key : '');
             }).join('');
-            const tableHtml = table(head, body) + buttons(tbl);
+            const tableHtml = table(head, body) + tableHint(tbl.name) + buttons(tbl);
             result += sections
                 ? block('details', block('summary', esc(label(tbl))) + tableHtml)
                 : block('h2', esc(label(tbl))) + tableHtml;
@@ -2041,5 +2203,6 @@
     host.innerHTML = title() + block('div', inputPanel() + resultPanel(), STYLE.grid);
     host.addEventListener('input', refreshResults);
     host.addEventListener('change', refreshResults);
+    host.addEventListener('submit', saveCase);
 
 })();

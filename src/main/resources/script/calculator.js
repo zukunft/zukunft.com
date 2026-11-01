@@ -438,19 +438,30 @@
     function showDiagrams(numbers) {
         (data.diagrams || []).forEach((diagram) => {
             const host = document.getElementById(diagram.id);
-            const nums = diagram.numbers.map((key) => numbers[key] ?? null);
-            if (host !== null && !nums.includes(null)) {
-                const max = Math.max(1, ...nums.map(Math.abs));
+            const lines = diagram.lines.map((line) => line.numbers.map((key) => numbers[key] ?? null));
+            if (host !== null && !lines.flat().includes(null)) {
+                const max = Math.max(1, ...lines.flat().map(Math.abs));
                 const half = (DIAGRAM.height - DIAGRAM.top - DIAGRAM.bottom) / 2;
                 const wid = DIAGRAM.width - DIAGRAM.left - DIAGRAM.right;
-                const points = nums.map((num, k) => {
-                    const x = DIAGRAM.left + k * wid / Math.max(1, nums.length - 1);
-                    return x.toFixed(1) + ',' + (DIAGRAM.top + half * (1 - num / max)).toFixed(1);
+                const groups = host.querySelectorAll('g');
+                lines.forEach((nums, pos) => {
+                    const line = diagram.lines[pos];
+                    const circles = groups[pos].querySelectorAll('circle');
+                    const points = nums.map((num, k) => {
+                        const x = (DIAGRAM.left + k * wid / Math.max(1, nums.length - 1)).toFixed(1);
+                        const y = (DIAGRAM.top + half * (1 - num / max)).toFixed(1);
+                        circles[k].setAttribute('cx', x);
+                        circles[k].setAttribute('cy', y);
+                        circles[k].querySelector('title').textContent = line.titles[k] + fixed(num, 2) + line.unit;
+                        return x + ',' + y;
+                    });
+                    groups[pos].querySelector('polyline').setAttribute('points', points.join(' '));
+                    const legend = document.getElementById(diagram.id + LEGEND_SUFFIX + pos);
+                    legend.textContent = line.label + fixed(nums[nums.length - 1], 2) + line.unit;
                 });
-                host.querySelector('polyline').setAttribute('points', points.join(' '));
-                host.querySelector('text').textContent = fixed(max, 0);
-                const legend = document.getElementById(diagram.id + LEGEND_SUFFIX);
-                legend.textContent = diagram.label + ' ' + fixed(nums[nums.length - 1], 2);
+                const texts = host.querySelectorAll('text');
+                texts[0].textContent = '+' + fixed(max, 0);
+                texts[2].textContent = '-' + fixed(max, 0);
             }
         });
     }

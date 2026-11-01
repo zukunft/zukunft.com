@@ -1718,8 +1718,12 @@ class test_triples extends test_objects
         $id = triple_names::CALC_CHECK_FIRST_ID;
         $kw = new triple($this->env->usr1);
         $kw->set($id--, triples::CALCULATOR_CHECK);
-        $grp = $this->calc_triple($id, 'Zurich check', $this->zh_city()->phrase(), new test_verbs($this->env)->verb_has(), $kw);
-        return [$kw, $grp];
+        $has = new test_verbs($this->env)->verb_has();
+        $grp = $this->calc_triple($id, 'Zurich check', $this->zh_city()->phrase(), $has, $kw);
+        $hint_id = triple_names::CALC_CHECK_HINT_FIRST_ID;
+        $kw_hint = new triple($this->env->usr1);
+        $kw_hint->set($hint_id--, triples::CALCULATOR_HINT);
+        return [$kw, $grp, $kw_hint, $this->calc_triple($hint_id, 'Zurich check hint', $grp->phrase(), $has, $kw_hint, triple_names::CALC_CHECK_HINT)];
     }
 
     /**
@@ -1787,7 +1791,7 @@ class test_triples extends test_objects
         $kw = new triple($this->env->usr1);
         $kw->set($id--, triples::CALCULATOR_FILE_IMPORT);
         $kw_flags = [];
-        foreach ([triples::CALCULATOR_SIGNED, triples::CALCULATOR_COLUMN_UNIT, triples::CALCULATOR_HINT] as $name) {
+        foreach ([triples::CALCULATOR_SIGNED, triples::CALCULATOR_COLUMN_UNIT, triples::CALCULATOR_HINT, triples::CALCULATOR_COLOUR] as $name) {
             $kw_flags[$name] = new triple($this->env->usr1);
             $kw_flags[$name]->set($id--, $name);
         }
@@ -1798,6 +1802,7 @@ class test_triples extends test_objects
         $short = $this->calc_triple($id, 'Zurich input canton Bern', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $t_wrd->word_bern()->phrase());
         $imports = $this->calc_triple($id, 'Zurich imports', $this->zh_city()->phrase(), $has, $kw);
         $import = $this->calc_triple($id, 'Zurich import inhabitants', $imports->phrase(), $has, $t_wrd->word_inhabitant()->phrase());
+        $dia_col = $this->calc_triple($id, triple_names::CALC_DIAGRAM_COLUMN, $this->zh_city()->phrase(), $has, $t_wrd->word_inhabitant()->phrase());
         return [
             ...$this->calculator_zh_fields(),
             $lbl,
@@ -1808,6 +1813,9 @@ class test_triples extends test_objects
             $import,
             $this->calc_triple($id, 'Zurich input canton signed', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $kw_flags[triples::CALCULATOR_SIGNED]),
             $this->calc_triple($id, 'Zurich input canton unit', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $kw_flags[triples::CALCULATOR_COLUMN_UNIT]),
+            $this->calc_triple($id, 'Zurich input canton colour', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $kw_flags[triples::CALCULATOR_COLOUR]),
+            $dia_col,
+            $this->calc_triple($id, 'Zurich canton diagram column filter', $dia_col->phrase(), $t_vrb->verb_with(), $t_wrd->word_bern()->phrase()),
             $this->calc_triple($id, 'Bern hint', $t_wrd->word_bern()->phrase(), $has, $kw_flags[triples::CALCULATOR_HINT], triple_names::CALC_ROW_HINT),
             $this->calc_triple($id, 'Zurich canton instance', $t_wrd->word_zh()->phrase(), $t_vrb->verb_is(), $t_wrd->word_canton()->phrase()),
             $this->calc_triple($id, 'Zurich input canton Bern label', $short->phrase(), $has, $lbl, triple_names::CALC_SHORT_LABEL),
@@ -1853,6 +1861,48 @@ class test_triples extends test_objects
             // the column shows only the inhabitants of the canton, like a row of the main table with a filter
             $this->calc_triple($id, 'Zurich detail column inhabitants canton', $col->phrase(), $t_vrb->verb_with(), $t_wrd->word_canton()->phrase()),
         ];
+    }
+
+    /**
+     * @return triple[] the triples of the calculation result test with a colour on the detail column and a hint on the detail table
+     */
+    function calculator_zh_detail_style(): array
+    {
+        $has = new test_verbs($this->env)->verb_has();
+        $res = [];
+        foreach ($this->calculator_zh_result() as $trp) {
+            $res[$trp->name()] = $trp;
+        }
+        $id = triple_names::CALC_DETAIL_STYLE_FIRST_ID;
+        $colour = new triple($this->env->usr1);
+        $colour->set($id--, triples::CALCULATOR_COLOUR);
+        $hint = new triple($this->env->usr1);
+        $hint->set($id--, triples::CALCULATOR_HINT);
+        return [
+            ...array_values($res),
+            $colour,
+            $hint,
+            $this->calc_triple($id, 'Zurich detail column inhabitants colour', $res['Zurich detail column inhabitants']->phrase(), $has, $colour),
+            $this->calc_triple($id, 'Zurich detail city hint', $res['Zurich detail city']->phrase(), $has, $hint, triple_names::CALC_DETAIL_HINT),
+        ];
+    }
+
+    /**
+     * @return triple[] the triples of the calculation result test with the sign flag on the row inhabitants instead of on its group
+     */
+    function calculator_zh_signed_row(): array
+    {
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $result = $this->calculator_zh_result();
+        foreach ($result as $trp) {
+            if ($trp->name() == 'Zurich rows city signed') {
+                $trp->set_from($calc[triple_names::CALC_ZH_ROW_INHABITANTS]->phrase());
+            }
+        }
+        return $result;
     }
 
     /**

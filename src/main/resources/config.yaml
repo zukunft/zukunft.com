@@ -627,6 +627,9 @@ zukunft.com:
             font:
               sys-conf-value: "sans-serif"
               tooltip-comment: "the css font family of every page, its buttons and the editors e.g. sans-serif or \"Segoe UI\", system-ui, sans-serif; only letters, digits, spaces, commas, quotes and hyphens"
+            report logo:
+              sys-conf-value: ""
+              tooltip-comment: "the file name of the jpeg image in the images folder of the server with the logo of the firm that presents a pdf report e.g. firm_logo.jpg; if it is empty, missing or no jpeg the report shows the zukunft.com logo"
             colour mode:
               sys-conf-value: 1
               tooltip-comment: "1 to show the pages always light, which is the default, 2 always dark and 0 light or dark like the setting of the browser; the user menu switches between light and dark"

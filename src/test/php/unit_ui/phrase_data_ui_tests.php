@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'calculator_report.php';
 include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config.php';
@@ -45,11 +46,13 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'phrase_data.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'files.php';
@@ -58,20 +61,26 @@ include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -87,6 +96,11 @@ class phrase_data_ui_tests
     // a word of an answer without calculator triples
     const int NO_CALC_ID = 1;
     const string NO_CALC_NAME = 'System Test Word Without Calculator';
+    // the texts of the pdf writer test and the number of rows that do not fit on one page
+    const string PDF_BRACKET_TEXT = 'a (b)';
+    const string PDF_BRACKET_ESCAPED = '(a \\(b\\))';
+    const string PDF_HEAD = 'head';
+    const int PDF_LONG_ROWS = 60;
     // the json fields of the objects of the answer without the results
     const array OBJECT_FIELDS = [
         json_fields::WORDS,
@@ -209,8 +223,118 @@ class phrase_data_ui_tests
         $dto = $this->filled([], $msg);
         $t->assert($test_name, $dto->phr_lst->count(), 0);
         $t->assert_msg($test_name, $msg);
+        // a triple without a from phrase is valid data e.g. in USD or per km
+        $test_name = 'a triple without a from phrase is no problem';
+        $no_from = $sample[json_fields::TRIPLES][0];
+        unset($no_from[json_fields::EX_FROM]);
+        $no_from[json_fields::ID] = triple_names::IN_USD_ID;
+        $no_from[json_fields::NAME] = triple_names::IN_USD;
+        $json = $sample;
+        $json[json_fields::TRIPLES][] = $no_from;
+        $msg = new user_message();
+        $dto = $this->filled($json, $msg);
+        $t->assert_msg($test_name, $msg);
+        $test_name = '... and it is part of the request cache';
+        $no_from_phr = $dto->phr_lst->get_by_name(triple_names::IN_USD, $msg);
+        $t->assert($test_name, $no_from_phr?->name() ?? '', triple_names::IN_USD);
+        // negative: a from phrase that the answer does not contain is still reported
+        $test_name = 'a triple with an unknown from phrase is reported';
+        $no_from[json_fields::EX_FROM] = self::UNKNOWN_NAME;
+        $json = $sample;
+        $json[json_fields::TRIPLES][] = $no_from;
+        $msg = new user_message();
+        $this->filled($json, $msg);
+        $t->assert_text_contains($test_name, $msg->text(), self::UNKNOWN_NAME);
+        // negative: a to phrase that the answer does not contain too
+        $test_name = 'a triple with an unknown to phrase is reported';
+        $no_to = $sample[json_fields::TRIPLES][0];
+        $no_to[json_fields::ID] = triple_names::IN_USD_ID;
+        $no_to[json_fields::NAME] = triple_names::IN_USD;
+        $no_to[json_fields::EX_TO] = self::UNKNOWN_NAME;
+        $json = $sample;
+        $json[json_fields::TRIPLES][] = $no_to;
+        $msg = new user_message();
+        $this->filled($json, $msg);
+        $t->assert_text_contains($test_name, $msg->text(), self::UNKNOWN_NAME);
 
         $this->page_tests($t, $ts, $sample);
+        $this->report_tests($t, $ts);
+    }
+
+    /**
+     * the pdf writer and the pdf report of the portfolio split, created from a phraseData answer of the page
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $ts the name of the test section
+     */
+    private function report_tests(test_cleanup $t, string $ts): void
+    {
+        $t->subheader($ts . 'pdf writer');
+        $test_name = 'a pdf has the header, the end and at least one page';
+        $pdf = new pdf_writer();
+        $empty_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $empty_pdf, '%PDF-');
+        $t->assert_text_contains($test_name, $empty_pdf, '/Count 1');
+        $t->assert_text_contains($test_name, $empty_pdf, '%%EOF');
+        $test_name = 'a text escapes the brackets of a pdf string';
+        $pdf = new pdf_writer();
+        $pdf->text(self::PDF_BRACKET_TEXT);
+        $t->assert_text_contains($test_name, $pdf->output(), self::PDF_BRACKET_ESCAPED);
+        $test_name = 'a long table continues on the next page';
+        $pdf = new pdf_writer();
+        $pdf->table([self::PDF_HEAD], array_fill(0, self::PDF_LONG_ROWS, ['1']), [true]);
+        $t->assert_text_contains($test_name, $pdf->output(), '/Count 2');
+        $test_name = 'a jpeg image is embedded';
+        $pdf = new pdf_writer();
+        $is_jpeg = $pdf->image(file_get_contents(files::REPORT_LOGO_DEFAULT));
+        $t->assert_true($test_name, $is_jpeg);
+        // negative: anything else is refused, so that the report can fall back to the default logo
+        $test_name = '... but no other file';
+        $t->assert_false($test_name, $pdf->image(self::PDF_HEAD));
+        $test_name = '... and no empty file';
+        $t->assert_false($test_name, $pdf->image(''));
+
+        $t->subheader($ts . 'calculator report');
+        $msg = new user_message();
+        $json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
+        $dto = $this->complete_page_cache($json, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
+        $report = new calculator_report()->pdf($trp, $msg, $dto);
+        $test_name = 'the report has a positions table per portfolio';
+        $t->assert_text_contains($test_name, $report, '(First child portfolio)');
+        $t->assert_text_contains($test_name, $report, '(Second child portfolio)');
+        $t->assert_text_contains($test_name, $report, '(Parent portfolio)');
+        $test_name = '... with the name of the security';
+        $t->assert_text_contains($test_name, $report, '(Givaudan SA)');
+        // the rate that the calculation uses, not a dated rate of another source
+        $test_name = '... the exchange rate of the calculation';
+        $t->assert_text_contains($test_name, $report, '(0.9000)');
+        $test_name = '... but not the dated exchange rate';
+        $t->assert_text_not_contains($test_name, $report, '(0.8300)');
+        $test_name = '... the logo';
+        $t->assert_text_contains($test_name, $report, '/DCTDecode');
+        $test_name = '... the other results of the page';
+        $t->assert_text_contains($test_name, $report, '(Splitting walk)');
+        $test_name = '... and the formulas used';
+        $t->assert_text_contains($test_name, $report, '(walk target of a child)');
+        // negative: a phrase without calculator triples has no report, so the page is shown
+        $test_name = 'a phrase without calculator triples has no report';
+        $no_calc_dto = $this->complete_page_cache([
+            json_fields::SELECTION => [[json_fields::ID => self::NO_CALC_ID, json_fields::NAME => self::NO_CALC_NAME]],
+            json_fields::WORDS => [[json_fields::ID => self::NO_CALC_ID, json_fields::NAME => self::NO_CALC_NAME]]
+        ], $msg);
+        $no_calc_wrd = $no_calc_dto->phr_lst->get_by_name(self::NO_CALC_NAME, $msg)?->obj();
+        $t->assert($test_name, new calculator_report()->pdf($no_calc_wrd, $msg, $no_calc_dto), '');
+        $test_name = '... and no phrase too';
+        $t->assert($test_name, new calculator_report()->pdf(null, $msg, $no_calc_dto), '');
+        $test_name = 'the report button of a page is a link to the pdf';
+        $calc = new calculator($trp->phrase(), $dto->phr_lst);
+        $btn_html = new ui_list()->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT));
+        $t->assert_text_contains($test_name, $btn_html, url_var::REPORT . '=' . url_var::TRUE);
+        // negative: a list without the report keyword has no link
+        $test_name = '... but a list without the keyword has none';
+        $no_rpt_html = new ui_list()->calculator_buttons($calc, null);
+        $t->assert_text_not_contains($test_name, $no_rpt_html, url_var::REPORT . '=');
     }
 
     /**
@@ -227,6 +351,7 @@ class phrase_data_ui_tests
     private function page_tests(test_cleanup $t, string $ts, array $sample): void
     {
         global $ui_sys;
+        global $mtr;
         $page = new system_page();
         $list = new ui_list();
 
@@ -246,6 +371,11 @@ class phrase_data_ui_tests
         $t->assert_msg($test_name, $msg);
         $test_name = '... with the script that builds the page';
         $t->assert_text_contains($test_name, $body, $html->script_src(files::CALCULATOR_JSON_SCRIPT));
+        // the script builds the field of the name of a case and its triple with these settings
+        $test_name = '... with the label of the case name';
+        $t->assert_text_contains($test_name, $body, $mtr->txt(msg_id::CALCULATOR_CASE_NAME));
+        $test_name = '... and the verb of the triple of a case';
+        $t->assert_text_contains($test_name, $body, '"of":"' . verbs::OF . '"');
         // negative: without javascript for the calculator the page has no html of its own
         $test_name = 'a calculator page without javascript is empty';
         $cfg_keep = $ui_sys->cfg;
@@ -277,6 +407,19 @@ class phrase_data_ui_tests
         }
         $wait_after = $ui_sys->api_wait;
         $t->assert($test_name, $wait_after, $wait_before);
+        // the page cache step runs twice per page, also if the answer has left the cache incomplete
+        $test_name = 'a page with its answer is not filled twice';
+        $msg = new user_message();
+        $dto = $this->complete_page_cache($sample, $msg);
+        $dto->online = true;
+        $dto->page_data_complete = false;
+        $frm_count = $dto->frm_lst->count();
+        $msk = new view();
+        $msk->code_id = views::CALCULATOR;
+        $msk->add_page_cache($trp, $msg, $dto);
+        $t->assert_msg($test_name, $msg);
+        $test_name = '... and keeps its formulas';
+        $t->assert($test_name, $dto->frm_lst->count(), $frm_count);
     }
 
     /**

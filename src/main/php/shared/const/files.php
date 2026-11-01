@@ -84,6 +84,9 @@ class files
     const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
     const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
     const string LOGO = paths::IMAGE_RES . 'ZUKUNFT_logo' . self::SVG;
+    // the images on the server e.g. the logo of a report, which is a jpeg because a pdf can embed it as it is
+    const string IMAGE_PATH = self::RESOURCE_PATH . 'images' . DIRECTORY_SEPARATOR;
+    const string REPORT_LOGO_DEFAULT = self::IMAGE_PATH . 'logo_xs.jpg';
     // the only scripts of the html frontend: the calculator pages repeat their calculation in the
     // browser, the calculator and the formula editor build the editor and the json calculator page the
     // page from the phrase data, if config.yaml allows javascript for the calculator (see docs/llm/frontend.md)

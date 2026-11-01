@@ -119,6 +119,8 @@ class styles
     // the button to remove an instance of a repeated input and the block of the import buttons of a calculator page
     const string CALC_BUTTON_REMOVE = 'btn-outline-secondary btn-sm';
     const string CALC_IMPORTS = 'imports';
+    // the css variable with the width of the result panel that a calculator page can set (style_html.css)
+    const string CALC_RESULT_WIDTH_VAR = '--calc-result-width';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 
@@ -182,7 +184,7 @@ class styles
     // the parts of the calculation result (ui_list::calculation_table): the frame that scrolls a
     // wide table, a section row, a key row, the sub text of a row, a number cell, the sign of a
     // number, the content of the details, the formula notes and the source list
-    // the colours of the flagged columns of a calculator table: the first once, then the others cycling
+    // the colours of the flagged columns of a calculator table: the first for a single column, the others cycling for the instances
     const array CALC_COLUMN_COLOURS = ['col-first', 'col-1', 'col-2', 'col-3', 'col-4'];
     // a diagram of a calculator page with its legend, and the status of a row of the check table
     const string CALC_CHART = 'chart';

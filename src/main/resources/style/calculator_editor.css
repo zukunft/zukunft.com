@@ -927,6 +927,8 @@ textarea.inp {
     border-radius: 8px;
     padding: 18px;
     display: grid;
+    /* a wide table scrolls inside of the panel and never widens it across its border */
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
     min-width: 0;
 }

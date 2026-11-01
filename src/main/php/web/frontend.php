@@ -59,6 +59,7 @@ include_once html_paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
+include_once html_paths::EXECUTE . 'calculator_report.php';
 
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
@@ -216,6 +217,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
 
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -317,6 +319,8 @@ class frontend
 
     // the main data cache of the frontend
     public ?data_object $dto = null;
+    // the pdf that a request with url_var::REPORT has created, which the entry point sends instead of the page
+    public string $report_pdf = '';
 
 
     /*
@@ -1313,6 +1317,7 @@ class frontend
                 $this->load_page_start();
                 $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
                 $this->load_page_end();
+                $this->report_pdf = $this->report_of_url($url_array, $dbo, $msg_ui, $dto);
                 $title = $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
@@ -1343,6 +1348,23 @@ class frontend
                 "view.php", '', (new Exception)->getTraceAsString());
         }
 
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the parsed url as an array
+     * @param mixed $dbo the object of the page
+     * @param user_message_ui $msg_ui to report a problem of the load
+     * @param data_object $dto the request cache filled with the data of the page
+     * @return string the pdf report if the url asks for it and the page is a calculator, else an empty string, so that the page is shown
+     */
+    private function report_of_url(array $url_array, mixed $dbo, user_message_ui $msg_ui, data_object $dto): string
+    {
+        $result = '';
+        $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
+        if ($is_report and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto);
+        }
         return $result;
     }
 

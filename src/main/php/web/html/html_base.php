@@ -197,6 +197,8 @@ class html_base
     const int DIAGRAM_PAD_RIGHT = 12;
     const int DIAGRAM_PAD_TOP = 12;
     const int DIAGRAM_PAD_BOTTOM = 24;
+    const string DIAGRAM_POINT_RADIUS = '2.4';
+    const string SVG_GROUP = 'g';
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
@@ -2989,36 +2991,55 @@ class html_base
      */
 
     /**
-     * a line diagram of a number per row without javascript, with a line at zero and at the biggest number
+     * a line diagram of numbers per row without javascript, with a line at zero and at the biggest number
      *
-     * @param array $nums the numbers of the line in the order of the rows
+     * @param array $lines per line its numbers in the order of the rows, its colour style ('' for none) and per number the text of the tooltip of its point
      * @param string $first the text below the first number
      * @param string $last the text below the last number
      * @param string $max_text the biggest absolute number as a text
      * @return string the html code of the svg image
      */
-    function line_diagram(array $nums, string $first, string $last, string $max_text): string
+    function line_diagram(array $lines, string $first, string $last, string $max_text): string
     {
-        $max = max(1, ...array_map('abs', $nums));
-        $wid = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_LEFT - self::DIAGRAM_PAD_RIGHT;
+        $max = max(1, ...array_map('abs', array_merge(...array_column($lines, 0))));
         $right = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_RIGHT;
         $half = (self::DIAGRAM_HEIGHT - self::DIAGRAM_PAD_TOP - self::DIAGRAM_PAD_BOTTOM) / 2;
         $y_of = fn(float $num) => self::DIAGRAM_PAD_TOP + $half * (1 - $num / $max);
-        $points = [];
-        foreach (array_values($nums) as $k => $num) {
-            $x = self::DIAGRAM_PAD_LEFT + $k * $wid / max(1, count($nums) - 1);
-            $points[] = number_format($x, 1, '.', '') . ',' . number_format($y_of($num), 1, '.', '');
-        }
         $body = '';
         foreach ([$max, 0, -$max] as $num) {
             $y = number_format($y_of($num), 1, '.', '');
             $body .= '<line x1="' . self::DIAGRAM_PAD_LEFT . '" x2="' . $right . '" y1="' . $y . '" y2="' . $y . '"/>';
         }
-        $body .= '<text x="0" y="' . number_format($y_of($max) + 4, 1, '.', '') . '">' . $this->esc($max_text) . '</text>'
-            . '<polyline points="' . implode(' ', $points) . '"/>'
-            . '<text x="' . self::DIAGRAM_PAD_LEFT . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '">' . $this->esc($first) . '</text>'
+        $texts = ['+' . $max_text, '0', '-' . $max_text];
+        foreach ([$max, 0, -$max] as $k => $num) {
+            $body .= '<text x="' . (self::DIAGRAM_PAD_LEFT - 6) . '" y="' . number_format($y_of($num) + 4, 1, '.', '') . '" text-anchor="end">' . $this->esc($texts[$k]) . '</text>';
+        }
+        foreach ($lines as [$nums, $style, $titles]) {
+            $body .= $this->block(self::SVG_GROUP, $this->diagram_line($nums, $titles, $y_of), $style);
+        }
+        $body .= '<text x="' . self::DIAGRAM_PAD_LEFT . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '">' . $this->esc($first) . '</text>'
             . '<text x="' . $right . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '" text-anchor="end">' . $this->esc($last) . '</text>';
         return '<svg viewBox="0 0 ' . self::DIAGRAM_WIDTH . ' ' . self::DIAGRAM_HEIGHT . '" role="img">' . $body . '</svg>';
+    }
+
+    /**
+     * @param array $nums the numbers of the line in the order of the rows
+     * @param array $titles per number the text of the tooltip of its point
+     * @param callable $y_of the height in the diagram of a number
+     * @return string the svg code of the line with a point per number
+     */
+    private function diagram_line(array $nums, array $titles, callable $y_of): string
+    {
+        $wid = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_LEFT - self::DIAGRAM_PAD_RIGHT;
+        $points = [];
+        $circles = '';
+        foreach (array_values($nums) as $k => $num) {
+            $x = number_format(self::DIAGRAM_PAD_LEFT + $k * $wid / max(1, count($nums) - 1), 1, '.', '');
+            $y = number_format($y_of($num), 1, '.', '');
+            $points[] = $x . ',' . $y;
+            $circles .= '<circle cx="' . $x . '" cy="' . $y . '" r="' . self::DIAGRAM_POINT_RADIUS . '"><title>' . $this->esc($titles[$k]) . '</title></circle>';
+        }
+        return '<polyline points="' . implode(' ', $points) . '"/>' . $circles;
     }
 
     /**

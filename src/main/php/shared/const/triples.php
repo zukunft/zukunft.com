@@ -135,6 +135,8 @@ class triples
     // makes the settings page offer the selection of the light or the dark colours (see base_phrases.json)
     const string COLOUR_MODE = 'colour mode';
     const string COLOUR_MODE_CODE_ID = 'colour_mode';
+    // the file name of the image of the firm that presents a report (config.yaml user default frontend layout)
+    const string REPORT_LOGO = 'report logo';
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
@@ -295,6 +297,7 @@ class triples
         self::FIELD_LIMIT_DOWN => self::FIELD_LIMIT_DOWN_CODE_ID,
         self::FIELD_STEP => self::FIELD_STEP_CODE_ID,
         self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
+        self::CALCULATOR_RESULT_WIDTH => self::CALCULATOR_RESULT_WIDTH_CODE_ID,
     ];
     // the types of a process catch field by their code id
     const array FIELD_TYPES = [
@@ -440,6 +443,8 @@ class triples
     const string CALCULATOR_COLOUR = 'calculator colour';
     const string CALCULATOR_DECIMALS = 'calculator decimals';
     const string CALCULATOR_DECIMALS_CODE_ID = 'system_calculator_decimals';
+    const string CALCULATOR_RESULT_WIDTH = 'calculator result width';
+    const string CALCULATOR_RESULT_WIDTH_CODE_ID = 'system_calculator_result_width';
     const string CALCULATOR_WARNING = 'calculator warning';
     const string CALCULATOR_WARNING_CODE_ID = 'system_calculator_warning';
     const string CALCULATOR_READ_ONLY = 'calculator read only';
@@ -483,6 +488,7 @@ class triples
         ...triples::CALCULATOR_BLOCKS,
         ...triples::CALCULATOR_BUTTONS,
         self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
+        self::CALCULATOR_RESULT_WIDTH => self::CALCULATOR_RESULT_WIDTH_CODE_ID,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

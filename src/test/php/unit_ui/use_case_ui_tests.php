@@ -725,6 +725,18 @@ class use_case_ui_tests
         // negative: a page without a phrase has no calculator title
         $test_name = '... and a page without a phrase has no calculator title';
         $t->assert($test_name, $page->calculator_title(null, $dto_calc), '');
+        // the page sets the width of its result panel e.g. the wide table of the portfolio split
+        $test_name = 'a page with a result width sets it as a style';
+        $dto_width = new data_object();
+        $dto_width->val_lst = new test_values($t)->value_list_result_width_ui();
+        $width_style = $page->calculator_result_width_style(new test_triples($t)->zh_city_ui(), $dto_width);
+        $t->assert_text_contains($test_name, $width_style, styles::CALC_RESULT_WIDTH_VAR . ':' . triple_names::CALC_RESULT_WIDTH . 'px');
+        // negative: a page without the value has the standard width e.g. the pv lifetime balance
+        $test_name = '... and another page keeps the standard width';
+        $other_style = $page->calculator_result_width_style(new test_words($t)->zh_ui(), $dto_width);
+        $t->assert($test_name, $other_style, '');
+        $test_name = '... and a page without a request cache too';
+        $t->assert($test_name, $page->calculator_result_width_style(new test_triples($t)->zh_city_ui(), null), '');
 
         $t->subheader($ts . 'calculator input');
         // the inputs of Zurich (city) are the inputs of Zurich, the phrase it is built from: the
@@ -900,15 +912,24 @@ class use_case_ui_tests
         $test_name = '... but never the expected number';
         $exp_none = $t_val->value_list_calculator_check_ui(null);
         $t->assert($test_name, $list->rank_number($exp_phr, $exp_phr, $exp_none, $msg), -INF);
+        $test_name = '... with its hint below the table';
+        $t->assert_text_contains($test_name, $chk_same, '<' . html_base::P . ' class="' . styles::INPUT_HINT . '">' . triple_names::CALC_CHECK_HINT);
         $test_name = '... and a page without the check has no table';
         $no_chk_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
         $no_chk = $list->calculator_check($no_chk_calc, $t_val->value_list_calculator_check_ui(values::SAMPLE_FLOAT), $dto_in, $msg);
         $t->assert($test_name, $no_chk, '');
         $test_name = 'a diagram draws a point per number and names the first and the last row';
-        $svg = $html->line_diagram([1.0, -2.0], word_names::BE, word_names::ZH, '2');
+        $svg_colour = styles::CALC_COLUMN_COLOURS[1];
+        $svg = $html->line_diagram([[[1.0, -2.0], $svg_colour, [word_names::BE, word_names::ZH]], [[0.0, 0.0], '', ['a', 'b']]], word_names::BE, word_names::ZH, '2');
         $t->assert_text_contains($test_name, $svg, '<polyline points="70.0,53.0 748.0,176.0"');
         $t->assert_text_contains($test_name, $svg, word_names::BE);
         $t->assert_text_contains($test_name, $svg, word_names::ZH);
+        $test_name = '... with a tooltip per point';
+        $t->assert_text_contains($test_name, $svg, '<title>' . word_names::ZH . '</title>');
+        $test_name = '... and a line per series in its colour';
+        $t->assert_text_contains($test_name, $svg, '<g class="' . $svg_colour . '"><polyline');
+        $test_name = '... and a series without a colour has no style';
+        $t->assert_text_contains($test_name, $svg, '<g><polyline points="70.0,');
         // negative: a page without the flag has no diagram and without the list no notes
         $test_name = '... but a page without the flag has none';
         $no_diagram = $list->calculator_diagrams($no_chk_calc, $t_val->value_list_calculator_input_ui(), $msg);
@@ -944,6 +965,23 @@ class use_case_ui_tests
         $test_name = 'a column can name an instance shorter';
         $ins_cols = $ins_calc->columns([$ins_item]);
         $t->assert_contains($test_name, array_column($ins_cols, 0), [triple_names::CALC_SHORT_LABEL]);
+        $test_name = 'a diagram of a column filtered by an instance has a line per instance';
+        $dia_col = $t_phr->list_calculator_instances_ui()->get_by_name(triple_names::CALC_DIAGRAM_COLUMN, $msg);
+        $dia_lines = $ins_calc->diagram_lines($dia_col);
+        $dia_labels = array_column($dia_lines, 2);
+        // Zurich shows its calculator label, because it is also the page phrase of this fixture
+        $t->assert_contains($test_name, $dia_labels, [mb_ucfirst(word_names::BE), triple_names::CALC_ZH_LABEL_COM]);
+        // negative: a column without such a filter is one line without a colour
+        $test_name = '... but another column is one line';
+        $one_lines = $ins_calc->diagram_lines($ins_item);
+        $one_colour = $one_lines[0][1];
+        $t->assert($test_name, $one_colour, '');
+        $test_name = 'the instances of a column with the colour flag start with the second colour';
+        $ins_colours = array_column($ins_cols, 3);
+        $t->assert_contains($test_name, $ins_colours, [styles::CALC_COLUMN_COLOURS[1]]);
+        // negative: the first colour is for a single column wherever it stands e.g. the parent behind the children
+        $test_name = '... and not the first colour';
+        $t->assert($test_name, array_intersect($ins_colours, [styles::CALC_COLUMN_COLOURS[0]]), []);
         $test_name = 'the imports of a page are a section with a button per item';
         $imports_html = $list->calculator_imports($ins_calc);
         $t->assert_text_contains($test_name, $imports_html, triple_names::CALC_IMPORTS_LABEL);
@@ -1200,6 +1238,37 @@ class use_case_ui_tests
         $t->assert_text_not_contains($test_name, $two_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
+        // negative: a flagged group shows the sign by its style only e.g. the savings of the pv page
+        $plus_span = '<span class="' . styles::CALC_POSITIVE . '">+';
+        $test_name = '... but without the plus sign';
+        $t->assert_text_not_contains($test_name, $res_html, $plus_span);
+        // a flagged row shows the plus sign e.g. the deviation of the portfolio split
+        $test_name = 'the number of a signed row shows the plus sign';
+        $dto_row = new data_object();
+        $dto_row->online = false;
+        $dto_row->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_row->phr_lst = $t_phr->list_calculator_signed_row_ui();
+        $dto_row->val_lst = $t_val->value_list_calculator_result_ui();
+        $row_html = $page->calculation_result($wrd, $msg, $dto_row);
+        $t->assert_text_contains($test_name, $row_html, $plus_span);
+        // a detail table shows the colour of its column in the cells and its hint below the table
+        $dto_style = new data_object();
+        $dto_style->online = false;
+        $dto_style->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_style->phr_lst = $t_phr->list_calculator_detail_style_ui();
+        $dto_style->val_lst = $t_val->value_list_calculator_result_ui();
+        $style_html = $page->calculation_result($wrd, $msg, $dto_style);
+        $colour_cell = '<' . html_base::TD . ' class="' . styles::CALC_NUMBER . ' ' . styles::CALC_COLUMN_COLOURS[0] . '"';
+        $test_name = 'a cell of a detail column with the colour flag has the colour';
+        $t->assert_text_contains($test_name, $style_html, $colour_cell);
+        $detail_hint = '<' . html_base::P . ' class="' . styles::INPUT_HINT . '">' . triple_names::CALC_DETAIL_HINT;
+        $test_name = 'the hint of a detail table is shown below the table';
+        $t->assert_text_contains($test_name, $style_html, $detail_hint);
+        // negative: without the flag and the hint neither is shown
+        $test_name = '... but a cell without the flag has no colour';
+        $t->assert_text_not_contains($test_name, $res_html, $colour_cell);
+        $test_name = '... and a table without a hint has none';
+        $t->assert_text_not_contains($test_name, $res_html, $detail_hint);
         // the save compares the results of the page by their group id, so a cell names the number it shows
         $cell_id = $dto_res->val_lst->get_by_names(
             [word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->html_id();

@@ -301,8 +301,8 @@ class phrase_data
                 ];
             } elseif (array_key_exists($name, $this->trp_by_name)) {
                 $trp = $this->trp_by_name[$name];
-                $from = $this->phrase_json($trp[json_fields::EX_FROM] ?? '', $msg);
-                $to = $this->phrase_json($trp[json_fields::EX_TO] ?? '', $msg);
+                $from = $this->triple_side_json($trp, json_fields::EX_FROM, $msg);
+                $to = $this->triple_side_json($trp, json_fields::EX_TO, $msg);
                 $result = [
                     json_fields::ID => $trp[json_fields::ID],
                     json_fields::NAME => $name,
@@ -323,6 +323,18 @@ class phrase_data
             $this->phr_json[$name] = $this->without_null($result);
         }
         return $this->phr_json[$name];
+    }
+
+    /**
+     * @param array $trp the json of a triple of the answer
+     * @param string $side json_fields::EX_FROM or json_fields::EX_TO
+     * @param user_message $msg to report a side that the answer does not contain
+     * @return array|null the api json of the phrase of the side, null for a triple without this side e.g. the from of "in USD" or "per km"
+     */
+    private function triple_side_json(array $trp, string $side, user_message $msg): ?array
+    {
+        $name = $trp[$side] ?? '';
+        return $name == '' ? null : $this->phrase_json($name, $msg);
     }
 
     /**

@@ -6548,7 +6548,11 @@
             xecute/calculator.php
     \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- phrase_id - section for function phrase_id not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
     \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
+            nt/execute/calculator.php
+    \-- diagram_lines - section for function diagram_lines not yet defined that it should be texts and flags in /compone
             nt/execute/calculator.php
     \-- phrase_hint - section for function phrase_hint not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
@@ -6564,6 +6568,8 @@
             xecute/calculator.php
     \-- own_label - section for function own_label not yet defined that it should be texts and flags in /component/execu
             te/calculator.php
+    \-- own_hint - section for function own_hint not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
     \-- phrase_label - section for function phrase_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
     \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
@@ -6582,6 +6588,9 @@
             culator.php
     \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+\-- calculator_report
+    \-- pdf - section for function pdf missing in /component/execute/calculator_report.php
+    \-- add_html - section for function add_html missing in /component/execute/calculator_report.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -6911,6 +6920,8 @@
             atch in /component/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
+    \-- calculator_result_width_style - section for function calculator_result_width_style not yet defined that it shoul
+            d be process catch in /component/execute/system_page.php
     \-- calculator_json - section for function calculator_json not yet defined that it should be process catch in /compo
             nent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
@@ -7005,17 +7016,21 @@
     \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_table_unit - section for function calculation_table_unit missing in /component/execute/ui_list.php
+    \-- result_width - section for function result_width missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
             hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
     \-- calculator_buttons - section for function calculator_buttons missing in /component/execute/ui_list.php
+    \-- calculator_report_url - section for function calculator_report_url missing in /component/execute/ui_list.php
     \-- calculator_check - section for function calculator_check missing in /component/execute/ui_list.php
     \-- calculator_check_same - section for function calculator_check_same missing in /component/execute/ui_list.php
     \-- calculator_diagrams - section for function calculator_diagrams missing in /component/execute/ui_list.php
     \-- calculator_notes - section for function calculator_notes missing in /component/execute/ui_list.php
+    \-- ranked_rows - section for function ranked_rows missing in /component/execute/ui_list.php
     \-- rank_number - section for function rank_number missing in /component/execute/ui_list.php
+    \-- calculator_phrase_cells - section for function calculator_phrase_cells missing in /component/execute/ui_list.php
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
@@ -7025,6 +7040,8 @@
             hp
     \-- calculator_needed_results - section for function calculator_needed_results missing in /component/execute/ui_list
             .php
+    \-- calculator_general_value - section for function calculator_general_value missing in /component/execute/ui_list.p
+            hp
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -7731,6 +7748,14 @@
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
+\-- pdf_writer
+    \-- image - section for function image not yet defined that it should be add in /html/pdf_writer.php
+    \-- title - section for function title not yet defined that it should be add in /html/pdf_writer.php
+    \-- heading - section for function heading not yet defined that it should be add in /html/pdf_writer.php
+    \-- text - section for function text not yet defined that it should be add in /html/pdf_writer.php
+    \-- table - section for function table not yet defined that it should be add in /html/pdf_writer.php
+    \-- output - section for function output not yet defined that it should be output in /html/pdf_writer.php
+    \-- text_width - section for function text_width not yet defined that it should be internal in /html/pdf_writer.php
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
@@ -9558,6 +9583,10 @@
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
         \-- table_model - 
+    \-- pdf
+        \-- calculator_report - @param word|triple|null $dbo the phrase of the page
+    \-- add_html
+        \-- calculator_report - add a part of the page: its headings, tables and texts in their order
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
     \-- title_named
@@ -9802,6 +9831,8 @@
     \-- calculation_table_unit
         \-- ui_list - @param array $vals per row group,
                  row and column the number of the cell or null (calculation_table_values)
+    \-- result_width
+        \-- ui_list - @param phrase $phr the phrase of the calculator page
     \-- calculation_row_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_side_context
@@ -9809,8 +9840,10 @@
     \-- calculation_detail_tables
         \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
     \-- calculator_buttons
-        \-- ui_list - the buttons of a list or a detail table at their place,
-                 without a function so far (docs/llm/pending.md)
+        \-- ui_list - the buttons of a list or a detail table at their place: the report is a link to the pdf,
+                 which also
+    \-- calculator_report_url
+        \-- ui_list - @param int $phr_id the phrase id of the page, which is negative for a triple
     \-- calculator_check
         \-- ui_list - the check table of a calculator: a row per value with the word expected with the expected number,
                  the number
@@ -9821,8 +9854,13 @@
                 the column along the rows of its table
     \-- calculator_notes
         \-- ui_list - the notes of a calculator: per item of the list the label in bold in front of the description
+    \-- ranked_rows
+        \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- rank_number
         \-- ui_list - @param phrase $row the phrase of a row e.g. LISP
+    \-- calculator_phrase_cells
+        \-- ui_list - the text of a column with the flag calculator phrase column: the phrase of a stored number with a 
+                source
     \-- calculator_sources
         \-- ui_list - the sources of a calculator page as a numbered list in the order of their first use, so
     \-- calculator_numbers
@@ -9837,6 +9875,9 @@
         \-- ui_list - @return array the number format of the user for the calculator scripts: the decimal point,
     \-- calculator_needed_results
         \-- ui_list - the results that the calculator script calculates: the result of each cell and the results
+    \-- calculator_general_value
+        \-- ui_list - a fact that does not name the page e.g. the Swiss consumption mix of a month in the table of one P
+                V installation;
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -10082,9 +10123,13 @@
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- button_label
         \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- phrase_id
+        \-- calculator - @return int the phrase id of the page, which is negative for a triple
     \-- diagram_title
         \-- calculator - @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative devia
                 tion
+    \-- diagram_lines
+        \-- calculator - @param phrase $col a column of a detail table with a diagram
     \-- phrase_hint
         \-- calculator - @param phrase $phr a phrase that is no item e.g. a row of a detail table
     \-- row_kinds
@@ -10099,6 +10144,8 @@
         \-- calculator - @param phrase|null $item a list item e.g. PV installation input yield factor
     \-- own_label
         \-- calculator - @param phrase|null $phr e.g. the group of the inputs
+    \-- own_hint
+        \-- calculator - @param phrase|null $phr an item e.g. a detail table
     \-- phrase_label
         \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail t
                 able
@@ -10416,6 +10463,8 @@
         \-- system_page - the results of the page phrase until now against the results after the save of the formula
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_result_width_style
+        \-- system_page - @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
     \-- calculator_json
         \-- system_page - the calculator page that the browser builds from the phraseData answer of the page
     \-- process_catch_fields
@@ -10924,7 +10973,7 @@
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
     \-- line_diagram
-        \-- html_base - a line diagram of a number per row without javascript,
+        \-- html_base - a line diagram of numbers per row without javascript,
                  with a line at zero and at the biggest number
     \-- label_no_for
         \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
@@ -11036,6 +11085,22 @@
         \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
     \-- link_style
         \-- html_base - @param string $stylesheet path to the stylesheet file
+    \-- text_width
+        \-- pdf_writer - @param string $text the text in utf-8
+\-- add
+    \-- image
+        \-- pdf_writer - add a jpeg image at the current position, of which a pdf can use the data as it is
+    \-- title
+        \-- pdf_writer - @param string $text the title of the document
+    \-- heading
+        \-- pdf_writer - @param string $text the heading of the next section
+    \-- text
+        \-- pdf_writer - add a text that is wrapped at the page width
+    \-- table
+        \-- pdf_writer - add a table that is as wide as its texts and scaled down if it is wider than the page
+\-- output
+    \-- output
+        \-- pdf_writer - @return string the complete pdf file with at least one page
 \-- table
     \-- tr
         \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto

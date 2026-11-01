@@ -75,7 +75,7 @@ is the `description` of that triple.
 | `calculator label`     | the shown name, e.g. the page title or a row label |
 | `calculator hint`      | the help text, e.g. the lead text or the text below a field |
 | `calculator highlight` | shows a row in bold as a key figure             |
-| `calculator signed`    | colours the positive and negative numbers of a row group |
+| `calculator signed`    | colours the positive and negative numbers of a row group; a flagged row or column also shows the plus sign and no colour for a number that rounds to zero |
 | `calculator number note` | a short note behind the unit of the number in a row label, e.g. PV-weighted |
 
 A text of an item is used on this page only. A text of a phrase is used on every
@@ -157,9 +157,11 @@ A repeated input:
 | editable column | `house heating detail column price` · `has a` · `calculator editable` | the cells are number fields that join the save form |
 | phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
 | page independent | `house heating detail fuel` · `has a` · `calculator page independent` | the cells select their numbers without the page phrase, e.g. the energy prices that are the same for every house; also for an item or the check table |
-| diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a legend of the last numbers |
+| diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a tooltip per point and a legend of the last numbers; if the filter of the column is an instance of a repeated input, one line per instance in the colours of the instances |
 | decimals | the value `price`, `calculator decimals` = 3 | the cells of the row of the phrase in the result table show this number of decimals |
-| colour | `house heating column heat pump` · `has a` · `calculator colour` | the columns with this flag get the colours of the page palette in their order in the header |
+| result width | the value `house heating`, `calculator result width` = 896 | the result panel of the page has this width in pixels instead of the standard width |
+| table hint | `house heating detail fuel` · `has a` · `calculator hint` | the description is shown below the detail table or the check table |
+| colour | `house heating column heat pump` · `has a` · `calculator colour` | a flagged single column gets the first colour of the page palette and the instances of a repeated column the others cycling, in the header and in the cells of a detail table |
 
 Two proposed rules for the detail tables need no keyword:
 
@@ -186,7 +188,7 @@ Two proposed rules for the detail tables need no keyword:
 |---|---|---|
 | file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase; on the page or its base phrase the triple is a list: a collapsed section with its label and an import button per item |
 | download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
-| printable report | `house heating inputs` · `has a` · `calculator printable report` | shows the page as a printable pdf |
+| printable report | `house heating inputs` · `has a` · `calculator printable report` | a link to the pdf report of the page: the logo of the user setting `report logo` or of zukunft.com, a table per column filtered by `split count` with the positions of this portfolio, the other tables, notes and sources of the page and the formulas used |
 | copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |
 
 ### Calculations

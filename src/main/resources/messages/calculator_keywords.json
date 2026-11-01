@@ -87,6 +87,12 @@
       "name": "decimals"
     },
     {
+      "name": "width"
+    },
+    {
+      "name": "result"
+    },
+    {
       "name": "colour"
     },
     {
@@ -206,7 +212,7 @@
     },
     {
       "name": "calculator signed",
-      "description": "flag: the cells of a row group or of a row with a triple to this keyword show the sign of the number",
+      "description": "flag: the cells of a row group with a triple to this keyword show the sign of the number by its style; the cells of a row or a column also show the plus sign, and the style only if the number does not round to zero",
       "from": "calculator (system)",
       "verb": "has a",
       "to": "sign",
@@ -334,8 +340,22 @@
       "code_id": "system_calculator_decimals"
     },
     {
+      "name": "result width",
+      "from": "width",
+      "verb": "of",
+      "to": "result"
+    },
+    {
+      "name": "calculator result width",
+      "description": "number property: a value with the page phrase and this keyword sets the width of the result panel of the page in pixels e.g. 896 for the wide table of the portfolio split; without the value the page has the standard width",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "result width",
+      "code_id": "system_calculator_result_width"
+    },
+    {
       "name": "calculator colour",
-      "description": "PROPOSED NEW ELEMENT: flag: the columns with a triple to this keyword get the colours of the page palette in their order e.g. the dark blue for the parent and four cycling blues for the children, in the header; the cells and the diagram lines still need it",
+      "description": "flag: the columns with a triple to this keyword get the colours of the page palette e.g. the dark blue for a single column such as the parent and four cycling blues for the instances such as the children, in the header and in the cells of a detail table",
       "from": "calculator (system)",
       "verb": "has a",
       "to": "colour"
@@ -382,7 +402,7 @@
     },
     {
       "name": "calculator printable report",
-      "description": "PROPOSED NEW ELEMENT: button: a triple from the inputs list to this keyword shows a report button that shows the page as a printable pdf",
+      "description": "button: a triple from the inputs list to this keyword shows a report button that opens the page as a pdf",
       "from": "calculator (system)",
       "verb": "has a",
       "to": "printable report",

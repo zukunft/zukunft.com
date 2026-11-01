@@ -184,6 +184,11 @@ class ui_list extends ui_base
     const string CALC_DIAGRAM_LEGEND_SUFFIX = '-legend';
     const string CALC_DIAGRAM_LABEL = 'label';
     const string CALC_DIAGRAM_NUMBERS = 'numbers';
+    const string CALC_DIAGRAM_LINES = 'lines';
+    const string CALC_DIAGRAM_UNIT = 'unit';
+    const string CALC_DIAGRAM_TITLES = 'titles';
+    const string CALC_DIAGRAM_MARK = '●';
+    const string CALC_DIAGRAM_TEXT_TAG = 'span';
     const string CALC_FORMAT = 'format';
     const string CALC_CELL_NUMBER = 'number';
     const string CALC_CELL_UNIT = 'unit';
@@ -201,7 +206,7 @@ class ui_list extends ui_base
     const string CALC_DIGITS = 'digits';
     const string CALC_ROUGH_DIGITS = 'rough_digits';
     // the phrases of a value that make it a property of a calculator field and not the number of the field
-    const array CALC_FIELD_PROPERTIES = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE, triples::CALCULATOR_DECIMALS];
+    const array CALC_FIELD_PROPERTIES = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE, triples::CALCULATOR_DECIMALS, triples::CALCULATOR_RESULT_WIDTH];
     const string CALC_POSITIVE = 'positive';
     const string CALC_NEGATIVE = 'negative';
 
@@ -3486,11 +3491,13 @@ class ui_list extends ui_base
                 $grp_signed = $calc->has_flag($grp, triples::CALCULATOR_SIGNED);
                 foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
                     $ctx = $this->calculation_row_context($calc, $dbo, $row);
-                    $signed = ($grp_signed or $calc->has_flag($row, triples::CALCULATOR_SIGNED));
+                    // a flagged row shows the plus sign like a flagged column, a flagged group only the style of the sign
+                    $plus = $calc->has_flag($row, triples::CALCULATOR_SIGNED);
+                    $signed = ($grp_signed and !$plus);
                     $decimals = $this->row_decimals($calc->item_phrase($row), $dto->val_lst);
                     $cells = '';
                     foreach (array_keys($cols) as $c) {
-                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, $with_unit, $msg, $decimals);
+                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, $with_unit, $msg, $decimals, $plus);
                     }
                     $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
                         . $this->calculator_sub($calc, $row, $dbo, $dto, $lst, $msg);
@@ -3537,7 +3544,28 @@ class ui_list extends ui_base
      */
     private function decimals_of(array $phrases, value_list $lst): ?int
     {
-        $names = [...array_map(fn(phrase $phr) => $phr->name(), $phrases), triples::CALCULATOR_DECIMALS];
+        return $this->keyword_number($phrases, triples::CALCULATOR_DECIMALS, $lst);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the calculator page
+     * @param value_list $lst the values with the property values
+     * @return int|null the width in pixels that the page sets for its result panel, null for the standard width
+     */
+    function result_width(phrase $phr, value_list $lst): ?int
+    {
+        return $this->keyword_number([$phr], triples::CALCULATOR_RESULT_WIDTH, $lst);
+    }
+
+    /**
+     * @param array $phrases the phrases that set the number e.g. lot value in CHF and cash
+     * @param string $keyword the name of the calculator keyword of the number
+     * @param value_list $lst the values with the property values
+     * @return int|null the number of the value with exactly these phrases and the keyword, null if there is none
+     */
+    private function keyword_number(array $phrases, string $keyword, value_list $lst): ?int
+    {
+        $names = [...array_map(fn(phrase $phr) => $phr->name(), $phrases), $keyword];
         $result = null;
         foreach ($lst->lst() as $val) {
             $is_exact = ($val instanceof value and count($val->phr_lst()->names()) == count($names) and $val->match_all($names));
@@ -3722,12 +3750,25 @@ class ui_list extends ui_base
             $tbl_phr = $calc->item_phrase($tbl);
             if ($tbl_phr != null and $calc->has_flag($tbl, triples::CALCULATOR_SECTION) == $sections) {
                 $table = $this->calculation_detail_table($calc, $dbo, $tbl, $tbl_phr, $lst, $msg)
+                    . $this->calculator_table_hint($calc, $tbl)
                     . $this->calculator_buttons($calc, $tbl);
                 $label = $html->esc($calc->label($tbl));
                 $result .= $sections ? $html->details($label, $table) : $html->block(html_base::H2, $label) . $table;
             }
         }
         return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $item the item of the table e.g. a detail table or the check list
+     * @return string the html code of the own hint of the item below its table, empty if it has none
+     */
+    private function calculator_table_hint(calculator $calc, ?phrase $item): string
+    {
+        $html = new html_base();
+        $hint = $calc->own_hint($item);
+        return $hint == '' ? '' : $html->block(html_base::P, $html->esc($hint), styles::INPUT_HINT);
     }
 
     /**
@@ -3783,13 +3824,14 @@ class ui_list extends ui_base
             }
             $sub = ($numbered and $row[1][1] != null) ? $calc->phrase_hint($row[1][1]) : '';
             $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg, $texts, $number, $col_decimals,
-                array_column($cols, 6), $units, $sub);
+                array_column($cols, 6), $units, $sub, array_column($cols, 3));
         }
         return $this->calculator_table($head, $body);
     }
 
     /**
-     * the buttons of a list or a detail table at their place, without a function so far (docs/llm/pending.md)
+     * the buttons of a list or a detail table at their place: the report is a link to the pdf, which also
+     * works without javascript, and the others have no function so far (docs/llm/pending.md)
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
@@ -3799,19 +3841,34 @@ class ui_list extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $labels = [];
-        foreach ([triples::CALCULATOR_FILE_IMPORT, triples::CALCULATOR_DOWNLOAD, triples::CALCULATOR_REPORT] as $keyword) {
-            $labels[] = $calc->button_label($item, $keyword);
-        }
+        $labels = [$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT), $calc->button_label($item, triples::CALCULATOR_DOWNLOAD)];
+        $copy = [];
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
-            $labels[] = $mtr->txt(msg_id::CALCULATOR_COPY_JSON);
-            $labels[] = $mtr->txt(msg_id::CALCULATOR_COPY_CSV);
+            $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
         }
         $result = '';
         foreach (array_filter($labels) as $label) {
             $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
         }
+        $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
+        if ($report != '') {
+            $result .= $html->ref($this->calculator_report_url($calc->phrase_id()), $report, '', styles::CALC_BUTTON, false, false);
+        }
+        foreach ($copy as $label) {
+            $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
         return $result;
+    }
+
+    /**
+     * @param int $phr_id the phrase id of the page, which is negative for a triple
+     * @return string the url of the pdf report of the page with the user
+     */
+    function calculator_report_url(int $phr_id): string
+    {
+        $html = new html_base();
+        $url = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr_id, url_var::REPORT => url_var::TRUE];
+        return $html->url_with_user($html->page_url($url));
     }
 
     /**
@@ -3846,7 +3903,8 @@ class ui_list extends ui_base
             foreach ([msg_id::CALCULATOR_CHECK_EXPECTED, msg_id::CALCULATOR_CHECK_CALCULATED, msg_id::CALCULATOR_CHECK_STATUS] as $txt_id) {
                 $head .= $html->block(html_base::TH, $html->esc($mtr->txt($txt_id)), styles::CALC_NUMBER);
             }
-            $result = $html->details($html->esc($calc->own_label($grp)), $this->calculator_table($head, implode('', $rows)));
+            $table = $this->calculator_table($head, implode('', $rows)) . $this->calculator_table_hint($calc, $grp);
+            $result = $html->details($html->esc($calc->own_label($grp)), $table);
         }
         return $result;
     }
@@ -3918,39 +3976,77 @@ class ui_list extends ui_base
      */
     function calculator_diagrams(calculator $calc, value_list $lst, user_message $msg): string
     {
-        $html = new html_base();
-        $fmt = new number_format();
         $result = '';
         foreach ($calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
             foreach ($calc->sub_items($tbl, verbs::HAS_ID) as $col) {
                 $title = $calc->diagram_title($col);
                 $tbl_phr = $calc->item_phrase($tbl);
                 if ($title != '' and $tbl_phr != null) {
-                    $vals = [];
-                    foreach ($this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg) as $row) {
-                        $val = $this->calculator_general_value([$row, $calc->item_phrase($col), $calc->filter($col)], $lst, $msg, [], true);
-                        if ($val != null) {
-                            $vals[$row->name()] = $val;
-                        }
-                    }
-                    if (count($vals) > 1) {
-                        $nums = array_map(fn($val) => $val->number(), array_values($vals));
-                        $max = new number_format()->text(max(1, ...array_map('abs', $nums)));
-                        $svg = $html->line_diagram($nums, (string)array_key_first($vals), (string)array_key_last($vals), $max);
-                        $fmt->decimals = 2;
-                        $legend = $calc->label($col) . ' ' . $fmt->text(end($nums));
-                        $id = self::CALC_DIAGRAM_ID . count($this->diagram_plan);
-                        $this->diagram_plan[] = [
-                            self::CALC_CHECK_ID => $id,
-                            self::CALC_DIAGRAM_LABEL => $calc->label($col),
-                            self::CALC_DIAGRAM_NUMBERS => array_map(fn($val) => $val->html_id(), array_values($vals)),
-                        ];
-                        $body = $html->div($svg, styles::CALC_CHART, $id)
-                            . $html->div($html->esc($legend), styles::CALC_LEGEND, $id . self::CALC_DIAGRAM_LEGEND_SUFFIX);
-                        $result .= $html->details($html->esc($title), $body);
-                    }
+                    $rows = $this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg);
+                    $result .= $this->calculator_diagram($calc, $col, $title, $rows, $lst, $msg);
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $col the column with the diagram
+     * @param string $title the summary of the section of the diagram
+     * @param phrase[] $rows the rows of the table of the column
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the section, empty with less than two rows that have a number of every line
+     */
+    private function calculator_diagram(calculator $calc, phrase $col, string $title, array $rows, value_list $lst, user_message $msg): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $fmt = new number_format();
+        $fmt->decimals = 2;
+        $lines = [];
+        foreach ($calc->diagram_lines($col) as [$flt, $colour, $label]) {
+            $vals = [];
+            foreach ($rows as $row) {
+                $val = $this->calculator_general_value([$row, $calc->item_phrase($col), $flt], $lst, $msg, [], true);
+                if ($val != null) {
+                    $vals[$row->name()] = $val;
+                }
+            }
+            $lines[] = [$vals, $colour, $label];
+        }
+        $names = array_map('strval', array_keys(array_intersect_key(...array_column($lines, 0))));
+        $result = '';
+        if (count($names) > 1) {
+            $id = self::CALC_DIAGRAM_ID . count($this->diagram_plan);
+            $svg_lines = [];
+            $plan = [];
+            $legend = '';
+            $all = [];
+            foreach ($lines as $pos => [$vals, $colour, $label]) {
+                $nums = array_map(fn($name) => $vals[$name]->number(), $names);
+                $all = [...$all, ...$nums];
+                $unit = $this->unit_name($vals[end($names)], $msg);
+                $unit_txt = $unit == '' ? '' : ' ' . $unit;
+                $titles = array_map(fn($name) => $label . ', ' . $name . ': ', $names);
+                $svg_lines[] = [$nums, $colour, array_map(fn($txt, $num) => $txt . $fmt->text($num) . $unit_txt, $titles, $nums)];
+                $final = $label . ' ' . $mtr->txt(msg_id::CALCULATOR_DIAGRAM_FINAL) . ' ';
+                $text_id = $id . self::CALC_DIAGRAM_LEGEND_SUFFIX . $pos;
+                $legend .= $html->span($html->span(self::CALC_DIAGRAM_MARK, $colour) . ' '
+                    . $html->block(self::CALC_DIAGRAM_TEXT_TAG, $html->esc($final . $fmt->text(end($nums)) . $unit_txt), '', $text_id));
+                $plan[] = [
+                    self::CALC_DIAGRAM_LABEL => $final,
+                    self::CALC_DIAGRAM_UNIT => $unit_txt,
+                    self::CALC_DIAGRAM_TITLES => $titles,
+                    self::CALC_DIAGRAM_NUMBERS => array_map(fn($name) => $vals[$name]->html_id(), $names),
+                ];
+            }
+            $this->diagram_plan[] = [self::CALC_CHECK_ID => $id, self::CALC_DIAGRAM_LINES => $plan];
+            $max = new number_format()->text(max(1, ...array_map('abs', $all)));
+            $svg = $html->line_diagram($svg_lines, $names[0], end($names), $max);
+            $body = $html->div($svg, styles::CALC_CHART, $id) . $html->div($legend, styles::CALC_LEGEND);
+            $result = $html->details($html->esc($title), $body);
         }
         return $result;
     }
@@ -3984,7 +4080,7 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the phrase types
      * @return phrase[] the row phrases of the table, by the biggest number of the phrase that the table "is ranked by" if it has one, a tie in the order of the follower chain
      */
-    private function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
+    function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
     {
         $result = $calc->row_phrases($tbl_phr);
         $rank = $calc->sub_items($tbl, verbs::RANK_ID)[0] ?? null;
@@ -4029,7 +4125,7 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the phrase types
      * @return array per phrase column its text e.g. EUR
      */
-    private function calculator_phrase_cells(calculator $calc, ?phrase $row_phr, array $cols, value_list $lst, user_message $msg): array
+    function calculator_phrase_cells(calculator $calc, ?phrase $row_phr, array $cols, value_list $lst, user_message $msg): array
     {
         $result = [];
         foreach ($cols as $c => [, $col_phr, , , , $is_phrase]) {
@@ -4183,6 +4279,7 @@ class ui_list extends ui_base
      * @param int|null $decimals the decimals that the row sets, null for the decimals of the column
      * @param bool $plus true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero
      * @param string $sub the sub text behind the number e.g. the unit shares
+     * @param string $colour the colour style of the column of a detail table, '' for none
      * @return string the html code of the number cell, empty if the page has no number
      */
     private function calculator_cell(
@@ -4193,7 +4290,8 @@ class ui_list extends ui_base
         user_message   $msg,
         ?int           $decimals = null,
         bool           $plus = false,
-        string         $sub = ''
+        string         $sub = '',
+        string         $colour = ''
     ): string
     {
         $html = new html_base();
@@ -4221,7 +4319,7 @@ class ui_list extends ui_base
             $this->cell_plan[$id][self::CALC_CELL_PLUS] = $plus;
             $this->cell_plan[$id][self::CALC_CELL_SUB] = $sub;
         }
-        return $html->block(html_base::TD, $txt, styles::CALC_NUMBER, $id);
+        return $html->block(html_base::TD, $txt, trim(styles::CALC_NUMBER . ' ' . $colour), $id);
     }
 
     /**
@@ -4368,7 +4466,7 @@ class ui_list extends ui_base
         // the numbers that the script shows: of the cells, the warnings and the diagrams
         $shown = [...array_values($this->cell_plan), ...$wrn_plan];
         foreach ($this->diagram_plan as $diagram) {
-            foreach ($diagram[self::CALC_DIAGRAM_NUMBERS] as $num_id) {
+            foreach (array_merge(...array_column($diagram[self::CALC_DIAGRAM_LINES], self::CALC_DIAGRAM_NUMBERS)) as $num_id) {
                 $shown[] = [self::CALC_CELL_NUMBER => $num_id];
             }
         }
@@ -4767,6 +4865,7 @@ class ui_list extends ui_base
      * @param array $plus per column if it shows the plus sign
      * @param array $units per column the unit that a cell shows as sub text, '' for none
      * @param string $sub the sub text of the label e.g. the full name of a ticker
+     * @param array $colours per column its colour style, '' for none
      * @return string the html code of the row of a detail table
      */
     private function calculator_detail_row(
@@ -4780,7 +4879,8 @@ class ui_list extends ui_base
         array        $col_decimals = [],
         array        $plus = [],
         array        $units = [],
-        string       $sub = ''
+        string       $sub = '',
+        array        $colours = []
     ): string
     {
         $html = new html_base();
@@ -4788,14 +4888,14 @@ class ui_list extends ui_base
         foreach ($vals as $c => $val) {
             $cells .= array_key_exists($c, $texts)
                 ? $html->block(html_base::TD, $html->esc($texts[$c]))
-                : $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg, $col_decimals[$c] ?? null, $plus[$c] ?? false, $units[$c] ?? '');
+                : $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg, $col_decimals[$c] ?? null, $plus[$c] ?? false, $units[$c] ?? '', $colours[$c] ?? '');
         }
         $first = $html->esc($label) . ($sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB));
         if ($number != '') {
             $cells = $html->block(html_base::TD, $first) . $cells;
             $first = $number;
         }
-        return $this->calculator_row($first, $cells, $key);
+        return $this->calculator_row($first, $cells, $key, $number == '' ? '' : styles::CALC_NUMBER);
     }
 
     /**
@@ -4839,7 +4939,7 @@ class ui_list extends ui_base
      * @param bool $with_results true to take the one result if no one value qualifies, for a table whose rows belong to no page
      * @return sandbox_value|null the one value with all the phrases or null if there is none or several
      */
-    private function calculator_general_value(array $phrases, value_list $lst, user_message $msg, array $skip = [], bool $with_results = false): ?sandbox_value
+    function calculator_general_value(array $phrases, value_list $lst, user_message $msg, array $skip = [], bool $with_results = false): ?sandbox_value
     {
         $phr_lst = array_filter($phrases);
         $found = [];
@@ -4871,10 +4971,10 @@ class ui_list extends ui_base
      * @param bool $key true to show the row as a key row
      * @return string the html code of the table row
      */
-    private function calculator_row(string $first, string $cells, bool $key): string
+    private function calculator_row(string $first, string $cells, bool $key, string $first_style = ''): string
     {
         $html = new html_base();
-        return $html->block(html_base::TR, $html->block(html_base::TD, $first) . $cells,
+        return $html->block(html_base::TR, $html->block(html_base::TD, $first, $first_style) . $cells,
             $key ? styles::CALC_KEY : '');
     }
 

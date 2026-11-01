@@ -215,6 +215,7 @@ class url_var
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
+    const string REPORT = 'rp'; // 1 to answer with the pdf report of a calculator page instead of the page
     // 0 to show the page of the server instead of the page that the browser builds from its json data,
     // which a calculator page shows by default if config.yaml allows javascript for the calculator
     const string JAVASCRIPT = 'sc';
@@ -350,6 +351,7 @@ class url_var
     const string CONFIG_KEY_HUMAN = 'setting';
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
+    const string REPORT_HUMAN = 'report'; // the long form of self::REPORT
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
     const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2757&sc=0
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
@@ -372,6 +374,7 @@ class url_var
     // repeated in the back part and the url stays short
     const array PAGE_VARS = [
         self::MASK,
+        self::REPORT,
         self::ID,
         self::USER_TO_EDIT,
         self::ID_LST,
@@ -447,6 +450,7 @@ class url_var
         self::NO_CACHE,
         // the page that the browser builds is a render mode of the same page
         self::JAVASCRIPT,
+        self::REPORT,
         // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
         // page must not turn the url into a form submit of an object without an id
         self::DISPLAY_LIST_SIZE,
@@ -761,6 +765,7 @@ class url_var
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
         [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
+        [self::REPORT_HUMAN, self::REPORT],
 
         // user
         [self::USER_HUMAN, self::USER],

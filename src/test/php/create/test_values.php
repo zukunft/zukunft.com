@@ -60,6 +60,8 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -67,6 +69,8 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -1578,6 +1582,19 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_zh_impact(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the result panel width that the page Zurich (city) sets
+     */
+    function value_list_result_width_ui(): value_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $kw = new triple($this->env->usr1);
+        $kw->set(triple_names::CALC_RESULT_WIDTH_ID, triples::CALCULATOR_RESULT_WIDTH);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->zh_city()->phrase(), $kw->phrase()], triple_names::CALC_RESULT_WIDTH));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
     /**
