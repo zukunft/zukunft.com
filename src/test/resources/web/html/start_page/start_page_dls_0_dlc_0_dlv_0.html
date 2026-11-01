@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test start page - zukunft.com
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                start_page_dls_0_dlc_0_dlv_0
+            </h4>
+            <div class="container text-center">
+                <h4>
+                    <a href="/http/view.php?m=4&amp;id=139">
+                        global problems
+                    </a>
+                </h4>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>
+                        <a href="/http/view.php?m=3&amp;id=220">
+                            problem
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=220.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=220.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=298">
+                            trillion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=302">
+                            EUR
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-177.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-177.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=297">
+                            htp
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=304">
+                            GDP
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=3&amp;id=392">
+                            reason
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=392.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=392.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=277">
+                            potential loss of reason
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=298">
+                            trillion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=302">
+                            EUR
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-277.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-277.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=3&amp;id=241">
+                            solution
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=241.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=241.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=4&amp;id=178">
+                            potential gain
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=159">
+                            billion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=297">
+                            htp
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-178.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-178.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=200">
+                            loss reduction
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-200.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-200.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=201">
+                            initial effort
+                        </a>
+                        in
+                        <a href="/http/view.php?m=4&amp;id=203">
+                            person year
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-201.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-201.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=202">
+                            reward ratio
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=298">
+                            trillion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=302">
+                            EUR
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-202.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=0&amp;dlv=0&amp;dlo=-202.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=162">
+                            global warming
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006725025005745&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            31.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83598757435965617&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            15 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569082272940209&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            30 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=244">
+                            climate gas emissions
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1o-0l-0W-2e_2i_46_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            31.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=294">
+                            reduce climate gas emissions
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=2a-0m-0W-0T_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            35.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=689352900808&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            35.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=141435433746635&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            352
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85006725025005770&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.03
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                            populism
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722883944625&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            23.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599184785080497&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            11.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569509622055089&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            22.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=245">
+                            avoid wrong decisions
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=1p-0m-0T_22_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1116702015688&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            34.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1118852186315&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            341
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85006722883944650&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.02
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=278" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
+                            poverty
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722885124273&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            20.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599262094491825&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            9.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569586931466417&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            19.4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=277">
+                            research
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2J_2K_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1194011427016&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            34.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1196161597643&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            341
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85006722885124298&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.02
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=276" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+                            health
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722884993201&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            13.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599253504557233&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            6.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569578341531825&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            13 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=279">
+                            taxes
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2I_2L_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            8.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1185421492424&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            8.8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1187571663051&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            88
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85006722884993226&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=182">
+                            wealth concentration
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            11.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            5.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            10.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=195">
+                            basic income
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=11-0q-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            16
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482413256&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            16 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280063461294283&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            160
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0q-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=280" title="process of teaching and learning">
+                            education
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722885255345&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            9.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599270684426417&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            4.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569595521401009&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=281">
+                            spending
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2M_2N_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            14.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1202601361608&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            14.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1204751532235&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            143
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85006722885255370&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=307">
+                            disinformation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-2e_2i_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-0U_2d_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3.8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-0U_2k_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            7.6 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=193">
+                            platform regulation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1%2F-0m-0T_2d_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            12
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139860693680328&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            12 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139862843850955&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            120
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-2e_2i_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=183">
+                            market power
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            7.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=247">
+                            market share tax
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1r-0r-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482478792&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            6 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280067756261579&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            60
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0r-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=184">
+                            biased information
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            6.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            6.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=194">
+                            Delphi method
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=10-0s-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            9
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482544328&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280072051228875&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            90
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0s-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=243">
+                            black-box AI
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            4.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            2.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            4.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=246">
+                            public AI
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1q-1n-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            7
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231483592947&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280145065804019&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            70
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-18-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=186">
+                            citizen participation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            1.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=198">
+                            fluid democracy
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=14-0u-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482675400&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            5.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280080641163467&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0u-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=187">
+                            GDP mismeasurement
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            2.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            1.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            2.4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=248">
+                            gross domestic usage
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1s-0v-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482740936&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280084936130763&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            40
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0v-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=188">
+                            proprietary software
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            1.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0.9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            1.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=197">
+                            free software
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=13-0w-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482806472&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280089231098059&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            30
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=18-0w-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=0&amp;9dlv=0">
+                            0
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+            </table>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

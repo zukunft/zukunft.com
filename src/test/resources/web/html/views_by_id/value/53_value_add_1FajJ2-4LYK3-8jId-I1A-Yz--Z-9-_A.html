@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -34,23 +38,60 @@
                                 </i>
                             </summary>
                             <ul>
-                                <li>
-                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
-                                        alternative
+                                <li class="menu-header">
+                                    alternative views
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=5&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+" title="show &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; with the &#039;Value (default)&#039; view">
+                                        Value (default)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=54&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+&amp;d=5" title="adjust &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; so that it is always shown with the &#039;Value (default)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=25&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+" title="show &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; with the &#039;Value (detail)&#039; view">
+                                        Value (detail)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=54&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+&amp;d=25" title="adjust &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; so that it is always shown with the &#039;Value (detail)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=33&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+" title="show &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; with the &#039;Value (range)&#039; view">
+                                        Value (range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=54&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+&amp;d=33" title="adjust &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; so that it is always shown with the &#039;Value (range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=41&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+" title="show &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; with the &#039;Value (detail with range)&#039; view">
+                                        Value (detail with range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=54&amp;id=1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+&amp;d=41" title="adjust &#039;mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8&#039; so that it is always shown with the &#039;Value (detail with range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views e.g. Start view, Table, Word (default)">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=85&amp;id=53&amp;9m=53&amp;9id=1FajJ2-4LYK3-8jId-I1A-Yz-%2F.-Z-9-%2F_A_a_3s_1Ao_%2FvLC_%2F%2FZSB_ZSahL_">
-                                        change view
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=53&amp;9m=53&amp;9id=1FajJ2-4LYK3-8jId-I1A-Yz-%2F.-Z-9-%2F_A_a_3s_1Ao_%2FvLC_%2F%2FZSB_ZSahL_" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=84&amp;9m=53&amp;9id=1FajJ2-4LYK3-8jId-I1A-Yz-%2F.-Z-9-%2F_A_a_3s_1Ao_%2FvLC_%2F%2FZSB_ZSahL_">
+                                    <a href="http://localhost/http/view.php?m=84&amp;9m=53&amp;9id=1FajJ2-4LYK3-8jId-I1A-Yz-%2F.-Z-9-%2F_A_a_3s_1Ao_%2FvLC_%2F%2FZSB_ZSahL_" title="create a new named view editor for this mathematics, triple1, word2, triple2, word3, triple3, word4, triple4, word5, triple5, word6, triple6, word7, triple7, word8, triple8">
                                         add view
                                     </a>
                                 </li>
@@ -303,373 +344,397 @@
                             </option>
                             <option value="second" data-value="22">
                             </option>
-                            <option value="Switzerland" data-value="210">
+                            <option value="Switzerland" data-value="221">
                             </option>
-                            <option value="city" data-value="192">
+                            <option value="city" data-value="203">
                             </option>
-                            <option value="canton" data-value="190">
+                            <option value="canton" data-value="201">
                             </option>
-                            <option value="Zurich" data-value="217">
+                            <option value="Zurich" data-value="228">
                             </option>
-                            <option value="Bern" data-value="189">
+                            <option value="Bern" data-value="200">
                             </option>
-                            <option value="Geneva" data-value="196">
+                            <option value="Geneva" data-value="207">
                             </option>
-                            <option value="inhabitants" data-value="201">
+                            <option value="inhabitants" data-value="212">
                             </option>
-                            <option value="parts" data-value="607">
+                            <option value="parts" data-value="627">
                             </option>
-                            <option value="total" data-value="387">
+                            <option value="total" data-value="407">
                             </option>
-                            <option value="problem" data-value="209">
+                            <option value="problem" data-value="220">
                             </option>
-                            <option value="global" data-value="198">
+                            <option value="global" data-value="209">
                             </option>
-                            <option value="potential" data-value="226">
+                            <option value="potential" data-value="249">
                             </option>
-                            <option value="climate" data-value="230">
+                            <option value="climate" data-value="253">
                             </option>
-                            <option value="warmer" data-value="233">
+                            <option value="warmer" data-value="256">
                             </option>
-                            <option value="health" data-value="253">
+                            <option value="health" data-value="276">
                             </option>
-                            <option value="populism" data-value="237">
+                            <option value="populism" data-value="260">
                             </option>
-                            <option value="poverty" data-value="255">
+                            <option value="poverty" data-value="278">
                             </option>
-                            <option value="education" data-value="257">
+                            <option value="education" data-value="280">
                             </option>
-                            <option value="happy" data-value="269">
+                            <option value="happy" data-value="292">
                             </option>
                             <option value="time" data-value="99">
                             </option>
-                            <option value="points" data-value="271">
+                            <option value="points" data-value="294">
                             </option>
-                            <option value="trillion" data-value="275">
+                            <option value="trillion" data-value="298">
                             </option>
                             <option value="billion" data-value="159">
                             </option>
-                            <option value="CHF" data-value="460">
+                            <option value="CHF" data-value="480">
                             </option>
-                            <option value="EUR" data-value="279">
+                            <option value="EUR" data-value="302">
                             </option>
-                            <option value="USD" data-value="446">
+                            <option value="USD" data-value="466">
                             </option>
-                            <option value="htp" data-value="274">
+                            <option value="htp" data-value="297">
                             </option>
-                            <option value="company" data-value="193">
+                            <option value="company" data-value="204">
                             </option>
-                            <option value="ABB" data-value="601">
+                            <option value="ABB" data-value="621">
                             </option>
                             <option value="mathematical constant" data-value="-1">
                             </option>
                             <option value="π (unit symbol)" data-value="-5">
                             </option>
-                            <option value="Pi (math)" data-value="-56">
+                            <option value="Pi (math)" data-value="-57">
                             </option>
-                            <option value="𝑒 (unit symbol)" data-value="-58">
+                            <option value="𝑒 (unit symbol)" data-value="-59">
                             </option>
-                            <option value="global problem" data-value="-104">
+                            <option value="global problem" data-value="-139">
                             </option>
-                            <option value="global warming" data-value="-112">
+                            <option value="global warming" data-value="-162">
                             </option>
-                            <option value="global warming potential" data-value="-113">
+                            <option value="global warming potential" data-value="-163">
                             </option>
-                            <option value="populism (global problem)" data-value="-121">
+                            <option value="populism (global problem)" data-value="-171">
                             </option>
-                            <option value="poverty (global problem)" data-value="-124">
+                            <option value="poverty (global problem)" data-value="-174">
                             </option>
-                            <option value="health can be global problem" data-value="-122">
+                            <option value="health can be global problem" data-value="-172">
                             </option>
-                            <option value="education can be global problem" data-value="-125">
+                            <option value="education can be global problem" data-value="-175">
                             </option>
-                            <option value="time points" data-value="-116">
+                            <option value="time points" data-value="-166">
                             </option>
-                            <option value="happy time points" data-value="-178">
+                            <option value="happy time points" data-value="-230">
                             </option>
-                            <option value="city of Zurich" data-value="-106">
+                            <option value="city of Zurich" data-value="-141">
                             </option>
-                            <option value="canton Zurich" data-value="-107">
+                            <option value="canton Zurich" data-value="-142">
                             </option>
-                            <option value="Bern (city)" data-value="-108">
+                            <option value="Bern (city)" data-value="-143">
                             </option>
-                            <option value="Geneva (city)" data-value="-109">
+                            <option value="Geneva (city)" data-value="-144">
                             </option>
-                            <option value="main column (system)" data-value="-223">
+                            <option value="main column (system)" data-value="-237">
                             </option>
-                            <option value="marginal column (system)" data-value="-225">
+                            <option value="marginal column (system)" data-value="-239">
                             </option>
-                            <option value="mayor column (system)" data-value="-222">
+                            <option value="mayor column (system)" data-value="-236">
                             </option>
-                            <option value="minor column (system)" data-value="-224">
+                            <option value="minor column (system)" data-value="-238">
                             </option>
-                            <option value="column potential loss of reason" data-value="-266">
+                            <option value="column potential loss of reason" data-value="-313">
                             </option>
-                            <option value="column reason" data-value="-265">
+                            <option value="column reason" data-value="-312">
                             </option>
-                            <option value="column reward ratio" data-value="-259">
+                            <option value="column reward ratio" data-value="-299">
                             </option>
-                            <option value="column consumption mix" data-value="-1956">
+                            <option value="column consumption mix" data-value="-2029">
                             </option>
-                            <option value="column displacement mix" data-value="-1957">
+                            <option value="column displacement mix" data-value="-2030">
                             </option>
-                            <option value="column gain" data-value="-245">
+                            <option value="column first child portfolio" data-value="-3349">
                             </option>
-                            <option value="column loss" data-value="-242">
+                            <option value="column parent portfolio" data-value="-3294">
                             </option>
-                            <option value="column potential gain" data-value="-244">
+                            <option value="column potential gain" data-value="-283">
                             </option>
-                            <option value="column potential loss" data-value="-241">
+                            <option value="column potential gain in EUR" data-value="-292">
                             </option>
-                            <option value="column problem (high prio)" data-value="-240">
+                            <option value="column potential loss" data-value="-281">
                             </option>
-                            <option value="column solution (high prio)" data-value="-243">
+                            <option value="column problem (high prio)" data-value="-280">
                             </option>
-                            <option value="column confidence" data-value="-255">
+                            <option value="column second child portfolio" data-value="-3350">
                             </option>
-                            <option value="column cost" data-value="-247">
+                            <option value="column solution (high prio)" data-value="-282">
                             </option>
-                            <option value="column effort" data-value="-252">
+                            <option value="column confidence" data-value="-293">
                             </option>
-                            <option value="column expected return" data-value="-251">
+                            <option value="column cost" data-value="-285">
                             </option>
-                            <option value="column initial effort" data-value="-258">
+                            <option value="column effort" data-value="-290">
                             </option>
-                            <option value="column loss reduction" data-value="-257">
+                            <option value="column expected return" data-value="-289">
                             </option>
-                            <option value="column percent" data-value="-253">
+                            <option value="column initial effort" data-value="-298">
                             </option>
-                            <option value="column priority" data-value="-248">
+                            <option value="column loss reduction" data-value="-297">
                             </option>
-                            <option value="column probability" data-value="-249">
+                            <option value="column percent" data-value="-291">
                             </option>
-                            <option value="column probability range" data-value="-260">
+                            <option value="column potential gain in htp" data-value="-296">
                             </option>
-                            <option value="column ranking" data-value="-246">
+                            <option value="column priority" data-value="-286">
                             </option>
-                            <option value="column source" data-value="-254">
+                            <option value="column probability" data-value="-287">
                             </option>
-                            <option value="column standard deviation" data-value="-250">
+                            <option value="column probability range" data-value="-300">
                             </option>
-                            <option value="column potential loss of reason is explaining column for column reason" data-value="-281">
+                            <option value="column ranking" data-value="-284">
                             </option>
-                            <option value="column reason is next main column after column problem (high prio)" data-value="-280">
+                            <option value="column standard deviation" data-value="-288">
                             </option>
-                            <option value="column solution (high prio) is next main column after column reason" data-value="-282">
+                            <option value="column potential loss of reason is explaining column for column reason" data-value="-330">
                             </option>
-                            <option value="column displacement mix is next main column after column consumption mix" data-value="-1958">
+                            <option value="column reason is next main column after column problem (high prio)" data-value="-329">
                             </option>
-                            <option value="column gain is explaining column for column solution (high prio)" data-value="-276">
+                            <option value="column solution (high prio) is next main column after column reason" data-value="-331">
                             </option>
-                            <option value="column loss is explaining column for column problem (high prio)" data-value="-272">
+                            <option value="column displacement mix is next main column after column consumption mix" data-value="-2031">
                             </option>
-                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-278">
+                            <option value="column first child portfolio is next main column after column parent portfolio" data-value="-3392">
                             </option>
-                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-274">
+                            <option value="column second child portfolio is next main column after column first child portfolio" data-value="-3393">
                             </option>
-                            <option value="column cost is explaining column for column problem (high prio)" data-value="-273">
+                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-325">
                             </option>
-                            <option value="column percent is explaining column for column problem (high prio)" data-value="-275">
+                            <option value="column potential gain in EUR is explaining column for column solution (high prio)" data-value="-319">
                             </option>
-                            <option value="column problem (high prio) is next main column after column priority" data-value="-267">
+                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-321">
                             </option>
-                            <option value="column effort is explaining column for column solution (high prio)" data-value="-277">
+                            <option value="column cost is explaining column for column problem (high prio)" data-value="-320">
                             </option>
-                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-279">
+                            <option value="column percent is explaining column for column problem (high prio)" data-value="-322">
                             </option>
-                            <option value="column probability is explaining column for column priority" data-value="-268">
+                            <option value="column problem (high prio) is next main column after column priority" data-value="-315">
                             </option>
-                            <option value="column ranking is explaining column for column priority" data-value="-270">
+                            <option value="column effort is explaining column for column solution (high prio)" data-value="-324">
                             </option>
-                            <option value="column source is explaining column for column priority" data-value="-271">
+                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-326">
                             </option>
-                            <option value="column standard deviation is explaining column for column priority" data-value="-269">
+                            <option value="column potential gain in htp is explaining column for column solution (high prio)" data-value="-323">
                             </option>
-                            <option value="percent decimal" data-value="-773">
+                            <option value="column probability is explaining column for column priority" data-value="-316">
                             </option>
-                            <option value="2019 (year)" data-value="-53">
+                            <option value="column ranking is explaining column for column priority" data-value="-318">
                             </option>
-                            <option value="2019 (year of definition)" data-value="-79">
+                            <option value="column standard deviation is explaining column for column priority" data-value="-317">
                             </option>
-                            <option value="assumed (conjecture)" data-value="-166">
+                            <option value="percent decimal" data-value="-841">
                             </option>
-                            <option value="avoid wrong decisions (populism solution)" data-value="-2322">
+                            <option value="2019 (year)" data-value="-54">
                             </option>
-                            <option value="avoid wrong decisions (solution)" data-value="-227">
+                            <option value="2019 (year of definition)" data-value="-80">
                             </option>
-                            <option value="billion (scaling)" data-value="-626">
+                            <option value="assumed (conjecture)" data-value="-216">
                             </option>
-                            <option value="education (climate solution)" data-value="-1166">
+                            <option value="billion (scaling)" data-value="-675">
                             </option>
-                            <option value="EUR (currency)" data-value="-624">
+                            <option value="education (climate solution)" data-value="-1236">
                             </option>
-                            <option value="EUR (ISO 4217 code)" data-value="-422">
+                            <option value="EUR (currency)" data-value="-673">
                             </option>
-                            <option value="million (scaling)" data-value="-627">
+                            <option value="EUR (ISO 4217 code)" data-value="-471">
                             </option>
-                            <option value="research (climate solution)" data-value="-1163">
+                            <option value="million (scaling)" data-value="-676">
                             </option>
-                            <option value="research (poverty solution)" data-value="-2324">
+                            <option value="one-click hide (populism solution)" data-value="-1300">
                             </option>
-                            <option value="research (solution)" data-value="-140">
+                            <option value="one-click hide (solution)" data-value="-1301">
                             </option>
-                            <option value="spending (education solution)" data-value="-2382">
+                            <option value="research (climate solution)" data-value="-1233">
                             </option>
-                            <option value="spending (solution)" data-value="-142">
+                            <option value="research (poverty solution)" data-value="-2397">
                             </option>
-                            <option value="Switzerland (country)" data-value="-284">
+                            <option value="research (solution)" data-value="-190">
                             </option>
-                            <option value="taxes (health solution)" data-value="-2373">
+                            <option value="spending (education solution)" data-value="-2455">
                             </option>
-                            <option value="taxes (solution)" data-value="-141">
+                            <option value="spending (solution)" data-value="-192">
                             </option>
-                            <option value="Zurich agglomeration" data-value="-859">
+                            <option value="Switzerland (country)" data-value="-333">
                             </option>
-                            <option value="Zurich Insurance" data-value="-288">
+                            <option value="taxes (health solution)" data-value="-2446">
                             </option>
-                            <option value="Zurich region" data-value="-852">
+                            <option value="taxes (solution)" data-value="-191">
                             </option>
-                            <option value="absolute poverty" data-value="-1011">
+                            <option value="Zurich agglomeration" data-value="-927">
                             </option>
-                            <option value="child poverty" data-value="-1694">
+                            <option value="Zurich Insurance" data-value="-337">
                             </option>
-                            <option value="civic education" data-value="-1188">
+                            <option value="Zurich region" data-value="-920">
                             </option>
-                            <option value="current GDP" data-value="-1807">
+                            <option value="absolute poverty" data-value="-1079">
                             </option>
-                            <option value="extreme poverty" data-value="-1013">
+                            <option value="break-even spending" data-value="-3540">
                             </option>
-                            <option value="multidimensional poverty" data-value="-1015">
+                            <option value="child poverty" data-value="-1767">
                             </option>
-                            <option value="nominal GDP" data-value="-966">
+                            <option value="civic education" data-value="-1259">
                             </option>
-                            <option value="primary education" data-value="-1294">
+                            <option value="current GDP" data-value="-1880">
                             </option>
-                            <option value="public education" data-value="-1382">
+                            <option value="extreme poverty" data-value="-1081">
                             </option>
-                            <option value="real GDP" data-value="-967">
+                            <option value="multidimensional poverty" data-value="-1083">
                             </option>
-                            <option value="relative poverty" data-value="-1012">
+                            <option value="nominal GDP" data-value="-1034">
                             </option>
-                            <option value="research expenditure share" data-value="-932">
+                            <option value="primary education" data-value="-1366">
                             </option>
-                            <option value="secondary education" data-value="-1815">
+                            <option value="public education" data-value="-1454">
                             </option>
-                            <option value="subjective poverty" data-value="-1014">
+                            <option value="real GDP" data-value="-1035">
                             </option>
-                            <option value="tertiary education" data-value="-1816">
+                            <option value="relative poverty" data-value="-1080">
                             </option>
-                            <option value="alignment research" data-value="-1540">
+                            <option value="research expenditure share" data-value="-1000">
                             </option>
-                            <option value="billion USD" data-value="-1112">
+                            <option value="secondary education" data-value="-1888">
                             </option>
-                            <option value="canton GDP" data-value="-778">
+                            <option value="subjective poverty" data-value="-1082">
                             </option>
-                            <option value="critical thinking education" data-value="-1263">
+                            <option value="tertiary education" data-value="-1889">
                             </option>
-                            <option value="education spending" data-value="-1364">
+                            <option value="alignment research" data-value="-1612">
                             </option>
-                            <option value="government spending" data-value="-964">
+                            <option value="billion CHF" data-value="-3521">
                             </option>
-                            <option value="health spending" data-value="-1695">
+                            <option value="billion USD" data-value="-1181">
                             </option>
-                            <option value="health taxes" data-value="-1362">
+                            <option value="canton GDP" data-value="-846">
                             </option>
-                            <option value="learning poverty" data-value="-1363">
+                            <option value="critical thinking education" data-value="-1335">
                             </option>
-                            <option value="licence spending" data-value="-1613">
+                            <option value="education spending" data-value="-1436">
                             </option>
-                            <option value="maternal and child health" data-value="-1325">
+                            <option value="government spending" data-value="-1032">
                             </option>
-                            <option value="potential loss of reason" data-value="-219">
+                            <option value="health spending" data-value="-1768">
                             </option>
-                            <option value="poverty research" data-value="-1289">
+                            <option value="health taxes" data-value="-1434">
                             </option>
-                            <option value="software spending" data-value="-1905">
+                            <option value="learning poverty" data-value="-1435">
                             </option>
-                            <option value="Swiss canton" data-value="-1766">
+                            <option value="licence spending" data-value="-1685">
                             </option>
-                            <option value="trillion EUR" data-value="-1111">
+                            <option value="maternal and child health" data-value="-1397">
                             </option>
-                            <option value="windfall taxes" data-value="-1391">
+                            <option value="normal-rate spending" data-value="-3586">
                             </option>
-                            <option value="in EUR" data-value="-406">
+                            <option value="potential loss of reason" data-value="-277">
                             </option>
-                            <option value="potential gain and initial effort" data-value="-216">
+                            <option value="poverty research" data-value="-1361">
                             </option>
-                            <option value="potential gain and potential loss" data-value="-2452">
+                            <option value="software spending" data-value="-1978">
                             </option>
-                            <option value="2019-2020" data-value="-1796">
+                            <option value="Swiss canton" data-value="-1839">
                             </option>
-                            <option value="2019 to 2022" data-value="-393">
+                            <option value="trillion EUR" data-value="-1180">
                             </option>
-                            <option value="EUR is symbol for Euro" data-value="-396">
+                            <option value="windfall taxes" data-value="-1463">
                             </option>
-                            <option value="GDP is symbol for gross domestic product" data-value="-894">
+                            <option value="in EUR" data-value="-455">
                             </option>
-                            <option value="htp is symbol for happy time points" data-value="-220">
+                            <option value="potential gain in EUR" data-value="-240">
                             </option>
-                            <option value="ill health" data-value="-1858">
+                            <option value="potential gain in htp" data-value="-241">
                             </option>
-                            <option value="GDP decline" data-value="-123">
+                            <option value="potential gain and initial effort" data-value="-274">
                             </option>
-                            <option value="EUR per kWh" data-value="-1978">
+                            <option value="potential gain and potential loss" data-value="-2629">
                             </option>
-                            <option value="EUR per kWp" data-value="-1979">
+                            <option value="2019-2020" data-value="-1869">
                             </option>
-                            <option value="EUR per person year" data-value="-192">
+                            <option value="2019 to 2022" data-value="-442">
                             </option>
-                            <option value="EUR per tonne CO2" data-value="-1644">
+                            <option value="EUR is symbol for Euro" data-value="-445">
                             </option>
-                            <option value="GDP per capita" data-value="-779">
+                            <option value="GDP is symbol for gross domestic product" data-value="-962">
                             </option>
-                            <option value="person year per billion USD" data-value="-1171">
+                            <option value="htp is symbol for happy time points" data-value="-278">
                             </option>
-                            <option value="person year per trillion EUR" data-value="-1170">
+                            <option value="ill health" data-value="-1931">
                             </option>
-                            <option value="2019 is follower of 2018" data-value="-302">
+                            <option value="Switzerland has a NPP ban" data-value="-3032">
                             </option>
-                            <option value="consumption change due to populism" data-value="-1688">
+                            <option value="GDP decline" data-value="-173">
                             </option>
-                            <option value="crime due to poverty" data-value="-1702">
+                            <option value="EUR per kW" data-value="-2942">
                             </option>
-                            <option value="debt to GDP ratio change due to populism" data-value="-1692">
+                            <option value="EUR per kWh" data-value="-2051">
                             </option>
-                            <option value="economic nationalism due to populism" data-value="-1689">
+                            <option value="EUR per kWp" data-value="-2052">
                             </option>
-                            <option value="excess mortality due to populism" data-value="-1691">
+                            <option value="EUR per person year" data-value="-249">
                             </option>
-                            <option value="financial globalization change due to populism" data-value="-1693">
+                            <option value="EUR per tonne" data-value="-2531">
                             </option>
-                            <option value="GDP per capita change due to populism" data-value="-1682">
+                            <option value="EUR per tonne CO2" data-value="-1716">
                             </option>
-                            <option value="health cost due to poverty" data-value="-1703">
+                            <option value="EUR per tonne CO2-eq" data-value="-2587">
                             </option>
-                            <option value="household air pollution due to poverty" data-value="-1710">
+                            <option value="GDP per capita" data-value="-847">
                             </option>
-                            <option value="hunger due to poverty" data-value="-1706">
+                            <option value="person year per billion USD" data-value="-1241">
                             </option>
-                            <option value="income loss due to poverty" data-value="-1704">
+                            <option value="person year per trillion EUR" data-value="-1240">
                             </option>
-                            <option value="institutional erosion due to populism" data-value="-1690">
+                            <option value="2019 is follower of 2018" data-value="-351">
                             </option>
-                            <option value="life expectancy gap due to poverty" data-value="-1708">
+                            <option value="consumption change due to populism" data-value="-1761">
                             </option>
-                            <option value="populism can cause GDP decline" data-value="-183">
+                            <option value="crime due to poverty" data-value="-1775">
                             </option>
-                            <option value="social cost due to poverty" data-value="-1701">
+                            <option value="debt to GDP ratio change due to populism" data-value="-1765">
                             </option>
-                            <option value="stunting due to poverty" data-value="-1705">
+                            <option value="economic nationalism due to populism" data-value="-1762">
                             </option>
-                            <option value="unsafe WASH due to poverty" data-value="-1709">
+                            <option value="excess mortality due to populism" data-value="-1764">
                             </option>
-                            <option value="default sort order (system)" data-value="-238">
+                            <option value="financial globalization change due to populism" data-value="-1766">
                             </option>
-                            <option value="sort numeric descending of potential loss" data-value="-264">
+                            <option value="GDP per capita change due to populism" data-value="-1755">
                             </option>
-                            <option value="this" data-value="183">
+                            <option value="health cost due to poverty" data-value="-1776">
                             </option>
-                            <option value="prior" data-value="185">
+                            <option value="household air pollution due to poverty" data-value="-1783">
+                            </option>
+                            <option value="hunger due to poverty" data-value="-1779">
+                            </option>
+                            <option value="income loss due to poverty" data-value="-1777">
+                            </option>
+                            <option value="institutional erosion due to populism" data-value="-1763">
+                            </option>
+                            <option value="life expectancy gap due to poverty" data-value="-1781">
+                            </option>
+                            <option value="populism can cause GDP decline" data-value="-235">
+                            </option>
+                            <option value="social cost due to poverty" data-value="-1774">
+                            </option>
+                            <option value="stunting due to poverty" data-value="-1778">
+                            </option>
+                            <option value="unsafe WASH due to poverty" data-value="-1782">
+                            </option>
+                            <option value="default sort order (system)" data-value="-275">
+                            </option>
+                            <option value="sort numeric descending of potential loss" data-value="-310">
+                            </option>
+                            <option value="this" data-value="194">
+                            </option>
+                            <option value="prior" data-value="196">
                             </option>
                         </datalist>
                     </div>
@@ -727,7 +792,7 @@
                             source
                         </label>
                         <select class="form-control" name="so" form="value_add" id="so_form_select_source" >
-                            <option value="7"  >
+                            <option value="9"  >
                                 Federal Statistical Office
                             </option>
                             <option value="1"  selected >
@@ -765,9 +830,6 @@
                             <option value="16"  >
                                 Calculator
                             </option>
-                            <option value="175"  >
-                                Complete
-                            </option>
                             <option value="91"  >
                                 Component
                             </option>
@@ -779,6 +841,9 @@
                             </option>
                             <option value="181"  >
                                 Education
+                            </option>
+                            <option value="63"  >
+                                Explain result
                             </option>
                             <option value="8"  >
                                 Formula (default)
@@ -803,9 +868,6 @@
                             </option>
                             <option value="159"  >
                                 Language
-                            </option>
-                            <option value="158"  >
-                                Language selection
                             </option>
                             <option value="185"  >
                                 Mathematical constant
@@ -861,9 +923,6 @@
                             <option value="34"  >
                                 Source (range)
                             </option>
-                            <option value="136"  >
-                                System log
-                            </option>
                             <option value="2"  >
                                 Table
                             </option>
@@ -896,6 +955,9 @@
                             </option>
                             <option value="33"  >
                                 Value (range)
+                            </option>
+                            <option value="117"  >
+                                Value detail
                             </option>
                             <option value="114"  >
                                 Values of a phrase

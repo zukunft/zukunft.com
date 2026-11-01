@@ -52,7 +52,9 @@ class view_link_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sandbox for ' . views::MATH_CONST_NAME);
-        $msk_lnk = $t_msk->term_view();
+        // the add fixture has no id, because the id 1 of term_view() is the link that the reset
+        // creates (see sql_db), so saving it would exclude that link for the test user
+        $msk_lnk = $t_msk->term_view_filled_add();
         $msk_lnk->save($msg);
         // TODO Prio 2 activate (set object id instead of id)
         //$t->assert_write_link($t_msk->view_link_filled_add());

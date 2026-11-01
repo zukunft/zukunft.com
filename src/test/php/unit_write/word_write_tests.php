@@ -184,7 +184,7 @@ class word_write_tests
         $t->assert('word->children for "' . word_names::TEST_PARENT . '" excluding the start word', $result, $target,
             $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
-        // TODO move read only tests like this to the db read or unit tests
+        // TODO Prio 2 move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
         // e.g. which is for parent canton the phrase "Zurich (canton)", but not, as tested later, the phrase "Zurich (city)"
         //      "cantons are Zurich, Bern, ... and valid is also everything related to the Word canton itself"
@@ -569,7 +569,7 @@ class word_write_tests
         $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '" unchanged for user 1', $result, $target);
 
-        // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
+        // TODO Prio 2 check that the changed word name cannot be used for a verb, triple or formula anymore
 
         $test_name = 'check if undo all specific changes removes the user word ' . word_names::TEST_RENAMED;
         $wrd_usr2 = new word($t->usr2);
@@ -637,11 +637,11 @@ class word_write_tests
         $t->assert_false($test_name, $wrd_del_ui->load_by_id($del_id, $msg_ui));
         $t->assert_true($test_name . ' message', $msg_ui->has_msg_id(msg_id::OBJECT_NOT_FOUND));
 
-        // TODO test the creation of a new scaling word e.g. dozen for 12
+        // TODO Prio 2 test the creation of a new scaling word e.g. dozen for 12
         //      and adding a related formula and calculating values based on the added formula
-        // TODO test the creation of a new time word e.g. year 2042
+        // TODO Prio 2 test the creation of a new time word e.g. year 2042
 
-        // TODO redo the user-specific word changes including changing the default view
+        // TODO Prio 2 redo the user-specific word changes including changing the default view
         // check if the user-specific changes can be removed with one click
 
         // check if the deletion request has been logged

@@ -108,4 +108,4 @@ PREPARE value_list_by_phr_lst_all_p2 FROM
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = ?
          WHERE ( REGEXP_LIKE(s.group_id, ?, 'c')
-            OR   REGEXP_LIKE(s.group_id, ?, 'c') ) ';
+            OR   REGEXP_LIKE(s.group_id, ?, 'c') )  LIMIT ? OFFSET ?';

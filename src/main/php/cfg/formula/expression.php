@@ -212,7 +212,8 @@ class expression extends shared_expression
         $this->reset();
         $this->frm = $frm;
         $this->usr = $frm->get_user();
-        $this->frm_name = $frm->name();
+        // empty for a formula given only by its id e.g. by an update put message, whose name the fill adds later
+        $this->frm_name = $frm->name() ?? '';
     }
 
 
@@ -733,7 +734,7 @@ class expression extends shared_expression
 
     /*
      * filter elements
-     * TODO to move to element list
+     * TODO Prio 2 to move to element list
      */
 
     /**
@@ -789,19 +790,23 @@ class expression extends shared_expression
 
         if ($ref_text <> "") {
             // add word ids to selection
-            $new_wrd_id = $this->get_word_id($ref_text);
+            // the words are scanned on a copy, so that the triples left of a word are still found
+            $wrd_txt = $ref_text;
+            $new_wrd_id = $this->get_word_id($wrd_txt);
             while ($new_wrd_id != 0) {
                 if (!in_array($new_wrd_id, $id_lst)) {
                     $id_lst[] = $new_wrd_id;
                 }
-                $ref_text = $lib->str_right_of($ref_text, chars::WORD_START . $new_wrd_id . chars::WORD_END);
-                $new_wrd_id = $this->get_word_id($ref_text);
+                $wrd_txt = $lib->str_right_of($wrd_txt, chars::WORD_START . $new_wrd_id . chars::WORD_END);
+                $new_wrd_id = $this->get_word_id($wrd_txt);
             }
             // add triple ids to selection
             $new_trp_id = $this->get_triple_id($ref_text);
             while ($new_trp_id != 0) {
-                if (!in_array($new_wrd_id, $id_lst)) {
-                    $id_lst[] = $new_trp_id * -1;
+                // the phrase id of a triple is negative, so the negative id is checked like a word id
+                $trp_phr_id = $new_trp_id * -1;
+                if (!in_array($trp_phr_id, $id_lst)) {
+                    $id_lst[] = $trp_phr_id;
                 }
                 $ref_text = $lib->str_right_of($ref_text, chars::TRIPLE_START . $new_trp_id . chars::TRIPLE_END);
                 $new_trp_id = $this->get_triple_id($ref_text);
@@ -1085,7 +1090,7 @@ class expression extends shared_expression
     /**
      * similar to phr_lst, but
      * e.g. for "sales" "differentiator" "country" all "country" words should be included
-     * TODO should also include the words implied by the verbs
+     * TODO Prio 2 should also include the words implied by the verbs
      */
     function phr_verb_lst(user_message $msg): phrase_list
     {
@@ -1117,7 +1122,7 @@ class expression extends shared_expression
                 log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
             }
         }
-        // TODO check if the phrases are already loaded
+        // TODO Prio 2 check if the phrases are already loaded
         //$phr_lst->load();
         log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;

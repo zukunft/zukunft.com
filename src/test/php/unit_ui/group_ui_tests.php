@@ -33,9 +33,13 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -78,6 +82,89 @@ class group_ui_tests
         $grp_no_names = new group();
         $grp_no_names->add($phr_no_name);
         $t->assert($test_name, $grp_no_names->name(), '');
+
+        // the phrase list of a group is built once per change of the group, because a table
+        // asks each value for its phrases many times
+        $t->subheader($ts . 'phrase list');
+        $test_name = 'a phrase added to the group is in the next phrase list of the group';
+        $grp_lst = new group($t_grp->group_zh_2020()->api_json([api_types::INCL_PHRASES]));
+        $grp_lst->phr_lst();
+        $phr_add = new phrase();
+        $phr_add->set_id(word_names::TEST_ADD_ID);
+        $grp_lst->add($phr_add);
+        $t->assert_true($test_name, $grp_lst->phr_lst()->has_id(word_names::TEST_ADD_ID));
+        // negative: the caller gets a copy, so a phrase removed from it stays in the group
+        $test_name = 'a phrase removed from the phrase list of a group stays in the group';
+        $rm_lst = new phrase_list();
+        $rm_lst->add_phrase($phr_add);
+        $grp_lst->phr_lst()->remove($rm_lst);
+        $t->assert_true($test_name, $grp_lst->phr_lst()->has_id(word_names::TEST_ADD_ID));
+
+        $t->subheader($ts . 'add');
+
+        // a phrase that is not yet part of the group is added
+        $test_name = 'a new phrase is added to the group';
+        $grp_add = new group();
+        $phr_add = new phrase();
+        $phr_add->set_id(word_names::TEST_ADD_ID);
+        $added = $grp_add->add($phr_add);
+        $t->assert_true($test_name, $added);
+
+        // negative: a phrase that is already part of the group is not added again
+        $test_name = 'a phrase that is already part of the group is not added again';
+        $grp_add = new group();
+        $grp_add->add($phr_add);
+        $added = $grp_add->add($phr_add);
+        $t->assert_false($test_name, $added);
+
+        // a group that is not yet part of the list is added
+        $test_name = 'a new group is added to the list';
+        $grp_lst_add = new group_list();
+        $grp_zh = new group($t_grp->group_zh()->api_json());
+        $added = $grp_lst_add->add($grp_zh, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: a group that is already part of the list is not added again
+        $test_name = 'a group that is already part of the list is not added again';
+        $grp_lst_add = new group_list();
+        $grp_lst_add->add($grp_zh, $msg);
+        $added = $grp_lst_add->add($grp_zh, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug text shows the number of groups even if the debug level hides the group names
+        $test_name = 'shows the total of the groups';
+        $grp_lst_dsp = new group_list();
+        $grp_lst_dsp->add($grp_zh, $msg);
+        $dsp = $grp_lst_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, 'total 1');
+        $msg->reset();
+
+        // negative: the default debug level zero lists no group name
+        $test_name = 'shows no group name with the debug level zero';
+        $grp_lst_dsp = new group_list();
+        $grp_lst_dsp->add($grp_zh, $msg);
+        $dsp = $grp_lst_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, groups::ZH_CITY_INHABITANTS);
+        $msg->reset();
+
+        $t->subheader($ts . 'api mapper');
+
+        // the name of the api json is the name given by the user
+        $test_name = 'the api mapper sets the name of the group';
+        $grp_map = new group();
+        $grp_map->api_mapper(json_decode($t_grp->group_zh()->api_json(), true), $msg);
+        $t->assert($test_name, $grp_map->name(), groups::ZH_CITY_INHABITANTS);
+        $msg->reset();
+
+        // without the id the api json is used as the phrase list of the group, so a phrase without the id is reported
+        $test_name = 'the api mapper reports a phrase of the group without the id';
+        $grp_map = new group();
+        $t->assert_false($test_name, $grp_map->api_mapper([[json_fields::NAME => word_names::MATH]], $msg));
+        $msg->reset();
     }
 
 }

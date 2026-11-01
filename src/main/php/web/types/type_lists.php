@@ -5,9 +5,9 @@
     web/types/type_list.php - parent object for all preloaded types used in the html frontend
     -----------------------
 
-    TODO move the global vars to vars within the cache
-    TODO add a garbage collection
-    TODO add a momory usage check
+    TODO Prio 2 move the global vars to vars within the cache
+    TODO Prio 2 add a garbage collection
+    TODO Prio 2 add a momory usage check
 
 
     This file is part of zukunft.com - calc with words
@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // which the frontend init loads, free of the value and view chain (see web\helper\data_object)
 //include_once html_paths::COMPONENT . 'component.php';
 //include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'ref.php';
 //include_once html_paths::REF . 'source.php';
@@ -51,9 +52,11 @@ include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
 include_once html_paths::TYPES . 'change_table_list.php';
 include_once html_paths::TYPES . 'change_field_list.php';
+include_once html_paths::TYPES . 'sys_log_level_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'user_profile.php';
 include_once html_paths::TYPES . 'job_type_list.php';
+include_once html_paths::TYPES . 'job_status_list.php';
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
@@ -97,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -138,14 +142,18 @@ class type_lists
     public ?language_list $lan = null;
     public ?language_form_list $lan_for = null;
     public ?verbs $vrb = null;
+    public ?sys_log_level_list $sys_log_lvl = null;
     public ?sys_log_status_list $sys_log_sta = null;
     public ?job_type_list $job_typ = null;
+    public ?job_status_list $job_sta = null;
     public ?change_action_list $cng_act = null;
     public ?change_table_list $cng_tbl = null;
     public ?change_field_list $cng_fld = null;
     public ?view_list_ui $msk_sys = null;
     // the phrases of the initial cache load e.g. the symbol triples (see verbs::PRELOAD_VERBS)
     public ?phrase_list_ui $phr_sys = null;
+    // the formulas that convert the measure units of the system phrases e.g. "kg" = "tonne" * 1000
+    public ?formula_list_ui $frm_sys = null;
 
 
     /*
@@ -160,6 +168,14 @@ class type_lists
     /*
      * type list by class
      */
+
+    /**
+     * @return bool false if the backend has sent no phrase types e.g. to select the type of a word
+     */
+    function has_phrase_types(): bool
+    {
+        return $this->phr_typ !== null;
+    }
 
     /**
      * get the type list related to a given object class
@@ -415,6 +431,18 @@ class type_lists
         } else {
             $this->set_system_phrases([]);
         }
+        // a pod without unit conversions sends no formulas, so every number keeps its unit
+        if (array_key_exists(api::JSON_LIST_SYSTEM_FORMULAS, $json_array)) {
+            $this->set_system_formulas($json_array[api::JSON_LIST_SYSTEM_FORMULAS]);
+        } else {
+            $this->set_system_formulas([]);
+        }
+        if (array_key_exists(api::JSON_LIST_SYS_LOG_LEVELS, $json_array)) {
+            $this->set_sys_log_levels($json_array[api::JSON_LIST_SYS_LOG_LEVELS], $msg);
+        } else {
+            $msg->add_error_text('Mandatory sys_log_levels missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_levels([], $msg);
+        }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
             $this->set_sys_log_statuum($json_array[api::JSON_LIST_SYS_LOG_STATUUS], $msg);
         } else {
@@ -426,6 +454,12 @@ class type_lists
         } else {
             $msg->add_error_text('Mandatory job_types missing in API JSON ' . json_encode($json_array));
             $this->set_job_types([], $msg);
+        }
+        if (array_key_exists(api::JSON_LIST_JOB_STATUUS, $json_array)) {
+            $this->set_job_statuum($json_array[api::JSON_LIST_JOB_STATUUS], $msg);
+        } else {
+            $msg->add_error_text('Mandatory job_statuum missing in API JSON ' . json_encode($json_array));
+            $this->set_job_statuum([], $msg);
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
             $this->set_change_action_list($json_array[api::JSON_LIST_CHANGE_LOG_ACTIONS], $msg);
@@ -556,6 +590,12 @@ class type_lists
         $this->vrb->set_from_json_array($json_array, $msg, verb::class);
     }
 
+    function set_sys_log_levels(?array $json_array, user_message $msg): void
+    {
+        $this->sys_log_lvl = new sys_log_level_list();
+        $this->sys_log_lvl->set_from_json_array($json_array, $msg);
+    }
+
     function set_sys_log_statuum(?array $json_array, user_message $msg): void
     {
         $this->sys_log_sta = new sys_log_status_list();
@@ -566,6 +606,12 @@ class type_lists
     {
         $this->job_typ = new job_type_list();
         $this->job_typ->set_from_json_array($json_array, $msg);
+    }
+
+    function set_job_statuum(?array $json_array, user_message $msg): void
+    {
+        $this->job_sta = new job_status_list();
+        $this->job_sta->set_from_json_array($json_array, $msg);
     }
 
     function set_change_action_list(?array $json_array, user_message $msg): void
@@ -606,7 +652,20 @@ class type_lists
         }
     }
 
-    // TODO add similar functions for all cache types
+    /**
+     * set the formulas that convert the measure units of the system phrases e.g. "scale tonne to kg"
+     *
+     * @param array $json_array the formula part of the initial cache api message
+     */
+    function set_system_formulas(array $json_array): void
+    {
+        $this->frm_sys = new formula_list_ui();
+        if ($json_array != []) {
+            $this->frm_sys->api_mapper($json_array);
+        }
+    }
+
+    // TODO Prio 2 add similar functions for all cache types
     function get_html_by_id(int $id, user_message $msg): string
     {
         $result = '';

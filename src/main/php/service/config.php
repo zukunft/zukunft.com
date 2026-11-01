@@ -5,9 +5,9 @@
     service/config.php - functions to handle the core system configuration values
     ------------------
 
-    TODO use single words with code_id for the system configuration
-    TODO check on system start that the system configuration is complete
-    TODO move all possible values to the phrase based configuration
+    TODO Prio 2 use single words with code_id for the system configuration
+    TODO Prio 1 check on system start that the system configuration is complete
+    TODO Prio 2 move all possible values to the phrase based configuration
 
     the values in the config table can only be changed by the system or the pod admin
     expose the config class functions as simple functions for simple coding
@@ -111,7 +111,7 @@ class config extends db_object_seq_id
     const string FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
 
     // all database field names excluding the id
-    // TODO review and sync with FLD_LST_ALL
+    // TODO Prio 2 review and sync with FLD_LST_ALL
     const array FLD_NAMES = array(
         self::FLD_NAME,
         fields::FLD_CODE_ID,

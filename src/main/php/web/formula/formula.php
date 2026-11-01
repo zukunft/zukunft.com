@@ -919,7 +919,7 @@ class formula extends sandbox_code_id
         } else {
             if ($this->id() > 0) {
                 $url = $this->obj_url(views::FORMULA_ADD_ID);
-                // TODO check if 'add_link=1' is needed
+                // TODO Prio 3 check if 'add_link=1' is needed
                 $result .= (new button($url, $url_arr))->add(msg_id::FORMULA_ADD);
             }
         }
@@ -955,7 +955,7 @@ class formula extends sandbox_code_id
         log_debug("value list");
         $res_lst = new result_list();
         $res_lst->load_by_formula($this, $msg);
-        $sample_val = $res_lst->display();
+        $sample_val = $res_lst->display($msg);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
                 $name_wrd_dsp = $this->name_wrd;

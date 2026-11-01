@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED_TYPES . 'file_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -83,7 +85,7 @@ class import_file
     /**
      * import a single json file
      * TODO Prio 0 add user_message as a parameter
-     * TODO set $direct by default to false
+     * TODO Prio 2 set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
@@ -119,7 +121,8 @@ class import_file
 
         // indicate to the user that the import has started
         $size = filesize($filename);
-        $imp->est_time_total = $size / $total_bytes_per_sec;
+        // the speed is configured in MB per second, so without the conversion the estimate was a million times too long
+        $imp->est_time_total = import::est_time_by_size($size, $total_bytes_per_sec);
         $imp->est_time_read = $imp->est_time_total * $read_time_pct / 100;
         $imp->est_time_decode = $imp->est_time_total * $decode_time_pct / 100;
         $imp->est_time_create = $imp->est_time_total * $create_time_pct / 100;
@@ -219,7 +222,7 @@ class import_file
 
     /**
      * import the initial system configuration
-     * TODO validate the import by comparing the import with the api message to tne frontend
+     * TODO Prio 2 validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
      * @param bool $validate if true, the import is validated even if the number of the values matches
@@ -237,6 +240,10 @@ class import_file
             // import the system configuration from the resource file
             $imf = new import_file();
             $msg->merge($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
+
+            if ($msg->is_ok()) {
+                $this->drop_config_cache($usr, $msg);
+            }
 
             // check the import if needed or requested
             if (!$msg->is_ok() or $validate) {
@@ -326,8 +333,23 @@ class import_file
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
-     * TODO add a check bottom for admin to reload the system configuration
+     * the imported values are part of the cached config of every user, which the database cache
+     * renews only after its max age (db_cache::is_outdated), so it is dropped after the import;
+     * the file cache is renewed by the time of config.yaml (config_numbers::is_file_cache_valid)
+     *
+     * @param user $usr who has imported the config
+     * @param user_message $msg to report a failed delete
+     * @return bool true if the config cache entries of all users have been dropped
+     */
+    function drop_config_cache(user $usr, user_message $msg): bool
+    {
+        $cac = new db_cache($usr);
+        return $cac->del_by_types(config_numbers::CACHE_TYPES, $msg);
+    }
+
+    /**
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 3 add a check bottom for admin to reload the system configuration
      * import zukunft.com system data and data used for unit tests via json file
      * for an import it can be assumed that this type configuration is loaded
      * @param user $usr the owner of the initial system data
@@ -412,9 +434,10 @@ class import_file
      * phrases of the start page e.g. the column tiers of solution_prio.json
      * @param user $usr the owner of the use case data
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @param array $filenames the use case files with the full path in the order of the import
      * @return string any error or warning message during import
      */
-    function import_use_case_data(user $usr, bool $direct = false): string
+    function import_use_case_data(user $usr, bool $direct = false, array $filenames = files::USE_CASE_FILES): string
     {
         $result = '';
         log_info('use case data setup',
@@ -425,7 +448,7 @@ class import_file
         );
 
         // the file names already carry the full path, so no message path is prepended
-        foreach (files::USE_CASE_FILES as $filename) {
+        foreach ($filenames as $filename) {
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

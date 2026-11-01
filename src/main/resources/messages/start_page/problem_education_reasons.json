@@ -126,6 +126,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -205,6 +208,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "from": "lack",
       "verb": "of",
@@ -415,8 +430,8 @@
     {"words": ["income loss due to lack of education", "present value", "world", "2021", "percent", "current GDP"], "number": "0.14", "source": "World Bank UNESCO UNICEF (2021) The State of the Global Education Crisis", "description": "the lost lifetime earnings of the current generation of students as share of today's global GDP"},
     {"words": ["income loss due to lack of education", "present value", "world", "2022", "trillion", "EUR"], "number": "19.42", "source": "World Bank (2022) press release 70 percent of 10-year-olds in learning poverty", "description": "the potential lifetime earnings that the current generation of students is at risk of losing, the update of the 2021 estimate; 21 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["income loss due to lack of education", "present value", "world", "2022", "percent", "current GDP"], "number": "0.17", "source": "World Bank (2022) press release 70 percent of 10-year-olds in learning poverty", "description": "the lost lifetime earnings of the current generation of students as share of today's global GDP"},
-    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "low"], "number": "13.87", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 15 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "high"], "number": "27.74", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 30 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "variance low (system)"], "number": "13.87", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 15 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "variance high (system)"], "number": "27.74", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 30 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["income loss due to lack of education", "private return", "year of schooling", "world", "percent"], "number": "0.09", "source": "Psacharopoulos & Patrinos (2018)", "description": "the private average global return to a year of schooling, so the earnings that a person loses per missing year of schooling; average of 1120 estimates in 139 countries from 1950 to 2014"},
     {"words": ["GDP loss due to lack of education", "present value", "world", "2100", "trillion", "EUR"], "number": "677.08", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted world GDP lost until 2100 because not all children reach basic skills; 732127 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["GDP loss due to lack of education", "present value", "world", "2100", "percent", "GDP"], "number": "0.116", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the share of the discounted future world GDP until 2100 that is lost because not all children reach basic skills"},
@@ -427,9 +442,9 @@
     {"words": ["GDP loss due to lack of education", "present value", "Europe", "2100", "percent", "current GDP"], "number": "1.95", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 195 percent of the current GDP of the World Bank region"},
     {"words": ["GDP loss due to lack of education", "present value", "North America", "2100", "percent", "current GDP"], "number": "1.79", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 179 percent of the current GDP of the World Bank region"},
     {"words": ["crime due to lack of education", "cost", "graduation rate", "man", "United States", "1990", "billion", "EUR"], "number": "1.295", "source": "Lochner & Moretti (2004)", "description": "the social cost of the crimes that a one percentage point higher high school graduation rate of the men would have avoided in 1990, nearly 100,000 crimes including nearly 400 murders; 1.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["crime due to lack of education", "cost", "graduation rate", "man", "United States", "1990", "billion", "EUR", "low"], "number": "0.7232", "source": "Lochner & Moretti (2004)", "description": "the same savings with the estimates for violent and property crime instead of the single crimes; 782 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "low"], "number": "0.14", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
-    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "high"], "number": "0.26", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
+    {"words": ["crime due to lack of education", "cost", "graduation rate", "man", "United States", "1990", "billion", "EUR", "variance low (system)"], "number": "0.7232", "source": "Lochner & Moretti (2004)", "description": "the same savings with the estimates for violent and property crime instead of the single crimes; 782 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "variance low (system)"], "number": "0.14", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
+    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "variance high (system)"], "number": "0.26", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
     {"words": ["mortality due to lack of education", "mortality risk reduction", "year of schooling", "world", "percent"], "number": "0.019", "source": "Balaj et al. (2024)", "description": "the average reduction of the all-cause adult mortality risk per additional year of education, 95 percent uncertainty interval 1.8 to 2.0 percent"},
     {"words": ["mortality due to lack of education", "mortality risk reduction", "secondary education", "world", "percent"], "number": "0.245", "source": "Balaj et al. (2024)", "description": "adults with 12 years of education compared to adults with no schooling, 95 percent uncertainty interval 23.0 to 26.1 percent"},
     {"words": ["child mortality due to lack of education", "child mortality reduction", "mother", "year of schooling", "world", "percent"], "number": "0.0304", "source": "Balaj et al. (2021)", "description": "the average reduction of the under-5 mortality per additional year of schooling of the mother, 95 percent CI 2.82 to 3.23 percent"},

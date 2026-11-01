@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -35,22 +39,20 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&amp;id=2">
-                                        alternative
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="/http/view.php?m=85&amp;id=1">
-                                        change view
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=84">
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
                                         add view
                                     </a>
                                 </li>
@@ -145,11 +147,17 @@
                             </option>
                             <option value="cache">
                             </option>
+                            <option value="cbam">
+                            </option>
+                            <option value="colour mode">
+                            </option>
                             <option value="columns">
                             </option>
                             <option value="database">
                             </option>
                             <option value="default">
+                            </option>
+                            <option value="font">
                             </option>
                             <option value="initial">
                             </option>
@@ -167,6 +175,8 @@
                             </option>
                             <option value="pod">
                             </option>
+                            <option value="pv">
+                            </option>
                             <option value="retry">
                             </option>
                             <option value="row limit">
@@ -174,6 +184,8 @@
                             <option value="select">
                             </option>
                             <option value="start delay">
+                            </option>
+                            <option value="startup">
                             </option>
                             <option value="suggested">
                             </option>
@@ -185,7 +197,11 @@
                             </option>
                             <option value="types">
                             </option>
+                            <option value="url">
+                            </option>
                             <option value="user">
+                            </option>
+                            <option value="view name">
                             </option>
                         </datalist>
                         <button type="submit" class="btn">
@@ -303,6 +319,29 @@
                                             </dt>
                                             <dd>
                                                 5
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li>
+                                        <dl>
+                                            <dt>
+                                                font
+                                            </dt>
+                                            <dd>
+                                                serif
+                                            </dd>
+                                        </dl>
+                                    </li>
+                                    <li>
+                                        <dl>
+                                            <dt>
+                                                colour mode
+                                            </dt>
+                                            <dd>
+                                                2
+                                                <span class="config-file-value">
+                                                    default 1
+                                                </span>
                                             </dd>
                                         </dl>
                                     </li>
@@ -465,259 +504,61 @@
                                             </ul>
                                         </details>
                                     </li>
-                                </ul>
-                            </details>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <h4>
-                config tree search
-            </h4>
-            <div class="config-toolbar">
-                <form action="/http/view.php" method="get">
-                    <input type="hidden" name="m" value="126">
-                    <div class="config-search">
-                        <input type="search" name="kp" list="config-keys" value="delay">
-                        <datalist id="config-keys">
-                            <option value="&lt;script&gt;alert(1)&lt;/script&gt;">
-                            </option>
-                            <option value="cache">
-                            </option>
-                            <option value="columns">
-                            </option>
-                            <option value="database">
-                            </option>
-                            <option value="default">
-                            </option>
-                            <option value="initial">
-                            </option>
-                            <option value="language">
-                            </option>
-                            <option value="max">
-                            </option>
-                            <option value="max delay">
-                            </option>
-                            <option value="more">
-                            </option>
-                            <option value="name">
-                            </option>
-                            <option value="page">
-                            </option>
-                            <option value="pod">
-                            </option>
-                            <option value="retry">
-                            </option>
-                            <option value="row limit">
-                            </option>
-                            <option value="select">
-                            </option>
-                            <option value="start delay">
-                            </option>
-                            <option value="suggested">
-                            </option>
-                            <option value="system">
-                            </option>
-                            <option value="test">
-                            </option>
-                            <option value="timeout">
-                            </option>
-                            <option value="types">
-                            </option>
-                            <option value="user">
-                            </option>
-                        </datalist>
-                        <button type="submit" class="btn">
-                            Find
-                        </button>
-                    </div>
-                    <ul class="config-scope">
-                        <li class="config-scope-shown">
-                            all
-                        </li>
-                        <li>
-                            <a href="/http/view.php?m=126&amp;1=system&amp;kp=delay">
-                                system
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/http/view.php?m=126&amp;1=user&amp;kp=delay">
-                                user
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/http/view.php?m=126&amp;1=select&amp;kp=delay">
-                                select
-                            </a>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-            <div class="config-hit-head">
-                <span>
-                    2 matches
-                </span>
-                <a href="/http/view.php?m=126">
-                    Remove filter
-                </a>
-            </div>
-            <div class="config-hit">
-                <div class="config-path">
-                    system › database › retry
-                </div>
-                <dl>
-                    <dt>
-                        start
-                        <mark>
-                            delay
-                        </mark>
-                    </dt>
-                    <dd>
-                        2
-                        <span class="config-unit">
-                            sec
-                        </span>
-                        <span class="config-file-value">
-                            default 1
-                            <span class="config-unit">
-                                sec
-                            </span>
-                        </span>
-                        <span>
-                            initial
-                            <mark>
-                                delay
-                            </mark>
-                            in seconds for the first connection retry
-                        </span>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>
-                        max
-                        <mark>
-                            delay
-                        </mark>
-                    </dt>
-                    <dd>
-                        3600
-                        <span class="config-unit">
-                            sec
-                        </span>
-                    </dd>
-                </dl>
-            </div>
-            <h4>
-                config tree scope
-            </h4>
-            <div class="config-toolbar">
-                <form action="/http/view.php" method="get">
-                    <input type="hidden" name="m" value="126">
-                    <input type="hidden" name="1" value="user">
-                    <div class="config-search">
-                        <input type="search" name="kp" list="config-keys" value="">
-                        <datalist id="config-keys">
-                            <option value="&lt;script&gt;alert(1)&lt;/script&gt;">
-                            </option>
-                            <option value="cache">
-                            </option>
-                            <option value="columns">
-                            </option>
-                            <option value="database">
-                            </option>
-                            <option value="default">
-                            </option>
-                            <option value="initial">
-                            </option>
-                            <option value="language">
-                            </option>
-                            <option value="max">
-                            </option>
-                            <option value="max delay">
-                            </option>
-                            <option value="more">
-                            </option>
-                            <option value="name">
-                            </option>
-                            <option value="page">
-                            </option>
-                            <option value="pod">
-                            </option>
-                            <option value="retry">
-                            </option>
-                            <option value="row limit">
-                            </option>
-                            <option value="select">
-                            </option>
-                            <option value="start delay">
-                            </option>
-                            <option value="suggested">
-                            </option>
-                            <option value="system">
-                            </option>
-                            <option value="test">
-                            </option>
-                            <option value="timeout">
-                            </option>
-                            <option value="types">
-                            </option>
-                            <option value="user">
-                            </option>
-                        </datalist>
-                        <button type="submit" class="btn">
-                            Find
-                        </button>
-                    </div>
-                    <ul class="config-scope">
-                        <li>
-                            <a href="/http/view.php?m=126">
-                                all
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/http/view.php?m=126&amp;1=system">
-                                system
-                            </a>
-                        </li>
-                        <li class="config-scope-shown">
-                            user
-                        </li>
-                        <li>
-                            <a href="/http/view.php?m=126&amp;1=select">
-                                select
-                            </a>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-            <div class="config-columns">
-                <div class="config-column">
-                    <ul class="config-tree">
-                        <li>
-                            <details class="config-node" id="cfg-user">
-                                <summary>
-                                    user
-                                </summary>
-                                <ul class="config-tree">
                                     <li>
-                                        <dl>
-                                            <dt title="the language of the user frontend">
-                                                language
-                                            </dt>
-                                            <dd>
-                                                en
-                                            </dd>
-                                        </dl>
-                                    </li>
-                                    <li>
-                                        <dl>
-                                            <dt>
-                                                &lt;script&gt;alert(1)&lt;/script&gt;
-                                            </dt>
-                                            <dd>
-                                                5
-                                            </dd>
-                                        </dl>
+                                        <details class="config-node" id="cfg-system/startup">
+                                            <summary>
+                                                startup
+                                            </summary>
+                                            <ul class="config-tree">
+                                                <li>
+                                                    <details class="config-node" id="cfg-system/startup/pv">
+                                                        <summary>
+                                                            pv
+                                                        </summary>
+                                                        <ul class="config-tree">
+                                                            <li>
+                                                                <dl>
+                                                                    <dt>
+                                                                        url
+                                                                    </dt>
+                                                                    <dd>
+                                                                        /http/view.php?m=4&amp;id=1954
+                                                                    </dd>
+                                                                </dl>
+                                                            </li>
+                                                            <li>
+                                                                <dl>
+                                                                    <dt>
+                                                                        view name
+                                                                    </dt>
+                                                                    <dd>
+                                                                    </dd>
+                                                                </dl>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details class="config-node" id="cfg-system/startup/cbam">
+                                                        <summary>
+                                                            cbam
+                                                        </summary>
+                                                        <ul class="config-tree">
+                                                            <li>
+                                                                <dl>
+                                                                    <dt>
+                                                                        view name
+                                                                    </dt>
+                                                                    <dd>
+                                                                        Calculator
+                                                                    </dd>
+                                                                </dl>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
                                     </li>
                                 </ul>
                             </details>

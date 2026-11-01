@@ -45,6 +45,8 @@ class styles
     const string CHANGE_PREVIEW = 'change-preview';
     // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view
     const string JUSTIFY_CENTER = 'justify-content-center';
+    // bootstrap css class to show the elements side by side e.g. the view name and its switch icon in the edit menu
+    const string FLEX_ROW = 'd-flex';
     // the change impact line centered below the change preview table
     const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';
@@ -56,16 +58,15 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // a warning or error text shown inline to the user (see html_base::dsp_err)
+    const string TEXT_DANGER = 'text-danger';
     // a table column of the main tier is hidden on a small screen, one of the minor tier is
     // shown on a wide screen only and one of the marginal tier only on the widest screen
     // (see triples::SYSTEM_COLUMN_TIERS)
     const string COL_MAIN = 'd-none d-md-table-cell';
     const string COL_MINOR = 'd-none d-xl-table-cell';
     const string COL_MARGINAL = 'd-none d-xxl-table-cell';
-    // the popup menu of the "..." table header that selects the columns shown, styled like
-    // the menus of the page header (see style_html.css)
-    const string MENU_COLUMN = 'column-menu';
-    // a sub header inside a popup menu e.g. "columns and values" above the column entries
+    // a sub header inside the edit menu of the navbar e.g. "columns and values" above the column entries
     const string MENU_HEADER = 'menu-header';
     // the up / down icons behind a column header that sort the rows by the column, and the
     // icon of the order that the page shows (see style_html.css)
@@ -73,14 +74,13 @@ class styles
     const string SORT_ACTIVE = 'sort-active';
     // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
     const string CHART_ROW = 'chart-row';
-    // the line above the charts of a table shown without the table: the header of the table
-    // centred and the "..." menu of the table in the top right corner (see style_html.css)
+    // the input panel beside the result panels of a use case page, stacked on a phone, and the
+    // frame of each panel (see view_exe::dsp_entries and the .use-case rules of style_html.css)
+    const string GRID = 'grid';
+    const string PANEL = 'panel';
+    // the line above the charts of a table shown without the table with the header of the table
+    // centred (see style_html.css)
     const string CHART_HEAD = 'chart-head';
-    const string CHART_CORNER = 'chart-corner';
-    // the popup menu of the "..." below the title of a default view that selects the view
-    // version and the full width line that puts it in the right corner (see style_html.css)
-    const string MENU_VIEW_VERSION = 'view-version-menu';
-    const string VIEW_VERSION_CORNER = 'view-version-corner';
     // bootstrap css class to center a line e.g. the phrase above a value table
     const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
@@ -102,9 +102,35 @@ class styles
     // the size of the field label, so the icon is easy to hit
     const string FORM_ICON_INLINE = 'form-icon-inline';
 
+    // css classes of the links that look like buttons or tabs on a process catch page: the next button
+    // continues, the back button returns, and the selected tab is shown without a link
+    const string PROCESS_CATCH_BUTTON_NEXT = 'btn btn-outline-success btn-space';
+    const string PROCESS_CATCH_BUTTON_BACK = 'btn btn-outline-secondary btn-space';
+    // the refresh is a submit button, which gets the btn class from html_base::button, but not the
+    // col-1 of html_base::button_bs, so it is as wide as its text like the next and the back button
+    const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary btn-space';
+    // the save of a calculator page like the refresh, with the 1rem side padding of bootstrap, so that
+    // the space left and right of the text is about the 10px padding and the half leading above and below
+    const string CALC_BUTTON_SAVE = 'btn-outline-primary btn-space px-3';
+    // the button that adds an instance of a repeated input of a calculator page
+    const string CALC_BUTTON_ADD = 'btn-outline-primary btn-sm';
+    // a button of a list or a detail table of a calculator page e.g. download
+    const string CALC_BUTTON = 'btn-outline-primary';
+    // the button to remove an instance of a repeated input and the block of the import buttons of a calculator page
+    const string CALC_BUTTON_REMOVE = 'btn-outline-secondary btn-sm';
+    const string CALC_IMPORTS = 'imports';
+    // the css variable with the width of the result panel that a calculator page can set (style_html.css)
+    const string CALC_RESULT_WIDTH_VAR = '--calc-result-width';
+    const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
+    const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
+
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';
+    // the entries of the user menu that switch to the dark or the light mode, which the css hides if the
+    // browser has already this mode and the user follows the browser (see html_base::theme_switch)
+    const string THEME_TO_DARK = 'theme-to-dark';
+    const string THEME_TO_LIGHT = 'theme-to-light';
 
     // css class of a block that is hidden until the url fragment names it, e.g. the formula link
     // form that the link icon of the formula list reveals; the css-only twin of the tabs above
@@ -136,6 +162,54 @@ class styles
     // and the measure/scaling part that follows the number like on a price tag
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
+    // an input field of a use case page with its label and the unit behind the input (ui_list::input_fields)
+    const string INPUT_FIELD = 'field';
+    const string INPUT_UNIT = 'unit';
+    // a checkbox with its label and hint, and a number that a user cannot change, of a calculator
+    const string INPUT_CHECK = 'check';
+    const string INPUT_READ_ONLY = 'ro';
+    // the warnings below the input fields of a calculator and one warning
+    const string INPUT_WARNINGS = 'warnings';
+    const string INPUT_WARNING = 'warn';
+    // the measured or assumed tag behind the label and the source hint below an assumption field
+    const string INPUT_TAG = 'tag';
+    const string INPUT_HINT = 'hint';
+    // the measured and the assumed tag of a calculator assumption in their own colour
+    const string INPUT_TAG_MEASURED = 'tag m';
+    const string INPUT_TAG_ASSUMED = 'tag a';
+    // the input and its unit on one line of a calculator field, and the frame of the inputs and
+    // the save button of the calculator input (ui_list::calculator_fields)
+    const string INPUT_ROW = 'row';
+    const string INPUTS = 'inputs';
+    // the parts of the calculation result (ui_list::calculation_table): the frame that scrolls a
+    // wide table, a section row, a key row, the sub text of a row, a number cell, the sign of a
+    // number, the content of the details, the formula notes and the source list
+    // the colours of the flagged columns of a calculator table: the first for a single column, the others cycling for the instances
+    const array CALC_COLUMN_COLOURS = ['col-first', 'col-1', 'col-2', 'col-3', 'col-4'];
+    // a diagram of a calculator page with its legend, and the status of a row of the check table
+    const string CALC_CHART = 'chart';
+    const string CALC_LEGEND = 'legend';
+    const string CALC_STATUS_OK = 'pill ok';
+    const string CALC_STATUS_FAIL = 'pill fail';
+    const string CALC_SCROLL = 'scroll';
+    const string CALC_SECTION = 'sec';
+    const string CALC_KEY = 'key';
+    const string CALC_SUB = 'sub';
+    const string CALC_NUMBER = 'n';
+    const string CALC_POSITIVE = 'pos';
+    const string CALC_NEGATIVE = 'neg';
+    const string CALC_MORE = 'more';
+    const string CALC_NOTES = 'notes';
+    const string CALC_SOURCES = 'src';
+    // the host of the calculator editor, which calculator_editor.css formats
+    const string CALC_EDITOR = 'editor';
+    // the hosts of the formula editor, the selector and the result compare, in which formula_editor.css nests all its rules
+    const string FORMULA_EDITOR = 'formula-editor';
+
+    // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
+    const string ADMIN_MORE = 'admin-more';
+    // one column of the admin dashboard, which limits its tables to the width of the column
+    const string ADMIN_COLUMN = 'admin-column';
 
     // css classes of the read only tree of the system configuration (web/helper/config_tree):
     // the nested list of the keys, a node that has keys below it and the block of one search hit with its path

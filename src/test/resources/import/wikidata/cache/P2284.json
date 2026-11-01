@@ -4,8 +4,8 @@
             "pageid": 23451809,
             "ns": 120,
             "title": "Property:P2284",
-            "lastrevid": 2517383298,
-            "modified": "2026-07-14T12:33:51Z",
+            "lastrevid": 2546116988,
+            "modified": "2026-09-15T09:14:28Z",
             "type": "property",
             "datatype": "quantity",
             "id": "P2284",
@@ -2379,6 +2379,62 @@
                                             "entity-type": "item",
                                             "numeric-id": 203722,
                                             "id": "Q203722"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "e610d0d15d2075d2e7986292ede1a43b7c1c9ed3",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 140987104,
+                                            "id": "Q140987104"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "cd99dca2aa439166ca93b89c8ff4e0dc93d0d0ec",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 1881382,
+                                            "id": "Q1881382"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "6f7b4299cc561f5b86274afd384b0b7397cd2dc4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 140987098,
+                                            "id": "Q140987098"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "56a40d0cf9560e27bbe92632354bc0cb2b5a9670",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 131473,
+                                            "id": "Q131473"
                                         },
                                         "type": "wikibase-entityid"
                                     },

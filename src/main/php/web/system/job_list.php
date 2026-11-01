@@ -43,8 +43,14 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -63,7 +69,7 @@ class job_list extends ListBase
 
     /**
      * set the vars of these list display objects bases on the api json array
-     * TODO can be moved to list_dsp as soon as all list api message include the header
+     * TODO Prio 2 can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -185,6 +191,30 @@ class job_list extends ListBase
         return $jobs;
     }
 
+    /**
+     * @return array the jobs that have not yet ended with the longest waiting job first
+     */
+    function open_oldest_first(): array
+    {
+        $jobs = array_values(array_filter($this->lst(), fn(job $job) => $job->is_open()));
+        usort($jobs, fn(job $a, job $b) => [$a->request_time(), $a->id()] <=> [$b->request_time(), $b->id()]);
+        return $jobs;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the config lookup
+     * @return int the seconds an open job may wait before it is critical (config.yaml system > job > max delay)
+     */
+    static function max_delay(user_message $msg): int
+    {
+        global $ui_sys;
+        $limit = def::FALLBACK_JOB_MAX_DELAY;
+        if ($ui_sys?->cfg !== null) {
+            $limit = (int)$ui_sys->cfg->get_by([triples::MAX_DELAY, words::JOB], $msg, def::FALLBACK_JOB_MAX_DELAY);
+        }
+        return $limit;
+    }
+
     /*
      * to review
      */
@@ -198,7 +228,7 @@ class job_list extends ListBase
     {
         $html = new html_base();
         $cols = '';
-        // TODO check if and why the next line makes sense
+        // TODO Prio 2 check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $job) {
             $lnk = $job->display_linked($url_arr);

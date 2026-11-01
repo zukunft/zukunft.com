@@ -5,8 +5,8 @@
     test/create/test_objects.php - base parameters for creating the test objects
     ----------------------------
 
-    TODO create all test object from these classes like test_values
-    TODO shorten the names e.g. if the phrase is most often used use the function name canton() for the phrase
+    TODO Prio 2 create all test object from these classes like test_values
+    TODO Prio 3 shorten the names e.g. if the phrase is most often used use the function name canton() for the phrase
 
     object adding, loading and testing functions
 
@@ -90,6 +90,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_pinned_ids.php';
 //include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
@@ -670,7 +671,7 @@ class test_db_load
             // a loaded formula is regenerated and not kept based on the previous expression
             $frm->set_user_text($frm_text, $msg);
             $frm->save($msg);
-            // TODO add this check to all add functions
+            // TODO Prio 1 add this check to all add functions
             if (!$msg->is_ok()) {
                 $reason = $msg->all_message_text();
                 log_warning('add formula failed due to: ' . $reason);
@@ -719,7 +720,7 @@ class test_db_load
         global $sys;
         $ref = new ref($this->env->usr1);
         if ($phr->id() != 0) {
-            // TODO check if type name is the code id or really the name
+            // TODO Prio 2 check if type name is the code id or really the name
             $ref->load_by_link_ids($phr->id(), $sys->typ_lst->ref_typ->id($type_name), $msg);
         }
         return $ref;
@@ -738,7 +739,7 @@ class test_db_load
         $ref = $this->load_ref($wrd->name(), $type_name, $msg);
         if ($ref->id() == 0) {
             $ref->set_phrase($phr);
-            // TODO check if type name is the code id or really the name
+            // TODO Prio 2 check if type name is the code id or really the name
             $ref->set_predicate_id($sys->typ_lst->ref_typ->id($type_name));
             $ref->set_external_key($external_key);
             $msg = new user_message($this->env->usr1);
@@ -1560,6 +1561,10 @@ class test_db_load
             if (!$this->csv_check_of_class($class, $csv_db, $csv_file_path)) {
                 $result = false;
             }
+        }
+        // the pinned *_ID consts of the tests after the database and the list.csv files are filled
+        if (!new test_pinned_ids()->check($this->env, $this->rows_after_reset)) {
+            $result = false;
         }
         return $result;
     }

@@ -280,7 +280,8 @@ class sandbox_list_named extends sandbox_list
      */
     protected function add_direct(sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
-        if (!$this->lst_name_dirty) {
+        // like the rebuild of the index the first entry of a name is kept
+        if (!$this->lst_name_dirty and !array_key_exists($obj_to_add->name(), $this->name_pos_lst)) {
             $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
         }
         parent::add_direct($obj_to_add);
@@ -329,7 +330,7 @@ class sandbox_list_named extends sandbox_list
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name(), $msg);
-                // TODO check if and how a sync of the objects can be done
+                // TODO Prio 2 check if and how a sync of the objects can be done
                 if ($sbx_old == null) {
                     $this->add($sbx_new, $msg);
                 }
@@ -415,7 +416,7 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @returns array with all unique names of this list with the keys within this list
      */
     protected function name_pos_lst(): array

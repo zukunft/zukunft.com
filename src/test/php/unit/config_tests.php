@@ -64,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -130,6 +131,31 @@ class config_tests
         $t->assert_false($test_name, $t_val->config_empty()->ip_user_can_change());
 
 
+        $t->subheader($ts . 'user log switches');
+
+        // the user log can be switched off for all users and for the users without login
+        // and a pod without the switch writes the log
+        $names = config_numbers::USER_LOG_ALLOWED_NAMES;
+        $test_name = 'the user log is written if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->user_log_allowed());
+        $test_name = 'the user log is not written if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->user_log_allowed());
+        $test_name = 'a pod without the switch writes the user log';
+        $t->assert_true($test_name, $t_val->config_empty()->user_log_allowed());
+        $test_name = 'the switch for all users does not change the switch for the ip users';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->ip_user_log_allowed());
+        $names = config_numbers::IP_USER_LOG_ALLOWED_NAMES;
+        $test_name = 'the user log of an ip user is written if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->ip_user_log_allowed());
+        $test_name = 'the user log of an ip user is not written if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->ip_user_log_allowed());
+        $test_name = 'a pod without the switch writes the user log of an ip user';
+        $t->assert_true($test_name, $t_val->config_empty()->ip_user_log_allowed());
+        // negative: the ip user switch has all phrases of the switch for all users
+        $test_name = 'the switch for the ip users does not change the switch for all users';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->user_log_allowed());
+
+
         $t->subheader($ts . 'database cache switches');
 
         // each database cache can be switched off by a pod setting in config.yaml
@@ -185,6 +211,11 @@ class config_tests
         $cfg_cached->set_cache_json($api_json);
         $test_name = 'a text config value is read from the cached json';
         $t->assert($test_name, $cfg_cached->language(), language_codes::SYS);
+
+        // a config without the language value falls back to the system language
+        $test_name = 'a config without a language uses the system language';
+        $lan_code = $t_val->config_empty()->language();
+        $t->assert($test_name, $lan_code, language_codes::SYS);
 
         // the html page cache (db_cache_pages) has its own pod switch
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
@@ -266,7 +297,8 @@ class config_tests
         $default_names = array_merge(config_tree::ROOT_KEYS,
             [test_config_trees::SYSTEM, test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
         $default_key = config_numbers::names_key($default_names);
-        $t->assert_false($test_name, array_key_exists($default_key, $t_cft->cfg()->exact_lookup()));
+        $exact_lookup = $t_cft->cfg()->exact_lookup();
+        $t->assert_key_not_exists($test_name, $default_key, $exact_lookup);
         // negative: a key with two settings is a group without a value or a unit
         $test_name = 'a key with two settings has no value and no unit';
         $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
@@ -292,7 +324,38 @@ class config_tests
         $t->assert($test_name, $max_node[json_fields::ID] ?? 0, test_config_trees::MAX_DELAY_ID);
         // negative: without a database value there is nothing to overwrite
         $test_name = '... but a setting without a database value has no id';
-        $t->assert_false($test_name, array_key_exists(json_fields::ID, $default_node));
+        $t->assert_key_not_exists($test_name, json_fields::ID, $default_node);
+        // e.g. the empty view name of a pinned view, which the import does not save
+        $test_name = 'a text setting without a database value names the phrase ids of its yaml path for the first save';
+        $view_node = $t_cft->node_by_name($nodes, test_config_trees::VIEW_NAME);
+        $view_names = array_merge(config_tree::ROOT_KEYS,
+            [test_config_trees::SYSTEM, test_config_trees::STARTUP, test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $t->assert($test_name, $view_node[json_fields::CONFIG_PHRASE_IDS] ?? [], array_map([$t_cft, 'phrase_id'], $view_names));
+        $test_name = '... as a text setting';
+        $t->assert($test_name, $view_node[json_fields::CONFIG_IS_TEXT] ?? false, true);
+        // negative: a text with a database value is changed by the id of the value
+        $test_name = '... but a text setting with a database value has no phrase ids';
+        $url_node = $t_cft->node_by_name($nodes, test_config_trees::URL);
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_PHRASE_IDS, $url_node);
+        // negative: a number without a database value is still not added by the settings page
+        $test_name = '... and neither a number setting';
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_PHRASE_IDS, $default_node);
+        $test_name = '... and a number is no text setting';
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_IS_TEXT, $default_node);
+        // the settings page finds the font setting by the code id of its word and not by its name
+        $test_name = 'a setting names the code id of its word e.g. of the font';
+        $font_node = $t_cft->node_by_name($nodes, test_config_trees::FONT);
+        $t->assert($test_name, $font_node[json_fields::CODE_ID] ?? '', words::FONT_CODE_ID);
+        $test_name = '... and of a triple e.g. of the colour mode';
+        $mode_node = $t_cft->node_by_name($nodes, test_config_trees::COLOUR_MODE);
+        $t->assert($test_name, $mode_node[json_fields::CODE_ID] ?? '', triples::COLOUR_MODE_CODE_ID);
+        // negative: a word without code id names none
+        $test_name = '... but a word without code id names none';
+        $t->assert_key_not_exists($test_name, json_fields::CODE_ID, $default_node);
+        // negative: a config.yaml without a key has no node, even if the database has values
+        $test_name = 'an empty config.yaml has no node';
+        $empty_nodes = $cft->nodes([], $t_cft->cfg());
+        $t->assert($test_name, $empty_nodes, []);
         // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
         $obj_lookup = $t_val->config_cache_switch($names, true)->exact_lookup();
@@ -302,7 +365,9 @@ class config_tests
         $t->assert($test_name, config_numbers::names_key(array_reverse($names)), config_numbers::names_key($names));
         // negative: a value with more phrases belongs to a setting below the given one
         $test_name = '... but not by a part of its phrases';
-        $t->assert_false($test_name, array_key_exists(config_numbers::names_key(array_slice($names, 1)), $obj_lookup));
+        $part_names = array_slice($names, 1);
+        $part_key = config_numbers::names_key($part_names);
+        $t->assert_key_not_exists($test_name, $part_key, $obj_lookup);
         // a numeric name is an int key of the cached lookup rows, but the same phrase as its text
         $test_name = 'a numeric name is the same phrase as its text';
         $t->assert($test_name, config_numbers::names_key([2000]), config_numbers::names_key(['2000']));

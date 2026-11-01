@@ -126,6 +126,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
@@ -164,7 +165,6 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
-include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
@@ -177,7 +177,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
-//include_once test_paths::CONST . 'word_names.php';
+include_once paths::TEST_CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -267,6 +267,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -336,7 +337,7 @@ class sql_db
     const string TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
-    const string VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
+    const string VT_PHRASE_GROUP_LINK = 'group_link'; // TODO Prio 2 deprecate
 
     // difference between the object name and the table name
     const string TABLE_EXTENSION = 's';
@@ -372,7 +373,7 @@ class sql_db
 
     const sql_field_type FLD_USAGE_SQL_TYP = sql_field_type::INT;
     const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
-    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
+    // TODO Prio 3 MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
 
     // the formatting used to convert a php DateTime var to a SQL string (maybe add "c" for time zone)
     const string DATE_FORMAT = 'Y-m-d H:i:s';
@@ -402,6 +403,7 @@ class sql_db
         user::class,
         ip_range::class,
         session::class,
+        user_log::class,
         change_action::class,
         change_table::class,
         change_field::class,
@@ -519,6 +521,7 @@ class sql_db
         db_cache_type::class,
         share_type::class,
         protection_type::class,
+        user_log::class,
         user::class,
         user_status::class,
         user_type::class,
@@ -563,8 +566,8 @@ class sql_db
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
-    // TODO use class
-    // TODO switch the the sql const
+    // TODO Prio 2 use class
+    // TODO Prio 2 switch the the sql const
     const array DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
@@ -588,6 +591,7 @@ class sql_db
         change_values_big::class,
         change_link::class,
         sys_log::class,
+        user_log::class,
         job::class,
         db_cache::class,
         db_cache_page::class,
@@ -595,7 +599,7 @@ class sql_db
     ];
 
     // tables that link two named tables
-    // TODO set automatically by set_link_fields???
+    // TODO Prio 3 set automatically by set_link_fields???
     const array DB_TYPES_LINK = [
         triple::class,
         formula_link::class,
@@ -1056,7 +1060,7 @@ class sql_db
     function close(): void
     {
         if ($this->db_type == sql_db::POSTGRES) {
-            // TODO null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
+            // TODO Prio 2 null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
             if ($this->postgres_link !== false) {
                 pg_close($this->postgres_link);
                 $this->postgres_link = false;
@@ -1162,7 +1166,7 @@ class sql_db
 
     /**
      * create the database tables and fill it with the essential data
-     * TODO remove or secure before moving to PROD
+     * TODO Prio 1 remove or secure before moving to PROD
      *
      * @param user_message $msg to collect the messages that should be shown to the user
      *                          with the user who has requested the setup,
@@ -1263,6 +1267,11 @@ class sql_db
             $import->import_use_case_data($usr);
             // followed only by the system data added after the test ids have been pinned
             $import->import_system_data_appended($usr);
+            // and the use cases that build on the appended system data e.g. the calculator keywords
+            $import->import_use_case_data($usr, false, files::USE_CASE_FILES_APPENDED);
+            // a types api call during the imports may have cached the system phrases without the
+            // symbol triples imported after it e.g. "g/kWh is symbol for gram per kWh"
+            new db_cache(user::system())->del_types($sys_msg);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($sys_msg, $usr);
@@ -1288,7 +1297,7 @@ class sql_db
             $msk_lnk->save($msg);
 
             // remove the test dataset for a clean database
-            // TODO use the user message object instead of a string
+            // TODO Prio 2 use the user message object instead of a string
             /*
             $cleanup_result = $t->cleanup();
             if (!$cleanup_result) {
@@ -1326,7 +1335,7 @@ class sql_db
     /**
      * force to drop any remaining tables of the database
      * used to clean up before a setup and for testing to reset the db after a broken db update script
-     * TODO remove or deactivate this before prod deployment
+     * TODO Prio 1 remove or deactivate this before prod deployment
      *
      * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return int the number of dropped tables
@@ -1426,7 +1435,7 @@ class sql_db
         global $sys;
         $sys->typ_lst = new type_lists();
 
-        // TODO use user profile cache
+        // TODO Prio 2 use user profile cache
         global $sys;
         global $sys;
 
@@ -1497,8 +1506,11 @@ class sql_db
             $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
         }
 
+        // the cached types api message is the state before the csv load
+        new db_cache(user::system())->del_types($msg);
+
         // set the seq number if needed
-        // TODO check why this is needed and combine with the other sequence reset
+        // TODO Prio 2 check why this is needed and combine with the other sequence reset
         $this->seq_reset(change_table::class, $msg);
         $this->seq_reset(change_field::class, $msg);
         $this->seq_reset(change_action::class, $msg);
@@ -1653,8 +1665,8 @@ class sql_db
     /**
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
-     * TODO check that this is always called directly before the query is created, so that
-     * TODO should be deprecated and the sql creator should be used instead
+     * TODO Prio 2 check that this is always called directly before the query is created, so that
+     * TODO Prio 2 should be deprecated and the sql creator should be used instead
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
@@ -2200,7 +2212,7 @@ class sql_db
             }
             $this->set_field_sep();
             if ($this->usr_query or $this->join_type != '') {
-                // TODO extract the common part
+                // TODO Prio 2 extract the common part
                 if (is_array($field)) {
                     if (!is_array($this->id_field)) {
                         log_warning('The id field ' . $this->id_field . ' is expected to be an array');
@@ -2456,6 +2468,7 @@ class sql_db
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $lib->singular_table($result);
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
@@ -2522,7 +2535,7 @@ class sql_db
 
     /**
      * set the table name based on the already set type / class
-     * TODO use always the user table flag
+     * TODO Prio 2 use always the user table flag
      * @param bool $usr_table
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
@@ -2555,7 +2568,8 @@ class sql_db
             and $class != user_status::class
             and $class != user_statuum::class
             and $class != user_type::class
-            and $class != user_official_type::class) {
+            and $class != user_official_type::class
+            and $class != user_log::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -2883,7 +2897,7 @@ class sql_db
                 msg_id::VAR_TRACE_LINK => $trace_link,
             ]);
         } else {
-            // TODO review to use a generic transformation for $sql_array
+            // TODO Prio 2 review to use a generic transformation for $sql_array
             if (count($sql_array) == 1) {
                 $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
             } elseif (count($sql_array) == 2) {
@@ -2978,7 +2992,7 @@ class sql_db
 
         $stmt = $this->prepared_stmt[$sql_name];
 
-        // TODO review to use a generic transformation for $sql_array
+        // TODO Prio 2 review to use a generic transformation for $sql_array
         if (count($sql_array) == 1) {
             $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
         } elseif (count($sql_array) == 2) {
@@ -3011,9 +3025,9 @@ class sql_db
      * @return \PgSql\Result|mysqli_result|null the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
-     * TODO add the writing of potential sql errors to the sys log table to the sql execution
-     * TODO includes the user to be able to ask the user for details how the error has been created
-     * TODO with php 8 switch to the union return type resource|false
+     * TODO Prio 2 add the writing of potential sql errors to the sys log table to the sql execution
+     * TODO Prio 2 includes the user to be able to ask the user for details how the error has been created
+     * TODO Prio 3 with php 8 switch to the union return type resource|false
      */
     function exe(
         string $sql,
@@ -3025,7 +3039,6 @@ class sql_db
         string $debug_txt = ''
     ): \PgSql\Result|mysqli_result|null
     {
-        global $sys;
         global $debug;
 
         // trace the caller description at its named db level, so '&debug=6' shows all writes and
@@ -3055,7 +3068,6 @@ class sql_db
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
-        $sys->times->switch();
 
         return $result;
     }
@@ -3105,10 +3117,10 @@ class sql_db
      * @return \PgSql\Result|null the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
-     * TODO switch return type to bool|resource with PHP 8.0
-     * TODO add the writing of potential sql errors to the sys log table to the sql execution
-     * TODO includes the user to be able to ask the user for details how the error has been created
-     * TODO with php 8 switch to the union return type resource|false
+     * TODO Prio 3 switch return type to bool|resource with PHP 8.0
+     * TODO Prio 2 add the writing of potential sql errors to the sys log table to the sql execution
+     * TODO Prio 2 includes the user to be able to ask the user for details how the error has been created
+     * TODO Prio 3 with php 8 switch to the union return type resource|false
      */
     private function exe_postgres(
         string $sql,
@@ -3128,12 +3140,12 @@ class sql_db
         if ($this->postgres_link == null) {
             $msg = 'database connection lost';
             log_fatal_db($msg, 'sql_db->exe: ' . $sql_name);
-            // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+            // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
             throw new Exception($msg);
         } else {
             // validate the parameters
             if ($sql_name == '') {
-                // TODO switch to error when all SQL statements are named
+                // TODO Prio 2 switch to error when all SQL statements are named
                 //log_warning('Name for SQL statement ' . $sql . ' is missing');
                 log_debug('Name for SQL statement ' . $sql . ' is missing');
             }
@@ -3142,7 +3154,7 @@ class sql_db
             $sql = str_replace("\n", " ", $sql);
             if ($sql_name == '') {
                 // simply execute old queries
-                // TODO to be deprecated
+                // TODO Prio 2 to be deprecated
                 try {
                     $result = pg_query($this->postgres_link, $sql);
                 } catch (Exception $e) {
@@ -3194,7 +3206,7 @@ class sql_db
                 } else {
                     if ($sql_call != '') {
                         // execute a query with the given parameter
-                        // TODO to be deprecated by
+                        // TODO Prio 2 to be deprecated by
                         try {
                             $result = pg_query($this->postgres_link, $sql_call);
                         } catch (Exception $e) {
@@ -3277,10 +3289,10 @@ class sql_db
      * @return mysqli_result the message that should be shown to the system admin for debugging
      * @throws Exception
      *
-     * TODO switch return type to bool|resource with PHP 8.0
-     * TODO add the writing of potential sql errors to the sys log table to the sql execution
-     * TODO includes the user to be able to ask the user for details how the error has been created
-     * TODO with php 8 switch to the union return type resource|false
+     * TODO Prio 3 switch return type to bool|resource with PHP 8.0
+     * TODO Prio 2 add the writing of potential sql errors to the sys log table to the sql execution
+     * TODO Prio 2 includes the user to be able to ask the user for details how the error has been created
+     * TODO Prio 3 with php 8 switch to the union return type resource|false
      */
     private
     function exe_mysql(
@@ -3297,12 +3309,12 @@ class sql_db
             $msg = 'database connection lost';
             $this->open_with_retry($msg);
             log_fatal($msg, 'sql_db->exe->' . $sql_name);
-            // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+            // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
             throw new Exception($msg);
         } else {
             // validate the parameters
             if ($sql_name == '') {
-                // TODO switch to error when all SQL statements are named
+                // TODO Prio 2 switch to error when all SQL statements are named
                 //log_warning('Name for SQL statement ' . $sql . ' is missing');
                 log_debug('Name for SQL statement ' . $sql . ' is missing');
             }
@@ -3321,7 +3333,7 @@ class sql_db
                 if ($stmt == null) {
                     throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
                 } else {
-                    // TODO review to use a generic transformation for $sql_array
+                    // TODO Prio 2 review to use a generic transformation for $sql_array
                     if (count($sql_array) == 1) {
                         $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
                     } elseif (count($sql_array) == 2) {
@@ -3362,7 +3374,7 @@ class sql_db
         if (in_array($sql_name, $this->prepared_sql_names)) {
             return true;
         } else {
-            // TODO check if actually exists
+            // TODO Prio 3 check if actually exists
             return false;
         }
     }
@@ -3440,7 +3452,7 @@ class sql_db
             if ($this->db_type == sql_db::POSTGRES) {
                 if ($this->postgres_link == null) {
                     log_warning('Database connection lost', 'sql_db->fetch');
-                    // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+                    // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
                         $exe_result = $this->exe($sql, $sql_name, $sql_array,
@@ -3467,7 +3479,7 @@ class sql_db
             } elseif ($this->db_type == sql_db::MYSQL) {
                 if ($this->mysql == null) {
                     log_warning('Database connection lost', 'sql_db->fetch');
-                    // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+                    // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
                         $exe_result = $this->exe($sql, $sql_name, $sql_array, '', '', sys_log_levels::ERROR_ID, $debug_txt);
@@ -3801,9 +3813,9 @@ class sql_db
      * set the SQL WHERE statement for link tables
      * if $id_from or $id_to is null all links to the other side are selected
      *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
-     * TODO allow also to retrieve a list of linked objects
-     * TODO get the user-specific list of linked objects
-     * TODO use always parameterized values
+     * TODO Prio 2 allow also to retrieve a list of linked objects
+     * TODO Prio 2 get the user-specific list of linked objects
+     * TODO Prio 1 use always parameterized values
      */
     function set_where_link_no_fld(int $id = 0, int $id_from = 0, int $id_to = 0, int $id_type = 0): string
     {
@@ -3881,8 +3893,8 @@ class sql_db
     /**
      * set the standard where statement to select either by id or name or code_id
      * the type must have been already set e.g. to 'source'
-     * TODO check why the request user must be set to search by code_id ?
-     * TODO check if test for positive and negative id values is needed; because phrases can have a negative id ?
+     * TODO Prio 2 check why the request user must be set to search by code_id ?
+     * TODO Prio 2 check if test for positive and negative id values is needed; because phrases can have a negative id ?
      */
     function set_where_std($id, $name = '', $code_id = ''): string
     {
@@ -4058,7 +4070,7 @@ class sql_db
     /**
      * set the where statement for a later call of the select function
      * mainly used to overwrite the for special cases, where the set_where function cannot be used
-     * TODO prevent code injections e.g. by using only predefined queries
+     * TODO Prio 1 prevent code injections e.g. by using only predefined queries
      */
     function set_where_text($where_text): void
     {
@@ -4544,7 +4556,7 @@ class sql_db
 
     /**
      * convert the parameter type list to make valid for postgres
-     * TODO deprecate and use a function of the sql object instead
+     * TODO Prio 2 deprecate and use a function of the sql object instead
      *
      * @return array with the postgres parameter types
      */
@@ -4587,7 +4599,7 @@ class sql_db
     }
 
     /**
-     * TODO deprecate and replace by sql creator function
+     * TODO Prio 2 deprecate and replace by sql creator function
      * @return string with the SQL prepare statement for the current query
      */
     private
@@ -4917,7 +4929,7 @@ class sql_db
 
     /**
      * Sql Format: format a value for a SQL statement
-     * TODO deprecate to prevent sql code injections
+     * TODO Prio 1 deprecate to prevent sql code injections
      *
      * $field_value is the value that should be formatted
      * $force_type can be set to force the formatting e.g. for the time word 2021 to use '2021'
@@ -4960,7 +4972,7 @@ class sql_db
 
                 // escape the text value for Postgres
                 if ($db_con->postgres_link == null) {
-                    // TODO review
+                    // TODO Prio 2 review
                     log_warning('deprecated call of the pg_escape_string function');
                     $result = pg_escape_string($result);
                 } else {
@@ -5661,7 +5673,7 @@ class sql_db
         $real_columns = $this->get_column_names($table_name, $msg);
         $missing_columns = array_diff($expected_columns, $real_columns);
         if (count($missing_columns) > 0) {
-            // TODO add $this
+            // TODO Prio 3 add $this
             $lib = new library();
             log_fatal('Database column ' . $lib->dsp_array($missing_columns)
                 . ' missing in ' . $table_name, 'sql_db/check_column_names');

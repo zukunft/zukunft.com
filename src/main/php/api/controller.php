@@ -38,16 +38,19 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -66,14 +69,24 @@ class controller
      */
 
     /**
+     * read the body of the current write request as it has been sent e.g. a json file to import
+     *
+     * @return string the body or an empty string if the request has none
+     */
+    function request_text(): string
+    {
+        $result = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
+        return $result === false ? '' : $result;
+    }
+
+    /**
      * read the json body of the current write request (post/put/delete)
      *
      * @return array the decoded json body or an empty array for a missing or malformed body
      */
     function request_json(): array
     {
-        $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-        $result = json_decode($request_text, true);
+        $result = json_decode($this->request_text(), true);
         // an empty or malformed body decodes to null; return an empty array so the : array return
         // type never fatals and the caller (a write with no/invalid body) maps nothing
         return is_array($result) ? $result : [];
@@ -228,8 +241,11 @@ class controller
      */
     function not_permitted(user_message $msg): void
     {
-        $this->set_response_code(401);
-        $this->curl_response('', $msg->all_message_text(), rest_ctrl::GET);
+        // a refusal without a reason is still named, because an empty answer would be read as a success
+        if ($msg->all_message_text() == '') {
+            $msg->add(msg_id::REQUEST_NOT_PERMITTED, []);
+        }
+        $this->get_response('', $msg->all_message_text(), 401);
     }
 
     /**
@@ -279,6 +295,58 @@ class controller
      */
 
     /**
+     * name in a header if the answer comes from the cache, so that e.g. the test run shows it
+     * (see rest_call::api_call); only if def::DEBUG_API_CACHE is switched on
+     *
+     * @param bool $is_cached true if the answer has been read from the cache, false if it has been created
+     * @return void
+     */
+    function cache_header(bool $is_cached): void
+    {
+        if (def::DEBUG_API_CACHE and !headers_sent()) {
+            $state = $is_cached ? api::CACHE_HIT : api::CACHE_MISS;
+            header(api::CACHE_HEADER . ': ' . $state);
+        }
+    }
+
+    /**
+     * add the seconds of each step as the first field of the json object of an answer that has
+     * taken longer than the configured limit, so that the frontend can split its wait for the
+     * answer or ignore the field (see rest_call::time_steps_of and system_time_list::answer_limit);
+     * added after the cache, so that a cached answer never carries the time of its creation;
+     * a json list has no field, so it is sent without the time
+     *
+     * @param string $api_json the json answer as created or read from the cache
+     * @return string the json answer with the seconds of its steps if it has been slow
+     */
+    private function with_time(string $api_json): string
+    {
+        global $sys;
+        $steps = [];
+        if ($sys != null) {
+            $steps = $sys->times->answer_steps($sys->start_time, microtime(true), system_time_list::answer_limit());
+        }
+        return self::json_with_time($api_json, $steps);
+    }
+
+    /**
+     * @param string $api_json the json answer
+     * @param array $steps the seconds per backend step, empty for a fast answer
+     * @return string the json with the steps as the first field of its object, unchanged without steps or for a json list
+     */
+    static function json_with_time(string $api_json, array $steps): string
+    {
+        $result = $api_json;
+        $json = ltrim($api_json);
+        $fields = ltrim(substr($json, 1));
+        $is_filled_object = (str_starts_with($json, '{') and !str_starts_with($fields, '}'));
+        if ($steps != [] and $is_filled_object) {
+            $result = '{"' . json_fields::API_TIME . '":' . json_encode($steps) . ',' . $fields;
+        }
+        return $result;
+    }
+
+    /**
      * set the http response code only if the response headers have not been sent yet
      * during the test run the log writer may already have emitted output (e.g. a test header),
      * which sends the headers, so setting the response code afterwards would raise a php warning
@@ -299,9 +367,10 @@ class controller
      *
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
+     * @param int $err_code the http status of an answer with a message e.g. 401 for a refused request
      * @return void
      */
-    private function get_response(string $api_obj, string $msg): void
+    private function get_response(string $api_obj, string $msg, int $err_code = 400): void
     {
         // required headers
         if (!headers_sent()) {
@@ -309,6 +378,9 @@ class controller
             header("Content-Type: application/json; charset=" . def::ENCODING);
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
+
+        // the answer is collected, so that the time of a slow answer can be added (see with_time)
+        ob_start();
 
         // return the api json or the error message
         if ($msg == '') {
@@ -321,14 +393,15 @@ class controller
 
         } else {
 
-            // set response code - 400 Bad Request
-            $this->set_response_code(400);
+            // set response code e.g. 400 Bad Request
+            $this->set_response_code($err_code);
 
             // tell the user no products found
             echo json_encode(
                 array(json_fields::MSG => $msg)
             );
         }
+        echo $this->with_time(ob_get_clean());
     }
 
     /**
@@ -360,6 +433,8 @@ class controller
         // object before calling this, so here only format the response - never map+save or delete
         // again (the previous re-execution here was a double write / double delete)
         log_debug($method);
+        // the answer is collected, so that the time of a slow answer can be added (see with_time)
+        ob_start();
         switch ($method) {
             case rest_ctrl::PUT:
                 if ($msg == '') {
@@ -455,6 +530,7 @@ class controller
                 }
                 break;
         }
+        echo $this->with_time(ob_get_clean());
     }
 
     /**
@@ -468,8 +544,8 @@ class controller
         $msg_ok = true;
         $body = array();
         if ($api_msg !== null) {
-            // TODO check transfer time
-            // TODO check if version matches
+            // TODO Prio 2 check transfer time
+            // TODO Prio 1 check if version matches
             if ($msg_ok) {
                 if (array_key_exists($body_key, $api_msg)) {
                     $body = $api_msg[$body_key];

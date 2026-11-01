@@ -64,6 +64,7 @@ include_once paths::MODEL_SANDBOX . 'protection_type.php';
 include_once paths::MODEL_SANDBOX . 'share_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
@@ -112,6 +113,7 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -145,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
@@ -191,6 +194,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_lists_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_types
@@ -203,6 +207,13 @@ class test_types
     // use the global test environment
     private test_cleanup $env;
 
+    // the scaling factor and the symbol of the "scaling word percent" phrase type of phrase_types.csv
+    const int SCALING_PCT_SCALE = 100;
+    const string SCALING_PCT_SYMBOL = '%';
+
+    // the action that leads to the "assigned" sys log status of sys_log_statuum.csv
+    const string SYS_LOG_ASSIGNED_ACTION = 'assign to';
+
     function __construct(test_cleanup $env) {
         $this->env = $env;
     }
@@ -211,6 +222,14 @@ class test_types
     /*
      * unit
      */
+
+    /**
+     * @return type_lists_ui a frontend cache without any type list e.g. if the backend has sent no types
+     */
+    function type_lists_empty_ui(): type_lists_ui
+    {
+        return new type_lists_ui();
+    }
 
     /**
      * @return change_action "add" as the main change action for unit testing without logging
@@ -269,6 +288,42 @@ class test_types
     {
         return new sys_log_status(
             sys_log_statuum::OPEN,
+            sys_log_statuum::OPEN_NAME,
+            sys_log_statuum::OPEN_COM,
+            sys_log_statuum::OPEN_ID);
+    }
+
+    /**
+     * @return sys_log_status_list a type list with only the status "open" for unit testing
+     */
+    function sys_log_status_list(): sys_log_status_list
+    {
+        $typ_lst = new sys_log_status_list();
+        $typ_lst->add($this->sys_log_status());
+        return $typ_lst;
+    }
+
+    /**
+     * @return sys_log_status "assigned" with the action that leads to it for unit testing
+     */
+    function sys_log_status_assigned(): sys_log_status
+    {
+        $log_sta = new sys_log_status(
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED_COM,
+            sys_log_statuum::ASSIGNED_ID);
+        $log_sta->action = self::SYS_LOG_ASSIGNED_ACTION;
+        return $log_sta;
+    }
+
+    /**
+     * @return sys_log_status "open" without the code id e.g. to test that a type list refuses it
+     */
+    function sys_log_status_without_code_id(): sys_log_status
+    {
+        return new sys_log_status(
+            null,
             sys_log_statuum::OPEN_NAME,
             sys_log_statuum::OPEN_COM,
             sys_log_statuum::OPEN_ID);
@@ -450,6 +505,20 @@ class test_types
             phrase_types::SCALING,
             phrase_types::SCALING_ID,
             phrase_types::SCALING_NAME);
+    }
+
+    /**
+     * @return phrase_type "scaling word percent" type with a scaling factor and a symbol for unit testing
+     */
+    function phrase_type_scaling_pct(): phrase_type
+    {
+        $phr_typ = new phrase_type(
+            phrase_types::SCALING_PCT,
+            0,
+            phrase_types::SCALING_PCT_NAME);
+        $phr_typ->scale = self::SCALING_PCT_SCALE;
+        $phr_typ->symbol = self::SCALING_PCT_SYMBOL;
+        return $phr_typ;
     }
 
     /**

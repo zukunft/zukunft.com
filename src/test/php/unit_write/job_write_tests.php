@@ -120,7 +120,7 @@ class job_write_tests
         $calc_request->set_user($t->usr1);
         $calc_request->phr_lst = $phr_lst;
         $result = $job_lst->add($calc_request);
-        // TODO review
+        // TODO Prio 2 review
         $target = '';
         if ($result->is_ok()) {
             $target = $result->get_last_message();

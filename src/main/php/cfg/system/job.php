@@ -520,7 +520,7 @@ class job extends db_object_seq_id_user
     }
 
     /**
-     * TODO align the field name with the object
+     * TODO Prio 2 align the field name with the object
      * @return string job_id instead of a job object
      */
     function id_field(): string
@@ -553,7 +553,7 @@ class job extends db_object_seq_id_user
         }
         $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::STATUS] = $this->status_id();
-        // TODO use time zone?
+        // TODO Prio 3 use time zone?
         $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
             $vars[json_fields::TIME_START] = $this->start_time->format(DateTimeInterface::ATOM);

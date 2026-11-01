@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# TODO make sure that before any update in release or prod
-# TODO the test.php script has run without errors on the local server
-# TODO using a temp test database e.g "zukunft_test"
+# TODO Prio 1 make sure that before any update in release or prod
+# TODO Prio 1 the test.php script has run without errors on the local server
+# TODO Prio 1 using a temp test database e.g "zukunft_test"
 
 # stop on the first error, so that a failed update is never reported as done
 set -euo pipefail

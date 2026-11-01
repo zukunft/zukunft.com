@@ -40,7 +40,7 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
-// TODO move phr_ids to shared objects
+// TODO Prio 2 move phr_ids to shared objects
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -125,26 +125,52 @@ class value_list extends ListBase
     const int LIMIT_ALL = 0;
     // the column tiers of a table to show: the number says how many tiers of
     // triples::SYSTEM_COLUMN_TIERS are left out from the bottom, so a higher number is a
-    // narrower table and zero shows every tier, every unit and the ranges; the menu of the
-    // "..." header selects one of them (docs/llm/frontend.md)
+    // narrower table and zero shows every tier, every unit and the variance; the edit menu of
+    // the navbar selects one of them (docs/llm/frontend.md)
     const int COLUMN_TIERS_ALL = 0;
     const int COLUMN_TIERS_EX_MARGINAL = 1;
     const int COLUMN_TIERS_EX_MINOR = 2;
     const int COLUMN_TIERS_EX_MAIN = 3;
-    // the name of each column tier selection for the "..." menu, the narrowest table first
+    // the name of each column tier selection for the edit menu, the narrowest table first
     const array COLUMN_TIER_NAMES = [
         self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR,
         self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN,
         self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR,
         self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL,
     ];
-    // the probability range of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
-    const string RANGE_START = ' (';
-    const string RANGE_SEP = ' – ';
-    const string RANGE_END = ')';
+    // the tooltip of each column tier selection
+    const array COLUMN_TIER_TIPS = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR_TIP,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN_TIP,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR_TIP,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL_TIP,
+    ];
+    // the tooltip of each column tier selection with the variance of each number
+    const array COLUMN_TIER_VARIANCE_TIPS = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR_VARIANCE_TIP,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN_VARIANCE_TIP,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR_VARIANCE_TIP,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL_VARIANCE_TIP,
+    ];
+    // the variance of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
+    const string VARIANCE_START = ' (';
+    const string VARIANCE_SEP = ' – ';
+    const string VARIANCE_END = ')';
     // joins the phrase id and a counter to the id of a further column of the same phrase in
     // another unit, so that the id can never clash with a phrase id
     const string UNIT_COLUMN_SEP = '|';
+
+    // per phrase id true if the phrase is a unit (see is_unit), because a table asks it for each
+    // phrase of each value in several steps, but the phrases of a table are only a few hundred
+    private array $unit_by_id = [];
+
+    // true if the list shows the variance behind each number (see variance_list), so that the
+    // "... and n more" link opens the next version of the list with the variance too
+    public bool $with_variance = false;
+
+    // the column names per column tier selection of the last table or chart created from this
+    // list (see table_model::tier_names), which the page hands to the column menu of the navbar
+    public array $tier_names = [];
 
     /*
      * set and get
@@ -214,7 +240,7 @@ class value_list extends ListBase
 
     /**
      * get the first value of the list that is related to all given phrase names
-     * TODO use a memory db
+     * TODO Prio 3 use a memory db
      * @param array $names list of phrase names
      * @return value|null this first matching value or null if no value is found
      */
@@ -222,7 +248,8 @@ class value_list extends ListBase
     {
         $result = null;
         foreach ($this->lst() as $val) {
-            if ($result == null) {
+            // only a value, because add_results can add results to this list, which return no value here
+            if ($result == null and $val instanceof value) {
                 if ($val->match_all($names)) {
                     $result = $val;
                 }
@@ -245,9 +272,10 @@ class value_list extends ListBase
     function add(value|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
+        // the id index of the list finds a double without scanning the list, and add_direct keeps
+        // it up to date; a value without an id is not yet in the database and therefore never a double
+        if ($to_add->id() == 0 or !$this->has_id($to_add->id())) {
             $this->add_direct($to_add);
-            $this->set_hash_dirty();
             $result = true;
         }
         return $result;
@@ -323,22 +351,16 @@ class value_list extends ListBase
     }
 
     /**
-     * sort this value list in place so that the value with the highest impact is first
-     * the impact of a value is the highest impact of the phrases it is assigned to
+     * sort this value list in place in the preferred order of numbers (see sandbox_value::sorted):
+     * the value with the highest impact first, then within the same unit the bigger number, then
+     * by name; the impact of a value is the highest impact of the phrases it is assigned to
+     *
+     * @param user_message $msg to report a problem of the phrase types that name the unit
      * @return void
      */
-    function sort_by_impact(): void
+    function sort_by_impact(user_message $msg): void
     {
-        $lst = $this->lst();
-        // impact first, then number, then the group name so that values with the same impact and
-        // number keep a deterministic order that does not depend on the value (group) id: a value's
-        // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
-        // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
-        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
-        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $b->impact() <=> $a->impact()
-            ?: $b->number() <=> $a->number()
-                ?: strcmp($a->name() ?? '', $b->name() ?? ''));
-        $this->set_lst($lst);
+        $this->set_lst(sandbox_value::sorted($this->lst(), $msg));
     }
 
 
@@ -348,13 +370,15 @@ class value_list extends ListBase
 
     /**
      * create the html code to show a list of values
-     * TODO use a more general parent function
+     * TODO Prio 2 use a more general parent function
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
      * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
+     * @param bool $with_variance true to show the variance behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code to display the values to the user
      */
     function list(
@@ -363,7 +387,8 @@ class value_list extends ListBase
         array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
-        ?int         $page = null
+        ?int         $page = null,
+        bool         $with_variance = false
     ): string
     {
         $html = new html_base();
@@ -372,20 +397,22 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order is always deterministic
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
+            $val_lst = $this->variance_list($with_variance);
+            $pool = $val_lst->without_shown_bounds();
 
             $i = 0;
-            foreach ($this->lst() as $val) {
+            foreach ($pool as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $result .= $this->value_line($val, $msg, $context_phr_lst, $url_arr);
+                        $result .= $val_lst->value_line($val, $msg, $context_phr_lst, $url_arr);
                     } else {
-                        $diff = $this->count() - $i;
+                        $diff = count($pool) - $i;
                         if ($diff > 0) {
-                            $result .= ' ' . $this->more_tail($diff, $context_phr_lst);
+                            $result .= ' ' . $val_lst->more_tail($diff, $context_phr_lst);
                         }
                     }
                     $i++;
@@ -400,6 +427,7 @@ class value_list extends ListBase
      * value (as an edit link) on the right; the shared line renderer of list() and list_most_relevant()
      *
      * @param value $val the value to render
+     * @param user_message $msg to report a problem of the value display
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and therefore left out of the line
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value line
@@ -412,7 +440,7 @@ class value_list extends ListBase
         // a phrase with a symbol e.g. the factor is not named but shown behind the number as "x",
         // and the symbol link stays outside the value link (see sandbox_value::number_symbols)
         $line = $val->phrase_link_list($msg, $context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr)
-            . $val->number_symbols($msg);
+            . $val->number_symbols($msg) . $this->variance_of($val, $msg, $url_arr);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -429,6 +457,8 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
      * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
+     * @param bool $with_variance true to show the variance behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code to display the grouped values to the user
      */
     function list_most_relevant(
@@ -436,11 +466,13 @@ class value_list extends ListBase
         phrase_list  $context_phr_lst = new phrase_list(),
         array        $url_arr = [],
         string       $style = '',
-        ?int         $limit = null
+        ?int         $limit = null,
+        bool         $with_variance = false
     ): string
     {
         $result = '';
-        if (!$this->is_empty()) {
+        $val_lst = $this->variance_list($with_variance);
+        if (!$val_lst->is_empty()) {
             $html = new html_base();
             // the limit is a page total: however the values are grouped, the page never shows
             // more values than the configured number, so that the user messages below the view
@@ -450,10 +482,10 @@ class value_list extends ListBase
                 $limit = $this->configured_limit($msg);
             }
             // the values still to be placed; each section consumes the values it groups
-            $pool = $this->lst();
-            [$time_html, $pool, $limit] = $this->time_groups($pool, $context_phr_lst, $msg, $url_arr, $limit);
-            [$phrase_html, $pool, $limit] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $url_arr, $limit);
-            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $url_arr, $limit);
+            $pool = $val_lst->without_shown_bounds();
+            [$time_html, $pool, $limit] = $val_lst->time_groups($pool, $context_phr_lst, $msg, $url_arr, $limit);
+            [$phrase_html, $pool, $limit] = $val_lst->relevant_phrase_groups($pool, $msg, $context_phr_lst, $url_arr, $limit);
+            $rest_html = $val_lst->impact_group($pool, $msg, $context_phr_lst, $url_arr, $limit);
             // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
             // list width) is added as a second css class of that container
             $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
@@ -573,28 +605,33 @@ class value_list extends ListBase
      *
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param array $url_arr the url vars of the calling page for the back link
+     * @param bool $with_variance true to show the variance behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code of the value columns or '' if this list is empty
      */
     function columns_by_phrase(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        array        $url_arr = []
+        array        $url_arr = [],
+        bool         $with_variance = false
     ): string
     {
         $result = '';
-        if (!$this->is_empty()) {
+        $val_lst = $this->variance_list($with_variance);
+        if (!$val_lst->is_empty()) {
             $html = new html_base();
+            $pool = $val_lst->without_shown_bounds();
             // a column phrase needs to be used by at least two values, else the column shows one line
-            [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
-                $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+            [$phr_by_id, $val_phr_ids] = $val_lst->phrase_ranking(
+                $pool, $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
             $col_lst = [];
-            $remaining = $this->lst();
+            $remaining = $pool;
             foreach ($phr_by_id as $id => $phr) {
                 // no break in the loop, so the free column count is checked per phrase
                 if (count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
-                    [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+                    [$members, $rest] = $val_lst->split_by_phrase($remaining, $id, $val_phr_ids);
                     if ($members != []) {
-                        $col_lst[] = $this->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
+                        $col_lst[] = $val_lst->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
                         $remaining = $rest;
                     }
                 }
@@ -602,7 +639,7 @@ class value_list extends ListBase
             // the values that share no column phrase fill the last free column,
             // limited like every column to the configured number of values
             if ($remaining != [] and count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
-                $col_lst[] = $this->impact_group(
+                $col_lst[] = $val_lst->impact_group(
                     $remaining, $msg, $context_phr_lst, $url_arr, $this->configured_limit($msg));
             }
             $result = $html->div_row_wrapping_cols($col_lst, $msg);
@@ -641,9 +678,9 @@ class value_list extends ListBase
      *                              the start page; false to show them in a last "Values" column
      * @param int $col_tiers the number of column tiers left out by default,
      *                       self::COLUMN_TIERS_ALL for every column; a simple table shows the
-     *                       tiers above with one unit each and the "..." header whose menu
+     *                       tiers above with one unit each and the edit menu of the navbar
      *                       selects the columns
-     * @param bool $with_range true to show the probability range behind each number by default,
+     * @param bool $with_variance true to show the variance behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
      * @param bool $value_rows_only true to leave out the rows without a number in a shown column,
      *                              so that the table has no empty row e.g. the ranking of the
@@ -661,22 +698,21 @@ class value_list extends ListBase
         array        $url_array = [],
         bool         $col_values_only = false,
         int          $col_tiers = self::COLUMN_TIERS_ALL,
-        bool         $with_range = true,
+        bool         $with_variance = true,
         bool         $value_rows_only = false
     ): string
     {
         $result = '';
-        // the url of the page says whether the ranges are shown, e.g. after the "..." click on a
-        // simple table, and wins over the default of the caller
-        if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
-            $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
-        }
+        // the url of the page says whether the variance is shown, e.g. after a click in the edit
+        // menu, and wins over the default of the caller
+        $with_variance = url_var::show_variance($url_array, $with_variance);
         if (!$this->is_empty()) {
             $html = new html_base();
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
+            $this->tier_names = $model->tier_names;
             $result = $this->table_html($model, $msg, $context_phr_lst, $rel_lst,
-                $url_array, $with_range, $with_border);
+                $url_array, $with_variance, $with_border);
             if ($with_header) {
                 $result = $this->table_header($model, $context_phr_lst) . $result;
             }
@@ -705,6 +741,7 @@ class value_list extends ListBase
         if (!$this->is_empty()) {
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
+            $this->tier_names = $model->tier_names;
             $result = $this->table_header($model, $context_phr_lst);
         }
         return $result;
@@ -774,23 +811,72 @@ class value_list extends ListBase
     ): string
     {
         $result = '';
+        $model = $this->chart_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+            $url_array, $col_values_only, $value_rows_only);
+        if ($model != null) {
+            $result = self::model_to_svg($model, $type, $msg, $context_phr_lst, $chart_cols);
+        }
+        return $result;
+    }
+
+    /**
+     * the table model of the charts of table_to_svg, which is the same for every chart of the table,
+     * so that the charts of one table can share it instead of each creating it again
+     * (the parameters are the ones of table_to_svg)
+     *
+     * @return table_model|null the rows and columns of the table for every chart or null if the table has nothing to plot
+     */
+    function chart_model(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $col_order = [],
+        ?phrase_list $rel_lst = null,
+        ?int         $limit = null,
+        array        $url_array = [],
+        bool         $col_values_only = false,
+        bool         $value_rows_only = false
+    ): ?table_model
+    {
+        $result = null;
         if (!$this->is_empty()) {
             // the tooltip of a row names every column of the table, so no tier is left out, not
             // even by the column selection of the page that shows the table beside the chart
             unset($url_array[url_var::DISPLAY_LIST_COLUMNS]);
-            $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+            $result = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
-            $chart = new table_chart();
-            $result = $chart->svg($model, $type, $msg, $context_phr_lst, $chart_cols);
+            $this->tier_names = $result->tier_names;
         }
         return $result;
+    }
+
+    /**
+     * draw one chart of a table model created by chart_model; the model is only read,
+     * so the same model can be drawn as several charts
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param chart_types $type how the rows are drawn
+     * @param user_message $msg to report a chart column that the table does not have
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. "global problem", which name the chart
+     * @param array $chart_cols the names of the value columns to plot, the y axis first (see table_to_svg)
+     * @return string the svg code of the chart or '' if the table has nothing to plot
+     */
+    static function model_to_svg(
+        table_model  $model,
+        chart_types  $type,
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $chart_cols = []
+    ): string
+    {
+        $chart = new table_chart();
+        return $chart->svg($model, $type, $msg, $context_phr_lst, $chart_cols);
     }
 
     /**
      * the rows and columns of the table of table_by_related_columns before they are rendered,
      * shared by the html table and the svg chart (the parameters are the ones of the table)
      *
-     * @return table_model the rows, columns, units and ranges of the table
+     * @return table_model the rows, columns, units and variance of the table
      */
     private function table_model(
         user_message $msg,
@@ -804,6 +890,9 @@ class value_list extends ListBase
         bool         $value_rows_only
     ): table_model
     {
+        // the table asks for the children of the same phrases many times and does not change
+        // the related phrases, so they are linked once for the whole build
+        $rel_lst = $rel_lst?->with_link_index();
         // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
         // so it is no column of the values and a column of it with another phrase, e.g. "potential
         // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
@@ -830,7 +919,7 @@ class value_list extends ListBase
      * @param bool $col_values_only true to leave out the values that fit no column
      * @param int $col_tiers the number of column tiers left out from the bottom
      * @param bool $value_rows_only true to drop a row without a number in a shown column
-     * @return table_model the rows, columns, units and ranges of the table
+     * @return table_model the rows, columns, units and variance of the table
      */
     private function table_model_of_columns(
         user_message $msg,
@@ -846,13 +935,13 @@ class value_list extends ListBase
     ): table_model
     {
         $model = new table_model();
-        // the url of the page names the column tiers, e.g. after the "..." click on a simple
-        // table, and wins over the default of the caller
+        // the url of the page names the column tiers, e.g. after a click in the edit menu,
+        // and wins over the default of the caller
         if (array_key_exists(url_var::DISPLAY_LIST_COLUMNS, $url_array)) {
             $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
         }
         // the row order follows the impact, so it never depends on the api/db row order
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
         // a phrase that every value carries describes the whole table, so the header names
         // it once and no row repeats it
         $tbl_phr = $this->phrases_of_every_value(
@@ -889,9 +978,17 @@ class value_list extends ListBase
         // order, e.g. the "solution" column between the "loss" and the "gain" column
         $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
         // a simple table shows the first tiers only, and the table of the mayor tier alone
-        // one unit per column; the columns left out are still reachable via the menu of
-        // the "..." header
-        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells, $msg);
+        // one unit per column; the columns left out are still reachable via the edit menu of
+        // the navbar
+        // the unit describes the number of a whole column, so its own header names it and a
+        // column can be defined per unit
+        $col_unit = $this->column_units($col_phr, $val_col, $msg);
+        // the tooltip of each entry of the column menu names the columns of its selection
+        foreach (array_keys(self::COLUMN_TIER_NAMES) as $tiers) {
+            $tier_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $col_unit, $rel_lst, $tiers, $cells, $msg);
+            $model->tier_names[$tiers] = $this->column_head_names($tier_ids, $col_phr, $phr_col, $tbl_phr);
+        }
+        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $col_unit, $rel_lst, $col_tiers, $cells, $msg);
         // a row whose numbers are all in columns that this table does not show says nothing
         // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
         // so such a row is dropped before the cut and uses up none of the shown rows
@@ -913,8 +1010,7 @@ class value_list extends ListBase
         foreach ($col_phr as $col_id => $phr) {
             $model->col_head[$col_id] = $this->column_head($phr, $tbl_phr);
         }
-        // the unit describes the number of a whole column, so its own header names it
-        $model->col_unit = $this->column_units($col_phr, $val_col, $msg);
+        $model->col_unit = $col_unit;
         // the names are set before the orders, because a defined order names its column
         $model->col_names = $this->column_names_of($col_phr, $model->col_head, $col_parts, $all_by_id);
         // a page must not fill the screen, because the user messages are shown below the
@@ -1016,7 +1112,7 @@ class value_list extends ListBase
                     $members, $rest, array_diff($rel_lst?->child_names($phr) ?? [], $col_order));
                 // a column shows one measure, so a phrase with values in several units gets
                 // one column per unit, the unit of the most relevant value first
-                foreach ($this->split_by_unit($members, $msg) as $unit_members) {
+                foreach ($this->split_by_unit($members, $phr->name(), $rel_lst, $msg) as $unit_members) {
                     $col_id = $this->unit_column_id($id, $col_phr);
                     $col_phr[$col_id] = $phr;
                     $col_parts[$col_id] = $parts;
@@ -1118,7 +1214,7 @@ class value_list extends ListBase
             // the cell, e.g. the gain of the solution for the whole problem beside the gain for
             // the reason shown, is left out, so that a cell never shows two numbers of one thing;
             // two values with the same row, column and phrases are shown in the same cell instead
-            // of the second one replacing the first, because a range bound is shown behind its centre;
+            // of the second one replacing the first, because a variance bound is shown behind its centre;
             // a confidence value often names less than the value it qualifies, e.g. no solution,
             // so it stays in the cell to be the tooltip of that value (see qualifies)
             $other_phrase = $this->names_other_phrase($phr_cell, $phr_cells[$row_key] ?? []);
@@ -1211,7 +1307,7 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param array $url_array the url parameters of the page that shows the table
-     * @param bool $with_range true to show the probability range behind each number
+     * @param bool $with_variance true to show the variance behind each number
      * @param bool $with_border false for the borderless table
      * @return string the html code of the table
      */
@@ -1221,7 +1317,7 @@ class value_list extends ListBase
         phrase_list  $context_phr_lst,
         ?phrase_list $rel_lst,
         array        $url_array,
-        bool         $with_range,
+        bool         $with_variance,
         bool         $with_border
     ): string
     {
@@ -1249,7 +1345,8 @@ class value_list extends ListBase
             $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
             // a phrase column names a phrase of the row, so it has no unit
             $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
-            $col_style[$col_id] = $this->column_style($this->column_tier($col_id, $phr->name(), $rel_lst));
+            $tier = $this->column_tier($col_id, $phr->name(), $rel_lst, $unit_lst->names());
+            $col_style[$col_id] = $this->column_style($tier);
             $head_phr = $this->column_head($phr, $model->tbl_phr);
             $col_head = $this->column_header($head_phr, $unit_lst);
             // a further column of the same phrase in another unit has no icons, because the
@@ -1262,9 +1359,7 @@ class value_list extends ListBase
         if ($rest_col) {
             $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
         }
-        // every table ends with the "..." header that opens the column menu, also the full
-        // table, so that the reader can narrow the columns again from every version
-        $header .= $html->th($this->columns_menu($url_array));
+        // the column menu is part of the edit menu of the navbar (columns_menu_items)
         $rows = $html->tr($header);
         foreach ($model->shown_keys as $row_key) {
             $row = $html->td($model->row_label[$row_key]);
@@ -1272,16 +1367,14 @@ class value_list extends ListBase
                 // a phrase column names a phrase of the row, a value column its values
                 if (array_key_exists($col_id, $model->col_phr)) {
                     $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
-                        $msg, $url_array, $col_style[$col_id], $with_range);
+                        $msg, $url_array, $col_style[$col_id], $with_variance);
                 } else {
                     $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array, $rel_lst), $col_style[$col_id]);
                 }
             }
             if ($rest_col) {
-                $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
+                $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_variance);
             }
-            // the cell below the "..." header, which the menu of that header covers
-            $row .= $html->td('');
             $rows .= $html->tr($row);
         }
         if ($model->rows_behind > 0) {
@@ -1290,8 +1383,6 @@ class value_list extends ListBase
             if ($rest_col) {
                 $pad_styles[] = '';
             }
-            // the column of the "..." header
-            $pad_styles[] = '';
             $more_url = $this->more_url($url_array, $model->row_limit, $msg);
             $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
         }
@@ -1378,8 +1469,22 @@ class value_list extends ListBase
      */
     private function is_unit(phrase $phr, user_message $msg): bool
     {
-        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
-            or $phr->is_factor($msg) or $phr->is_measure_non_unit($msg));
+        // a phrase without an id is not yet in the database, so it cannot be told apart by its id
+        $id = $phr->id();
+        if ($id != 0 and array_key_exists($id, $this->unit_by_id)) {
+            $result = $this->unit_by_id[$id];
+        } else {
+            $result = (
+                $phr->is_scaling($msg)
+                or $phr->is_measure($msg)
+                or $phr->is_percent($msg)
+                or $phr->is_factor($msg)
+                or $phr->is_measure_non_unit($msg));
+            if ($id != 0) {
+                $this->unit_by_id[$id] = $result;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1390,7 +1495,7 @@ class value_list extends ListBase
      * of solution_prio.json names the unit in the column header instead
      *
      * a marker like "low", "high" or "assumed" says how a number is stated and not what it is
-     * about, so it names no row either; a range bound is shown behind its centre value (see
+     * about, so it names no row either; a variance bound is shown behind its centre value (see
      * cell) and the estimate qualifier as the tooltip of the cell
      *
      * a phrase that every value carries describes the whole table, so the header names it once
@@ -1476,16 +1581,16 @@ class value_list extends ListBase
         $val_lst = $this->lst();
         $first = array_shift($val_lst);
         if ($first != null) {
-            foreach ($this->triple_parts($first, $shared)->lst() as $part) {
-                $is_shared = true;
-                foreach ($val_lst as $val) {
-                    if (!$this->triple_parts($val, $shared)->has_id($part->id())) {
-                        $is_shared = false;
-                    }
+            // the parts of the first value that the values so far all carry; a value can only
+            // remove a part, so the values after the last part are not split anymore
+            $parts = $this->triple_parts($first, $shared);
+            foreach ($val_lst as $val) {
+                if ($parts != []) {
+                    $parts = array_intersect_key($parts, $this->triple_parts($val, $shared));
                 }
-                if ($is_shared) {
-                    $result->add_phrase($part);
-                }
+            }
+            foreach ($parts as $part) {
+                $result->add_phrase($part);
             }
         }
         return $result;
@@ -1494,17 +1599,17 @@ class value_list extends ListBase
     /**
      * @param sandbox_value $val the value or result whose triples are split into their parts
      * @param phrase_list $shared the triples that every value carries and that are therefore not split
-     * @return phrase_list the from and to phrases of the other triples of the value
+     * @return array the from and to phrases of the other triples of the value keyed by phrase id
      */
-    private function triple_parts(sandbox_value $val, phrase_list $shared): phrase_list
+    private function triple_parts(sandbox_value $val, phrase_list $shared): array
     {
-        $result = new phrase_list();
+        $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
             if ($phr->is_triple() and !$shared->has_id($phr->id())) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     // a triple sent with its name only has empty parts, which name nothing
-                    if ($this->is_known($part) and !$result->has_id($part->id())) {
-                        $result->add_phrase($part);
+                    if ($this->is_known($part) and !array_key_exists($part->id(), $result)) {
+                        $result[$part->id()] = $part;
                     }
                 }
             }
@@ -1580,6 +1685,26 @@ class value_list extends ListBase
     }
 
     /**
+     * the names shown in the headers of the given columns, each name once, because a further
+     * unit column of a phrase has the same header name as its first unit column
+     *
+     * @param array $col_ids the ids of the columns in the order they are shown
+     * @param array $col_phr the value column phrases by column id
+     * @param array $phr_col the phrase column phrases by column id
+     * @param phrase_list $tbl_phr the phrases that the table header names for every value
+     * @return array the header names e.g. "loss" and "gain"
+     */
+    private function column_head_names(array $col_ids, array $col_phr, array $phr_col, phrase_list $tbl_phr): array
+    {
+        $names = [];
+        foreach ($col_ids as $col_id) {
+            $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
+            $names[] = $this->column_head($phr, $tbl_phr)->name();
+        }
+        return array_values(array_unique($names));
+    }
+
+    /**
      * the phrase that heads the column of the given phrase
      *
      * a triple whose part the table header names already is headed by its other part, e.g. the
@@ -1647,7 +1772,7 @@ class value_list extends ListBase
      *
      * @param phrase $phr the phrase to check
      * @param user_message $msg to report a missing phrase type list
-     * @return bool true for a range bound tag, the confidence or a value quality, which is shown
+     * @return bool true for a variance bound tag, the confidence or a value quality, which is shown
      *              as a mark behind the number (see sandbox_value::quality_mark)
      */
     private function is_marker(phrase $phr, user_message $msg): bool
@@ -1658,8 +1783,8 @@ class value_list extends ListBase
     /**
      * one table cell with the values of one row and column
      *
-     * a value tagged with a range word is a bound of the probability range of the value with the
-     * same phrases, so it is shown behind that centre value as "centre (low – high)" instead of
+     * a value tagged with a variance bound e.g. "variance low (system)" is a bound of the value
+     * with the same other phrases, so it is shown behind that centre value as "centre (low – high)" instead of
      * as a value of its own (see the view-validation of solution_prio.json); a bound without a
      * centre is shown like a value, so that nothing is lost; the estimate qualifier of a value
      * is the tooltip of the cell, because the table is about the numbers and not about how they
@@ -1680,29 +1805,23 @@ class value_list extends ListBase
         user_message $msg,
         array        $url_arr,
         string       $style,
-        bool         $with_range = true
+        bool         $with_variance = true
     ): string
     {
         $html = new html_base();
         [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
-        // a simple table shows the numbers only, so the bounds of the range are left out here
-        // and shown by the full table that the "..." header links to
-        if (!$with_range) {
+        // a simple table shows the numbers only, so the variance bounds are left out here
+        // and shown by the full table that the edit menu of the navbar links to
+        if (!$with_variance) {
             $bound = [];
         }
         $txt_lst = [];
         $conf_used = [];
         foreach ($centre_lst as $val) {
             $txt = $val->value_edit($msg, $url_arr);
-            $key = $this->range_key($val);
+            $key = $this->variance_key($val);
             if (array_key_exists($key, $bound)) {
-                // a range normally has both bounds, but a missing one leaves its place empty
-                $low = $bound[$key][words::LOW] ?? null;
-                $high = $bound[$key][words::HIGH] ?? null;
-                // a bound has the quality of its centre value, which shows the mark once
-                $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
-                $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
-                $txt .= self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
+                $txt .= $this->variance_html($bound[$key], $msg, $url_arr);
                 unset($bound[$key]);
             }
             foreach ($conf_lst as $conf_key => $conf_val) {
@@ -1730,12 +1849,32 @@ class value_list extends ListBase
     }
 
     /**
-     * sort the values of a cell into the centre values, the range bounds, the confidence values
+     * the variance shown behind a centre value e.g. " (-1.25% – -0.87%)", the shared format of the
+     * table cells and the grouped value lists
+     *
+     * @param array $bound the bounds of one centre value keyed by the variance bound triple name
+     * @param user_message $msg to report a problem of the value display
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html of the variance in brackets
+     */
+    private function variance_html(array $bound, user_message $msg, array $url_arr): string
+    {
+        // a variance normally has both bounds, but a missing one leaves its place empty
+        $low = $bound[triples::SYSTEM_VARIANCE_LOW] ?? null;
+        $high = $bound[triples::SYSTEM_VARIANCE_HIGH] ?? null;
+        // a bound has the quality of its centre value, which shows the mark once
+        $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
+        $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
+        return self::VARIANCE_START . $low_txt . self::VARIANCE_SEP . $high_txt . self::VARIANCE_END;
+    }
+
+    /**
+     * sort the values of a cell into the centre values, the variance bounds, the confidence values
      * and the qualifiers shown as the tooltip of the cell
      *
      * @param array $val_lst the values of the cell
      * @param user_message $msg to report a problem of reading a phrase type
-     * @return array [the centre values, the bounds keyed by range key and range word,
+     * @return array [the centre values, the bounds keyed by variance key and variance bound,
      *                the confidence values, the qualifier names]
      */
     private function sort_cell_values(array $val_lst, user_message $msg): array
@@ -1745,13 +1884,13 @@ class value_list extends ListBase
         $conf_lst = [];
         $qualifier_lst = [];
         foreach ($val_lst as $val) {
-            $range_word = $this->range_word($val);
+            $var_bound = $this->variance_bound($val);
             if ($this->is_confidence($val)) {
                 $conf_lst[] = $val;
-            } elseif ($range_word == '') {
+            } elseif ($var_bound == '') {
                 $centre_lst[] = $val;
             } else {
-                $bound[$this->range_key($val)][$range_word] = $val;
+                $bound[$this->variance_key($val)][$var_bound] = $val;
             }
             foreach ($val->grp->phr_lst()->lst() as $phr) {
                 $is_new = !in_array($phr->name(), $qualifier_lst);
@@ -1826,7 +1965,7 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to key
-     * @return string the names of the unit phrases of the value, encoded like the range key, so
+     * @return string the names of the unit phrases of the value, encoded like the variance key, so
      *                that the values of one measure share the key e.g. "trillion EUR"
      */
     private function unit_key(sandbox_value $val, user_message $msg): string
@@ -1844,19 +1983,23 @@ class value_list extends ListBase
     /**
      * split the values of one column phrase into the values of each unit, e.g. the potential
      * loss in trillion EUR and the potential loss in percent htp, because a column shows one
-     * measure; the unit with the most values leads, because the table with the mayor tier only
-     * shows the leading unit (see columns_of_tiers), e.g. the potential loss in trillion EUR of
-     * every problem and not the one potential loss in htp of a single problem, which has the
-     * bigger number; units with the same number of values keep the order of the impact
+     * measure; the table with the mayor tier only shows the leading unit (see columns_of_tiers),
+     * so the unit that a column definition puts in the higher tier leads, e.g. the potential
+     * gain in EUR before the gain in htp; among units of the same tier the unit with the most
+     * values leads, e.g. the potential loss in trillion EUR of every problem and not the one
+     * potential loss in htp of a single problem, which has the bigger number; units with the
+     * same tier and number of values keep the order of the impact
      *
      * a confidence value is a share whatever the unit of the value it qualifies, so it follows
      * the value with the same subject instead of its own unit (see cell)
      *
      * @param array $members the values of the column phrase in the order of the impact
+     * @param string $name the name of the column phrase e.g. "potential gain"
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the column definitions
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array per unit the values of that unit, the leading unit first
      */
-    private function split_by_unit(array $members, user_message $msg): array
+    private function split_by_unit(array $members, string $name, ?phrase_list $rel_lst, user_message $msg): array
     {
         $result = [];
         $conf_lst = [];
@@ -1867,10 +2010,25 @@ class value_list extends ListBase
                 $result[$this->unit_key($val, $msg)][] = $val;
             }
         }
-        // a stable sort, so units with the same number of values keep the impact order
-        uasort($result, fn(array $a, array $b) => count($b) <=> count($a));
+        $level = [];
+        foreach (array_keys($result) as $unit_key) {
+            $level[$unit_key] = $this->tier_level($rel_lst?->column_tier($name, json_decode($unit_key)) ?? '');
+        }
+        // the higher tier first and then the most values; a stable sort, so units with the same
+        // tier and number of values keep the impact order
+        $lead_first = fn(string $a, string $b) => [$level[$a], count($result[$b])] <=> [$level[$b], count($result[$a])];
+        uksort($result, $lead_first);
+        // the subject names of each value are created once and not again for each confidence value
+        $subjects = [];
+        if ($conf_lst != []) {
+            foreach ($result as $unit_members) {
+                foreach ($unit_members as $val) {
+                    $subjects[spl_object_id($val)] = $this->subject_names($val, $msg);
+                }
+            }
+        }
         foreach ($conf_lst as $conf_val) {
-            $found = $this->unit_of_qualified($result, $conf_val, $msg);
+            $found = $this->unit_of_qualified($result, $conf_val, $subjects, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where
             // it is shown like a value instead of a tooltip (see cell), so that it is not lost
             if ($found == '') {
@@ -1886,21 +2044,43 @@ class value_list extends ListBase
      *
      * @param array $unit_lst per unit the values of that unit collected so far
      * @param sandbox_value $conf_val the confidence value to place
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
      * @param user_message $msg to report a problem of reading a phrase type
      * @return string the unit key of the qualified values or an empty string if none is qualified
      */
-    private function unit_of_qualified(array $unit_lst, sandbox_value $conf_val, user_message $msg): string
+    private function unit_of_qualified(
+        array         $unit_lst,
+        sandbox_value $conf_val,
+        array         $subjects,
+        user_message  $msg
+    ): string
     {
         $result = '';
+        // the qualified value names all subject phrases of the confidence value (see qualifies)
+        $conf_names = $this->subject_names($conf_val, $msg);
         // the first unit with a qualified value wins, so the confidence follows the leading unit
         foreach ($unit_lst as $unit_key => $unit_members) {
             foreach ($unit_members as $val) {
-                if ($result == '' and $this->qualifies($conf_val, $val, $msg)) {
+                if ($result == '' and $this->subject_qualifies($conf_names, $val, $subjects)) {
                     $result = $unit_key;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the given value carries all subject phrases of a confidence value, like qualifies
+     * but with the subject names created upfront
+     *
+     * @param array $conf_names the subject names of the confidence value
+     * @param sandbox_value $val the value that the confidence value may qualify
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
+     * @return bool true if the value carries all subject phrases of the confidence value
+     */
+    private function subject_qualifies(array $conf_names, sandbox_value $val, array $subjects): bool
+    {
+        return array_diff($conf_names, $subjects[spl_object_id($val)]) == [];
     }
 
     /**
@@ -1924,13 +2104,13 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to check
-     * @return string the range word of the value e.g. "low", or an empty string for a centre value
+     * @return string the variance bound of the value e.g. "variance low (system)", or an empty string for a centre value
      */
-    private function range_word(sandbox_value $val): string
+    private function variance_bound(sandbox_value $val): string
     {
         $result = '';
         foreach ($val->grp->phr_lst()->lst() as $phr) {
-            if (in_array($phr->name(), words::RANGE_WORDS)) {
+            if (in_array($phr->name(), triples::VARIANCE_BOUNDS)) {
                 $result = $phr->name();
             }
         }
@@ -1939,13 +2119,13 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to key
-     * @return string the phrase names of the value without the range word, which a centre value
+     * @return string the phrase names of the value without the variance bound, which a centre value
      *                shares with its bounds; encoded, so that a comma in a name cannot join two
      *                different phrase sets to the same key
      */
-    private function range_key(sandbox_value $val): string
+    private function variance_key(sandbox_value $val): string
     {
-        $names = array_diff($val->grp->phr_lst()->names(), words::RANGE_WORDS);
+        $names = array_diff($val->grp->phr_lst()->names(), triples::VARIANCE_BOUNDS);
         sort($names);
         return json_encode(array_values($names));
     }
@@ -1988,8 +2168,9 @@ class value_list extends ListBase
     private function without_row_column(array $col_order, ?phrase $row_col, ?phrase_list $rel_lst): array
     {
         $result = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $parts = [$name];
             if ($phr != null and $phr->is_triple()) {
                 $parts[] = $phr->obj()->get_from()?->name();
@@ -2021,8 +2202,9 @@ class value_list extends ListBase
         // a linked phrase that is a defined column itself names a column and not a row phrase, e.g.
         // "potential gain" of the chart triple "potential gain and potential loss"
         $col_children = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $children = ($phr == null) ? [] : array_diff($rel_lst->child_names($phr), $col_order);
             if ($children != []) {
                 $col_children[] = $children;
@@ -2072,8 +2254,9 @@ class value_list extends ListBase
         foreach ($col_phr as $val_col_phr) {
             $head_ids[] = $this->column_head($val_col_phr, $tbl_phr)->id();
         }
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
             if ($phr != null and !array_key_exists($phr->id(), $col_phr)
@@ -2172,6 +2355,7 @@ class value_list extends ListBase
     {
         $by_parts = [];
         $by_phrase = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         // the defined columns first, in the order of the definition
         foreach ($col_order as $name) {
             $found = false;
@@ -2185,7 +2369,7 @@ class value_list extends ListBase
             // its two parts (see column_parts); it takes its values before the column of one of
             // the parts, because it names more of the phrases of a value, so it comes first
             if (!$found) {
-                $col_phr = $rel_lst?->column_phrase($name);
+                $col_phr = $col_phr_lst[$name] ?? null;
                 if ($col_phr != null and count($this->column_parts($col_phr, $all)) > 1) {
                     $by_parts[$col_phr->id()] = $col_phr;
                 }
@@ -2242,8 +2426,9 @@ class value_list extends ListBase
     private function column_names_with_parts(array $col_order, ?phrase_list $rel_lst): array
     {
         $result = $col_order;
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             if ($phr != null and $phr->is_triple() and !$this->is_carried($phr)) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     if ($part != null and !in_array($part->name(), $result)) {
@@ -2402,7 +2587,7 @@ class value_list extends ListBase
         if (count($pool) > 0) {
             $val_lst = new value_list();
             $val_lst->set_lst($pool);
-            $val_lst->sort_by_impact();
+            $val_lst->sort_by_impact($msg);
             // the remaining page budget after the grouped sections; the pool holds the ungrouped
             // values and the values of the skipped groups, so the more tail of this last section
             // covers everything the page does not show
@@ -2452,7 +2637,7 @@ class value_list extends ListBase
         // bucketed in pool order by time_groups / relevant_phrase_groups, which is not stable
         $val_lst = new value_list();
         $val_lst->set_lst($members);
-        $val_lst->sort_by_impact();
+        $val_lst->sort_by_impact($msg);
         // show at most the configured number of values per group and offer the rest behind the
         // "... and n more" tail, so that a phrase with many values cannot fill the whole screen
         // and the messages below the view stay visible (see docs/llm/frontend.md)
@@ -2478,6 +2663,7 @@ class value_list extends ListBase
      * the number on the right; the shared item renderer of group_block and impact_group
      *
      * @param sandbox_value $val the value or result to render
+     * @param user_message $msg to report a problem of the value display
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value list item
@@ -2486,8 +2672,93 @@ class value_list extends ListBase
     {
         $html = new html_base();
         $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);
-        $num = $html->span($val->value_edit($msg, $url_arr) . $val->number_symbols($msg), styles::VALUE_NUM);
+        $num_txt = $val->value_edit($msg, $url_arr) . $val->number_symbols($msg)
+            . $this->variance_of($val, $msg, $url_arr);
+        $num = $html->span($num_txt, styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
+        return $result;
+    }
+
+    /**
+     * @param bool $with_variance true if the variance bounds are shown behind their centre value
+     * @return value_list a copy of this list that knows whether the variance is shown, with the
+     *                    variance bounds only if they are
+     */
+    private function variance_list(bool $with_variance): value_list
+    {
+        $shown_lst = [];
+        foreach ($this->lst() as $val) {
+            if ($with_variance or $this->variance_bound($val) == '') {
+                $shown_lst[] = $val;
+            }
+        }
+        $result = new value_list();
+        $result->set_lst($shown_lst);
+        $result->with_variance = $with_variance;
+        return $result;
+    }
+
+    /**
+     * the values that a grouped list shows as an item of their own: a bound that has its centre
+     * value in this list is shown behind that centre (see variance_of), a bound without a centre is
+     * shown like a value, so that nothing is lost
+     *
+     * @return array the values and results of this list without the bounds shown behind a centre
+     */
+    private function without_shown_bounds(): array
+    {
+        $centre_keys = [];
+        foreach ($this->lst() as $val) {
+            if ($this->variance_bound($val) == '') {
+                $centre_keys[] = $this->variance_key($val);
+            }
+        }
+        $result = [];
+        foreach ($this->lst() as $val) {
+            if (!$this->is_shown_bound($val, $centre_keys)) {
+                $result[] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result to check
+     * @param array $centre_keys the variance keys of the centre values of this list
+     * @return bool true if the value is a variance bound whose centre value is in this list
+     */
+    private function is_shown_bound(sandbox_value $val, array $centre_keys): bool
+    {
+        $is_bound = ($this->variance_bound($val) != '');
+        return ($is_bound and in_array($this->variance_key($val), $centre_keys));
+    }
+
+    /**
+     * the variance of a centre value in the format of the start page e.g. " (-1.25% – -0.87%)"
+     *
+     * @param sandbox_value $val the centre value or result whose bounds are looked up in this list
+     * @param user_message $msg to report a problem of the value display
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html of the variance or '' if this list has no bound of the value
+     */
+    private function variance_of(sandbox_value $val, user_message $msg, array $url_arr): string
+    {
+        // a bound without a centre is shown like a value and never gets the variance of its sibling
+        if ($this->variance_bound($val) != '') {
+            return '';
+        }
+        $key = $this->variance_key($val);
+        $bound = [];
+        foreach ($this->lst() as $bnd) {
+            $var_bound = $this->variance_bound($bnd);
+            if ($var_bound != '' and $this->variance_key($bnd) == $key) {
+                $bound[$var_bound] = $bnd;
+            }
+        }
+        $result = '';
+        if ($bound != []) {
+            $result = $this->variance_html($bound, $msg, $url_arr);
+        }
         return $result;
     }
 
@@ -2521,12 +2792,13 @@ class value_list extends ListBase
 
     /**
      * the columns of the first tiers, at most the configured number of columns: the other
-     * columns are left to the full table, which the "..."
-     * header links to (docs/llm/frontend.md)
+     * columns are left to the full table, which the edit menu
+     * of the navbar links to (docs/llm/frontend.md)
      *
      * @param array $col_ids the ids of every column in the order they are shown
      * @param array $col_phr the value column phrases by column id
      * @param array $phr_col the phrase column phrases by column id
+     * @param array $col_unit per value column id the unit phrases of the column, which can have a tier of their own
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @param array $cells per row and column the values, to check if a further unit column is complete
@@ -2537,6 +2809,7 @@ class value_list extends ListBase
         array        $col_ids,
         array        $col_phr,
         array        $phr_col,
+        array        $col_unit,
         ?phrase_list $rel_lst,
         int          $col_tiers,
         array        $cells,
@@ -2553,7 +2826,9 @@ class value_list extends ListBase
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
                 $unit_shown = ($is_first_unit or $this->unit_column_complete((string)$col_id, $cells));
-                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst));
+                // a phrase column names a phrase of the row, so it has no unit
+                $unit_names = isset($col_unit[$col_id]) ? $col_unit[$col_id]->names() : [];
+                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst, $unit_names));
                 if ($unit_shown and $level <= $last_tier) {
                     $level_of_shown[$col_id] = $level;
                 }
@@ -2618,11 +2893,12 @@ class value_list extends ListBase
      * @param int|string $col_id the id of the column, which names a further unit e.g. "125|1"
      * @param string $name the name of the column phrase e.g. "loss"
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param array $unit_names the names of the unit phrases of the column e.g. "trillion" and "EUR"
      * @return string the tier name e.g. "minor column (system)" or '' if the column is not defined
      */
-    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst): string
+    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst, array $unit_names): string
     {
-        $result = $rel_lst?->column_tier($name) ?? '';
+        $result = $rel_lst?->column_tier($name, $unit_names) ?? '';
         if (str_contains((string)$col_id, self::UNIT_COLUMN_SEP)
             and $this->tier_level($result) < $this->tier_level(triples::SYSTEM_COLUMN_MINOR)) {
             $result = triples::SYSTEM_COLUMN_MINOR;
@@ -2645,35 +2921,36 @@ class value_list extends ListBase
     }
 
     /**
-     * the "..." header of a table that opens the menu to select the columns shown: one entry
-     * per column tier and each of them once with and once without the probability range, so
-     * that the reader reaches every version of the table from every version
-     * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
+     * the entries of the edit menu of the navbar to select the columns and the form of the value
+     * tables of the page: one entry per column tier and each of them once with and once without
+     * the variance, so that the reader reaches every version of the table from every version
+     * (docs/llm/frontend.md "... more is always a link"); empty if the page is not known
      *
      * @param array $url_array the url parameters of the page that shows the table
-     * @return string the html code of the header cell
+     * @param array $tier_names per column tier selection the column names of the tables of the
+     *                          page (table_model::tier_names), which the tooltips name
+     * @return string the html list items of the menu entries
      */
-    function columns_menu(array $url_array): string
+    function columns_menu_items(array $url_array, array $tier_names = []): string
     {
         $html = new html_base();
-        $result = msg_id::THREE_POINTS->text();
+        $result = '';
         if ($url_array != []) {
             // the columns and the form of the table are two selections of the same menu, each
             // below its own sub header
-            $items = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
+            $result = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
             foreach (self::COLUMN_TIER_NAMES as $tiers => $tier_msg) {
-                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
-                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
+                $names = $tier_names[$tiers] ?? [];
+                $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false, $names);
+                $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true, $names);
             }
             // the form shown is not offered again, so the menu names only the ways to change
-            $items .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
+            $result .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
             foreach (table_forms::cases() as $form) {
                 if ($form != table_forms::by_url($url_array)) {
-                    $items .= $this->form_menu_item($url_array, $form);
+                    $result .= $this->form_menu_item($url_array, $form);
                 }
             }
-            $result = $html->popup_menu(
-                $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
     }
@@ -2749,7 +3026,7 @@ class value_list extends ListBase
         unset($url_pars[url_var::DISPLAY_LIST_AS]);
         $url_pars[url_var::DISPLAY_LIST_AS] = $form->value;
         $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
-        return $html->list_item($html->ref($url, $form->msg_id()->text()));
+        return $html->list_item($html->ref($url, $form->msg_id()->text(), $form->tip_msg_id()->text()));
     }
 
     /**
@@ -2758,29 +3035,37 @@ class value_list extends ListBase
      * @param array $url_array the url parameters of the page that shows the table
      * @param int $tiers the column tiers of this entry e.g. self::COLUMN_TIERS_ALL
      * @param msg_id $tier_msg the name of the column tiers e.g. "all columns"
-     * @param bool $with_range true for the entry that shows the range behind each number
+     * @param bool $with_variance true for the entry that shows the variance behind each number
+     * @param array $names the names of the columns that the entry shows, which the tooltip names
      * @return string the html code of the menu entry
      */
     private function columns_menu_item(
         array  $url_array,
         int    $tiers,
         msg_id $tier_msg,
-        bool   $with_range
+        bool   $with_variance,
+        array  $names = []
     ): string
     {
         $html = new html_base();
         $url_pars = html_base::page_url_array($url_array);
         // the two vars are removed first, so that a page that already selects columns creates
         // the same url as a page that does not, which keeps one cached page per selection
-        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_RANGE]);
+        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_VARIANCE]);
         $url_pars[url_var::DISPLAY_LIST_COLUMNS] = $tiers;
-        $url_pars[url_var::DISPLAY_LIST_RANGE] = $with_range ? url_var::TRUE : url_var::FALSE;
+        $url_pars[url_var::DISPLAY_LIST_VARIANCE] = $with_variance ? url_var::TRUE : url_var::FALSE;
         $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
         $name = $tier_msg->text();
-        if ($with_range) {
-            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text();
+        if ($with_variance) {
+            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text();
         }
-        return $html->list_item($html->ref($url, $name));
+        $tip_id = self::COLUMN_TIER_TIPS[$tiers];
+        if ($with_variance) {
+            $tip_id = self::COLUMN_TIER_VARIANCE_TIPS[$tiers];
+        }
+        // without a table on the page the tooltip says only what the entry shows
+        $tip = $html->tip_with_names($tip_id, msg_id::TABLE_COLUMNS_NAMES_TIP, implode(', ', $names));
+        return $html->list_item($html->ref($url, $name, $tip));
     }
 
     /**
@@ -2839,10 +3124,15 @@ class value_list extends ListBase
         $txt = msg_id::THREE_POINTS->text() . ' ' . msg_id::AND_MORE_BEFORE->text() . ' '
             . $diff . ' ' . msg_id::MORE->text();
         $phr = $context_phr_lst->lst()[0] ?? null;
+        // the next version of a list with the variance shows the variance too
+        $variance_par = '';
+        if ($this->with_variance) {
+            $variance_par = url_var::DISPLAY_LIST_VARIANCE . url_var::EQ . url_var::TRUE;
+        }
         if ($more_url != '') {
             $result = $html->ref($more_url, $txt);
         } elseif ($phr != null) {
-            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id()), $txt);
+            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id(), [], $variance_par), $txt);
         } else {
             $result = $txt;
         }
@@ -2990,7 +3280,7 @@ class value_list extends ListBase
 
     /**
      * create the html code to show a list of values where the unit is behind the value
-     * TODO use a more general parent function
+     * TODO Prio 2 use a more general parent function
      *
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
@@ -3009,7 +3299,7 @@ class value_list extends ListBase
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order (and the limited subset)
             // never depends on the api/db row order (see docs/llm/frontend.md), like list() and table()
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
@@ -3046,7 +3336,7 @@ class value_list extends ListBase
         $html = new html_base();
 
         // sort so the highest impact value is shown first and the order is always deterministic
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
@@ -3061,14 +3351,14 @@ class value_list extends ListBase
         }
 
         // if no phrase is left for the header, show 'description' as a dummy replacement
-        // TODO make the replacement language and user-specific
+        // TODO Prio 2 make the replacement language and user-specific
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
             $head_text = $header_phrases->name_link();
         }
 
-        // TODO add a button to add a new value using
+        // TODO Prio 2 add a button to add a new value using
         //$btn_new = $common_phrases->btn_add_value();
         $btn_new = '';
 
@@ -3085,7 +3375,7 @@ class value_list extends ListBase
             $row = $html->td($val->grp->phrase_link_list($common_phrases));
             $row .= $html->td($val->value_edit($msg, $url_arr));
             $rows .= $html->tr($row);
-            // TODO add button to delete a value or add a similar value
+            // TODO Prio 2 add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();
             //$btn_add = $val->btn_add();
         }
@@ -3238,7 +3528,7 @@ class value_list extends ListBase
             log_debug('extra phrase, that might need to be added to each table cell: ' . $extra_phrases->dsp_name());
 
             // display the common words
-            // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
+            // TODO Prio 3 sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
             if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
@@ -3269,7 +3559,7 @@ class value_list extends ListBase
 
             // temp: display the word tree
             $last_words = '';
-            $id = 0; // TODO review and rename
+            $id = 0; // TODO Prio 2 review and rename
             foreach ($row_wrd_lst->lst as $sub_wrd) {
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id();
@@ -3326,7 +3616,7 @@ class value_list extends ListBase
                             if ($sub_wrd->id() > 0) {
                                 $add_phr_lst->add($sub_wrd->phrase(), $msg);
                                 $add_phr_ids[] = $sub_wrd->id();
-                                $type_ids[] = $sub_wrd->id(); // TODO check if it should not be $type_word_id
+                                $type_ids[] = $sub_wrd->id(); // TODO Prio 1 check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                             if (!in_array($time_wrd->id(), $add_phr_ids) and $time_wrd->id() > 0) {
@@ -3661,7 +3951,7 @@ class value_list extends ListBase
 
         $common_phr_lst = $common_phr_lst->phrase_list($msg);
 
-        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
+        // TODO Prio 2 review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*
         if (get_class($this->phr) == word::class or get_class($this->phr) == word::class) {
             $this->phr = $this->phr->phrase();

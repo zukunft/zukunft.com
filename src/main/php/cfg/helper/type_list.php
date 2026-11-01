@@ -94,6 +94,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+//include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_profile_list.php';
 //include_once paths::MODEL_USER . 'user_type.php';
@@ -185,6 +186,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
@@ -414,7 +416,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
-     * TODO create a warning if number of rows is above the sql_db::ROW_MAX limit
+     * TODO Prio 2 create a warning if number of rows is above the sql_db::ROW_MAX limit
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
@@ -428,7 +430,7 @@ class type_list extends ListOfIdNamedCodeObjects
             $class = $this->list_class_to_type($class);
         }
         $qp = $this->load_sql($sc, $class);
-        // TODO add a warning if the list gets (too) long
+        // TODO Prio 2 add a warning if the list gets (too) long
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -494,6 +496,7 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_function_list::class => sys_log_function::class,
             sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
+            system_time_type_list::class => system_time_type::class,
             db_cache_status_list::class => db_cache_status::class,
             db_cache_type_list::class => db_cache_type::class,
             user_profile_list::class => user_profile::class,
@@ -570,7 +573,7 @@ class type_list extends ListOfIdNamedCodeObjects
                 } elseif ($class == db_cache_status::class) {
                     $type_name = strval($db_row[db_cache_status::FLD_NAME]);
                 } else {
-                    // TODO use a unique type name for each type
+                    // TODO Prio 2 use a unique type name for each type
                     if (array_key_exists(fields::FLD_TYPE_NAME, $db_row)) {
                         $type_name = strval($db_row[fields::FLD_TYPE_NAME]);
                     } else {

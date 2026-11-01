@@ -59,6 +59,8 @@ class api
     const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
     const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
+    // the server admin page has its own authentication (see http/server_admin.php)
+    const string SERVER_ADMIN_SCRIPT = self::SCRIPT_PATH . 'server_admin.php';
     const string FIND_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID;
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;
@@ -69,6 +71,10 @@ class api
     // the http header name of the per session anti csrf token that must be sent with every
     // api write call of a session (see server_guard::csrf_token_valid)
     const string CSRF_TOKEN_HEADER = 'X-CSRF-Token';
+    // the http header that names if an api answer comes from the cache, sent only if def::DEBUG_API_CACHE is true
+    const string CACHE_HEADER = 'X-Zukunft-Cache';
+    const string CACHE_HIT = 'hit';
+    const string CACHE_MISS = 'miss';
 
     // human-readable root-level forward scripts (nicer than /http/view.php?m=... for emails and sharing)
     const string LOGIN_FORWARD = DIRECTORY_SEPARATOR . 'login';
@@ -139,14 +145,17 @@ class api
     const string JSON_LIST_PROTECTION_TYPES = 'protection_types';
     const string JSON_LIST_LANGUAGES = 'languages';
     const string JSON_LIST_LANGUAGE_FORMS = 'language_forms';
+    const string JSON_LIST_SYS_LOG_LEVELS = 'sys_log_levels';
     const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string JSON_LIST_JOB_TYPES = 'job_types';
+    const string JSON_LIST_JOB_STATUUS = 'job_statuum';
     const string JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
     const string JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const string JSON_LIST_VERBS = 'verbs';
     const string JSON_LIST_SYSTEM_VIEWS = 'system_views';
     const string JSON_LIST_SYSTEM_PHRASES = 'system_phrases';
+    const string JSON_LIST_SYSTEM_FORMULAS = 'system_formulas';
     const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
 
 
@@ -154,7 +163,7 @@ class api
      * fields
      */
 
-    // TODO review
+    // TODO Prio 2 review
     // to include the objects that should be displayed in one api message
     const string API_WORD = 'word';
     const string API_TRIPLE = 'triple';
@@ -175,8 +184,8 @@ class api
     {
         $msg_ok = true;
         $body = array();
-        // TODO check transfer time
-        // TODO check if version matches
+        // TODO Prio 2 check transfer time
+        // TODO Prio 1 check if version matches
         if ($msg_ok) {
             if (array_key_exists($body_key, $api_msg)) {
                 $body = $api_msg[$body_key];

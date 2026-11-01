@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -128,6 +129,36 @@ class term_ui_tests
         $t->assert($test_name, $trm_zero->obj_id(), 0);
         $test_name = '... and id() returns zero again';
         $t->assert($test_name, $trm_zero->id(), 0);
+
+        $t->subheader($ts . 'debug id');
+
+        // the term uses the debug text of the word, triple, verb or formula behind it
+        $test_name = 'shows the name of the word';
+        $trm_dsp = new term($t_wrd->word()->term()->api_json());
+        $dsp = $trm_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a term without a loaded object has no name to show
+        $test_name = 'shows no name for an empty term';
+        $trm_dsp = new term();
+        $dsp = $trm_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the class of the api json selects the object, so a word json fills the term with the word
+        $test_name = 'the api mapper sets the word of the term';
+        $trm_map = new term();
+        $trm_map->api_mapper(json_decode($t_wrd->word()->term()->api_json(), true), $msg);
+        $t->assert($test_name, $trm_map->name(), word_names::MATH);
+        $msg->reset();
+
+        // a value is no term, so the mapper reports the class of the api json
+        $test_name = 'the api mapper reports a class that is not a term';
+        $trm_map = new term();
+        $api_json = [json_fields::ID => word_names::MATH_ID, json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE];
+        $t->assert_false($test_name, $trm_map->api_mapper($api_json, $msg));
+        $msg->reset();
     }
 
 }

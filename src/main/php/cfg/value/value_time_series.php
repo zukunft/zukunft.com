@@ -5,8 +5,8 @@
     model/value/value_time_series.php - the header object for time series values
     ---------------------------------
 
-    TODO add function that decides if the user values should saved in a complete new time series or if overwrites should be saved
-    TODO create a value_time_series_headers table which is only used to create a unique id for the time series data
+    TODO Prio 2 add function that decides if the user values should saved in a complete new time series or if overwrites should be saved
+    TODO Prio 2 create a value_time_series_headers table which is only used to create a unique id for the time series data
 
     To save values that have a timestamp more efficient in a separate table
 
@@ -306,7 +306,7 @@ class value_time_series extends sandbox_value
     /**
      * just set the class name for the user sandbox function
      * load a reference object by database id
-     * TODO load the related time series data
+     * TODO Prio 2 load the related time series data
      * @param int|string $id the id of the reference
      * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int the id of the object found and zero if nothing is found
@@ -321,7 +321,7 @@ class value_time_series extends sandbox_value
 
     /**
      * load a row from the database selected by id
-     * TODO load the related time series data
+     * TODO Prio 2 load the related time series data
      * @param group $grp the phrase group to which the time series should be loaded
      * @return bool true if time series has been loaded
      */
@@ -356,7 +356,7 @@ class value_time_series extends sandbox_value
             // create an empty db_rec element to force saving of all set fields
             $db_vts = new value_time_series($this->get_user());
             //$db_vts->id = $this->id();
-            // TODO add the data list saving
+            // TODO Prio 1 add the data list saving
         }
 
         return $msg->is_ok();
@@ -399,7 +399,7 @@ class value_time_series extends sandbox_value
             $this->add($msg);
         } else {
             // update a value
-            // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
+            // TODO Prio 2 if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
@@ -419,7 +419,7 @@ class value_time_series extends sandbox_value
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            // TODO add function based db saving
+            // TODO Prio 2 add function based db saving
             if ($msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                 $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);

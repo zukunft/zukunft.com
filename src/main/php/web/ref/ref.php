@@ -535,7 +535,7 @@ class ref extends sandbox
     private function refresh_job_link(html_base $html): string
     {
         global $mtr;
-        // TODO point to the dedicated refresh-job creation once that job and its view exist;
+        // TODO Prio 2 point to the dedicated refresh-job creation once that job and its view exist;
         //      for now the link only opens the async job view and does not yet create a real job
         $url = $html->url_back(views::JOB_ASYNC_ID, $this->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';

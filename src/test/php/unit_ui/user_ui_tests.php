@@ -47,6 +47,7 @@ include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'components.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list as user_log_sum_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -90,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -249,6 +252,13 @@ class user_ui_tests
         $one_obj_html = $log->change_log_table_pure(
             $usr_sys_ui, $t_log->log_list_word_changes_ui(), $msg, true);
         $t->assert_text_not_contains($test_name, $one_obj_html, $mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
+
+        // negative: an object that is not yet in the database has no change log, so the tab is dropped
+        $test_name = 'an object without a database id has no changes tab';
+        $new_usr_ui = new user_ui();
+        $word_log = $t_log->log_list_word_changes_ui();
+        $new_obj_html = $log->change_log_table_pure($new_usr_ui, $word_log, $msg, true);
+        $t->assert($test_name, $new_obj_html, '');
 
         // the name of the changed object links to the default page of the object, so that the user
         // can open it from the user page instead of having to search it by name
@@ -483,10 +493,11 @@ class user_ui_tests
 
         $test_name = 'the api url of an ip only user carries no user id';
         $ip_data = $rest->data_with_user([], new user_message($ip_ui));
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $ip_data));
+        $t->assert_key_not_exists($test_name, url_var::USER, $ip_data);
 
         $test_name = 'the api url without a user carries no user id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], $msg)));
+        $api_data = $rest->data_with_user([], $msg);
+        $t->assert_key_not_exists($test_name, url_var::USER, $api_data);
 
         $t->subheader($ts . 'page url');
 
@@ -511,6 +522,8 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $html->ref($page_url, word_names::MATH), $usr_url);
         $test_name = '... and in the form';
         $t->assert_text_contains($test_name, $html->form_start(views::WORD_EDIT), $html->form_hidden(url_var::USER, (string)users::DEV_ID));
+        $test_name = '... as the hidden user field of the form';
+        $t->assert($test_name, $html->form_user(), $html->form_hidden(url_var::USER, (string)users::DEV_ID));
         $test_name = 'the back key and a value u are not taken as the user id';
         $back_url = $page_url . url_var::ADD . url_var::BACK . $usr_url . url_var::ADD . url_var::ACTION . url_var::EQ . url_var::CRUD_UPDATE;
         $t->assert($test_name, $html->url_with_user($back_url), $back_url . url_var::ADD . $usr_url);
@@ -526,6 +539,8 @@ class user_ui_tests
         $t->assert($test_name, $html->url_with_user($page_url), $page_url);
         $test_name = '... and the form of an ip only user has no user field';
         $t->assert($test_name, $html->form_user(), '');
+        $test_name = '... so the form of an ip only user starts without a user field';
+        $t->assert_text_not_contains($test_name, $html->form_start(views::WORD_EDIT), html_base::NAME . '="' . url_var::USER . '"');
         // the system users see the standard data by default, so their urls name no user
         $ui_sys->usr = $sys_ui;
         $test_name = 'the page url of the system user carries no user id';
@@ -540,8 +555,14 @@ class user_ui_tests
         $t->assert_true($test_name, $ip_ui->uses_standard_data());
         $test_name = 'the system user sees the standard data';
         $t->assert_true($test_name, $sys_ui->uses_standard_data());
-        $test_name = 'the api url of the system user carries no user id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], new user_message($sys_ui))));
+        // unlike the page url the api url names every user with an id, because the backend sees
+        // the call of the own pod and would otherwise answer for the ip user of the pod
+        $test_name = 'the api url of the system user carries its id';
+        $sys_data = $rest->data_with_user([], new user_message($sys_ui));
+        $t->assert($test_name, $sys_data[url_var::USER] ?? 0, users::SYSTEM_ID);
+        $test_name = 'the api url of the system test user carries its id';
+        $sys_test_data = $rest->data_with_user([], new user_message($sys_test_ui));
+        $t->assert($test_name, $sys_test_data[url_var::USER] ?? 0, users::SYSTEM_TEST_ID);
 
         // the page of a logged in user shows the user name, the logout link and the black add and
         // edit icons, so it is never stored as or taken from the shared page cache; the requesting
@@ -663,7 +684,7 @@ class user_ui_tests
         $std_arr = $url_map->url_to_standard([url_var::MASK => views::USER_ADMIN_EDIT_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);
         $t->assert($test_name, $std_arr[url_var::ID] ?? 0, users::DEV_ID);
         $test_name = '... and is not kept beside the id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER_TO_EDIT, $std_arr));
+        $t->assert_key_not_exists($test_name, url_var::USER_TO_EDIT, $std_arr);
         $test_name = 'the user_to_edit of another view does not replace the id';
         $std_arr = $url_map->url_to_standard(
             [url_var::MASK => views::WORD_ID, url_var::ID => word_names::MATH_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);
@@ -702,6 +723,12 @@ class user_ui_tests
             $mtr->txt(msg_id::RESET_MAIL_HELLO) . mail_sender::CRLF . mail_sender::CRLF . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO));
         $test_name = '... without a single line feed';
         $t->assert_false($test_name, preg_match('/[^\r]\n/', $mail_txt) === 1);
+        // negative: a text that has crlf line ends already gets no second carriage return
+        $test_name = '... and a text with crlf line ends gets no double carriage return';
+        $crlf_subject = $mtr->txt(msg_id::SIGNUP_MAIL_SUBJECT);
+        $crlf_body = $mtr->txt(msg_id::RESET_MAIL_HELLO) . mail_sender::CRLF . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO);
+        $crlf_mail_txt = mail_sender::smtp_message(users::SYSTEM_SIGNUP_EMAIL, users::TEST_SIGNUP_EMAIL, $crlf_subject, $crlf_body);
+        $t->assert_text_not_contains($test_name, $crlf_mail_txt, "\r\r\n");
 
         $t->subheader($ts . 'popup form');
 
@@ -714,6 +741,47 @@ class user_ui_tests
         $t->assert($test_name, $preview->popup_class(), '');
 
         $t->html_page_test($test_page, 'user', 'user', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the user mapper sets the name';
+        $usr_ui = new user_ui();
+        $usr_ui->api_mapper(json_decode($t_usr->user_sys_normal()->api_json(), true), $msg);
+        $t->assert($test_name, $usr_ui->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: the id is mandatory, so a user json without it is reported
+        $test_name = 'the user mapper reports a json without id';
+        $api_json = json_decode($t_usr->user_sys_normal()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $usr_ui = new user_ui();
+        $t->assert_false($test_name, $usr_ui->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $test_name = 'the message mapper sets the user';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => json_decode($t_usr->user_sys_normal()->api_json(), true)], $msg);
+        $t->assert($test_name, $map_msg->usr?->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: a message user without id is not mapped, so the message keeps no user
+        $test_name = 'the message mapper skips a user without id';
+        $api_json = json_decode($t_usr->user_sys_normal()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => $api_json], $msg);
+        $t->assert_null($test_name, $map_msg->usr?->name());
+        $msg->reset();
+
+        // the list of the summed sessions adds every entry, so it has no negative case
+        $t->subheader($ts . 'add');
+
+        // the summed sessions of a user are added to the list
+        $test_name = 'the summed sessions of a user are added';
+        $sum_lst = new user_log_sum_list_ui();
+        $sum_ui = $t_usr->log_sum_ui();
+        $added = $sum_lst->add($sum_ui);
+        $t->assert_true($test_name, $added);
     }
 
 }

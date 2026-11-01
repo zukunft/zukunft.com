@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
         // with the check the tables will be created and the system data will be loaded
         // the check is requested by the admin user, so the changes are done in his name
-        // TODO compare with test_recreate.php
+        // TODO Prio 2 compare with test_recreate.php
         if (!$db_chk->db_check($db_con, $msg)) {
             echo $msg->all_message_text();
         }

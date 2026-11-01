@@ -153,7 +153,7 @@ class triple_list extends ListBase
         $html = new html_base();
         $cols = '';
         $last_trp = null;
-        // TODO check if and why the next line makes sense
+        // TODO Prio 2 check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $trp) {
             $lnk = $trp->name_link($url_arr);
@@ -169,7 +169,7 @@ class triple_list extends ListBase
     }
 
     /**
-     * TODO move the relevant parts to other functions
+     * TODO Prio 2 move the relevant parts to other functions
      * shows all words the link to the given word
      * returns the html code to select a word that can be edited
      */
@@ -193,7 +193,7 @@ class triple_list extends ListBase
 
             $lnk = $this->get_by_key($lnk_key, $msg);
             // get the next link to detect if there is more than one word linked with the same link type
-            // TODO check with a unit test if last element is used
+            // TODO Prio 2 check with a unit test if last element is used
             if ($this->count() - 1 > $lnk_key) {
                 $next_lnk = $this->get_by_key($lnk_key + 1, $msg);
             } else {
@@ -398,7 +398,7 @@ class triple_list extends ListBase
     /**
      * like names_linked, but without measure and time triples
      * because measure triples are usually shown after the number
-     * TODO call this from the display object t o avoid casting again
+     * TODO Prio 2 call this from the display object t o avoid casting again
      * @returns triple_list_ui a triple
      */
     function ex_measure_and_time_lst(user_message $msg): triple_list_ui
@@ -487,7 +487,7 @@ class triple_list extends ListBase
         if ($from_phr != null) {
             $trp->set_from($from_phr);
         }
-        // TODO preset verb
+        // TODO Prio 3 preset verb
         $to_lst = $this->to_phrase_list($msg);
         $to_phr = $to_lst->mainly();
         if ($to_phr != null) {
@@ -499,7 +499,7 @@ class triple_list extends ListBase
     /**
      * @return array with all triple names in alphabetic order
      * this function is called from dsp_id, so no call of another function is allowed
-     * TODO move to a parent object for triple list and term list
+     * TODO Prio 2 move to a parent object for triple list and term list
      */
     function names(): array
     {
@@ -512,7 +512,7 @@ class triple_list extends ListBase
                 }
             }
         }
-        // TODO allow to fix the order
+        // TODO Prio 3 allow to fix the order
         // asort($name_lst);
         return $name_lst;
     }

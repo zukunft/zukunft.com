@@ -40,6 +40,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -50,9 +51,11 @@ include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'view_menu.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -60,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -70,9 +74,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\view_menu;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_views extends test_objects
@@ -359,6 +365,18 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view with a word component without a position type, e.g. to test the page frame
+     *         of a view without the data load of a calculated component
+     */
+    function view_with_word_component(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view_protected();
+        $msk->cmp_lnk_lst = $t_cmp->component_link_list_word();
+        return $msk;
+    }
+
+    /**
      * @return view with a side-or-below group of four text columns
      *         to test the responsive column position types
      */
@@ -367,6 +385,18 @@ class test_views extends test_objects
         $t_cmp = new test_components($this->env);
         $msk = $this->view();
         $msk->cmp_lnk_lst = $t_cmp->components_side_or_below($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view with a header row and a side-or-below group of an input and a result column
+     *         to test the frame of a use case page like the calculator
+     */
+    function view_use_case(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_use_case($msk);
         return $msk;
     }
 
@@ -442,7 +472,7 @@ class test_views extends test_objects
     }
 
     /**
-     * TODO add the relevance to test the sorting
+     * TODO Prio 2 add the relevance to test the sorting
      * @return view_list with a longer list of suggested views for a word
      */
     function view_list_word_long(): view_list
@@ -471,12 +501,93 @@ class test_views extends test_objects
         return new view_list_ui($t_msk->view_list_word()->api_json());
     }
 
+    /**
+     * @param view $msk the only view of the list e.g. "Mathematical constant"
+     * @return view_list_ui the suggested views of the edit menu with only the given view
+     */
+    function menu_view_list_ui(view $msk): view_list_ui
+    {
+        $msk_lst = new view_list($this->env->usr1);
+        $msk_lst->add($msk);
+        return new view_list_ui($msk_lst->api_json());
+    }
+
+    /**
+     * @return view_menu the edit menu of the table view with its table editor
+     */
+    function menu_table_editor_ui(): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->edt_id = views::TABLE_EDITOR_ID;
+        $mnu->edt_name = views::TABLE_EDITOR_NAME;
+        return $mnu;
+    }
+
+    /**
+     * @return view_menu the edit menu of the word mathematics with the science view as example of the more views
+     */
+    function menu_math_ui(): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->more_names = [views::SCIENCE];
+        $mnu->obj_name = word_names::MATH;
+        return $mnu;
+    }
+
+    /**
+     * @param string $view_items the menu entries of the suggested views e.g. of the word Pi
+     * @param string $page_items the menu entries of the page e.g. the column selection of its table
+     * @return view_menu the edit menu with the given entries
+     */
+    function menu_items_ui(string $view_items, string $page_items = ''): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->view_items = $view_items;
+        $mnu->page_items = $page_items;
+        return $mnu;
+    }
+
     function view_relation_add(): view_relation
     {
         $mrl = new view_relation($this->env->usr1);
         $mrl->set_parent($this->view_add());
         $mrl->set_relation_type(view_relation_types::ADD);
         $mrl->set_child($this->view_word_log());
+        return $mrl;
+    }
+
+    /**
+     * @return view the table of the values of a phrase, which has the table editor as editor
+     */
+    function view_table(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::TABLE_ID, views::TABLE_NAME);
+        $msk->set_code_id_db(views::TABLE);
+        return $msk;
+    }
+
+    /**
+     * @return view the editor of the table view
+     */
+    function view_table_editor(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+        $msk->set_code_id_db(views::TABLE_EDITOR);
+        return $msk;
+    }
+
+    /**
+     * @return view_relation the table editor as the editor of the table view
+     */
+    function view_relation_editor(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->id = 2;
+        $mrl->set_parent($this->view_table());
+        $mrl->set_relation_type(view_relation_types::EDITOR);
+        $mrl->set_child($this->view_table_editor());
         return $mrl;
     }
 
@@ -487,7 +598,20 @@ class test_views extends test_objects
         $mrl->set_parent($this->view_word_edit());
         $mrl->set_relation_type(view_relation_types::ADD);
         $mrl->set_child($this->view_word_log());
-        $mrl->start_pos = 15;
+        $mrl->start_pos = test_const::VIEW_RELATION_POS;
+        return $mrl;
+    }
+
+    /**
+     * @return view_relation with the parent view but without the child view
+     *         e.g. to test that a missing child view is not exported
+     */
+    function view_relation_incomplete(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->id = 1;
+        $mrl->set_parent($this->view_word_edit());
+        $mrl->set_relation_type(view_relation_types::ADD);
         return $mrl;
     }
 
@@ -496,7 +620,7 @@ class test_views extends test_objects
         global $sys;
         // TODO Prio 0 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
-        $mrl->description = 'add usage and log of a word';
+        $mrl->description = test_const::VIEW_RELATION_COM;
         $mrl->exclude();
         $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -526,6 +650,18 @@ class test_views extends test_objects
         //$msk_rel->set_parent($this->view_filled_add());
         //$msk_rel->set_child($this->view_part_filled_add());
         return $msk_rel;
+    }
+
+    /**
+     * @return view_relation_list with the add relation of the word edit view
+     *         and the editor relation of the table view
+     */
+    function view_relation_list(): view_relation_list
+    {
+        $lst = new view_relation_list($this->env->usr1);
+        $lst->add_link($this->view_relation());
+        $lst->add_link($this->view_relation_editor());
+        return $lst;
     }
 
     function term_view_add(): term_view
@@ -562,7 +698,7 @@ class test_views extends test_objects
     {
         global $sys;
         $trm_msk = $this->term_view();
-        $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->description = test_const::TERM_VIEW_COM;
         $trm_msk->order_nbr = test_const::TERM_VIEW_ORDER_NBR;
         $trm_msk->set_style(view_styles::COL_SM_8, new user_message($this->env->usr1));
         $trm_msk->exclude();

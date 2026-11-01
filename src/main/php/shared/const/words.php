@@ -34,6 +34,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::TEST_CONST . 'word_names.php';
+
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class words
@@ -76,9 +80,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const string POD = 'pod';
-    const int POD_ID = 207;
+    const int POD_ID = 218;
     const string MASTER_POD_NAME = 'zukunft.com';
-    const int MASTER_POD_NAME_ID = 216;
+    const int MASTER_POD_NAME_ID = 227;
     const string JOB = 'job';
     const string USER = 'user';
     const string FRONTEND = 'frontend';
@@ -107,9 +111,11 @@ class words
     // in alphabetic order except the main keywords listed above
     const string ACCESS = 'access';
     const string ACCOUNT = 'account';
+    const string AGE = 'age';
     const string ALLOWED = 'allowed';
     const string API = 'api';
     const string API_WORD = 'API';
+    const string ARCHIVE = 'archive';
     const string AUTOMATIC = 'automatic';
     const string AVERAGE = 'average';
     const string AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
@@ -121,12 +127,12 @@ class words
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string CATEGORY = 'category';
     const string CH = 'Switzerland';
-    const int CH_ID = 210;
+    const int CH_ID = 221;
     const string CHANGE = 'change';
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 460;
+    const int CHF_ID = 480;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -140,6 +146,7 @@ class words
     // in the shared const and not only in the test const
     const string CURRENCY = 'currency';
     const string DAILY = 'daily';
+    const string DASHBOARD = 'dashboard';
     const string DATA = 'data';
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
@@ -153,6 +160,8 @@ class words
     const string DELAY = 'delay';
     const string DELETE = 'delete';
     const string DETAIL = 'detail';
+    // config key: the number of digits shown of a number (config.yaml number format > digits)
+    const string DIGITS = 'digits';
     const string ELEMENTS = 'elements';
     const string ENTRIES = 'entries';
     const string ENTRY = 'entry';
@@ -165,12 +174,16 @@ class words
     const string FACTOR_COM = 'how many times bigger one number is than the number it is compared with';
     const string FACTORS = 'factors';
     const string FILE = 'file';
+    const string FONT = 'font';
+    // the code id of the font setting, with which the settings page offers the font selection (see base_phrases.json)
+    const string FONT_CODE_ID = 'font';
     const string FORMAT = 'format';
     const string FORMULAS = 'formulas';
     const string FREEZE = 'freeze';
+    const string FULL = 'full';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 269;
+    const int HAPPY_ID = 292;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -181,7 +194,7 @@ class words
     const string IP = 'ip';
     const string IP_RANGES = 'ip-ranges';
     const string LAUNCH = 'launch';
-    const int LAUNCH_ID = 202;
+    const int LAUNCH_ID = 213;
     const string LAYOUT = 'layout';
     const string LAYOUT_COM = 'the settings to position the components on the screen';
     const string LEVEL = 'level';
@@ -213,20 +226,32 @@ class words
     const string NUMBER = 'number';
     const int NUMBER_ID = 137;
     const string PAGE = 'page';
+    const string PATH = 'path';
     const string PCT = 'percent';
     const int PCT_ID = 160;
-    // the words that tag a value as a bound of the probability range of the value with the same
-    // phrases (see the view-validation of solution_prio.json), and the qualifier of an estimate
-    const string LOW = 'low';
-    const string HIGH = 'high';
+    // the qualifier of an estimate
     const string ASSUMED = 'assumed';
+    // the qualifier of the output of a model, e.g. a value that a formula cannot calculate
+    const string MODELLED = 'modelled';
+    // the qualifier of a stored number that a formula of the same file calculates
+    const string CALCULATED = 'calculated';
     // the word that tags the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
-    const array RANGE_WORDS = [self::LOW, self::HIGH];
     // the qualifiers of a value that a table shows as the tooltip of the cell
     const array QUALIFIERS = [self::ASSUMED];
-    // the words that describe how a number is stated instead of what it is about
-    const array VALUE_MARKERS = [self::LOW, self::HIGH, self::ASSUMED, self::CONFIDENCE];
+    // a value with one of these phrases is a second number of the same fact, so a list function does not count it twice
+    const array LIST_FUNCTION_EXCLUDED = [
+        triples::SYSTEM_VARIANCE_LOW,
+        triples::SYSTEM_VARIANCE_HIGH,
+        self::CONFIDENCE
+    ];
+    // the phrases that describe how a number is stated instead of what it is about
+    const array VALUE_MARKERS = [
+        triples::SYSTEM_VARIANCE_LOW,
+        triples::SYSTEM_VARIANCE_HIGH,
+        self::ASSUMED,
+        self::CONFIDENCE
+    ];
     const string PEERS = 'peers';
     const string PERCENT = 'percent';
     const string PERIOD = 'period';
@@ -234,9 +259,10 @@ class words
     const string PHRASE = 'phrase';
     const string PODS = 'pods';
     const string POINT = 'point';
-    const int POINT_ID = 208;
+    const int POINT_ID = 219;
     const string POINTS = 'points';
-    const int POINTS_ID = 271;
+    const int POINTS_ID = 294;
+    const string PRECISE = 'precise';
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
@@ -246,9 +272,12 @@ class words
     const string REFERENCES = 'references';
     const string RELATED = 'related';
     const string REMOVE = 'remove';
+    const string REQUEST = 'request';
+    const string REQUESTS = 'requests';
     const string RESULTS = 'results';
     const string RETRY = 'retry';
     const string RISK = 'risk';
+    const string ROUGH = 'rough';
     const string ROW = 'row';
     const string SAME = 'same';
     const string SEC = 'sec';
@@ -264,6 +293,7 @@ class words
     const string SOURCE = 'source';
     const string SOURCES = 'sources';
     const string START = 'start';
+    const string STARTUP = 'startup';
     const string STORAGE = 'storage';
     const string STORE = 'store';
     const string SUGGESTED = 'suggested';
@@ -276,22 +306,25 @@ class words
     const int TIME_ID = 99;
     const string TITLE = 'title';
     const string TOLERANCE = 'tolerance';
+    const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 387;
+    const int TOTAL_ID = 407;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
+    const string UPDATES = 'updates';
     const string URL = 'url';
-    const int URL_ID = 211;
+    const int URL_ID = 222;
     const string USAGE = 'usage';
     const string VALIDATE = 'validate';
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 791;
+    const int VERBS_ID = 821;
     const string VERSION = 'version';
+    const string VERY = 'very';
     const string VIEW = 'view';
     const string VIEWS = 'views';
     const string WARNING = 'warning';
@@ -305,6 +338,54 @@ class words
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const string YEAR_CAP = 'year';
     const int YEAR_CAP_ID = 105;
+
+    // the colour keys of config.yaml user > default > frontend > layout > colours (see def::FALLBACK_PAGE_COLOURS)
+    // the dark or light mode of the user (see def::MODE_BROWSER)
+    const string MODE = 'mode';
+    const string COLOURS = 'colours';
+    const string EDITOR = 'editor';
+    const string DARK = 'dark';
+    // the colours of the pages
+    const string GREY = 'grey';
+    const string LINK = 'link';
+    const string DEEP = 'deep';
+    const string BORDER = 'border';
+    const string WHITE = 'white';
+    const string RULE = 'rule';
+    const string PANEL = 'panel';
+    const string INPUT = 'input';
+    const string CHANGED = 'changed';
+    const string TAB = 'tab';
+    const string HIGHLIGHT = 'highlight';
+    const string SHADOW = 'shadow';
+    const string MENU = 'menu';
+    const string FAINT = 'faint';
+    const string LABEL = 'label';
+    const string NEGATIVE = 'negative';
+    const string HOVER = 'hover';
+    const string BLACK = 'black';
+    // the colours of the calculator and the formula editor
+    const string BACKGROUND = 'background';
+    const string SURFACE = 'surface';
+    const string SHEET = 'sheet';
+    const string INK = 'ink';
+    const string SUBTEXT = 'subtext';
+    const string MUTED = 'muted';
+    const string LINE = 'line';
+    const string ACCENT = 'accent';
+    const string SOFT = 'soft';
+    const string SHARED = 'shared';
+    const string DANGER = 'danger';
+    const string SUCCESS = 'success';
+    // the colours of the table charts
+    const string CHART = 'chart';
+    const string GRID = 'grid';
+    const string RANGE = 'range';
+    // the words of the two word colour keys of the editors e.g. "preview text" (see triples::PREVIEW_TEXT)
+    const string PREVIEW = 'preview';
+    const string TEXT = 'text';
+    const string FIELD = 'field';
+    const string SECTION = 'section';
 
 
     // list of often used words used as a default selection e.g. for the phrase selection

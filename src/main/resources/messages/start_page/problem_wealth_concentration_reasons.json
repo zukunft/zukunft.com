@@ -165,6 +165,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -205,6 +208,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "wealth concentration",
       "from": "concentration",
@@ -511,10 +526,10 @@
     {"words": ["wealth growth", "billionaire", "world", "annual", "percent"], "number": "0.07", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the average annual growth of the wealth of the global billionaires since 1995 net of inflation; context, not attributed as a cost by the source"},
     {"words": ["wealth growth", "billionaire", "world", "2024", "trillion", "EUR"], "number": "1.85", "source": "Oxfam (2025) Takers not Makers", "description": "2 trillion USD at the ECB 2023 average of 1.0813 USD per EUR, to 15 trillion USD; an advocacy source, the amount as reported by Al Jazeera; context, not attributed as a cost by the source"},
     {"words": ["growth loss due to wealth concentration", "GDP", "OECD", "cumulative", "percent"], "number": "0.085", "source": "OECD (2014) Focus on Inequality and Growth", "description": "the cumulated loss of the GDP after 25 years of 0.35 percentage point less growth per year caused by a rise of the income inequality by 3 Gini points, the average increase in the OECD over the past two decades"},
-    {"words": ["growth loss due to wealth concentration", "GDP per capita", "Mexico", "1990-2010", "percent", "low"], "number": "0.1", "source": "OECD (2014) Focus on Inequality and Growth", "description": "more than 10 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
+    {"words": ["growth loss due to wealth concentration", "GDP per capita", "Mexico", "1990-2010", "percent", "variance low (system)"], "number": "0.1", "source": "OECD (2014) Focus on Inequality and Growth", "description": "more than 10 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
     {"words": ["growth loss due to wealth concentration", "GDP per capita", "United Kingdom", "1990-2010", "percent"], "number": "0.09", "source": "OECD (2014) Focus on Inequality and Growth", "description": "nearly 9 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
-    {"words": ["growth loss due to wealth concentration", "GDP per capita", "United States", "1990-2010", "percent", "low"], "number": "0.06", "source": "OECD (2014) Focus on Inequality and Growth", "description": "between 6 and 7 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
-    {"words": ["growth loss due to wealth concentration", "GDP per capita", "United States", "1990-2010", "percent", "high"], "number": "0.07", "source": "OECD (2014) Focus on Inequality and Growth", "description": "between 6 and 7 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
+    {"words": ["growth loss due to wealth concentration", "GDP per capita", "United States", "1990-2010", "percent", "variance low (system)"], "number": "0.06", "source": "OECD (2014) Focus on Inequality and Growth", "description": "between 6 and 7 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
+    {"words": ["growth loss due to wealth concentration", "GDP per capita", "United States", "1990-2010", "percent", "variance high (system)"], "number": "0.07", "source": "OECD (2014) Focus on Inequality and Growth", "description": "between 6 and 7 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005"},
     {"words": ["growth loss due to wealth concentration", "world", "annual", "percent"], "number": "0.005", "source": "Ostry, Berg & Tsangarides (2014)", "description": "0.5 percentage points less growth per year, from 5 to 4.5 percent, for an increase of the net Gini from 37 to 42 in the cross-country panel"},
     {"words": ["growth loss due to wealth concentration", "growth spell duration change", "world", "percent"], "number": "-0.07", "source": "Ostry, Berg & Tsangarides (2014)", "description": "the expected length of a growth spell is about 7 percent shorter per Gini point of more inequality, i.e. a 6 percentage point higher risk that the spell ends the next year"},
     {"words": ["tax evasion due to wealth concentration", "top 0.01 percent", "Scandinavia", "percent"], "number": "0.25", "source": "Alstadsæter, Johannesen & Zucman (2019)", "description": "the share of their taxes that the 0.01 percent richest households of Norway, Sweden and Denmark evade, compared to less than 5 percent detected in random tax audits throughout the distribution"},
@@ -522,16 +537,16 @@
     {"words": ["tax evasion due to wealth concentration", "offshore wealth", "world", "2022", "trillion", "EUR"], "number": "11.1", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "12 trillion USD at the ECB 2023 average of 1.0813 USD per EUR; financial assets only, reported and unreported"},
     {"words": ["tax evasion due to wealth concentration", "offshore wealth", "world", "2022", "percent", "GDP"], "number": "0.12", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the offshore financial wealth of the households as share of the world GDP"},
     {"words": ["tax evasion due to wealth concentration", "untaxed offshore wealth", "world", "percent"], "number": "0.25", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the share of the global offshore financial wealth that still evades taxation in the central scenario of the report of October 2023, down by a factor of about three in less than 10 years"},
-    {"words": ["tax avoidance due to wealth concentration", "effective tax rate", "billionaire", "world", "percent", "low"], "number": "0", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"},
-    {"words": ["tax avoidance due to wealth concentration", "effective tax rate", "billionaire", "world", "percent", "high"], "number": "0.005", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"},
+    {"words": ["tax avoidance due to wealth concentration", "effective tax rate", "billionaire", "world", "percent", "variance low (system)"], "number": "0", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"},
+    {"words": ["tax avoidance due to wealth concentration", "effective tax rate", "billionaire", "world", "percent", "variance high (system)"], "number": "0.005", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"},
     {"words": ["tax avoidance due to wealth concentration", "effective tax rate", "billionaire", "United States", "percent"], "number": "0.005", "source": "EU Tax Observatory (2023) Global Tax Evasion Report 2024", "description": "the personal taxes of the billionaires as share of their wealth, closer to 0.5 percent in the United States"},
     {"words": ["political capture due to wealth concentration", "economic elite", "coefficient", "United States"], "number": "0.76", "source": "Gilens & Page (2014)", "description": "the logit coefficient of the preferences of the economic elites on the policy change in the multivariate model of 1'779 policy issues, as reprinted by Bashir (2015)"},
     {"words": ["average citizen", "coefficient", "United States"], "number": "0.03", "source": "Gilens & Page (2014)", "description": "the comparison for the economic elites: the not significant logit coefficient of the preferences of the average citizens in the same model, as reprinted by Bashir (2015)"},
     {"words": ["low economic mobility due to wealth concentration", "numeracy score change", "OECD", "point"], "number": "-6", "source": "OECD (2014) Focus on Inequality and Growth", "description": "the lower numeracy of the individuals with a low parental education background for a 6 points higher income inequality, the US-Canada difference in 2010; nearly 40 percent of the gap to the medium background"},
     {"words": ["intergenerational earnings elasticity", "United States"], "number": "0.5", "source": "Corak (2013)", "description": "about 0.5, twice as high as in Canada; a level of the mobility that the Great Gatsby Curve correlates with the inequality, not attributed to the wealth concentration as a cause by the source"},
     {"words": ["intergenerational earnings elasticity", "United Kingdom"], "number": "0.5", "source": "Corak (2013)", "description": "roughly 50 percent of any advantage or disadvantage is passed on; a correlation, not attributed to the wealth concentration as a cause by the source"},
-    {"words": ["intergenerational earnings elasticity", "Denmark", "high"], "number": "0.2", "source": "Corak (2013)", "description": "less than one-fifth of any advantage or disadvantage is passed on, as in Finland and Norway; a correlation, not attributed to the wealth concentration as a cause by the source"},
-    {"words": ["excess mortality due to wealth concentration", "deaths", "adult", "OECD", "million", "person", "low"], "number": "1.5", "source": "Kondo et al. (2009)", "description": "upwards of 1.5 million deaths in 30 OECD countries that could be averted by levelling the Gini coefficient of the income below 0.3, if the relation is causal"},
+    {"words": ["intergenerational earnings elasticity", "Denmark", "variance high (system)"], "number": "0.2", "source": "Corak (2013)", "description": "less than one-fifth of any advantage or disadvantage is passed on, as in Finland and Norway; a correlation, not attributed to the wealth concentration as a cause by the source"},
+    {"words": ["excess mortality due to wealth concentration", "deaths", "adult", "OECD", "million", "person", "variance low (system)"], "number": "1.5", "source": "Kondo et al. (2009)", "description": "upwards of 1.5 million deaths in 30 OECD countries that could be averted by levelling the Gini coefficient of the income below 0.3, if the relation is causal"},
     {"words": ["excess mortality due to wealth concentration", "deaths", "adult", "OECD", "percent"], "number": "0.096", "source": "Kondo et al. (2009)", "description": "the share of the adult mortality in 30 OECD countries that could be averted by levelling the Gini coefficient of the income below 0.3, if the relation is causal"},
     {"words": ["excess mortality due to wealth concentration", "excess risk", "United States", "percent"], "number": "0.11", "source": "Kondo et al. (2009)"},
     {"words": ["excess mortality due to wealth concentration", "excess risk", "Mexico", "percent"], "number": "0.38", "source": "Kondo et al. (2009)"},

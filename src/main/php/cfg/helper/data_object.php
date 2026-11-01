@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_CALC . 'prior_operand.php';
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -51,6 +52,8 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
+// loaded via user.php like the user, because it loads sql_db
+//include_once paths::MODEL_HELPER . 'db_cache.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_list.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -61,6 +64,7 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 //include_once paths::MODEL_USER . 'user_list.php';
@@ -71,9 +75,11 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_list.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 //include_once paths::MODEL_VIEW . 'view_sys_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
@@ -88,6 +94,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -114,6 +121,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -128,6 +136,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -136,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -145,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class data_object
@@ -185,6 +197,7 @@ class data_object
     private view_list $msk_lst;
     private component_list $cmp_lst;
     private term_view_list $trm_msk_lst;
+    private view_relation_list $mrl_lst;
 
     // for system configuration exchange
     private user_list $usr_lst;
@@ -201,6 +214,9 @@ class data_object
 
     // all preloaded phrases that the frontend needs on every page (see load_system_phrases)
     public phrase_list $sys_phr;
+
+    // the formulas linked to the measure units of the system phrases (see load_system_formulas)
+    public formula_list $sys_frm;
 
 
     /*
@@ -234,12 +250,14 @@ class data_object
         $this->msk_lst = new view_list($usr);
         $this->cmp_lst = new component_list($usr);
         $this->trm_msk_lst = new term_view_list($usr);
+        $this->mrl_lst = new view_relation_list($usr);
         $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
         $this->msg = new user_message(); // an object field of this cache, not the message of a request
         $this->typ_lst = new type_lists();
         $this->sys_msk = new view_sys_list($usr);
         $this->sys_phr = new phrase_list($usr);
+        $this->sys_frm = new formula_list($usr);
     }
 
 
@@ -516,6 +534,14 @@ class data_object
     }
 
     /**
+     * @return view_relation_list with the relations between the views e.g. the editor of a view
+     */
+    function view_relation_list(): view_relation_list
+    {
+        return $this->mrl_lst;
+    }
+
+    /**
      * @return user_list with the user of this data object
      */
     function user_list(): user_list
@@ -743,7 +769,8 @@ class data_object
      * load the phrases that the frontend needs on every page: the triples of the verbs of
      * verbs::PRELOAD_VERBS and the phrases they link, e.g. the triple "% is symbol for percent"
      * with the words "%" and "percent", so that a page can show the symbol behind a number
-     * without knowing the triple that defines it (see web\phrase::symbol_name)
+     * without knowing the triple that defines it (see web\phrase::symbol_name), and the words
+     * of phrase_types::PRELOAD_TYPES, so that every unit and scaling word is known e.g. "kWh"
      *
      * @param user_message $msg to report a verb that the pod does not have
      * @return bool true if at least one phrase has been preloaded
@@ -754,7 +781,8 @@ class data_object
 
         $this->sys_phr = new phrase_list($this->get_user());
         foreach (verbs::PRELOAD_VERBS as $code_id) {
-            $vrb = $sys->verb($code_id);
+            // without the log of the lookup, because the missing verb is reported below
+            $vrb = $sys->verb($code_id, false);
             if ($vrb->id() == 0) {
                 log_err_msg('the verb ' . $code_id . ' is missing, so the phrases of this verb '
                     . 'cannot be preloaded and a symbol of a number is not shown', $msg);
@@ -771,7 +799,47 @@ class data_object
                 } while ($trp_lst->count() >= sql_db::ROW_LIMIT);
             }
         }
+        // the words of the unit and scaling types, because a unit without a symbol triple e.g. "kWh"
+        // would be missing; the load by type has no row limit, so no unit is cut off
+        foreach (phrase_types::PRELOAD_TYPES as $code_id) {
+            // without the log of id(), because the message below names the consequence
+            $typ_id = $sys->typ_lst->phr_typ->id($code_id, false);
+            if ($typ_id <= 0) {
+                log_err_msg('the phrase type ' . $code_id . ' is missing, so its words cannot be '
+                    . 'preloaded and a number with such a word is shown without it', $msg);
+            } else {
+                // TODO Prio 1 better use a phrase list
+                $wrd_lst = new word_list($this->get_user());
+                $wrd_lst->load_by_type($typ_id, $msg);
+                $this->sys_phr->merge($wrd_lst->phrase_list());
+            }
+        }
         return !$this->sys_phr->is_empty();
+    }
+
+    /**
+     * load the formulas linked to the measure units and the scaling words of the system phrases
+     * e.g. "scale tonne to kg", so that the frontend can show 123'456 kg as 123.5 t (see web\helper\number_format);
+     * called after load_system_phrases, because the units are taken from the system phrases
+     *
+     * @param user_message $msg to report a problem of the load
+     * @return bool true if at least one formula has been preloaded
+     */
+    function load_system_formulas(user_message $msg): bool
+    {
+        $this->sys_frm = new formula_list($this->get_user());
+        // only the own type of a phrase is used, because the from and to of a symbol triple can be an
+        // id-only triple, which measure_lst would try to reload without a verb, one db read each
+        $unit_lst = $this->sys_phr->get_by_type(phrase_types::MEASURE);
+        // the scaling words too, so that the scaling formulas e.g. "scale million to one" are preloaded
+        foreach (phrase_types::SCALING_TYPES as $code_id) {
+            $unit_lst->merge($this->sys_phr->get_by_type($code_id));
+        }
+        $result = false;
+        if (!$unit_lst->is_empty()) {
+            $result = $this->sys_frm->load_by_phr_lst($unit_lst, $msg);
+        }
+        return $result;
     }
 
 
@@ -979,6 +1047,16 @@ class data_object
     function add_term_view(term_view $trm_msk): void
     {
         $this->trm_msk_lst->add_link($trm_msk);
+    }
+
+    /**
+     * add a view relation with the parent and child view of the import to the list
+     * @param view_relation $mrl the relation with the views of this data object
+     * @param user_message $msg to report a relation that is in the import twice
+     */
+    function add_view_relation(view_relation $mrl, user_message $msg): void
+    {
+        $this->mrl_lst->add_by_key($mrl, false, $msg);
     }
 
     /**
@@ -1300,17 +1378,22 @@ class data_object
     function validate_results(user_message $msg): int
     {
         $failures = 0;
+        // the phrase names of each number are created once, because each operand of each result
+        // is searched in all numbers of the file
+        $val_names = $this->numbers_with_name_sets($this->value_list()->lst());
         // a result that has been reproduced can be the operand of a later result, so that a
         // chain like "target value, then its probability range" is checked step by step; only a
         // reproduced result is an operand, else a wrong number would confirm the next one
-        $checked = new result_list($this->usr);
+        $checked = [];
+        // the previous rows are created once for the same reason
+        $pri = new prior_operand($this->prior_names());
         foreach ($this->res_chk_lst->lst() as $res_chk) {
             $usr_msg = new user_message(); // a per item buffer to count the failures, merged below
-            $this->validate_result($res_chk, $checked, $usr_msg);
+            $this->validate_result($res_chk, $val_names, $checked, $pri, $usr_msg);
             if (!$usr_msg->is_ok()) {
                 $failures++;
             } else {
-                $checked->add_result_direct($res_chk);
+                $checked = array_merge($checked, $this->numbers_with_name_sets([$res_chk]));
             }
             $msg->merge($usr_msg);
         }
@@ -1322,11 +1405,13 @@ class data_object
      * based on the values and formulas of this data object
      *
      * @param result $res_chk the imported result with the expected number
-     * @param result_list $checked the results of this file that have already been reproduced
+     * @param array $val_names the values of this file with their phrase names (see numbers_with_name_sets)
+     * @param array $checked the results of this file that have already been reproduced with their phrase names
+     * @param prior_operand $pri the previous rows of the follower chains of this file
      * @param user_message $msg to collect the problems that the user should fix in the import file
      * @return void
      */
-    private function validate_result(result $res_chk, result_list $checked, user_message $msg): void
+    private function validate_result(result $res_chk, array $val_names, array $checked, prior_operand $pri, user_message $msg): void
     {
         // use the formula of this data object because the result may only know the formula name
         $frm = null;
@@ -1343,14 +1428,15 @@ class data_object
             // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
             $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
             // replace the phrase names in the source part of the expression with the imported values
-            $r_part = $this->expression_with_values($frm, $checked, $ctx_names, $res_name, $msg);
+            $r_part = $this->expression_with_values($frm, $val_names, $checked, $ctx_names, $res_name, $pri, $msg);
             // calculate and compare the result if all values have been found
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
-                $num_chk = $calc->parse($r_part);
-                $num_chk_rounded = round((float)$num_chk, self::CALC_VALIDATION_DECIMALS);
-                $num_imp_rounded = round((float)$res_chk->number(), self::CALC_VALIDATION_DECIMALS);
-                if ($num_chk_rounded != $num_imp_rounded) {
+                $num_chk = $calc->parse($r_part, $msg);
+                // compared by the difference, because rounding each number would report e.g. 0.004999 and 0.005001
+                $max_diff = pow(10, -self::CALC_VALIDATION_DECIMALS);
+                // an expression without a number is already reported, so a difference would only be its consequence
+                if ($msg->is_ok() and abs((float)$num_chk - (float)$res_chk->number()) >= $max_diff) {
                     $msg->add(msg_id::CALC_VALIDATION_FAILED, [
                         msg_id::VAR_VALUE => $res_chk->number(),
                         msg_id::VAR_NAME => $res_name,
@@ -1374,18 +1460,22 @@ class data_object
      * used if the file states no value for the operand
      *
      * @param formula $frm the formula whose expression should be filled with the numbers
-     * @param result_list $checked the results of this file that have already been reproduced
+     * @param array $val_names the values of this file with their phrase names (see numbers_with_name_sets)
+     * @param array $checked the results of this file that have already been reproduced with their phrase names
      * @param array $ctx_names the phrase names that limit the value selection
      * @param string $res_name the name of the checked result to report a missing value
+     * @param prior_operand $pri the previous rows of the follower chains of this file
      * @param user_message $msg to collect the values that the import file does not contain
      * @return string the source part of the expression with a number instead of each operand
      */
     private function expression_with_values(
-        formula      $frm,
-        result_list  $checked,
-        array        $ctx_names,
-        string       $res_name,
-        user_message $msg
+        formula       $frm,
+        array         $val_names,
+        array         $checked,
+        array         $ctx_names,
+        string        $res_name,
+        prior_operand $pri,
+        user_message  $msg
     ): string
     {
         $lib = new library();
@@ -1401,11 +1491,15 @@ class data_object
                 $i = $i + 2;
                 $phr_names[] = $exp_part_lst[$i];
             }
-            $val = $this->value_list()->get_by_names_and_context($phr_names, $ctx_names);
+            [$sel_names, $sel_ctx] = $pri->select($phr_names, $ctx_names);
+            $sel_set = array_flip($sel_ctx);
+            $val = $this->number_by_names($val_names, $sel_names, $sel_set);
             if ($val == null) {
-                $val = $checked->get_by_names_and_context($phr_names, $ctx_names);
+                $val = $this->number_by_names($checked, $sel_names, $sel_set);
             }
-            if ($val == null) {
+            // the first row has no previous row and the number 0
+            $num = $pri->is_first($phr_names, $ctx_names) ? 0 : $val?->number();
+            if ($num === null) {
                 $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
                     msg_id::VAR_WORD_NAME => implode(chars::SEPARATOR, $phr_names),
                     msg_id::VAR_NAME => $res_name
@@ -1416,9 +1510,64 @@ class data_object
                 $grp_parts = array_slice($exp_part_lst, $first, $i - $first + 1);
                 $result = str_replace(
                     chars::TERM_DELIMITER . implode(chars::TERM_DELIMITER, $grp_parts) . chars::TERM_DELIMITER,
-                    $val->number(), $result);
+                    $num, $result);
             }
             $i = $i + 2;
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per phrase name the name of the phrase before it in its "is follower of" chain of this import (shared\calc\prior_operand)
+     */
+    private function prior_names(): array
+    {
+        $result = [];
+        foreach ($this->triple_list()->lst() as $trp) {
+            $from = $trp->get_from()?->name();
+            $to = $trp->get_to()?->name();
+            if ($trp->get_verb_code_id() == verbs::FOLLOW and $from != null and $to != null) {
+                $result = prior_operand::with_link($result, $from, $to);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $numbers the values or results e.g. of an import file
+     * @return array per number the number and its phrase names as the keys of a set
+     */
+    private function numbers_with_name_sets(array $numbers): array
+    {
+        $result = [];
+        foreach ($numbers as $num) {
+            $result[] = [$num, array_flip($num->grp()->phrase_list()->names())];
+        }
+        return $result;
+    }
+
+    /**
+     * the first number that is related to all given phrase names and whose phrases are all
+     * within the context e.g. the number that a formula uses to calculate a result
+     *
+     * several names select one number, because an operand of a formula can be a group of
+     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
+     *
+     * @param array $numbers the numbers with their phrase names (see numbers_with_name_sets)
+     * @param array $phr_names the names of the phrases that select the number e.g. "price"
+     * @param array $ctx_set the phrase names that limit the selection as the keys of a set e.g. "apple" and "CHF"
+     * @return sandbox_value|null the first matching number or null if none matches
+     */
+    private function number_by_names(array $numbers, array $phr_names, array $ctx_set): ?sandbox_value
+    {
+        $result = null;
+        $phr_set = array_flip($phr_names);
+        foreach ($numbers as [$num, $names]) {
+            if ($result == null
+                and array_diff_key($phr_set, $names) == []
+                and array_diff_key($names, $ctx_set) == []) {
+                $result = $num;
+            }
         }
         return $result;
     }
@@ -1632,6 +1781,13 @@ class data_object
             log_debug('views not imported because ' . $msg->all_message_text());
         }
 
+        // import the view relations after the views, because the relation is saved with the view ids
+        if ($msg->is_ok()) {
+            $this->mrl_lst->save($msg);
+        } else {
+            log_debug('view relations not imported because ' . $msg->all_message_text());
+        }
+
         return $msg->is_ok();
     }
 
@@ -1682,7 +1838,7 @@ class data_object
 
     /**
      * add or update all users to the database
-     * TODO add the requesting user to prevent access right gains
+     * TODO Prio 1 add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
      * @param user_message $msg ok or the error message for the user with the suggested solution
      */
@@ -1719,6 +1875,10 @@ class data_object
     private function save_words(user_message $msg, import $imp): void
     {
         $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class, $msg);
+        // a unit or scaling word is part of the system phrases of the cached types api message
+        if ($this->word_list()->has_preload_type()) {
+            new db_cache($this->get_user())->del_types($msg);
+        }
     }
 
     /**
@@ -1760,6 +1920,11 @@ class data_object
             $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
             $trp_lst->save_with_cache($msg, $imp, $cache);
             $imp->step_end($trp_lst->count(), $trp_per_sec);
+
+            // a symbol triple is part of the system phrases of the cached types api message
+            if ($trp_lst->has_preload_verb()) {
+                new db_cache($this->get_user())->del_types($msg);
+            }
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->triple_list()->fill_by_name($trp_lst, $msg, false, false);
@@ -1995,7 +2160,7 @@ class data_object
     }
 
     /**
-     * TODO add the missing lists and vars of the dto object
+     * TODO Prio 2 add the missing lists and vars of the dto object
      * reports the difference to the given data object as human-readable messages
      * @param data_object $dto which might have some differences
      * @return user_message all differences as a human-readable text

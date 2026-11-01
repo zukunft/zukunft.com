@@ -97,7 +97,7 @@ function run_system_test(test_cleanup $t): void
     }
     $t->assert('IP blocking for ' . $usr_test->ip_addr, $result, $target);
 
-    // TODO combine with the other user unit tests
+    // TODO Prio 2 combine with the other user unit tests
     $t->subheader($ts . 'user unit tests');
 
     // load by name

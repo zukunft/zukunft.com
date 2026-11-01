@@ -45,15 +45,19 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::SYSTEM . 'job_list.php';
 //include_once html_paths::SYSTEM . 'sys_log_list.php';
+//include_once html_paths::SYSTEM . 'system_time_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::USER . 'user_log_sum_list.php';
 //include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::WORD . 'word_list.php';
 //include_once html_paths::WORD . 'triple_list.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
@@ -65,17 +69,22 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use DateTime;
 
 class data_object
 {
@@ -84,7 +93,7 @@ class data_object
      *  object vars
      */
 
-    // TODO measure and optimize memory versus speed
+    // TODO Prio 3 measure and optimize memory versus speed
     //      by keeping either separate lists
     //      or generate always the word or triple list from the phrase list
     //      or generate always the phrase list from the word or triple list
@@ -172,8 +181,12 @@ class data_object
     public value_list $val_lst {
         set(value_list $value) {
             $this->val_lst = $value;
+            // a new list holds none of the loaded values of a phrase list
+            $this->val_phr_keys = [];
         }
     }
+    // the sorted phrase ids of each phrase list whose values are in the value list (see add_values_of)
+    private array $val_phr_keys = [];
     public formula_list $frm_lst;
     // the phrases used as the to side of the "is a" triples, i.e. the categories a word can be defined as
     public phrase_list $ctg_lst;
@@ -181,9 +194,21 @@ class data_object
     public result_list $res_lst {
         set(result_list $value) {
             $this->res_lst = $value;
+            // a new list holds none of the loaded results of a phrase
+            $this->res_phr_ids = [];
         }
     }
     public view_list $msk_lst;
+    // the ids of the phrases whose results are in the result list (see add_results_of)
+    private array $res_phr_ids = [];
+    // the children of the list triples of the start page table e.g. every reason that "populism
+    // reason" links, kept out of the phrase list, because it also fills e.g. the phrase selectors
+    // of later pages; null if not yet loaded (see ui_list::add_start_page_data)
+    public ?phrase_list $start_lst_children = null;
+    // the view of the page, set by view_exe::show, so that a component can show its name
+    // (system_page::view_title); kept out of the view list, which a filled list makes the
+    // view selectors take as the complete list of views (ui_select::view_list_for)
+    public ?view $msk = null;
     private component_list $cmp_lst;
     // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
@@ -202,10 +227,40 @@ class data_object
     // the open system errors related to the session user
     public sys_log_list $sys_log;
 
+    // the given data of the admin dashboard, so that a test shows fixed entries without a backend call
+    public sys_log_list $adm_sys_log;
+    public job_list $adm_job_lst;
+    public system_time_list $adm_sys_tim_lst;
+    public user_log_sum_list $adm_usr_log_sum_lst;
+    // the time of the data snap that decides e.g. if a job is delayed; null for the time of the request
+    public ?DateTime $snap_time = null;
+
     // for warning and errors while filling the data_object
     private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
+    // true if one phraseData answer has filled the phrases, values and results of the page
+    // (view_exe::add_calculator_data), so that no part of them is loaded again
+    public bool $page_data_complete = false;
+    // the phraseData answer of the page, which the calculator page embeds as the seed of its script
+    public array $page_data = [];
+    // the column names per column tier selection of the value tables of the page
+    // (value_list::tier_names), which the tooltips of the column menu of the navbar name
+    public array $tier_names = [];
+    // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
+    // time of creating a page can be split into the frontend work and the api wait
+    public float $api_wait = 0;
+    // the part of the api wait that has been booked to the time report already (see take_api_wait)
+    private float $api_wait_booked = 0;
+    // of the wait not yet booked the seconds per backend step e.g. that the json of a slow answer
+    // has named (see rest_call::time_steps_of)
+    public array $api_steps = [];
+    // the seconds per component type that the html creation has taken without the api wait and
+    // that are not yet booked to the time report (see start_html_step)
+    public array $html_steps = [];
+    // per component that is being rendered its start, the api wait at the start and the time of
+    // the components within it, the outermost first
+    private array $html_step_starts = [];
 
 
     /*
@@ -224,6 +279,10 @@ class data_object
             $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
+            $this->adm_sys_log = new sys_log_list();
+            $this->adm_job_lst = new job_list();
+            $this->adm_sys_tim_lst = new system_time_list();
+            $this->adm_usr_log_sum_lst = new user_log_sum_list();
             $this->set_from_json($api_json, $this->msg);
             $this->usr = new user();
         } else {
@@ -249,10 +308,18 @@ class data_object
         $this->frm_lnk_lst = new formula_link_list();
         $this->res_lst = new result_list();
         $this->msk_lst = new view_list();
+        $this->msk = null;
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
         $this->sys_log = new sys_log_list();
+        $this->adm_sys_log = new sys_log_list();
+        $this->adm_job_lst = new job_list();
+        $this->adm_sys_tim_lst = new system_time_list();
+        $this->adm_usr_log_sum_lst = new user_log_sum_list();
+        $this->snap_time = null;
         $this->online = true;
+        $this->page_data_complete = false;
+        $this->page_data = [];
     }
 
 
@@ -362,6 +429,59 @@ class data_object
     }
 
     /**
+     * add the values of any of the given phrases to the value list, loaded once per request,
+     * because many cells and results of a calculator page ask the values of the same phrases
+     *
+     * @param phrase_list $phr_lst the phrases whose values should be loaded
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    function load_values_of(phrase_list $phr_lst, user_message $msg): void
+    {
+        if ($this->online and !$this->page_data_complete and !$this->has_values_of($phr_lst)) {
+            $val_lst = new value_list();
+            $val_lst->load_by_phr_lst($phr_lst, $msg);
+            // also an empty answer is kept, so that phrases without values are not asked again
+            $this->add_values_of($phr_lst, $val_lst, $msg);
+        }
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases of a value load
+     * @return bool true if the values of exactly these phrases, in any order, are in the value list
+     */
+    function has_values_of(phrase_list $phr_lst): bool
+    {
+        return array_key_exists($this->values_key($phr_lst), $this->val_phr_keys);
+    }
+
+    /**
+     * add the loaded values of a phrase list to the value list, which can hold other values already
+     *
+     * @param phrase_list $phr_lst the phrases whose values have been loaded
+     * @param value_list $val_lst the loaded values, also if empty
+     * @param user_message $msg to report a problem of the merge
+     * @return void
+     */
+    function add_values_of(phrase_list $phr_lst, value_list $val_lst, user_message $msg): void
+    {
+        $this->val_phr_keys[$this->values_key($phr_lst)] = true;
+        // add skips a value that the list has already
+        $this->val_lst->merge($val_lst, $msg);
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases of a value load
+     * @return string all phrase ids sorted, so that the same phrases in another order give the same key
+     */
+    private function values_key(phrase_list $phr_lst): string
+    {
+        $ids = $phr_lst->ids();
+        sort($ids);
+        return implode(chars::SEPARATOR, $ids);
+    }
+
+    /**
      * set the formula_link_list of this data object
      * @param formula_link_list $frm_lnk_lst
      */
@@ -385,6 +505,33 @@ class data_object
     function set_result_list(result_list $res_lst): void
     {
         $this->res_lst = $res_lst;
+    }
+
+    /**
+     * @param int $phr_id the id of the phrase of a page
+     * @return bool true if the results of the phrase have been loaded into the result list
+     *              (see add_results_of), which can hold the results of other phrases too
+     */
+    function has_results_of(int $phr_id): bool
+    {
+        return in_array($phr_id, $this->res_phr_ids);
+    }
+
+    /**
+     * add the loaded results of a phrase to the result list, which can hold the results of
+     * other phrases already, e.g. of a table on the same page
+     *
+     * @param int $phr_id the id of the phrase whose results have been loaded
+     * @param result_list $res_lst the loaded results of the phrase
+     * @return void
+     */
+    function add_results_of(int $phr_id, result_list $res_lst): void
+    {
+        $this->res_phr_ids[] = $phr_id;
+        foreach ($res_lst->lst() as $res) {
+            // add_result skips a result that the list has already
+            $this->res_lst->add_result($res);
+        }
     }
 
     /**
@@ -455,6 +602,20 @@ class data_object
             if ($result == null and $this->msk_lst->has_id($id)) {
                 $result = $this->msk_lst->get($id);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $id the database id of the view e.g. of the page that shows a component
+     * @return string the code id of the cached view e.g. views::PROCESS_CATCH_MAIN or an empty string for a user view or a view not cached
+     */
+    function view_code_id(int $id): string
+    {
+        $result = '';
+        $msk = $this->get_view_by_id($id);
+        if ($msk != null) {
+            $result = $msk->code_id ?? '';
         }
         return $result;
     }
@@ -553,6 +714,21 @@ class data_object
     }
 
     /**
+     * add the column names of a value table of the page, so that the column menu of the navbar
+     * names the columns of every table of the page, each name once per column tier selection
+     *
+     * @param array $tier_names per column tier selection the column names of one table
+     */
+    function add_tier_names(array $tier_names): void
+    {
+        foreach ($tier_names as $tiers => $names) {
+            $known = $this->tier_names[$tiers] ?? [];
+            $merged = array_merge($known, $names);
+            $this->tier_names[$tiers] = array_values(array_unique($merged));
+        }
+    }
+
+    /**
      * @return change_log_list the cache of the relevant change log entries
      */
     function change_log(): change_log_list
@@ -575,6 +751,83 @@ class data_object
     {
         return $this->sys_log;
     }
+
+    /**
+     * @param array $steps the seconds per backend step of one api answer (see rest_call::time_steps_of)
+     * @return void
+     */
+    function add_api_steps(array $steps): void
+    {
+        foreach ($steps as $cat => $seconds) {
+            $this->api_steps[$cat] = ($this->api_steps[$cat] ?? 0) + $seconds;
+        }
+    }
+
+    /**
+     * @return float the seconds that the frontend has waited for the backend since the last call,
+     *               which are booked to the time report by the caller (see frontend::book_times)
+     */
+    function take_api_wait(): float
+    {
+        $result = $this->api_wait - $this->api_wait_booked;
+        $this->api_wait_booked = $this->api_wait;
+        return $result;
+    }
+
+    /**
+     * @return array the seconds per backend step of the api wait since the last call
+     */
+    function take_api_steps(): array
+    {
+        $result = $this->api_steps;
+        $this->api_steps = [];
+        return $result;
+    }
+
+    /**
+     * @return array the seconds per component type of the html creation since the last call
+     */
+    function take_html_steps(): array
+    {
+        $result = $this->html_steps;
+        $this->html_steps = [];
+        return $result;
+    }
+
+    /**
+     * start the timing of the html creation of a component (see end_html_step)
+     *
+     * @param float $now the microtime of the start
+     * @return void
+     */
+    function start_html_step(float $now): void
+    {
+        $this->html_step_starts[] = [$now, $this->api_wait, 0.0];
+    }
+
+    /**
+     * add the html creation time of a component to its component type, without the api wait and
+     * without the components within it, which are counted for their own type
+     *
+     * @param string $cmp_typ the code id of the type of the component e.g. "text"
+     * @param float $now the microtime of the end
+     * @return void
+     */
+    function end_html_step(string $cmp_typ, float $now): void
+    {
+        $step_start = array_pop($this->html_step_starts);
+        if ($step_start != null) {
+            [$start, $wait_start, $within] = $step_start;
+            $total = $now - $start - ($this->api_wait - $wait_start);
+            $this->html_steps[$cmp_typ] = ($this->html_steps[$cmp_typ] ?? 0) + $total - $within;
+            // the component around this one leaves the time of this one to this component type
+            $outer = array_key_last($this->html_step_starts);
+            if ($outer !== null) {
+                $this->html_step_starts[$outer][2] += $total;
+            }
+        }
+    }
+
 
 
     /*

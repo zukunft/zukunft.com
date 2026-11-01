@@ -33,6 +33,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -43,6 +44,7 @@ include_once paths::MODEL_WORD . 'triple_list.php';
 
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -77,12 +79,34 @@ if ($db_con->is_open()) {
     $direction_text = $_GET[url_var::DIRECTION] ?? '';
     // one level loads the direct links only, more levels also follow the links of the phrases
     // just found; load_by_phr_levels bounds the requested number
-    $levels = (int)($_GET[url_var::LEVELS] ?? 1);
+    $levels_text = $_GET[url_var::LEVELS] ?? '';
+    $levels = (int)($levels_text === '' ? 1 : $levels_text);
     $pattern = $_GET[url_var::PATTERN] ?? '';
     $vrb_id = $_GET[url_var::VERB] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    $cac_key = '';
+    $cac_page = '';
     if ($usr->id > 0) {
+        $cac_par = [
+            url_var::ID_LST => $phr_ids,
+            url_var::PHRASE => $phr_id,
+            url_var::NAME => $phr_name,
+            url_var::DIRECTION => $direction_text,
+            url_var::LEVELS => $levels_text,
+            url_var::PATTERN => $pattern,
+            url_var::VERB => $vrb_id
+        ];
+        $cac_key = db_cache_page::api_key(phrase_list::class, $cac_par, $usr->id);
+        $cac_page = new db_cache_page();
+        $result = $cac_page->json_by_key($cac_key, $msg);
+    }
+    // without a user the result stays empty, which is no cached answer
+    $cac_hit = ($usr->id > 0 and $result !== null);
+    if ($usr->id > 0 and $result === null) {
+        $result = '';
+        // the snap is taken before the phrases are read, so a change during the read outdates the entry
+        $snap_time = new DateTime();
 
         $lst = new phrase_list($usr);
         // a related list is used structurally by the frontend, which reads the from, verb and to
@@ -146,9 +170,11 @@ if ($db_con->is_open()) {
         // drop the phrases the requester may not read (idor); see phrase::is_readable_by
         $lst->filter_readable_by($usr);
         $result = $lst->api_json($api_types, $msg);
+        $cac_page->save_json($cac_key, $result, $snap_time, $msg);
     }
 
     $ctrl = new controller();
+    $ctrl->cache_header($cac_hit);
     $ctrl->get_json($result, $msg);
 
 

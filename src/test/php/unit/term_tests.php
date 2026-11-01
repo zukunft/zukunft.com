@@ -41,6 +41,8 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once test_paths::CREATE . 'test_formulas.php';
 include_once test_paths::CREATE . 'test_terms.php';
@@ -54,7 +56,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -103,6 +111,20 @@ class term_tests
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a term is the full debug id of its object incl. the user
+        $test_name = 'the debug id shows the user of the object';
+        $trm = $t_trm->term();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
+
+        // negative: the term of an object without user shows no user
+        $test_name = 'the debug id of a term without user';
+        $trm = $t_trm->term_verb_is();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
 
         $t->subheader($ts . 'id encoding');
@@ -204,6 +226,96 @@ class term_tests
         $t->assert_false($t->name . '... and not to a word', $trm->is_word());
         $t->assert($t->name . '... and the name', $trm->name(), $frm->name());
 
+        // the row mapper maps only a row with both ids and else reports an internal error
+        $test_name = 'a row with the term id and the formula id can be mapped';
+        $trm = new term($t->usr1);
+        $db_row = [term::FLD_ID => $frm->term()->id(), formula_fields::FLD_ID => $frm->id()];
+        $has_ids = $trm->row_has_ids($db_row, formula_fields::FLD_ID);
+        $t->assert_true($test_name, $has_ids);
+        // e.g. a corrupted row of a formula with only the term id
+        $test_name = '... but not a row with only the term id';
+        $db_row = [term::FLD_ID => $frm->term()->id()];
+        $has_ids = $trm->row_has_ids($db_row, formula_fields::FLD_ID);
+        $t->assert_false($test_name, $has_ids);
+        // the second line of defence: the row mapper tells the user which field the row misses
+        $test_name = 'the message of a corrupted term row names the missing field';
+        $row_msg = new user_message($t->usr1);
+        $row_msg->add(msg_id::TERM_ROW_ID_MISSING, [msg_id::VAR_NAME => formula_fields::FLD_ID]);
+        $t->assert_text_contains($test_name, $row_msg->text(), formula_fields::FLD_ID);
+        $test_name = '... and is an error, so that the term is not used';
+        $t->assert_false($test_name, $row_msg->is_ok());
+
+
+        $t->subheader($ts . 'api json array');
+
+        // combine_object: the class of a term with id is sent, so that the frontend can rebuild the term
+        $test_name = 'the class of a word term';
+        $trm = $t_trm->term();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a term without id sends no class
+        $test_name = 'no class of a term without id';
+        $trm = $t_trm->by_name(word_names::MATH);
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
+        $msg->reset();
+
+        // combine_object: the class of an excluded term is sent in test mode
+        $test_name = 'the class of an excluded term in test mode';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: the class of an excluded term is not sent with only the excluded id
+        // TODO Prio 2 adjust if the excluded id should name the class of the term
+        //      (see docs/llm/pending_prio_2.md, "api json array", combine_object)
+        $test_name = 'no class of an excluded term';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
+        $msg->reset();
+
+        // combine_object: a verb term always gets the class
+        $test_name = 'the class of a verb term';
+        $trm = $t_trm->term_verb();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'export');
+
+        // the export of a word term names the class word
+        $test_name = 'export of a word term names the class';
+        $trm = $t_trm->term();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a triple term is not exported as a word
+        $test_name = 'export of a triple term names the class';
+        $trm = $t_trm->term_triple();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_TRIPLE);
+        $msg->reset();
+
+        // the export of a verb term names the class verb
+        $test_name = 'export of a verb term names the class';
+        $trm = $t_trm->term_verb();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+        // the export of a formula term names the class formula
+        $test_name = 'export of a formula term names the class';
+        $trm = $t_trm->term_formula();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_FORMULA);
+        $msg->reset();
+
 
         $t->subheader($ts . 'sql setup');
         $trm = $t_trm->term();
@@ -213,12 +325,32 @@ class term_tests
         $t->subheader($ts . 'sql query');
 
         // check the creation of the prepared sql statements to load a term by id or name
-        // TODO use assert_load_sql_id for all objects
-        // TODO use assert_load_sql_name for all named objects
+        // TODO Prio 2 use assert_load_sql_id for all objects
+        // TODO Prio 2 use assert_load_sql_name for all named objects
         $trm = new term($t->usr1);
         $t->assert_sql_by_id($sc, $trm);
         $t->assert_sql_by_name($sc, $trm);
-
+        // the user of the query selects the user row of the term e.g. with the name that the user has given it
+        $test_name = 'a term is loaded with the rows of the user who loads it';
+        $qp = $trm->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr1->id());
+        $test_name = '... and another user gets his own rows';
+        $trm_other = new term($t->usr2);
+        $qp = $trm_other->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr2->id());
+        // e.g. the import of a verb loads its term by name
+        $test_name = 'a term of a verb is loaded with the user of the verb';
+        $trm_vrb = $t_vrp->verb()->term();
+        $qp = $trm_vrb->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr1->id());
+        $test_name = '... and without a user of the verb with no user rows';
+        $trm_vrb = test_verbs::verb_part()->term();
+        $qp = $trm_vrb->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, 0);
 
         $t->subheader($ts . 'html frontend');
 
@@ -230,6 +362,17 @@ class term_tests
         $t->assert_api_to_ui($trm, new term_ui());
         $trm = $t_trm->term_verb();
         $t->assert_api_to_ui($trm, new term_ui());
+
+        // the frontend term sends the default view of a triple back like the backend sends it
+        $test_name = 'the frontend term of a triple keeps its default view';
+        $trm = new term_ui($t_trm->term_triple()->api_json());
+        $view_id = $trm->phrase_view_id();
+        $t->assert($test_name, $view_id, views::MATH_CONST_ID);
+        // negative: a formula has no default view in the term api
+        $test_name = '... but a formula term has none';
+        $trm = new term_ui($t_trm->term_formula()->api_json());
+        $view_id = $trm->phrase_view_id();
+        $t->assert_null($test_name, $view_id);
 
     }
 

@@ -84,7 +84,7 @@ class result_db
     // means: database fields only used for results
     // the field names and their descriptions are defined in result_fields
     // *_SQL_TYP is the sql data type used for the field
-    // TODO maybe use the dirty flag for faster dirty selection
+    // TODO Prio 3 maybe use the dirty flag for faster dirty selection
     //const string FLD_DIRTY = 'dirty';
     const array FLD_ALL_TIME_SERIES = array(
         [result_fields::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', result_fields::FLD_TS_ID_COM],
@@ -156,7 +156,7 @@ class result_db
     );
 
     // database table extensions used
-    // TODO add a similar list to the value class
+    // TODO Prio 2 add a similar list to the value class
     const array TBL_EXT_LST = array(
         sql_type::PRIME,
         sql_type::MAIN,

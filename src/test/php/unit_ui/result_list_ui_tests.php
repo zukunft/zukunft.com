@@ -40,7 +40,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -63,7 +65,7 @@ class result_list_ui_tests
         // test the result list display functions
         $lst = new result_list($t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('result list display test');
-        $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
+        $test_page .= 'result list with tooltip: ' . $lst->display($msg) . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';
         $t->html_page_test($test_page, 'result_list', 'result_list', $msg);
 
@@ -83,6 +85,17 @@ class result_list_ui_tests
         // negative: a phrase without results shows nothing
         $test_name = 'most relevant of an empty result list renders nothing';
         $t->assert($test_name, new result_list()->list_most_relevant($msg), '');
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every result of the api json';
+        $lst = new result_list();
+        $res_lst_json = $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $lst->api_mapper(json_decode($res_lst_json, true));
+        $t->assert($test_name, $lst->count(), $t_res->result_list()->count());
+        $test_name = 'the api mapper reports a result without id';
+        $lst = new result_list();
+        $api_json = [[json_fields::NUMBER => results::TV_INT]];
+        $t->assert_false($test_name, $lst->api_mapper($api_json)->is_ok());
     }
 
 }

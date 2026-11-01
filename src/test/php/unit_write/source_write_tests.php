@@ -99,7 +99,7 @@ class source_write_tests
         $msg->reset();
 
         /*
-        TODO remove but check upfront the replacement
+        TODO Prio 2 remove but check upfront the replacement
 
 
         // check if undo all specific changes removes the user source
@@ -128,10 +128,10 @@ class source_write_tests
 
         */
 
-        // TODO create and check the display functions
-        // TODO test the import of a source with a non system with the code id and check if the warning message is created and the update is rejected
-        // TODO test the import of a source with the code id does not create a warning if the code_id already matches
-        // TODO test if the import does not change the code_id if a normal user imports a source
+        // TODO Prio 2 create and check the display functions
+        // TODO Prio 1 test the import of a source with a non system with the code id and check if the warning message is created and the update is rejected
+        // TODO Prio 2 test the import of a source with the code id does not create a warning if the code_id already matches
+        // TODO Prio 1 test if the import does not change the code_id if a normal user imports a source
 
         // cleanup - fallback delete
         $src = new source($t->usr1);

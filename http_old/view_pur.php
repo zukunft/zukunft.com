@@ -56,11 +56,11 @@ if ($result != '') {
 } else {
 
     // get the requested objects
-    // TODO replace it with phrase and add other objects
+    // TODO Prio 3 replace it with phrase and add other objects
     //$view_words = $_GET[api::PAR_VIEW_WORDS] ?? '';
 
     // select the view
-    // TODO improve it based on view.php
+    // TODO Prio 3 improve it based on view.php
     $view_id = $_GET[frontend::PAR_VIEW_ID] ?? '';
 
     // get the view from the backend if not a cache
@@ -68,7 +68,7 @@ if ($result != '') {
 
     // get the data to show if not in cache
 
-    // TODO get the rest from view.php
+    // TODO Prio 3 get the rest from view.php
 
 }
 

@@ -36,8 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -68,6 +70,24 @@ class component_list_tests
 
         $cmp_lst = new component_list($t->usr1);
         $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);
+
+        $t->subheader($ts . 'export');
+        $msg = new user_message($t->usr1);
+
+        // a component list exports one entry per component
+        $test_name = 'export second component';
+        $cmp_lst = $t_cmp->component_list();
+        $exp = $cmp_lst->export_json($msg, [], false);
+        $second = $exp[1];
+        $t->assert($test_name, $second[json_fields::NAME], components::FORM_SHARE_TYPE_NAME);
+        $msg->reset();
+
+        // negative: a component list exports no entry beyond its components
+        $test_name = 'export no third component';
+        $cmp_lst = $t_cmp->component_list();
+        $exp = $cmp_lst->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, 2, $exp);
+        $msg->reset();
 
         // TODO Prio 2 move to ui tests
         /*

@@ -89,6 +89,6 @@ function run_user_test(all_tests $t): void
     $test_name = '... but it is no ip user, so user::get refuses to identify it by the ip';
     $t->assert_false($test_name, $usr_by_ip->is_ip_user());
 
-    // TODO add a test signup process to
+    // TODO Prio 2 add a test signup process to
 
 }

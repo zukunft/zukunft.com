@@ -274,7 +274,7 @@ class db_object_key extends TextIdObject
         $sc->set_class($class, $sc_par_lst, $sc_par_lst->ext_ex_user());
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
-        // TODO generalise this exception
+        // TODO Prio 2 generalise this exception
         if ($class == group::class
             and $sc_par_lst->is_prime()
             and $query_name == 'name'

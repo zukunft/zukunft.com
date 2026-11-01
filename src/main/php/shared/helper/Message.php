@@ -342,7 +342,7 @@ class Message
 
     /**
      * simple return a translated message text with vars
-     * TODO review
+     * TODO Prio 2 review
      * @param int $pos used to get another message than the main message
      * @return string simple the message text
      */

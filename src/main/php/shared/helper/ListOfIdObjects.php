@@ -187,7 +187,7 @@ class ListOfIdObjects extends ListOf
 
     /**
      * select an item by id
-     * TODO add unit tests
+     * TODO Prio 2 add unit tests
      *
      * @param int|string $id the unique database id of the object that should be returned
      * @return object|null the found user sandbox object or null if no id is found
@@ -350,7 +350,7 @@ class ListOfIdObjects extends ListOf
     }
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @returns array with all unique ids of this list with the keys within this list
      */
     protected function id_pos_lst(): array
@@ -429,7 +429,7 @@ class ListOfIdObjects extends ListOf
      * TODO Prio 3 rename to remove
      *
      * unset an object of the list
-     * TODO move to ListOfIdObjects ? And if not, explain in a comment why
+     * TODO Prio 2 move to ListOfIdObjects ? And if not, explain in a comment why
      *
      * @param int|string $key the unique id of the entry
      * @returns bool true if the object has been added

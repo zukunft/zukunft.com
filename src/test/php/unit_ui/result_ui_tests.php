@@ -110,6 +110,10 @@ class result_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, $res_page->val_formatted($msg));
         $test_name = '... with the link to change the result';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::RESULT_EDIT_ID);
+        // negative: a result without phrases and number has nothing to name, but still no php warning
+        $test_name = 'the title of an empty result shows no number';
+        $t->assert_text_not_contains($test_name, new system_form()->title_value(new result(), $msg),
+            $res_page->val_formatted($msg));
 
         // below the title the page shows the formula with the numbers used and then in latex
         $t->subheader($ts . 'formula with numbers');
@@ -134,18 +138,32 @@ class result_ui_tests
         $test_name = 'a result without a formula shows no latex';
         $t->assert($test_name, new ui_base()->expression_latex_link(new result()), '');
 
+        // the result add and edit form shows the group and the source group, so the source
+        // group posts its own url var, else it overwrites the group and both fields share one id
+        $test_name = 'the source group field posts the source group';
+        $src_html = $form->form_field_source_group_or_phrases($res_page);
+        $t->assert_text_contains($test_name, $src_html, 'name="' . url_var::SOURCE_GROUP_NAME . '"');
+        $test_name = '... and not the group, which the group field posts';
+        $grp_html = $form->form_field_group_or_phrases($res_page, '');
+        $t->assert_text_contains($test_name, $grp_html, 'name="' . url_var::GROUP_NAME . '"');
+        $t->assert_text_not_contains($test_name, $src_html, 'name="' . url_var::GROUP_NAME . '"');
+        // negative: a result without a source group shows an empty field instead of guessing the group
+        $test_name = 'the source group field of a result without a source group has no value';
+        $t->assert_text_not_contains($test_name, $form->form_field_source_group_or_phrases(new result()), 'value=');
+
         // the used lists are slow, so only the result views that show them ask the backend for them
         $t->subheader($ts . 'page request');
         $test_name = 'a result detail page asks for the used lists';
         $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = 'the result default page does not wait for the used lists';
         $api_par = frontend::page_api_par(views::RESULT);
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_not_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = '... but asks for the related objects';
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_RELATED, $api_par);
         $test_name = 'a page without a main object asks for no related objects';
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
+        $start_par = frontend::page_api_par(views::START);
+        $t->assert_key_not_exists($test_name, url_var::INCL_RELATED, $start_par);
 
         // below the title the page shows in three columns what the number is based on
         $t->subheader($ts . 'used for the calculation');
@@ -248,21 +266,21 @@ class result_ui_tests
         $res = new result($api_json);
         $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
         $phr_lst_keep = $ui_sys->phr_lst;
+        $pct_txt = '1.23' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $test_name = 'percent values use the user config percent decimals';
         $ui_sys->typ_lst_cache->phr_sys = $t_phr->list_percent_symbol_cache_ui();
         $ui_sys->phr_lst = new phrase_list_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         $test_name = '... also if only the phrases of the page know the symbol';
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         // a calculated number is shown in the same format as a measured one, so the cell text of
         // a result is the formatted number and never the raw one
         $test_name = '... and a table cell of a result uses the same format';
-        $t->assert($test_name, $res->value($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->value($msg), $pct_txt);
         $test_name = '... also as the linked number of the cell';
-        $t->assert_text_contains($test_name, $res->value_edit($msg),
-            '>1.23' . word_names::PERCENT_SYMBOL . '<');
+        $t->assert_text_contains($test_name, $res->value_edit($msg), '>' . $pct_txt . '<');
         // negative: with the symbol triple in neither cache the number is shown without the sign
         // instead of falling back to a coded one
         $test_name = '... but without the symbol triple in any cache the sign is missing';
@@ -317,6 +335,21 @@ class result_ui_tests
         $test_name = '... shows the result with its default view';
         $res_back = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::RESULT_ID);
         $t->assert_text_contains($test_name, $res_html, $res_back);
+
+        $t->subheader($ts . 'api mapper');
+        // a formula id without the nested formula is enough to link the formula
+        $test_name = 'the formula id of the api json is the formula of the result';
+        $res_json = json_decode($t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true);
+        $res_json[json_fields::FORMULA_ID] = formula_names::SCALE_TO_SEC_ID;
+        $res = new result();
+        $res->api_mapper($res_json, $msg);
+        $t->assert($test_name, $res->frm?->id(), formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+        $test_name = 'the mapper reports a result without id';
+        unset($res_json[json_fields::ID]);
+        $res = new result();
+        $t->assert_false($test_name, $res->api_mapper($res_json, $msg));
+        $msg->reset();
     }
 
 }

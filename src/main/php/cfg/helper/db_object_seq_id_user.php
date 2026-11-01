@@ -6,7 +6,7 @@
     --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id
-    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+    TODO Prio 3 should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
     The main sections of this object are
     - object vars:       the variables of this seq id object

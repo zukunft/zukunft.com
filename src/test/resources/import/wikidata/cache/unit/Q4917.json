@@ -1,0 +1,159 @@
+{
+    "entities": {
+        "Q4917": {
+            "id": "Q4917",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "United States dollar"
+                }
+            },
+            "claims": {
+                "P2284": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+0.92",
+                                    "unit": "http://www.wikidata.org/entity/Q4916"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2016-01-01T00:00:00Z",
+                                            "precision": 9
+                                        },
+                                        "type": "time"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+0.95",
+                                    "unit": "http://www.wikidata.org/entity/Q4916"
+                                },
+                                "type": "quantity"
+                            }
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+1",
+                                    "unit": "1"
+                                },
+                                "type": "quantity"
+                            }
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+7",
+                                    "unit": "http://www.wikidata.org/entity/Q0"
+                                },
+                                "type": "quantity"
+                            }
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+0.93",
+                                    "unit": "http://www.wikidata.org/entity/Q4916"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2016-01-01T00:00:00Z",
+                                            "precision": 9
+                                        },
+                                        "type": "time"
+                                    }
+                                }
+                            ],
+                            "P1013": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1013",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q56229488"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+0.94",
+                                    "unit": "http://www.wikidata.org/entity/Q4916"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P1013": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1013",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q0"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "somevalue",
+                            "property": "P2284"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

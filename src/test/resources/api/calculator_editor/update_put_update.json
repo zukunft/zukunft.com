@@ -1,0 +1,22 @@
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "user_id": 3,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "timestamp": "2026-10-24T12:00:00+00:00",
+  "body": {
+    "triples": [
+      {
+        "name": "System Test Triple renamed",
+        "description": "System Test Triple Description",
+        "verb_id": 2
+      }
+    ],
+    "values": [
+      {
+        "number": 123.456
+      }
+    ]
+  }
+}

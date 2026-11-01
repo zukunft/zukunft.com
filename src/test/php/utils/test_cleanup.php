@@ -155,7 +155,7 @@ class test_cleanup extends test_api
     }
 
     /**
-     * TODO use the user message object instead of a string
+     * TODO Prio 2 use the user message object instead of a string
      * TODO Prio 2 split and use more internal functions for the parts
      * to remove all system test rows from the database
      *
@@ -201,7 +201,7 @@ class test_cleanup extends test_api
         $t_grp->cleanup($ts);
 
         // secure cleanup the test views
-        // TODO: if a user has changed the view during the test, delete also the user views
+        // TODO Prio 2 if a user has changed the view during the test, delete also the user views
 
         $result .= $t_db->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME);
         $result .= $t_db->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME);
@@ -428,7 +428,7 @@ class test_cleanup extends test_api
         $t_db->del_triple($msg, word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
 
         // request to delete the added test word
-        // TODO: if a user has changed the word during the test, delete also the user words
+        // TODO Prio 2 if a user has changed the word during the test, delete also the user words
         $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
         $wrd = $t_db->load_word($msg, word_names::TEST_ADD);
         if ($wrd->id() > 0) {
@@ -472,7 +472,7 @@ class test_cleanup extends test_api
             }
         }
 
-        // TODO better use a info system log message
+        // TODO Prio 3 better use a info system log message
         // route through the timestamped writer so every 'Next database id' line starts with a timestamp
         echo_timestamped($db_con->seq_reset(word::class, $msg));
         echo_timestamped($db_con->seq_reset(formula::class, $msg));

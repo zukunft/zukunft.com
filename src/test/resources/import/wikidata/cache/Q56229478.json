@@ -1,0 +1,182 @@
+{
+    "entities": {
+        "Q56229478": {
+            "pageid": 56170581,
+            "ns": 0,
+            "title": "Q56229478",
+            "lastrevid": 2283967677,
+            "modified": "2024-12-06T03:42:39Z",
+            "type": "item",
+            "id": "Q56229478",
+            "labels": {
+                "cs": {
+                    "language": "cs",
+                    "value": "přítomné obyvatelstvo"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Wirtschaftliche Wohnbevölkerung"
+                },
+                "en": {
+                    "language": "en",
+                    "value": "population present"
+                },
+                "nl": {
+                    "language": "nl",
+                    "value": "huidige inwoners"
+                },
+                "mk": {
+                    "language": "mk",
+                    "value": "присутно население"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "günümüz nüfusu"
+                },
+                "ca": {
+                    "language": "ca",
+                    "value": "població present"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "прысутнае насельніцтва"
+                },
+                "eo": {
+                    "language": "eo",
+                    "value": "aktuala populacio"
+                },
+                "gsw": {
+                    "language": "gsw",
+                    "value": "Wirtschaftliche Wohnbevölkerung"
+                },
+                "sl": {
+                    "language": "sl",
+                    "value": "prisotno prebivalstvo"
+                },
+                "ja": {
+                    "language": "ja",
+                    "value": "現在人口"
+                },
+                "vec": {
+                    "language": "vec",
+                    "value": "popołasion atualmente prezente"
+                }
+            },
+            "descriptions": {
+                "cs": {
+                    "language": "cs",
+                    "value": "způsob stanovení počtu obyvatel"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Methode zur Bestimmung der Wohnbevölkerung"
+                },
+                "en": {
+                    "language": "en",
+                    "value": "method of determining the population"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "nüfus belirleme yöntemi"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "спосаб падліку колькасьці насельніцтва"
+                },
+                "ja": {
+                    "language": "ja",
+                    "value": "人口を決定する方法"
+                },
+                "gsw": {
+                    "language": "gsw",
+                    "value": "Methode zur Bestimmung der Wohnbevölkerung"
+                }
+            },
+            "aliases": {
+                "cs": [
+                    {
+                        "language": "cs",
+                        "value": "obyvatelstvo přítomné"
+                    }
+                ],
+                "de": [
+                    {
+                        "language": "de",
+                        "value": "derzeitige Wohnbevölkerung"
+                    },
+                    {
+                        "language": "de",
+                        "value": "anwesende Wohnbevölkerung"
+                    }
+                ]
+            },
+            "claims": {
+                "P31": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P31",
+                            "hash": "34279438acea536f81cf212db8e7bc04bd46a4bd",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 111243531,
+                                    "id": "Q111243531"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "Q56229478$352d87b1-49ec-30d3-e286-291b89c38b19",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "6457c20f60e8d16c3f6fcbcb4512babed4f9f169",
+                                "snaks": {
+                                    "P854": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P854",
+                                            "hash": "6fbb33a3f1b63fd719b91f7c3555f9c39b1b34d9",
+                                            "datavalue": {
+                                                "value": "https://www.stadt-zuerich.ch/prd/de/index/statistik/themen/bevoelkerung/bevoelkerungsentwicklung/bevoelkerungsdefinition.html",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P854"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P279": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P279",
+                            "hash": "008fe22594b7f53fb7b372dc54bb0eea3dfdea5e",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 33829,
+                                    "id": "Q33829"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "Q56229478$717fd773-4fdc-94a5-e84f-4dc85a7e0ea3",
+                        "rank": "normal"
+                    }
+                ]
+            },
+            "sitelinks": []
+        }
+    }
+}

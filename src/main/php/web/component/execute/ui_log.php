@@ -430,7 +430,6 @@ class ui_log
     ): string
     {
         global $mtr;
-        global $ui_sys;
 
         $html = new html_base();
         $result = '';
@@ -440,15 +439,7 @@ class ui_log
         if ($err_lst->is_empty()) {
             $result .= $mtr->txt(msg_id::USER_SYSTEM_ERRORS_NONE);
         } else {
-            if ($ui_sys?->cfg !== null) {
-                $limit = (int)$ui_sys->cfg->get_by(
-                    [triples::SYSTEM_ERRORS, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                    $msg, def::FALLBACK_USER_ERRORS
-                );
-            } else {
-                $limit = def::FALLBACK_USER_ERRORS;
-            }
-            $result .= $err_lst->head($limit)->get_html($msg);
+            $result .= $err_lst->head(sys_log_list::display_limit($msg))->get_html($msg);
         }
         return $result;
     }

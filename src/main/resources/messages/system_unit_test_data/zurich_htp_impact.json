@@ -22,7 +22,7 @@
     { "name": "time" },
     { "name": "point", "plural": "points", "description": "a single unit on a scale" },
     { "name": "impact", "description": "a marked effect or influence" },
-    { "name": "factor", "description": "a circumstance that contributes to a result" },
+    { "name": "factor" },
     { "name": "HTP" },
     { "name": "weighted", "description": "scaled by a relative weight" },
     { "name": "reach", "description": "the number of people exposed to or affected by something" },

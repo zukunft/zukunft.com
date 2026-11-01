@@ -93,7 +93,7 @@ class view_relation_db
         fields::FLD_PROTECT
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
-    // TODO check if this is used in all relevant objects
+    // TODO Prio 2 check if this is used in all relevant objects
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_START_POS,
         fields::FLD_DESCRIPTION,

@@ -132,6 +132,35 @@ class component_ui_tests
         $test_name = 'an object without a renderer subclass keeps its own class';
         $t->assert($test_name, new user_ui()->api_class(), user_ui::class);
 
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend component takes the name of the api message
+        $test_name = 'the api mapper sets the name of a component';
+        $cmp_map = new component();
+        $cmp_map->api_mapper(json_decode($t_cmp->component()->api_json(), true), $msg);
+        $t->assert($test_name, $cmp_map->name(), components::WORD_NAME);
+        $msg->reset();
+
+        // the id is mandatory, because without it a save would add a new component
+        $test_name = 'a component json without an id is refused';
+        $t->assert_false($test_name, $cmp_map->api_mapper([json_fields::NAME => components::WORD_NAME], $msg));
+        $msg->reset();
+
+        // a page request carries the linked view of a component link with its name
+        $test_name = 'the api mapper sets the view of a component link';
+        $lnk_json = $t_cmp->component_link_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]);
+        $lnk = new component_link_ui();
+        $lnk->api_mapper(json_decode($lnk_json, true), $msg);
+        $t->assert($test_name, $lnk->get_view()?->name(), views::START_NAME);
+        $msg->reset();
+
+        // a component link without a view in the api message has no view
+        $test_name = 'a component link json without a view leaves the view empty';
+        $lnk = new component_link_ui();
+        $lnk->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
+        $t->assert_null($test_name, $lnk->get_view()?->dsp_id());
+        $msg->reset();
+
         $t->subheader($ts . 'title');
 
         // the component default page shows the component name as the page title and the type, the
@@ -250,6 +279,12 @@ class component_ui_tests
         $test_name = 'a component without a row phrase shows only the row phrase label';
         $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst),
             $t->labeled(msg_id::FORM_SELECT_PHRASE_ROW, ''));
+        $test_name = 'a component without a column phrase shows only the column phrase label';
+        $t->assert($test_name, $sfm->show_col_phrase($cmp_plain, $ui_sys->phr_lst),
+            $t->labeled(msg_id::FORM_SELECT_PHRASE_COL, ''));
+        $test_name = 'a component without a sub column phrase shows only the sub column phrase label';
+        $t->assert($test_name, $sfm->show_col_sub_phrase($cmp_plain, $ui_sys->phr_lst),
+            $t->labeled(msg_id::FORM_SELECT_PHRASE_COL_SUB, ''));
 
         $t->subheader($ts . 'select');
 
@@ -274,8 +309,8 @@ class component_ui_tests
         // the component default page lists the views that use the component; the views come from
         // the request cache that also provides the views for the page rendering itself
         $list = new ui_list();
-        $views_html = $list->component_views($cmp_filled, $msg);
         $test_name = 'the views that use the component are listed';
+        $views_html = $list->component_views($cmp_filled, $msg);
         $t->assert_text_contains($test_name, $views_html, views::START_NAME);
         $test_name = 'the listed views link to the view default page';
         $t->assert_text_contains($test_name, $views_html, url_var::MASK . '=' . views::VIEW_DEFAULT_ID);

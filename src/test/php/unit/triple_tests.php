@@ -32,12 +32,16 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -148,6 +152,60 @@ class triple_tests
         $t->assert_false($test_name, $trp->set_code_id(
             triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
 
+        $t->subheader($ts . 'view on load');
+
+        // the default view is read from the database, so that the views tab of the triple offers it on top
+        $test_name = 'the default view of a triple is read from the database';
+        $db_row = [
+            triple_fields::FLD_ID => triple_names::MATH_CONST_ID,
+            fields::FLD_VIEW => views::MATH_CONST_ID
+        ];
+        $trp = new triple($t->usr1);
+        $trp->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $trp->get_view_id(), views::MATH_CONST_ID);
+        $msg->reset();
+        $test_name = '... and a triple without a default view has none';
+        $db_row = [
+            triple_fields::FLD_ID => triple_names::MATH_CONST_ID,
+            fields::FLD_VIEW => null
+        ];
+        $trp = new triple($t->usr1);
+        $trp->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $trp->get_view_id(), 0);
+        $msg->reset();
+
+        $t->subheader($ts . 'reverse check');
+
+        // e.g. a page part that moves up is the reverse of the order triple that the move removes
+        global $sys;
+        $test_name = 'an order triple can be the reverse of another order triple';
+        $trp = $t_trp->triple();
+        $trp->set_verb_id($sys->typ_lst->vrb->id(verbs::FOLLOW));
+        $t->assert_false($test_name, $trp->needs_reverse_check());
+        $test_name = '... but another triple must not be the reverse of an existing one';
+        $trp = $t_trp->triple();
+        $t->assert_true($test_name, $trp->needs_reverse_check());
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the verb between the linked phrases
+        $test_name = 'the debug id shows the verb';
+        $trp = $t_trp->triple();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, verbs::PART_NAME);
+
+        // ... and the id of the triple
+        $test_name = 'the debug id shows the triple id';
+        $trp = $t_trp->triple();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, triple_fields::FLD_ID);
+
+        // negative: a triple without id and links shows its name, but no triple id
+        $test_name = 'the debug id of a triple without id';
+        $trp = $t_trp->triple_name_only();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, triple_fields::FLD_ID);
+
         $t->subheader($ts . 'rename routing');
 
         // a name change of a triple is a key update (so the duplicate name check of the save
@@ -186,10 +244,30 @@ class triple_tests
         $diff = $trp_full->diff_msg($trp_other_from, true);
         $t->assert_false($test_name, $diff->is_ok());
 
+        $t->subheader($ts . 'fill');
+        // the fill takes over only the fields that the request does not name, so a requested
+        // type or name is the change and never a conflict (see update_put::fill_from_db)
+        $trp_db = $t_trp->triple_filled_public();
+        $trp_req = new triple($t->usr1);
+        $trp_req->set_type(phrase_types::TIME, new user_message($t->usr1));
+        $fill_msg = $trp_req->fill($trp_db, $t->usr1);
+        $test_name = 'the fill with another requested type reports no conflict';
+        $t->assert_true($test_name, $fill_msg->is_ok());
+        $test_name = '... and keeps the requested type';
+        $t->assert($test_name, $trp_req->type_code_id($msg), phrase_types::TIME);
+        $test_name = '... but takes over the given name, because the name is not requested';
+        $t->assert($test_name, $trp_req->name_given(), triple_names::MATH_CONST_GIVEN);
+        $trp_ren = new triple($t->usr1);
+        $trp_ren->set_name(triple_names::SYSTEM_TEST_RENAMED);
+        $trp_ren->fill($trp_db, $t->usr1);
+        $test_name = 'the fill of a renamed triple does not take over the old given name';
+        $t->assert_null($test_name, $trp_ren->name_given());
+
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();
         $t->assert_api_json($trp);
-        $t->assert_api($trp);
+        // own file like word_full, because triple.json is the db triple of the api get test
+        $t->assert_api($trp, 'triple_full');
 
         $t->subheader($ts . 'api mapping of an incomplete message');
         // an api message with only the id maps the id and does not fail
@@ -228,6 +306,82 @@ class triple_tests
         $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
         $test_name = 'api_mapper with a null from/verb/to keeps the id';
         $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+        $msg->reset();
+
+        $t->subheader($ts . 'api mapper');
+
+        // the to phrase of the api json is given by its id, so the mapper sets the to phrase by the id
+        $test_name = 'the api mapper sets the to phrase of the triple';
+        $trp_map = new triple($t->usr1);
+        $trp_map->api_mapper($t_trp->triple()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $trp_map->get_to()->id(), word_names::MATH_ID);
+        $msg->reset();
+
+        // a triple without the from phrase is incomplete, so the mapper reports the missing from phrase
+        $test_name = 'the api mapper reports a missing from phrase';
+        $trp_map = new triple($t->usr1);
+        $api_json = [json_fields::ID => triple_names::MATH_CONST_ID, json_fields::FROM => null];
+        $t->assert_false($test_name, $trp_map->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // with the phrases the from phrase is sent with its name for the page title
+        $test_name = 'the from phrase is sent with the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::FROM_PHRASE][json_fields::NAME], word_names::CONST_NAME);
+        $msg->reset();
+
+        // negative: without the phrases only the id of the from phrase is sent
+        $test_name = 'the from phrase is not sent without the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::FROM_PHRASE, $vars);
+        $msg->reset();
+
+        // with the phrases the verb is sent with its name
+        $test_name = 'the verb name is sent with the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::VERB][json_fields::NAME], verbs::PART_NAME);
+        $msg->reset();
+
+        // negative: without the phrases the verb is sent only by its id
+        $test_name = 'the verb id is sent without the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VERB], verbs::PART_ID);
+        $msg->reset();
+
+        // a triple without a given name is sent with the generated name
+        $test_name = 'the generated name is sent if no name is given';
+        $trp = $t_trp->triple_link_only();
+        $vars = $trp->api_json_array([], $msg);
+        $name = word_names::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . word_names::MATH;
+        $t->assert($test_name, $vars[json_fields::NAME], $name);
+        $msg->reset();
+
+        // negative: the name of a named triple is not replaced by the generated name
+        $test_name = 'the name is sent if given';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NAME], triple_names::MATH_CONST);
+        $msg->reset();
+
+        // the weight is only sent if set
+        $test_name = 'the weight is sent if set';
+        $trp = $t_trp->triple_impact();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::WEIGHT], test_const::TRIPLE_WEIGHT);
+        $msg->reset();
+
+        // negative: a triple without weight sends no weight
+        $test_name = 'no weight is sent if not set';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::WEIGHT, $vars);
+        $msg->reset();
 
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
@@ -298,7 +452,7 @@ class triple_tests
         $trp_ui->url_mapper([
             url_var::ID => 1,
             url_var::NAME => triple_names::SYSTEM_TEST_ADD,
-            url_var::PHRASE_FROM => 'phrase name that does not exist'
+            url_var::PHRASE_FROM => test_const::PHRASE_NOT_EXISTING
         ], $map_msg, $dto_ui);
         $t->assert_true($test_name, $map_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
 
@@ -310,6 +464,13 @@ class triple_tests
         $t->assert_false($test_name, $trp_ui->input_valid($val_msg, url_var::CRUD_UPDATE));
         $test_name = '... and the user is told that both phrases are needed';
         $t->assert_true($test_name, $val_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
+
+        // negative: an unknown phrase name posted as the from phrase is reported to the user
+        $test_name = 'an unknown from phrase name is reported to the user';
+        $trp_ui = new triple_ui();
+        $from_msg = new user_message_ui();
+        $trp_ui->set_from_by_id(test_const::PHRASE_NOT_EXISTING, $from_msg, $dto_ui);
+        $t->assert_true($test_name, $from_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
 
         $t->subheader($ts . 'frontend phrases_related round-trip');
         // build a target phrase ("Pi") that should appear in the triple's related list, and
@@ -345,6 +506,135 @@ class triple_tests
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($t->usr1), $json_file);
 
+        // the name of the triple is exported
+        $test_name = 'export includes the name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], triple_names::MATH_CONST);
+        $msg->reset();
+
+        // negative: a triple with only the links set exports no name
+        $test_name = 'export without name';
+        $trp = $t_trp->triple_link_only();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // the description of the triple is exported
+        $test_name = 'export includes the description';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], triple_names::MATH_CONST_COM);
+        $msg->reset();
+
+        // negative: a triple without description exports no description
+        $test_name = 'export without description';
+        $trp = $t_trp->triple_link_only();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // a not default phrase type is exported by its name
+        $test_name = 'export includes a not default type';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], phrase_types::MATH_CONST_NAME);
+        $msg->reset();
+
+        // negative: the default phrase type is left out of the export
+        $test_name = 'export leaves out the default type';
+        $trp = $t_trp->triple_default_type();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the linked phrases are exported by their names
+        $test_name = 'export includes the from and to name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EX_FROM], word_names::CONST_NAME);
+        $t->assert($test_name, $exp[json_fields::EX_TO], word_names::MATH);
+        $msg->reset();
+
+        // negative: a triple without links exports no from and to
+        $test_name = 'export without from and to';
+        $trp = $t_trp->triple_api();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EX_FROM, $exp);
+        $t->assert_key_not_exists($test_name, json_fields::EX_TO, $exp);
+        $msg->reset();
+
+        // the verb is exported by its name instead of the predicate code id
+        $test_name = 'export includes the verb name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EX_VERB], verbs::PART_NAME);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // negative: a triple without verb exports no verb
+        $test_name = 'export without verb';
+        $trp = $t_trp->triple_api();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EX_VERB, $exp);
+        $msg->reset();
+
+        // the view is exported by its name
+        $test_name = 'export includes the view name';
+        $trp = $t_trp->triple_filled();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::VIEW], views::MATH_CONST_NAME);
+        $msg->reset();
+
+        // negative: a triple without view exports no view
+        $test_name = 'export without view';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
+
+        // the usage is exported to validate the consistency
+        $test_name = 'export includes the usage';
+        $trp = $t_trp->triple_filled();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::USAGE], triple_names::SYSTEM_TEST_ADD_USAGE);
+        $msg->reset();
+
+        // negative: a triple without usage exports no usage
+        $test_name = 'export without usage';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USAGE, $exp);
+        $msg->reset();
+
+        // the impact is part of the export so that it round-trips
+        $test_name = 'export includes the impact';
+        $trp = $t_trp->triple_impact();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::IMPACT], impacts::MAX);
+        $msg->reset();
+
+        // negative: a triple without impact exports no impact
+        $test_name = 'export without impact';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::IMPACT, $exp);
+        $msg->reset();
+
+        // the weight is part of the export so that it round-trips
+        $test_name = 'export includes the weight';
+        $trp = $t_trp->triple_impact();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::WEIGHT], test_const::TRIPLE_WEIGHT);
+        $msg->reset();
+
+        // negative: a triple without weight exports no weight
+        $test_name = 'export without weight';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::WEIGHT, $exp);
+        $msg->reset();
+
         // the impact field is part of the triple im- and export
         // even if the impact is expected to be calculated internal
         // it is included in the im- and export for an initial value
@@ -368,6 +658,18 @@ class triple_tests
         $in_trp = $t_trp->triple_link_only();
         $db_trp = $t_trp->triple();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
+
+        // e.g. assigned_views.json adds the default view to the existing triple "mathematical constant"
+        $test_name = 'an import that adds a default view to a triple updates the database';
+        $in_trp = $t_trp->triple_name_only();
+        $in_trp->set_view_id(views::MATH_CONST_ID);
+        $db_trp = $t_trp->triple();
+        $needs_upd = $in_trp->needs_db_update($db_trp, $msg);
+        $t->assert_true($test_name, $needs_upd);
+        $test_name = '... but not if the triple has this default view already';
+        $db_trp->set_view_id(views::MATH_CONST_ID);
+        $needs_upd = $in_trp->needs_db_update($db_trp, $msg);
+        $t->assert_false($test_name, $needs_upd);
 
     }
 

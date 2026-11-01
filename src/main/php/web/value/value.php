@@ -144,7 +144,7 @@ class value extends sandbox_value
 
     /**
      * set the vars of this value frontend object bases on the url array
-     * TODO do the mapping always on normal, long and pod vars
+     * TODO Prio 2 do the mapping always on normal, long and pod vars
      * @param array $url_array an array based on $_GET from a form submit
      * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
@@ -731,7 +731,7 @@ class value extends sandbox_value
     function ref_selector(string $form, user_message $msg, string $pattern, ?ref_list $ref_lst): string
     {
         $ref_lst = $ref_lst ?? new ref_list();
-        // TODO review and maybe use test_mode parameter
+        // TODO Prio 3 review and maybe use test_mode parameter
         if ($pattern != '') {
             $ref_lst->load_like($pattern, $msg);
         }
@@ -1001,13 +1001,13 @@ class value extends sandbox_value
     // lists all words related to a given value except the given word
     // and offer to add a formula to the value as an alternative
     // $wrd_add is only optional to display the last added word at the end
-    // TODO: take user unlink of words into account
+    // TODO Prio 2 take user unlink of words into account
     // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
 
     // display some value samples related to the wrd_id
     // with a preference of the start_word_ids
     /*
-     * TODO recreate based on the group
+     * TODO Prio 2 recreate based on the group
     function dsp_samples($wrd_id, $start_wrd_ids, $size, array $url_arr = []): string
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
@@ -1106,7 +1106,7 @@ class value extends sandbox_value
     // lists all phrases related to a given value except the given phrase
     // and offer to add a formula to the value as an alternative
     // $wrd_add is only optional to display the last added phrase at the end
-    // TODO: take user unlink of phrases into account
+    // TODO Prio 1 take user unlink of phrases into account
     // save data to the database only if "save" is pressed add and remove the phrase links "on the fly", which means that after the first call the edit view is more or less the same as the add view
     function dsp_edit($type_ids, user_message $msg, array $url_arr = []): string
     {

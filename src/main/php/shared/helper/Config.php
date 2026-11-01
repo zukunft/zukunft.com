@@ -39,6 +39,13 @@ class Config
     const int ROW_LIMIT = 20;
     const string DEFAULT_DEC_POINT = ".";
     const int DEFAULT_PERCENT_DECIMALS = 2;
+    // the number of digits shown of a number per precision tier (config.yaml number format > digits);
+    // the full precision tier shows all decimals and has therefore no number
+    const int DEFAULT_DIGITS = 4;
+    const int PRECISE_DIGITS = 8;
+    const int VERY_PRECISE_DIGITS = 12;
+    const int ROUGH_DIGITS = 3;
+    const int VERY_ROUGH_DIGITS = 2;
     const string DEFAULT_THOUSAND_SEP = "'";
     const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
@@ -47,6 +54,9 @@ class Config
     const string FRONTEND_HTML_JS_PHRASE = 'HTML with js phrase selection';
     const string FRONTEND_FULL_JS = 'full js';
     const string DEFAULT_FRONTEND_TYPE = self::FRONTEND_PURE_HTML;
+    // config.yaml "user > default > frontend > use javascript > for calculator": the calculator pages repeat
+    // their calculation in the browser, the only javascript of the html frontend (docs/llm/frontend.md)
+    const bool DEFAULT_CALCULATOR_JAVASCRIPT = true;
 
     // number of entries initial to show in a named list
     const int LIMIT_NAME_LIST = 4;

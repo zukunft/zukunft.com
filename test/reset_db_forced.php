@@ -11,7 +11,7 @@
     first lets reset_db.php start with the built-in config defaults and recreate the
     config table from scratch together with all other tables.
 
-    TODO FOR DEVELOPMENT ONLY! Remove completely before production.
+    TODO Prio 1 FOR DEVELOPMENT ONLY! Remove completely before production.
 
 
     This file is part of zukunft.com - calc with words

@@ -81,16 +81,16 @@ class term_write_tests
         // ... check also for a triple
         $term = new term($t->usr1);
         $term->load_by_obj_name(triple_names::CITY_ZH, $msg);
-        $target = '<style class="text-danger">A triple with the name "' . triple_names::CITY_ZH . '" already exists. '
-            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
+        $target = '<span class="text-danger">A triple with the name "' . triple_names::CITY_ZH . '" already exists. '
+            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</span>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a verb
         $term = new term($t->usr1);
         $term->load_by_obj_name(verbs::IS, $msg);
-        $target = '<style class="text-danger">A word with the name "" already exists. '
-            . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
+        $target = '<span class="text-danger">A word with the name "" already exists. '
+            . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</span>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         // TODO Prio 0 activate
         //$t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

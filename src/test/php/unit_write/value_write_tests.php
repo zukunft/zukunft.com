@@ -163,7 +163,7 @@ class value_write_tests
             $chk_val->phr_lst()->set_lst(array());
             $chk_val->load_phrases($msg);
             if (!$chk_val->phr_lst()->is_empty()) {
-                // TODO check if sort is needed
+                // TODO Prio 3 check if sort is needed
                 //$chk_val->phr_lst()->wlsort();
                 $result = $lib->dsp_array($chk_val->phr_names());
             } else {
@@ -218,7 +218,8 @@ class value_write_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);
         $ui_sys->phr_lst = $phr_lst_keep;
-        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . word_names::PERCENT_SYMBOL;
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2)
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value
@@ -386,7 +387,7 @@ class value_write_tests
         if ($added_val->is_id_set()) {
             $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
-        // TODO fix it
+        // TODO Prio 2 fix it
         $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
         if ($result != $target) {
             $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
@@ -402,7 +403,7 @@ class value_write_tests
         $t->assert(', value->load the value previous updated for "' . word_names::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific value is created if another user changes the value
-        // TODO check loaded value matches the value for usr1
+        // TODO Prio 2 check loaded value matches the value for usr1
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id, $msg);
         $val_usr2->set_number(self::NUMBER_CHANGED);
@@ -446,8 +447,9 @@ class value_write_tests
         $target = '';
         $t->assert($ts . $test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... check if the value change for the other user has been logged; the change of the
-        // other user is written to the user values row and shown with 'user' after the action
+        // ... check if the undo has been logged; the number of the other user matches the standard
+        // again, so the user values row is deleted and the log shows the number that the user had,
+        // with 'user' after the action
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp, $msg);
         $usr_marker = '';
@@ -456,7 +458,7 @@ class value_write_tests
             $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
             $result = $log_ui->dsp(true);
         }
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed ' . $usr_marker . 'to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_CHANGED . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' ' . msg_id::LOG_DEL->value . ' ' . $usr_marker . '"' . self::NUMBER_CHANGED . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back

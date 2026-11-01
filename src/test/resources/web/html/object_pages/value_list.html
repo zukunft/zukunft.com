@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -35,22 +39,20 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&amp;id=2">
-                                        alternative
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="/http/view.php?m=85&amp;id=1">
-                                        change view
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=84">
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
                                         add view
                                     </a>
                                 </li>
@@ -139,61 +141,90 @@
             <br>
             <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">π</a> <a href="/http/view.php?m=5&amp;id=5">3.14</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=58" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit symbol)</a> <a href="/http/view.php?m=5&amp;id=32826">2.72</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=59" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit symbol)</a> <a href="/http/view.php?m=5&amp;id=32827">2.72</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
             <br>
             as long list:
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=76">1967 (year of definition)</a>, <a href="/http/view.php?m=3&amp;id=40" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a>, <a href="/http/view.php?m=4&amp;id=89">hyperfine transition frequency of Cs</a> <a href="/http/view.php?m=5&amp;id=173951189081">9'192'631'770</a></span>
-            <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=78">1983 (year of definition)</a>, <a href="/http/view.php?m=4&amp;id=71" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">m/s</a>, <a href="/http/view.php?m=4&amp;id=29" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">speed of light</a> <a href="/http/view.php?m=5&amp;id=140864194576462">299'792'458</a></span>
-            <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a> <a href="/http/view.php?m=5&amp;id=932021076103">415'367</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
-            <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=210">Switzerland</a> <a href="/http/view.php?m=5&amp;id=59110608408019079">8.61</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup> <a href="/http/view.php?m=3&amp;id=158" title="to specify numbers in millions">mio</a></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a> <a href="/http/view.php?m=5&amp;id=979266437255">415'367</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
             <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">π</a> <a href="/http/view.php?m=5&amp;id=5">3.14</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=58" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit symbol)</a> <a href="/http/view.php?m=5&amp;id=32826">2.72</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=59" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit symbol)</a> <a href="/http/view.php?m=5&amp;id=32827">2.72</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <a href="/http/view.php?m=114&amp;id=201">
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=77">1967 (year of definition)</a>, <a href="/http/view.php?m=3&amp;id=40" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a>, <a href="/http/view.php?m=4&amp;id=90">hyperfine transition frequency of Cs</a> <a href="/http/view.php?m=5&amp;id=173951254618">9'192'631'770</a></span>
+            <br>
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=79">1983 (year of definition)</a>, <a href="/http/view.php?m=4&amp;id=72" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">m/s</a>, <a href="/http/view.php?m=4&amp;id=30" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">speed of light</a> <a href="/http/view.php?m=5&amp;id=140868489609295">299'792'458</a></span>
+            <br>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=221">Switzerland</a> <a href="/http/view.php?m=5&amp;id=62206880396476551">8.61</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup> <a href="/http/view.php?m=3&amp;id=158" title="to specify numbers in millions">mio</a></span>
+            <br>
+            <a href="/http/view.php?m=114&amp;id=212">
                 ... and 1 more
             </a>
             <br>
             as long list with small page:
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=76">1967 (year of definition)</a>, <a href="/http/view.php?m=3&amp;id=40" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a>, <a href="/http/view.php?m=4&amp;id=89">hyperfine transition frequency of Cs</a> <a href="/http/view.php?m=5&amp;id=173951189081">9'192'631'770</a></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a> <a href="/http/view.php?m=5&amp;id=979266437255">415'367</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=78">1983 (year of definition)</a>, <a href="/http/view.php?m=4&amp;id=71" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">m/s</a>, <a href="/http/view.php?m=4&amp;id=29" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">speed of light</a> <a href="/http/view.php?m=5&amp;id=140864194576462">299'792'458</a></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">π</a> <a href="/http/view.php?m=5&amp;id=5">3.14</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a> <a href="/http/view.php?m=5&amp;id=932021076103">415'367</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=59" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit symbol)</a> <a href="/http/view.php?m=5&amp;id=32827">2.72</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=210">Switzerland</a> <a href="/http/view.php?m=5&amp;id=59110608408019079">8.61</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup> <a href="/http/view.php?m=3&amp;id=158" title="to specify numbers in millions">mio</a></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=4&amp;id=77">1967 (year of definition)</a>, <a href="/http/view.php?m=3&amp;id=40" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a>, <a href="/http/view.php?m=4&amp;id=90">hyperfine transition frequency of Cs</a> <a href="/http/view.php?m=5&amp;id=173951254618">9'192'631'770</a></span>
             <br>
-            <a href="/http/view.php?m=114&amp;id=201">
+            <a href="/http/view.php?m=114&amp;id=212">
                 ... and 3 more
             </a>
             <br>
             <br>
             with units:
             <br>
-            <a href="/http/view.php?m=4&amp;id=89">
+            <a href="/http/view.php?m=3&amp;id=135">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=3&amp;id=228">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=3&amp;id=212">
+                inhabitants
+            </a>
+            <span>
+                415'367
+            </span>
+            <br>
+            <a href="/http/view.php?m=3&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                π
+            </a>
+            <span>
+                3.14
+            </span>
+            <br>
+            <a href="/http/view.php?m=4&amp;id=59" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
+                𝑒 (unit symbol)
+            </a>
+            <span>
+                2.72
+            </span>
+            <br>
+            <a href="/http/view.php?m=4&amp;id=90">
                 hyperfine transition frequency of Cs
             </a>
-            <a href="/http/view.php?m=value&amp;id=173951189081" title="1967 (year of definition)">
+            <a href="/http/view.php?m=value&amp;id=173951254618" title="1967 (year of definition)">
                 9'192'631'770
             </a>
             <a href="/http/view.php?m=3&amp;id=40" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">
                 Hz
             </a>
             <br>
-            <a href="/http/view.php?m=4&amp;id=29" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
+            <a href="/http/view.php?m=4&amp;id=30" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
                 speed of light
             </a>
-            <a href="/http/view.php?m=value&amp;id=140864194576462" title="1983 (year of definition)">
+            <a href="/http/view.php?m=value&amp;id=140868489609295" title="1983 (year of definition)">
                 299'792'458
             </a>
-            <a href="/http/view.php?m=4&amp;id=71" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
+            <a href="/http/view.php?m=4&amp;id=72" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
                 m/s
             </a>
             <br>
@@ -201,26 +232,11 @@
                 2019
             </a>
             ,
-            <a href="/http/view.php?m=3&amp;id=217">
-                Zurich
-            </a>
-            ,
-            <a href="/http/view.php?m=3&amp;id=201">
-                inhabitants
-            </a>
-            <span>
-                415'367
-            </span>
-            <br>
-            <a href="/http/view.php?m=3&amp;id=135">
-                2019
-            </a>
-            ,
-            <a href="/http/view.php?m=3&amp;id=210">
+            <a href="/http/view.php?m=3&amp;id=221">
                 Switzerland
             </a>
             ,
-            <a href="/http/view.php?m=3&amp;id=201">
+            <a href="/http/view.php?m=3&amp;id=212">
                 inhabitants
             </a>
             ,
@@ -231,33 +247,19 @@
                 8.61
             </span>
             <br>
-            <a href="/http/view.php?m=3&amp;id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
-                π
-            </a>
-            <span>
-                3.14
-            </span>
-            <br>
-            <a href="/http/view.php?m=4&amp;id=58" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
-                𝑒 (unit symbol)
-            </a>
-            <span>
-                2.72
-            </span>
-            <br>
             <a href="/http/view.php?m=3&amp;id=135">
                 2019
             </a>
             ,
-            <a href="/http/view.php?m=3&amp;id=217">
+            <a href="/http/view.php?m=3&amp;id=228">
                 Zurich
             </a>
             ,
-            <a href="/http/view.php?m=3&amp;id=190">
+            <a href="/http/view.php?m=3&amp;id=201">
                 canton
             </a>
             ,
-            <a href="/http/view.php?m=3&amp;id=201">
+            <a href="/http/view.php?m=3&amp;id=212">
                 inhabitants
             </a>
             ,
@@ -274,23 +276,23 @@
             <div class="value-list">
                 <div class="value-group">
                     <div class="value-group-title">
-                        <a href="/http/view.php?m=3&amp;id=444">
+                        <a href="/http/view.php?m=3&amp;id=464">
                             2022
                         </a>
                     </div>
                     <ul class="value-items">
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=217">
+                                <a href="/http/view.php?m=3&amp;id=228">
                                     Zurich
                                 </a>
                                 ,
-                                <a href="/http/view.php?m=3&amp;id=201">
+                                <a href="/http/view.php?m=3&amp;id=212">
                                     inhabitants
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=1906979700937">
+                                <a href="/http/view.php?m=5&amp;id=1992879767764">
                                     434'008
                                 </a>
                                 <sup>
@@ -302,16 +304,16 @@
                         </li>
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=189">
+                                <a href="/http/view.php?m=3&amp;id=200">
                                     Bern
                                 </a>
                                 ,
-                                <a href="/http/view.php?m=3&amp;id=201">
+                                <a href="/http/view.php?m=3&amp;id=212">
                                     inhabitants
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=1906978652349">
+                                <a href="/http/view.php?m=5&amp;id=1992878719176">
                                     134'591
                                 </a>
                                 <sup>
@@ -325,23 +327,23 @@
                 </div>
                 <div class="value-group">
                     <div class="value-group-title">
-                        <a href="/http/view.php?m=3&amp;id=669">
+                        <a href="/http/view.php?m=3&amp;id=689">
                             2021
                         </a>
                     </div>
                     <ul class="value-items">
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=217">
+                                <a href="/http/view.php?m=3&amp;id=228">
                                     Zurich
                                 </a>
                                 ,
-                                <a href="/http/view.php?m=3&amp;id=201">
+                                <a href="/http/view.php?m=3&amp;id=212">
                                     inhabitants
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=2873347342537">
+                                <a href="/http/view.php?m=5&amp;id=2959247409364">
                                     421'878
                                 </a>
                                 <sup>
@@ -353,16 +355,16 @@
                         </li>
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=189">
+                                <a href="/http/view.php?m=3&amp;id=200">
                                     Bern
                                 </a>
                                 ,
-                                <a href="/http/view.php?m=3&amp;id=201">
+                                <a href="/http/view.php?m=3&amp;id=212">
                                     inhabitants
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=2873346293949">
+                                <a href="/http/view.php?m=5&amp;id=2959246360776">
                                     133'883
                                 </a>
                                 <sup>
@@ -376,19 +378,19 @@
                 </div>
                 <div class="value-group">
                     <div class="value-group-title">
-                        <a href="/http/view.php?m=3&amp;id=601">
+                        <a href="/http/view.php?m=3&amp;id=621">
                             ABB
                         </a>
                     </div>
                     <ul class="value-items">
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=217">
+                                <a href="/http/view.php?m=3&amp;id=228">
                                     Zurich
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=39387353">
+                                <a href="/http/view.php?m=5&amp;id=40698084">
                                     12.3
                                 </a>
                                 <sup>
@@ -400,12 +402,12 @@
                         </li>
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=602">
+                                <a href="/http/view.php?m=3&amp;id=622">
                                     Vestas
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=39453273">
+                                <a href="/http/view.php?m=5&amp;id=40764013">
                                     6.7
                                 </a>
                                 <sup>
@@ -417,12 +419,12 @@
                         </li>
                         <li>
                             <span class="value-name">
-                                <a href="/http/view.php?m=3&amp;id=189">
+                                <a href="/http/view.php?m=3&amp;id=200">
                                     Bern
                                 </a>
                             </span>
                             <span class="value-num">
-                                <a href="/http/view.php?m=5&amp;id=39387325">
+                                <a href="/http/view.php?m=5&amp;id=40698056">
                                     4.5
                                 </a>
                                 <sup>
@@ -442,17 +444,17 @@
             </div>
             <br>
             same values in standard / none grouped format:
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=444">2022</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a> <a href="/http/view.php?m=5&amp;id=1906979700937">434'008</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=464">2022</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a> <a href="/http/view.php?m=5&amp;id=1992879767764">434'008</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=669">2021</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a> <a href="/http/view.php?m=5&amp;id=2873347342537">421'878</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=689">2021</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a> <a href="/http/view.php?m=5&amp;id=2959247409364">421'878</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=444">2022</a>, <a href="/http/view.php?m=3&amp;id=189">Bern</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a> <a href="/http/view.php?m=5&amp;id=1906978652349">134'591</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=464">2022</a>, <a href="/http/view.php?m=3&amp;id=200">Bern</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a> <a href="/http/view.php?m=5&amp;id=1992878719176">134'591</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=669">2021</a>, <a href="/http/view.php?m=3&amp;id=189">Bern</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a> <a href="/http/view.php?m=5&amp;id=2873346293949">133'883</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=689">2021</a>, <a href="/http/view.php?m=3&amp;id=200">Bern</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a> <a href="/http/view.php?m=5&amp;id=2959246360776">133'883</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=601">ABB</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a> <a href="/http/view.php?m=5&amp;id=39387353">12.3</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=621">ABB</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a> <a href="/http/view.php?m=5&amp;id=40698084">12.3</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
-            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=601">ABB</a>, <a href="/http/view.php?m=3&amp;id=602">Vestas</a> <a href="/http/view.php?m=5&amp;id=39453273">6.7</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+            <span class="text-nowrap"><a href="/http/view.php?m=3&amp;id=621">ABB</a>, <a href="/http/view.php?m=3&amp;id=622">Vestas</a> <a href="/http/view.php?m=5&amp;id=40764013">6.7</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
             <br>
             ... and 2 more
             <br>
@@ -464,7 +466,7 @@
                             2019
                         </a>
                         ,
-                        <a href="/http/view.php?m=3&amp;id=201">
+                        <a href="/http/view.php?m=3&amp;id=212">
                             inhabitants
                         </a>
                     </th>
@@ -474,12 +476,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=217">
+                        <a href="/http/view.php?m=3&amp;id=228">
                             Zurich
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=932021076103">
+                        <a href="/http/view.php?m=5&amp;id=979266437255">
                             415'367
                         </a>
                         <sup>
@@ -491,7 +493,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=210">
+                        <a href="/http/view.php?m=3&amp;id=221">
                             Switzerland
                         </a>
                         ,
@@ -500,7 +502,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=59110608408019079">
+                        <a href="/http/view.php?m=5&amp;id=62206880396476551">
                             8.61
                         </a>
                         <sup>
@@ -512,11 +514,11 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=217">
+                        <a href="/http/view.php?m=3&amp;id=228">
                             Zurich
                         </a>
                         ,
-                        <a href="/http/view.php?m=3&amp;id=190">
+                        <a href="/http/view.php?m=3&amp;id=201">
                             canton
                         </a>
                         ,
@@ -525,7 +527,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=05_0S_0y_17_1N_">
+                        <a href="/http/view.php?m=5&amp;id=05_0S_17_1I_1Y_">
                             1.55
                         </a>
                         <sup>
@@ -539,7 +541,7 @@
             <br>
             as table with context:
             <h4>
-                <a href="/http/view.php?m=3&amp;id=201">
+                <a href="/http/view.php?m=3&amp;id=212">
                     inhabitants
                 </a>
             </h4>
@@ -556,12 +558,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=217">
+                        <a href="/http/view.php?m=3&amp;id=228">
                             Zurich
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=932021076103">
+                        <a href="/http/view.php?m=5&amp;id=979266437255">
                             415'367
                         </a>
                         <sup>
@@ -573,7 +575,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=210">
+                        <a href="/http/view.php?m=3&amp;id=221">
                             Switzerland
                         </a>
                         ,
@@ -582,7 +584,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=59110608408019079">
+                        <a href="/http/view.php?m=5&amp;id=62206880396476551">
                             8.61
                         </a>
                         <sup>
@@ -594,11 +596,11 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=217">
+                        <a href="/http/view.php?m=3&amp;id=228">
                             Zurich
                         </a>
                         ,
-                        <a href="/http/view.php?m=3&amp;id=190">
+                        <a href="/http/view.php?m=3&amp;id=201">
                             canton
                         </a>
                         ,
@@ -607,7 +609,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=05_0S_0y_17_1N_">
+                        <a href="/http/view.php?m=5&amp;id=05_0S_17_1I_1Y_">
                             1.55
                         </a>
                         <sup>
@@ -623,22 +625,20 @@
             <br>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 470" width="740" height="470" role="img" aria-label="global problems: loss">
                 <style>
-                    :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #77756f; --grid: #e3e0d8; --range: #f0c9a8; --accent: #c4561c; --accent2: #2d6a8a; --hover: #f4efe6; }
-        @media (prefers-color-scheme: dark) {
-        :root { --bg: #1b1b1a; --fg: #ecebe6; --muted: #9a978f; --grid: #353431; --range: #6b3d22; --accent: #f08a4b; --accent2: #4f93b8; --hover: #262523; }
-        }
+                    :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
+
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: 18px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: 12px; }
-        .grid { stroke: var(--grid); stroke-width: 1; }
-        .ax { fill: var(--muted); font-size: 12px; }
-        .lbl { fill: var(--fg); font-size: 13.2px; text-anchor: end; dominant-baseline: central; }
-        .val { fill: var(--muted); font-size: 12px; dominant-baseline: central; }
-        .rng { fill: var(--range); }
-        .mid { fill: var(--accent); }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .lbl { fill: var(--chart-fg); font-size: 13.2px; text-anchor: end; dominant-baseline: central; }
+        .val { fill: var(--chart-muted); font-size: 12px; dominant-baseline: central; }
+        .rng { fill: var(--chart-range); }
+        .mid { fill: var(--chart-accent); }
         .hit { fill: transparent; }
-        .bar:hover .hit { fill: var(--hover); }
+        .bar:hover .hit { fill: var(--chart-hover); }
                 </style>
                 <rect class="bg" width="740" height="470"/>
                 <text class="h" x="20" y="24">
@@ -900,22 +900,20 @@ gain: 3a billion htp
             <br>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 590" width="640" height="590" role="img" aria-label="solutions: gain vs. loss">
                 <style>
-                    :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #77756f; --grid: #e3e0d8; --range: #f0c9a8; --accent: #c4561c; --accent2: #2d6a8a; --hover: #f4efe6; }
-        @media (prefers-color-scheme: dark) {
-        :root { --bg: #1b1b1a; --fg: #ecebe6; --muted: #9a978f; --grid: #353431; --range: #6b3d22; --accent: #f08a4b; --accent2: #4f93b8; --hover: #262523; }
-        }
+                    :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
+
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: 18px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: 12px; }
-        .grid { stroke: var(--grid); stroke-width: 1; }
-        .ax { fill: var(--muted); font-size: 12px; }
-        .pt circle { fill: var(--accent2); }
-        .pt text { fill: #fff; font-size: 10.8px; font-weight: 600; text-anchor: middle; }
-        .pt:hover circle { fill: var(--accent); }
-        .lg { fill: var(--fg); font-size: 12px; }
-        .lg tspan.p { fill: var(--muted); }
-        .lg tspan.n { font-weight: 600; fill: var(--accent2); }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .pt circle { fill: var(--chart-point); }
+        .pt text { fill: var(--chart-point-text); font-size: 10.8px; font-weight: 600; text-anchor: middle; }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .lg { fill: var(--chart-fg); font-size: 12px; }
+        .lg tspan.p { fill: var(--chart-muted); }
+        .lg tspan.n { font-weight: 600; fill: var(--chart-point); }
                 </style>
                 <rect class="bg" width="640" height="590"/>
                 <text class="h" x="20" y="24">
@@ -1021,34 +1019,34 @@ gain: 34.1 billion htp
                 </g>
                 <g class="pt">
                     <title>
-                        4 basic income (wealth concentration)
-loss: 11.2a trillion EUR
-gain: 16a billion htp
-                    </title>
-                    <circle cx="239.2" cy="242" r="11"/>
-                    <text x="239.2" y="246">
-                        4
-                    </text>
-                </g>
-                <g class="pt">
-                    <title>
-                        5 spending (education)
-loss: 9.4 trillion EUR
-gain: 14.3 billion htp
-                    </title>
-                    <circle cx="210.4" cy="255.2" r="11"/>
-                    <text x="210.4" y="259.2">
-                        5
-                    </text>
-                </g>
-                <g class="pt">
-                    <title>
-                        6 taxes (health)
+                        4 taxes (health)
 loss: 13.6 trillion EUR
 gain: 8.8 billion htp
                     </title>
                     <circle cx="277.6" cy="297.8" r="11"/>
                     <text x="277.6" y="301.8">
+                        4
+                    </text>
+                </g>
+                <g class="pt">
+                    <title>
+                        5 basic income (wealth concentration)
+loss: 11.2a trillion EUR
+gain: 16a billion htp
+                    </title>
+                    <circle cx="239.2" cy="242" r="11"/>
+                    <text x="239.2" y="246">
+                        5
+                    </text>
+                </g>
+                <g class="pt">
+                    <title>
+                        6 spending (education)
+loss: 9.4 trillion EUR
+gain: 14.3 billion htp
+                    </title>
+                    <circle cx="210.4" cy="255.2" r="11"/>
+                    <text x="210.4" y="259.2">
                         6
                     </text>
                 </g>
@@ -1065,23 +1063,23 @@ gain: 12a billion htp
                 </g>
                 <g class="pt">
                     <title>
-                        8 Delphi method (biased information)
-loss: 6.5a trillion EUR
-gain: 9a billion htp
-                    </title>
-                    <circle cx="164" cy="296.3" r="11"/>
-                    <text x="164" y="300.3">
-                        8
-                    </text>
-                </g>
-                <g class="pt">
-                    <title>
-                        9 market share tax (market power)
+                        8 market share tax (market power)
 loss: 7.3a trillion EUR
 gain: 6a billion htp
                     </title>
                     <circle cx="176.8" cy="319.5" r="11"/>
                     <text x="176.8" y="323.5">
+                        8
+                    </text>
+                </g>
+                <g class="pt">
+                    <title>
+                        9 Delphi method (biased information)
+loss: 6.5a trillion EUR
+gain: 9a billion htp
+                    </title>
+                    <circle cx="164" cy="296.3" r="11"/>
+                    <text x="164" y="300.3">
                         9
                     </text>
                 </g>
@@ -1161,27 +1159,27 @@ gain: 3a billion htp
                         <tspan class="n">
                             4
                         </tspan>
-                        basic income
+                        taxes
                         <tspan class="p">
-                            · wealth concentration
+                            · health
                         </tspan>
                     </text>
                     <text x="40" y="516">
                         <tspan class="n">
                             5
                         </tspan>
-                        spending
+                        basic income
                         <tspan class="p">
-                            · education
+                            · wealth concentration
                         </tspan>
                     </text>
                     <text x="40" y="536">
                         <tspan class="n">
                             6
                         </tspan>
-                        taxes
+                        spending
                         <tspan class="p">
-                            · health
+                            · education
                         </tspan>
                     </text>
                     <text x="40" y="556">
@@ -1197,18 +1195,18 @@ gain: 3a billion htp
                         <tspan class="n">
                             8
                         </tspan>
-                        Delphi method
+                        market share tax
                         <tspan class="p">
-                            · biased information
+                            · market power
                         </tspan>
                     </text>
                     <text x="340" y="456">
                         <tspan class="n">
                             9
                         </tspan>
-                        market share tax
+                        Delphi method
                         <tspan class="p">
-                            · market power
+                            · biased information
                         </tspan>
                     </text>
                     <text x="340" y="476">

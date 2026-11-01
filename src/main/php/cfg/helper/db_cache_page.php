@@ -5,10 +5,13 @@
     model/helper/db_cache_page.php - the cached html pages of view-only requests keyed by the url
     ------------------------------
 
+    also the json messages of api get requests e.g. of the resultList api are cached here (see api_key)
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this cached page object
     - construct and map: set the vars of this object to the initial value or based on a db row
+    - info:              e.g. if the cached content is too old to be used
     - load:              database access object (DAO) functions
     - save:              add or replace a cached html page
     - api:               create an api array for the frontend
@@ -57,8 +60,12 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'phrase_data.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
@@ -91,9 +98,21 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use DateTime;
 use DateTimeInterface;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 
 class db_cache_page extends db_object_seq_id
 {
+
+    // the apis whose cached answers show the saved objects e.g. the phrase data of a calculator page
+    const array CACHED_APIS = [
+        phrase_data::class,
+        phrase_list::class,
+        value_list::class,
+        result_list::class,
+    ];
 
     /*
      * db const
@@ -182,6 +201,24 @@ class db_cache_page extends db_object_seq_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * @return bool true if this row has no content or is older than the max cache age and therefore needs to be refilled
+     */
+    function is_outdated(): bool
+    {
+        $result = true;
+        if ($this->html_page !== null and $this->last_update !== null) {
+            $lib = new library();
+            $result = $lib->is_older_than_cache_max_age($this->last_update);
+        }
+        return $result;
+    }
+
+
+    /*
      * load
      */
 
@@ -217,6 +254,45 @@ class db_cache_page extends db_object_seq_id
             // TODO Prio 1 add message to page
         }
         return $result;
+    }
+
+    /**
+     * get the cached json of an api get request, but only within the max cache age, because e.g. a
+     * recalculated result does not drop the cache (see save_json)
+     *
+     * @param string $key the cache key of the request created by api_key
+     * @param user_message $msg to report a failed cache read to the requesting user
+     * @return string|null the cached api json message or null if it is not cached, outdated or the cache is switched off
+     */
+    function json_by_key(string $key, user_message $msg): ?string
+    {
+        $result = null;
+        if ($this->api_cache_allowed()) {
+            $this->load_by_url($key, $msg);
+            if (!$this->is_outdated()) {
+                $result = $this->html_page;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the cache key of an api get request e.g. 'resultList?phrase_ids=-134%2C-186&u=3'
+     * the values are url encoded, so that a value cannot end the key with another user
+     * and an empty value is left out, because the api treats it like a missing parameter
+     *
+     * @param string $class the class of the api e.g. result_list::class for the resultList api
+     * @param array $par every request parameter that changes the json message, as url var => value
+     * @param int $usr_id the requesting user, because the json differs by the user sandbox and permissions
+     * @return string the key that ends with the user like a personal page, so that del_by_user drops it
+     */
+    static function api_key(string $class, array $par, int $usr_id): string
+    {
+        $lib = new library();
+        $api_name = $lib->class_to_api_route($class);
+        // a zero is a used parameter, so only the empty string is filtered
+        $used_par = array_filter($par, fn($val) => $val !== '');
+        return $api_name . url_var::PAR . http_build_query($used_par) . self::user_key($usr_id);
     }
 
 
@@ -309,16 +385,39 @@ class db_cache_page extends db_object_seq_id
      * @param string $url the request url that the cached html page belongs to
      * @param string $html the rendered html page that should be cached
      * @param user_message $msg to collect the problem messages for the requesting user
+     * @param DateTime $snap_time when the data of the page has started to be read, by default the time of the write
      * @return bool true if the cached html page has been saved
      */
-    function save_html(string $url, string $html, user_message $msg): bool
+    function save_html(string $url, string $html, user_message $msg, DateTime $snap_time = new DateTime()): bool
     {
         $this->load_by_url($url, $msg);
         $this->url = $url;
         $this->html_page = $html;
-        $this->last_update = new DateTime();
+        $this->last_update = $snap_time;
         $this->save($msg);
         return $msg->is_ok();
+    }
+
+    /**
+     * remember the json of an api get request for the next request with the same key
+     * in the html page field, because the url keyed cache is the same for a page and an api message;
+     * a failed cache write is only logged, because the requesting user already has the json
+     *
+     * @param string $key the cache key of the request created by api_key
+     * @param string $json the api json message created for the request
+     * @param DateTime $snap_time when the data of the json has started to be read, which is the age of the entry
+     * @param user_message $msg of the request, only read to never cache the json of a failed request
+     * @return void
+     */
+    function save_json(string $key, string $json, DateTime $snap_time, user_message $msg): void
+    {
+        if ($msg->is_ok() and $this->api_cache_allowed()) {
+            // filling the cache is a system action that must also work for a user who cannot change data
+            $cac_msg = new user_message(user::system()); // not reported, a failed cache write is only logged
+            if (!$this->save_html($key, $json, $cac_msg, $snap_time)) {
+                log_warning('caching the api message ' . $key . ' failed because ' . $cac_msg->all_message_text());
+            }
+        }
     }
 
     /**
@@ -337,9 +436,8 @@ class db_cache_page extends db_object_seq_id
     {
         global $db_con;
 
-        $usr_key = url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
         $qp = $db_con->sql_creator()->del_sql_list_by_text(
-            self::class, self::FLD_URL, $usr_key, sql_par_type::LIKE_L);
+            self::class, self::FLD_URL, self::user_key($usr_id), sql_par_type::LIKE_L);
         return $db_con->delete($qp, 'cached pages of user ' . $usr_id, $msg);
     }
 
@@ -356,6 +454,91 @@ class db_cache_page extends db_object_seq_id
 
         $qp = $db_con->sql_creator()->del_sql_all(self::class);
         return $db_con->delete($qp, 'all cached pages', $msg);
+    }
+
+    /**
+     * remove the cached html pages of all users or of one user, but not the cached api answers,
+     * which a write outdates only if they can show the changed object (see del_api)
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @param int $usr_id the user whose pages are removed or zero for the pages of all users
+     * @return bool true if the cached pages have been removed
+     */
+    function del_html(user_message $msg, int $usr_id = 0): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_list_by_text(
+            self::class, self::FLD_URL, self::html_key_pattern($usr_id), sql_par_type::LIKE_R);
+        return $db_con->delete($qp, 'cached html pages', $msg);
+    }
+
+    /**
+     * remove the cached answers of one api e.g. of the result list, of all users or of one user
+     *
+     * @param string $class the list class of the api e.g. result_list
+     * @param user_message $msg to report a problem of the delete
+     * @param int $usr_id the user whose answers are removed or zero for the answers of all users
+     * @return bool true if the cached api answers have been removed
+     */
+    function del_api(string $class, user_message $msg, int $usr_id = 0): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_list_by_text(
+            self::class, self::FLD_URL, self::api_key_pattern($class, $usr_id), sql_par_type::LIKE_R);
+        return $db_con->delete($qp, 'cached api answers', $msg);
+    }
+
+    /**
+     * remove the cached html pages and the cached answers of the data apis of all users,
+     * because e.g. an import or an update put changes the standard data that every user sees;
+     * the other cached answers are kept
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return void
+     */
+    function del_data_answers(user_message $msg): void
+    {
+        $this->del_html($msg);
+        foreach (self::CACHED_APIS as $class) {
+            $this->del_api($class, $msg);
+        }
+    }
+
+    /**
+     * the start of the key of the cached html pages (see frontend::url_cache_key), with the
+     * user in the middle for the pages of one user; the delete adds the wildcard at the end, so
+     * e.g. the pages of user 3 also match the pages of user 31, which only drops a page too many
+     *
+     * @param int $usr_id the user of the pages or zero for the pages of all users
+     * @return string the key pattern for a delete with sql_par_type::LIKE_R
+     */
+    static function html_key_pattern(int $usr_id = 0): string
+    {
+        $result = url_var::MASK . url_var::EQ;
+        if ($usr_id > 0) {
+            $result .= sql::WILDCARD . self::user_key($usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the start of the key of the cached answers of one api (see api_key), with the user in the
+     * middle for the answers of one user
+     *
+     * @param string $class the list class of the api e.g. result_list
+     * @param int $usr_id the user of the answers or zero for the answers of all users
+     * @return string the key pattern for a delete with sql_par_type::LIKE_R
+     */
+    static function api_key_pattern(string $class, int $usr_id = 0): string
+    {
+        $lib = new library();
+        $result = $lib->class_to_api_route($class) . url_var::PAR;
+        if ($usr_id > 0) {
+            $result .= sql::WILDCARD . self::user_key($usr_id);
+        }
+        return $result;
     }
 
 
@@ -524,6 +707,25 @@ class db_cache_page extends db_object_seq_id
             ]);
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * the pod setting of the url keyed cache, which switches the html pages and the api messages together
+     * @return bool false if nothing should be read from or written to the cache, true also before the config is loaded
+     */
+    private function api_cache_allowed(): bool
+    {
+        global $cfg;
+        return $cfg?->page_cache_allowed() ?? true;
+    }
+
+    /**
+     * @param int $usr_id the id of the user of a personal page or api message
+     * @return string the end of the cache key that names the user e.g. '&u=3'
+     */
+    private static function user_key(int $usr_id): string
+    {
+        return url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
     }
 
 

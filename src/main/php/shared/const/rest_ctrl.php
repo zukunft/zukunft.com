@@ -43,6 +43,7 @@ class rest_ctrl
     const string REMOTE_ADDR = 'REMOTE_ADDR';
     const string REQUEST_METHOD = 'REQUEST_METHOD';
     const string REQUEST_URI = 'REQUEST_URI';
+    const string REQUEST_TIME_FLOAT = 'REQUEST_TIME_FLOAT';
     const string GET = 'GET';
     const string POST = 'POST';
     const string PUT = 'PUT';

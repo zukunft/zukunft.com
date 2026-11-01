@@ -107,7 +107,7 @@ class verb_read_tests
         );
 
 
-        // TODO add to phrase and triple the methode
+        // TODO Prio 2 add to phrase and triple the methode
         //      ->all_parents to get canton, city and company for Zurich (canton)
         //      whereas ->parents just return canton for Zurich (canton) because the word splitting is not done
 
@@ -133,7 +133,7 @@ class verb_read_tests
         $select_list = $lst->selector_list();
         $top_verb = $select_list[0]; // the most often verb should be on the top
         $result = $top_verb[1]; // the name of the verb is always on second place
-        // TODO check why this differs depending on the database used
+        // TODO Prio 2 check why this differs depending on the database used
         if ($result == 'is an acronym for') {
             $target = 'is an acronym for';
         } elseif ($result == verbs::IS_NAME) {

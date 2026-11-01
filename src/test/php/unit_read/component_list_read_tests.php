@@ -72,7 +72,7 @@ class component_list_read_tests
         $t->assert_text_contains($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
-        // TODO add this to all db read tests for all API call functions
+        // TODO Prio 2 add this to all db read tests for all API call functions
         $result = json_decode($cmp_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(component_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
@@ -85,7 +85,7 @@ class component_list_read_tests
         $t->assert_contains($test_name, $cmp_lst->names(), components::WORD_NAME);
 
         // test load by component list by ids
-        /* TODO activate
+        /* TODO Prio 1 activate
         $test_name = 'load components by ids';
         $wrd_lst = new component_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));

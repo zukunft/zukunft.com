@@ -42,8 +42,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::API_OBJECT . 'controller.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
@@ -57,6 +59,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -67,6 +70,8 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -83,28 +88,39 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -122,6 +138,7 @@ class base_ui_tests
         $t_phr = new test_phrases($t);
         $t_src = new test_sources($t);
         $t_frm = new test_formulas($t);
+        $t_msk = new test_views($t);
         $msg = new user_message();
         $msg_ui = new user_message_ui();
 
@@ -177,6 +194,15 @@ class base_ui_tests
         $test_name = 'a change mask request is not cached';
         $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // the admin dashboard shows the live state of the pod, so it is always created again
+        $test_name = 'the admin dashboard is not cached';
+        $url_array = [url_var::MASK => views::ADMIN_MAIN_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_ID), '');
+        // negative: another system view is still cached
+        $test_name = '... but the settings page is cached';
+        $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SYSTEM_CONFIG_ID . '&id=0');
 
         // a request with a form submission is never cached
         $test_name = 'a post request is not cached';
@@ -262,6 +288,18 @@ class base_ui_tests
         $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
         $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
 
+        // the page of the server is asked for by sc=0 (e.g. view.php?m=calculator&id=-2757&sc=0) and is
+        // rendered live, because the cached page of the bare url is the page that the browser builds
+        $test_name = 'sc=0 is not cached';
+        $url_array = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::JAVASCRIPT => url_var::FALSE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'javascript is mapped to the short sc';
+        $url_array = [url_var::MASK_HUMAN => views::CALCULATOR, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::JAVASCRIPT_HUMAN => url_var::FALSE];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::JAVASCRIPT] ?? '', url_var::FALSE);
+
         // the login and signup form pages are served from the page cache even though they are process
         // masks, because the plain form is static (the per-session token is restored per request)
         $test_name = 'the login form is cached';
@@ -271,6 +309,18 @@ class base_ui_tests
         $test_name = 'the signup form is cached';
         $url_array = [url_var::MASK => views::SIGNUP_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SIGNUP_ID . '&id=0');
+
+        // the form carries the back part as hidden fields to return to the calling page after the login
+        $test_name = 'the login form with a back part is not cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID, url_var::BACK . url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the signup form with a back part is not cached';
+        $url_array = [url_var::MASK => views::SIGNUP_ID, url_var::BACK . url_var::MASK => views::WORD_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'a word view with a back part is still cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::BACK . url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
         // the login submit is a post action, so only the form GET is cached, never the submission
         $test_name = 'the login submit is not cached';
@@ -302,14 +352,14 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_PAGE => 1];
         $t->assert($test_name, $ui->url_cache_key($url_array),
             'm=' . views::START_ID . '&id=0&' . url_var::DISPLAY_LIST_PAGE . '=1');
-        // the full table with every column and the ranges is a view-only state like the list size
+        // the full table with every column and the variance is a view-only state like the list size
         $test_name = 'the full table of the start page is cached under its own key';
         $url_array = [url_var::MASK => views::START_ID,
             url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
-            url_var::DISPLAY_LIST_RANGE => url_var::TRUE];
+            url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
             . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
-            . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+            . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
         // the order of the rows is a view-only state as well, so each order is cached on its own
         $test_name = 'the sorted table of the start page is cached under its own key';
         $prime_order = table_orders::NUMERIC_ASC->url_value(12);
@@ -326,13 +376,22 @@ class base_ui_tests
         // and the mapping of the page object would report the missing id (see frontend::url_object_values)
         $test_name = 'the list size is a control var';
         $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_SIZE, url_var::CONTROL_VARS));
-        $test_name = '... like the list page, the columns and the ranges';
+        $test_name = '... like the list page, the columns and the variance';
         $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_PAGE, url_var::CONTROL_VARS)
             and in_array(url_var::DISPLAY_LIST_COLUMNS, url_var::CONTROL_VARS)
-            and in_array(url_var::DISPLAY_LIST_RANGE, url_var::CONTROL_VARS));
+            and in_array(url_var::DISPLAY_LIST_VARIANCE, url_var::CONTROL_VARS));
         $test_name = '... and the three row orders, which the page links repeat as page vars';
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::CONTROL_VARS), []);
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::PAGE_VARS), []);
+        $test_name = 'a url with dlv=1 shows the variance';
+        $variance_on = [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
+        $t->assert_true($test_name, url_var::show_variance($variance_on));
+        $test_name = 'a url with dlv=0 hides the variance although the default shows it';
+        $variance_off = [url_var::DISPLAY_LIST_VARIANCE => url_var::FALSE];
+        $t->assert_false($test_name, url_var::show_variance($variance_off, true));
+        $test_name = 'a url without dlv returns the default';
+        $t->assert_false($test_name, url_var::show_variance([]));
+        $t->assert_true($test_name, url_var::show_variance([], true));
         // e.g. view.php?m=126&1=calculation shows one top level key of the settings and no object
         $test_name = 'the search and the scope of a page are control vars';
         $t->assert_true($test_name, in_array(url_var::PATTERN, url_var::CONTROL_VARS)
@@ -352,6 +411,9 @@ class base_ui_tests
         // the target is a pure html frontend, so the tab box must not contain javascript
         $test_name = 'tab_box contains no javascript';
         $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+        // negative: an empty change log or view list shows no empty tab
+        $test_name = 'a tab box without content shows no tab';
+        $t->assert($test_name, $html->tab_box(['View' => '', 'Changes' => '']), '');
 
         $t->subheader($ts . 'navbar');
 
@@ -364,6 +426,24 @@ class base_ui_tests
         $test_name = 'without a logged in user the person icon keeps the default color';
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
+
+        // the user menu of an admin offers the admin dashboard
+        $dashboard_par = url_var::MASK . '=' . views::ADMIN_MAIN_ID;
+        $test_name = 'the user menu of an admin links to the admin dashboard';
+        $navbar_admin = $html->navbar(0, [], 'test admin', null, true);
+        $t->assert_text_contains($test_name, $navbar_admin, $dashboard_par);
+        // negative: a normal user cannot open the dashboard, so the link is not offered
+        $test_name = '... but not the user menu of a normal user';
+        $t->assert_text_not_contains($test_name, $navbar_logged, $dashboard_par);
+
+        // the edit menu of an admin offers the server admin page as last entry
+        $test_name = 'the edit menu of an admin links to the server admin page';
+        $t->assert_text_contains($test_name, $navbar_admin, api::SERVER_ADMIN_SCRIPT);
+        // negative: the server admin page is not offered to a normal user or a user without login
+        $test_name = '... but not the edit menu of a normal user';
+        $t->assert_text_not_contains($test_name, $navbar_logged, api::SERVER_ADMIN_SCRIPT);
+        $test_name = '... and not the edit menu without login';
+        $t->assert_text_not_contains($test_name, $navbar_anon, api::SERVER_ADMIN_SCRIPT);
 
         // the settings are the read only system configuration, which an ip user without login can see too
         $test_name = 'the settings link of a request without login is the short settings path';
@@ -383,6 +463,51 @@ class base_ui_tests
             $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
             $t->assert_file($test_name, $html->forward_page($msk_id), $file);
         }
+        // negative: the session decides who the user is, so the static page never names a user
+        $test_name = 'a forward page names no user';
+        $t->assert_text_not_contains($test_name, $html->forward_page(views::SYSTEM_CONFIG_ID), url_var::USER . url_var::EQ);
+
+        // the pinned views of config.yaml are linked on the static start page and each has a static
+        // forward page by its url name, which the db read test writes (system_views_read_tests::run_pinned_views)
+        $pin_lst = $t->pinned_views();
+        // e.g. a moved yaml key would else skip every test of the pinned views silently
+        $test_name = 'config.yaml has pinned views';
+        $t->assert_greater_zero($test_name, count($pin_lst));
+        $test_name = 'a pinned view is linked by its name with the tooltip';
+        $pin = array_slice($pin_lst, 0, 1, true);
+        $pin_fields = reset($pin) ?: [];
+        $markers = $html::THEME_BEGIN . $html::THEME_END . $html::PINNED_VIEWS_BEGIN . $html::PINNED_VIEWS_END;
+        $page_one = $html->start_page($markers, $pin, $msg_ui);
+        $t->assert_text_contains($test_name, $page_one, '>' . ($pin_fields[words::NAME] ?? '') . '<');
+        $t->assert_text_contains($test_name, $page_one, 'title="' . ($pin_fields[words::TOOLTIP] ?? '') . '"');
+        // negative: the static page is the same for every user, so a link never names the user
+        $test_name = '... and without the user';
+        $t->assert_text_not_contains($test_name, $page_one, url_var::USER . url_var::EQ);
+        // the static start page has no php head, so the test run writes the font of every page into it
+        $test_name = 'the start page has the font of every page';
+        $t->assert_text_contains($test_name, $page_one, '--font-page: ' . def::FALLBACK_FONT . ';');
+        foreach (test_files::STATIC_PAGES as $static_path) {
+            $test_name = 'the static page ' . basename($static_path) . ' has the font and the colours of config.yaml';
+            $static_page = file_get_contents($static_path);
+            $t->assert_file($test_name, $html->static_page($static_page, $msg_ui), $static_path);
+        }
+        $test_name = 'the short url page opens the url with the escaped url vars';
+        $url_one = $pin_fields[words::URL] ?? '';
+        $forward_one = $html->forward_url_page($url_one);
+        $t->assert_text_contains($test_name, $forward_one, htmlspecialchars($url_one, ENT_QUOTES));
+        // negative: the short url opens a fixed url, so it needs no javascript to keep the url vars
+        $test_name = '... without javascript';
+        $t->assert_text_not_contains($test_name, $forward_one, '<script');
+
+        // the docroot serves an extensionless file only if its name is in the allow-list of the .htaccess
+        $htaccess = file_get_contents(test_files::HTACCESS);
+        preg_match('/<FilesMatch "\^\(([^)]*)\)\$">/', $htaccess, $allowed);
+        $allow_lst = explode('|', $allowed[1] ?? '');
+        $forward_lst = array_map(fn($forward) => ltrim($forward, DIRECTORY_SEPARATOR), array_keys(api::FORWARD_VIEWS));
+        $test_name = 'the .htaccess allows each forward page';
+        $t->assert($test_name, array_values(array_diff($forward_lst, $allow_lst)), []);
+        $test_name = '... and each short url of a pinned view';
+        $t->assert($test_name, array_values(array_diff(array_keys($pin_lst), $allow_lst)), []);
 
         // the login link forwards a '9'-prefixed back target of the current page (the logout
         // page carries the original page as back target, see frontend::action_logout), so after
@@ -433,6 +558,9 @@ class base_ui_tests
         ]);
         $t->assert_text_contains($test_name, $logout_body, htmlspecialchars($val_url));
         $t->assert_text_contains($test_name, $logout_body, $mtr->txt(msg_id::FORM_FIELD_BACK));
+        // negative: without a back target the back button leads to the start page, which names no view
+        $test_name = '... and without a back target to the start page';
+        $t->assert_text_not_contains($test_name, new system_page()->logout_body(), url_var::PAR . url_var::MASK . url_var::EQ);
 
         $test_name = 'on a normal page the login link uses the page as the back target';
         $navbar_normal_page = $html->navbar(views::WORD_ID, [
@@ -442,17 +570,202 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $navbar_normal_page,
             api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
 
+        // the edit menu of a view with an editor (a view relation of the editor type) opens the
+        // editor with the same object, e.g. the table editor for the table of a phrase
+        $test_name = 'the edit menu of a view with an editor opens the editor with the same object';
+        $table_page = [url_var::MASK => (string)views::TABLE_ID, url_var::ID => (string)word_names::MATH_ID];
+        $navbar_table = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
+            $t_msk->menu_table_editor_ui());
+        $t->assert_text_contains($test_name, $navbar_table,
+            url_var::MASK . '=' . views::TABLE_EDITOR_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
+        $t->assert_text_contains($test_name, $navbar_table, '>' . views::TABLE_EDITOR_NAME . '<');
+        $test_name = '... and returns to the table';
+        $t->assert_text_contains($test_name, $navbar_table, url_var::BACK . url_var::MASK . '=' . views::TABLE_ID);
+        $alternative = '>' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW) . '<';
+        $test_name = '... below the sub header alternative views';
+        $t->assert_text_order($test_name, $navbar_table, $alternative, '>' . views::TABLE_EDITOR_NAME . '<');
+        // negative: a view without an editor and without suggested views has no sub header alternative views
+        $test_name = 'the edit menu of a view without editor and suggested views has no sub header alternative views';
+        $t->assert_text_not_contains($test_name, $navbar_normal_page, $alternative);
+        // changing and adding a view are below the sub header customize, which follows "... more"
+        $test_name = 'the sub header customize is between "... more" and "change this view"';
+        $customize = 'class="' . styles::MENU_HEADER . '">' . $mtr->txt(msg_id::NAVBAR_CUSTOMIZE);
+        $t->assert_text_order($test_name, $navbar_normal_page, '>' . $mtr->txt(msg_id::AND_MORE) . '<', $customize);
+        $t->assert_text_order($test_name, $navbar_normal_page, $customize, '>' . $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW) . '<');
+        $test_name = '"change this view" says that it calls the view editor';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW_TIP));
+        $test_name = '"... more" names examples of the more views';
+        $navbar_names = $html->navbar(views::WORD_ID, [], null, null, false, $t_msk->menu_math_ui());
+        $names_tip = $lib->msg_var_replace($mtr->txt(msg_id::NAVBAR_MORE_VIEWS_NAMES_TIP), msg_id::VAR_NAME_LIST, views::SCIENCE);
+        $more_tip = $mtr->txt(msg_id::NAVBAR_MORE_VIEWS_TIP) . ' ' . $names_tip;
+        $t->assert_text_contains($test_name, $navbar_names, $more_tip);
+        $test_name = '"add view" names the shown object';
+        $for_tip = $lib->msg_var_replace($mtr->txt(msg_id::NAVBAR_ADD_VIEW_FOR_TIP), msg_id::VAR_NAME_LIST, word_names::MATH);
+        $add_tip = $mtr->txt(msg_id::NAVBAR_ADD_VIEW_TIP) . ' ' . $for_tip;
+        $t->assert_text_contains($test_name, $navbar_names, $add_tip);
+        // negative: without view names or object the tooltips name none
+        $test_name = '... but without the names of the views no examples';
+        $more_tip_start = $mtr->txt(msg_id::NAVBAR_MORE_VIEWS_TIP) . ' ';
+        $t->assert_text_not_contains($test_name, $navbar_normal_page, $more_tip_start);
+        $test_name = '... and without the shown object no object';
+        $add_tip_end = $mtr->txt(msg_id::NAVBAR_ADD_VIEW_TIP) . '"';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $add_tip_end);
+        // like the edit icons behind the title the editor of a user without login is grey and asks for a login
+        $usr_known = $ui_sys->usr;
+        $ip_ui = new user_ui();
+        $ip_ui->api_mapper([
+            json_fields::ID => users::TEST_USER_ID,
+            json_fields::PROFILE_ID => $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY)], $msg_ui);
+        $ui_sys->usr = $ip_ui;
+        $navbar_table_ip = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
+            $t_msk->menu_table_editor_ui());
+        $ui_sys->usr = $usr_known;
+        $test_name = 'the editor in the edit menu of a user without login is grey';
+        $t->assert_text_contains($test_name, $navbar_table_ip, styles::STYLE_GREY);
+        $test_name = '... and asks for a login';
+        $t->assert_text_contains($test_name, $navbar_table_ip, $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED));
+        $test_name = 'the editor in the edit menu of a known user is not grey and asks for nothing';
+        $t->assert_text_not_contains($test_name, $navbar_table, styles::STYLE_GREY);
+        $t->assert_text_not_contains($test_name, $navbar_table, $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED));
+
         $t->subheader($ts . 'login');
 
         $created_html = $html->about_page($msg_ui);
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        // the about view shows the about text inside the main element, so only the page closes the body
+        $test_name = 'the about text does not close the page';
+        $t->assert_text_not_contains($test_name, $html->about_body(), '</' . html_base::BODY . '>');
+        $test_name = '... but the about page does';
+        $t->assert_text_contains($test_name, $created_html, '</' . html_base::BODY . '>');
+
+
+        $t->subheader($ts . 'page font and colours');
+
+        // the page head sets the font and the colours of config.yaml frontend.layout as the css
+        // variables of the style files (see html_base::theme_style), the fallback without a config
+        $t_val = new test_values($t);
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = new config_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a page without a configured font has the fallback font';
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . def::FALLBACK_FONT . ';');
+        $test_name = '... and the fallback colours of the page';
+        $t->assert_text_contains($test_name, $head, '--page-link: ' . def::FALLBACK_PAGE_COLOURS['--page-link'][1] . ';');
+        $test_name = '... and of the editors in the light mode';
+        $t->assert_text_contains($test_name, $head, '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][1] . ';');
+        // a user without a mode gets the light mode, so a page looks the same for every user
+        $dark_query = '@media (prefers-color-scheme: dark)';
+        $test_name = '... only in the light mode';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $t->assert_text_not_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = 'the configured font is the font of the page';
+        $font = '"Segoe UI", system-ui, sans-serif';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text([words::FONT], $font)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . $font . ';');
+        // negative: a font that could end the css rule or the style element is not used
+        $test_name = 'a configured font that could end the style element is not used';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text([words::FONT], 'x;}</style><b>')->api_json([api_types::INCL_PHRASES]));
+        $font_msg = new user_message_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, $font_msg);
+        $t->assert_text_not_contains($test_name, $head, '</style><b>');
+        $test_name = '... but the fallback font';
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . def::FALLBACK_FONT . ';');
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $font_msg->is_ok());
+        $test_name = 'the configured page colour is the colour of the page';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::PAGE, words::LINK], '#123456')->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $t->assert_text_contains($test_name, $head, '--page-link: #123456;');
+        // a dark colour has the names of its light colour too, so the light mode must not take it
+        $test_name = 'a configured dark editor colour is the colour of the dark mode';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::EDITOR, words::DARK, words::BACKGROUND], '#222222')->api_json([api_types::INCL_PHRASES]));
+        [$edit_light, $edit_dark] = $html->theme_colours(def::FALLBACK_EDITOR_COLOURS, [words::EDITOR, ...html_base::COLOUR_PATH], new user_message_ui());
+        $t->assert_text_contains($test_name, $edit_dark, '--bg: #222222;');
+        $test_name = '... but not of the light mode';
+        $t->assert_text_contains($test_name, $edit_light, '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][1] . ';');
+        $test_name = 'the configured chart colour is the colour of the chart';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::CHART, words::GRID], '#345678')->api_json([api_types::INCL_PHRASES]));
+        [$chart_light] = $html->theme_colours(def::FALLBACK_CHART_COLOURS, [words::CHART, ...html_base::COLOUR_PATH], new user_message_ui());
+        $t->assert_text_contains($test_name, $chart_light, '--chart-grid: #345678;');
+        // negative: a colour that could end the css rule or the style element is not used
+        $test_name = 'a configured colour that could end the style element is not used';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::PAGE, words::LINK], 'red;}</style><b>')->api_json([api_types::INCL_PHRASES]));
+        $colour_msg = new user_message_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, $colour_msg);
+        $t->assert_text_not_contains($test_name, $head, '</style><b>');
+        $test_name = '... but the fallback colour';
+        $t->assert_text_contains($test_name, $head, '--page-link: ' . def::FALLBACK_PAGE_COLOURS['--page-link'][1] . ';');
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $colour_msg->is_ok());
+
+
+        $t->subheader($ts . 'dark and light mode');
+
+        // a user who has chosen the dark mode gets the dark colours without asking the browser
+        $nav_url = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_DARK)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a user in the dark mode gets the dark colours';
+        $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = '... without asking the browser';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $test_name = '... and without the light colours';
+        $t->assert_text_not_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        $test_name = '... and the dark bootstrap components';
+        $t->assert_text_contains($test_name, $html->header('test', new user_message_ui()), 'data-bs-theme="dark"');
+        $nav = $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME);
+        $test_name = '... and the switch to the light mode in the user menu';
+        $t->assert_text_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_LIGHT_MODE->text()));
+        $test_name = '... with a tooltip';
+        $t->assert_text_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_LIGHT_MODE_TIP->text()));
+        $test_name = '... but not to the dark mode';
+        $t->assert_text_not_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        $test_name = '... and not hidden by the setting of the browser';
+        $t->assert_text_not_contains($test_name, $nav, styles::THEME_TO_LIGHT);
+        // a user who has chosen the light mode gets the light colours only
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_LIGHT)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a user in the light mode gets the light colours';
+        $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        $test_name = '... without asking the browser';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $test_name = '... and the light bootstrap components';
+        $t->assert_text_not_contains($test_name, $html->header('test', new user_message_ui()), 'data-bs-theme');
+        $test_name = '... and the switch to the dark mode in the user menu';
+        $t->assert_text_contains($test_name, $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME),
+            $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        // a user who follows the browser gets both switches, of which the css shows the one to the other mode
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_BROWSER)->api_json([api_types::INCL_PHRASES]));
+        $nav = $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME);
+        $test_name = 'a user who follows the browser gets the switch to the dark mode';
+        $t->assert_text_contains($test_name, $nav, styles::THEME_TO_DARK);
+        $test_name = '... and to the light mode';
+        $t->assert_text_contains($test_name, $nav, styles::THEME_TO_LIGHT);
+        // the dark colours of a user who follows the browser are only in the media query
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = '... and the dark colours of the editors if the browser asks for them';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query) ?: '', '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][2] . ';');
+        $test_name = '... and of the page';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query) ?: '', '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = '... but the light colours without the media query';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query, true) ?: '', '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        // negative: an ip user cannot keep the mode, so the user menu has no switch
+        $test_name = 'an ip user gets no switch between the dark and the light mode';
+        $t->assert_text_not_contains($test_name, $html->navbar(views::WORD_ID, $nav_url),
+            $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        $ui_sys->cfg = $cfg_keep;
 
 
         $t->subheader($ts . 'selector');
 
-        // TODO test the creation of a phrase list API JSON
-        // TODO create a selector using a list an with a simple test page header an footer
+        // TODO Prio 2 test the creation of a phrase list API JSON
+        // TODO Prio 2 create a selector using a list an with a simple test page header an footer
         /*
         $sel = new html_selector();
         $sel->label = 'Test:';
@@ -518,6 +831,117 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $labelled_add, 'for="' . $name_id . '_add"');
         $t->assert_text_contains($test_name, $labelled_add, 'id="' . $name_id . '_add"');
 
+        // the plain input of the simple forms (login, signup, ...) links its label to the field the same way
+        $test_name = 'form_input links the label to the input id';
+        $plain = $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN, '', 'username or email');
+        $t->assert_text_contains($test_name, $plain, '<label for="username_or_email">username or email</label>');
+        $t->assert_text_contains($test_name, $plain, 'id="username_or_email"');
+        $t->assert_text_contains($test_name, $plain, 'name="' . url_var::USERNAME_HUMAN . '"');
+        // negative: a field without a label gets neither a label nor an id
+        $test_name = '... and a field without a label has no label tag and no id';
+        $plain_no_label = $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, '3');
+        $t->assert_text_not_contains($test_name, $plain_no_label, '<label');
+        $t->assert_text_not_contains($test_name, $plain_no_label, ' id="');
+
+        // an error text is an inline text with the danger style that keeps its html e.g. the <b> of a message
+        $test_name = 'an error text is a red inline text';
+        $err_html = $html->dsp_err('data <b>may get lost</b>');
+        $t->assert($test_name, $err_html, '<span class="' . styles::TEXT_DANGER . '">data <b>may get lost</b></span>');
+        // negative: a <style> tag is a stylesheet and the browser does not show its text
+        $test_name = '... and never a style tag';
+        $t->assert_text_not_contains($test_name, $err_html, '<style');
+        // negative: the text is shown as it is, so no tag is added to a plain text
+        $test_name = '... and a plain error text gets no tag added';
+        $plain_err_html = $html->dsp_err('plain text');
+        $t->assert_text_contains($test_name, $plain_err_html, '>plain text<');
+        $t->assert_text_not_contains($test_name, $plain_err_html, '<b>');
+
+        $t->subheader($ts . 'html elements');
+
+        // a named button posts its name as a url key and the label is the accessible name of an icon button
+        $test_name = 'a named button posts its name';
+        $post_btn = $html->button_bs('add', '', '', url_var::POST_SUBMIT, 'add a value');
+        $t->assert_text_contains($test_name, $post_btn, html_base::NAME . '="' . url_var::POST_SUBMIT . '"');
+        $t->assert_text_contains($test_name, $post_btn, html_base::ARIA_LABEL . '="add a value"');
+        $test_name = '... and a plain button neither posts a name nor has an accessible name';
+        $plain_btn = $html->button_bs('add');
+        $t->assert_text_not_contains($test_name, $plain_btn, html_base::NAME . '="');
+        $t->assert_text_not_contains($test_name, $plain_btn, html_base::ARIA_LABEL);
+
+        // the submit button posts the submit url var; the shown text is the value and never the name
+        $test_name = 'the submit button posts the submit url var';
+        $t->assert_text_contains($test_name, $html->form_submit('Link'), html_base::NAME . '="' . url_var::POST_SUBMIT . '"');
+        $test_name = '... and never the shown text as the name';
+        $t->assert_text_not_contains($test_name, $html->form_submit('Link'), html_base::NAME . '="Link"');
+
+        // a number input writes only the limits that are given, so the browser enforces no limit by default
+        $test_name = 'a number input writes the given limits';
+        $num_input = $html->input_number(url_var::NUMERIC_VALUE, 0.5, 0, 1, 0.01, 'value_form');
+        $t->assert_text_contains($test_name, $num_input, 'min="0" max="1" step="0.01"');
+        $t->assert_text_contains($test_name, $num_input, html_base::FORM . '="value_form"');
+        $test_name = '... and an input without limits and form has neither';
+        $free_input = $html->input_number(url_var::NUMERIC_VALUE, null, null, null, null);
+        $t->assert_text_not_contains($test_name, $free_input, html_base::VALUE . '=');
+        $t->assert_text_not_contains($test_name, $free_input, 'min=');
+        $t->assert_text_not_contains($test_name, $free_input, html_base::FORM . '=');
+
+        // the link to an object escapes the name, so a name with a tag cannot inject html
+        $test_name = 'the link to an object shows the name';
+        $obj_link = $html->ref_view(views::WORD_ID, word_names::MATH_ID, word_names::MATH);
+        $t->assert_text_contains($test_name, $obj_link, '>' . word_names::MATH . '</' . html_base::A . '>');
+        $test_name = '... and a name with a tag is shown as text, not as html';
+        $tag_link = $html->ref_view(views::WORD_ID, word_names::MATH_ID, '<b>' . word_names::MATH . '</b>');
+        $t->assert_text_not_contains($test_name, $tag_link, '<b>');
+
+        // a heading shows the title and gets a style class only if a style is given
+        $test_name = 'a heading shows the title';
+        $t->assert_text_contains($test_name, $html->text_h2('names'), '>names</');
+        $test_name = '... without a style class if none is given';
+        $t->assert_text_not_contains($test_name, $html->text_h2('names'), html_base::CLASS_HTML . '=');
+
+
+        $t->subheader($ts . 'loading start');
+
+        // the start of a slow page shows the loading text with the footer only after the delay
+        $test_name = 'the loading start is shown after the delay';
+        $loading = $html->loading_start(1.5, 2, $msg_ui);
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_ANIMATION . ' 0s 1.5s forwards');
+        $test_name = '... with the font of every page';
+        $t->assert_text_contains($test_name, $loading, '--font-page: ' . def::FALLBACK_FONT . ';');
+        $test_name = '... with the loading text';
+        $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
+        $test_name = '... and the footer';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_FOOTER);
+        // negative: the page that follows names the document and closes it
+        $test_name = 'the loading start has no title';
+        $t->assert_text_not_contains($test_name, $loading, '<' . html_base::TITLE);
+        $test_name = '... and does not close the body';
+        $t->assert_text_not_contains($test_name, $loading, '</' . html_base::BODY);
+        $test_name = '... and uses no element id e.g. of the search field of the navbar';
+        $t->assert_text_not_contains($test_name, $loading, ' ' . html_base::ID . '="');
+        // the seconds since the request start are counted up to the count limit, not to the php time limit
+        $test_name = 'the loading text counts the seconds from the given second';
+        $t->assert_text_contains($test_name, $loading, 'initial-value: 2;');
+        $test_name = '... in one step per second up to the count limit';
+        $t->assert_text_contains($test_name, $loading, ' 3598s steps(3598) 1.5s forwards');
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_COUNTER . ': ' . html_base::LOADING_COUNT_LIMIT . ';');
+        $test_name = '... and shows the count in the text';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_LOADING_SECONDS . '"></');
+        // negative: a request that has already reached the count limit shows no count
+        $test_name = 'the loading text has no count at the count limit';
+        $at_limit = $html->loading_start(1.5, html_base::LOADING_COUNT_LIMIT, $msg_ui);
+        $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
+        $test_name = 'the loading end hides the loading start';
+        $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
+        // the snapshot of a slow page replaces the volatile seconds since the request start
+        $test_name = 'the loading seconds of a page are replaced by the fixed test seconds';
+        $slow = $html->loading_start(1.5, 7, $msg_ui);
+        $fixed = $html->loading_start(1.5, $t::TEST_LOADING_SECONDS, $msg_ui);
+        $t->assert($test_name, $t->fix_volatile_loading_seconds($slow), $fixed);
+        // negative: a page without the count stays as it is
+        $test_name = '... and a loading start without the count stays unchanged';
+        $t->assert($test_name, $t->fix_volatile_loading_seconds($at_limit), $at_limit);
+
 
         $t->subheader($ts . 'unit html table tests');
 
@@ -582,7 +1006,7 @@ class base_ui_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2)
-            . word_names::PERCENT_SYMBOL;
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
         // the phrases of the test setup are used again for the snapshots below
         $ui_sys->phr_lst = $phr_lst_keep;
@@ -591,11 +1015,11 @@ class base_ui_tests
         $res_lst = new result_list_ui();
         $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
         $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
-        $t->html_page_test($res_lst->table(), '', 'table_result', $msg_ui);
+        $t->html_page_test($res_lst->table($msg_ui), '', 'table_result', $msg_ui);
 
         // create the same table as above, but within a context
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
-        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $msg_ui);
+        $t->html_page_test($res_lst->table($msg_ui, $phr_lst_context_ui), '', 'table_result_context', $msg_ui);
 
 
         $t->subheader($ts . 'unit html view component tests');
@@ -609,14 +1033,14 @@ class base_ui_tests
 
         $t->subheader($ts . 'list');
 
-        // TODO create and set the model objects and
+        // TODO Prio 2 create and set the model objects and
         //      create the api object using the api_obj() function
         //      create and set the dsp object based on the api json
 
         $lst = new verb_list($t->usr1);
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
-        // TODO use set_from_json to set the display object
+        // TODO Prio 2 use set_from_json to set the display object
         $vrb_lst_ui = new verb_list_ui();
         $vrb_lst_ui->set_from_json_array($lst->api_json_array([], $msg), $msg_ui);
         $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $msg_ui);
@@ -635,7 +1059,7 @@ class base_ui_tests
 
 
 
-        // TODO review
+        // TODO Prio 2 review
 
         global $sys;
         $html = new html_base();
@@ -670,6 +1094,8 @@ class base_ui_tests
 
 
         $t->subheader($ts . 'button tests');
+        // every colour set of the buttons with a sample button each and the name of the set
+        $t->html_page_test($this->buttons_page($html, $msg_ui), 'buttons', 'buttons', $msg_ui);
         $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         $test_name = 'a sandbox object e.g. word add button html code';
@@ -709,7 +1135,21 @@ class base_ui_tests
         $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
-        // TODO move e.g. because the edit word button is tested already in the unit tests of the object
+        // the explanation is shown in the tooltip of the add button
+        $test_name = 'the add button shows the explanation';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD, word_names::MATH_COM);
+        $t->assert_text_contains($test_name, $btn_html, word_names::MATH_COM);
+
+        // negative: without an explanation the add button shows only the message text
+        $test_name = 'the add button without explanation shows only the message';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD);
+        $t->assert_text_not_contains($test_name, $btn_html, word_names::MATH_COM);
+
+        // TODO Prio 2 move e.g. because the edit word button is tested already in the unit tests of the object
 
         $url = $html->url_back(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
@@ -823,6 +1263,9 @@ class base_ui_tests
         parse_str($url_part["query"], $url_array);
         $t->assert($test_name, html_base::back_url_array($url_array),
             ['9m' => '3', '9id' => '123']);
+        // negative: the id 0 of a page without an object names nothing
+        $test_name = '... and a form without a calling page has no hidden back field';
+        $t->assert($test_name, html_base::back_url_array([url_var::ID => '0']), []);
 
         $test_name = 'login url with back part while editing word 123';
         $url_part = parse_url('?m=3&id=123');
@@ -856,6 +1299,8 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, []), '9');
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        $test_name = '... and without an object and a calling page it has no parameter';
+        $t->assert($test_name, $html->url_old(rest_ctrl::VIEW), rest_ctrl::PATH_FIXED . rest_ctrl::VIEW . rest_ctrl::EXT);
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
         // space, so a link writes the id in its short url form, which has a '_' instead of the '+'
         // (see group_id_url), because else the value page finds no value
@@ -955,6 +1400,28 @@ class base_ui_tests
         $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_ORDER_HUMAN] ?? '', $prime_order);
         $t->assert($test_name . ' (sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_HUMAN] ?? '', $sub_order);
         $t->assert($test_name . ' (sub sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN] ?? '', $sub_sub_order);
+        // the walk of the phrase data api is a url var with fixed values like the refresh part
+        $test_name = 'the human-readable phrase data walk maps to the short url var and value';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::PHRASE_DATA_WALK_HUMAN . '=' . url_var::PHRASE_DATA_WALK_FROM_HUMAN;
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $walk = $url_array[url_var::PHRASE_DATA_WALK] ?? '';
+        $t->assert($test_name, $walk, url_var::PHRASE_DATA_WALK_FROM);
+        $test_name = '... and the short url var and value map back to the human-readable names';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&'
+            . url_var::PHRASE_DATA_WALK . '=' . url_var::PHRASE_DATA_WALK_VALUE;
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
+        $url_array = $lib->url_array($url_human);
+        $walk_human = $url_array[url_var::PHRASE_DATA_WALK_HUMAN] ?? '';
+        $t->assert($test_name, $walk_human, url_var::PHRASE_DATA_WALK_VALUE_HUMAN);
+        // negative: a value that names no walk is reported and not mapped silently
+        $test_name = '... but an unknown walk value is reported';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::PHRASE_DATA_WALK_HUMAN . '=' . url_var::PHRASE_DATA_WALK_HUMAN;
+        $msg->reset();
+        $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert_true($test_name, $msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $msg->reset();
 
         // TODO Prio 1 review
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
@@ -1021,6 +1488,98 @@ class base_ui_tests
         $test_name = '... but leaves an integer id as it is';
         $t->assert($test_name, (string)new rest_call()->id_data(word_names::MATH_ID)[url_var::ID],
             (string)word_names::MATH_ID);
+        // the backend names in a header if an api answer comes from the cache (see def::DEBUG_API_CACHE)
+        $test_name = 'the cache header of an api answer is read';
+        $line = api::CACHE_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_HIT);
+        $test_name = '... also in lower case as http/2 sends it';
+        $line = strtolower(api::CACHE_HEADER) . ': ' . api::CACHE_MISS . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_MISS);
+        $test_name = '... but not from another header';
+        $line = api::CSRF_TOKEN_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), '');
+        // the backend names the seconds of each step of a slow answer in its json, which the
+        // frontend reads and removes, so that the answer is passed on like a fast one
+        $steps = [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25];
+        $api_json = json_encode([json_fields::NAME => word_names::MATH]);
+        $slow_json = controller::json_with_time($api_json, $steps);
+        $test_name = 'the steps of a slow api answer are the first field of its json';
+        $t->assert_text_contains($test_name, $slow_json, rest_call::TIME_START);
+        $test_name = '... which the frontend reads';
+        $t->assert($test_name, rest_call::time_steps_of($slow_json), $steps);
+        $test_name = '... and removes from the answer';
+        $t->assert($test_name, rest_call::without_time($slow_json), $api_json);
+        // negative: a fast answer, an empty object and a json list stay as they are
+        $test_name = 'a fast api answer gets no steps';
+        $t->assert($test_name, controller::json_with_time($api_json, []), $api_json);
+        $test_name = '... and the frontend reads none';
+        $t->assert($test_name, rest_call::time_steps_of($api_json), []);
+        $test_name = '... and leaves the answer as it is';
+        $t->assert($test_name, rest_call::without_time($api_json), $api_json);
+        $test_name = 'an empty json object gets no steps';
+        $t->assert($test_name, controller::json_with_time('{}', $steps), '{}');
+        $test_name = 'a json list gets no steps, because it has no field for them';
+        $t->assert($test_name, controller::json_with_time('[]', $steps), '[]');
+        // the frontend sums the wait and the steps of the api calls until they are booked to the time report
+        $dto_ui = new data_object();
+        $dto_ui->api_wait += 1.5;
+        $dto_ui->add_api_steps([system_time_type::DB_READ => 1.0]);
+        $dto_ui->add_api_steps([system_time_type::DB_READ => 0.25, system_time_type::SQL_CREATE => 0.5]);
+        $test_name = 'the api wait not yet booked is taken for the time report';
+        $t->assert($test_name, (string)$dto_ui->take_api_wait(), '1.5');
+        $test_name = '... and the backend steps summed per step';
+        $t->assert($test_name, $dto_ui->take_api_steps(),
+            [system_time_type::DB_READ => 1.25, system_time_type::SQL_CREATE => 0.5]);
+        // negative: a booked time is not booked again
+        $test_name = 'a booked api wait is not taken again';
+        $t->assert($test_name, (string)$dto_ui->take_api_wait(), '0');
+        $test_name = '... and neither are the booked steps';
+        $t->assert($test_name, $dto_ui->take_api_steps(), []);
+        // the frontend splits the rest of its wait into the connect and the transfer of the answer
+        $test_name = 'the wait for an api answer is split into connect and transfer';
+        $t->assert($test_name, rest_call::transfer_steps(0.25, 0.5, 0.75),
+            [system_time_type::API_CONNECT => 0.25, system_time_type::API_TRANSFER => 0.25]);
+        // negative: a reused connection and an answer in one package add no step
+        $test_name = '... but not without connect and transfer time';
+        $t->assert($test_name, rest_call::transfer_steps(0, 0.5, 0.5), []);
+        // the time from the open connection to the first byte is the server time, named by the kind of answer
+        // a slow answer always names its steps, so an object without them has been fast
+        $test_name = 'the server time of an api object without steps is a fast api response';
+        $t->assert($test_name, rest_call::server_steps($api_json, 0.5), [system_time_type::API_FAST => 0.5]);
+        $test_name = '... of a json list, which has no field for the steps, a list response';
+        $t->assert($test_name, rest_call::server_steps('[]', 0.5), [system_time_type::API_LIST => 0.5]);
+        $test_name = '... of an answer that is no json e.g. an error page a no json response';
+        $t->assert($test_name, rest_call::server_steps('', 0.5), [system_time_type::API_NO_JSON => 0.5]);
+        $test_name = '... and of a slow answer its steps and the part that the backend has not measured';
+        $t->assert($test_name, rest_call::server_steps($slow_json, 2.0),
+            [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25, system_time_type::API_NOT_MEASURED => 0.25]);
+        // negative: a slow answer whose steps cover the whole server time has no unmeasured part
+        $test_name = '... but without an unmeasured part if the steps cover the server time';
+        $t->assert($test_name, rest_call::server_steps($slow_json, 1.75),
+            [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25]);
+        // the wait around the call that curl itself does not count e.g. the session cookie file
+        $test_name = 'the wait that curl does not count is the curl time';
+        $t->assert($test_name, rest_call::curl_step(1.0, 0.75), [system_time_type::API_CURL => 0.25]);
+        $test_name = '... but not if curl has counted the whole wait';
+        $t->assert($test_name, rest_call::curl_step(0.75, 0.75), []);
+        // the render time of each component without its api wait and without the components within it
+        $dto_ui = new data_object();
+        $dto_ui->start_html_step(10.0);
+        $dto_ui->start_html_step(11.0);
+        $dto_ui->end_html_step(component_types::TEXT, 12.0);
+        $dto_ui->api_wait += 0.5;
+        $dto_ui->end_html_step(component_types::FORM_TITLE, 14.0);
+        $test_name = 'a component is timed without the components within it';
+        $t->assert($test_name, $dto_ui->take_html_steps(),
+            [component_types::TEXT => 1.0, component_types::FORM_TITLE => 2.5]);
+        $test_name = '... and after the booking only the components rendered since';
+        $dto_ui->start_html_step(20.0);
+        $dto_ui->end_html_step(component_types::TEXT, 20.25);
+        $t->assert($test_name, $dto_ui->take_html_steps(), [component_types::TEXT => 0.25]);
+        // negative: an end without a start e.g. after an error in the render adds no time
+        $test_name = 'an end of a component without its start adds no time';
+        $dto_ui->end_html_step(component_types::TEXT, 30.0);
+        $t->assert($test_name, $dto_ui->take_html_steps(), []);
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID
@@ -1313,7 +1872,63 @@ class base_ui_tests
         $url_map->url_to_standard($lib->url_array($url), $msg);
         $err_msg = $msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');
+        // negative: a url key without a pod mapping is reported as missing
+        $test_name = 'pod url conversion reports a url key without a pod mapping';
+        $pod_msg = new user_message_ui();
+        $no_map_url = [url_var::MASK => views::WORD_ID, test_const::URL_KEY_UNKNOWN => '1'];
+        $url_map->standard_url_to_pod($no_map_url, $pod_msg);
+        $t->assert_true($test_name, $pod_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
+    }
+
+    /**
+     * the body of the page object_pages/buttons.html: a sample button of each colour set with the name
+     * of the set (see docs/llm/frontend.md); the samples use the real classes and the colours of the
+     * page head, so a change of the css or of config.yaml shows on the page; the mouse over sample is
+     * painted with the hover colour, because a static page cannot show the hover
+     *
+     * @param html_base $html to build the theme style and the style links of the editor frame
+     * @param user_message_ui $msg to report a configured colour that css could misread
+     * @return string the html body with the samples
+     */
+    private function buttons_page(html_base $html, user_message_ui $msg): string
+    {
+        $page = '<h2>button colour sets</h2>' . "\n"
+            . '<h4>main button (style_html.css)</h4>' . "\n"
+            . '<p>every button of the pages, also with a bootstrap outline class, and the main buttons of the editors</p>' . "\n"
+            . '<p>' . "\n"
+            . '<button class="btn" type="button">active</button>' . "\n"
+            . '<button class="btn" type="button" style="background: var(--btn-main-hover);">mouse over</button>' . "\n"
+            . '<button class="btn" type="button" disabled>inactive</button>' . "\n"
+            . '<button class="btn btn-outline-secondary" type="button">outline secondary</button>' . "\n"
+            . '<button class="btn btn-outline-success" type="button">outline success</button>' . "\n"
+            . '<button class="btn btn-outline-primary" type="button">outline primary</button>' . "\n"
+            . '</p>' . "\n";
+        // the editor css also sets its page e.g. the background and the fonts, so the editor sets are in a frame
+        $editor = $html->theme_style($msg)
+            . $html->link_style(files_shared::STYLE_HTML)
+            . $html->link_style(files_shared::CALCULATOR_EDITOR_STYLE)
+            . '<div class="editor" style="padding: 8px;">'
+            . '<p>main button: load and save</p><p>'
+            . '<button class="btn primary">Load</button> '
+            . '<button class="btn primary" style="background: var(--btn-main-hover); border-color: var(--btn-main-hover);">mouse over</button> '
+            . '<button class="btn primary" disabled>Save without changes</button></p>'
+            . '<p>editor button: the other actions e.g. undo</p><p>'
+            . '<button class="btn">Undo</button> '
+            . '<button class="btn" style="border-color: var(--accent);">mouse over</button> '
+            . '<button class="btn" disabled>Redo without history</button> '
+            . '<button class="btn small">small</button></p>'
+            . '<p>ghost button: a cancel next to a main action</p><p>'
+            . '<button class="btn ghost">Cancel</button> '
+            . '<button class="btn ghost" style="background: var(--accent-soft);">mouse over</button></p>'
+            . '<p>danger button: a remove</p><p>'
+            . '<button class="btn danger">Remove field</button></p>'
+            . '</div>';
+        $page .= '<h4>editor buttons (calculator_editor.css)</h4>' . "\n"
+            . '<p>in a frame, because the editor css also sets its page e.g. the background and the fonts</p>' . "\n"
+            . '<iframe title="editor buttons" style="width: 100%; height: 340px; border: none;" srcdoc="'
+            . htmlspecialchars($editor, ENT_QUOTES) . '"></iframe>' . "\n";
+        return $html->div($page, 'container mt-4');
     }
 
 }

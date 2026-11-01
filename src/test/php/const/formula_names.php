@@ -58,17 +58,32 @@ class formula_names
     const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
     const string SCALE_TO_SEC_LATEX_NUMBER = '60';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
-    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
+    // a term id of the database expression that is not a number
+    const string REF_ID_NOT_A_NUMBER = 'wO';
+    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={' . self::REF_ID_NOT_A_NUMBER . '}*60';
     const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
     const string SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID = '{wO}={w104}*60';
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
     const string SCALE_TO_SEC_CODE_ID = 'scale_minute_to_sec';
     const int SCALE_TO_SEC_ID = 1;
+    // the unit conversion of units.json that the number format uses to show kg in tonne
+    const string SCALE_TONNE = 'scale tonne to kg';
+    // the formula of the result row autarky of pv_lifetime_balance.json, which the calculator
+    // editor changes; the changed expression leaves out the battery discharge of the original
+    const string AUTARKY = 'autarky formula';
+    const string AUTARKY_OPERAND_REMOVED = 'battery discharge';
+    const int SCALE_TONNE_ID = 10;
+    const string SCALE_TONNE_EXP = '"' . word_names::KG . '" = "' . word_names::TONNE . '" * 1000';
     const string SCALE_HOUR = 'scale hour to sec';
     const int SCALE_HOUR_ID = 2;
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
+    // the min and max function and their argument separator are kept as they are by the conversion
+    const string MIN_CIRCUMFERENCE_PI = '= min( "circumference" ; "Pi" * 2 )';
+    const string MIN_CIRCUMFERENCE_PI_DB = '=min({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MAX_CIRCUMFERENCE_PI = '= max( "circumference" ; "Pi" * 2 )';
+    const string MAX_CIRCUMFERENCE_PI_DB = '=max({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';
@@ -127,7 +142,7 @@ class formula_names
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const string SCALE_MIO_DB = '{w' . word_names::ONE_ID . '} = {w' . word_names::MIO_ID . '} * 1000000';
     const string PARTS_IN_PERCENT = 'parts in percent';
-    const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
+    const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO Prio 3 check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
     const int CITY_POPULATION_ID = 27;

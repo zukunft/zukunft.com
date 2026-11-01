@@ -36,18 +36,35 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_db_load.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UNIT_WORKFLOW . 'value_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\unit_workflow\value_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -72,7 +89,65 @@ class value_write_url_tests extends value_url_tests
         $this->add_value_details_workflow(workflows::WF_ADD_VALUE_DETAILS_NBR, true);
         // names the group of the value that the add_value workflow has written above
         $this->change_value_group_workflow(workflows::WF_CHANGE_VALUE_GROUP_NBR, true);
+        // changes the number of the same value; the test cleanup deletes the value and its change log
+        $this->calculator_save_write($t);
 
+    }
+
+    /**
+     * the save of a calculator page writes the changed number to the value that the add value
+     * workflow has written and confirms it with the label and the new number as a link to the value
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function calculator_save_write(test_cleanup $t): void
+    {
+        global $mtr;
+        $html = new html_base();
+        $t_wrd = new test_words($t);
+        // the frontend message of the save and the backend message of the check load
+        $msg_ui = new user_message_ui();
+        $msg_ui->usr = $this->usr;
+        $msg = new user_message($t->usr1);
+        $t->subheader($this->ts . 'calculator save');
+        $one = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $two = $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
+        $val_id = $this->value_id([$one, $two]);
+        $field = (string)$one;
+        $shown_key = url_var::PRE . url_var::NUMERIC_VALUE . $field;
+        $form = [
+            url_var::MASK => views::CALCULATOR_ID,
+            url_var::ID => $one,
+            url_var::ACTION => url_var::ACTION_SAVE,
+            url_var::NUMERIC_VALUE . $field => (string)values::SAMPLE_INT,
+            url_var::GROUP . $field => (string)$val_id,
+            $shown_key => $html->number_value(values::SAMPLE_FLOAT),
+            url_var::NAME . $field => word_names::TEST_ADD,
+        ];
+
+        $test_name = 'the calculator save confirms the saved number with the label';
+        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+        $info = $msg_ui->get_last_info_html();
+        $t->assert_text_contains($test_name, $info, word_names::TEST_ADD);
+        $test_name = '... and the new number as a link';
+        $t->assert_text_contains($test_name, $info, '>' . values::SAMPLE_INT . '</' . html_base::A . '>');
+        $msg_ui->reset();
+        $test_name = '... and has written the number to the value';
+        $val = new value($t->usr1);
+        $val->load_by_id($val_id, $msg);
+        // the number is compared as text, because assert takes no float
+        $t->assert($test_name, (string)$val->number(), (string)values::SAMPLE_INT);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // negative: the same number again is no change, so nothing is saved or confirmed
+        $test_name = 'a save of the shown number saves nothing';
+        $form[$shown_key] = (string)values::SAMPLE_INT;
+        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+        $t->assert($test_name, $msg_ui->get_last_info(), $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
+        $test_name = '... and confirms no saved number';
+        $t->assert($test_name, $msg_ui->get_last_info_html(), '');
+        $msg_ui->reset();
     }
 
     /**

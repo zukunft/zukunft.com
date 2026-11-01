@@ -97,6 +97,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "probability"
     },
     {
@@ -113,6 +116,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "GDP mismeasurement",
       "description": "gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)",
@@ -211,14 +226,14 @@
     {
       "name": "probability range low",
       "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance low (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{low} = x \\cdot f_{low}",
       "assigned_word": "probability range factor"
     },
     {
       "name": "probability range high",
       "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance high (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{high} = x \\cdot f_{high}",
       "assigned_word": "probability range factor"
     },
@@ -232,7 +247,7 @@
     {
       "name": "loss reduction by gross domestic usage",
       "description": "the share of the potential loss that the solution avoids, the growth that the gross domestic usage captures divided by the upper end of the growth that the GDP misses because free goods count as zero",
-      "expression": "\"loss reduction\",\"percent\" = \"gross domestic usage\",\"GDP mismeasurement\" / \"GDP growth\",\"free good\",\"high\"",
+      "expression": "\"loss reduction\",\"percent\" = \"gross domestic usage\",\"GDP mismeasurement\" / \"GDP growth\",\"free good\",\"variance high (system)\"",
       "latex": "r = \\frac{u}{m_{high}}",
       "assigned_word": "usage"
     },
@@ -262,6 +277,13 @@
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
       "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
+    },
+    {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
       "assigned_word": "loss reduction"
     }
   ],
@@ -293,7 +315,7 @@
         "free good",
         "annual",
         "percent",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.0011",
       "source": "Brynjolfsson et al. (2019) GDP-B",
@@ -403,7 +425,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 15 percent (see the view-validation of solution_prio.json)"
@@ -414,7 +436,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 15 percent"
@@ -424,7 +446,7 @@
         "GDP mismeasurement",
         "GDP",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -434,7 +456,7 @@
         "GDP mismeasurement",
         "GDP",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -445,7 +467,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -456,7 +478,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -468,7 +490,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
@@ -480,7 +502,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5, the range factor of an estimate"
@@ -491,7 +513,7 @@
         "gross domestic usage",
         "person year",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -502,7 +524,7 @@
         "gross domestic usage",
         "person year",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -513,7 +535,7 @@
         "gross domestic usage",
         "percent",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -524,7 +546,7 @@
         "gross domestic usage",
         "percent",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.0",
       "description": "the centre times 2.5 would exceed the share limit, so the upper bound is clamped at the centre of 100 percent"
@@ -563,7 +585,7 @@
         "annual",
         "assumed",
         "percent",
-        "high"
+        "variance high (system)"
       ],
       "formula": "loss reduction by gross domestic usage",
       "words": [
@@ -666,12 +688,35 @@
     {
       "context": [
         "GDP mismeasurement",
+        "gross domestic usage",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "GDP mismeasurement",
+        "gross domestic usage",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.250005",
+      "note": "0.250005 trillion EUR potential loss * 100 percent loss reduction; the solution avoids the whole loss, so the gain equals the loss"
+    },
+    {
+      "context": [
+        "GDP mismeasurement",
         "potential loss",
         "trillion",
         "EUR",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -680,7 +725,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.1",
       "note": "0.25 * 0.4"
@@ -693,7 +738,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -702,7 +747,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.625",
       "note": "0.25 * 2.5"
@@ -715,7 +760,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -724,7 +769,7 @@
         "percent",
         "GDP",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.075",
       "note": "-0.03 * 2.5"
@@ -737,7 +782,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -746,7 +791,7 @@
         "percent",
         "GDP",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.012",
       "note": "-0.03 * 0.4"
@@ -759,7 +804,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -768,7 +813,7 @@
         "percent",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.075",
       "note": "-0.03 * 2.5"
@@ -781,7 +826,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -790,7 +835,7 @@
         "percent",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.012",
       "note": "-0.03 * 0.4"
@@ -804,7 +849,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -814,7 +859,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.6",
       "note": "4 * 0.4"
@@ -828,7 +873,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -838,7 +883,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "10",
       "note": "4 * 2.5"
@@ -851,7 +896,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -860,7 +905,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.6",
       "note": "4 * 0.4"
@@ -873,7 +918,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -882,7 +927,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "10",
       "note": "4 * 2.5"
@@ -895,7 +940,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -904,7 +949,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "note": "1 * 0.4"
@@ -917,7 +962,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -926,7 +971,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1",
       "note": "1 * 1.0, clamped at the share limit"

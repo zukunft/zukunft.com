@@ -30,6 +30,10 @@
   math_add
   math_sub
   math_bracket  - checks if formula contains a bracket and calculates the inner part first
+  math_min      - replaces the min function by the smallest of its arguments
+  math_max      - replaces the max function by the largest of its arguments
+  math_one_number - replaces the functions of one number e.g. sqrt or log
+  math_pow      - calculates a power
 
   
   external functions that are used in other libraries such as zu_lib_calc_conv.php
@@ -68,10 +72,16 @@ namespace Zukunft\ZukunftCom\main\php\service\math;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CALC . 'arithmetic.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class calc_internal
@@ -84,6 +94,10 @@ class calc_internal
 
     // the marker of the exponent in a number in scientific notation e.g. "6.55E-5"
     const string EXPONENT_MARKER = 'E';
+    // the text of a part that cannot be calculated and is already reported, so the calling parts give no number too
+    const string NO_NUMBER = 'NaN';
+    // a name directly before a bracket, but not the exponent of a number e.g. the "E3" of "5E3 (2)"
+    const string FUNCTION_NAME_PATTERN = '/(?<![\p{L}\d_.])\p{L}[\p{L}\d_.]*(?=\s*\()/u';
 
     /*
      * external functions that are supposed to be called from other libraries
@@ -91,9 +105,22 @@ class calc_internal
 
     /**
      * actually calculate the numeric result; this should be replaced by R
+     * @param string $formula the math expression with numbers
+     * @param user_message $msg to report a missing math function or an expression that cannot be calculated
+     * @return float|null the number or null if the expression cannot be calculated, which is reported on $msg
      */
-    function parse(string $formula): ?float
+    function parse(string $formula, user_message $msg): ?float
     {
+        // never a wrong number, because the operators would else calculate without the missing function
+        $missing = $this->missing_function($formula);
+        if ($missing != '') {
+            $msg->add(msg_id::FORMULA_FUNCTION_MISSING, [
+                msg_id::VAR_NAME => $missing,
+                msg_id::VAR_EXPRESSION => $formula
+            ]);
+            return null;
+        }
+
         $result = $formula;
 
         if ($result <> "") {
@@ -104,30 +131,73 @@ class calc_internal
             // reduce sign pairs e.g. "+ -9" to "- 9" before the calculation is started
             $result = $this->combine_signs($result);
 
-            $result = $this->math_if($result);
+            $result = $this->math_min($result, $msg);
+            log_debug("math_parse after min:" . $result);
+            $result = $this->math_max($result, $msg);
+            log_debug("math_parse after max:" . $result);
+            $result = $this->math_one_number($result, $msg);
+            log_debug("math_parse after functions of one number:" . $result);
+            $result = $this->math_list($result, $msg);
+            log_debug("math_parse after list functions:" . $result);
+            $result = $this->math_if($result, $msg);
             log_debug("math_parse after if:" . $result);
-            $result = $this->math_bracket($result);
+            $result = $this->math_bracket($result, $msg);
             log_debug("math_parse after bracket:" . $result);
             // the operator with the lowest precedence splits the formula first, because each part
             // is parsed on its own: splitting at a "*" first would evaluate a "+" inside its left
             // part before the multiplication, e.g. "1 + 2 * 3" as "(1 + 2) * 3"
-            $result = $this->math_add($result);
+            $result = $this->math_add($result, $msg);
             log_debug("math_parse after add:" . $result);
-            $result = $this->math_sub($result);
+            $result = $this->math_sub($result, $msg);
             log_debug("math_parse after sub:" . $result);
-            $result = $this->math_mul($result);
+            $result = $this->math_mul($result, $msg);
             log_debug("math_parse after mul:" . $result);
-            $result = $this->math_div($result);
+            $result = $this->math_div($result, $msg);
             log_debug("math_parse after div:" . $result);
+            $result = $this->math_pow($result, $msg);
+            log_debug("math_parse after pow:" . $result);
         }
 
         log_debug('calculated result: "' . $result . '"');
         if (is_numeric($result)) {
             return (float)$result;
         } else {
-            log_err('cannot parse "' . $formula . '" to number');
+            if ($result != self::NO_NUMBER) {
+                // a text in an expression is a problem of the formula that the user can fix, no internal error
+                $msg->add(msg_id::FORMULA_NO_NUMBER, [msg_id::VAR_EXPRESSION => $formula]);
+            }
             return null;
         }
+    }
+
+    /**
+     * @param string $formula the math expression with numbers
+     * @return string the first name before a bracket that is not in chars::FUNC_CALCULATED or an empty string if there is none
+     */
+    function missing_function(string $formula): string
+    {
+        $missing = array_values(array_diff($this->function_names($formula), chars::FUNC_CALCULATED));
+        return $missing[0] ?? '';
+    }
+
+    /**
+     * @param string $formula a math expression
+     * @return array every name before a bracket outside a text in the order of the expression
+     */
+    function function_names(string $formula): array
+    {
+        preg_match_all(self::FUNCTION_NAME_PATTERN, $this->without_text($formula), $found);
+        return $found[0];
+    }
+
+    /**
+     * @param string $formula a math expression
+     * @return string the expression without the texts in high quotes e.g. without the phrase names
+     */
+    function without_text(string $formula): string
+    {
+        $txt_field = chars::TXT_FIELD . '[^' . chars::TXT_FIELD . ']*' . chars::TXT_FIELD;
+        return preg_replace('/' . $txt_field . '/', '', $formula);
     }
 
     /*
@@ -259,7 +329,7 @@ class calc_internal
             $next = substr(ltrim(substr($formula, $pos + 1)), 0, 1);
             $number_follows = (ctype_digit($next) or $next == chars::DECIMAL_POINT);
             $is_start = ($prev == '');
-            $after_operator = in_array($prev, [chars::ADD, chars::SUB, chars::MUL, chars::DIV, chars::BRACKET_OPEN]);
+            $after_operator = in_array($prev, [chars::ADD, chars::SUB, chars::MUL, chars::DIV, chars::POW, chars::BRACKET_OPEN]);
             // brackets around the whole condition, because "or" binds weaker than the assignment
             $result = ((($is_start or $after_operator) and $number_follows)
                 or $this->is_exponent_sign($formula, $pos));
@@ -304,6 +374,17 @@ class calc_internal
         if ($pos < 0) {
             $pos = $this->pos_separator($formula, chars::FUNC_IS_NUM, 0);
         }
+        if ($pos < 0) {
+            $pos = $this->pos_separator($formula, chars::FUNC_MIN, 0);
+        }
+        if ($pos < 0) {
+            $pos = $this->pos_separator($formula, chars::FUNC_MAX, 0);
+        }
+        foreach ([...chars::FUNC_ONE_NUMBER, ...chars::FUNC_LIST] as $name) {
+            if ($pos < 0) {
+                $pos = $this->pos_separator($formula, $name, 0);
+            }
+        }
 
         log_debug($pos);
         return $pos;
@@ -344,6 +425,17 @@ class calc_internal
         if (str_starts_with($formula, chars::FUNC_IS_NUM)) {
             $result = chars::FUNC_IS_NUM;
         }
+        if (str_starts_with($formula, chars::FUNC_MIN)) {
+            $result = chars::FUNC_MIN;
+        }
+        if (str_starts_with($formula, chars::FUNC_MAX)) {
+            $result = chars::FUNC_MAX;
+        }
+        foreach ([...chars::FUNC_ONE_NUMBER, ...chars::FUNC_LIST] as $name) {
+            if (str_starts_with($formula, $name)) {
+                $result = $name;
+            }
+        }
 
         log_debug($result);
         return $result;
@@ -372,6 +464,10 @@ class calc_internal
             $next_pos = $pos;
         }
         $pos = $this->pos_separator($formula, chars::DIV, 0);
+        if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
+            $next_pos = $pos;
+        }
+        $pos = $this->pos_separator($formula, chars::POW, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
@@ -435,31 +531,6 @@ class calc_internal
                     }
                 }
             }
-        }
-        return $result;
-    }
-
-    /**
-     * @return string get the next math operator
-     */
-    private function get_operator_pos(string $formula): string
-    {
-        log_debug($formula);
-
-        $result = '';
-        $pos = $this->pos_operator($formula);
-        if ($formula[$pos] == chars::ADD) {
-            $result = chars::ADD;
-        } elseif ($formula[$pos] == chars::SUB) {
-            $result = chars::SUB;
-        } elseif ($formula[$pos] == chars::MUL) {
-            $result = chars::MUL;
-        } elseif ($formula[$pos] == chars::DIV) {
-            $result = chars::DIV;
-        } elseif ($formula[$pos] == chars::AND) {
-            $result = chars::AND;
-        } elseif ($formula[$pos] == chars::OR) {
-            $result = chars::OR;
         }
         return $result;
     }
@@ -576,7 +647,7 @@ class calc_internal
      * this could and should be replaced by R-project.org later
      * @returns string with the result of the formula that can be converted into a number
      */
-    private function calc(string $formula, $operator): string
+    private function calc(string $formula, $operator, user_message $msg): string
     {
         $result = $formula;
 
@@ -612,12 +683,12 @@ class calc_internal
                     // number, so use zero instead of parsing the blank as a number
                     $part_l = 0.0;
                 } else {
-                    $part_l = $this->parse($part_l);
+                    $part_l = $this->parse($part_l, $msg);
                 }
                 log_debug("left part result " . $part_l . ": ");
                 $part_r = $lib->str_right($result, ($pos + 1) * -1);
                 log_debug("right part " . $operator . ": " . $part_r . ".");
-                $part_r = $this->parse($part_r);
+                $part_r = $this->parse($part_r, $msg);
                 log_debug("right part result " . $part_r . ": ");
 
                 $result_l = floatval($part_l);
@@ -633,7 +704,11 @@ class calc_internal
                             log_debug("result " . $result_l . " / " . $result_r);
                             $result = $result_l / $result_r;
                         } else {
-                            $result = 0;
+                            $result = self::NO_NUMBER;
+                            // a part without a number is already reported and is no zero
+                            if ($part_r !== null) {
+                                $msg->add(msg_id::FORMULA_DIVISION_BY_ZERO, [msg_id::VAR_EXPRESSION => $formula]);
+                            }
                         }
                         break;
                     case chars::ADD:
@@ -643,12 +718,25 @@ class calc_internal
                         log_debug("result " . $result_l . " / " . $result_r);
                         $result = $result_l - $result_r;
                         break;
+                    case chars::POW:
+                        // a part without a number is already reported and is no zero
+                        if ($part_l !== null and $part_r !== null) {
+                            $result = $this->power($result_l, $result_r, $formula, $msg);
+                        }
+                        break;
+                }
+                // floatval would count a part without a number as zero
+                if ($part_l === null or $part_r === null) {
+                    $result = self::NO_NUMBER;
                 }
             } else {
                 if ($pos == 0) {
                     $part_r = $lib->str_right($result, $pos * -1);
-                    $part_r = $this->parse($part_r);
+                    $part_r = $this->parse($part_r, $msg);
                     $result = $operator . $part_r;
+                    if ($part_r === null) {
+                        $result = self::NO_NUMBER;
+                    }
                 }
             }
         }
@@ -659,33 +747,55 @@ class calc_internal
     /**
      * @returns string interprets or converts a math operator condition
      */
-    private function math_mul(string $formula): string
+    private function math_mul(string $formula, user_message $msg): string
     {
-        return $this->calc($formula, chars::MUL);
+        return $this->calc($formula, chars::MUL, $msg);
     }
 
     /**
      * @returns string interprets or converts a math operator condition
      */
-    private function math_div(string $formula): string
+    private function math_div(string $formula, user_message $msg): string
     {
-        return $this->calc($formula, chars::DIV);
+        return $this->calc($formula, chars::DIV, $msg);
+    }
+
+    /**
+     * splits at the first operator, so that a power is calculated from right to left;
+     * a number written before a power keeps its sign, because it may be a value e.g. -2 ^ 2 is 4
+     * @returns string interprets or converts a math operator condition
+     */
+    private function math_pow(string $formula, user_message $msg): string
+    {
+        return $this->calc($formula, chars::POW, $msg);
+    }
+
+    /**
+     * @param float $base the number that is raised
+     * @param float $exponent the power
+     * @param string $formula the expression to name in the message
+     * @param user_message $msg to report a power without a number e.g. the root of a negative number
+     * @return string the number or NO_NUMBER
+     */
+    private function power(float $base, float $exponent, string $formula, user_message $msg): string
+    {
+        return $this->number_or_report(arithmetic::power_of($base, $exponent), chars::POW, $formula, $msg);
     }
 
     /**
      * @returns string interprets or converts a math operator condition
      */
-    private function math_add(string $formula): string
+    private function math_add(string $formula, user_message $msg): string
     {
-        return $this->calc($formula, chars::ADD);
+        return $this->calc($formula, chars::ADD, $msg);
     }
 
     /**
      * @returns string interprets or converts a math operator condition
      */
-    private function math_sub(string $formula): string
+    private function math_sub(string $formula, user_message $msg): string
     {
-        return $this->calc($formula, chars::SUB);
+        return $this->calc($formula, chars::SUB, $msg);
     }
 
     /**
@@ -712,7 +822,7 @@ class calc_internal
     /**
      * checks if formula contains a bracket and calculates the inner part first
      */
-    function math_bracket(string $formula): string
+    function math_bracket(string $formula, user_message $msg): string
     {
         $result = $formula;
 
@@ -738,15 +848,20 @@ class calc_internal
             $right_part = $lib->str_right_of($result, $left_part . chars::BRACKET_OPEN . $inner_part . chars::BRACKET_CLOSE);
             log_debug("right_part " . $right_part);
 
-            // ... and something needs to be calculated
-            if ($this->has_operator($inner_part)) {
+            // ... and something needs to be calculated e.g. also the min function of "(min(1;2)) * 3"
+            // or a number needs its brackets removed e.g. a value in "(-3) ^ 2"
+            $is_num = is_numeric(trim($inner_part));
+            if ($this->has_operator($inner_part) or $this->has_function_pos($inner_part) or $is_num) {
 
                 // calculate the inner part
-                $inner_part = $this->parse($inner_part);
+                $inner_part = $this->parse($inner_part, $msg);
                 log_debug("inner_part result " . $inner_part);
 
                 // combine the result
                 $result = $left_part . $inner_part . $right_part;
+                if ($inner_part === null) {
+                    $result = self::NO_NUMBER;
+                }
             }
         }
 
@@ -755,74 +870,301 @@ class calc_internal
     }
 
     /**
-     * @param string $formula
-     * @return string
+     * replace the min functions outside a bracket by the smallest of their arguments,
+     * e.g. "2 * min(3; 1 + 1)" by "2 * 2"; a min inside a bracket or an argument is replaced
+     * when the bracket or the argument is parsed
+     * @param string $formula the math expression with numbers that may contain the min function
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return string the expression with the min function replaced, unchanged if it has none or its closing bracket is missing, or NO_NUMBER if an argument has no number
      */
-    private function math_if(string $formula): string
+    function math_min(string $formula, user_message $msg): string
+    {
+        return $this->replace_function($formula, chars::FUNC_MIN, min(...), $msg);
+    }
+
+    /**
+     * replace the max functions outside a bracket by the largest of their arguments,
+     * in the same way as math_min
+     * @param string $formula the math expression with numbers that may contain the max function
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return string the expression with the max function replaced, unchanged if it has none or its closing bracket is missing, or NO_NUMBER if an argument has no number
+     */
+    function math_max(string $formula, user_message $msg): string
+    {
+        return $this->replace_function($formula, chars::FUNC_MAX, max(...), $msg);
+    }
+
+    /**
+     * replace the functions of one number outside a bracket e.g. "2 * sqrt(9)" by "2 * 3";
+     * a function inside a bracket or an argument is replaced when that is parsed
+     * @param string $formula the math expression with numbers
+     * @param user_message $msg to report a function without a number e.g. the logarithm of zero
+     * @return string the expression with the functions replaced or NO_NUMBER if one has no number
+     */
+    private function math_one_number(string $formula, user_message $msg): string
     {
         $result = $formula;
+        foreach (chars::FUNC_ONE_NUMBER as $name) {
+            $pick = fn(array $nums) => $this->one_number($name, $nums, $formula, $msg);
+            $result = $this->replace_function($result, $name, $pick, $msg);
+        }
+        return $result;
+    }
 
-        $lib = new library();
+    /**
+     * replace the list functions outside a bracket e.g. "sum(1;2) * 2" by "3 * 2"; the formula
+     * engine has written all numbers of a list as the arguments (formula::fill_list_element_group)
+     * @param string $formula the math expression with numbers
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return string the expression with the functions replaced or NO_NUMBER if one has no number
+     */
+    function math_list(string $formula, user_message $msg): string
+    {
+        $result = $formula;
+        foreach (chars::FUNC_LIST as $name) {
+            $pick = fn(array $nums) => arithmetic::list_number($name, $nums);
+            $result = $this->replace_function($result, $name, $pick, $msg);
+        }
+        return $result;
+    }
 
-        // get the position of the next bracket
-        log_debug("separate ");
-        $if_start_pos = $this->pos_separator($result, chars::FUNC_IF, 0);
-        $inner_start_pos = $this->pos_separator($result, chars::BRACKET_OPEN, 0);
-        log_debug("separate ");
-        // if there is a bracket ...
-        if ($if_start_pos >= 0 and $inner_start_pos >= 0 and $if_start_pos < $inner_start_pos) {
-            // ... and a closing bracket ...
-            $inner_end_pos = $this->pos_separator($result, chars::BRACKET_CLOSE, $inner_start_pos + 1);
+    /**
+     * @param string $name the name of the function e.g. "sqrt"
+     * @param array $nums the numbers of the arguments, which must be exactly one
+     * @param string $formula the expression to name in the message
+     * @param user_message $msg to report a function without a number
+     * @return string the number or NO_NUMBER
+     */
+    private function one_number(string $name, array $nums, string $formula, user_message $msg): string
+    {
+        $num = NAN;
+        if ($name == chars::FUNC_LOG) {
+            $num = arithmetic::log_number($nums);
+        } elseif (count($nums) == 1) {
+            $num = arithmetic::one_number($name, $nums[0]);
+        }
+        return $this->number_or_report($num, $name, $formula, $msg);
+    }
 
-            // ... separate the formula
+    /**
+     * @param float $num the calculated number, which can be infinite or not a number e.g. of a logarithm of zero
+     * @param string $name the name of the function or the operator
+     * @param string $formula the expression to name in the message
+     * @param user_message $msg to report a calculation without a number
+     * @return string the number or NO_NUMBER, which is reported, because it is never a wrong number
+     */
+    private function number_or_report(float $num, string $name, string $formula, user_message $msg): string
+    {
+        $result = (string)$num;
+        if (!is_finite($num)) {
+            $msg->add(msg_id::FORMULA_FUNCTION_NO_NUMBER, [
+                msg_id::VAR_NAME => $name,
+                msg_id::VAR_EXPRESSION => $formula
+            ]);
+            $result = self::NO_NUMBER;
+        }
+        return $result;
+    }
 
-            // get the left part, but don't get the result of the left part because this can cause loops
-            $left_part = substr($result, 0, $inner_start_pos);
-            log_debug("left_part " . $left_part);
+    /**
+     * @param string $formula the math expression with numbers that may contain the function
+     * @param string $name the name of the function e.g. "min"
+     * @param callable $pick returns the number of the function from the array of its argument numbers
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return string the expression with every function outside a bracket replaced, unchanged if it has none or its closing bracket is missing, or NO_NUMBER if one has no number
+     */
+    private function replace_function(string $formula, string $name, callable $pick, user_message $msg): string
+    {
+        $result = $formula;
+        // every call, because the brackets of a later call would else be calculated like a normal bracket
+        do {
+            $before = $result;
+            $result = $this->replace_first_function($before, $name, $pick, $msg);
+        } while ($result != $before and $result != self::NO_NUMBER);
+        return $result;
+    }
 
-            $inner_part = substr($result, $inner_start_pos + 1, $inner_end_pos - $inner_start_pos - 1);
-            log_debug('inner_part "' . $inner_part . '"');
-
-            // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = $lib->str_right_of($result, $left_part . chars::BRACKET_OPEN . $inner_part . chars::BRACKET_CLOSE);
-            log_debug("right_part " . $right_part);
-
-            // ... and something needs to be looked at
-            if ($this->has_operator($inner_part) or $this->has_function_pos($inner_part)) {
-
-                // depending on the operator split the inner part if needed
-                $operator = $this->get_operator_pos($inner_part);
-                log_debug('operator "' . $operator . '" in "' . $inner_part . '"');
-                if ($operator == chars::AND or $operator == chars::OR) {
-                    $result = null; // by default no result
-                    $inner_left_part = $lib->str_left_of($inner_part, $operator);
-                    $inner_right_part = $lib->str_right_of($inner_part, $operator);
-                    $inner_left_part = $this->parse($inner_left_part);
-                    $inner_right_part = $this->parse($inner_right_part);
-                    if ($operator == chars::AND) {
-                        if ($inner_left_part and $inner_right_part) {
-                            log_debug('if: get logical result for "' . $inner_part . '" is "true"');
-                            $result = $this->parse($right_part);
-                        }
-                    }
-                    if ($operator == chars::OR) {
-                        if ($inner_left_part or $inner_right_part) {
-                            log_debug('if: get logical result for "' . $inner_part . '" is "true"');
-                            $result = $this->parse($right_part);
-                        }
-                    }
-                } else {
-                    // calculate the inner part
-                    $inner_part_result = $this->parse($inner_part);
-                    log_debug("inner_part result " . $inner_part);
-                    log_debug('if: get logical result for "' . $inner_part . '" is "' . $inner_part_result . '"');
-                    // combine the result
-                    $result = $left_part . $inner_part_result . $right_part;
+    /**
+     * @param string $formula the math expression with numbers that may contain the function
+     * @param string $name the name of the function e.g. "min"
+     * @param callable $pick returns the number of the function from the array of its argument numbers
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return string the expression with the first function outside a bracket replaced, unchanged if it has none or its closing bracket is missing, or NO_NUMBER if it has no number
+     */
+    private function replace_first_function(string $formula, string $name, callable $pick, user_message $msg): string
+    {
+        $result = $formula;
+        $name_start = $this->pos_separator($result, $name, 0);
+        $open = $this->function_bracket($result, $name, $name_start);
+        if ($open >= 0) {
+            $args_start = $open + 1;
+            $args_end = $this->pos_separator($result, chars::BRACKET_CLOSE, $args_start);
+            if ($args_end >= $args_start) {
+                $args = substr($result, $args_start, $args_end - $args_start);
+                $nums = $this->function_arguments($args, $msg);
+                // an argument that is no number is never replaced by a wrong number
+                $num_txt = self::NO_NUMBER;
+                if (!in_array(null, $nums, true)) {
+                    $num_txt = (string)$pick($nums);
+                }
+                $result = self::NO_NUMBER;
+                if ($num_txt != self::NO_NUMBER) {
+                    $result = substr($formula, 0, $name_start) . $num_txt . substr($formula, $args_end + 1);
                 }
             }
         }
+        return $result;
+    }
 
+    /**
+     * @param string $formula the math expression with numbers
+     * @param string $name the name of the function e.g. "min"
+     * @param int $name_start the position of the function name or -1 if the expression has none
+     * @return int the position of the open bracket of the function or -1 if more than blanks follow the name e.g. "min (" of the formula editor is a call
+     */
+    private function function_bracket(string $formula, string $name, int $name_start): int
+    {
+        $result = -1;
+        if ($name_start >= 0) {
+            $name_end = $name_start + strlen($name);
+            $open = $this->pos_separator($formula, chars::BRACKET_OPEN, $name_end);
+            $between = substr($formula, $name_end, max($open - $name_end, 0));
+            if ($open >= 0 and trim($between) == '') {
+                $result = $open;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $args the arguments of a function e.g. "3; 1 + 1"
+     * @param user_message $msg to report an argument that cannot be calculated
+     * @return array the number of each argument; an argument in brackets or with a function is split only at its own level
+     */
+    private function function_arguments(string $args, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->function_argument_texts($args) as $arg) {
+            $result[] = $this->parse($arg, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $args the arguments of a function e.g. "3; 1 + 1"
+     * @return array the text of each argument, split only at its own level
+     */
+    private function function_argument_texts(string $args): array
+    {
+        $result = [];
+        $pos = $this->pos_separator($args, chars::FUNC_ARG_SEPARATOR, 0);
+        while ($pos >= 0) {
+            $result[] = substr($args, 0, $pos);
+            $args = substr($args, $pos + 1);
+            $pos = $this->pos_separator($args, chars::FUNC_ARG_SEPARATOR, 0);
+        }
+        $result[] = $args;
+        return $result;
+    }
+
+    /**
+     * replace the first if function outside a bracket, either "if( condition ; then ; else )"
+     * or "if( condition ) then", where the text behind the bracket is the then part
+     * @param string $formula the math expression with numbers that may contain the if function
+     * @param user_message $msg to report a part that cannot be calculated
+     * @return string the expression with the function replaced, unchanged if it has none or is no valid call, or NO_NUMBER if it has no number
+     */
+    private function math_if(string $formula, user_message $msg): string
+    {
+        $result = $formula;
+        // every call, because the brackets of a later call would else be calculated like a normal bracket
+        do {
+            $before = $result;
+            $result = $this->math_first_if($before, $msg);
+        } while ($result != $before and $result != self::NO_NUMBER);
+        return $result;
+    }
+
+    /**
+     * @param string $formula the math expression with numbers that may contain the if function
+     * @param user_message $msg to report a part that cannot be calculated
+     * @return string the expression with the first function replaced, unchanged if it has none or is no valid call, or NO_NUMBER if it has no number
+     */
+    private function math_first_if(string $formula, user_message $msg): string
+    {
+        $result = $formula;
+        $if_start = $this->pos_separator($result, chars::FUNC_IF, 0);
+        $open = $this->function_bracket($result, chars::FUNC_IF, $if_start);
+        if ($open >= 0) {
+            $close = $this->pos_separator($result, chars::BRACKET_CLOSE, $open + 1);
+            if ($close > $open) {
+                $args = $this->function_argument_texts(substr($result, $open + 1, $close - $open - 1));
+                $before = substr($result, 0, $if_start);
+                $after = substr($result, $close + 1);
+                if (count($args) == 3) {
+                    $num = $this->if_number($args[0], $args[1], $args[2], $msg);
+                    $result = $before . $num . $after;
+                } elseif (count($args) == 1) {
+                    $num = $this->if_number($args[0], $after, null, $msg);
+                    $result = $before . $num;
+                } else {
+                    $num = '';
+                }
+                if ($num == self::NO_NUMBER) {
+                    $result = self::NO_NUMBER;
+                }
+            }
+        }
         log_debug("done " . $result);
+        return $result;
+    }
+
+    /**
+     * only the chosen part is calculated, because the condition often guards the other part e.g. against a division by zero
+     * @param string $condition the text of the condition e.g. "1 = 0" or "1 & 0"
+     * @param string $then the text that is calculated if the condition is true
+     * @param string|null $else the text that is calculated if the condition is false, null for no result without an error
+     * @param user_message $msg to report a part that cannot be calculated
+     * @return string the number or NO_NUMBER
+     */
+    private function if_number(string $condition, string $then, ?string $else, user_message $msg): string
+    {
+        $result = self::NO_NUMBER;
+        $is_true = $this->condition_is_true($condition, $msg);
+        $chosen = $is_true ? $then : $else;
+        if ($is_true !== null and $chosen !== null) {
+            $result = (string)($this->parse($chosen, $msg) ?? self::NO_NUMBER);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $condition two conditions joined by chars::OR or chars::AND, two sums compared by "=" or a sum that is true if it is not zero
+     * @param user_message $msg to report a part that cannot be calculated
+     * @return bool|null the result or null if a part cannot be calculated, because a missing part is neither true nor false
+     */
+    private function condition_is_true(string $condition, user_message $msg): ?bool
+    {
+        $or = $this->pos_separator($condition, chars::OR, 0);
+        $and = $this->pos_separator($condition, chars::AND, 0);
+        $equal = $this->pos_separator($condition, chars::CHAR_CALC, 0);
+        if ($or >= 0 or $and >= 0) {
+            $pos = $or >= 0 ? $or : $and;
+            $left = $this->condition_is_true(substr($condition, 0, $pos), $msg);
+            $right = $this->condition_is_true(substr($condition, $pos + 1), $msg);
+            if ($left === null or $right === null) {
+                $result = null;
+            } else {
+                $result = $or >= 0 ? ($left or $right) : ($left and $right);
+            }
+        } elseif ($equal >= 0) {
+            $left = $this->parse(substr($condition, 0, $equal), $msg);
+            $right = $this->parse(substr($condition, $equal + 1), $msg);
+            $result = ($left === null or $right === null) ? null : $left == $right;
+        } else {
+            $num = $this->parse($condition, $msg);
+            $result = $num === null ? null : $num != 0;
+        }
         return $result;
     }
 

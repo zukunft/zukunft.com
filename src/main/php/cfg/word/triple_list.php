@@ -116,7 +116,7 @@ class triple_list extends sandbox_list_named
 
     public array $lst; // the list of triples
 
-    // fields to select a part of the graph (TODO deprecated)
+    // fields to select a part of the graph (TODO Prio 2 deprecated)
     public array $ids = array();  // list of link ids
     public ?word $wrd = null;          // show the graph elements related to this word
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
@@ -131,7 +131,7 @@ class triple_list extends sandbox_list_named
     /**
      * fill the triple list based on a database records
      * actually just add the single triple object to the parent function
-     * TODO check that a similar function is used for all lists
+     * TODO Prio 2 check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -612,6 +612,20 @@ class triple_list extends sandbox_list_named
     }
 
     /**
+     * @return bool true if at least one triple has a verb of verbs::PRELOAD_VERBS e.g. "is symbol for",
+     *              so that the system phrases of the cached types api message change by saving the list
+     */
+    function has_preload_verb(): bool
+    {
+        foreach ($this->lst() as $trp) {
+            if ($trp->has_preload_verb()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * delete all loaded triples e.g. to delete all the triples linked to a word
      * @param user_message $msg the message for the user why deleting the triples has failed and a suggested solution
      * @return bool true if all triples has been deleted
@@ -799,18 +813,23 @@ class triple_list extends sandbox_list_named
      * (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
      * the id of a renamed triple is set from the original so it is excluded from the insert step
      * @param user_message $msg to collect the messages of the triggered rename
+     * @param triple_list $db_lst filled with the found database triples, because a triple with an id is not loaded again, but the other fields of the import e.g. the description must still be updated
      * @return void
      */
-    function rename_link_conflicts(user_message $msg): void
+    function rename_link_conflicts(user_message $msg, triple_list $db_lst): void
     {
         foreach ($this->lst() as $trp) {
             if ($trp->id() == 0 and $trp->from_id() != 0 and $trp->to_id() != 0) {
                 $db_trp = new triple($this->get_user());
                 $db_trp->load_by_link_id( $trp->from_id(), $msg, $trp->predicate_id(), $trp->to_id() );
-                if ($db_trp->id() > 0 and $db_trp->name() != $trp->name()) {
-                    $db_trp->set_name($trp->name());
-                    $db_trp->save($msg);
+                if ($db_trp->id() > 0) {
+                    if ($db_trp->name() != $trp->name()) {
+                        $db_trp->set_name($trp->name());
+                        $db_trp->save($msg);
+                    }
+                    // also with the same name, because then a load by name has missed the row and an insert would fail
                     $trp->id = $db_trp->id();
+                    $db_lst->add($db_trp);
                 }
             }
         }
@@ -848,15 +867,15 @@ class triple_list extends sandbox_list_named
             // rename any triple that re-declares an existing from/verb/to link under a different
             // name so the original triple is updated instead of dropping a duplicate-link insert
             // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
+            $db_lst_all = new triple_list($this->get_user());
             $this->fill_by_name($cache, $msg, true, false);
-            $this->rename_link_conflicts($msg);
+            $this->rename_link_conflicts($msg, $db_lst_all);
 
             // repeat filling the database id to the triple list
             // and adding missing triples to the database
             // until it is clear that a triple is missing
             $trp_added = true;
             $level = 0;
-            $db_lst_all = new triple_list($this->get_user());
             $add_lst = new triple_list($this->get_user());
 
             // only for the case that there is no try create the message lists once that are recreated on each try
@@ -888,7 +907,7 @@ class triple_list extends sandbox_list_named
                 $chk_lst->fill_missing_verbs();
 
                 // get the triples that needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the triples by name from the database that does not yet have a database id
@@ -896,12 +915,12 @@ class triple_list extends sandbox_list_named
                 $imp->step_start(msg_id::LOAD, triple::class, $load_lst->count(), $step_time);
                 $db_lst = new triple_list($this->get_user());
                 // force to load all names including the triples excluded by the user to potential include the triples due to the import
-                // TODO add load_all = true also to the other objects
+                // TODO Prio 2 add load_all = true also to the other objects
                 $db_lst->load_by_names( $load_lst->names(true), $msg_load, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
                 // fill up the cache to prevent loading the same triple again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated
@@ -916,8 +935,17 @@ class triple_list extends sandbox_list_named
                 $load_lst = $load_lst->get_ready($msg_chk, $imp->file_name);
 
                 // get the triples that still needs to be added
-                // TODO check if other list save function are using the cache instead of this here
-                $add_lst = $load_lst->missing_ids($msg_chk);
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
+                $new_lst = $load_lst->missing_ids($msg_chk);
+
+                // the from side of a triple can be a triple whose id is known only since this level,
+                // so a link that exists under another name is renamed here instead of a failing insert
+                $new_lst->rename_link_conflicts($msg_ins, $db_lst_all);
+                $add_lst = $new_lst->missing_ids($msg_chk);
+                if ($add_lst->count() < $new_lst->count()) {
+                    // the triples that use a renamed triple are ready for the next level
+                    $trp_added = true;
+                }
 
                 // create any missing sql insert functions and insert the missing triples
                 if (!$add_lst->is_empty()) {
@@ -932,15 +960,15 @@ class triple_list extends sandbox_list_named
                 }
 
                 // reload the id of the triples added with the last run
-                // TODO use the insert message instead to increase speed
+                // TODO Prio 2 use the insert message instead to increase speed
                 // use a fresh message here too so the reloaded triples keep their name (see above)
                 $db_lst = new triple_list($this->get_user());
-                if (!$add_lst->is_empty()) {
-                    $db_lst->load_by_names( $add_lst->names(true), $msg_reload, true );
+                if (!$new_lst->is_empty()) {
+                    $db_lst->load_by_names( $new_lst->names(true), $msg_reload, true );
                 }
 
                 // fill up the cache to prevent loading the same triple again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated

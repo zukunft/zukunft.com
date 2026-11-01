@@ -149,21 +149,21 @@
   "formulas": [
     {
       "name": "specific embedded emissions formula",
-      "expression": "\"specific emissions\" = ( \"direct emissions\" + \"indirect emissions\" + Σ ( \"mass fraction\" × \"specific emissions of component\" ) ) / \"mass\"",
+      "expression": "\"specific emissions\" = ( \"direct emissions\" + \"indirect emissions\" + sum ( \"mass fraction\" * \"specific emissions of component\" ) ) / \"mass\"",
       "latex": "E_{spec} = \\frac{E_{dir} + E_{indir} + \\sum (m_i \\times E_{spec,i})}{M}",
       "description": "Calculation according to EU Implementing Regulation 2025/2547, Article 7",
       "assigned": ["product", "material"]
     },
     {
       "name": "CBAM amount formula",
-      "expression": "\"CBAM amount\" = \"specific emissions\" × \"mass\" × \"CO2 price\" - \"credit applied\"",
+      "expression": "\"CBAM amount\" = \"specific emissions\" * \"mass\" * \"CO2 price\" - \"credit applied\"",
       "latex": "CBAM = E_{spec} \\times M \\times P_{CO2} - K_{paid}",
       "description": "Net duty calculation including foreign carbon price credits",
       "assigned_word": "CBAM liability"
     },
     {
       "name": "fallback estimate formula",
-      "expression": "\"specific emissions\" = \"maximum sector value\" × 1.10",
+      "expression": "\"specific emissions\" = \"maximum sector value\" * 1.10",
       "latex": "E_{spec,est} = E_{max,sector} \\times 1.10",
       "description": "Conservative upper estimate when verified data is missing",
       "assigned_word": "standard emission factor"

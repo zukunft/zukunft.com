@@ -237,4 +237,4 @@ PREPARE result_list_by_phr_lst_p3 FROM
                                  AND u.user_id = ?
          WHERE REGEXP_LIKE(s.group_id, ?, 'c')
            AND REGEXP_LIKE(s.group_id, ?, 'c')
-           AND REGEXP_LIKE(s.group_id, ?, 'c')';
+           AND REGEXP_LIKE(s.group_id, ?, 'c') LIMIT ? OFFSET ?';

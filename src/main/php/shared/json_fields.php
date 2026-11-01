@@ -51,6 +51,8 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
+    // the seconds per backend step of a slow api answer, which the frontend may use or ignore (see controller::with_time)
+    const string API_TIME = 'api_time';
     // subarrays of the json url representation: the '7'-prefixed link vars (the link created with a new
     // object), the '8'-prefixed pre values (the db values when the edit view was opened) and the
     // '9'-prefixed back targets (where cancel / confirm return to)
@@ -176,7 +178,7 @@ class json_fields
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
     // so that no additional mapping is needed
-    // TODO check if api objects can be deprecated
+    // TODO Prio 2 check if api objects can be deprecated
     // and used in the backend to create the json for the frontend
     // and used in the frontend for the field selection
     const string ID = 'id'; // the unique database id used to save the changes
@@ -225,6 +227,10 @@ class json_fields
     const string CONFIG_CHILDREN = 'children';
     // the value of a setting in config.yaml, sent only if the database value differs or is missing
     const string CONFIG_FILE_VALUE = 'file_value';
+    // true for a text setting, which the settings page changes with a text input
+    const string CONFIG_IS_TEXT = 'is_text';
+    // the phrase ids of a text setting without a database value, with which its first save adds the value
+    const string CONFIG_PHRASE_IDS = 'phrase_ids';
 
     // the child id used e.g. for the child view of view relations
     const string CHILD_ID = 'child_id';
@@ -257,6 +263,12 @@ class json_fields
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
+    const string MILLISECONDS = 'milliseconds'; // e.g. the execution time of a request
+    // the summed user log sessions of one user e.g. for the users with the most server time on the admin dashboard
+    const string REQUESTS = 'requests'; // the number of api requests
+    const string UPDATES = 'updates'; // the number of api requests that have changed data
+    const string REQUEST_MS = 'request_ms'; // the milliseconds of all api requests
+    const string UPDATE_MS = 'update_ms'; // the milliseconds of the api requests that have changed data
     const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
     const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 
@@ -348,6 +360,11 @@ class json_fields
     // the shared overwrites of other users with the name of the overwriting user (USER_NAME),
     // used by the 'others' tab of the object page
     const string OTHER_OVERWRITES = 'other_overwrites';
+    // true if the requesting user has an own version of the object after the update put,
+    // false if the user sees the shared row e.g. also after an undo that removes the own version
+    const string USER_OVERWRITE = 'user_overwrite';
+    // the warnings of a save that has been done, e.g. an object of the update put that is not changed
+    const string WARNINGS = 'warnings';
 
     // to review
     const string ACTION = 'action';
@@ -395,6 +412,8 @@ class json_fields
     const string LIST_SYSTEM_VIEWS = 'system_views';
     // the phrases that the frontend needs on every page e.g. the symbol triples (see verbs::PRELOAD_VERBS)
     const string LIST_SYSTEM_PHRASES = 'system_phrases';
+    // the formulas that convert a measure unit of the system phrases e.g. "kg" = "tonne" * 1000
+    const string LIST_SYSTEM_FORMULAS = 'system_formulas';
 
     /*
      * im- and export - fields used only for the im- and export json messages
@@ -406,6 +425,12 @@ class json_fields
     const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+    // the views assigned to a word by the import e.g. "Mathematical constant" to "Pi", which the edit menu of the navbar offers
+    const string VIEWS_ASSIGNED = 'views_assigned';
+    // list of view relations e.g. the table editor of the table view
+    const string VIEW_RELATIONS = 'view_relations';
+    // the view id of the editor of a view, which the edit menu of the navbar offers
+    const string EDITOR_ID = 'editor_id';
     // list of terms e.g. the terms that use a view
     const string TERMS = 'terms';
 
@@ -492,6 +517,8 @@ class json_fields
     const string WORDS = 'words';
     const string VERBS = 'verbs';
     const string TRIPLES = 'triples';
+    // the objects that an update put message deletes resp. excludes for the user, by class and id
+    const string DELETE = 'delete';
 
     // for ip ranges
     const string IP_FROM = 'ip_from';

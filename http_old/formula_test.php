@@ -181,7 +181,7 @@ if ($session_usr->id > 0) {
             // build the calculation queue
             // the standard value will always be checked first
             // and after that the user-specific value will be calculated if needed
-            // TODO: but only if the user has done some changes
+            // TODO Prio 3 but only if the user has done some changes
             $calc_res_lst = new result_list($usr);
             foreach ($frm_lst->lst() as $frm) {
                 $calc_lst = $calc_res_lst->frm_upd_lst($frm, $back);

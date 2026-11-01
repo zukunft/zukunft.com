@@ -9,14 +9,14 @@
 
     1. for up to two prime phrases, one result phrase and a formula id with a 16 bit integer id
        a 64 bit bigint key is used for fast and efficient saving for some results
-       TODO if the adds a phrase to the result use the formula to get this phrase
+       TODO Prio 3 if the adds a phrase to the result use the formula to get this phrase
             e.g. if the increase formula is assigned to inhabitants
                  the results have the phrases city, inhabitants and 2020
                  for the source and the result
                  the words percent and increase should be taken from the increase formula
                  because the formulas can be cached in the frontend
                  so the frontend can and the phrases without interaction to the backend
-       TODO reduce the length of the formula id e.g. to 10 bit
+       TODO Prio 3 reduce the length of the formula id e.g. to 10 bit
             and use 10 bit for the result phrase
             and 12, 16 and 16 bit for the source and result phrases
             to use a 64 bit key as much as possible
@@ -40,8 +40,8 @@
     this has the advantage that no separate table for the group is needed,
     unless a user changed the name of the group or added a description
 
-    TODO move the 32k most often used phrases to a phrase_most view
-    TODO use a 8 byte key for up to 4 most often used phrase group
+    TODO Prio 3 move the 32k most often used phrases to a phrase_most view
+    TODO Prio 3 use a 8 byte key for up to 4 most often used phrase group
 
 
     This file is part of zukunft.com - calc with words
@@ -102,7 +102,7 @@ class result_id extends id
     const int PRIME_RESULT_PHRASES = 0;
     const int MAIN_PHRASES_ALL = 8;
     const int MAIN_PHRASES = 6;
-    // TODO check for consistent usage
+    // TODO Prio 2 check for consistent usage
     const int MAIN_PHRASES_STD = 5;
     const int MAIN_SOURCE_PHRASES = 1;
     const int MAIN_RESULT_PHRASES = 1;
@@ -167,7 +167,7 @@ class result_id extends id
 
     /**
      * create two 64-bit integer ids based on a prime formula id and five prime phrase ids
-     * TODO check that system is running on 64 bit hardware
+     * TODO Prio 2 check that system is running on 64 bit hardware
      *
      * @param phrase_list $both_lst list of words or triples that are used to select the source and result
      * @param phrase_list $src_lst list of words or triples that are specific for the source value

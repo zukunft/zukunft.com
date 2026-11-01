@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'config_tree.php';
+include_once paths::SHARED_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -46,6 +48,8 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree as config_tree_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -69,9 +73,10 @@ class test_config_trees
     const int MAX_DELAY_VALUE = 3600;
     // the number a user saves instead, to check the confirmation of the change
     const int MAX_DELAY_NEW = 1800;
-    // the id of the database value, which only the max delay, the types and the initial select setting have, so a
-    // tree with an editing user shows the input for the initial select entries only, because max delay is a setting
-    // of the pod for an admin and a boolean is not yet editable
+    // the id of the database value, which only the max delay, the types, the initial select setting, the font and
+    // the colour mode have, so a tree with an editing user shows the input for the initial select entries and the
+    // font and the colour mode selection only, because max delay is a setting of the pod for an admin and a
+    // boolean is not yet editable
     const int MAX_DELAY_ID = 12;
     const int TYPES_ID = 13;
     const string SELECT_INITIAL = 'initial';
@@ -115,6 +120,34 @@ class test_config_trees
     const int SCRIPT_KEY_VALUE = 5;
     // the start of the escaped script key, which a browser shows as text
     const string SCRIPT_KEY_ESCAPED = '&lt;script&gt;';
+    // two pinned views of the start page like in config.yaml: the url of pv and the view name of cbam
+    // have a database value, the empty view name of pv has none, because the import does not save an
+    // empty text, so its first save adds the value with the phrases of its yaml path
+    const string STARTUP = 'startup';
+    const string PV = 'pv';
+    const string CBAM = 'cbam';
+    const string URL = 'url';
+    const string URL_VALUE = '/http/view.php?m=4&id=1954';
+    const string VIEW_NAME = 'view name';
+    const string VIEW_NAME_VALUE = 'Calculator';
+    // the font of the user, whose word has the font code id, so the tree offers the font selection
+    const string FONT = words::FONT;
+    const string FONT_VALUE = 'serif';
+    const int FONT_ID = 15;
+    // a font of config.yaml that is not in the font selection, which the selection offers too
+    const string FONT_UNKNOWN = 'Arial';
+    // the dark or light mode of the user, whose triple has the colour mode code id, so the tree offers
+    // the selection of the light or the dark colours
+    const string COLOUR_MODE = triples::COLOUR_MODE;
+    const int COLOUR_MODE_VALUE = def::MODE_DARK;
+    const int COLOUR_MODE_ID = 16;
+    // a mode number that is not in the mode selection, which the selection offers too
+    const int COLOUR_MODE_UNKNOWN = 3;
+    // the code ids of the words and triples like in the database (see base_phrases.json)
+    const array CODE_IDS = [
+        self::FONT => words::FONT_CODE_ID,
+        self::COLOUR_MODE => triples::COLOUR_MODE_CODE_ID,
+    ];
 
 
     /*
@@ -123,6 +156,8 @@ class test_config_trees
 
     // use the global test environment
     private test_cleanup $env;
+    // the id of each phrase by name (see phrase_id)
+    private array $phr_ids = [];
 
     function __construct(test_cleanup $env)
     {
@@ -171,6 +206,10 @@ class test_config_trees
                 self::POD => [
                     self::POD_NAME => self::POD_NAME_VALUE,
                 ],
+                self::STARTUP => [
+                    self::PV => [self::URL => self::URL_VALUE, self::VIEW_NAME => ''],
+                    self::CBAM => [self::VIEW_NAME => self::VIEW_NAME_VALUE],
+                ],
             ],
             self::USER => [
                 self::LANGUAGE => [
@@ -178,6 +217,8 @@ class test_config_trees
                     words::TOOLTIP_COMMENT => self::LANGUAGE_TIP,
                 ],
                 self::SCRIPT_KEY => self::SCRIPT_KEY_VALUE,
+                self::FONT => [words::SYS_CONF_VALUE => self::FONT_VALUE],
+                self::COLOUR_MODE => [words::SYS_CONF_VALUE => def::MODE_LIGHT],
             ],
             self::SELECT => array_merge([words::TOOLTIP_COMMENT => self::SELECT_TIP], self::SELECT_ENTRIES),
         ];
@@ -200,9 +241,16 @@ class test_config_trees
             [json_fields::PHRASES => $this->phrase_rows([self::USER, self::LANGUAGE]),
                 json_fields::TEXT_VALUE => self::LANGUAGE_VALUE],
             $this->cfg_row([self::USER, self::SCRIPT_KEY], self::SCRIPT_KEY_VALUE),
+            [json_fields::PHRASES => $this->phrase_rows([self::USER, self::FONT]),
+                json_fields::TEXT_VALUE => self::FONT_VALUE, json_fields::ID => self::FONT_ID],
+            $this->cfg_row([self::USER, self::COLOUR_MODE], self::COLOUR_MODE_VALUE, self::COLOUR_MODE_ID),
             $this->cfg_row([self::SYSTEM, self::TEST, self::TIMEOUT, self::SEC], self::TIMEOUT_VALUE),
             [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::POD, self::POD_NAME]),
                 json_fields::TEXT_VALUE => self::POD_NAME_VALUE],
+            [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::STARTUP, self::PV, self::URL]),
+                json_fields::TEXT_VALUE => self::URL_VALUE],
+            [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::STARTUP, self::CBAM, self::VIEW_NAME]),
+                json_fields::TEXT_VALUE => self::VIEW_NAME_VALUE],
         ];
         foreach (self::SELECT_ENTRIES as $key => $number) {
             $id = ($key == self::SELECT_INITIAL) ? self::SELECT_INITIAL_ID : 0;
@@ -239,12 +287,36 @@ class test_config_trees
 
     /**
      * @param array $keys the yaml keys of a setting below "system configuration"
-     * @return array the json phrases of the value, which are the keys of the whole yaml path
+     * @return array the json phrases of the value, which are the keys of the whole yaml path, each with
+     *               the same id in every row like in the database
      */
     private function phrase_rows(array $keys): array
     {
         $names = array_merge(config_tree::ROOT_KEYS, $keys);
-        return array_map(fn(string $name) => [json_fields::NAME => $name], $names);
+        return array_map(fn(string $name) => $this->phrase_row($name), $names);
+    }
+
+    /**
+     * @param string $name a yaml key of the test part of config.yaml
+     * @return array the json phrase with the id, the name and the code id of a word that has one
+     */
+    private function phrase_row(string $name): array
+    {
+        $row = [json_fields::ID => $this->phrase_id($name), json_fields::NAME => $name];
+        if (array_key_exists($name, self::CODE_IDS)) {
+            $row[json_fields::CODE_ID] = self::CODE_IDS[$name];
+        }
+        return $row;
+    }
+
+    /**
+     * @param string $name a yaml key of the test part of config.yaml
+     * @return int the id of the word with that name, numbered in the order of first use
+     */
+    function phrase_id(string $name): int
+    {
+        $this->phr_ids[$name] ??= count($this->phr_ids) + 1;
+        return $this->phr_ids[$name];
     }
 
     /**

@@ -62,7 +62,12 @@ class paths
     // the docroot as the current folder of the root path, so the url path of a forward page
     // e.g. api::SETTINGS_REL, which starts with a separator, can be added to name its file
     const string DOCROOT = ROOT_PATH . '.';
+    // the user log archive of the write test, which the test removes again
+    const string USER_LOG_ARCHIVE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR . 'test_user_log' . DIRECTORY_SEPARATOR;
 
+
+    // the scripts that a headless browser runs in a page snapshot to act like a user
+    const string JS = TEST_PATH . 'js' . DIRECTORY_SEPARATOR;
 
     // main path for the test resources
     const string RESOURCE = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR;
@@ -76,6 +81,8 @@ class paths
     const string API_SYSTEM_RES = self::API_RES . 'system' . DIRECTORY_SEPARATOR;
     const string API_TYPE_LIST_RES = self::API_RES . 'type_lists' . DIRECTORY_SEPARATOR;
     const string API_SYS_LOG_RES = self::API_RES . 'sys_log_list' . DIRECTORY_SEPARATOR;
+    const string API_PHRASE_DATA_RES = self::API_RES . 'phrase_data' . DIRECTORY_SEPARATOR;
+    const string API_CALCULATOR_EDITOR_RES = self::API_RES . 'calculator_editor' . DIRECTORY_SEPARATOR;
     const string DB_FORMULA = self::DB . self::FORMULA;
     const string DB_RES = self::RESOURCE . self::DB;
     const string DB_RES_FORMULA = self::DB_RES . self::FORMULA;
@@ -92,6 +99,8 @@ class paths
     const string IMPORT_WIKIDATA = self::IMPORT . 'wikidata' . DIRECTORY_SEPARATOR;
     // the json as received from wikidata
     const string IMPORT_WIKIDATA_CACHE = self::IMPORT_WIKIDATA . 'cache' . DIRECTORY_SEPARATOR;
+    // hand made wikidata json for the offline converter unit tests, which no live capture overwrites
+    const string IMPORT_WIKIDATA_UNIT = self::IMPORT_WIKIDATA_CACHE . 'unit' . DIRECTORY_SEPARATOR;
     // the json converted from the wikidata cache that can be imported into the database
     const string IMPORT_WIKIDATA_TO_IMPORT = self::IMPORT_WIKIDATA . 'to_import' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;
@@ -103,6 +112,8 @@ class paths
     // path for resources to test the frontend
     const string WEB_RES = self::RESOURCE . 'web' . DIRECTORY_SEPARATOR;
     const string WEB_SYSTEM_RES = self::WEB_RES . 'system' . DIRECTORY_SEPARATOR;
+    // the messages that the calculator editor sends after the user actions of a scenario
+    const string WEB_CALCULATOR_EDITOR_RES = self::WEB_RES . 'calculator_editor' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the user interface
     const string UI_RES = self::WEB_RES . 'ui' . DIRECTORY_SEPARATOR;
@@ -128,11 +139,18 @@ class paths
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;
     // to test if each object has all curl views including one or many read only view
     const string VIEWS = 'views_by_object' . DIRECTORY_SEPARATOR;
+    // the admin dashboard with given data sets e.g. with and without critical entries
+    const string VIEWS_ADMIN = self::VIEWS . 'admin' . DIRECTORY_SEPARATOR;
     // to test every selection of the start page sub menus: the rows, the columns and the form of the ranking
     const string START_PAGE = 'start_page' . DIRECTORY_SEPARATOR;
     // to test the read only settings page with the tree of the system configuration; not below
     // views_by_id, because the system view test removes every snapshot there that it has not written
     const string CONFIG_PAGE = 'config_page' . DIRECTORY_SEPARATOR;
+    // the page of a use case as generated from its json next to the hand made sample page
+    // (<name>_sample.html) that shows the target layout, so that the developer can compare the
+    // two; not below views_by_object, because the view test removes every snapshot there that it
+    // has not written, which would delete the sample
+    const string USE_CASES = 'use_cases' . DIRECTORY_SEPARATOR;
     // to test if all system view based on the id are fine including more static views like the about page
     const string VIEWS_BY_ID = self::HTML . 'views_by_id' . DIRECTORY_SEPARATOR;
     const string WEB = 'web' . DIRECTORY_SEPARATOR;

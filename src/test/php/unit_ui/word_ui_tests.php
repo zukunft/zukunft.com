@@ -39,15 +39,18 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
@@ -64,6 +67,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -78,6 +82,7 @@ class word_ui_tests
         $msg = new user_message();
 
         // init
+        $lib = new library();
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
@@ -122,9 +127,27 @@ class word_ui_tests
         $result = $wrd_crud->del($no_usr_msg);
         $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
 
-        // TODO add a list of differences between the user word and the standard word
+        $t->subheader($ts . 'debug id');
+
+        // the named sandbox debug text shows the name and the id of the word
+        $test_name = 'shows the name of the word';
+        $wrd_dsp = new word($t_wrd->word()->api_json());
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+        $test_name = '... and its id';
+        $id_txt = (string)word_names::MATH_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a word known only by its id e.g. from a url has no name to show
+        $test_name = 'shows no name for a word without a name';
+        $wrd_dsp = new word();
+        $wrd_dsp->set_id(word_names::MATH_ID);
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        // TODO Prio 2 add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
-        // TODO add this ui test for all main sandbox objects
+        // TODO Prio 2 add this ui test for all main sandbox objects
 
         $wrd = new word($t_wrd->word()->api_json());
         $wrd_pi = new word($t_wrd->word_pi()->api_json());
@@ -140,11 +163,23 @@ class word_ui_tests
         $test_page .= 'edit button: ' . $wrd->btn_edit($url_arr, $base_url) . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
+
+        // the same field with the long view list is checked apart from the page,
+        // because one page must not hold two fields with the same id
+        $test_name = 'the view selector with the long view list keeps the view url var as field name';
+        $long_sel = $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg);
+        $t->assert_text_contains($test_name, $long_sel, 'name="' . url_var::VIEW . '"');
+
         $test_page .= $html->text_h2('select');
+        // e.g. a frontend cache that has not got the phrase types from the backend
+        // the selector checks this before it uses the phrase types and else reports an internal error
+        $test_name = 'the frontend cache has the phrase types to select the type of a word';
+        $t->assert_true($test_name, $cfg->has_phrase_types());
+        $test_name = '... but not a cache that has got no phrase types from the backend';
+        $t_typ = new test_types($t);
+        $t->assert_false($test_name, $t_typ->type_lists_empty_ui()->has_phrase_types());
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
-        // the same field with the long view list, so the field name stays the view url var
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg) . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
@@ -177,6 +212,9 @@ class word_ui_tests
         $wrd_currency_rel = $t_wrd->currency_related_ui();
         $test_page .= $html->text_h2('children of ' . $wrd_currency_rel->name());
         $test_page .= 'children: ' . $list->children_of_word($wrd_currency_rel, $msg) . '<br>';
+        // the related words and the related triples split the children by their class
+        $test_page .= 'child words: ' . $list->child_words($wrd_currency_rel, $msg) . '<br>';
+        $test_page .= 'child triples: ' . $list->child_triples($wrd_currency_rel, $msg) . '<br>';
 
         // with a single child the component reads as the full statement "Euro is a currency"
         $wrd_currency_single = $t_wrd->single_currency_related_ui();
@@ -188,6 +226,12 @@ class word_ui_tests
         $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_eur_rel->name());
         $test_page .= $list->phrase_aliases($wrd_eur_rel, $msg) . '<br>';
         $test_page .= $list->phrase_symbols($wrd_eur_rel, $msg) . '<br>';
+
+        // the views that the edit menu of the navbar suggests for a word
+        $wrd_menu = $t_wrd->menu_views_ui();
+        $test_page .= $html->text_h2('edit menu of ' . $wrd_menu->name());
+        $wrd_menu_lst = $wrd_menu->menu_views_ui($cfg, $msg);
+        $test_page .= $html->list_unsorted($wrd_menu->menu_view_items_ui($wrd_menu_lst)) . '<br>';
         $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_eur_rel, $msg) . '<br>';
         // the "related phrases without subtitles" component groups the related phrases by verb
         $test_page .= 'related phrases without subtitles: ' . $list->phrases_related_ex_subtitle($wrd_eur_rel, $msg) . '<br>';
@@ -213,8 +257,11 @@ class word_ui_tests
         $wrd_minute = new word($t_wrd->word_minute()->api_json());
         $test_page .= $html->text_h2('formulas assigned to ' . $wrd_minute->name());
         $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $msg, $dto) . '<br>';
-        $test_page .= $html->text_h2('formulas assigned to ' . $wrd->name());
-        $test_page .= 'formulas: ' . $list->formulas($wrd, $msg, $dto) . '<br>';
+        // the formulas of a second word are checked apart from the page, because each list
+        // has the form to assign a formula and one page must not hold two forms with the same id
+        $test_name = 'the formulas assigned to a second word are listed';
+        $frm_html = $list->formulas($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $frm_html, formula_names::INCREASE);
 
         // show the values related to a word sorted by impact as on the default word page
         $t_val = new test_values($t);
@@ -233,8 +280,8 @@ class word_ui_tests
         $t->html_page_test($test_page, 'word html components', 'word', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'values in columns');
-        $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);
         $test_name = 'the values are shown in a wrapping column row';
+        $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);
         $t->assert_text_contains($test_name, $col_html, 'class="row');
         $test_name = 'the phrase of the page is not repeated as a column headline';
         $t->assert_text_not_contains($test_name, $col_html, styles::VALUE_GROUP_TITLE . '">' . word_names::ZH);
@@ -280,6 +327,26 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $currency_children, triple_names::SWISS_FRANC);
         $test_name = 'with several children the header uses the word plural "currencies"';
         $t->assert_text_contains($test_name, $currency_children, word_names::CURRENCIES);
+        // the related words show only the children that are words
+        $child_words = $list->child_words($wrd_currency_rel, $msg);
+        $test_name = 'the child words of currency include the word Euro';
+        $t->assert_text_contains($test_name, $child_words, word_names::EURO);
+        $test_name = '... but not the triple Swiss franc';
+        $t->assert_text_not_contains($test_name, $child_words, triple_names::SWISS_FRANC);
+        // the related triples show only the children that are triples
+        $child_triples = $list->child_triples($wrd_currency_rel, $msg);
+        $test_name = 'the child triples of currency include the triple Swiss franc';
+        $t->assert_text_contains($test_name, $child_triples, triple_names::SWISS_FRANC);
+        $test_name = '... but not the word Euro';
+        $t->assert_text_not_contains($test_name, $child_triples, word_names::EURO);
+        // with Euro as the only child the related words read as the full statement "Euro is a currency"
+        $test_name = 'a single child word is shown as the statement with its parent currency';
+        $single_words = $list->child_words($wrd_currency_single, $msg);
+        $t->assert_text_contains($test_name, $single_words, word_names::CURRENCY);
+        // negative: without a child triple the related triples stay empty
+        $test_name = 'the related triples of a word with only a child word are empty';
+        $single_triples = $list->child_triples($wrd_currency_single, $msg);
+        $t->assert($test_name, $single_triples, '');
         // a single child is shown as the full statement, e.g. "Euro is a currency"
         $currency_single = $list->children_of_word($wrd_currency_single, $msg);
         $test_name = 'a single child statement names the child Euro';
@@ -289,9 +356,132 @@ class word_ui_tests
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($trp_chf, $msg, new phrase_list()), '');
 
+        $msg->reset();
+        $t->subheader($ts . 'edit menu');
+        // first the views directly linked to the word, then the views of the parents sorted by name
+        $test_name = 'the edit menu offers the own view, the assigned view and then the parent views';
+        $menu_ids = $wrd_menu->menu_views_ui($cfg, $msg)->ids();
+        $top_ids = array_slice($menu_ids, 0, 4);
+        $t->assert($test_name, $top_ids, [views::MATH_CONST_ID, views::SCIENCE_ID, views::EDUCATION_ID, views::HISTORIC_ID]);
+        $test_name = '... and then the general word views';
+        $menu_ids = $wrd_menu->menu_views_ui($cfg, $msg)->ids();
+        $t->assert_contains($test_name, $menu_ids, views::WORD_ID);
+        // negative: science is assigned and a parent view, but offered only once
+        $test_name = '... and each view only once';
+        $id_counts = array_count_values($menu_ids);
+        $science_count = $id_counts[views::SCIENCE_ID] ?? 0;
+        $t->assert($test_name, $science_count, 1);
+        // a repeated view is normal in the menu, so it must not leave a message, which would e.g. stop
+        // the confirmed save of an edit form that is shown with this menu
+        $test_name = '... without a message about the repeated views';
+        $msg_txt = $msg->text();
+        $t->assert($test_name, $msg_txt, '');
+        $test_name = 'each view of the edit menu has the switch icon like in the views tab';
+        $menu_items = $wrd_menu->menu_view_items_ui($wrd_menu_lst);
+        $t->assert_text_contains($test_name, $menu_items, icons::VIEW_SWITCH);
+        $test_name = '... behind the view name in the same row';
+        $t->assert_text_contains($test_name, $menu_items, styles::FLEX_ROW);
+        // negative: the view itself is changed by the "change this view" entry of the menu
+        $test_name = '... but no edit icon';
+        $t->assert_text_not_contains($test_name, $menu_items, icons::EDIT);
+        // the own view of the word has no switch icon, because the word is always shown with it
+        $test_name = 'the own view of a word in the edit menu has no switch icon';
+        $own_lst = $t_msk->menu_view_list_ui($t_msk->view_math());
+        $own_items = $wrd_menu->menu_view_items_ui($own_lst);
+        $t->assert_text_not_contains($test_name, $own_items, icons::VIEW_SWITCH);
+        // negative: another view e.g. the assigned view science keeps the switch icon
+        $test_name = '... but another view has the switch icon';
+        $sci_lst = $t_msk->menu_view_list_ui($t_msk->view_science());
+        $sci_items = $wrd_menu->menu_view_items_ui($sci_lst);
+        $t->assert_text_contains($test_name, $sci_items, icons::VIEW_SWITCH);
+        // a word without a name e.g. a new word still gets the view entries
+        $test_name = 'a word without a name still gets the view entries of the edit menu';
+        $new_items = new word()->menu_view_items_ui($sci_lst);
+        $t->assert_text_contains($test_name, $new_items, views::SCIENCE);
+        // the tooltip of the view entry names the word by an empty name, because it has none yet
+        $test_name = '... with an empty word name in the tooltip';
+        $empty_tip = $lib->msg_var_replace($mtr->txt(msg_id::BUTTON_VIEW_SHOW_TIP), msg_id::VAR_NAME, '');
+        $empty_tip = $lib->msg_var_replace($empty_tip, msg_id::VAR_VIEW_NAME, views::SCIENCE);
+        $empty_title = htmlspecialchars($empty_tip, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $new_items, $empty_title);
+        // negative: a word with a name e.g. mathematics is named in the tooltip
+        $test_name = '... but a word with a name has no empty name in the tooltip';
+        $t->assert_text_not_contains($test_name, $sci_items, $empty_title);
+        // an object without an edit view of its own e.g. a group gets no switch icon, because
+        // the inherited edit view is the one of a word
+        $test_name = 'an object without its own edit view has no switch icon in the edit menu';
+        $grp_items = new group_ui()->menu_view_items_ui($sci_lst);
+        $t->assert_text_not_contains($test_name, $grp_items, icons::VIEW_SWITCH);
+        // the views tab of the object page offers the same view links as the edit menu
+        $test_name = 'the views tab of a word without a name shows its views';
+        $wrd_new = new word();
+        $wrd_new->view_lst = $sci_lst;
+        $new_tab = $list->view_tab_box($wrd_new, $msg, true);
+        $t->assert_text_contains($test_name, $new_tab, views::SCIENCE);
+        $test_name = '... with the switch icon';
+        $t->assert_text_contains($test_name, $new_tab, icons::VIEW_SWITCH);
+        // negative: an object without its own edit view gets no switch icon in the views tab either
+        $test_name = 'the views tab of an object without its own edit view has no switch icon';
+        $grp = new group_ui();
+        $grp->view_lst = $sci_lst;
+        $grp_tab = $list->view_tab_box($grp, $msg, true);
+        $t->assert_text_not_contains($test_name, $grp_tab, icons::VIEW_SWITCH);
+        // the view that shows the page is grey with a tooltip that names the shown word
+        $test_name = 'the view that shows the page is grey in the edit menu';
+        $used_items = $wrd_menu->menu_view_items_ui($own_lst, views::MATH_CONST_ID);
+        $grey_class = 'class="' . styles::STYLE_GREY . '"';
+        $t->assert_text_contains($test_name, $used_items, $grey_class);
+        $test_name = '... with the tooltip that the view has been used to show the word';
+        $used_tip = $lib->msg_var_replace($mtr->txt(msg_id::BUTTON_VIEW_USED_TIP), msg_id::VAR_NAME, word_names::MATH);
+        $used_title = htmlspecialchars($used_tip, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $used_items, $used_title);
+        // negative: a view that does not show the page is not grey
+        $test_name = '... but a view that does not show the page is not grey';
+        $t->assert_text_not_contains($test_name, $own_items, $grey_class);
+        // negative: a word without own, assigned or parent views in a cache without system views has no entries
+        $test_name = '... but a word without any suggested view has no entries';
+        $t_typ = new test_types($t);
+        $chf_ui = $t_wrd->chf_ui();
+        $empty_typ_lst = $t_typ->type_lists_empty_ui();
+        $chf_menu_lst = $chf_ui->menu_views_ui($empty_typ_lst, $msg);
+        $menu_items = $chf_ui->menu_view_items_ui($chf_menu_lst);
+        $t->assert($test_name, $menu_items, '');
+        // the tooltip of "... more" names some views that the menu does not offer
+        $test_name = 'the more views of a word are views that the edit menu does not offer';
+        $more_names = $wrd_menu->menu_more_names_ui($cfg, $wrd_menu_lst);
+        $menu_names = $wrd_menu_lst->names();
+        $t->assert_contains_not($test_name, $more_names, $menu_names);
+        // the cache has many more system views, so the tooltip names the configured number
+        $test_name = '... and only a few of them';
+        $more_count = count($more_names);
+        $t->assert($test_name, $more_count, word::MENU_MORE_NAMES);
+        // negative: a cache without system views has no more views
+        $test_name = '... but a cache without system views has none';
+        $no_names = $chf_ui->menu_more_names_ui($empty_typ_lst, $chf_menu_lst);
+        $t->assert($test_name, $no_names, []);
+        // the navbar shows the suggested views below the sub header alternative views
+        $alt_header = 'class="' . styles::MENU_HEADER . '">' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW);
+        $test_name = 'the edit menu of the navbar shows the suggested views below the sub header alternative views';
+        $menu_items = $wrd_menu->menu_view_items_ui($wrd_menu_lst);
+        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, $t_msk->menu_items_ui($menu_items));
+        $t->assert_text_order($test_name, $nav_html, $alt_header, views::SCIENCE);
+        // the entries of the page e.g. the table columns come first, above the sub header alternative views
+        $test_name = 'the entries of the page are above the sub header alternative views';
+        $page_items = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
+        $page_mnu = $t_msk->menu_items_ui($menu_items, $page_items);
+        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, $page_mnu);
+        $t->assert_text_order($test_name, $nav_html, msg_id::TABLE_MENU_COLUMNS->text(), $alt_header);
+        // negative: a page without suggested views has neither the sub header alternative views nor a link with that name
+        $test_name = 'a page without suggested views has no sub header alternative views';
+        $nav_html = $html->navbar(views::WORD_ID);
+        $t->assert_text_not_contains($test_name, $nav_html, $alt_header);
+        $test_name = '... and no link to a placeholder page';
+        $t->assert_text_not_contains($test_name, $nav_html, url_var::MASK . '=view_change');
+        $msg->reset();
+
         $t->subheader($ts . 'aliases and symbols');
-        $alias_html = $list->phrase_aliases($wrd_eur_rel, $msg);
         $test_name = 'one alias is shown with the singular text';
+        $alias_html = $list->phrase_aliases($wrd_eur_rel, $msg);
         $t->assert_text_contains($test_name, $alias_html, $mtr->txt(msg_id::PHRASE_ALIAS));
         $test_name = 'the alias line is not broken across lines';
         $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
@@ -354,6 +544,11 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $eur_html, styles::DEFINE_PHRASE_PANE);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($trp_chf_rel, $msg), '');
+        // negative: the symbol line and the related phrases of a phrase without relations stay empty
+        $test_name = 'without a symbol nothing is shown';
+        $t->assert($test_name, $list->phrase_symbols($wrd_zh, $msg, new phrase_list()), '');
+        $test_name = 'without related phrases no other related phrase is shown';
+        $t->assert($test_name, $list->phrases_related_ex_symbols($wrd_zh, $msg, new phrase_list()), '');
 
         $t->subheader($ts . 'phrase type');
         $test_name = 'the phrase type name is shown';
@@ -521,6 +716,12 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $ip_val_html, $icon_grey);
         $test_name = 'the value add icon of a user without login asks for a login';
         $t->assert_text_contains($test_name, $ip_val_html, $mtr->txt(msg_id::VALUE_ADD_BLOCKED));
+        // negative: a phrase without a db id cannot be linked or preset, so it gets no add icon
+        $test_name = 'a phrase that is not yet saved gets no formula add icon';
+        $phr_unsaved = new phrase();
+        $t->assert($test_name, $list->formula_add_link($phr_unsaved, $page_url), '');
+        $test_name = '... and no value add icon';
+        $t->assert($test_name, $list->value_add_link($phr_unsaved, $msg, $page_url), '');
         $test_name = 'the define icon of a user without login is grey';
         $ip_define_html = $list->phrases_related_ex_subtitle($wrd_currency_rel, $msg, null, $ctg_dto, true, $url_arr);
         $t->assert_text_contains($test_name, $ip_define_html, $icon_grey);
@@ -558,6 +759,11 @@ class word_ui_tests
         $sel = $dto->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
         $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
         $t->assert_text_contains($test_name, $sel->display(), $more_html);
+        // negative: a page without formulas offers no formula to select
+        $test_name = 'a formula selector without formulas has no option';
+        $dto_no_frm = new data_object();
+        $sel_empty = $dto_no_frm->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
+        $t->assert($test_name, $sel_empty->lst, []);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);
@@ -723,6 +929,9 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $simple_html, $back_mask);
         $test_name = '... and the add button is a save submit';
         $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::POST_SUBMIT . '"');
+        // negative: a new word has no id yet, so the simple add form never posts one
+        $test_name = 'the simple add form does not post an id';
+        $t->assert_text_not_contains($test_name, $simple_form->form_word_add_simple(), 'name="' . url_var::ID . '"');
 
         $t->subheader($ts . 'url mapper');
 
@@ -744,6 +953,22 @@ class word_ui_tests
         $test_name = 'a url without an id and without a name clears the name';
         $wrd_map->url_mapper([url_var::DESCRIPTION => 'partial url description'], $map_msg);
         $t->assert($test_name, $wrd_map->name(), '');
+
+
+        $t->subheader($ts . 'api mapper');
+
+        // the plural is the own field of the word mapper, so the api json of the filled word sets it
+        $test_name = 'the api mapper sets the plural of the word';
+        $wrd_map = new word();
+        $wrd_map->api_mapper(json_decode($t_wrd->word_filled()->api_json([api_types::TEST_MODE]), true), $msg);
+        $t->assert($test_name, $wrd_map->plural, word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // the id is mandatory, so an api json without the id is reported
+        $test_name = 'the api mapper reports a word without the id';
+        $wrd_map = new word();
+        $t->assert_false($test_name, $wrd_map->api_mapper([json_fields::NAME => word_names::MATH], $msg));
+        $msg->reset();
 
 
         $t->subheader($ts . 'view tab box');

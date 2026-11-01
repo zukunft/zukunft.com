@@ -42,19 +42,31 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once html_paths::HTML . 'html_base.php';
+// the frontend first, because it loads the web sandbox classes in the order they need
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
+include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -62,12 +74,22 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id as sandbox_code_id_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link as sandbox_link_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_typed as sandbox_typed_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
+use Zukunft\ZukunftCom\test\php\utils\math_function_report;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use ReflectionClass;
+use ReflectionClassConstant;
 
 class coding_rule_tests
 {
@@ -93,6 +115,17 @@ class coding_rule_tests
         'Zukunft\ZukunftCom\main\php\cfg\const\paths',
         'Zukunft\ZukunftCom\main\php\web\const\paths',
         'Zukunft\ZukunftCom\test\php\const\paths'
+    ];
+
+    // the web base classes of the page objects, which are never shown as a page themselves, so
+    // they keep the switch icon of sandbox::HAS_EDIT_VIEW and the inherited word edit view of
+    // db_object for their children e.g. word, which sets its own edit view
+    const array WEB_SANDBOX_BASE_CLASSES = [
+        sandbox_code_id_ui::class,
+        sandbox_link_ui::class,
+        sandbox_named_ui::class,
+        sandbox_typed_ui::class,
+        sandbox_value_ui::class,
     ];
 
     function run(test_cleanup $t): void
@@ -128,6 +161,87 @@ class coding_rule_tests
         $md_txt = new code_test_coverage()->md();
         $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
 
+        $test_name = 'check that the docs with the math functions is updated';
+        $mth = new math_function_report();
+        $md_txt = $mth->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_MATH, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        // the report names the evaluator without a function and the text with a different result
+        $test_name = 'a function without the expected result in an evaluator is reported as missing there';
+        $fnc_lst = ['+' => ['addition', '2 + 3', '5']];
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => math_function_report::NO_NUMBER]], $fnc_lst);
+        $t->assert($test_name, $gaps, ['+' => ['b']]);
+        $test_name = '... but not if every evaluator gives the expected result';
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => '5']], $fnc_lst);
+        $t->assert($test_name, $gaps, []);
+        $test_name = 'an edge case with a different number is reported as a difference';
+        $diffs = $mth->edge_diffs(['1 / 0' => ['a' => '0', 'b' => math_function_report::NO_NUMBER]]);
+        $t->assert($test_name, $diffs, ['1 / 0']);
+        // negative: the same number in another notation of php and javascript is no difference
+        $test_name = '... but not the same number in another notation';
+        $diffs = $mth->edge_diffs(['big' => ['a' => '1e+22', 'b' => '1.0e+22'], 'small' => ['a' => '3e-5', 'b' => '0.00003']]);
+        $t->assert($test_name, $diffs, []);
+        $test_name = 'the functions of a formula are counted without the phrase names';
+        $used = $mth->used_functions(['"a" = sqrt( "log(b)" )', '"c" = sqrt( 2 ) ^ 2']);
+        $t->assert($test_name, $used, ['^' => [1, '"c" = sqrt( 2 ) ^ 2'], 'sqrt' => [2, '"a" = sqrt( "log(b)" )']]);
+        // negative: a formula without a function has nothing to count
+        $test_name = '... and a formula without a function is not counted';
+        $t->assert($test_name, $mth->used_functions(['"a" = ( "b" + 1 ) * 2']), []);
+        $test_name = 'a number is written without a zero fraction';
+        $t->assert($test_name, $mth->number_text(5.0), '5');
+        // negative: no number stays visible as no number and never becomes a zero
+        $test_name = '... and no number as no number';
+        $t->assert($test_name, $mth->number_text(null), math_function_report::NO_NUMBER);
+
+        // each math operation has one symbol, so a formula of the data uses no second spelling
+        $test_name = 'no formula of the data uses a second symbol of a math operation';
+        $t->assert($test_name, $mth->symbols_to_replace($mth->data_expressions()), []);
+        $test_name = 'a second symbol of a math operation is reported with the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 × 3']), ['× instead of *: "a" = 2 × 3']);
+        // negative: the symbol to use and a phrase name in quotes are not reported
+        $test_name = '... but not the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 * 3']), []);
+        $test_name = '... and not a char of a phrase name';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a×b" = 2 * 3']), []);
+
+        // the never called list of the coverage report counts the calls and the quoted names
+        // of every function in the code, so that a function that nothing calls is listed
+        $test_name = 'an object call and a static call are counted as a call of the function';
+        $cov = new code_test_coverage();
+        $cnt_lst = [];
+        $name_lst = [];
+        $cov->code_calls(['$wrd->save($msg);', 'user::system();', "\$hooks = ['reset'];", 'function load(): void'],
+            $cnt_lst, $name_lst);
+        $t->assert($test_name, (string)($cnt_lst['save'] ?? 0) . ',' . (string)($cnt_lst['system'] ?? 0), '1,1');
+        $test_name = 'a quoted function name is counted as a name, because a callable or a property hook uses it';
+        $t->assert($test_name, (string)($name_lst['reset'] ?? 0), '1');
+        // negative: a declaration and a quoted name are no calls
+        $test_name = 'a function declaration is not counted as a call';
+        $t->assert_key_not_exists($test_name, 'load', $cnt_lst);
+        $test_name = '... and a quoted name is not counted as a call either';
+        $t->assert_key_not_exists($test_name, 'reset', $cnt_lst);
+
+        // the report lists the functions without any test before the functions with too few tests
+        $test_name = 'a function without a test call is listed as without any test';
+        $cls_lst = ['word' => ['load', 'save']];
+        $cnt_lst = ['load' => 1];
+        $low_cnt = 0;
+        $no_test_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], true, $low_cnt);
+        $t->assert_text_contains($test_name, $no_test_md, 'save - 0 unit test calls');
+        $test_name = '... in a section named by the number of these functions';
+        $t->assert_text_contains($test_name, $no_test_md, '1 functions of main backend have no test at all');
+        // negative: a function with one test call is not listed as without any test
+        $test_name = 'a function with a test call is not listed as without any test';
+        $t->assert_text_not_contains($test_name, $no_test_md, 'load');
+        $test_name = 'a function with too few test calls is listed as incomplete';
+        $incomplete_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], false, $low_cnt);
+        $t->assert_text_contains($test_name, $incomplete_md, 'load - 1 unit test calls');
+        $test_name = '... in a section named by the number of incomplete functions';
+        $t->assert_text_contains($test_name, $incomplete_md, '1 functions of main backend have incomplete tests');
+        // negative: a function without a test call is not listed as incomplete
+        $test_name = 'a function without a test call is not listed as incomplete';
+        $t->assert_text_not_contains($test_name, $incomplete_md, 'save');
+
         $this->php_class_name_check($t);
 
         $this->php_include_tests($t, paths::MODEL);
@@ -147,6 +261,9 @@ class coding_rule_tests
         $t->subheader($ts . 'frontend back url');
         $this->php_web_no_back_param_tests($t);
 
+        $t->subheader($ts . 'frontend switch icon');
+        $this->php_web_switch_edit_view_tests($t);
+
         $t->subheader($ts . 'requesting user on the message');
         $this->php_user_message_param_shadow_tests($t);
         $this->php_user_message_user_write_tests($t);
@@ -157,6 +274,7 @@ class coding_rule_tests
 
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
+        $this->config_yaml_theme_fallback_tests($t);
 
         $t->subheader($ts . 'import json consistency');
         // TODO Prio 3 maybe switch it on as a warning
@@ -175,9 +293,77 @@ class coding_rule_tests
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
 
-        $t->subheader($ts . 'html snapshots');
-        $this->html_no_empty_link_tests($t);
+    }
 
+    /**
+     * check the html snapshots; called after the tests that write the snapshots and not by run,
+     * because run is part of the unit tests, which would else check the snapshots of the last run
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function run_html_snapshots(test_cleanup $t): void
+    {
+        $t->name = 'code_rule->';
+        $t->subheader('code rule html snapshots');
+        $this->html_no_empty_link_tests($t);
+        $this->html_no_double_escape_tests($t);
+        $this->use_case_no_test_formula_tests($t);
+        $this->html_form_balance_tests($t);
+        $this->html_no_duplicate_id_tests($t);
+    }
+
+    /**
+     * check that no html snapshot contains an element id twice, because a label and the browser
+     * find only the first element of an id; the usual cause is one selector rendered twice
+     * on the same form, e.g. the view selector by two components of one view
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_duplicate_id_tests(test_cleanup $t): void
+    {
+        $test_name = 'an id used twice is found';
+        $t->assert($test_name, $this->duplicate_ids('<select id="d_view"></select><select id="d_view"></select>'),
+            ['d_view']);
+        $test_name = 'different ids are no duplicate';
+        $t->assert($test_name, $this->duplicate_ids('<select id="df_view"></select><select id="dm_view"></select>'),
+            []);
+        // negative: a script that writes elements as text uses no id of the page
+        $test_name = 'an id in the code of a script is no duplicate';
+        $script_ids = $this->duplicate_ids('<script id="seed">x = \'<input id="\' + id + \'">\''
+            . ' + \'<label id="\' + id + \'">\';</script>');
+        $t->assert($test_name, $script_ids, []);
+        $test_name = '... but the id of the script element still counts';
+        $tag_ids = $this->duplicate_ids('<script id="seed"></script><div id="seed"></div>');
+        $t->assert($test_name, $tag_ids, ['seed']);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $ids = $this->duplicate_ids(file_get_contents($html_file));
+                if ($ids != []) {
+                    $test_name = 'no id used twice in ' . $html_file;
+                    $t->assert($test_name, implode(', ', $ids), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'ids used twice checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every element id that the html uses more than once, sorted by name
+     */
+    function duplicate_ids(string $html): array
+    {
+        preg_match_all('/\sid="([^"]+)"/', $this->without_script_code($html), $matches);
+        $used = array_count_values($matches[1]);
+        $result = array_keys(array_filter($used, fn(int $count) => $count > 1));
+        sort($result);
+        return $result;
     }
 
     /**
@@ -214,14 +400,164 @@ class coding_rule_tests
     }
 
     /**
+     * check that no html snapshot shows an escaped text escaped again, e.g. "Krebs &amp;amp;
+     * Frischknecht", which the reader sees as "Krebs &amp; Frischknecht"; the usual cause is a text
+     * escaped before html_base::ref, which escapes the name of a link itself
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_double_escape_tests(test_cleanup $t): void
+    {
+        $test_name = 'a text that is escaped twice is found';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp;amp; Frischknecht</a>'),
+            ['Krebs &amp;amp;']);
+        $test_name = 'a text that is escaped once is no double escape';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp; Frischknecht</a>'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $escapes = $this->double_escapes(file_get_contents($html_file));
+                if ($escapes != []) {
+                    $test_name = 'no text escaped twice in ' . $html_file;
+                    $t->assert($test_name, implode("\n", $escapes), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'texts escaped twice checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no generated use case page shows a formula of the tests, because the test rows get
+     * other ids depending on the tests that have run before, so the snapshot would change between
+     * two runs; the usual cause is a test formula linked to a seed phrase of the page e.g. year
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function use_case_no_test_formula_tests(test_cleanup $t): void
+    {
+        $test_name = 'a page with a test formula is found';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::SYSTEM_TEST_ADD . '"}'),
+            [formula_names::SYSTEM_TEST_ADD]);
+        $test_name = 'a page with only seed formulas has no test formula';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::INCREASE . '"}'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES) as $html_file) {
+            // a hand made sample is no page of the database
+            $is_page = (str_ends_with($html_file, test_files::HTML)
+                and !str_ends_with($html_file, test_files::SAMPLE_SUFFIX . test_files::HTML));
+            if ($is_page) {
+                $files_checked++;
+                $found = $this->test_formulas_of(file_get_contents($html_file));
+                if ($found != []) {
+                    $test_name = 'no test formula in ' . $html_file;
+                    $t->assert($test_name, implode(', ', $found), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'test formulas checked in ' . $files_checked . ' use case pages';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page with its json data
+     * @return array the names of the test formulas (formula_names::TEST_FORMULAS) that the page names as a json name
+     */
+    function test_formulas_of(string $html): array
+    {
+        $result = [];
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
+            if (str_contains($html, '"name":"' . $frm_name . '"')) {
+                $result[] = $frm_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every entity of the html whose ampersand is escaped again, with the text before it in the same element
+     */
+    function double_escapes(string $html): array
+    {
+        preg_match_all('/[^<>]{0,40}&amp;(?:amp|lt|gt|quot|#0?39);/u', $this->without_script_code($html), $matches);
+        return $matches[0];
+    }
+
+    /**
      * @param string $html the html code of a page or a part of it
      * @return array every link of the html with nothing but white space between its tags
      */
     function empty_links(string $html): array
     {
         $tag = html_base::A;
-        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $html, $matches);
+        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $this->without_script_code($html), $matches);
         return $matches[0];
+    }
+
+    /**
+     * the html without the code inside its script elements, because a script e.g. of a raw sample page
+     * writes elements as text like '<input id="' + id + '">', which are no elements of the page;
+     * the script tags stay, so that the id of a script element e.g. of its json data still counts
+     *
+     * @param string $html the html code of a page or a part of it
+     * @return string the html code with empty script elements
+     */
+    private function without_script_code(string $html): string
+    {
+        $tag = html_base::SCRIPT;
+        return preg_replace('/(<' . $tag . '\b[^>]*>).*?(<\/' . $tag . '>)/s', '$1$2', $html);
+    }
+
+    /**
+     * every form of a rendered page is opened and closed once: a view that has a "form end" component
+     * needs a form opening title (system_form_title) and a component that renders its own form (e.g. the
+     * file selector) must not be closed again by the view, because html forms cannot nest
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function html_form_balance_tests(test_cleanup $t): void
+    {
+        $test_name = 'a closed form is balanced';
+        $t->assert($test_name, $this->form_balance('<form id="a"><input></form>'), 0);
+        $test_name = 'a form end without a form start is reported';
+        $t->assert($test_name, $this->form_balance('<div></div></form>'), -1);
+        $test_name = 'a form start without a form end is reported';
+        $t->assert($test_name, $this->form_balance('<form><form id="b"></form>'), 1);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $balance = $this->form_balance(file_get_contents($html_file));
+                if ($balance != 0) {
+                    $test_name = 'form tags balanced in ' . $html_file;
+                    $t->assert($test_name, $balance, 0);
+                }
+            }
+        }
+        $test_name = 'form tags checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return int the number of form start tags minus the number of form end tags, so 0 if balanced
+     */
+    function form_balance(string $html): int
+    {
+        $tag = html_base::FORM;
+        $page = $this->without_script_code($html);
+        return preg_match_all('/<' . $tag . '\b[^>]*>/', $page) - preg_match_all('/<\/' . $tag . '>/', $page);
     }
 
     /**
@@ -269,6 +605,55 @@ class coding_rule_tests
 
         $test_name = 'every config.yaml key has a const in words.php or triples.php';
         $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that the fallback font and colours of def.php, which the page head uses without a loaded
+     * config (html_base::theme_style), are the values of config.yaml frontend.layout, so that a page
+     * looks the same with and without the config; each difference is listed as "key: fallback != yaml"
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function config_yaml_theme_fallback_tests(test_cleanup $t): void
+    {
+        $yaml_tree = yaml_parse_file(files::CONFIG_YAML);
+        $layout = $yaml_tree[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::USER][words::DEFAULT]
+            [words::FRONTEND][words::LAYOUT] ?? [];
+        $colours = $layout[words::COLOURS] ?? [];
+        $diff = [];
+        $this->theme_fallback_diff(words::FONT, def_shared::FALLBACK_FONT, $layout[words::FONT] ?? [], $diff);
+        $this->theme_fallback_diff(triples::COLOUR_MODE, (string)def_shared::FALLBACK_MODE,
+            [words::SYS_CONF_VALUE => (string)($layout[triples::COLOUR_MODE][words::SYS_CONF_VALUE] ?? '')], $diff);
+        $groups = [
+            words::PAGE => def_shared::FALLBACK_PAGE_COLOURS,
+            words::EDITOR => def_shared::FALLBACK_EDITOR_COLOURS,
+            words::CHART => def_shared::FALLBACK_CHART_COLOURS,
+        ];
+        foreach ($groups as $group => $lst) {
+            foreach ($lst as [$key, $colour, $dark_colour]) {
+                $this->theme_fallback_diff($group . ' ' . $key, $colour, $colours[$group][$key] ?? [], $diff);
+                $this->theme_fallback_diff($group . ' dark ' . $key, $dark_colour,
+                    $colours[$group][words::DARK][$key] ?? [], $diff);
+            }
+        }
+        $test_name = 'the fallback font and colours of def.php are the values of config.yaml';
+        $t->assert($test_name, implode(', ', $diff), '');
+    }
+
+    /**
+     * @param string $name the config.yaml path of the setting for the difference list
+     * @param string $fallback the fallback of def.php
+     * @param array $entry the config.yaml entry with the sys-conf-value
+     * @param array $diff (in/out) the list of the differences
+     * @return void
+     */
+    private function theme_fallback_diff(string $name, string $fallback, array $entry, array &$diff): void
+    {
+        $yaml_value = $entry[words::SYS_CONF_VALUE] ?? '';
+        if ($yaml_value !== $fallback) {
+            $diff[] = $name . ': ' . $fallback . ' != ' . $yaml_value;
+        }
     }
 
     /**
@@ -343,9 +728,10 @@ class coding_rule_tests
 
     /**
      * verify that the source check of json_validation lists a measured value without a source
-     * and a source that the file does not define, but neither an assumed value nor a value with
-     * a defined source; the main data is only listed in docs/json_findings.md and not asserted,
-     * because many values still wait for their source
+     * and a source that the file does not define, but neither an assumed, modelled or calculated
+     * value, a setting of an input field nor a value with a defined source; the main data is only
+     * listed in docs/json_findings.md and not asserted, because many values still wait for their
+     * source
      *
      * @param test_cleanup $t the test environment
      * @return void
@@ -366,7 +752,7 @@ class coding_rule_tests
         $t->assert($test_name, array_keys($hits), []);
 
         $test_name = 'a probability range factor without a source is not listed';
-        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, words::LOW];
+        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, triples::SYSTEM_VARIANCE_LOW];
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
 
@@ -374,6 +760,23 @@ class coding_rule_tests
         $val[json_fields::WORDS] = [words::YEAR, words::CONFIDENCE];
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a modelled value without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::MODELLED];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a calculated value without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::CALCULATED];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        foreach ([triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP] as $fld_phr) {
+            $test_name = 'a ' . $fld_phr . ' of an input field without a source is not listed';
+            $val[json_fields::WORDS] = [words::YEAR, $fld_phr];
+            $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+            $t->assert($test_name, array_keys($hits), []);
+        }
 
         $test_name = 'a value with a source of the file is not listed';
         $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];
@@ -619,16 +1022,17 @@ class coding_rule_tests
      * @param array $data the parsed yaml subtree
      * @param array $keys (in/out) accumulator keyed by yaml key for uniqueness
      * @param array $meta_keys keys to skip because they are structural, not domain words
+     * @param bool $is_data true if the keys of this subtree are names of the data e.g. the url names of the pinned views (triples::CONFIG_DATA_KEYS)
      * @return void
      */
-    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys): void
+    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys, bool $is_data = false): void
     {
         foreach ($data as $key => $value) {
-            if (is_string($key) and !in_array($key, $meta_keys, true)) {
+            if (is_string($key) and !$is_data and !in_array($key, $meta_keys, true)) {
                 $keys[$key] = true;
             }
             if (is_array($value)) {
-                $this->collect_yaml_keys($value, $keys, $meta_keys);
+                $this->collect_yaml_keys($value, $keys, $meta_keys, in_array($key, triples::CONFIG_DATA_KEYS, true));
             }
         }
     }
@@ -1276,6 +1680,44 @@ class coding_rule_tests
         // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
         $test_name = 'web/ back url checked in ' . $files_checked . ' files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that every frontend page object that offers the switch icon has an edit view of its
+     * own: a class whose VIEW_EDIT_ID is only the word edit view inherited from db_object must set
+     * HAS_EDIT_VIEW to false, else the switch icon of the edit menu and of the views tab would
+     * change the object as a word (see sandbox::HAS_EDIT_VIEW)
+     *
+     * each violation produces one failing assertion naming the class; a clean tree produces the
+     * summary assertion only, which checks that at least one class has been checked
+     *
+     * positive (test fires when it should): a new page class without its own VIEW_EDIT_ID and
+     *     without "const bool HAS_EDIT_VIEW = false" flags the rule violation
+     * negative (test tolerates good code): word with its own VIEW_EDIT_ID and group with
+     *     HAS_EDIT_VIEW = false pass; the base classes of WEB_SANDBOX_BASE_CLASSES are skipped
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_switch_edit_view_tests(test_cleanup $t): void
+    {
+        $classes_checked = 0;
+        foreach (get_declared_classes() as $class) {
+            $is_page = is_subclass_of($class, sandbox_ui::class);
+            $is_base = in_array($class, self::WEB_SANDBOX_BASE_CLASSES);
+            if ($is_page and !$is_base) {
+                $classes_checked++;
+                $edit_const = new ReflectionClassConstant($class, 'VIEW_EDIT_ID');
+                $edit_class = $edit_const->getDeclaringClass()->getName();
+                if ($edit_class == db_object_ui::class and $class::HAS_EDIT_VIEW) {
+                    $test_name = $class . ' has no edit view of its own, so it must set HAS_EDIT_VIEW to false';
+                    // the class name is the actual result and no hit is the target
+                    $t->assert($test_name, $class);
+                }
+            }
+        }
+        $test_name = 'web/ switch icon edit view checked in ' . $classes_checked . ' classes';
+        $t->assert_greater($test_name, 0, $classes_checked);
     }
 
     /**
@@ -1934,7 +2376,7 @@ class coding_rule_tests
 
     /**
      * check if all used classes are also included once within the same file
-     * TODO add a child parent list and make sure that a parent never includes a child object
+     * TODO Prio 2 add a child parent list and make sure that a parent never includes a child object
      *      but the child always includes the parent
      *      and make sure that all not needed deactivated includes are removed
      *
@@ -1973,8 +2415,16 @@ class coding_rule_tests
                             $path_alias = str_starts_with($path_conv, 'paths::')
                                 ? 'html_' . $path_conv
                                 : '';
+                            // a main file includes a test const class via the main paths copy
+                            // of the test path, because test_paths is not loaded by the api
+                            // (e.g. paths::TEST_CONST for test_paths::CONST)
+                            // TODO Prio 2 remove if the main code no longer uses test names
+                            $path_main = str_starts_with($path_conv, 'test_paths::')
+                                ? 'paths::TEST_' . $lib->str_right_of($path_conv, 'test_paths::')
+                                : '';
                             if ($path_conv == $path_incl
                                 or $path_alias == $path_incl
+                                or $path_main == $path_incl
                                 or $path_conv == '') {
                                 $found = true;
                             }
@@ -2115,10 +2565,10 @@ class coding_rule_tests
      * check if the functions in the classes are grouped by sections
      * if the sections of all classes are in the same order
      * and if the sections are described in the class header
-     * TODO check that all sections have a description in the header
-     * TODO check that the sections match the order in the header
-     * TODO check that the header section list match the general order
-     * TODO check that no function is in an unexpected section
+     * TODO Prio 2 check that all sections have a description in the header
+     * TODO Prio 2 check that the sections match the order in the header
+     * TODO Prio 2 check that the header section list match the general order
+     * TODO Prio 2 check that no function is in an unexpected section
      *
      * @param string $base_path path name of the folder with the php scripts that should be checked
      * @param string $obj_grp_txt nae of the object group e.g. "main backend" or "html frontend"

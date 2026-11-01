@@ -53,7 +53,7 @@ class ui_rank
      */
     function system_phrases(db_object $phr): string
     {
-        // TODO review
+        // TODO Prio 2 review
         return $phr->name() . ' is ranked by time of discovery';
     }
 

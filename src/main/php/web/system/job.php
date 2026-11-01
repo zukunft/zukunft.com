@@ -93,7 +93,7 @@ class job extends db_object
     function api_mapper(array $json_array, user_message $msg): bool
     {
         parent::api_mapper($json_array, $msg);
-        // TODO use empty date instead?
+        // TODO Prio 3 use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
             try {
@@ -236,6 +236,17 @@ class job extends db_object
         return $this->end_time() === null;
     }
 
+    /**
+     * @param DateTime $now the time of the data snap, given so that a test result does not depend on the clock
+     * @param int $max_delay the seconds an open job may wait since its request before it is critical
+     * @return bool true if the job is still open and has waited longer than the given seconds
+     */
+    function is_delayed(DateTime $now, int $max_delay): bool
+    {
+        $waited = $now->getTimestamp() - $this->request_time()->getTimestamp();
+        return $this->is_open() and $waited > $max_delay;
+    }
+
 
     /*
      * modify
@@ -282,7 +293,7 @@ class job extends db_object
     {
         $html = new html_base();
         $result = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $result .= $html->td($this->request_time()->format(DateTimeInterface::ATOM));
@@ -297,9 +308,38 @@ class job extends db_object
             $result .= $html->td('');
         }
         $result .= $html->td($this->user_name());
-        $result .= $html->td($this->type());
-        $result .= $html->td($this->status());
+        $result .= $html->td($html->esc($this->type_text()));
+        $result .= $html->td($html->esc($this->status_text()));
         $result .= $html->td($this->priority());
+        return $result;
+    }
+
+    /**
+     * @return string the name of the type e.g. "update value" or the id if the type is not in the type cache
+     */
+    function type_text(): string
+    {
+        global $ui_sys;
+        $result = $ui_sys?->typ_lst_cache?->job_typ?->name($this->type()) ?? '';
+        if ($result == '') {
+            $result = (string)$this->type();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the status e.g. "created" or the id if the status is not in the type cache
+     */
+    function status_text(): string
+    {
+        global $ui_sys;
+        $result = '';
+        if (is_numeric($this->status)) {
+            $result = $ui_sys?->typ_lst_cache?->job_sta?->name((int)$this->status) ?? '';
+        }
+        if ($result == '') {
+            $result = $this->status;
+        }
         return $result;
     }
 
@@ -328,7 +368,7 @@ class job extends db_object
     function header(bool $with_actions = false): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('request time');
         $result .= $html->th('start time');
         $result .= $html->th('end time');

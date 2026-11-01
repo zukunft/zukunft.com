@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -79,6 +80,17 @@ class term_list_tests
 
         $t->subheader($ts . 'term list display');
 
+        // the debug id shows the names of the terms
+        $test_name = 'the debug id shows the term names';
+        $trm_lst = $t_trm->term_list();
+        $dsp = $trm_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: an empty list has no debug text
+        $test_name = 'the debug id of an empty list';
+        $trm_lst = $t_trm->list_empty();
+        $dsp = $trm_lst->dsp_id();
+        $t->assert_empty($test_name, $dsp);
 
 
         $t->subheader($ts . 'sql statement creation');

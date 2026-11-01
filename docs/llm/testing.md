@@ -248,6 +248,9 @@ for a different user only for a specific reason:
   case for `set_code_id`: `user::can_set_code_id()` allows the system, test, log
   and dev profiles but **not** admin, and `$t->usr1` carries the test profile, so
   the normal user already sets a `code_id` — pass `$t->usr1` there too.
+  Exception: in the unit run without database (`all_unit_tests`) `$t->usr1` has
+  the email profile, so a unit test that needs `can_set_code_id()` passes
+  `$t->usr_dev` as the requesting user of the message.
 
 Never create a test object as **`$t->usr_system`**. The system user (id 1) is for
 exercising *system-level functions*, not for owning ordinary test data. A word
@@ -592,6 +595,18 @@ When a dedicated helper expresses the check, use it directly with raw values —
 - **Wrong**: `$t->assert_true($test_name, str_contains($title_sym, verbs::SYMBOL_NAME));`
 - **Right**: `$t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);`
 
+The preferred assert is the one that receives the most self-speaking values: the values that
+are compared, not a `true` or `false` computed from them, so that the failing assert can
+report what it looked for and where. The same holds for an array key: the key and the array go
+to the assert, which then reports which key is missing on which array.
+
+- **Wrong**: `$t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));`
+- **Right**: `$t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);`
+  (and `assert_key_exists` for the positive case)
+
+When the fitting variant is missing in `test_base`, it is added there first (with the report
+of the compared values) instead of falling back to `assert_true` / `assert_false`.
+
 Two follow-ons:
 - Collapse a defensive compound into the single substring that subsumes it.
   `(str_contains($h,'<h4>CHF</h4>') or str_contains($h,'<h2>CHF</h2>')) and !str_contains($h,'>CHF <a')`
@@ -601,6 +616,28 @@ Two follow-ons:
   (`$edit_pos > $heading_end`) — is a generic `assert_true` with the comparison
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
+
+### The assert line compares two plain values
+
+The one-logical-element rule (`docs/llm/structure.md`) holds for the assert line too: it
+carries the `$test_name`, the actual value and the expected value, and each of the two values
+is a named variable, a single key read or a const. A nested key, a list index, a `??`
+fallback, a `count()` or a call chain is read into a named variable in the line before the
+assert, so the reader sees at a glance what is compared. A key that the positive test expects
+is read without `??`: a missing key is a failure of the test, and the run reports it with the
+key name.
+
+- **Wrong**: `$t->assert($test_name, $vars[0][json_fields::CODE_ID] ?? '', sys_log_statuum::OPEN);`
+- **Right**:
+
+```php
+$first = $vars[0];
+$t->assert($test_name, $first[json_fields::CODE_ID], sys_log_statuum::OPEN);
+```
+
+A compare of two counts (`count($vars)` with `count($typ_lst->lst())`) is no substitute: both
+sides come from the object under test, so the assert passes for any content. Compare one
+entry with a const instead.
 
 ### Every error message explains itself
 
@@ -672,7 +709,7 @@ distinguishing word (`'category subtitle'` vs `'category subtitle (multi)'`).
 
 Every file that says `do not edit manually` — `docs/code_object_name_exceptions.md`,
 `docs/code_user_message_exceptions.md`, `docs/code_test_coverage.md`,
-`docs/json_findings.md`, `docs/code_functions_all.md` — and every regenerated
+`docs/json_findings.md`, `docs/code_functions_all.md`, `docs/math.md` — and every regenerated
 baseline (the `list.csv` of `src/test/resources/unit/<class>/`, the html snapshots,
 the api fixtures) is written by `test/test.php` with `AUTO_UPDATE_TEST_FILES` set to
 `true` and compared with the flag set to `false`. A test that reports such a file as
@@ -687,6 +724,28 @@ edit the file:
 
 An LLM patching the generated line by hand masks the signal, and the next run
 overwrites the edit anyway.
+
+### No page of the local webserver is called during a `test/test.php` run
+
+A page called from the local webserver while `test/test.php` runs updates data in
+the test database, e.g. the order of the users in `src/test/resources/unit/user/list.csv`,
+so the types get a different view and a regenerated api fixture such as
+`src/test/resources/api/type_lists/type_lists.json` switches its format or its fields
+from one run to the next. The solution is to call no page of the local webserver until
+the run has finished. A long term fix that makes the run independent of parallel page
+calls is a Prio 3 task.
+
+### The test coverage counter stays simple
+
+`src/test/php/utils/code_test_coverage.php` counts a function call by its name only:
+a call between a `$test_name = …` line and the last assert of the same block counts for
+every class that declares the name, and a function that only a harness helper such as
+`$t->assert_sql_insert($sc, $wrd)` calls is reported as untested. The counter stays this
+simple and human readable on purpose: it is never made exact with a class resolution of
+the caller variable, a map of the harness helpers or an inheritance lookup. A function
+that the counter reports although a helper or a test of a sibling class covers it gets
+its own explicit test, because one extra unit test costs nothing in production, while a
+clever counter costs every reader the time to understand it.
 
 ## Tests that depend on data files must be reproducible from a single point of change
 
@@ -736,7 +795,10 @@ load, and if a sample file mixes both, split the code-id part into the system da
 of the test phrases. Those ids come from the insert order of the import files, so
 **adding or removing a phrase in a seed import shifts every id after it** — a new
 word in `base_phrases.json`, a split of one multi-word word into a triple, an
-extra file in `files::BASE_DATA_PATH_FILES`, all of them.
+extra file in `files::BASE_DATA_PATH_FILES`, all of them. The default
+`config.yaml` is such a seed import too: it is fixed and part of the code, and
+each key becomes a word (and a multi-word key a triple), so a new or moved key
+in `config.yaml` (e.g. a pinned view) needs a re-pin as well.
 
 The cheapest re-baseline is the one that is not needed: a change to a seed
 import stays as small as the task asks for, so that the object count of every
@@ -755,7 +817,56 @@ The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. Tha
 file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
 with `sql_db::csv_from_class()` after a database reset. So the sequence is
 **reset → regenerate the csv → read the new ids out of it → update the consts**.
+`test/test_re_pin.php` runs the first two steps as one fast cycle (the developer
+runs it, never an LLM): the unit tests upfront, the database recreation, the csv
+and api fixture refresh and the complete base and test data import, without the
+frontend, workflow and db write tests of `test.php`.
+A row added to a code link csv (`src/main/resources/db_code_links/`, e.g. a new
+component type or view style) is written to the database only by the setup, a
+version upgrade or the daily consistency check of `db_check`, so a partial run
+without the database recreation (`test/test_part.php`, `a_selected_test`) writes
+the csv rows and reloads the type lists upfront, or an import of a json that
+uses the new type fails with "not found". The csv load also removes the cached
+types api message (`db_cache` type `types`), because the frontend reads the
+types from that message and would miss the new rows until the cache age limit.
 Never derive an id by counting entries in the JSON or by assuming a shift of one.
+At the end of `csv_recreate()` the check `test/php/create/test_pinned_ids.php` takes
+the name or code id of each pinned object, picks its id from the `list.csv` of the
+class and from the database and reports every pinned id that differs together with
+the id to pin. A new `*_ID` const of a seed object is added to the array of its class
+there; the ids of test objects that exist in no database (e.g. `TEST_ADD_ID`) are not.
+An id that is built from pinned ids, e.g. the group id of one triple
+(`values::ONE_TRIPLE_GROUP + triple_names::PI_ID`) or an expected group or result key,
+is written as an expression of those consts and never as a number, so that it follows the re-pin.
+Without `files::AUTO_RE_PIN_OBJECT_ID` the check writes `docs/pinned_id_findings.md`
+with a section per class: either "143 words tested, all ids are fine" or each const to
+re-pin with the pinned and the new id, or why it needs a re-pin by hand (several ids in
+the database, a `list.csv` that differs from the database, no single const).
+With the flag the check rewrites the number of each shifted const in its php file
+instead, if the name has exactly one id in the database and the `list.csv` has the same;
+the run still uses the old values, so the tests are run again, the diff of the const
+files is reviewed and the flag is set back to `false`.
+
+### The steps to a stable test result after a new seed object
+
+If a word, triple or other object is added to the database, e.g. by adding data to a main
+json file, the developer does these steps; an LLM runs none of the scripts and sets none of the
+flags (see *An LLM never runs the `/test/*` scripts*):
+
+0. A human reviews the code.
+1. Run `test/reset_db.php` once to update the database and fix the ids.
+2. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` again, which updates the
+   test files with an id directly, the `list.csv` files and the re-pin report
+   `docs/pinned_id_findings.md`.
+3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run the complete `test/test.php`, which re-pins the
+   id consts in the code.
+4. Set `AUTO_RE_PIN_OBJECT_ID` to `false` and run the complete `test/test.php` again, which
+   updates the test files with the updated id consts and the re-pin report, which should now be empty.
+5. Run the full `test/test.php` again and fix any errors, if needed step by step in a debug run
+   with a break on the error.
+6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
+   double-check that no test case is volatile. If it is fine, do a final code review, which an
+   LLM may support, and commit with a matching commit message.
 
 Two traps that make the drift look smaller than it is:
 
@@ -893,12 +1004,13 @@ baseline to match its own new output, that diff goes silent and the developer ca
 no longer tell what changed (or whether it was intended). Regenerating a baseline
 is the developer's deliberate act of accepting the new output, never the LLM's.
 
-The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must always
-stay `false` and must never be changed by an LLM** — not even temporarily and
+The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must be
+`false` before every commit and must never be changed by an LLM** — not even temporarily and
 reverted within the same change. Setting it to `true` is how the *existing
 scripts* (run deliberately by a human) or a *human code reviewer* regenerate the
 baselines; it is never part of an automated code edit. Treat the constant as
-read-only just like the resource files it controls.
+read-only just like the resource files it controls. See also *The steps to a stable
+test result after a new seed object*, in which the developer sets it to `true` on purpose.
 
 Existing resources are regenerated only by **the existing scripts** (the
 `AUTO_UPDATE_TEST_FILES` mechanism, run deliberately) or by a **human code
@@ -919,6 +1031,23 @@ of silently masking a regression in an existing baseline.
   overwrite the stale snapshots, then committing the regenerated fixtures.
 - **Wrong**: hand-editing a `views_by_id/*.html` or `db/**/*.sql` fixture so the
   assertion passes again.
+
+### A use case page is generated next to its hand made sample
+
+`src/test/resources/web/html/use_cases/` (`test_paths::USE_CASES`) holds for a use case
+two pages with the same name: `<name>_sample.html` is the hand made target layout and
+`<name>.html` is the page that the view of the use case json renders, written by
+`assert_view_by_name` with the snapshot path given (e.g. `pv_lifetime_balance` from
+`files::PV_LIFETIME_BALANCE` in `system_views_read_tests`). The two are compared by the
+developer: the generated page is the regression snapshot of the use case view, the sample is
+the goal the view and its components grow towards. For the PV calculator a test writes the
+differences of the two as a markdown report next to the page (`html_page_diff`,
+`pv_lifetime_balance_diff.md` for the server page without javascript) and after the input cases
+standard, high and low for the page of the browser (`pv_lifetime_balance_diff_standard.md`,
+`_high.md` and `_low.md`). The table in `docs/deployment.md` "use case pages and their samples" lists which sample has
+this setup and how to add it. The folder is not
+below `views_by_object`, because the view test deletes every snapshot there that it has
+not written, which would remove the sample.
 
 ### The page footer shows the minor version in a test run
 
@@ -1069,11 +1198,11 @@ masks the `url_var::SECRET_VARS`.
 `unit_ui/start_page_ui_tests.php` renders the ranking of the start page from the
 unit fixtures (`test_values::value_list_start_page`) for every combination that
 the sub menus offer: the rows of the "… more" tail (`dls`), the column tiers with
-and without the ranges of the "…" header (`dlc`, `dlr`) and the form of the
+and without the variance of the "…" header (`dlc`, `dlv`) and the form of the
 ranking (`dla`: table, chart or both). Each page is compared with
 `src/test/resources/web/html/start_page/start_page<_var_value…>.html`, named by
 the url vars of the selection, so the file of a page is found from its url
-(`start_page_dls_20_dlc_0_dlr_1_dla_chart.html`); the default of a sub menu has
+(`start_page_dls_20_dlc_0_dlv_1_dla_chart.html`); the default of a sub menu has
 no var. The test needs no database, so it is the fast check of a ranking change;
 the `views_by_id/start_page/` snapshots keep the few full pages with the frame,
 and the details page there is the only one fetched from the pod. A snapshot of a
@@ -1109,7 +1238,8 @@ Worked examples of rules that belong here:
   `fas fa-*` strings in `web/**` (already a documented rule).
 - **`AUTO_UPDATE_TEST_FILES` is `false`** — fail the run if
   `files::AUTO_UPDATE_TEST_FILES` is `true`, so a forgotten (or LLM-introduced)
-  `true` cannot land on a branch.
+  `true` cannot land on a branch. See also *The steps to a stable test result after a
+  new seed object*, whose runs need the flag to be `true`, so this check belongs before a commit.
 
 Each check is one positive + one negative test in `coding_rule_tests.php` (the
 positive proves the check catches a known bad fixture line; the negative proves

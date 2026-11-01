@@ -167,7 +167,7 @@ class ref_type extends type_object
     }
 
     /**
-     * TODO use parent function for setting the name, ...
+     * TODO Prio 2 use parent function for setting the name, ...
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included

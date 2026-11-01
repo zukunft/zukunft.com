@@ -138,20 +138,26 @@ class config_numbers extends value_list
         words::ALLOWED,
     ];
 
+    // the complete phrase sets of the pod switches to write the sessions of the users to the user log
+    // (config.yaml system > pod > limits > user > log > allowed and > ip user > allowed)
+    const array USER_LOG_PATH = [...triples::CONFIG_SYSTEM_PATH, words::POD, words::LIMITS, words::USER, words::LOG];
+    const array USER_LOG_ALLOWED_NAMES = [...config_numbers::USER_LOG_PATH, words::ALLOWED];
+    const array IP_USER_LOG_ALLOWED_NAMES = [...config_numbers::USER_LOG_PATH, triples::IP_USER, words::ALLOWED];
+
     // list of word that should be hidden be default for normal selections
-    // TODO check on pod start that these words exists and are of hidden type
+    // TODO Prio 2 check on pod start that these words exists and are of hidden type
     const array HIDDEN_KEYWORDS = [
         words::THIS_SYSTEM,
     ];
 
     // list of triples that should be hidden be default for normal selections
-    // TODO check on pod start that these triples exists and are of hidden type
+    // TODO Prio 2 check on pod start that these triples exists and are of hidden type
     const array HIDDEN_KEY_TRIPLES = [
         [words::SYSTEM, words::CONFIGURATION],
     ];
 
     // list of words that should be admin protected because they are user for the system configuration
-    // TODO check on pod start that these words exists and are admin protected
+    // TODO Prio 2 check on pod start that these words exists and are admin protected
     const array ADMIN_KEYWORDS = [
         words::ALLOWED,
         words::AUTOMATIC,
@@ -218,7 +224,7 @@ class config_numbers extends value_list
     ];
 
     // list of triples that should be admin protected because they are user for the system configuration
-    // TODO check on pod start that these triples exists and are admin protected
+    // TODO Prio 2 check on pod start that these triples exists and are admin protected
     const array ADMIN_KEY_TRIPLES = [
         [words::DATABASE, words::CHANGE],
         [words::START, words::DELAY],
@@ -243,7 +249,7 @@ class config_numbers extends value_list
     ];
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
-    // TODO check on pod start that these comments are still normal
+    // TODO Prio 2 check on pod start that these comments are still normal
     const array INTERNAL_COMMENTS = [
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
@@ -340,6 +346,70 @@ class config_numbers extends value_list
             }
         }
         return $result;
+    }
+
+    /**
+     * the phrase ids of the config values by name, e.g. for the config tree that offers to add a
+     * text setting without a database value; built once from the values, so no phrase is loaded
+     *
+     * @return array the phrase id by phrase name, negative for a triple
+     */
+    function phrase_ids(): array
+    {
+        $result = [];
+        if ($this->cache_json === null) {
+            foreach ($this->lst() as $val) {
+                foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                    $result[$phr->name()] = $phr->id();
+                }
+            }
+        } else {
+            foreach ($this->cache_json as $api_row) {
+                foreach ($api_row[json_fields::PHRASES] ?? [] as $phr_row) {
+                    $result[$phr_row[json_fields::NAME] ?? ''] = $this->phrase_id_of_row($phr_row);
+                }
+            }
+        }
+        unset($result['']);
+        return $result;
+    }
+
+    /**
+     * the code ids of the words of the config values by name, e.g. for the config tree that offers
+     * the font selection for the setting whose word has the font code id; built once from the values
+     *
+     * @return array the code id by phrase name of the words that have a code id
+     */
+    function phrase_code_ids(): array
+    {
+        $result = [];
+        if ($this->cache_json === null) {
+            foreach ($this->lst() as $val) {
+                foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                    $result[$phr->name()] = $phr->code_id() ?? '';
+                }
+            }
+        } else {
+            foreach ($this->cache_json as $api_row) {
+                foreach ($api_row[json_fields::PHRASES] ?? [] as $phr_row) {
+                    $result[$phr_row[json_fields::NAME] ?? ''] = $phr_row[json_fields::CODE_ID] ?? '';
+                }
+            }
+        }
+        return array_filter($result);
+    }
+
+    /**
+     * @param array $phr_row a phrase of a cached config value e.g. {"id":754,"name":"pinned views","class":"triple"}
+     * @return int the phrase id, which is negative for a triple
+     */
+    private function phrase_id_of_row(array $phr_row): int
+    {
+        $id = (int)($phr_row[json_fields::ID] ?? 0);
+        if (($phr_row[json_fields::OBJECT_CLASS] ?? '') == json_fields::CLASS_TRIPLE) {
+            $id = -$id;
+        }
+        return $id;
     }
 
     /**
@@ -446,8 +516,11 @@ class config_numbers extends value_list
             $typ->name = db_cache_types::SYSTEM_CONFIG_NAME;
         }
         $load_msg = new user_message($usr); // judges only this load, see above; merged into $msg below
+        // each section is ended, so that the rest of the request is counted in the section around the load
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-        if (!$this->read_cache($typ, $usr, $load_msg, $phr)) {
+        $cached = $this->read_cache($typ, $usr, $load_msg, $phr);
+        $sys->times->switch();
+        if (!$cached) {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG, $load_msg);
@@ -466,9 +539,11 @@ class config_numbers extends value_list
                 log_warning('no config values loaded');
                 $load_msg->add_id(msg_id::CONFIG_EMPTY);
             }
+            $sys->times->switch();
             if ($load_msg->is_ok()) {
                 $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
                 $this->write_cache($typ, $usr, $snap_time, $load_msg, $phr);
+                $sys->times->switch();
             }
         }
         $msg->merge($load_msg);
@@ -874,6 +949,26 @@ class config_numbers extends value_list
     {
         $val = $this->exact_lookup()[self::names_key(self::IP_USER_CHANGE_NAMES)] ?? null;
         return ($val?->number() ?? 0) != 0;
+    }
+
+    /**
+     * the pod setting that decides if the sessions of the users are written to the user log
+     * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
+     * @return bool false if no session should be written to the user log
+     */
+    function user_log_allowed(): bool
+    {
+        return $this->pod_switch(self::USER_LOG_ALLOWED_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the sessions of the users without login are written to the user log
+     * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
+     * @return bool false if no session of an ip user should be written to the user log
+     */
+    function ip_user_log_allowed(): bool
+    {
+        return $this->pod_switch(self::IP_USER_LOG_ALLOWED_NAMES);
     }
 
 }

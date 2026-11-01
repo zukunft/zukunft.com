@@ -50,7 +50,7 @@ class verbs
     // *_NAME the name of the verb that is shown to the user
     // *_ID the fixed database id of the verb due to the initial database load
     // *_COM the tooltip description for the verb
-    // TODO add a check if all verbs have a const und linked functionalities
+    // TODO Prio 2 add a check if all verbs have a const und linked functionalities
     const string NOT_SET = "not_set";
     const string NOT_SET_NAME = "not set";
     const int NOT_SET_ID = 1;
@@ -84,7 +84,7 @@ class verbs
     const string FOLLOW = "follow"; // to order two phrases in time e.g. 2025 is follower of 2024
     const string FOLLOW_NAME = "is follower of";
     const int FOLLOW_ID = 33;
-    const string FOLLOW_COM = "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'";
+    const string FOLLOW_COM = "the order of two phrases: the time order e.g. 2025 is follower of 2024 or the order of the items of a list e.g. the inputs of a calculator page; for the table column order use 'is next main column after' or 'is explaining column for'";
     const string MEASURE = "measure_type";
     const string MEASURE_NAME = "is measure type for";
     const int MEASURE_ID = 29;
@@ -367,6 +367,12 @@ class verbs
         self::TEST_ADD_RENAMED,
     );
 
+    // list of verbs whose triple may be the reverse of an existing one e.g. the order of two page parts,
+    // because moving a part one place up swaps the order with its neighbour
+    const array WITHOUT_REVERSE_CHECK = array(
+        self::FOLLOW,
+    );
+
     // list of verbs that does not need a from phrase e.g. "per day" oder "m/s is alias of meter per second"
     const array WITHOUT_FROM = array(
         self::ALIAS,
@@ -456,6 +462,14 @@ class verbs
         [self::ALIAS,   foaf_direction::BOTH], // "m/s is alias of meter per second"                — explicit equivalence (symmetric)
         [self::ACRONYM, foaf_direction::DOWN], // "CHF is an acronym for Confoederatio Helvetica Franc" — abbreviated form of a name (asymmetric)
     );
+
+    // the verbs that name a phrase by another text e.g. "kWh/a is symbol for kilowatthours per year",
+    // so the data of a phrase (see phrase_data) includes these triples of its phrases from both sides
+    const array NAME_VERBS = [self::SYMBOL, self::ACRONYM, self::ALIAS];
+
+    // the verbs of the calculator triples (docs/llm/new_view_sample_pv_balance.md rules 3, 6, 7 and 9),
+    // the only triples that the from walk of the data of a phrase (see phrase_data) follows
+    const array CALCULATOR_VERBS = [self::HAS, self::WITH, self::FOLLOW, self::CAN_BE, self::USES, self::RANK];
 
     // ordered list of the verbs that connect an argument to the claim it is about;
     // ordering goes from the strongest backing to the weakest, so a renderer that

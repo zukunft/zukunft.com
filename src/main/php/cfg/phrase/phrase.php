@@ -77,6 +77,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -122,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -289,7 +291,7 @@ class phrase extends combine_named
         $result = false;
         $this->set_obj_id(0);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            /* TODO try to used the object mapper
+            /* TODO Prio 2 try to used the object mapper
             if (array_key_exists(phrase::FLD_ID, $db_row)) {
                 $this->set_obj_from_id($db_row[phrase::FLD_ID]);
                 if ($this->type() == word::class) {
@@ -430,7 +432,7 @@ class phrase extends combine_named
      */
     function set_id(int $id): void
     {
-        // TODO check if not set_id should be used
+        // TODO Prio 2 check if not set_id should be used
         $this->set_obj_id(abs($id));
     }
 
@@ -535,7 +537,10 @@ class phrase extends combine_named
         return $this->obj()->description;
     }
 
-    function code_id(): ?int
+    /**
+     * @return string|null the code id of the word or triple e.g. "font" or null if it has none
+     */
+    function code_id(): ?string
     {
         return $this->obj()->get_code_id();
     }
@@ -1005,7 +1010,8 @@ class phrase extends combine_named
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
-        $sc->add_where(phrase::FLD_NAME, $name);
+        // the name that the user has given the phrase, like word and triple (sandbox_named::load_sql_by_name)
+        $sc->add_where(phrase::FLD_NAME, $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1045,6 +1051,8 @@ class phrase extends combine_named
 
         $sc->set_class(self::class);
         $sc->set_name($qp->name);
+        // the user row of the requesting user e.g. with the name that the user has given the phrase
+        $sc->set_usr($this->get_user_id());
 
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_fields(self::FLD_NAMES_USR_EX);
@@ -1075,7 +1083,7 @@ class phrase extends combine_named
             $trp = new triple($this->get_user());
             $result = $trp->load_by_id($this->obj_id(), $msg);
             $this->obj = $trp;
-            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
+            // TODO Prio 3 check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->get_user());
@@ -1137,7 +1145,7 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
-     * TODO add a list of triple already split to detect endless loops
+     * TODO Prio 1 add a list of triple already split to detect endless loops
      */
     function wrd_lst(user_message $msg): word_list
     {
@@ -1189,9 +1197,9 @@ class phrase extends combine_named
 
     /**
      * if there is just one formula linked to the phrase, get it
-     * TODO separate the query parameter creation and add a unit test
-     * TODO allow also to retrieve a list of formulas
-     * TODO get the user-specific list of formulas
+     * TODO Prio 2 separate the query parameter creation and add a unit test
+     * TODO Prio 2 allow also to retrieve a list of formulas
+     * TODO Prio 2 get the user-specific list of formulas
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function formula(user_message $msg): formula
@@ -1493,7 +1501,7 @@ class phrase extends combine_named
         return $result;
     }
 
-    // TODO deprecate and replace by phase list functions
+    // TODO Prio 2 deprecate and replace by phase list functions
     // SQL to list the user phrases (related to a type if needed)
     function sql_list($type): string
     {
@@ -1505,7 +1513,7 @@ class phrase extends combine_named
         $sql_type_where = '';
 
         // if no phrase type is define, list all words and triples
-        // TODO: but if word has several types don't offer to the user to select the simple word
+        // TODO Prio 2 but if word has several types don't offer to the user to select the simple word
         //                                                      ^
         $sql_words = 'SELECT DISTINCT w.word_id AS id, 
                              ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
@@ -1704,8 +1712,8 @@ class phrase extends combine_named
     /**
      * @return phrase the following phrase based on the predefined verb following
      * e.g. the year 2020 if the given year phrase is 2019
-     * TODO add to triple and review
-     * TODO create unit tests
+     * TODO Prio 2 add to triple and review
+     * TODO Prio 2 create unit tests
      */
     function next(user_message $msg): phrase
     {
@@ -1733,8 +1741,8 @@ class phrase extends combine_named
 
     /**
      * return the follow word id based on the predefined verb following
-     * TODO add to triple and review
-     * TODO create unit tests
+     * TODO Prio 2 add to triple and review
+     * TODO Prio 2 create unit tests
      */
     function prior(user_message $msg): word
     {
@@ -1908,6 +1916,20 @@ class phrase extends combine_named
         global $cfg;
         return $this->selection($msg,
             $cfg?->symbol_formulas_included() ?? true, $cfg?->alias_formulas_included() ?? true);
+    }
+
+    /**
+     * the phrases whose formulas are the parent formulas of this phrase: the 'is a' ancestors of
+     * this phrase and of its symbols and aliases, nearest first; never the phrases linked by any
+     * other verb, because over all verbs a phrase is linked to most of the graph and the walk
+     * reaches the loop limit e.g. from "column" to "calculator (system)"
+     *
+     * @param user_message $msg to collect the problems while loading the linked phrases
+     * @return phrase_list the ancestors without this phrase
+     */
+    function formula_ancestors(user_message $msg): phrase_list
+    {
+        return $this->formula_selection($msg)->is($msg);
     }
 
     /**

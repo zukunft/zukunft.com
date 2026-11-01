@@ -100,6 +100,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_list.php';
+//include_once paths::MODEL_USER . 'user_log.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_status.php';
 //include_once paths::MODEL_USER . 'user_type.php';
@@ -203,6 +204,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
@@ -281,9 +283,18 @@ class def
     const int FALLBACK_IMPORT_BYTE_PER_SEC = 10000; // expected number of bytes per second that could be processed in import
     const int FALLBACK_PERCENT_STEP = 1; // the percent step size for the progress bar and of process parts
     const int FALLBACK_RETRY = 10; // the default number of retries for a failed process
+    const float FALLBACK_TEST_TOLERANCE = 1.0; // the share of objects that an api answer may have more than its expected sample
     const int FALLBACK_RECURSIVE_MAX = 99; // the maximal number of recursive calls of a function
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
     const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds
+    const float FALLBACK_RESPONSE_TIME_LOG = 1.2; // seconds above which a request is written to the system times
+    const float FALLBACK_RESPONSE_TIME_DETAIL = 2.0; // seconds above which also each step of a request is written
+    const float FALLBACK_RESPONSE_TIME_API = 0.5; // seconds above which an api answer names the time of each step in its json
+    const int FALLBACK_SLOW_REQUEST_DAYS = 10; // the number of last days of which the admin dashboard shows the slow requests
+    const int FALLBACK_USER_LOG_SESSION_GAP = 1800; // the max seconds between two requests of a user that are still one session of the user log
+    const int FALLBACK_USER_LOG_MAX_AGE_DAYS = 365; // the days a session is kept in the user log before it is archived
+    const int FALLBACK_USER_LOG_DASHBOARD_DAYS = 1; // the last days whose sessions are summed per user for the admin dashboard
+    const int FALLBACK_USER_LOG_DASHBOARD_TOP = 10; // the number of users with the most server time sent to the admin dashboard
 
 
     /*
@@ -322,7 +333,7 @@ class def
     // corresponding frontend object,
     // a database table and
     // can be im- and exported
-    // TODO add group, term_view_links, formula_link, component_links, styles, view_types,
+    // TODO Prio 2 add group, term_view_links, formula_link, component_links, styles, view_types,
     //          time_series, geo and text values, ip ranges, language, pod,
     //          add types (phrase_type, formula_type, formula_link_types, source_types,
     //                     ref_types, position_types, view_types, view_link_types,
@@ -613,7 +624,7 @@ class def
         source_fields::FLD_ID,
     ];
 
-    // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
+    // TODO Prio 1 review and combine with CLASSES_NO_CHANGE_LOG
     // list of classes that use a database table but where the changes never needs to be added to the change log
     const array CLASSES_NO_LOG = [
         job::class,
@@ -628,6 +639,7 @@ class def
         sys_log_level::class,
         system_time_type::class,
         system_time::class,
+        user_log::class,
         change_action::class,
         change_table::class,
         change_field::class,
@@ -848,7 +860,7 @@ class def
     ];
 
     // list of all sequences used in the database
-    // TODO base the list on the class list const and a sequence name function
+    // TODO Prio 2 base the list on the class list const and a sequence name function
     const array DB_SEQ_LIST = [
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_sys_log_id_seq',

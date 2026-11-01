@@ -85,7 +85,7 @@ class view_list extends sandbox_list_named
     /**
      * fill the view list based on a database records
      * actually just add the single view object to the parent function
-     * TODO check that a similar function is used for all lists
+     * TODO Prio 2 check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -161,7 +161,7 @@ class view_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of views by the names
-     * TODO use name_field() function to avoid overwrites
+     * TODO Prio 2 use name_field() function to avoid overwrites
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
@@ -350,6 +350,29 @@ class view_list extends sandbox_list_named
         return parent::load($qp, $msg);
     }
 
+    /**
+     * add the view of the id e.g. the default view of a phrase to the views tab, but only once
+     * and only if the view can be loaded, because a list holding an unloaded entry is not empty
+     * and would suppress the system default view fallback
+     *
+     * @param int|null $id the id of the view e.g. the default view of a word, null or 0 if none is set
+     * @param user_message $msg to report a problem of the view load
+     * @return bool true if the view has been added
+     */
+    function add_by_id(?int $id, user_message $msg): bool
+    {
+        $result = false;
+        // checked before the load, so that a view already in the list is not read again
+        if ($id > 0 and !$this->has_id($id)) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($id, $msg);
+            if ($msk->id() > 0) {
+                $result = $this->add($msk);
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export
@@ -381,7 +404,7 @@ class view_list extends sandbox_list_named
 
     /**
      * save all views of this list
-     * TODO create one SQL and commit statement for faster execution
+     * TODO Prio 2 create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
      * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
@@ -401,6 +424,10 @@ class view_list extends sandbox_list_named
                 // collect the user message for a consolidated list for the user
                 $msg->merge($cmp_lnk_usr_msg);
             }
+            // the terms of the "assigned" list e.g. "Pi" of "Mathematical constant", like the component links
+            $trm_lnk_usr_msg = $msg->clone_reset();
+            $msk->save_term_links($trm_lnk_usr_msg);
+            $msg->merge($trm_lnk_usr_msg);
         }
         return $msg->is_ok();
     }

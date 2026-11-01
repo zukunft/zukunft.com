@@ -79,7 +79,7 @@ class ref_type_list extends type_list
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->id = $db_entry[self::FLD_ID];
                 $type_obj->url = $db_entry[self::FLD_URL];
-                // TODO check if still needed
+                // TODO Prio 2 check if still needed
                 // $id = $db_entry[$db_con->get_id_field_name($db_type)];
                 $this->add($type_obj);
             }

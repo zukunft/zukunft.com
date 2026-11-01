@@ -57,7 +57,7 @@ class sources
     const int WIKIDATA_ID = 2;
     const string WIKIDATA = 'wikidata';
     const string MATH_CONST = 'mathematical constant';
-    const int BFS_ID = 7;
+    const int BFS_ID = 9;
     const string BFS = 'Federal Statistical Office';
     const string BFS_COM = 'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.';
     const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';

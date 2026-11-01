@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -103,19 +105,19 @@ class value_list_ui_tests
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
-        // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
-        // TODO format numbers
-        // TODO use one phrase for city of Zurich
-        // TODO optional "(in mio)" formatting for scale words
-        // TODO move time words to column headline
-        // TODO use language based plural for inhabitant
-        // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
-        // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
-        // TODO add buttons to or empty cells for easy adding new related values
+        // TODO Prio 3 move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
+        // TODO Prio 2 format numbers
+        // TODO Prio 3 use one phrase for city of Zurich
+        // TODO Prio 3 optional "(in mio)" formatting for scale words
+        // TODO Prio 3 move time words to column headline
+        // TODO Prio 3 use language based plural for inhabitant
+        // TODO Prio 3 if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
+        // TODO Prio 3 if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
+        // TODO Prio 3 add buttons to or empty cells for easy adding new related values
         $lst_zh_ui = $t_val->value_list_zh_ui();
         $lst_math_ui = $t_val->value_list_math_ui();
 
-        // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
+        // TODO Prio 2 add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
         $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($msg_ui, $phr_lst_context_ui) . '<br>';
@@ -144,6 +146,16 @@ class value_list_ui_tests
         $test_page .= 'as scatter plot: ' . $html->lf() . $svg_points . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $msg_ui);
 
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every value of the api json';
+        $val_lst_ui = new value_list_ui();
+        $val_lst_ui->api_mapper($t_val->value_list_math()->api_json_array([api_types::INCL_PHRASES], $msg));
+        $t->assert($test_name, $val_lst_ui->count(), $t_val->value_list_math()->count());
+        $test_name = 'the api mapper reports a value without id';
+        $val_lst_ui = new value_list_ui();
+        $api_json = [[json_fields::NUMBER => values::PI]];
+        $t->assert_false($test_name, $val_lst_ui->api_mapper($api_json)->is_ok());
+
         $t->subheader($ts . 'user config');
 
         $cfg = new config($t_val->value_list_all($msg)->api_json([api_types::INCL_PHRASES]));
@@ -170,7 +182,7 @@ class value_list_ui_tests
 
         $t->subheader($ts . 'sort by impact');
         $impact_lst = $t_val->value_list_zh_impact_ui();
-        $impact_lst->sort_by_impact();
+        $impact_lst->sort_by_impact($msg_ui);
         $test_name = 'the value of the phrase with the highest impact is first';
         $t->assert_text_order($test_name, $impact_lst->list($msg_ui), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         // two values with the same impact and number must not be ordered by the volatile group id
@@ -178,8 +190,54 @@ class value_list_ui_tests
         // order stays the same across test database rebuilds ("Zurich" sorts before "city")
         $test_name = 'a number tie is broken by the group name for a stable order';
         $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list($msg_ui), word_names::ZH, word_names::CITY);
+        // a number is compared only with a number of the same unit, so the values are grouped by
+        // their unit (gram before kWh) and within the unit the bigger number is first
+        $unit_lst = $t_val->value_list_sort_units_ui();
+        $gram_val = $unit_lst->get_by_names([word_names::GRAM]);
+        $big_kwh_val = $unit_lst->get_by_names([word_names::CANTON, word_names::KWH]);
+        $small_kwh_val = $unit_lst->get_by_names([word_names::ZH, word_names::KWH]);
+        $unit_lst->sort_by_impact($msg_ui);
+        $test_name = 'the numbers are compared only within the same unit';
+        $t->assert($test_name, array_map(fn($val) => $val->name(), $unit_lst->lst()),
+            [$gram_val->name(), $big_kwh_val->name(), $small_kwh_val->name()]);
         $test_name = 'sort by impact of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list($msg_ui), '');
+
+        // a value is added once, also if a filter finds it twice e.g. by the page phrase and by a child
+        $t->subheader($ts . 'add');
+
+        // a value that is not yet in the list is added
+        $test_name = 'a new value is added';
+        $add_lst = new value_list_ui();
+        $val = $t_val->value_ch_ui();
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // negative: a value that is already in the list is not added again
+        $test_name = 'a value that is already in the list is not added again';
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_false($test_name, $added);
+        $msg_ui->reset();
+
+        // the refused double leaves the list with one entry
+        $test_name = '... so the list keeps one entry';
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $add_lst->add($val, $msg_ui);
+        $cnt = $add_lst->count();
+        $t->assert($test_name, $cnt, 1);
+        $msg_ui->reset();
+
+        // a value without an id is not yet in the database, so it is never a double
+        $test_name = 'a second value without an id is added';
+        $add_lst = new value_list_ui();
+        $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $added = $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
 
         $t->subheader($ts . 'most relevant');
         // a limit above the fixture size, so that these blocks test the grouping and the order;
@@ -222,6 +280,26 @@ class value_list_ui_tests
         $test_name = 'the oldest year group is behind the more tail';
         $t->assert_text_not_contains($test_name, $many_html, word_names::YEAR_2019);
 
+        // the variance bounds are shown only if the page asks for them (url_var::DISPLAY_LIST_VARIANCE)
+        // and then in the format of the start page behind their centre value
+        $test_name = 'without the variance the bounds of a grouped list are left out';
+        $mr_plain = $lib->html_to_text($t_val->value_list_variance_ui()->list_most_relevant($msg_ui));
+        $t->assert_text_not_contains($test_name, $mr_plain, triple_names::SYSTEM_VARIANCE_LOW);
+        $t->assert_text_not_contains($test_name, $mr_plain, '0.88');
+        $test_name = '... but the centre value is shown';
+        $t->assert_text_contains($test_name, $mr_plain, '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED);
+        $test_name = 'with the variance the bounds are shown behind their centre value';
+        $mr_variance = $lib->html_to_text($t_val->value_list_variance_ui()->list_most_relevant(
+            $msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $mr_variance, ' (0.88 – 5.5)');
+        $test_name = '... and not as values of their own';
+        $t->assert_text_not_contains($test_name, $mr_variance, triple_names::SYSTEM_VARIANCE_HIGH);
+        $test_name = 'a bound without its centre value is shown like a value';
+        $mr_bounds = $lib->html_to_text($t_val->value_list_bounds_only_ui()->list_most_relevant(
+            $msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $mr_bounds, triple_names::SYSTEM_VARIANCE_LOW);
+        $t->assert_text_not_contains($test_name, $mr_bounds, ' (0.88');
+
         $t->subheader($ts . 'columns');
         $col_html = $t_val->value_list_most_relevant_ui()->columns_by_phrase($msg_ui);
         $test_name = 'the columns are combined to one wrapping row';
@@ -238,6 +316,13 @@ class value_list_ui_tests
             substr_count($col_html, 'class="col"') <= position_types::MAX_SIDE_COLUMNS);
         $test_name = 'the columns of an empty value list render nothing';
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
+        $test_name = 'without the variance the value columns leave out the bounds';
+        $col_plain = $lib->html_to_text($t_val->value_list_variance_ui()->columns_by_phrase($msg_ui));
+        $t->assert_text_not_contains($test_name, $col_plain, '0.88');
+        $test_name = 'with the variance the value columns show the bounds behind their centre value';
+        $col_variance = $lib->html_to_text($t_val->value_list_variance_ui()->columns_by_phrase(
+            $msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $col_variance, ' (0.88 – 5.5)');
 
         $t->subheader($ts . 'table with related columns');
         // the row limit is checked below, so the column checks ask for every row; else the value
@@ -285,55 +370,60 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tbl_cut,
             '<th>' . msg_id::FORM_SUB_TITLE_VALUES->text() . '</th>');
 
-        // a value tagged "low" or "high" is a bound of the probability range of the value with
+        // a value tagged "low" or "high" is a bound of the variance of the value with
         // the same phrases, so it is shown behind that centre value instead of in a row of its
         // own, and the qualifier "assumed" names no row either, so the problem keeps one row
         // (see the view-validation of solution_prio.json)
-        $tbl_range = $t_val->value_list_range_ui()->table_by_related_columns($msg_ui);
+        $tbl_variance = $t_val->value_list_variance_ui()->table_by_related_columns($msg_ui);
         // the values are assumed, so the centre value is followed by the "a" mark, which the
         // bounds share with it and do not repeat (see sandbox_value::quality_mark)
         $centre_txt = '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED;
-        $test_name = 'the range bounds are shown behind their centre value';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), $centre_txt . ' (0.88 – 5.5)');
+        $test_name = 'the variance bounds are shown behind their centre value';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_variance), $centre_txt . ' (0.88 – 5.5)');
         // the four loss values (centre, both bounds and the confidence) share one row; the gain
         // is carried by one value only, so it heads no column and names a row of its own, which
         // is the header row plus two rows
         $test_name = '... so the bounds and the qualifier name no row of their own';
-        $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
+        $t->assert($test_name, substr_count($tbl_variance, '<' . html_base::TR . '>'), 3);
         $test_name = '... and a value without a source is followed by the "-" mark';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_variance), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
         $test_name = '... and a value without bounds is shown without brackets';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range),
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_variance),
             '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
-        // a simple table shows the numbers only and the "..." header links to the same page with
-        // the ranges switched on, which wins over the default of the caller
-        $tbl_plain = $t_val->value_list_range_ui()->table_by_related_columns(
+        // a simple table shows the numbers only and the edit menu of the navbar links to the same
+        // page with the variance switched on, which wins over the default of the caller
+        $tbl_plain = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
-        $test_name = 'without the range the centre value is shown alone';
+        $test_name = 'without the variance the centre value is shown alone';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), $centre_txt . ' (');
-        $test_name = '... and the "..." header links to the page with the ranges';
-        $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
-        $tbl_url = $t_val->value_list_range_ui()->table_by_related_columns(
+        $test_name = '... and the edit menu links to the page with the variance';
+        $variance_par = url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE;
+        $variance_menu = $t_val->value_list_variance_ui()->columns_menu_items([url_var::MASK => views::START_ID]);
+        $t->assert_text_contains($test_name, $variance_menu, $variance_par);
+        // negative: the table itself has no link to the variance, because its menu is in the navbar
+        $test_name = '... but the table does not';
+        $t->assert_text_not_contains($test_name, $tbl_plain, $variance_par);
+        $tbl_url = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
-            [url_var::DISPLAY_LIST_RANGE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
-        $test_name = 'the url switches the range on although the caller has switched it off';
+            [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
+        $test_name = 'the url switches the variance on although the caller has switched it off';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), $centre_txt . ' (0.88 – 5.5)');
         $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
-        $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
+        $t->assert_text_contains($test_name, $tbl_variance, 'title="' . word_names::ASSUMED . ', ');
         // a value tagged "confidence" says how sure the value with the same subject is, so it is
         // the tooltip of that value and no value or row of its own
         $test_name = 'the confidence of a value is the tooltip of its cell';
-        $t->assert_text_contains($test_name, $tbl_range, word_names::CONFIDENCE . ' ');
+        $t->assert_text_contains($test_name, $tbl_variance, word_names::CONFIDENCE . ' ');
         $test_name = '... and not a value of the cell';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '5.5), ');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_variance), '5.5), ');
         // the confidence is a share, so its unit differs from the unit of the loss, but it still
         // follows the loss instead of opening a column of its own unit
         $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
         $test_name = '... nor a column of its own unit';
         $t->assert($test_name, substr_count(
-            $lib->html_to_text($lib->str_left_of($tbl_range, '</tr>')), word_names::LOSS . $unit_sep), 1);
+            $lib->html_to_text($lib->str_left_of($tbl_variance, '</tr>')), word_names::LOSS . $unit_sep), 1);
 
         // a confidence value often names less than the value it qualifies, e.g. the confidence of
         // the loss of a problem qualifies the loss of the solution of that problem, which names
@@ -420,6 +510,27 @@ class value_list_ui_tests
         $test_name = 'the main columns show no minor column';
         $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 1);
 
+        // a column defined per unit shows the unit of the higher tier first, even if another unit
+        // has more values, e.g. the start page shows the potential gain in trillion EUR, which
+        // has the unit of the loss, and not the gain in billion htp
+        $gain_lst = $t_phr->list_columns_gain_units_ui();
+        $tbl_gain_mayor = $t_val->value_list_gain_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $gain_lst->column_names(), false, true, $gain_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_gain_mayor = $lib->html_to_text($lib->str_left_of($tbl_gain_mayor, '</tr>'));
+        $test_name = 'the mayor column shows the unit that its definition names';
+        $t->assert_text_contains($test_name, $hdr_gain_mayor, word_names::EUR);
+        $test_name = '... and not the unit of the most values, which is a minor column';
+        $t->assert_text_not_contains($test_name, $hdr_gain_mayor, word_names::HTP);
+        // negative: without a definition per unit the unit of the most values fills the column
+        $any_lst = $t_phr->list_columns_potential_gain_ui();
+        $tbl_gain_any = $t_val->value_list_gain_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $any_lst->column_names(), false, true, $any_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_gain_any = $lib->html_to_text($lib->str_left_of($tbl_gain_any, '</tr>'));
+        $test_name = 'without a unit definition the mayor column shows the unit of the most values';
+        $t->assert_text_contains($test_name, $hdr_gain_any, word_names::HTP);
+
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
@@ -452,7 +563,7 @@ class value_list_ui_tests
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
         // values before the column of one of its parts, because it names more of their phrases
         $rel_lst = $t_phr->list_columns_potential_loss_ui();
-        $tbl_parts = $t_val->value_list_range_ui()->table_by_related_columns(
+        $tbl_parts = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_parts = $lib->html_to_text($lib->str_left_of($tbl_parts, '</tr>'));
         $test_name = 'a column of two phrases takes the values that carry both';
@@ -463,7 +574,7 @@ class value_list_ui_tests
         // negative: without the column of the two phrases the values stay in the column of the
         // one phrase they carry
         $rel_lst = $t_phr->list_columns_loss_ui();
-        $tbl_one = $t_val->value_list_range_ui()->table_by_related_columns(
+        $tbl_one = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_one = $lib->html_to_text($lib->str_left_of($tbl_one, '</tr>'));
         $test_name = 'without the column of two phrases the column of the one phrase is used';
@@ -472,13 +583,15 @@ class value_list_ui_tests
 
         // every defined column is shown, because the tiers hide the columns per screen size, so
         // the number of columns that fit on the widest screen limits only the columns that the
-        // data suggests; five defined columns give five column headers plus the row name header
-        // and the "..." header with the column menu
+        // data suggests; the defined columns give one column header each plus the row name header,
+        // because the column menu is in the edit menu of the navbar
         $rel_lst = $t_phr->list_columns_ordered_ui();
         $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
-        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
+        $th_count = substr_count($tbl_def, '<th');
+        $th_expected = count($rel_lst->column_names()) + 1;
+        $t->assert($test_name, $th_count, $th_expected);
 
         // the tier of a defined column says on which screens it is shown: a minor column carries
         // the class that hides it below a wide screen, a mayor column has no class and is shown
@@ -492,7 +605,8 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MINOR);
 
         // a simple table shows the mayor columns only, so the minor column "cost" is left to the
-        // full table and the "..." header says that more columns exist
+        // full table; the columns are selected in the edit menu of the navbar, so no header cell
+        // is the "..." menu
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
@@ -502,13 +616,15 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
         $test_name = '... but keeps the mayor columns';
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
-        $test_name = '... and ends with the "..." header';
-        $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
-        // the full table shows every column and still ends with the "..." header, because its
-        // menu is the only way back to the fewer columns
-        $test_name = 'the full table shows the minor column and the "..." header';
+        // negative: the menu to show more columns is in the navbar, not in the header
+        $test_name = '... and has no "..." header';
+        $dots = msg_id::THREE_POINTS->text();
+        $t->assert_text_not_contains($test_name, $hdr_mayor, $dots);
+        $test_name = 'the full table shows the minor column';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
-        $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+        // negative: the way back to fewer columns is the edit menu of the navbar
+        $test_name = '... and has no "..." header either';
+        $t->assert_text_not_contains($test_name, $hdr_def, $dots);
 
         // the reason of a problem is a phrase column like the solution and the loss that the
         // reason causes a value column of its own: its value carries the problem, the word
@@ -667,33 +783,33 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_rsn_sol),
             '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
 
-        // the "..." header opens the menu that selects the columns, so it offers every column
-        // tier and each of them once with and once without the ranges
+        // the edit menu of the navbar selects the columns of the table, so it offers every column
+        // tier and each of them once with and once without the variance
         $page_url = [url_var::MASK => views::START_ID];
-        $tbl_menu = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+        $tbl_page = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
-        $test_name = 'the "..." header opens a menu without any javascript';
-        $t->assert_text_contains($test_name, $tbl_menu,
-            '<' . html_base::DETAILS . ' class="' . styles::MENU_COLUMN . '">');
+        // negative: the table itself has no "..." menu any more
+        $test_name = 'the table has no column menu, because the edit menu of the navbar offers it';
+        $t->assert_text_not_contains($test_name, $tbl_page, '<' . html_base::DETAILS);
+        $tbl_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items($page_url);
+        $test_name = 'the column entries of the edit menu need no javascript';
         $t->assert_text_not_contains($test_name, $tbl_menu, '<script');
         foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
             $test_name = 'the column menu offers ' . $msg_tier->text();
             $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu), $msg_tier->text());
-            // the entry of one tier without and the entry with the range of each number
+            // the entry of one tier without and the entry with the variance of each number
             $t->assert_text_contains($test_name, $tbl_menu,
                 url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
-                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::FALSE);
+                . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::FALSE);
             $t->assert_text_contains($test_name, $tbl_menu,
                 url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
-                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+                . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
         }
-        $test_name = '... and names the entry with the range';
+        $test_name = '... and names the entry with the variance';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
-            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text());
+            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text());
         // the menu selects the columns and the form of the table, each below its own sub header
-        $test_name = 'the menu tooltip names the columns and the form';
-        $t->assert_text_contains($test_name, $tbl_menu, 'title="' . msg_id::TABLE_COLUMNS_TIP->text() . '"');
         $test_name = 'the column entries are below the sub header columns and values';
         $t->assert_text_order($test_name, $tbl_menu,
             'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_COLUMNS->text(),
@@ -702,12 +818,43 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $tbl_menu,
             'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_AS->text(),
             msg_id::TABLE_AS_TABLE_CHART->text());
+        // the tooltip of a column entry says what it shows and names the columns of the table
+        $test_name = 'the tooltip of the mayor entry says that it shows only the mayor columns';
+        $t->assert_text_contains($test_name, $tbl_menu, msg_id::TABLE_COLUMNS_MAYOR_TIP->text());
+        $test_name = '... and the one with the variance that it adds the variance';
+        $t->assert_text_contains($test_name, $tbl_menu, msg_id::TABLE_COLUMNS_MAYOR_VARIANCE_TIP->text());
+        // negative: without the column names of a table the tooltip names no columns
+        $names_tip = $lib->msg_var_replace(msg_id::TABLE_COLUMNS_NAMES_TIP->text(), msg_id::VAR_NAME_LIST, '');
+        $test_name = '... but without a table on the page no column names';
+        $t->assert_text_not_contains($test_name, $tbl_menu, $names_tip);
+        $tbl_lst = $t_val->value_list_defined_columns_ui();
+        $tbl_lst->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
+            null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $mayor_names = $tbl_lst->tier_names[value_list_ui::COLUMN_TIERS_EX_MAIN] ?? [];
+        $all_names = $tbl_lst->tier_names[value_list_ui::COLUMN_TIERS_ALL] ?? [];
+        $test_name = 'the table keeps the names of the mayor columns';
+        $t->assert_contains($test_name, $mayor_names, word_names::LOSS);
+        // negative: the minor column is no mayor column
+        $test_name = '... without the minor column';
+        $t->assert_contains_not($test_name, $mayor_names, word_names::COST);
+        $test_name = '... which all columns include';
+        $t->assert_contains($test_name, $all_names, word_names::COST);
+        $names_menu = $tbl_lst->columns_menu_items($page_url, $tbl_lst->tier_names);
+        $mayor_tip = msg_id::TABLE_COLUMNS_MAYOR_TIP->text() . ' ' . $names_tip;
+        $test_name = 'the tooltip of the mayor entry names the mayor columns of the table';
+        $t->assert_text_order($test_name, $names_menu, $mayor_tip, word_names::LOSS);
         // the form shown is not offered again: the table page offers the chart and the table
         // with the chart, the chart page the table and the table with the chart
+        // negative: without the url of the page no version can be linked, so there are no entries
+        $test_name = 'the column menu of an unknown page has no entries';
+        $unknown_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items([]);
+        $t->assert($test_name, $unknown_menu, '');
         $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
-        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu($chart_url);
+        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items($chart_url);
         foreach (table_forms::cases() as $form) {
-            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text();
+            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '" '
+                . html_base::TITLE_HTML . '="' . $form->tip_msg_id()->text() . '">' . $form->msg_id()->text();
             $test_name = 'the table menu offers the table ' . $form->value;
             if ($form == table_forms::TABLE) {
                 $t->assert_text_not_contains($test_name, $tbl_menu, $form_entry);
@@ -842,7 +989,13 @@ class value_list_ui_tests
             $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $desc_url);
         $test_name = 'the biggest number of another column first changes the impact order';
         $t->assert_text_order($test_name, $tbl_desc, word_names::DISINFORMATION, word_names::HEALTH);
-        $tbl_impact = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+        // the solution basic income has the highest impact, so the impact order puts its problem
+        // wealth concentration first; the numbers are no impact, because the loss and the gain have
+        // different units, which the preferred order never compares (docs/llm/frontend.md)
+        $rank_impact_lst = $t_val->value_list_solution_prio_ui();
+        $rank_impact_lst->get_by_names([triple_names::WEALTH_CONCENTRATION, triple_names::BASIC_INCOME])->phr_lst()
+            ->get_by_name(triple_names::BASIC_INCOME, $msg_ui)->obj()->impact = impacts::MAX;
+        $tbl_impact = $rank_impact_lst->table_by_related_columns(
             $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $rank_url);
         $test_name = '... which the table without an order keeps';
         $t->assert_text_order($test_name, $tbl_impact, word_names::HEALTH, word_names::DISINFORMATION);
@@ -1017,6 +1170,22 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tail_plain, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'without a page phrase the more count is still shown';
         $t->assert_text_contains($test_name, $tail_plain, msg_id::MORE->text());
+        $variance_par = url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE;
+        $test_name = 'the more tail of a list without the variance does not ask for it';
+        $t->assert_text_not_contains($test_name, $tail_html, $variance_par);
+        $test_name = 'the more tail of a list with the variance opens the next version with the variance';
+        $tail_variance = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 1, null, true);
+        $t->assert_text_contains($test_name, $tail_variance, $variance_par);
+        $test_name = '... and the more tail of a grouped list too';
+        $tail_grouped = $t_val->list_all_ui($msg)->list_most_relevant(
+            $msg_ui, $phr_lst_context_ui, limit: 1, with_variance: true);
+        $t->assert_text_contains($test_name, $tail_grouped, $variance_par);
+        $test_name = 'without the variance the plain list leaves out the bounds';
+        $lst_plain = $lib->html_to_text($t_val->value_list_variance_ui()->list($msg_ui));
+        $t->assert_text_not_contains($test_name, $lst_plain, '0.88');
+        $test_name = 'with the variance the plain list shows the bounds behind their centre value';
+        $lst_variance = $lib->html_to_text($t_val->value_list_variance_ui()->list($msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $lst_variance, ' (0.88 – 5.5)');
 
         // the tail tells the user that the list is shortened, so it must be the last entry
         // and it must only be there if the list really does not show every value
@@ -1042,12 +1211,12 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $svg_bars, triple_names::GLOBAL_WARMING, word_names::POPULISM);
         $test_name = '... and the solution of the problem in the tooltip';
         $t->assert_text_contains($test_name, $svg_bars, triple_names::REDUCE_EMISSIONS);
-        // the range of a number is the bar behind the dot and the bounds are named in the
+        // the variance of a number is the bar behind the dot and the bounds are named in the
         // tooltip like in the table cell, with the assumed mark behind the centre number
-        $svg_range = $t_val->value_list_range_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
-        $test_name = 'the range bounds are named in the tooltip like in the table';
+        $svg_range = $t_val->value_list_variance_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
+        $test_name = 'the variance bounds are named in the tooltip like in the table';
         $t->assert_text_contains($test_name, $svg_range, $centre_txt . ' ' . word_names::TRILLION . ' '
-            . word_names::EUR . value_list_ui::RANGE_START . '0.88' . value_list_ui::RANGE_SEP . '5.5' . value_list_ui::RANGE_END);
+            . word_names::EUR . value_list_ui::VARIANCE_START . '0.88' . value_list_ui::VARIANCE_SEP . '5.5' . value_list_ui::VARIANCE_END);
         $test_name = '... and drawn as the bar of the row';
         $t->assert($test_name, substr_count($svg_range, 'class="rng"'), 1);
         $test_name = 'the ranking is drawn as a scatter plot of the gain against the loss';
@@ -1063,7 +1232,7 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $svg_points,
             word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);
         // negative: a column that the table does not have is reported instead of plotting another
-        $svg_none = $t_val->value_list_range_ui()->table_to_svg(
+        $svg_none = $t_val->value_list_variance_ui()->table_to_svg(
             chart_types::RANGE_BARS, $msg_ui, chart_cols: [word_names::PI]);
         $test_name = 'a column that the table does not have draws no chart';
         $t->assert($test_name, $svg_none, '');
@@ -1072,12 +1241,23 @@ class value_list_ui_tests
         $msg_ui->reset();
         $test_name = 'an empty value list draws no chart';
         $t->assert($test_name, new value_list_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui), '');
+        // the charts of one table share one table model, because creating the model is the slow part
+        $rank_model = $t_val->value_list_solution_prio_ui()->chart_model(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst, value_list_ui::LIMIT_ALL);
+        $test_name = 'the range bars drawn from the shared table model are the range bars of the table';
+        $t->assert($test_name, value_list_ui::model_to_svg($rank_model, chart_types::RANGE_BARS, $msg_ui, $rank_ctx), $svg_bars);
+        $test_name = '... and the scatter plot drawn from the same model is the scatter plot of the table';
+        $t->assert($test_name, value_list_ui::model_to_svg($rank_model, chart_types::SCATTER, $msg_ui, $rank_ctx,
+            [word_names::GAIN, word_names::LOSS]), $svg_points);
+        // negative: without a number there is no model to share
+        $test_name = 'an empty value list has no table model for the charts';
+        $t->assert_null($test_name, new value_list_ui()->chart_model($msg_ui));
 
-        // TODO add a test that if a view contains beside the "2023 (year)"
+        // TODO Prio 2 add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"
         //      the "(year)" is not shown to the user, because the user will assume i
 
-        // TODO add s test that if a view contains the word "city"
+        // TODO Prio 2 add s test that if a view contains the word "city"
         //      or many cities and never a "canton"
         //      and the phrase "Zurich (city)" is shown
         //      only "Zurich" without "(city)" is used

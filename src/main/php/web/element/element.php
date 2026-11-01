@@ -178,7 +178,7 @@ class element extends db_object
 
         if ($this->obj != null) {
             if ($this->obj->id() <> 0) {
-                // TODO replace with phrase
+                // TODO Prio 2 replace with phrase
                 if ($this->obj::class == word::class
                     or $this->obj::class == triple::class) {
                     $result = $this->obj->name_link($url_arr);

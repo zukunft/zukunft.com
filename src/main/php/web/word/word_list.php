@@ -124,7 +124,7 @@ class word_list extends list_named
     {
         $html = new html_base();
         $cols = '';
-        // TODO check if and why the next line makes sense
+        // TODO Prio 2 check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {
             $lnk = $wrd->name_link($url_arr);
@@ -351,7 +351,7 @@ class word_list extends list_named
         $max_wrd = new word();
         if (count($this->lst()) > 0) {
             foreach ($this->lst() as $wrd) {
-                // TODO replaced by "is following"
+                // TODO Prio 2 replaced by "is following"
                 if ($wrd->name() > $max_wrd->name()) {
                     $max_wrd = clone $wrd;
                 }
@@ -413,7 +413,7 @@ class word_list extends list_named
     /**
      * like names_linked, but without measure and time words
      * because measure words are usually shown after the number
-     * TODO call this from the display object t o avoid casting again
+     * TODO Prio 2 call this from the display object t o avoid casting again
      * @returns word_list a word
      */
     function ex_measure_and_time_lst(user_message $msg): word_list

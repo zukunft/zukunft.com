@@ -88,9 +88,11 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+//include_once paths::MODEL_SYSTEM . 'system_time.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_log.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_status.php';
@@ -109,6 +111,8 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+// loaded by sql_db.php, because system_time_type extends type_object, which is still being included here
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -154,6 +158,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
@@ -164,6 +169,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
@@ -175,6 +181,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use DateTime;
 
 class sql_creator
@@ -230,6 +237,8 @@ class sql_creator
         change_values_geo_big::class,
         change_link::class,
         sys_log::class,
+        system_time::class,
+        user_log::class,
         job::class,
         db_cache::class,
         db_cache_page::class,
@@ -263,7 +272,7 @@ class sql_creator
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user-specific data
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
-    // TODO replace by a sc_par_lst
+    // TODO Prio 2 replace by a sc_par_lst
     private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $list_query;       // true, if the query is part of a list of queries used for a with statement
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user-specific data
@@ -620,8 +629,8 @@ class sql_creator
     /**
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
-     * TODO check that this is always called directly before the query is created, so that no old parameters are used
-     * TODO check if this is called with the class name and if there are exceptions
+     * TODO Prio 2 check that this is always called directly before the query is created, so that no old parameters are used
+     * TODO Prio 2 check if this is called with the class name and if there are exceptions
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -1089,7 +1098,7 @@ class sql_creator
     /**
      * add a where condition a list of id are one field or another
      * e.g. used to select both sides of a phrase tree
-     * TODO move the table prefix to a separate parameter
+     * TODO Prio 2 move the table prefix to a separate parameter
      *
      * @param string $fld the field name used in the sql where statement
      * @param int|string|array|null $fld_val with the database id that should be selected
@@ -1121,7 +1130,7 @@ class sql_creator
     /**
      * add the parameter for a where condition a list of id are one field or another
      * e.g. used to select both sides of a phrase tree
-     * TODO move the table prefix to a separate parameter
+     * TODO Prio 2 move the table prefix to a separate parameter
      *
      * @param string $fld the field name used in the sql where statement
      * @param int|string|array|null $fld_val with the database id that should be selected
@@ -1170,6 +1179,8 @@ class sql_creator
             } elseif ($spt == sql_par_type::INT
                 or $spt == sql_par_type::INT_SMALL
                 or $spt == sql_par_type::INT_HIGHER
+                or $spt == sql_par_type::TIME_HIGHER
+                or $spt == sql_par_type::TIME_LOWER
                 or $spt == sql_par_type::INT_LOWER
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
@@ -1279,6 +1290,9 @@ class sql_creator
         bool $num_id = false
     ): string
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::SQL_CREATE);
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             if ($par_offset > 0 or $this->sub_query) {
@@ -1302,16 +1316,16 @@ class sql_creator
         $sql .= $fields . $from . $this->join . $where . $this->order . $this->get_page();
 
         if ($prepare) {
-            return $this->end_sql($sql);
-        } else {
-            return $sql;
+            $sql = $this->end_sql($sql);
         }
+        $sys->times->switch();
+        return $sql;
     }
 
     /**
      * create the sql statement to add a row to the database
-     * TODO add fields types for inserting prime values to change the id to smallint
-     * TODO check if log_err is always set correctly
+     * TODO Prio 2 add fields types for inserting prime values to change the id to smallint
+     * TODO Prio 2 check if log_err is always set correctly
      *
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types to add
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -1379,7 +1393,7 @@ class sql_creator
                     $par_typ = $this->get_sql_par_type($par_val);
                 }
                 if ($use_named_par) {
-                    // TODO remove these exceptions
+                    // TODO Prio 2 remove these exceptions
                     if ($par_name == change::FLD_FIELD_ID) {
                         $par_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
                     }
@@ -1498,7 +1512,7 @@ class sql_creator
 
     /**
      * create the sql statement to update a row to the database
-     * TODO use a sql_par_field for the id_field
+     * TODO Prio 2 use a sql_par_field for the id_field
      *
      * @param string|array $id_field name of the id field (or list of field names)
      * @param int|string|array $id the unique id of the row that should be updated
@@ -1559,7 +1573,7 @@ class sql_creator
         $offset = $par_pos - 1;
 
         // prepare the where class
-        // TODO maybe can be removed because done already in the calling function
+        // TODO Prio 3 maybe can be removed because done already in the calling function
         if (is_array($id_field)) {
             if (!is_array($id)) {
                 $grp_id = new group_id();
@@ -1621,7 +1635,7 @@ class sql_creator
                     $sql_set .= ', ';
                 }
                 if ($val != sql::NOW) {
-                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                    $sql_set .= $this->sql_set_field($fvt, $this->name_sql_esc($this->par_lst->name($i)));
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
                     $i--;
@@ -1703,7 +1717,7 @@ class sql_creator
         $offset = $par_pos - 1;
 
         // prepare the where class
-        // TODO maybe can be removed because done already in the calling function
+        // TODO Prio 3 maybe can be removed because done already in the calling function
         if (is_array($id_field)) {
             if (!is_array($id)) {
                 $grp_id = new group_id();
@@ -1776,7 +1790,7 @@ class sql_creator
                     $sql_set .= ', ';
                 }
                 if ($val != sql::NOW) {
-                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                    $sql_set .= $this->sql_set_field($fvt, $this->name_sql_esc($this->par_lst->name($i)));
                     $i++;
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
@@ -1792,6 +1806,23 @@ class sql_creator
 
         }
         return $this->end_sql($sql, $sql_type);
+    }
+
+    /**
+     * the set part of one field of an update e.g. "requests = requests + $3" for an increment field
+     *
+     * @param sql_par_field $fvt the field with the name and the increment flag
+     * @param string $par the escaped parameter name of the value e.g. $3
+     * @return string the assignment of the field for the set part of the update
+     */
+    private function sql_set_field(sql_par_field $fvt, string $par): string
+    {
+        $fld = $this->name_sql_esc($fvt->name);
+        $result = $fld . ' = ' . $par;
+        if ($fvt->increment) {
+            $result = $fld . ' = ' . $fld . ' ' . sql::PLUS . ' ' . $par;
+        }
+        return $result;
     }
 
     /**
@@ -1827,7 +1858,7 @@ class sql_creator
 
     /**
      * create the sql function part to log the insert changes
-     * TODO combine with sql_func_log_update function or move common parts to private functions
+     * TODO Prio 2 combine with sql_func_log_update function or move common parts to private functions
      *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
@@ -1984,7 +2015,7 @@ class sql_creator
     }
 
     /**
-     * TODO combine with sandbox_value function
+     * TODO Prio 2 combine with sandbox_value function
      * @return bool true if the class is one of the value classes and not a result class
      */
     private function is_value_class(string $class): bool
@@ -2004,7 +2035,7 @@ class sql_creator
 
     /**
      * create the sql function part to log the update changes
-     * TODO combine with sql_func_log function or move common parts to private functions
+     * TODO Prio 2 combine with sql_func_log function or move common parts to private functions
      *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
@@ -2038,7 +2069,7 @@ class sql_creator
         $qp->sql = ' ';
 
         // set the parameters for the log sql statement creation
-        // TODO ??? get the id of the new entry and use it in the log
+        // TODO Prio 2 ??? get the id of the new entry and use it in the log
         $sc_log = clone $this;
         $sc_par_lst->add(sql_type::VALUE_SELECT);
         $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
@@ -2074,11 +2105,11 @@ class sql_creator
                 }
             }
 
-            // TODO replace dummy value table with an enum value
+            // TODO Prio 2 replace dummy value table with an enum value
             $qp_log = $log->sql_insert_log(
                 $sc_log, $msg, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
-            // TODO get the fields used in the change log sql from the sql
+            // TODO Prio 2 get the fields used in the change log sql from the sql
             $qp->sql .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
@@ -2177,7 +2208,7 @@ class sql_creator
     ): sql_par
     {
         // create the parameter fields for the log entry
-        // TODO remove the double creation of this list in the calling functions
+        // TODO Prio 2 remove the double creation of this list in the calling functions
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
             user_db::FLD_ID,
@@ -2199,7 +2230,7 @@ class sql_creator
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
                 $log->old_link_id = $dbo->predicate_id();
-                $log->old_text_link = $dbo->predicate_name();
+                $log->old_text_link = $dbo->predicate_name() ?? '';
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -2208,13 +2239,17 @@ class sql_creator
                 // for external links the id is a string
                 $log->old_text_to = $dbo->to_id();
             }
+            // the log function always has the text parameters and is created once per name,
+            // so a missing name e.g. of a phrase deleted before the link is passed as an empty text
+            $log->old_text_from ??= '';
+            $log->old_text_to ??= '';
         }
         if ($sc_par_lst->is_insert_part() or $sc_par_lst->is_update_part()) {
             $log->new_from_id = $sbx->from_id();
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
                 $log->new_link_id = $sbx->predicate_id();
-                $log->new_text_link = $sbx->predicate_name();
+                $log->new_text_link = $sbx->predicate_name() ?? '';
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2223,6 +2258,8 @@ class sql_creator
                 // for external links the id is a string
                 $log->new_text_to = $sbx->to_id();
             }
+            $log->new_text_from ??= '';
+            $log->new_text_to ??= '';
         }
 
         // set the parameters for the log sql statement creation
@@ -2264,29 +2301,31 @@ class sql_creator
         // set the vars of the log link object
         $log = new change_link($usr);
         $log->set_class($sbx::class, $msg);
+        // like in sql_func_log_link a missing name is passed as an empty text,
+        // because the log function always has the text parameters and is created once per name
         $log->old_from_id = $sbx->from_id();
         $log->new_from_id = 0;
-        $log->old_text_from = $sbx->from_name();
+        $log->old_text_from = $sbx->from_name() ?? '';
         $log->new_text_from = '';
         if ($sbx::class == triple::class) {
             // triples have a verb as type
             $log->old_link_id = $sbx->get_verb_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->get_verb_name();
+            $log->old_text_link = $sbx->get_verb_name() ?? '';
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
             // other links can have a type
             $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->predicate_name();
+            $log->old_text_link = $sbx->predicate_name() ?? '';
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {
             $log->old_to_id = $sbx->to_id();
-            $log->old_text_to = $sbx->to_name();
+            $log->old_text_to = $sbx->to_name() ?? '';
         } else {
             // for external links the "to_id" is a string
-            $log->old_text_to = $sbx->to_id();
+            $log->old_text_to = $sbx->to_id() ?? '';
         }
         $log->new_to_id = 0;
         $log->new_text_to = '';
@@ -2651,7 +2690,7 @@ class sql_creator
 
     /**
      * create a sql statement to delete or exclude a database row
-     * TODO deprecate and replace by create_sql_delete_fvt
+     * TODO Prio 2 deprecate and replace by create_sql_delete_fvt
      *
      * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
@@ -2927,7 +2966,7 @@ class sql_creator
                                 $this->add_par(sql_par_type::INT, $this->usr_id, $usr_fld);
                             }
                         } else {
-                            // TODO make the field pos of the user field more dynamic to cover more cases
+                            // TODO Prio 2 make the field pos of the user field more dynamic to cover more cases
                             $this->join_usr_par_name = $this->par_name(1, false);
                         }
                         $this->join .= $this->join_usr_par_name;
@@ -3014,7 +3053,7 @@ class sql_creator
         return $result;
     }
 
-    // TODO test where this is needed
+    // TODO Prio 3 test where this is needed
     private function str_array_esc_high_quote(array $str_array): array
     {
         $result = [];
@@ -3028,7 +3067,7 @@ class sql_creator
     }
 
     /*
-    // TODO test where this is needed
+    // TODO Prio 3 test where this is needed
     private function str_array_esc_dollar(array $str_array): array
     {
         $result = [];
@@ -3289,7 +3328,7 @@ class sql_creator
         foreach ($this->grp_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
-            // TODO add min
+            // TODO Prio 2 add min
             $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') ' . sql::AS . ' ' . sql::MAX_PREFIX . $field;
         }
 
@@ -3929,8 +3968,10 @@ class sql_creator
                     . ' OR ' . $tbl . $fld . ' IS NULL )';
             } elseif ($typ == sql_par_type::INT_NULL_SAFE) {
                 $sql_where .= $tbl . $fld . $this->equal_operator($typ) . $par->name;
-            } elseif ($typ == sql_par_type::INT_HIGHER) {
+            } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                 $sql_where .= $tbl . $fld . ' >= ' . $par->name;
+            } elseif ($typ == sql_par_type::TIME_LOWER) {
+                $sql_where .= $tbl . $fld . ' < ' . $par->name;
             } elseif ($typ == sql_par_type::INT_LOWER) {
                 $sql_where .= $tbl . $fld . ' =< ' . $par->name;
             } elseif ($typ == sql_par_type::INT_SAME
@@ -4158,15 +4199,17 @@ class sql_creator
                             $result .= $tbl_id . $this->par_lst->name($i) . ' IS NULL ';
                         } elseif ($typ == sql_par_type::NOT_NULL) {
                             $par_offset--;
-                            // TODO review table prefix
+                            // TODO Prio 2 review table prefix
                             $result .= sql_db::LNK_TBL . '.' . $this->par_lst->name($i) . ' IS NOT NULL ';
                         } elseif ($typ == sql_par_type::INT_NOT) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
                             $result .= '( ' . $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_name($par_pos)
                                 . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' IS NULL )';
-                        } elseif ($typ == sql_par_type::INT_HIGHER) {
+                        } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' >= ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::TIME_LOWER) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' < ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_LOWER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' =< ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_SAME
@@ -4399,7 +4442,7 @@ class sql_creator
 
         } else {
 
-            // TODO move this to fvt_lst based
+            // TODO Prio 2 move this to fvt_lst based
 
             if ($this->sub_query or $sc_par_lst->is_sub_tbl()) {
                 $sql = $sql_statement_type;
@@ -4966,7 +5009,7 @@ class sql_creator
                         if ($new_id_fld != '') {
                             $sql .= ' ' . sql::INTO . ' ' . $new_id_fld;
                         }
-                        // TODO check if not the next line needs to be used
+                        // TODO Prio 3 check if not the next line needs to be used
                         // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                     }
                 }
@@ -5163,7 +5206,8 @@ class sql_creator
             and $class != user_profile::class
             and $class != user_type::class
             and $class != user_official_type::class
-            and $class != user_status::class) {
+            and $class != user_status::class
+            and $class != user_log::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -5337,6 +5381,7 @@ class sql_creator
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $lib->singular_table($result);
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
@@ -5483,7 +5528,7 @@ class sql_creator
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_name';
-        // TODO remove these exceptions for a unique name in the "with_log" undate queries
+        // TODO Prio 2 remove these exceptions for a unique name in the "with_log" undate queries
         if ($result == 'link_type_name') {
             $result = fields::FLD_TYPE_NAME;
         }
@@ -5553,6 +5598,9 @@ class sql_creator
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
         }
+        if ($result == 'system_time_type_name') {
+            $result = fields::FLD_TYPE_NAME;
+        }
         return $result;
     }
 
@@ -5599,7 +5647,7 @@ class sql_creator
 
     /**
      * convert the parameter type list to make valid for postgres
-     * TODO move postgres const to a separate class sql_pg
+     * TODO Prio 2 move postgres const to a separate class sql_pg
      * @return array with the postgres parameter types
      */
     public function par_types_to_postgres(array $in_types = []): array
@@ -5610,7 +5658,7 @@ class sql_creator
         $result = array();
         foreach ($in_types as $type) {
             $pg_type = $this->par_type_to_postgres($type);
-            // TODO review const exclusion
+            // TODO Prio 2 review const exclusion
             if ($pg_type != '') {
                 $result[] = $this->par_type_to_postgres($type);
             }
@@ -5646,6 +5694,10 @@ class sql_creator
                 break;
             case sql_par_type::INT_SMALL:
                 $result = sql::PG_PAR_INT_SMALL;
+                break;
+            case sql_par_type::TIME_HIGHER:
+            case sql_par_type::TIME_LOWER:
+                $result = sql_par_type::TIME->value;
                 break;
             case sql_par_type::TEXT_LIST:
                 $result = sql::PG_PAR_TEXT . sql::PG_PAR_LIST;
@@ -5713,7 +5765,7 @@ class sql_creator
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
-            // TODO review
+            // TODO Prio 2 review
             $sql_mid_where = '';
             if ($sc_par_lst->is_prime()) {
                 $grp_id = new group_id();
@@ -5725,7 +5777,7 @@ class sql_creator
                         $pos = 0;
                         foreach ($id_lst as $id_item) {
                             if ($id_item == null) {
-                                // TODO move null to const
+                                // TODO Prio 2 move null to const
                                 $this->add_par(sql_par_type::INT_SMALL, '0');
                             } else {
                                 $this->add_par(sql_par_type::INT_SMALL, $id_item);
@@ -5792,7 +5844,7 @@ class sql_creator
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
-            // TODO use where function
+            // TODO Prio 2 use where function
             $pos = 1;
             $this->add_par(sql_par_type::INT, $id);
             $sql_mid = " " . user_db::FLD_ID .
@@ -5814,6 +5866,27 @@ class sql_creator
         return $qp;
     }
 
+
+    /**
+     * create a sql statement to delete all rows of one user without change log,
+     * e.g. the cache entries or the user log sessions before the user is deleted
+     *
+     * @param string $class the class name of a table in def::CLASSES_NO_CHANGE_LOG with a user_id field
+     * @param int $usr_id the id of the user whose rows are removed
+     * @return sql_par the sql statement to delete the rows of the user
+     */
+    function del_sql_by_user_without_log(string $class, int $usr_id): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class);
+        $this->add_where(user_db::FLD_ID, $usr_id);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->get_table()) . ' ';
+        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $this->par_name(1);
+        $qp->name .= '_by_user';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
+        $qp->par = $this->get_par();
+        return $qp;
+    }
 
     /**
      * create a sql statement to delete all rows that have one of the given ids
@@ -6096,7 +6169,7 @@ class sql_creator
 
     /**
      * create the SQL statement to add a role to the database
-     * TODO review and test the MySQL role
+     * TODO Prio 2 review and test the MySQL role
      * @param string $name
      * @param string $pw
      * @return string the sql statement to create a role

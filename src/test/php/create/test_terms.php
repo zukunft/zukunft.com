@@ -150,6 +150,14 @@ class test_terms
     }
 
     /**
+     * @return term_list without any term e.g. to test the empty debug id
+     */
+    function list_empty(): term_list
+    {
+        return new term_list($this->env->usr1);
+    }
+
+    /**
      * @return term_list with all terms used for the unit tests
      */
     function term_list_all(): term_list
@@ -365,7 +373,7 @@ class test_terms
 
     /**
      * create a huge list of terms for speed testing
-     * TODO review
+     * TODO Prio 2 review
      * @returns term_list a dummy term list for unit tests
      */
     function list_huge(test_cleanup $t, int $size): term_list

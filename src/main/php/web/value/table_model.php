@@ -7,7 +7,7 @@
 
     built once by value_list::table_model from the values and the column definitions, so that
     the html table (value_list::table_by_related_columns) and the svg chart
-    (value_list::table_to_svg) show the same rows, columns, units and ranges
+    (value_list::table_to_svg) show the same rows, columns, units and variance
 
 
     This file is part of zukunft.com - calc with words
@@ -41,12 +41,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 
@@ -82,6 +84,9 @@ class table_model
     public array $col_unit = [];
     // per value column id the names that select the column e.g. "potential loss" and "loss"
     public array $col_names = [];
+    // per column tier selection e.g. value_list::COLUMN_TIERS_EX_MAIN the header names of the
+    // columns that the table shows with it, which the tooltips of the column menu name
+    public array $tier_names = [];
     // the keys of the rows shown, in the order of the impact or of the orders below
     public array $shown_keys = [];
     // the orders of the rows: per order the phrase id of the column and the condition
@@ -149,9 +154,9 @@ class table_model
             $names = $val->grp->phr_lst()->names();
             if (in_array(words::CONFIDENCE, $names)) {
                 $conf = $val;
-            } elseif (in_array(words::LOW, $names)) {
+            } elseif (in_array(triples::SYSTEM_VARIANCE_LOW, $names)) {
                 $low = $val;
-            } elseif (in_array(words::HIGH, $names)) {
+            } elseif (in_array(triples::SYSTEM_VARIANCE_HIGH, $names)) {
                 $high = $val;
             } elseif ($centre === null) {
                 $centre = $val;

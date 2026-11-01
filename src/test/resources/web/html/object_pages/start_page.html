@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -35,22 +39,20 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&amp;id=2">
-                                        alternative
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="/http/view.php?m=85&amp;id=1">
-                                        change view
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=84">
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
                                         add view
                                     </a>
                                 </li>
@@ -137,11 +139,11 @@
             </h4>
             <div class="container text-center">
                 <h4>
-                    <a href="/http/view.php?m=4&amp;id=104">
+                    <a href="/http/view.php?m=4&amp;id=139">
                         global problems
                     </a>
                     ,
-                    <a href="/http/view.php?m=3&amp;id=226">
+                    <a href="/http/view.php?m=3&amp;id=249">
                         potential
                     </a>
                 </h4>
@@ -149,51 +151,48 @@
             <table class="table">
                 <tr>
                     <th>
-                        <a href="/http/view.php?m=3&amp;id=209">
+                        <a href="/http/view.php?m=3&amp;id=220">
                             problem
                         </a>
                     </th>
                     <th>
-                        <a href="/http/view.php?m=3&amp;id=229">
+                        <a href="/http/view.php?m=3&amp;id=252">
                             loss
                         </a>
                         in
-                        <a href="/http/view.php?m=3&amp;id=275">
+                        <a href="/http/view.php?m=3&amp;id=298">
                             trillion
                         </a>
-                        <a href="/http/view.php?m=3&amp;id=279">
+                        <a href="/http/view.php?m=3&amp;id=302">
                             EUR
                         </a>
                     </th>
                     <th>
-                        <a href="/http/view.php?m=3&amp;id=218">
+                        <a href="/http/view.php?m=3&amp;id=241">
                             solution
                         </a>
                     </th>
                     <th>
-                        <a href="/http/view.php?m=3&amp;id=227">
+                        <a href="/http/view.php?m=3&amp;id=250">
                             gain
                         </a>
                         in
                         <a href="/http/view.php?m=3&amp;id=159">
                             billion
                         </a>
-                        <a href="/http/view.php?m=3&amp;id=274">
+                        <a href="/http/view.php?m=3&amp;id=297">
                             htp
                         </a>
-                    </th>
-                    <th>
-                        ...
                     </th>
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=4&amp;id=112">
+                        <a href="/http/view.php?m=4&amp;id=162">
                             global warming
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=78532701773136000">
+                        <a href="/http/view.php?m=5&amp;id=85006725025005745">
                             31.5
                         </a>
                         <sup>
@@ -203,12 +202,12 @@
                         </sup>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=4&amp;id=226">
+                        <a href="/http/view.php?m=4&amp;id=294">
                             reduce climate gas emissions
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=1W-0%2F-%2Fk-0T_2G_">
+                        <a href="/http/view.php?m=5&amp;id=2a-0m-0W-0T_2d_">
                             35.2
                         </a>
                         <sup>
@@ -217,17 +216,15 @@
                             </span>
                         </sup>
                     </td>
-                    <td>
-                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=237" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                        <a href="/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
                             populism
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=78532699633844352">
+                        <a href="/http/view.php?m=5&amp;id=85006722883944625">
                             23.8
                         </a>
                         <sup>
@@ -237,12 +234,12 @@
                         </sup>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=4&amp;id=188">
+                        <a href="/http/view.php?m=4&amp;id=245">
                             avoid wrong decisions
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=0w-0%2F-0T_1h_2G_">
+                        <a href="/http/view.php?m=5&amp;id=1p-0m-0T_22_2d_">
                             34.1
                         </a>
                         <sup>
@@ -251,17 +248,15 @@
                             </span>
                         </sup>
                     </td>
-                    <td>
-                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=255" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
+                        <a href="/http/view.php?m=3&amp;id=278" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
                             poverty
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=78532699635024000">
+                        <a href="/http/view.php?m=5&amp;id=85006722885124273">
                             20.4
                         </a>
                         <sup>
@@ -271,12 +266,12 @@
                         </sup>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=254">
+                        <a href="/http/view.php?m=3&amp;id=277">
                             research
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=0%2F-0T_1y_1z_2G_">
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2J_2K_2d_">
                             34.1
                         </a>
                         <sup>
@@ -285,51 +280,15 @@
                             </span>
                         </sup>
                     </td>
-                    <td>
-                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=257" title="process of teaching and learning">
-                            education
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/http/view.php?m=5&amp;id=78532699635155072">
-                            9.4
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                        <a href="/http/view.php?m=3&amp;id=258">
-                            spending
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/http/view.php?m=5&amp;id=0%2F-0T_2%2F_20_2G_">
-                            14.3
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="/http/view.php?m=3&amp;id=253" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+                        <a href="/http/view.php?m=3&amp;id=276" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
                             health
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=78532699634892928">
+                        <a href="/http/view.php?m=5&amp;id=85006722884993201">
                             13.6
                         </a>
                         <sup>
@@ -339,12 +298,12 @@
                         </sup>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=3&amp;id=256">
+                        <a href="/http/view.php?m=3&amp;id=279">
                             taxes
                         </a>
                     </td>
                     <td>
-                        <a href="/http/view.php?m=5&amp;id=0%2F-0T_1x_2._2G_">
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2I_2L_2d_">
                             8.8
                         </a>
                         <sup>
@@ -353,7 +312,37 @@
                             </span>
                         </sup>
                     </td>
+                </tr>
+                <tr>
                     <td>
+                        <a href="/http/view.php?m=3&amp;id=280" title="process of teaching and learning">
+                            education
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722885255345">
+                            9.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=281">
+                            spending
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2M_2N_2d_">
+                            14.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
                     </td>
                 </tr>
             </table>

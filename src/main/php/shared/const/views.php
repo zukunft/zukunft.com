@@ -95,13 +95,57 @@ class views
     const int LOGIN_RESET_ID = 15;
 
     // easy data change
-    // the calculator: the values of a word/triple as a table with the columns the system column
-    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
-    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    // the calculator page of a phrase with the title, the inputs and the results that the
+    // calculator triples of the phrase select (calculator_views.json, docs/llm/new_view_sample_pv_balance.md)
     const string CALCULATOR = 'calculator';
     const int CALCULATOR_ID = 16;
     const string CALCULATOR_NAME = 'Calculator';
-    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+    // the comparison table: the values of a word/triple as a table with the columns the system
+    // column tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with
+    // the avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    const string COMPARISON_TABLE = 'comparison_table';
+    const int COMPARISON_TABLE_ID = 200;
+    const string COMPARISON_TABLE_NAME = 'Comparison table';
+    // the view of the use case cbam_calculator.json, selected by its name only as well
+    const string CBAM_TREE_CALCULATOR_NAME = 'CBAM Part Tree Calculator';
+    // the view of the use case portfolio_split_calculator.json, selected by its name only as well
+    const string PORTFOLIO_SPLIT_CALCULATOR_NAME = 'Portfolio Split Calculator';
+    // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
+    const string TABLE_EDITOR = 'table_editor';
+    const int TABLE_EDITOR_ID = 194;
+    const string TABLE_EDITOR_NAME = 'Table editor';
+    const string CALCULATOR_EDITOR = 'calculator_editor';
+    const int CALCULATOR_EDITOR_ID = 195;
+    const string CALCULATOR_EDITOR_NAME = 'Calculator editor';
+    // the editor of the formulas of a page phrase, appended to calculator_views.json, so that no id moves
+    const string FORMULA_EDITOR = 'formula_editor';
+    const int FORMULA_EDITOR_ID = 201;
+    const string FORMULA_EDITOR_NAME = 'Formula editor';
+    // the views whose phrase selector sends the name of the phrase that the view shows next
+    // (see frontend::url_with_selected_phrase)
+    const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATOR_EDITOR];
+    // the four pages of a process catch, which guide the user of a question phrase e.g. the PV
+    // calculator from one easy question to the result (process_catch_views.json)
+    const string PROCESS_CATCH_START = 'process_catch_start';
+    const string PROCESS_CATCH_START_NAME = 'process catch start page';
+    const string PROCESS_CATCH_MAIN = 'process_catch_main';
+    const string PROCESS_CATCH_MAIN_NAME = 'process catch main page';
+    const string PROCESS_CATCH_DETAIL = 'process_catch_detail';
+    const string PROCESS_CATCH_DETAIL_NAME = 'process catch detail page';
+    const string PROCESS_CATCH_RESULT = 'process_catch_result';
+    const string PROCESS_CATCH_RESULT_NAME = 'process catch result page';
+    // the page that the next button of a process catch page opens
+    const array PROCESS_CATCH_NEXT = [
+        self::PROCESS_CATCH_START => self::PROCESS_CATCH_MAIN,
+        self::PROCESS_CATCH_MAIN => self::PROCESS_CATCH_DETAIL,
+        self::PROCESS_CATCH_DETAIL => self::PROCESS_CATCH_RESULT,
+    ];
+    // the page that the back button of a process catch page opens
+    const array PROCESS_CATCH_BACK = [
+        self::PROCESS_CATCH_MAIN => self::PROCESS_CATCH_START,
+        self::PROCESS_CATCH_DETAIL => self::PROCESS_CATCH_MAIN,
+        self::PROCESS_CATCH_RESULT => self::PROCESS_CATCH_DETAIL,
+    ];
     const string VALUE_OVERWRITE = 'value_overwrite';
     const int VALUE_OVERWRITE_ID = 17;
     const string RESULT_OVERWRITE = 'result_overwrite';
@@ -519,7 +563,7 @@ class views
     const string MATH_CONST = 'math_const';
     const int MATH_CONST_ID = 185;
     const string MATH_CONST_NAME = 'Mathematical constant';
-    const string MATH_CONST_COM = 'Show a mathematical constant and the related words and formulas';
+    const string MATH_CONST_COM = 'Show all mathematical constants with their description and the main formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
     const int GLOBAL_PROBLEM_ID = 186;
 
@@ -544,8 +588,6 @@ class views
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
-    // the name of the view with the code id self::COMPLETE, which is capitalised unlike the code id
-    const string TEST_ALL_NAME = 'Complete';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
@@ -559,7 +601,7 @@ class views
     const int CURRENCY_ID = 187; // a kind of dummy id that may often change
 
 
-    // TODO views to be created
+    // TODO Prio 2 views to be created
     const string WORD_LIST = 'word_list'; //
 
     const string USER_ADD = 'user_add';
@@ -675,8 +717,8 @@ class views
     ];
 
     // the four versions of the default view of each main object, always in the order default,
-    // detail, range and detail with range, so that the related system view selector of each
-    // version can link to the other three
+    // detail, range and detail with range, so that the edit menu of the navbar offers the four
+    // versions in this order (sandbox::menu_views_ui)
     const array DEFAULT_VIEW_VERSIONS = [
         [self::WORD_ID, self::WORD_DEFAULT_DETAIL_ID, self::WORD_DEFAULT_RANGE_ID, self::WORD_DEFAULT_DETAIL_RANGE_ID],
         [self::TRIPLE_ID, self::TRIPLE_DEFAULT_DETAIL_ID, self::TRIPLE_DEFAULT_RANGE_ID, self::TRIPLE_DEFAULT_DETAIL_RANGE_ID],
@@ -758,11 +800,21 @@ class views
 
     // default view for a phrase and the views that show a word or a triple the same way
     // e.g. the table of the reasons of global warming, which is the triple "global warming reason"
+    // and the table editor, which the navbar opens with the phrase id of the table
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
         self::TERM_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::COMPARISON_TABLE_ID,
+        ...views::EDITOR_MASKS_IDS,
+    ];
+
+    // the editors of a phrase view, which change the database with their save e.g. the calculator editor
+    const array EDITOR_MASKS_IDS = [
+        self::TABLE_EDITOR_ID,
+        self::CALCULATOR_EDITOR_ID,
+        self::FORMULA_EDITOR_ID,
     ];
 
     // system masks that have a source as the main object
@@ -1010,7 +1062,7 @@ class views
     ];
 
     // system masks that only used to display a sandbox object
-    // TODO review SETUP_ID seems to be not correct
+    // TODO Prio 1 review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
         self::START_ID,
         self::ABOUT_ID,
@@ -1074,6 +1126,7 @@ class views
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::COMPARISON_TABLE_ID,
         self::CURRENCY_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
@@ -1222,6 +1275,7 @@ class views
     // but never the login, signup and export masks that an ip user must be able to use
     const array IP_BLOCKED_MASKS_IDS = [
         ...views::CHANGE_MASKS_IDS,
+        ...views::EDITOR_MASKS_IDS,
         self::FORMULA_TEST_ID,
         self::UNDO_ID,
         self::PASTE_TABLE_ID,
@@ -1262,6 +1316,12 @@ class views
     const array PAGE_CACHE_ALLOWED_MASKS_IDS = [
         self::LOGIN_ID,
         self::SIGNUP_ID,
+    ];
+
+    // views that show the live state of the pod, which a cached page would show as it has been at the
+    // time of the caching, so they are never read from or written to the html page cache
+    const array LIVE_MASKS_IDS = [
+        self::ADMIN_MAIN_ID,
     ];
 
     // system masks that trigger an action via GET (no form submission required)
@@ -1465,6 +1525,7 @@ class views
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
         self::CALCULATOR_ID => self::CALCULATOR,
+        self::COMPARISON_TABLE_ID => self::COMPARISON_TABLE,
         self::CURRENCY_ID => self::CURRENCY,
         self::VIEW_DEFAULT_ID => self::VIEW,
         self::COMPONENT_DEFAULT_ID => self::COMPONENT,
@@ -1657,6 +1718,23 @@ class views
         return $result;
     }
 
+    /**
+     * @param int $msk_id the database id of a view e.g. views::WORD_ID, the default view of a word
+     * @return array the ids of the four versions of the default view that the given view is one of
+     *               e.g. the default, detail, range and detail with range view of a word, or an empty
+     *               array if the view is not a version of a default view
+     */
+    function default_versions(int $msk_id): array
+    {
+        $result = [];
+        foreach (self::DEFAULT_VIEW_VERSIONS as $versions) {
+            if (in_array($msk_id, $versions)) {
+                $result = $versions;
+            }
+        }
+        return $result;
+    }
+
     function code_id_to_id(string $code_id): int
     {
         $msk_codes = array_flip(self::TEST_VIEW_IDS);
@@ -1771,6 +1849,7 @@ class views
     }
 
     /**
+     * TODO Prio 3 use code id instead of database id
      * the mask to show the main object of a blocked change mask
      * e.g. if this pod does not allow an ip user to open the word edit mask
      *      show the word default view with the blocked message instead (see /http/view.php)
@@ -1798,6 +1877,8 @@ class views
             self::VIEW_LINK_ADD_ID, self::VIEW_LINK_EDIT_ID, self::VIEW_LINK_DEL_ID => self::TERM_VIEW_DEFAULT_ID,
             self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_DEL_ID => self::COMPONENT_LINK_DEFAULT_ID,
             self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_DEL_ID => self::VIEW_RELATION_DEFAULT_ID,
+            self::TABLE_EDITOR_ID => self::TABLE_ID,
+            self::CALCULATOR_EDITOR_ID, self::FORMULA_EDITOR_ID => self::CALCULATOR_ID,
             default => self::START_ID
         };
     }

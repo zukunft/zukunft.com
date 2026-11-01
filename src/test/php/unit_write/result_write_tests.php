@@ -5,8 +5,8 @@
     test/php/unit_write/result_tests.php - write test RESULTS to the database and check the results
     ------------------------------------
 
-    TODO allow users to overwrite results
-    TODO allow user to convert words or triples to formula names
+    TODO Prio 2 allow users to overwrite results
+    TODO Prio 2 allow user to convert words or triples to formula names
         e.g. if one user creates the word increase and adds a number
              and later another user wants to create a formula, he should be allowed to do it
              the first user should see than a suggestion to calculate the increase instead of having it fixed
@@ -97,7 +97,7 @@ class result_write_tests
         } else {
             $result = 'no ' . word_names::INHABITANTS . ' ' . formula_names::INCREASE . ' value found for ' . words::CH;
         }
-        // TODO review
+        // TODO Prio 2 review
         $target = results::TV_INCREASE_LONG;
         // TODO Prio 1 activate
         //$t->assert('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $result, $target, $t::TIMEOUT_LIMIT_LONG);
@@ -162,7 +162,7 @@ class result_write_tests
         $val_best_guess = new value($t->usr1);
         $val_best_guess->load_by_grp($phr_lst->get_grp_id(), $msg);
         $result = $val_best_guess->number();
-        // TODO check why this value sometimes switch
+        // TODO Prio 1 check why this value sometimes switch
         /*
         $target = 0.18264281677284;
         if ($result != $target) {
@@ -247,7 +247,7 @@ class result_write_tests
         $target = '0.0074';
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-        // TODO add PE frm test
+        // TODO Prio 2 add PE frm test
         //$frm = $t_db->load_formula(TF_PE);
         $frm = $t_db->load_formula(formula_names::INCREASE);
         $res_lst = new result_list($t->usr1);
@@ -256,6 +256,18 @@ class result_write_tests
         $target = '"sales","' . words::PCT . '","increase","' . word_names::TEST_RENAMED . '","2017"';
         $target = word_names::INHABITANTS;
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        // the phrases of all results are loaded with one query for the whole list, also the source phrases
+        $test_name = '... and each result of the list has the names of its source phrases';
+        $src_named = true;
+        foreach ($res_lst->lst() as $res) {
+            if ($res->src_grp->is_id_set() and in_array('', $res->src_grp->phrase_list()->names())) {
+                $src_named = false;
+            }
+            if ($res->src_grp->is_id_set() and $res->src_grp->phrase_list()->is_empty()) {
+                $src_named = false;
+            }
+        }
+        $t->assert_true($test_name, $src_named);
 
         // cleanup - fallback delete (done here and not at the end of run,
         // because the result list tests above load the results of the renamed test formula)

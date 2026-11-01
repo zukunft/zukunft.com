@@ -46,6 +46,7 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -62,11 +63,13 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'component_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
@@ -84,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -125,6 +129,9 @@ class view_base extends sandbox_code_id
 
     // the style e.g. to define the width
     protected ?int $style_id = null;
+
+    // the view id of the editor of this view, which the edit menu of the navbar offers
+    public ?int $editor_id = null;
 
 
     /*
@@ -170,6 +177,7 @@ class view_base extends sandbox_code_id
         if (array_key_exists(json_fields::STYLE, $json_array)) {
             $this->set_style_id($json_array[json_fields::STYLE]);
         }
+        $this->editor_id = $json_array[json_fields::EDITOR_ID] ?? null;
         // set the components
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
@@ -242,6 +250,23 @@ class view_base extends sandbox_code_id
         return $this->cmp_lst;
     }
 
+    /**
+     * @param type_lists $typ_lst the frontend cache with the component types
+     * @param user_message $msg to report a component type that cannot be found
+     * @return bool true if a component of this view shows a value table e.g. the start page, so that
+     *              the edit menu of the navbar offers the column and form selection of the table
+     */
+    function shows_value_table(type_lists $typ_lst, user_message $msg): bool
+    {
+        $result = false;
+        foreach ($this->cmp_lst->lst() as $cmp) {
+            if (in_array($cmp->type_code_id($typ_lst, $msg), component_types::TABLE_MENU_TYPES)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
     function set_style_id(?int $style_id = null): void
     {
         $this->style_id = $style_id;
@@ -303,7 +328,18 @@ class view_base extends sandbox_code_id
         return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
-    function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
+     * @param user_message $msg to report a problem of the title name
+     * @param data_object|null $dto the request cache e.g. with the calculator triples of the page phrase
+     * @return string the title of the page: the object name and the view name, or for the
+     *                calculator the calculator label of the page phrase if it has one
+     */
+    function title(
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        user_message                                     $msg,
+        ?data_object                                     $dto = null
+    ): string
     {
         // the object name comes first, then the view name, joined by the configured title separator
         $html = new html_base();
@@ -312,7 +348,11 @@ class view_base extends sandbox_code_id
         if ($dbo instanceof sandbox_value) {
             $name = $dbo->title_name($msg);
         }
-        return $html->concat_title_text($name, $this->name(), $msg);
+        $view_name = $this->name();
+        if ($this->code_id == views::CALCULATOR and $dto != null and ($dbo instanceof word or $dbo instanceof triple)) {
+            $view_name = new calculator($dbo->phrase(), $dto->phr_lst)->page_label() ?: $view_name;
+        }
+        return $html->concat_title_text($name, $view_name, $msg);
     }
 
 

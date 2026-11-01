@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_list.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -71,6 +73,35 @@ class view_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'view_list', 'view_list', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the api message of a view list is mapped to one frontend view per entry
+        $test_name = 'the api mapper adds each view of the api message to the list';
+        $msk_lst = new view_list();
+        $msk_lst->api_mapper(json_decode($t_msk->view_list()->api_json(), true));
+        $t->assert($test_name, $msk_lst->count(), $t_msk->view_list()->count());
+
+        // a list entry without an id is reported, so the caller can show the problem
+        $test_name = 'a view list entry without an id is reported';
+        $msk_lst = new view_list();
+        $api_json = [[json_fields::NAME => views::START_NAME]];
+        $t->assert_false($test_name, $msk_lst->api_mapper($api_json)->is_ok());
+
+        $t->subheader($ts . 'sort');
+
+        // e.g. the edit menu of the navbar shows the views of a group sorted by name
+        $test_name = 'the views are sorted by name independent of the case';
+        $msk_lst = $t_msk->view_list_ui();
+        $msk_lst->sort_by_name();
+        $first_name = $msk_lst->lst()[0]->name();
+        $t->assert($test_name, $first_name, views::EDUCATION_NAME);
+        // negative: an empty list stays empty
+        $test_name = '... and an empty list stays empty';
+        $msk_lst = new view_list();
+        $msk_lst->sort_by_name();
+        $msk_cnt = $msk_lst->count();
+        $t->assert($test_name, $msk_cnt, 0);
     }
 
 }

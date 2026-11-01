@@ -51,8 +51,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class server_guard
@@ -203,6 +205,58 @@ class server_guard
             header('X-Frame-Options: SAMEORIGIN');
             header('Referrer-Policy: strict-origin-when-cross-origin');
         }
+    }
+
+    /**
+     * the time when the request has been received e.g. to count the script loading of an api call;
+     * $_SERVER is read here because this is the request boundary, like request_url
+     * @return float the microtime of the request or 0 if it is not known
+     */
+    public static function request_start_time(): float
+    {
+        return (float)($_SERVER[rest_ctrl::REQUEST_TIME_FLOAT] ?? 0);
+    }
+
+    /**
+     * the url of the request as received e.g. to log a slow api call in the system times;
+     * $_SERVER is read here because this is the request boundary, like enforce_tls / enforce
+     * @return string the path and query of the request or '' if the script has not been called by an url
+     */
+    public static function request_url(): string
+    {
+        return $_SERVER[rest_ctrl::REQUEST_URI] ?? '';
+    }
+
+    /**
+     * the http method of the request e.g. to count a write request in the user log;
+     * $_SERVER is read here because this is the request boundary, like request_url
+     * @return string the http method e.g. POST or GET if the script has not been called by an url
+     */
+    public static function request_method(): string
+    {
+        return $_SERVER[rest_ctrl::REQUEST_METHOD] ?? rest_ctrl::GET;
+    }
+
+    /**
+     * the data user that the request names in url_var::USER e.g. the browsing user of an own pod call
+     * (see user::data_user_id); $_GET is read here because this is the request boundary, like request_url
+     * @return int the requested user id or 0 if the request names no user or no valid id e.g. a negative id
+     */
+    public static function requested_user_id(): int
+    {
+        return self::valid_user_id($_GET[url_var::USER] ?? 0);
+    }
+
+    /**
+     * pure user id check of a url parameter
+     * @param mixed $url_value the value of the url parameter e.g. a string or an array for u[]=x
+     * @return int the user id or 0 if the value is no positive integer
+     */
+    public static function valid_user_id(mixed $url_value): int
+    {
+        // a cast would turn e.g. the array of u[]=x into the id 1
+        $options = ['options' => ['default' => 0, 'min_range' => 1]];
+        return filter_var($url_value, FILTER_VALIDATE_INT, $options);
     }
 
     /**

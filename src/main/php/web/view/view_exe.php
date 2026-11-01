@@ -40,11 +40,17 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -53,6 +59,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'components.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -60,6 +67,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -68,17 +76,22 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -93,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_exe extends view_base
 {
+
 
     /*
      * execute
@@ -128,19 +142,53 @@ class view_exe extends view_base
         if ($this->code_id != '') {
             $form_name = $this->code_id;
         } else {
-            $form_name = $this->name();
+            // a user view has no code id, so its name is the form name, without the chars that
+            // an html id may not contain, because the inputs of the page refer to the form by its id
+            $form_name = trim(preg_replace('/[^\p{L}\p{N}_-]+/u', '_', $this->name()), '_');
         }
 
         if ($this->id() <= 0) {
             $this->log_err("The view id must be loaded to display it.");
         } else {
+            // the view of the page is in the request cache, so that a component can show its name
+            // and description (see system_page::view_title)
+            if ($cfg != null) {
+                $cfg->msk = $this;
+            }
+            $this->add_page_cache($dbo, $msg, $cfg);
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
-            $result .= $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+            $result .= new system_page()->calculator_result_width_style($dbo, $cfg);
+            // the page that the browser builds from the json data replaces the components, which
+            // creates nothing for a phrase without calculator triples or if the config allows no
+            // javascript for the calculator, so that the page of the server is shown
+            $js_page = '';
+            if ($this->is_javascript_page($url_array)) {
+                $js_page = new system_page()->calculator_json($dbo, $msg, $cfg, $form_name, $this->id());
+            }
+            if ($js_page != '') {
+                $result .= $js_page;
+            } else {
+                // the style of the view is the page class e.g. use-case for the grid of a use case page
+                $entries = $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+                $result .= new html_base()->add_style($entries, $this->get_style_id());
+            }
             $result .= $this->dsp_type_close($msg);
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the view
+     * @return bool true if the page that the browser builds from its json data may be shown, which
+     *              only the calculator has at the moment; sc=0 (url_var::JAVASCRIPT) asks for the
+     *              page of the server
+     */
+    private function is_javascript_page(array $url_array): bool
+    {
+        $refused = ($url_array[url_var::JAVASCRIPT] ?? '') == url_var::FALSE;
+        return !$refused and $this->code_id == views::CALCULATOR;
     }
 
     /**
@@ -164,6 +212,7 @@ class view_exe extends view_base
         array                                            $url_array = []
     ): string
     {
+        global $ui_sys;
         $html = new html_base();
 
         $this->log_debug($this->dsp_id());
@@ -187,6 +236,9 @@ class view_exe extends view_base
             $style_id = null;
             // the columns of a side-or-below group that are stacked on small screens
             $col_lst = [];
+            // a use case page e.g. the calculator shows its first row as the header and its
+            // side-or-below group as panels in one grid instead of the bootstrap rows and columns
+            $use_case = $html->get_style_code($this->get_style_id()) == view_styles::USE_CASE;
             foreach ($this->cmp_lst->lst() as $cmp) {
                 $pos_type = $cmp->pos_type_code_id($cfg->typ_lst_cache);
                 // add previous collected components to the final result
@@ -196,13 +248,16 @@ class view_exe extends view_base
                         if ($col_lst != []) {
                             // close the side-or-below group with the last collected column
                             $col_lst[] = $row;
-                            $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                            $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
                             $col_lst = [];
+                            $style_id = null;
+                        } elseif ($use_case and $result == '') {
+                            $result .= $html->block(html_base::HEADER, $row);
                             $style_id = null;
                         } elseif ($auto_row) {
                             // the row uses the style of the component e.g. col-md-4 for a short line
                             // or the full page width if no style is set
-                            // TODO easy move code to HTML class
+                            // TODO Prio 2 easy move code to HTML class
                             $row_style = $html->get_style_code($style_id);
                             if ($row_style == '') {
                                 $row_style = view_styles::DEFAULT_ROW;
@@ -241,7 +296,13 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache, $msg)) {
                     $auto_row = false;
                 }
+                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
+                // the render time per component type splits the url to html time in the report
+                $ui_sys?->start_html_step(microtime(true));
                 $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $pattern, $test_mode, $url_array);
+                $ui_sys?->end_html_step($tc_id, microtime(true));
+                // the time of this message is the creation of this component incl. its api calls, so a slow component can be found
+                log_debug('component ' . $cmp->dsp_id() . ' rendered', url_var::DEBUG_LEVEL_MAIN_STEP);
                 // a combined component shares the row with the previous one, but it is still an own
                 // component, so it starts on an own line, e.g. the plural of a word below its
                 // description instead of behind it; a component that creates no html adds no line
@@ -265,7 +326,6 @@ class view_exe extends view_base
                 // Do not add the row or column style
                 // if the style has been added by the component already
                 // TODO Prio 1 find a more strait forward way to define it
-                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
                 if ($cmp->no_row_style($tc_id)) {
                     $style_id = null;
                 }
@@ -274,7 +334,7 @@ class view_exe extends view_base
             if ($col_lst != []) {
                 // close a side-or-below group at the end of the view
                 $col_lst[] = $html->add_style($row, $style_id);
-                $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
             } elseif ($row != '') {
                 $result .= $row;
             }
@@ -290,17 +350,83 @@ class view_exe extends view_base
      * as the screen gets narrower than the configured side widths
      *
      * @param array $col_lst the html code of the columns
+     * @param bool $use_case true for a use case page, whose first column is the input panel and
+     *                       every following column a result panel in one grid
      * @return string the html code of the row with the wrapping columns
      */
-    private function dsp_side_or_below_row(array $col_lst, user_message $msg): string
+    private function dsp_side_or_below_row(array $col_lst, user_message $msg, bool $use_case = false): string
     {
-        return new html_base()->div_row_wrapping_cols($col_lst, $msg);
+        $html = new html_base();
+        if (!$use_case) {
+            return $html->div_row_wrapping_cols($col_lst, $msg);
+        }
+        // empty columns are skipped like in a bootstrap row, so the first panel shown is the input panel
+        $panels = '';
+        foreach (array_values(array_filter($col_lst, fn($col) => $col != '')) as $pos => $col) {
+            $tag = $pos == 0 ? html_base::ASIDE : html_base::SECTION;
+            $panels .= $html->block($tag, $col, styles::PANEL);
+        }
+        return $html->div($panels, styles::GRID);
+    }
+
+
+    /**
+     * fill the request cache with the data that the components of this view show, before the
+     * title and the components are created, so that their html creation needs no backend call;
+     * for the calculator these are the phrases, values and results of one phraseData answer
+     * (docs/llm/new_view_sample_pv_balance.md), for the start page the data of its table
+     *
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param data_object|null $dto the request cache to fill
+     * @return void
+     */
+    function add_page_cache(
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        user_message                                     $msg,
+        ?data_object                                     $dto
+    ): void
+    {
+        if ($this->code_id == views::CALCULATOR and $dto != null and $dto->online
+            and ($dbo instanceof word or $dbo instanceof triple)) {
+            $this->add_calculator_data($dbo->phrase(), $dto, $msg);
+        }
+        if ($dto != null) {
+            foreach ($this->cmp_lst->lst() as $cmp) {
+                $cmp->add_page_cache($dto, $msg);
+            }
+        }
     }
 
 
     /*
      * internal execute
      */
+
+    /**
+     * fill the request cache of a calculator page from one answer of the phraseData api, once per
+     * page: the calculator tree of the page phrase with the labels, hints, flags and selector
+     * options, the values, the results with their context, the formulas and the sources; only if
+     * the answer names nothing that it does not contain, the cache is marked as complete, so that
+     * else the components load the missing part
+     *
+     * @param phrase $phr the phrase of the page e.g. example PV installation
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_calculator_data(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        // the title step and the show step both call this, and a second fill would add every formula and source twice
+        if ($dto->page_data == []) {
+            $phd = new phrase_data();
+            $json = $phd->load_from_walk($phr, $msg);
+            $dto->page_data = $json;
+            if ($json != [] and $phd->fill($json, $dto, $msg)) {
+                $dto->page_data_complete = true;
+            }
+        }
+    }
 
     /**
      * return the beginning html code for the view_type;
@@ -339,7 +465,7 @@ class view_exe extends view_base
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return string
      */
     protected function user(): string
@@ -515,7 +641,7 @@ class view_exe extends view_base
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
-                // TODO ??? should this not be the default entry type
+                // TODO Prio 2 ??? should this not be the default entry type
                 $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
@@ -597,7 +723,8 @@ class view_exe extends view_base
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();
-            $view_name = $html->esc($msk->name());
+            // the link escapes the name itself
+            $view_name = $msk->name();
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {

@@ -59,7 +59,7 @@ class id
 
     /**
      * create a 64-bit integer id based on four 16-bit integer ids
-     * TODO check that system is running on 64 bit hardware
+     * TODO Prio 2 check that system is running on 64 bit hardware
      *
      * @param array $id_lst list of prime phrase ids or formula id (16 bit) that are used to select a value or result
      * @return int the group or result id based on the given id list as 64-bit integer

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test buttons - zukunft.com
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="container mt-4">
+                <h2>
+                    button colour sets
+                </h2>
+                <h4>
+                    main button (style_html.css)
+                </h4>
+                <p>
+                    every button of the pages, also with a bootstrap outline class, and the main buttons of the editors
+                </p>
+                <p>
+                    <button class="btn" type="button">
+                        active
+                    </button>
+                    <button class="btn" type="button" style="background: var(--btn-main-hover);">
+                        mouse over
+                    </button>
+                    <button class="btn" type="button" disabled>
+                        inactive
+                    </button>
+                    <button class="btn btn-outline-secondary" type="button">
+                        outline secondary
+                    </button>
+                    <button class="btn btn-outline-success" type="button">
+                        outline success
+                    </button>
+                    <button class="btn btn-outline-primary" type="button">
+                        outline primary
+                    </button>
+                </p>
+                <h4>
+                    editor buttons (calculator_editor.css)
+                </h4>
+                <p>
+                    in a frame, because the editor css also sets its page e.g. the background and the fonts
+                </p>
+                <iframe title="editor buttons" style="width: 100%; height: 340px; border: none;" srcdoc="&lt;style&gt;
+:root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+&lt;/style&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;/src/main/resources/style/style_html.css&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/src/main/resources/style/calculator_editor.css&quot;&gt;&lt;div class=&quot;editor&quot; style=&quot;padding: 8px;&quot;&gt;&lt;p&gt;main button: load and save&lt;/p&gt;&lt;p&gt;&lt;button class=&quot;btn primary&quot;&gt;Load&lt;/button&gt; &lt;button class=&quot;btn primary&quot; style=&quot;background: var(--btn-main-hover); border-color: var(--btn-main-hover);&quot;&gt;mouse over&lt;/button&gt; &lt;button class=&quot;btn primary&quot; disabled&gt;Save without changes&lt;/button&gt;&lt;/p&gt;&lt;p&gt;editor button: the other actions e.g. undo&lt;/p&gt;&lt;p&gt;&lt;button class=&quot;btn&quot;&gt;Undo&lt;/button&gt; &lt;button class=&quot;btn&quot; style=&quot;border-color: var(--accent);&quot;&gt;mouse over&lt;/button&gt; &lt;button class=&quot;btn&quot; disabled&gt;Redo without history&lt;/button&gt; &lt;button class=&quot;btn small&quot;&gt;small&lt;/button&gt;&lt;/p&gt;&lt;p&gt;ghost button: a cancel next to a main action&lt;/p&gt;&lt;p&gt;&lt;button class=&quot;btn ghost&quot;&gt;Cancel&lt;/button&gt; &lt;button class=&quot;btn ghost&quot; style=&quot;background: var(--accent-soft);&quot;&gt;mouse over&lt;/button&gt;&lt;/p&gt;&lt;p&gt;danger button: a remove&lt;/p&gt;&lt;p&gt;&lt;button class=&quot;btn danger&quot;&gt;Remove field&lt;/button&gt;&lt;/p&gt;&lt;/div&gt;">
+                </iframe>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

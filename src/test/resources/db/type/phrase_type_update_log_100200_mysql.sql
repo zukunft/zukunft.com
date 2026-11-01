@@ -27,7 +27,7 @@ SELECT phrase_type_update_log_100200
         1,
         108,
         'changed description',
-        '1',
+        null,
         1,
         106,
         'standard');

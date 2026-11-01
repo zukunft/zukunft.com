@@ -673,16 +673,9 @@ class sandbox_link_named extends sandbox_link
         if ($obj::class == phrase::class or $obj::class == term::class) {
             $obj = $obj->obj();
         }
+        // a given type is the change e.g. of the update put, so it is kept like the given name
         if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
-        } elseif ($this->type_id($msg) != $obj->type_id($msg)) {
-            $lib = new library();
-            $msg->add(msg_id::DIFF_TYPE, [
-                msg_id::VAR_TYPE => $obj->type_name(),
-                msg_id::VAR_TYPE_CHK => $this->type_name(),
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-            ]);
         }
         if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;
@@ -830,7 +823,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp

@@ -71,6 +71,7 @@ include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::MODEL_WORD . 'word_db.php';
@@ -117,6 +118,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -688,10 +690,18 @@ class word extends sandbox_code_id
         // fall back to the frontend request cache if the caller has no type list,
         // like dsp_type_selector above which reads $ui_sys->typ_lst_cache directly
         if ($typ_lst == null) {
-            log_err('type list cache missing, falling back to the request cache');
+            log_err_msg_ui('type list cache missing, falling back to the request cache', $msg);
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
+        // e.g. a cache that has not got the phrase types from the backend, which the user cannot fix
+        if (!$typ_lst->has_phrase_types()) {
+            log_err_msg_ui('the phrase types are missing in the type list cache, so the phrase type of '
+                . $this->name() . ' cannot be selected', $msg);
+            $result = '';
+        } else {
+            $result = $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
+        }
+        return $result;
     }
 
 
@@ -782,7 +792,7 @@ class word extends sandbox_code_id
      *
      * @param string $type the ENUM string of the fixed type
      * @returns bool true if the word has the given type
-     * TODO Switch to php 8.1 and real ENUM
+     * TODO Prio 2 Switch to php 8.1 and real ENUM
      */
     function is_type(string $type, user_message $msg): bool
     {
@@ -802,6 +812,14 @@ class word extends sandbox_code_id
     function is_time(user_message $msg): bool
     {
         return $this->is_type(phrase_types::TIME, $msg);
+    }
+
+    /**
+     * @return bool true if the word says how a number has been found e.g. "assumed" or "modelled"
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
     }
 
     /**
@@ -886,7 +904,7 @@ class word extends sandbox_code_id
     }
 
     /*
-     * TODO deprecate the following functions
+     * TODO Prio 2 deprecate the following functions
      */
 
 

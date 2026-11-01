@@ -5,7 +5,7 @@
     model/db/sql_par_field_list.php - a list of sql parameter fields
     -----------------------------
 
-    TODO split this list into
+    TODO Prio 2 split this list into
          1. a list with just the field, value and type that should be used for the sql parameters
             and in the sql creator as a replacement for the fields, values und types object
          2. a list with additional the related name field for the user change log
@@ -228,6 +228,26 @@ class sql_par_field_list
         } else {
             $fld->type_id = null;
         }
+        $this->add($fld);
+    }
+
+    /**
+     * add a field whose value an update adds to the database value instead of replacing it e.g. a counter,
+     * so that two requests written at the same time cannot overwrite the count of each other
+     *
+     * @param string $name the field name e.g. requests
+     * @param int $value the number that is added to the database value
+     * @param sql_field_type $type the sql type of the field e.g. sql_field_type::INT
+     * @return void
+     */
+    function add_increment(string $name, int $value, sql_field_type $type): void
+    {
+        $fld = new sql_par_field();
+        $fld->name = $name;
+        $fld->value = $value;
+        $fld->type = $type->par_type();
+        $fld->old = null;
+        $fld->increment = true;
         $this->add($fld);
     }
 

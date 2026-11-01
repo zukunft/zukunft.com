@@ -77,7 +77,7 @@ class sys_log extends log
     public ?DateTime $update_time = null;
     public ?string $log_text = null;
     public ?string $description = null;
-    // TODO use a simple user object instead of the id
+    // TODO Prio 2 use a simple user object instead of the id
     // the user or user group who is supposed to fix the issue
     public ?int $solver_id = null;
     // the solver name transported in the api message so the frontend needs no db lookup to show it
@@ -237,17 +237,17 @@ class sys_log extends log
     {
         $html = new html_base();
         $row = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format('Y-m-d H:i:s'));
-        // TODO show the username instead of the id
-        $row .= $html->td($this->user_id());
+        // the user name is user-controlled, so it is escaped like the log text (stored xss)
+        $row .= $html->td($html->esc($this->user_text()));
         // the log text can embed request-derived strings (e.g. a blocked url), so escape it before
         // it is rendered into the admin error-log page (stored xss otherwise, see html_base::td)
         $row .= $html->td($html->esc($this->text()));
-        $row .= $html->td($this->owner_id());
-        $row .= $html->td($this->status());
+        $row .= $html->td($html->esc($this->owner_text()));
+        $row .= $html->td($html->esc($this->status_text()));
         return $html->tr($row);
     }
 
@@ -284,24 +284,24 @@ class sys_log extends log
      */
     function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
-        global $mtr, $sys;
+        global $mtr, $ui_sys;
 
         $html = new html_base();
         $row = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format(DateTimeInterface::ATOM));
         // escape the user-controlled name and the request-derived log fields (stored xss)
-        // TODO show the user name instead of the id
+        // TODO Prio 2 show the user name instead of the id
         $row .= $html->td($html->esc($this->user_name()));
         $row .= $html->td($html->esc($this->text()));
         $row .= $html->td($html->esc($this->trace()));
         $row .= $html->td($html->esc($this->prg_part()));
-        $row .= $html->td($this->owner_id());
-        $row .= $html->td($this->status());
+        $row .= $html->td($html->esc($this->owner_text()));
+        $row .= $html->td($html->esc($this->status_text()));
         if ($usr->is_admin() or $usr->is_system()) {
-            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $ui_sys->typ_lst_cache->sys_log_sta->id(sys_log_statuum::CLOSED);
             // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
             $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
@@ -315,7 +315,7 @@ class sys_log extends log
     function header(): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('creation time');
         $result .= $html->th('user');
         $result .= $html->th('issue description');
@@ -330,7 +330,7 @@ class sys_log extends log
     function header_admin(): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('creation time');
         $result .= $html->th('user');
         $result .= $html->th('issue description');
@@ -347,7 +347,7 @@ class sys_log extends log
      */
     function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
-        global $mtr, $sys;
+        global $mtr, $ui_sys;
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
@@ -370,7 +370,7 @@ class sys_log extends log
         $row_text .= $html->td($this->status_name());
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $ui_sys->typ_lst_cache->sys_log_sta->id(sys_log_statuum::CLOSED);
                 // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
                 $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
@@ -403,7 +403,7 @@ class sys_log extends log
         return $this->owner($msg)->name();
     }
 
-    // TODO review
+    // TODO Prio 2 review
     function status_name(): string
     {
         return '"' . $this->status . '"';
@@ -414,10 +414,42 @@ class sys_log extends log
      * internal helper
      */
 
+    /**
+     * @return string the name of the user who has caused the entry as sent by the api or the id if the name is missing
+     */
+    private function user_text(): string
+    {
+        $result = $this->user_name() ?? '';
+        if ($result == '') {
+            $result = (string)$this->user_id();
+        }
+        return $result;
+    }
+
+    /**
+     * the owner (solver) for a table cell without a database lookup, unlike owner_name
+     * @return string the name of the owner as sent by the api, the id if the name is missing or empty without an owner
+     */
+    private function owner_text(): string
+    {
+        $result = $this->solver_name ?? '';
+        if ($result == '' and ($this->owner_id() ?? 0) > 0) {
+            $result = (string)$this->owner_id();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the status e.g. "new" or the id if the status is not in the type cache
+     */
     private function status_text(): string
     {
         global $ui_sys;
-        return $ui_sys->typ_lst_cache->sys_log_sta->name($this->status());
+        $result = $ui_sys?->typ_lst_cache?->sys_log_sta?->name($this->status()) ?? '';
+        if ($result == '') {
+            $result = (string)$this->status();
+        }
+        return $result;
     }
 
 }

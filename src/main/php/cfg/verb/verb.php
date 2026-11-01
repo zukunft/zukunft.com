@@ -7,7 +7,7 @@
 
     $vrb is the suggested var name
 
-    TODO maybe move the reverse to a linked predicate
+    TODO Prio 3 maybe move the reverse to a linked predicate
 
 
     This file is part of zukunft.com - calc with words
@@ -121,8 +121,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 class verb extends type_object
 {
 
-    // TODO MAYBE base verb on named sandbox object like suggested in the frontend or change the frontend object
-    // TODO add an easy way to get the name from the code id
+    // TODO Prio 3 MAYBE base verb on named sandbox object like suggested in the frontend or change the frontend object
+    // TODO Prio 2 add an easy way to get the name from the code id
 
 
     /*
@@ -151,7 +151,7 @@ class verb extends type_object
     // name used if more than one word is shown
     // e.g. instead of "ABB" "is a" "company"
     // use "ABB", Nestlé" "are" "companies"
-    // TODO move to language forms
+    // TODO Prio 2 move to language forms
     public ?string $plural = null;
     // name used if displayed the other way round
     // e.g. for "country" "has a" "Human Development Index"
@@ -252,7 +252,7 @@ class verb extends type_object
     {
         parent::api_mapper($api_json, $msg, $trusted);
 
-        // TODO add user to request new verbs via api
+        // TODO Prio 2 add user to request new verbs via api
 
         $this->common_mapper($api_json, $msg);
 
@@ -303,7 +303,7 @@ class verb extends type_object
 
     function common_mapper(array $json, user_message $msg): bool
     {
-        // TODO move plural to language forms
+        // TODO Prio 2 move plural to language forms
 
         if (array_key_exists(json_fields::PLURAL, $json)) {
             if ($json[json_fields::PLURAL] <> '') {
@@ -674,7 +674,7 @@ class verb extends type_object
             def_shared::FALLBACK_VERB_TRIPLES_READ);
         return (int)($limit ?? def_shared::FALLBACK_VERB_TRIPLES_READ);
     }
-    // TODO test set_by_api_json
+    // TODO Prio 2 test set_by_api_json
 
 
     /*
@@ -778,7 +778,7 @@ class verb extends type_object
             $vars[json_fields::NAME_IN_FORMULA] = $this->frm_name;
         }
 
-        // TODO add the protection type
+        // TODO Prio 2 add the protection type
         /*
         if ($this->protection_id > 0 and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protection_type::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
@@ -958,7 +958,7 @@ class verb extends type_object
         return $result;
     }
 
-    // TODO to review: additional check the database foreign keys
+    // TODO Prio 2 to review: additional check the database foreign keys
     function not_used_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par(verb::class);
@@ -1130,7 +1130,7 @@ class verb extends type_object
     }
 
     /**
-     * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
+     * TODO Prio 2 return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
@@ -1207,7 +1207,7 @@ class verb extends type_object
             }
         }
 
-        // TODO log internal errors as errors but user warnings as info
+        // TODO Prio 2 log internal errors as errors but user warnings as info
         if (!$msg->is_ok()) {
             log_info($msg->text());
         }
@@ -1275,11 +1275,11 @@ class verb extends type_object
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
                 $sc = $db_con->sql_creator();
-                // TODO include deleting of user excludes in the sql function
+                // TODO Prio 1 include deleting of user excludes in the sql function
                 $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
                 $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
             } else {
-                // TODO: create a new verb and request to delete the old
+                // TODO Prio 2 create a new verb and request to delete the old
                 log_err_msg('Creating a new verb is not yet possible', $msg);
             }
         }
@@ -1379,7 +1379,7 @@ class verb extends type_object
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        // TODO move to language forms
+        // TODO Prio 2 move to language forms
         if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(

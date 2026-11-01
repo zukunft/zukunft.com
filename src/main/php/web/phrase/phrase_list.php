@@ -5,7 +5,7 @@
     web/phrase/phrase_list.php - create the html code to display a phrase list
     --------------------------
 
-    TODO create a value matrix based on this phrase list
+    TODO Prio 3 create a value matrix based on this phrase list
 
 
     This file is part of zukunft.com - calc with words
@@ -112,6 +112,10 @@ class phrase_list extends sandbox_list_named
     // are defined like the charts: the tier and the assignment of the order
     const int SORT_LEVELS = 2;
 
+    // the names of the linked phrases by direction and phrase name of a copy for the build of
+    // one table (see with_link_index) or null if each request scans the list
+    private ?array $link_index = null;
+
     /*
      * set and get
      */
@@ -163,6 +167,29 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
+     * the phrase with the given name from this list or else from the backend, e.g. the name that a
+     * datalist field submits instead of the phrase id
+     *
+     * @param string $name the name of the word or triple
+     * @param user_message $msg to report a phrase name that the user needs to correct
+     * @return phrase|null the phrase or null if no phrase has the name
+     */
+    function load_or_get_by_name(string $name, user_message $msg): ?phrase
+    {
+        $phr = $this->get_by_name($name, $msg);
+        if ($phr == null) {
+            $phr_loaded = new phrase();
+            if ($phr_loaded->load_by_name($name, $msg)) {
+                $phr = $phr_loaded;
+            } else {
+                // an unknown phrase name is a user input that the user can correct
+                $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $name]);
+            }
+        }
+        return $phr;
+    }
+
+    /**
      * add the phrases related to the given phrase to the list
      * @param phrase $phr
      * @param foaf_direction $direction
@@ -174,7 +201,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
 
-        // TODO move the
+        // TODO Prio 2 move the
         $api = new rest_call();
         $data = array();
         $data[url_var::PHRASE] = $phr->id();
@@ -490,7 +517,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
 
-        // TODO move the
+        // TODO Prio 2 move the
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
@@ -545,7 +572,7 @@ class phrase_list extends sandbox_list_named
     function result_phrases_most_relevant(): phrase_list
     {
         $phr = new phrase_list();
-        // TODO review temp solution
+        // TODO Prio 2 review temp solution
         //$phr->load_by_name();
         return $phr;
     }
@@ -586,23 +613,56 @@ class phrase_list extends sandbox_list_named
      */
     private function linked_names(phrase $phr, foaf_direction $direction): array
     {
-        $result = [];
-        foreach ($this->lst() as $lst_phr) {
-            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
-                $trp = $lst_phr->obj();
-                // the parents are on the "to" side of the triples that start with the phrase
-                [$own, $linked] = [$trp->get_from(), $trp->get_to()];
-                if ($direction == foaf_direction::DOWN) {
-                    [$own, $linked] = [$trp->get_to(), $trp->get_from()];
-                }
-                if ($own?->name() == $phr->name()) {
-                    $name = $linked?->name();
-                    if ($name != null and !in_array($name, $result)) {
-                        $result[] = $name;
+        if ($this->link_index !== null) {
+            $result = $this->link_index[$direction->value][$phr->name() ?? ''] ?? [];
+        } else {
+            $result = [];
+            foreach ($this->lst() as $lst_phr) {
+                if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
+                    $trp = $lst_phr->obj();
+                    // the parents are on the "to" side of the triples that start with the phrase
+                    [$own, $linked] = [$trp->get_from(), $trp->get_to()];
+                    if ($direction == foaf_direction::DOWN) {
+                        [$own, $linked] = [$trp->get_to(), $trp->get_from()];
+                    }
+                    if ($own?->name() == $phr->name()) {
+                        $name = $linked?->name();
+                        if ($name != null and !in_array($name, $result)) {
+                            $result[] = $name;
+                        }
                     }
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * a copy of this list that answers child_names and parent_names from an index of the
+     * triple links created in one pass by the rules of linked_names, e.g. for the build of
+     * one table, which asks for the children of the same phrases many times; the copy must not
+     * be changed, because the index would not follow a change of the list or of its triples
+     *
+     * @return phrase_list the copy with the link index
+     */
+    function with_link_index(): phrase_list
+    {
+        $index = [foaf_direction::UP->value => [], foaf_direction::DOWN->value => []];
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
+                $trp = $lst_phr->obj();
+                $from = $trp->get_from()?->name();
+                $to = $trp->get_to()?->name();
+                // the parents of the from side are on the to side, the children of the to side on the from side
+                foreach ([foaf_direction::UP->value => [$from, $to], foaf_direction::DOWN->value => [$to, $from]] as $dir => [$own, $name]) {
+                    if ($name != null and !in_array($name, $index[$dir][$own ?? ''] ?? [])) {
+                        $index[$dir][$own ?? ''][] = $name;
+                    }
+                }
+            }
+        }
+        $result = clone $this;
+        $result->link_index = $index;
         return $result;
     }
 
@@ -631,6 +691,105 @@ class phrase_list extends sandbox_list_named
             }
         }
         return $result;
+    }
+
+    /**
+     * the given phrase and every phrase above it in this list: the sides that a triple is built
+     * from and the "to" side of each triple that links a phrase up, followed to the top, e.g. for
+     * "populism solution" its sides "solution" and "populism" and, via "populism is a global
+     * problem", also "global problem" and its side "problem"
+     *
+     * @param phrase $phr the phrase whose parents are collected
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @param bool $sides_only true to follow only the sides that a triple is built from, e.g. "potential gain" and "EUR" of "potential gain in EUR"
+     * @return phrase_list the given phrase and its parents, each once
+     */
+    function parents_all(phrase $phr, user_message $msg, bool $sides_only = false): phrase_list
+    {
+        $result = new phrase_list();
+        $next = [$phr];
+        // a phrase already collected is not followed again, which also ends a circular link chain
+        while ($next != []) {
+            $cur = $this->cached_phrase(array_pop($next));
+            if (!$result->has_id($cur->id())) {
+                $result->add_phrase($cur);
+                $next = array_merge($next, $this->up_phrases($cur, $msg, $sides_only));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the sub types of the given type, e.g. the column tiers "mayor column (system)" to
+     * "marginal column (system)" that "column (system)" can be, or the type itself if it has none
+     *
+     * @param phrase $typ the type phrase e.g. "column (system)"
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @return array the sub type phrases in the order of their definition, e.g. from mayor to marginal
+     */
+    function sub_types(phrase $typ, user_message $msg): array
+    {
+        $result = $this->children($typ, $msg)->lst();
+        if ($result == []) {
+            $result = [$typ];
+        }
+        usort($result, fn(phrase $a, phrase $b) => $a->obj()->id() <=> $b->obj()->id());
+        return $result;
+    }
+
+    /**
+     * the triples of this list that link a phrase related to the given parents to the given type,
+     * e.g. "column problem (high prio)" for "mayor column (system)", because "problem" is a parent
+     * of "populism solution"; a triple is related if it is built from one of the parents
+     *
+     * @param phrase $typ the type phrase that the triples point to e.g. "mayor column (system)"
+     * @param phrase_list $par_lst the phrases that relate a triple e.g. all parents of "populism solution"
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @return phrase_list the related triples sorted by name
+     */
+    function related_triples_to(phrase $typ, phrase_list $par_lst, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->parent_triples($typ, $msg)->lst() as $trp) {
+            $from = $trp->get_from();
+            if ($from != null and $this->parents_all($from, $msg, true)->has_any_of($par_lst)) {
+                $result->add_phrase($trp);
+            }
+        }
+        $result->sort_by_name();
+        return $result;
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases to look for
+     * @return bool true if at least one of the given phrases is part of this list
+     */
+    function has_any_of(phrase_list $phr_lst): bool
+    {
+        $result = false;
+        foreach ($phr_lst->lst() as $phr) {
+            if ($this->has_id($phr->id())) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase whose direct parents are returned
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @param bool $sides_only true for the sides of a triple only, false also for the "to" side of each link up
+     * @return array the sides of the phrase if it is a triple and the "to" side of the triples of this list that link it up
+     */
+    private function up_phrases(phrase $phr, user_message $msg, bool $sides_only): array
+    {
+        $result = [$phr->get_from(), $phr->get_to()];
+        if (!$sides_only) {
+            foreach ($this->children($phr, $msg)->lst() as $lnk) {
+                $result[] = $lnk->get_to();
+            }
+        }
+        return array_filter($result);
     }
 
     /**
@@ -696,21 +855,47 @@ class phrase_list extends sandbox_list_named
      * the tier of the table column of the given phrase name
      *
      * the tier says on which screens the column is shown: a mayor column on every screen, a main
-     * column not on a small one and a minor column on a wide one only
+     * column not on a small one and a minor column on a wide one only; a definition of the
+     * column in one unit e.g. "potential gain in EUR" wins over the definition for any unit
      *
      * @param string $name the name of the column phrase e.g. "loss"
+     * @param array $unit_names the names of the unit phrases of the column e.g. "trillion" and "EUR"; empty for any unit
      * @return string the tier name e.g. "mayor column (system)" or '' if the column is not defined
      */
-    function column_tier(string $name): string
+    function column_tier(string $name, array $unit_names = []): string
     {
         $result = '';
+        $any_unit = '';
         foreach ($this->lst() as $phr) {
-            if ($phr->is_triple() and $result == '') {
-                $trp = $phr->obj();
-                $to_name = $trp->get_to()?->name() ?? '';
-                if (in_array($to_name, triples::SYSTEM_COLUMN_TIERS) and $trp->get_from()?->name() == $name) {
-                    $result = $to_name;
+            $trp = $phr->is_triple() ? $phr->obj() : null;
+            $tier = $trp?->get_to()?->name() ?? '';
+            if (in_array($tier, triples::SYSTEM_COLUMN_TIERS)) {
+                [$col, $unit] = $this->column_and_unit($trp->get_from());
+                if ($col?->name() == $name and $unit == null and $any_unit == '') {
+                    $any_unit = $tier;
+                } elseif ($col?->name() == $name and in_array($unit?->name(), $unit_names) and $result == '') {
+                    $result = $tier;
                 }
+            }
+        }
+        return $result == '' ? $any_unit : $result;
+    }
+
+    /**
+     * the column phrase and the unit of a column definition: "<phrase> can be <tier>" defines the
+     * column in any unit and "<phrase> in <unit> can be <tier>" the column in that unit only,
+     * where the unit is the measure e.g. "EUR" whatever the scaling, like the verb "in" says
+     *
+     * @param phrase|null $phr the from side of a column definition e.g. "potential gain in EUR"
+     * @return array the column phrase e.g. "potential gain" and the unit phrase or null for any unit
+     */
+    private function column_and_unit(?phrase $phr): array
+    {
+        $result = [$phr, null];
+        if ($phr != null and $phr->is_triple()) {
+            $trp = $phr->obj();
+            if ($trp->get_verb()?->get_code_id() == verbs::IN) {
+                $result = [$trp->get_from(), $trp->get_to()];
             }
         }
         return $result;
@@ -731,7 +916,7 @@ class phrase_list extends sandbox_list_named
                     $trp = $phr->obj();
                     // the tier is the "to" side, so the column phrase is the "from" side
                     if ($trp->get_to()?->name() == $tier) {
-                        $name = $trp->get_from()?->name();
+                        $name = $this->column_and_unit($trp->get_from())[0]?->name();
                         // a phrase assigned to two tiers keeps the more important one
                         if ($name != null and !in_array($name, $result)) {
                             $result[$phr->name()] = $name;
@@ -844,24 +1029,30 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * the phrase that this list defines as the table column of the given name
+     * the phrases that this list defines as table columns, found with one walk over the list
      *
-     * the caller has the column name from column_names() and needs the phrase itself to head the
-     * column with a link and to ask child_names() which phrases belong into that column
+     * the caller has the column names from column_names() and needs the phrases themselves to
+     * head the columns with a link and to ask child_names() which phrases belong into a column;
+     * a table asks for them in several steps, so each step gets all column phrases at once
+     * instead of walking the list for each name
      *
-     * @param string $name the name of a column phrase e.g. "solution"
-     * @return phrase|null the column phrase or null if this list defines no column of that name
+     * @return array the column phrases keyed by their name e.g. "solution", the first definition
+     *               of a name wins
      */
-    function column_phrase(string $name): ?phrase
+    function column_phrases(): array
     {
-        $result = null;
+        $result = [];
         foreach ($this->lst() as $phr) {
-            if ($phr->is_triple() and $result == null) {
+            if ($phr->is_triple()) {
                 $trp = $phr->obj();
                 // the tier is the "to" side, so the column phrase is the "from" side
                 if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
-                    if ($trp->get_from()?->name() == $name) {
-                        $result = $trp->get_from();
+                    $col = $this->column_and_unit($trp->get_from())[0];
+                    if ($col != null) {
+                        // the first definition of a column name wins
+                        if (!array_key_exists($col->name(), $result)) {
+                            $result[$col->name()] = $col;
+                        }
                     }
                 }
             }
@@ -989,8 +1180,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_from()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_from()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }
@@ -1215,11 +1407,42 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp->get_from(), $msg);
                     }
                 }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a phrase that is listed twice
+     * @return phrase_list the phrases of this list that are words e.g. "Euro" of the children of currency
+     */
+    function only_words(user_message $msg): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_word()) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a phrase that is listed twice
+     * @return phrase_list the phrases of this list that are triples e.g. "Swiss franc" of the children of currency
+     */
+    function only_triples(user_message $msg): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $result->add($phr, $msg);
             }
         }
         return $result;
@@ -1237,8 +1460,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }
@@ -1260,7 +1484,8 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                    // null-safe, because a triple that a link names only by its id has no sides
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }
@@ -1334,7 +1559,7 @@ class phrase_list extends sandbox_list_named
     /**
      * get the most useful time for the given phrases
      * similar to the backend function with the same name
-     * TODO: review
+     * TODO Prio 2 review
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
@@ -1371,7 +1596,7 @@ class phrase_list extends sandbox_list_named
                         $phr->load($msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
-                    // TODO check if old can ge removed: if ($phr->id() > 0) {
+                    // TODO Prio 2 check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class) {
                         $wrd_lst->add($phr->obj(), $msg);
                     } elseif (get_class($phr->obj()) == triple::class) {
@@ -1581,7 +1806,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * @returns string the html code to display the phrases for a sentence start
-     * TODO replace adding the s with a language specific functions that can include exceptions
+     * TODO Prio 2 replace adding the s with a language specific functions that can include exceptions
      */
     private function InitCap(): string
     {
@@ -1875,7 +2100,7 @@ class phrase_list extends sandbox_list_named
     {
         $phr = null;
         if ($this->count() > 1) {
-            // TODO get from frontend config
+            // TODO Prio 2 get from frontend config
             // $is_dominant_pct = $ui_sys->cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
             $is_dominant_pct = 0.3;
             $count_lst = array_count_values($this->id_lst());
@@ -1994,7 +2219,7 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
      * @param array $url_arr the url vars of the calling page for the back link
@@ -2021,7 +2246,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * shows all phrases that are part of a list
      * e.g. used to display all phrases linked to a word
      * @param array $url_arr the url vars of the calling page for the back link

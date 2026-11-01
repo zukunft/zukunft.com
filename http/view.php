@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
 // reset the html code var
 $web_txt = '';
+$report_pdf = '';
 
 // init global objects for the database connection until the api is completed
 global $debug;
@@ -70,9 +71,9 @@ $msg_ui = new user_message_ui();  // frontend entry point
 
 // prepare for static pages
 // merge POST into GET so form submissions (e.g. login) reach url_to_action
-// TODO llm: add other actions or maybe use $_REQUEST ?
-// TODO llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
-// TODO llm: if the lan is given use it for $mtr
+// TODO Prio 3 llm: add other actions or maybe use $_REQUEST ?
+// TODO Prio 2 llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
+// TODO Prio 2 llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 if (!empty($_POST)) {
     // redact the unhashed password before logging so a login post never leaks it into the log
@@ -85,8 +86,8 @@ if ($debug > 10) {
     log_debug('url array: ' . library::dsp_array($url_array, true));
 }
 
-// TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
-// TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
+// TODO Prio 2 llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
+// TODO Prio 2 llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
 
 
 // open database
@@ -178,7 +179,9 @@ if ($db_con->is_open()) {
         // and this cached page); the message of this request is added to the cached page
         // the page after an action shows the changed data, so it is never taken from the cache
         $cached_page = null;
-        if ($redirect_msg === null) {
+        // a pdf report is never a cached page and needs the start of a page not to be sent
+        $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
+        if ($redirect_msg === null and !$is_report) {
             $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
         }
         if ($cached_page !== null) {
@@ -228,8 +231,15 @@ if ($db_con->is_open()) {
                 // show the result to the user
                 // and use the cached html pages for view-only requests to reduce the response time
                 $sys->times->switch(system_time_type::URL_TO_HTML);
-                $is_live = ($is_action or $redirect_msg !== null);
-                $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
+                if ($is_report) {
+                    $page_html = $ui->url_to_html($url_array, $msg_ui, $ui->dto);
+                    $report_pdf = $ui->report_pdf;
+                } else {
+                    $ui->send_loading_start($msg_ui, $start_time);
+                    $is_live = ($is_action or $redirect_msg !== null);
+                    $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
+                    $web_txt .= new html_base()->loading_end();
+                }
                 $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
             }
             $sys->times->switch(system_time_type::CLOSE);
@@ -249,9 +259,12 @@ if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
     $web_txt .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
 }
 
-// show the page, or after an action send the browser to the next page
+// show the page, or after an action send the browser to the next page, or send the pdf report
 if ($redirect_url != '') {
     header('Location: ' . $redirect_url, true, 303);
+} elseif ($report_pdf != '') {
+    header('Content-Type: application/pdf');
+    echo $report_pdf;
 } else {
     echo $web_txt;
 }

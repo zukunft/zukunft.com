@@ -55,6 +55,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
@@ -92,7 +93,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -164,7 +169,7 @@ class change_log_tests
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
-        // TODO add auto increment test for all mysql tables
+        // TODO Prio 2 add auto increment test for all mysql tables
 
         $t->subheader($ts . 'group name sql setup for values related to up to 16 phrases');
         $log = $t_log->log_norm();
@@ -280,6 +285,11 @@ class change_log_tests
         $t->assert_text_contains($test_name, $qp_order->sql,
             change_log::FLD_TIME . ' ' . sql::ORDER_DESC
             . ', ' . sql_db::STD_TBL . '.' . change_log::FLD_ID);
+        // only a value or result change is selected by the group id, a word by its row id
+        $test_name = 'the last changes of a word are not selected by a group id';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_wrd = $log_lst->load_sql_obj_last($sc, word::class, 1, $t->usr1);
+        $t->assert_text_not_contains($test_name, $qp_wrd->sql, group_fields::FLD_ID);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
@@ -340,14 +350,117 @@ class change_log_tests
         $api = $log_new->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
 
+        $t->subheader($ts . 'api json array');
+
+        // the name of the changed object is sent if it has been set
+        $test_name = 'row name of a named change';
+        $log = $t_log->log_source_overwrite();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::ROW_NAME] ?? '', sources::SIB);
+        $msg->reset();
+
+        // negative: a change without an object name sends no row name
+        $test_name = 'no row name without name';
+        $log = $t_log->log_word_add();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::ROW_NAME, $vars);
+        $msg->reset();
+
+        // the values of the other users are sent if another user has changed the field
+        $test_name = 'other values of a change';
+        $log = $t_log->log_word_add_view();
+        $log->other_values = test_log::OTHER_VALUES;
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OTHER_VALUES] ?? [], test_log::OTHER_VALUES);
+        $msg->reset();
+
+        // negative: a change that no other user has touched sends no other values
+        $test_name = 'no other values without others';
+        $log = $t_log->log_word_add_view();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::OTHER_VALUES, $vars);
+        $msg->reset();
+
+        // the old value of an updated named object field
+        $test_name = 'old value of a change';
+        $log = $t_log->log_word_update();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OLD_VALUE] ?? '', word_names::TEST_RENAMED);
+        $msg->reset();
+
+        // negative: an added field has no old value
+        $test_name = 'no old value of an add';
+        $log = $t_log->log_word_add();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::OLD_VALUE]);
+        $msg->reset();
+
+        // the standard value of a user overwrite
+        $test_name = 'std value of an overwrite';
+        $log = $t_log->log_component_overwrite();
+        $log->std_value = components::WORD_COM;
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STD_VALUE] ?? '', components::WORD_COM);
+        $msg->reset();
+
+        // negative: an overwrite without a known standard value
+        $test_name = 'no std value';
+        $log = $t_log->log_component_overwrite();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::STD_VALUE]);
+        $msg->reset();
+
+        // the old value of an updated value
+        $test_name = 'old value of a value change';
+        $log = $t_log->log_value_update();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OLD_VALUE] ?? 0, values::SAMPLE_INT);
+        $msg->reset();
+
+        // negative: an added value has no old value
+        $test_name = 'no old value of a value add';
+        $log = $t_log->log_value();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::OLD_VALUE]);
+        $msg->reset();
+
+        // the new value of an added value
+        $test_name = 'new value of a value change';
+        $log = $t_log->log_value();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NEW_VALUE] ?? 0, values::PI_SHORT);
+        $msg->reset();
+
+        // negative: a deleted value has no new value
+        $test_name = 'no new value of a value delete';
+        $log = $t_log->log_value_delete();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::NEW_VALUE]);
+        $msg->reset();
+
+        // one json entry per change of the list
+        $test_name = 'one entry per change';
+        $log_lst = $t_log->log_list_user_overwrites();
+        $vars = $log_lst->api_json_array([], $msg);
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::ROW_NAME], word_names::MATH);
+        $msg->reset();
+
+        // negative: an empty list results in an empty array
+        $test_name = 'empty list';
+        $log_lst = new change_log_list();
+        $vars = $log_lst->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
         // sql to load a log entry by field and row id
-        // TODO check that user-specific changes are included in the list of changes
+        // TODO Prio 2 check that user-specific changes are included in the list of changes
         $log = new change($t->usr1);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
-        // TODO check that user-specific changes are included in the list of changes
-        // TODO add tests for all value types
+        // TODO Prio 2 check that user-specific changes are included in the list of changes
+        // TODO Prio 2 add tests for all value types
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
 
         // sql to load a field by field name and table id
@@ -372,6 +485,32 @@ class change_log_tests
         // sql to delete the change log of a time series value during the test cleanup
         $this->assert_value_time_series_change_log_del_qp($t, $db_con);
 
+        $t->subheader($ts . 'add');
+
+        // a change is added to the change list
+        $test_name = 'add a change';
+        $log_lst = new change_log_list();
+        $added = $log_lst->add($t_log->log_word_add());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing change is not added
+        $test_name = 'add no change for null';
+        $log_lst = new change_log_list();
+        $added = $log_lst->add(null);
+        $t->assert_false($test_name, $added);
+
+        // a link change is added to the link change list
+        $test_name = 'add a link change';
+        $cl_lst = new change_log_link_list();
+        $added = $cl_lst->add($t_log->log_link());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing link change is not added
+        $test_name = 'add no link change for null';
+        $cl_lst = new change_log_link_list();
+        $added = $cl_lst->add(null);
+        $t->assert_false($test_name, $added);
+
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
@@ -384,6 +523,59 @@ class change_log_tests
 
         $log_lst = $t_log->log_list_named();
         $t->assert_api($log_lst);
+
+
+        $t->subheader($ts . 'debug id');
+
+        // change_log: the debug id of the base log entry shows the changed table
+        $test_name = 'base log with table';
+        $chg = $t_log->log_base_word_add();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, change_tables::WORD);
+
+        // negative: a base log entry without table shows no table
+        $test_name = 'base log without table';
+        $chg = $t_log->log_base();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, change_tables::WORD);
+
+        // change: the debug id of an update shows the value before the change
+        $test_name = 'named log with old value';
+        $chg = $t_log->log_word_update();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::TEST_RENAMED);
+
+        // negative: an add has no value before the change
+        $test_name = 'named log without old value';
+        $chg = $t_log->log_word_add();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::TEST_RENAMED);
+
+        // change_value: the debug id of a value update shows the value before the change
+        $test_name = 'value log with old value';
+        $chg = $t_log->log_value_update();
+        $dsp = $chg->dsp_id();
+        $old_txt = (string)values::SAMPLE_INT;
+        $t->assert_text_contains($test_name, $dsp, $old_txt);
+
+        // negative: a value add has no value before the change
+        $test_name = 'value log without old value';
+        $chg = $t_log->log_value();
+        $dsp = $chg->dsp_id();
+        $old_txt = (string)values::SAMPLE_INT;
+        $t->assert_text_not_contains($test_name, $dsp, $old_txt);
+
+        // change_link: the debug id shows the linked from object
+        $test_name = 'link log with from object';
+        $chg = $t_log->log_link_named();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::CONST_NAME);
+
+        // negative: a link log with only the ids shows no from object
+        $test_name = 'link log without from object';
+        $chg = $t_log->log_link();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::CONST_NAME);
 
     }
 

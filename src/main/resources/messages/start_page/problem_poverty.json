@@ -82,6 +82,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "probability"
     },
     {
@@ -300,6 +303,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "extreme poverty",
       "from": "poverty",
@@ -912,14 +927,14 @@
     {
       "name": "probability range low",
       "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance low (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{low} = x \\cdot f_{low}",
       "assigned_word": "probability range factor"
     },
     {
       "name": "probability range high",
       "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance high (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{high} = x \\cdot f_{high}",
       "assigned_word": "probability range factor"
     },
@@ -963,6 +978,13 @@
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
       "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
+    },
+    {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
       "assigned_word": "loss reduction"
     },
     {
@@ -1094,7 +1116,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.5",
       "description": "the centre divided by 2.0 for the 80 percent probability range of an estimate with a confidence of 25 percent (see the view-validation of solution_prio.json)"
@@ -1105,7 +1127,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.0",
       "description": "the centre times 2.0 for the 80 percent probability range of an estimate with a confidence of 25 percent"
@@ -1115,7 +1137,7 @@
         "poverty",
         "GDP",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.0",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -1125,7 +1147,7 @@
         "poverty",
         "GDP",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.5",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -1136,7 +1158,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.0",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -1147,7 +1169,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.5",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -1159,7 +1181,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.6667",
       "description": "the centre divided by 1.5, the range factor of a structural number, which is narrower than the factor of an estimate"
@@ -1171,7 +1193,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.5",
       "description": "the centre times 1.5, the range factor of a structural number"
@@ -1182,7 +1204,7 @@
         "research",
         "person year",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1193,7 +1215,7 @@
         "research",
         "person year",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1204,7 +1226,7 @@
         "research",
         "percent",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1215,7 +1237,7 @@
         "research",
         "percent",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1264,7 +1286,7 @@
       "words": [
         "economic growth (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1273,7 +1295,7 @@
       "words": [
         "economic growth (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1312,7 +1334,7 @@
       "words": [
         "property rights (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1321,7 +1343,7 @@
       "words": [
         "property rights (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1360,7 +1382,7 @@
       "words": [
         "rule of law (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1369,7 +1391,7 @@
       "words": [
         "rule of law (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1408,7 +1430,7 @@
       "words": [
         "anti-corruption measures (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1417,7 +1439,7 @@
       "words": [
         "anti-corruption measures (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1456,7 +1478,7 @@
       "words": [
         "universal primary education (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1465,7 +1487,7 @@
       "words": [
         "universal primary education (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1504,7 +1526,7 @@
       "words": [
         "early childhood programs (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1513,7 +1535,7 @@
       "words": [
         "early childhood programs (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1552,7 +1574,7 @@
       "words": [
         "maternal and child health (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1561,7 +1583,7 @@
       "words": [
         "maternal and child health (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1600,7 +1622,7 @@
       "words": [
         "vaccination (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1609,7 +1631,7 @@
       "words": [
         "vaccination (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1648,7 +1670,7 @@
       "words": [
         "clean water (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1657,7 +1679,7 @@
       "words": [
         "clean water (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1696,7 +1718,7 @@
       "words": [
         "sanitation (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1705,7 +1727,7 @@
       "words": [
         "sanitation (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1744,7 +1766,7 @@
       "words": [
         "nutrition programs (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1753,7 +1775,7 @@
       "words": [
         "nutrition programs (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1792,7 +1814,7 @@
       "words": [
         "unconditional cash transfers (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1801,7 +1823,7 @@
       "words": [
         "unconditional cash transfers (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1840,7 +1862,7 @@
       "words": [
         "conditional cash transfers (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1849,7 +1871,7 @@
       "words": [
         "conditional cash transfers (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1888,7 +1910,7 @@
       "words": [
         "graduation programs (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1897,7 +1919,7 @@
       "words": [
         "graduation programs (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1936,7 +1958,7 @@
       "words": [
         "earned income tax credit (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1945,7 +1967,7 @@
       "words": [
         "earned income tax credit (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1984,7 +2006,7 @@
       "words": [
         "child benefits (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1993,7 +2015,7 @@
       "words": [
         "child benefits (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2032,7 +2054,7 @@
       "words": [
         "universal basic income (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2041,7 +2063,7 @@
       "words": [
         "universal basic income (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2080,7 +2102,7 @@
       "words": [
         "pension coverage (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2089,7 +2111,7 @@
       "words": [
         "pension coverage (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2128,7 +2150,7 @@
       "words": [
         "health insurance (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2137,7 +2159,7 @@
       "words": [
         "health insurance (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2176,7 +2198,7 @@
       "words": [
         "social safety nets (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2185,7 +2207,7 @@
       "words": [
         "social safety nets (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2224,7 +2246,7 @@
       "words": [
         "access to electricity (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2233,7 +2255,7 @@
       "words": [
         "access to electricity (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2272,7 +2294,7 @@
       "words": [
         "rural roads (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2281,7 +2303,7 @@
       "words": [
         "rural roads (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2320,7 +2342,7 @@
       "words": [
         "financial inclusion (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2329,7 +2351,7 @@
       "words": [
         "financial inclusion (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2368,7 +2390,7 @@
       "words": [
         "land titling (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2377,7 +2399,7 @@
       "words": [
         "land titling (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2416,7 +2438,7 @@
       "words": [
         "agricultural extension (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2425,7 +2447,7 @@
       "words": [
         "agricultural extension (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2464,7 +2486,7 @@
       "words": [
         "trade access (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2473,7 +2495,7 @@
       "words": [
         "trade access (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2512,7 +2534,7 @@
       "words": [
         "minimum wage (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2521,7 +2543,7 @@
       "words": [
         "minimum wage (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2560,7 +2582,7 @@
       "words": [
         "affordable housing (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2569,7 +2591,7 @@
       "words": [
         "affordable housing (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2608,7 +2630,7 @@
       "words": [
         "housing first (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2617,7 +2639,7 @@
       "words": [
         "housing first (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2656,7 +2678,7 @@
       "words": [
         "job training (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2665,7 +2687,7 @@
       "words": [
         "job training (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2704,7 +2726,7 @@
       "words": [
         "public employment schemes (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2713,7 +2735,7 @@
       "words": [
         "public employment schemes (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2752,7 +2774,7 @@
       "words": [
         "microfinance (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2761,7 +2783,7 @@
       "words": [
         "microfinance (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2800,7 +2822,7 @@
       "words": [
         "food subsidies (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2809,7 +2831,7 @@
       "words": [
         "food subsidies (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2848,7 +2870,7 @@
       "words": [
         "charity (poverty solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2857,7 +2879,7 @@
       "words": [
         "charity (poverty solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -2995,12 +3017,35 @@
     {
       "context": [
         "poverty",
+        "research",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "poverty",
+        "research",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.02",
+      "note": "1.999996 trillion EUR potential loss * 1 percent loss reduction"
+    },
+    {
+      "context": [
+        "poverty",
         "potential loss",
         "trillion",
         "EUR",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3009,7 +3054,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1",
       "note": "2 * 0.5"
@@ -3022,7 +3067,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3031,7 +3076,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "4",
       "note": "2 * 2.0"
@@ -3044,7 +3089,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3053,7 +3098,7 @@
         "percent",
         "GDP",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.16",
       "note": "-0.08 * 2.0"
@@ -3066,7 +3111,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3075,7 +3120,7 @@
         "percent",
         "GDP",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.04",
       "note": "-0.08 * 0.5"
@@ -3088,7 +3133,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3097,7 +3142,7 @@
         "percent",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.32",
       "note": "-0.16 * 2.0"
@@ -3110,7 +3155,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3119,7 +3164,7 @@
         "percent",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.08",
       "note": "-0.16 * 0.5"
@@ -3133,7 +3178,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3143,7 +3188,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "22.73",
       "note": "34.1 * 0.6667; the comparison rounds to two decimals, so 22.73"
@@ -3157,7 +3202,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3167,7 +3212,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "51.15",
       "note": "34.1 * 1.5"
@@ -3180,7 +3225,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3189,7 +3234,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4",
       "note": "10 * 0.4"
@@ -3202,7 +3247,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3211,7 +3256,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "25",
       "note": "10 * 2.5"
@@ -3224,7 +3269,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3233,7 +3278,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.004",
       "note": "0.01 * 0.4"
@@ -3246,7 +3291,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3255,7 +3300,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.025",
       "note": "0.01 * 2.5"
@@ -3286,7 +3331,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3294,7 +3339,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.072",
       "note": "0.18 * 0.4"
@@ -3306,7 +3351,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3314,7 +3359,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.45",
       "note": "0.18 * 2.5"
@@ -3351,7 +3396,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3360,7 +3405,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "245.5202",
       "note": "613.8006 * 0.4"
@@ -3373,7 +3418,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3382,7 +3427,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1534.5015",
       "note": "613.8006 * 2.5"
@@ -3415,7 +3460,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3423,7 +3468,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "21.818",
       "note": "54.545 * 0.4"
@@ -3435,7 +3480,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3443,7 +3488,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "136.3625",
       "note": "54.545 * 2.5"
@@ -3474,7 +3519,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3482,7 +3527,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -3494,7 +3539,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3502,7 +3547,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -3539,7 +3584,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3548,7 +3593,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -3561,7 +3606,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3570,7 +3615,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -3603,7 +3648,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3611,7 +3656,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4364",
       "note": "1.0909 * 0.4"
@@ -3623,7 +3668,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3631,7 +3676,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.7272",
       "note": "1.0909 * 2.5"
@@ -3662,7 +3707,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3670,7 +3715,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -3682,7 +3727,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3690,7 +3735,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -3727,7 +3772,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3736,7 +3781,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -3749,7 +3794,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3758,7 +3803,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -3791,7 +3836,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3799,7 +3844,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.0909",
       "note": "2.7273 * 0.4"
@@ -3811,7 +3856,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3819,7 +3864,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "6.8182",
       "note": "2.7273 * 2.5"
@@ -3850,7 +3895,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3858,7 +3903,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0144",
       "note": "0.036 * 0.4"
@@ -3870,7 +3915,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3878,7 +3923,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.09",
       "note": "0.036 * 2.5"
@@ -3915,7 +3960,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3924,7 +3969,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "49.104",
       "note": "122.7601 * 0.4"
@@ -3937,7 +3982,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -3946,7 +3991,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "306.9002",
       "note": "122.7601 * 2.5"
@@ -3979,7 +4024,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -3987,7 +4032,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4364",
       "note": "1.0909 * 0.4"
@@ -3999,7 +4044,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4007,7 +4052,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.7272",
       "note": "1.0909 * 2.5"
@@ -4038,7 +4083,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4046,7 +4091,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.028",
       "note": "0.07 * 0.4"
@@ -4058,7 +4103,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4066,7 +4111,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.175",
       "note": "0.07 * 2.5"
@@ -4103,7 +4148,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4112,7 +4157,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "95.4801",
       "note": "238.7002 * 0.4"
@@ -4125,7 +4170,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4134,7 +4179,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "596.7505",
       "note": "238.7002 * 2.5"
@@ -4167,7 +4212,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4175,7 +4220,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.0909",
       "note": "2.7273 * 0.4"
@@ -4187,7 +4232,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4195,7 +4240,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "6.8182",
       "note": "2.7273 * 2.5"
@@ -4226,7 +4271,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4234,7 +4279,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -4246,7 +4291,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4254,7 +4299,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -4291,7 +4336,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4300,7 +4345,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -4313,7 +4358,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4322,7 +4367,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -4355,7 +4400,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4363,7 +4408,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.0909",
       "note": "2.7273 * 0.4"
@@ -4375,7 +4420,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4383,7 +4428,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "6.8182",
       "note": "2.7273 * 2.5"
@@ -4414,7 +4459,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4422,7 +4467,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0224",
       "note": "0.056 * 0.4"
@@ -4434,7 +4479,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4442,7 +4487,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.14",
       "note": "0.056 * 2.5"
@@ -4479,7 +4524,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4488,7 +4533,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "76.3841",
       "note": "190.9602 * 0.4"
@@ -4501,7 +4546,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4510,7 +4555,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "477.4005",
       "note": "190.9602 * 2.5"
@@ -4543,7 +4588,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4551,7 +4596,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.6546",
       "note": "1.6364 * 0.4"
@@ -4563,7 +4608,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4571,7 +4616,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "4.091",
       "note": "1.6364 * 2.5"
@@ -4602,7 +4647,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4610,7 +4655,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0192",
       "note": "0.048 * 0.4"
@@ -4622,7 +4667,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4630,7 +4675,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.12",
       "note": "0.048 * 2.5"
@@ -4667,7 +4712,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4676,7 +4721,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "65.4721",
       "note": "163.6802 * 0.4"
@@ -4689,7 +4734,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4698,7 +4743,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "409.2005",
       "note": "163.6802 * 2.5"
@@ -4731,7 +4776,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4739,7 +4784,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.2182",
       "note": "0.5454 * 0.4"
@@ -4751,7 +4796,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4759,7 +4804,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.3635",
       "note": "0.5454 * 2.5"
@@ -4790,7 +4835,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4798,7 +4843,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0144",
       "note": "0.036 * 0.4"
@@ -4810,7 +4855,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4818,7 +4863,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.09",
       "note": "0.036 * 2.5"
@@ -4855,7 +4900,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4864,7 +4909,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "49.104",
       "note": "122.7601 * 0.4"
@@ -4877,7 +4922,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4886,7 +4931,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "306.9002",
       "note": "122.7601 * 2.5"
@@ -4919,7 +4964,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4927,7 +4972,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -4939,7 +4984,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -4947,7 +4992,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -4978,7 +5023,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -4986,7 +5031,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.008",
       "note": "0.02 * 0.4"
@@ -4998,7 +5043,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5006,7 +5051,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.05",
       "note": "0.02 * 2.5"
@@ -5043,7 +5088,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5052,7 +5097,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "27.28",
       "note": "68.2001 * 0.4"
@@ -5065,7 +5110,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5074,7 +5119,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "170.5003",
       "note": "68.2001 * 2.5"
@@ -5107,7 +5152,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5115,7 +5160,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -5127,7 +5172,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5135,7 +5180,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -5166,7 +5211,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5174,7 +5219,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0168",
       "note": "0.042 * 0.4"
@@ -5186,7 +5231,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5194,7 +5239,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.105",
       "note": "0.042 * 2.5"
@@ -5231,7 +5276,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5240,7 +5285,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "57.288",
       "note": "143.2201 * 0.4"
@@ -5253,7 +5298,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5262,7 +5307,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "358.0503",
       "note": "143.2201 * 2.5"
@@ -5295,7 +5340,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5303,7 +5348,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.6546",
       "note": "1.6364 * 0.4"
@@ -5315,7 +5360,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5323,7 +5368,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "4.091",
       "note": "1.6364 * 2.5"
@@ -5354,7 +5399,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5362,7 +5407,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.032",
       "note": "0.08 * 0.4"
@@ -5374,7 +5419,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5382,7 +5427,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.2",
       "note": "0.08 * 2.5"
@@ -5419,7 +5464,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5428,7 +5473,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "109.1201",
       "note": "272.8003 * 0.4"
@@ -5441,7 +5486,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5450,7 +5495,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "682.0007",
       "note": "272.8003 * 2.5"
@@ -5483,7 +5528,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5491,7 +5536,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "6.5454",
       "note": "16.3635 * 0.4"
@@ -5503,7 +5548,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5511,7 +5556,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "40.9087",
       "note": "16.3635 * 2.5"
@@ -5542,7 +5587,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5550,7 +5595,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0288",
       "note": "0.072 * 0.4"
@@ -5562,7 +5607,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5570,7 +5615,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.18",
       "note": "0.072 * 2.5"
@@ -5607,7 +5652,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5616,7 +5661,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "98.2081",
       "note": "245.5202 * 0.4"
@@ -5629,7 +5674,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5638,7 +5683,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "613.8005",
       "note": "245.5202 * 2.5"
@@ -5671,7 +5716,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5679,7 +5724,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.3636",
       "note": "10.909 * 0.4"
@@ -5691,7 +5736,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5699,7 +5744,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "27.2725",
       "note": "10.909 * 2.5"
@@ -5730,7 +5775,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5738,7 +5783,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -5750,7 +5795,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5758,7 +5803,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -5795,7 +5840,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5804,7 +5849,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -5817,7 +5862,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5826,7 +5871,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -5859,7 +5904,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5867,7 +5912,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -5879,7 +5924,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5887,7 +5932,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -5918,7 +5963,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5926,7 +5971,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0064",
       "note": "0.016 * 0.4"
@@ -5938,7 +5983,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -5946,7 +5991,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.04",
       "note": "0.016 * 2.5"
@@ -5983,7 +6028,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -5992,7 +6037,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "21.824",
       "note": "54.5601 * 0.4"
@@ -6005,7 +6050,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6014,7 +6059,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "136.4002",
       "note": "54.5601 * 2.5"
@@ -6047,7 +6092,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6055,7 +6100,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.0909",
       "note": "2.7273 * 0.4"
@@ -6067,7 +6112,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6075,7 +6120,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "6.8182",
       "note": "2.7273 * 2.5"
@@ -6106,7 +6151,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6114,7 +6159,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.02",
       "note": "0.05 * 0.4"
@@ -6126,7 +6171,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6134,7 +6179,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.125",
       "note": "0.05 * 2.5"
@@ -6171,7 +6216,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6180,7 +6225,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "68.2001",
       "note": "170.5002 * 0.4"
@@ -6193,7 +6238,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6202,7 +6247,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "426.2505",
       "note": "170.5002 * 2.5"
@@ -6235,7 +6280,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6243,7 +6288,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.3636",
       "note": "10.909 * 0.4"
@@ -6255,7 +6300,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6263,7 +6308,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "27.2725",
       "note": "10.909 * 2.5"
@@ -6294,7 +6339,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6302,7 +6347,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.024",
       "note": "0.06 * 0.4"
@@ -6314,7 +6359,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6322,7 +6367,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.15",
       "note": "0.06 * 2.5"
@@ -6359,7 +6404,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6368,7 +6413,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "81.8401",
       "note": "204.6002 * 0.4"
@@ -6381,7 +6426,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6390,7 +6435,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "511.5005",
       "note": "204.6002 * 2.5"
@@ -6423,7 +6468,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6431,7 +6476,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "21.818",
       "note": "54.545 * 0.4"
@@ -6443,7 +6488,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6451,7 +6496,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "136.3625",
       "note": "54.545 * 2.5"
@@ -6482,7 +6527,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6490,7 +6535,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0144",
       "note": "0.036 * 0.4"
@@ -6502,7 +6547,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6510,7 +6555,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.09",
       "note": "0.036 * 2.5"
@@ -6547,7 +6592,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6556,7 +6601,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "49.104",
       "note": "122.7601 * 0.4"
@@ -6569,7 +6614,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6578,7 +6623,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "306.9002",
       "note": "122.7601 * 2.5"
@@ -6611,7 +6656,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6619,7 +6664,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -6631,7 +6676,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6639,7 +6684,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -6670,7 +6715,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6678,7 +6723,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -6690,7 +6735,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6698,7 +6743,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -6735,7 +6780,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6744,7 +6789,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -6757,7 +6802,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6766,7 +6811,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -6799,7 +6844,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6807,7 +6852,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -6819,7 +6864,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6827,7 +6872,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -6858,7 +6903,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6866,7 +6911,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.024",
       "note": "0.06 * 0.4"
@@ -6878,7 +6923,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6886,7 +6931,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.15",
       "note": "0.06 * 2.5"
@@ -6923,7 +6968,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6932,7 +6977,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "81.8401",
       "note": "204.6002 * 0.4"
@@ -6945,7 +6990,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -6954,7 +6999,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "511.5005",
       "note": "204.6002 * 2.5"
@@ -6987,7 +7032,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -6995,7 +7040,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.3636",
       "note": "10.909 * 0.4"
@@ -7007,7 +7052,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7015,7 +7060,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "27.2725",
       "note": "10.909 * 2.5"
@@ -7046,7 +7091,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7054,7 +7099,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0168",
       "note": "0.042 * 0.4"
@@ -7066,7 +7111,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7074,7 +7119,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.105",
       "note": "0.042 * 2.5"
@@ -7111,7 +7156,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7120,7 +7165,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "57.288",
       "note": "143.2201 * 0.4"
@@ -7133,7 +7178,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7142,7 +7187,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "358.0503",
       "note": "143.2201 * 2.5"
@@ -7175,7 +7220,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7183,7 +7228,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -7195,7 +7240,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7203,7 +7248,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -7234,7 +7279,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7242,7 +7287,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0144",
       "note": "0.036 * 0.4"
@@ -7254,7 +7299,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7262,7 +7307,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.09",
       "note": "0.036 * 2.5"
@@ -7299,7 +7344,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7308,7 +7353,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "49.104",
       "note": "122.7601 * 0.4"
@@ -7321,7 +7366,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7330,7 +7375,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "306.9002",
       "note": "122.7601 * 2.5"
@@ -7363,7 +7408,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7371,7 +7416,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -7383,7 +7428,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7391,7 +7436,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -7422,7 +7467,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7430,7 +7475,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0112",
       "note": "0.028 * 0.4"
@@ -7442,7 +7487,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7450,7 +7495,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.07",
       "note": "0.028 * 2.5"
@@ -7487,7 +7532,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7496,7 +7541,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "38.192",
       "note": "95.4801 * 0.4"
@@ -7509,7 +7554,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7518,7 +7563,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "238.7002",
       "note": "95.4801 * 2.5"
@@ -7551,7 +7596,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7559,7 +7604,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.1091",
       "note": "0.2727 * 0.4"
@@ -7571,7 +7616,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7579,7 +7624,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.6817",
       "note": "0.2727 * 2.5"
@@ -7610,7 +7655,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7618,7 +7663,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.008",
       "note": "0.02 * 0.4"
@@ -7630,7 +7675,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7638,7 +7683,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.05",
       "note": "0.02 * 2.5"
@@ -7675,7 +7720,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7684,7 +7729,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "27.28",
       "note": "68.2001 * 0.4"
@@ -7697,7 +7742,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7706,7 +7751,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "170.5003",
       "note": "68.2001 * 2.5"
@@ -7739,7 +7784,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7747,7 +7792,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.2182",
       "note": "0.5454 * 0.4"
@@ -7759,7 +7804,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7767,7 +7812,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.3635",
       "note": "0.5454 * 2.5"
@@ -7798,7 +7843,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7806,7 +7851,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0144",
       "note": "0.036 * 0.4"
@@ -7818,7 +7863,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7826,7 +7871,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.09",
       "note": "0.036 * 2.5"
@@ -7863,7 +7908,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7872,7 +7917,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "49.104",
       "note": "122.7601 * 0.4"
@@ -7885,7 +7930,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7894,7 +7939,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "306.9002",
       "note": "122.7601 * 2.5"
@@ -7927,7 +7972,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7935,7 +7980,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4364",
       "note": "1.0909 * 0.4"
@@ -7947,7 +7992,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -7955,7 +8000,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.7272",
       "note": "1.0909 * 2.5"
@@ -7986,7 +8031,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -7994,7 +8039,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0096",
       "note": "0.024 * 0.4"
@@ -8006,7 +8051,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8014,7 +8059,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.06",
       "note": "0.024 * 2.5"
@@ -8051,7 +8096,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8060,7 +8105,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "32.736",
       "note": "81.8401 * 0.4"
@@ -8073,7 +8118,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8082,7 +8127,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "204.6003",
       "note": "81.8401 * 2.5"
@@ -8115,7 +8160,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8123,7 +8168,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.1091",
       "note": "0.2727 * 0.4"
@@ -8135,7 +8180,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8143,7 +8188,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.6817",
       "note": "0.2727 * 2.5"
@@ -8174,7 +8219,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8182,7 +8227,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0096",
       "note": "0.024 * 0.4"
@@ -8194,7 +8239,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8202,7 +8247,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.06",
       "note": "0.024 * 2.5"
@@ -8239,7 +8284,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8248,7 +8293,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "32.736",
       "note": "81.8401 * 0.4"
@@ -8261,7 +8306,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8270,7 +8315,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "204.6003",
       "note": "81.8401 * 2.5"
@@ -8303,7 +8348,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8311,7 +8356,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0218",
       "note": "0.0545 * 0.4"
@@ -8323,7 +8368,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8331,7 +8376,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1363",
       "note": "0.0545 * 2.5"
@@ -8362,7 +8407,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8370,7 +8415,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0064",
       "note": "0.016 * 0.4"
@@ -8382,7 +8427,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8390,7 +8435,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.04",
       "note": "0.016 * 2.5"
@@ -8427,7 +8472,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8436,7 +8481,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "21.824",
       "note": "54.5601 * 0.4"
@@ -8449,7 +8494,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8458,7 +8503,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "136.4002",
       "note": "54.5601 * 2.5"
@@ -8491,7 +8536,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8499,7 +8544,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.3636",
       "note": "10.909 * 0.4"
@@ -8511,7 +8556,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8519,7 +8564,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "27.2725",
       "note": "10.909 * 2.5"
@@ -8550,7 +8595,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8558,7 +8603,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.004",
       "note": "0.01 * 0.4"
@@ -8570,7 +8615,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8578,7 +8623,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.025",
       "note": "0.01 * 2.5"
@@ -8615,7 +8660,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8624,7 +8669,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "13.64",
       "note": "34.1 * 0.4"
@@ -8637,7 +8682,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8646,7 +8691,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "85.25",
       "note": "34.1 * 2.5"
@@ -8679,7 +8724,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8687,7 +8732,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4364",
       "note": "1.0909 * 0.4"
@@ -8699,7 +8744,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8707,7 +8752,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.7272",
       "note": "1.0909 * 2.5"
@@ -8738,7 +8783,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8746,7 +8791,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.012",
       "note": "0.03 * 0.4"
@@ -8758,7 +8803,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8766,7 +8811,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.075",
       "note": "0.03 * 2.5"
@@ -8803,7 +8848,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8812,7 +8857,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "40.92",
       "note": "102.3001 * 0.4"
@@ -8825,7 +8870,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8834,7 +8879,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "255.7502",
       "note": "102.3001 * 2.5"
@@ -8867,7 +8912,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8875,7 +8920,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.0909",
       "note": "2.7273 * 0.4"
@@ -8887,7 +8932,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8895,7 +8940,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "6.8182",
       "note": "2.7273 * 2.5"
@@ -8926,7 +8971,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -8934,7 +8979,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.016",
       "note": "0.04 * 0.4"
@@ -8946,7 +8991,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -8954,7 +8999,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.1",
       "note": "0.04 * 2.5"
@@ -8991,7 +9036,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9000,7 +9045,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "54.56",
       "note": "136.4001 * 0.4"
@@ -9013,7 +9058,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9022,7 +9067,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "341.0003",
       "note": "136.4001 * 2.5"
@@ -9055,7 +9100,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9063,7 +9108,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -9075,7 +9120,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9083,7 +9128,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -9114,7 +9159,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9122,7 +9167,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0056",
       "note": "0.014 * 0.4"
@@ -9134,7 +9179,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9142,7 +9187,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.035",
       "note": "0.014 * 2.5"
@@ -9179,7 +9224,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9188,7 +9233,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "19.096",
       "note": "47.74 * 0.4"
@@ -9201,7 +9246,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9210,7 +9255,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "119.35",
       "note": "47.74 * 2.5"
@@ -9243,7 +9288,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9251,7 +9296,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.2182",
       "note": "0.5454 * 0.4"
@@ -9263,7 +9308,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9271,7 +9316,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.3635",
       "note": "0.5454 * 2.5"
@@ -9302,7 +9347,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9310,7 +9355,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0112",
       "note": "0.028 * 0.4"
@@ -9322,7 +9367,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9330,7 +9375,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.07",
       "note": "0.028 * 2.5"
@@ -9367,7 +9412,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9376,7 +9421,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "38.192",
       "note": "95.4801 * 0.4"
@@ -9389,7 +9434,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9398,7 +9443,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "238.7002",
       "note": "95.4801 * 2.5"
@@ -9431,7 +9476,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9439,7 +9484,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -9451,7 +9496,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9459,7 +9504,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"
@@ -9490,7 +9535,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9498,7 +9543,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0128",
       "note": "0.032 * 0.4"
@@ -9510,7 +9555,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9518,7 +9563,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.08",
       "note": "0.032 * 2.5"
@@ -9555,7 +9600,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9564,7 +9609,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "43.648",
       "note": "109.1201 * 0.4"
@@ -9577,7 +9622,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9586,7 +9631,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "272.8003",
       "note": "109.1201 * 2.5"
@@ -9619,7 +9664,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9627,7 +9672,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.1818",
       "note": "5.4545 * 0.4"
@@ -9639,7 +9684,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9647,7 +9692,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "13.6363",
       "note": "5.4545 * 2.5"

@@ -71,6 +71,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class group extends sandbox_named
 {
 
+    // a group has no edit view of its own (see sandbox::HAS_EDIT_VIEW)
+    // TODO Prio 1 create a edit view for groups
+    const bool HAS_EDIT_VIEW = false;
+
     /*
      * object vars
      */
@@ -85,6 +89,8 @@ class group extends sandbox_named
     private bool $name_tip_dirty;
     private string $name_link;
     private bool $name_link_dirty;
+    // the phrases as a list with its id index, built once per change of the phrases (see phr_lst)
+    private ?phrase_list $phr_lst_cache = null;
 
 
     /*
@@ -126,6 +132,7 @@ class group extends sandbox_named
         $this->lst_dirty = true;
         $this->name_tip_dirty = true;
         $this->name_link_dirty = true;
+        $this->phr_lst_cache = null;
     }
 
     function unset_name_tip_dirty(): void
@@ -180,9 +187,15 @@ class group extends sandbox_named
      */
     function phr_lst(): phrase_list
     {
-        $phr_lst = new phrase_list();
-        $phr_lst->set_lst($this->lst());
-        return $phr_lst;
+        if ($this->phr_lst_cache == null) {
+            $this->phr_lst_cache = new phrase_list();
+            $this->phr_lst_cache->set_lst($this->lst());
+            // the first id check builds the id index, so that each copy has it and the has_id of
+            // a caller does not build it again e.g. a table asks every value for its phrases
+            $this->phr_lst_cache->has_id('');
+        }
+        // a copy, because a caller may change the list e.g. by remove()
+        return clone $this->phr_lst_cache;
     }
 
 
@@ -250,6 +263,7 @@ class group extends sandbox_named
         $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;
+        $this->set_dirty();
     }
 
     /**
@@ -281,10 +295,28 @@ class group extends sandbox_named
     function add(phrase $phr): bool
     {
         $result = false;
-        if (!in_array($phr->id(), $this->name_pos_lst())) {
+        if (!$this->has_phrase_id($phr->id())) {
             $this->lst[] = $phr;
             $this->set_dirty();
             $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $id the id of the phrase that should be added
+     * @return bool true if a phrase with this id is already part of the group;
+     *              a phrase without id is not yet in the database, so it is never a double
+     */
+    private function has_phrase_id(int $id): bool
+    {
+        $result = false;
+        if ($id != 0) {
+            foreach ($this->lst as $grp_phr) {
+                if ($grp_phr->id() == $id) {
+                    $result = true;
+                }
+            }
         }
         return $result;
     }

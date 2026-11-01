@@ -326,11 +326,11 @@ class formula_map extends sandbox_code_id
             }
             /*
             if ($this->id() > 0) {
-                // TODO check the exclusion handling
+                // TODO Prio 2 check the exclusion handling
                 log_debug('->load ' . $this->dsp_id() . ' not excluded');
 
                 // load the formula name word object
-                // a word (TODO triple)
+                // a word (TODO Prio 2 triple)
                 // with the same name as the formula is needed,
                 // because values can only be assigned to a word
                 if (is_null($this->name_wrd)) {
@@ -1222,7 +1222,7 @@ class formula_map extends sandbox_code_id
         $this->import_mapper($in_ex_json, $msg, $dto);
 
         // assign the formula to the words and triple
-        // TODO check if it is done via mapper and save_related
+        // TODO Prio 2 check if it is done via mapper and save_related
         $this->assign_phrases($msg);
 
         // save the object and the related objects in the database
@@ -1249,7 +1249,7 @@ class formula_map extends sandbox_code_id
 
         global $sys;
 
-        // TODO avoid the var overwrite be overwriting the type_name() function
+        // TODO Prio 2 avoid the var overwrite be overwriting the type_name() function
         if (isset($this->type_id)) {
             if ($this->type_id <> $sys->typ_lst->frm_typ->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $sys->typ_lst->frm_typ->code_id($this->type_id);
@@ -1485,7 +1485,7 @@ class formula_map extends sandbox_code_id
         if ($this->has_usr_cfg()) {
             return false;
         } else {
-            // TODO check the formula assigment
+            // TODO Prio 2 check the formula assigment
             return true;
         }
     }
@@ -1559,7 +1559,7 @@ class formula_map extends sandbox_code_id
 
     /**
      * create an SQL statement to retrieve all user-specific changes of this formula
-     * TODO combine with load_sql_user_changes ?
+     * TODO Prio 2 combine with load_sql_user_changes ?
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -1668,7 +1668,7 @@ class formula_map extends sandbox_code_id
             // create the related formula word
             // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
             // the creation of the formula word is switched off because the term loading should be fine now
-            // TODO check and remove the create_wrd function and the phrase_type_shared::FORMULA_LINK
+            // TODO Prio 2 check and remove the create_wrd function and the phrase_type_shared::FORMULA_LINK
             if ($this->wrd_add($msg)) {
 
                 // create an empty db_frm element to force saving of all set fields
@@ -1971,7 +1971,7 @@ class formula_map extends sandbox_code_id
     /**
      * remove depending on objects
      * needs to be overwritten by the child class if needed
-     * TODO make sure that only user-specific data is deleted
+     * TODO Prio 1 make sure that only user-specific data is deleted
      *
      * @param user_message $msg the message for the user why deleting the formula links has failed and a suggested solution
      * @return bool true if the formula links has been deleted
@@ -2110,8 +2110,12 @@ class formula_map extends sandbox_code_id
         }
         // preserve the stored expression when a partial update does not carry one (e.g. changing
         // only the description of a predefined formula whose expression field is not shown to the
-        // user), so the expression is neither cleared nor reported as a missing mandatory field
-        if ($this->ref_text != null and $obj->ref_text !== $this->ref_text) {
+        // user), so the expression is neither cleared nor reported as a missing mandatory field;
+        // in the user overlay an empty expression means the standard expression, so there it
+        // clears the own expression of the user e.g. on the undo of an expression change
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $ref_text_changed = (($this->ref_text != null or $usr_tbl) and $obj->ref_text !== $this->ref_text);
+        if ($ref_text_changed) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_TEXT,
@@ -2126,7 +2130,7 @@ class formula_map extends sandbox_code_id
                 $obj->ref_text
             );
         }
-        if ($this->usr_text != null and $obj->usr_text !== $this->usr_text) {
+        if (($this->usr_text != null or $usr_tbl) and $obj->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_USER_TEXT,
@@ -2173,7 +2177,7 @@ class formula_map extends sandbox_code_id
         }
         // an expression only counts as changed if the update actually carries one (see above),
         // so a partial update that keeps the stored expression does not bump the last update time
-        if (($this->ref_text != null and $obj->ref_text !== $this->ref_text)
+        if ($ref_text_changed
             or $obj->type_id($msg) <> $this->type_id($msg)
             or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {

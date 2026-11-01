@@ -1,0 +1,6652 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-29 16:48:00",
+  "user": "timon",
+  "selection": [
+    "ABB share decision"
+  ],
+  "description": "Use case: should an investor buy, sell or hold the shares of ABB Ltd (SIX: ABBN) at the closing price of 28 October 2026, as shown by the system view 'Calculator' for the phrase 'ABB share decision'. The page derives a target price from five valuation methods on the key figures of equity valuation - the earnings multiple (EPS 2027 estimate times a fair P/E), a two-stage discounted cash flow of the free cash flow per share, the enterprise value multiple (operational EBITA 2026 times a fair EV/EBITA minus net debt), the Gordon dividend discount and the analyst consensus - weights them as the reader says, compares the weighted target with the price and turns the upside into the verdict buy, hold or sell with a margin of safety. ABB reports in US dollars and the share is quoted in Swiss francs, so every per-share figure is converted with the USD/CHF rate. The inputs are the price, the EPS estimate 2027, the fair P/E, the free cash flow guidance 2026, the cash flow growth, the required return, the fair EV/EBITA, the analyst consensus target and the margin of safety; the assumptions are the EPS 2026 and trailing, the dividend and its growth, the years and the terminal growth of the cash flow model, the EBITA, the net debt, the shares outstanding, the exchange rate, the holding period and the five method weights. The arguments of the bull and the bear case, the presets, the labels, the hints, the tags, the verdict texts, the sensitivity grid and the sources of the page are the calculator triples and values of 'ABB share decision'. Two numbers need a power that the zukunft.com formulas do not have, the present value factors of the discounted cash flow and the annualised price return, so they are stored as modelled values; all other results are formulas of the file and reproduced by the calc-validation. The inputs that are not measured carry the word assumed and a confidence. State of the data: close of 28 October 2026, Q3 2026 results of 20 October 2026. The page is a model of the key figures, not investment advice.",
+  "words": [
+    {
+      "name": "ABB",
+      "refs": [
+        {
+          "name": "ABB",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ABBN"
+    },
+    {
+      "name": "SIX",
+      "description": "the Swiss stock exchange in Zurich, SIX Swiss Exchange",
+      "refs": [
+        {
+          "name": "SIX_Swiss_Exchange",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "SoftBank",
+      "description": "Japanese multinational investment holding company headquartered in Tokyo",
+      "refs": [
+        {
+          "name": "SoftBank_Group",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Rotork",
+      "description": "British manufacturer of industrial flow control equipment, headquartered in Bath",
+      "refs": [
+        {
+          "name": "Rotork",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Mitsubishi Electric",
+      "description": "Japanese multinational electronics and electrical equipment manufacturer headquartered in Tokyo",
+      "refs": [
+        {
+          "name": "Mitsubishi_Electric",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gamesa Electric",
+      "description": "the power electronics business for renewable energy that ABB bought from Siemens Gamesa in 2024, part of the Motion business area"
+    },
+    {
+      "name": "UBS"
+    },
+    {
+      "name": "RBC"
+    },
+    {
+      "name": "Berenberg"
+    },
+    {
+      "name": "Bernstein"
+    },
+    {
+      "name": "JP Morgan"
+    },
+    {
+      "name": "Deutsche Bank"
+    },
+    {
+      "name": "Barclays"
+    },
+    {
+      "name": "Goldman Sachs"
+    },
+    {
+      "name": "Jefferies"
+    },
+    {
+      "name": "Simply Wall St",
+      "description": "a stock analysis platform that publishes bull and bear narratives and a discounted cash flow fair value per share"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "US dollar"
+    },
+    {
+      "name": "Swiss franc"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "duration"
+    },
+    {
+      "name": "unit"
+    },
+    {
+      "name": "a"
+    },
+    {
+      "name": "month"
+    },
+    {
+      "name": "quarter"
+    },
+    {
+      "name": "nine"
+    },
+    {
+      "name": "third"
+    },
+    {
+      "name": "full"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "2025"
+    },
+    {
+      "name": "2026"
+    },
+    {
+      "name": "2027"
+    },
+    {
+      "name": "July"
+    },
+    {
+      "name": "September"
+    },
+    {
+      "name": "October"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "close"
+    },
+    {
+      "name": "earnings"
+    },
+    {
+      "name": "EPS"
+    },
+    {
+      "name": "estimate"
+    },
+    {
+      "name": "trailing"
+    },
+    {
+      "name": "forward"
+    },
+    {
+      "name": "dividend"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "perpetual"
+    },
+    {
+      "name": "terminal"
+    },
+    {
+      "name": "explicit"
+    },
+    {
+      "name": "stage"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "discounted"
+    },
+    {
+      "name": "present"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "enterprise"
+    },
+    {
+      "name": "multiple"
+    },
+    {
+      "name": "consensus"
+    },
+    {
+      "name": "analyst"
+    },
+    {
+      "name": "target"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "weighted"
+    },
+    {
+      "name": "margin"
+    },
+    {
+      "name": "safety"
+    },
+    {
+      "name": "decision"
+    },
+    {
+      "name": "buy"
+    },
+    {
+      "name": "sell"
+    },
+    {
+      "name": "hold"
+    },
+    {
+      "name": "verdict"
+    },
+    {
+      "name": "upside"
+    },
+    {
+      "name": "return"
+    },
+    {
+      "name": "required"
+    },
+    {
+      "name": "expected"
+    },
+    {
+      "name": "annualised"
+    },
+    {
+      "name": "holding"
+    },
+    {
+      "name": "period"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "capitalisation"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "debt"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "outstanding"
+    },
+    {
+      "name": "exchange"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "guidance"
+    },
+    {
+      "name": "operational"
+    },
+    {
+      "name": "fair"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "key"
+    },
+    {
+      "name": "figure"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "EBITA",
+      "description": "earnings before interest, taxes and amortisation, the operating profit measure ABB reports",
+      "refs": [
+        {
+          "name": "Earnings_before_interest,_taxes,_depreciation_and_amortization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "EBITDA",
+      "description": "earnings before interest, taxes, depreciation and amortisation",
+      "refs": [
+        {
+          "name": "Earnings_before_interest,_taxes,_depreciation_and_amortization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "EV",
+      "description": "the usual acronym for enterprise value"
+    },
+    {
+      "name": "P/E",
+      "description": "the price-earnings ratio: the share price divided by the earnings per share",
+      "refs": [
+        {
+          "name": "Price–earnings_ratio",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "PEG",
+      "description": "the price/earnings to growth ratio: the P/E divided by the earnings growth in percent",
+      "refs": [
+        {
+          "name": "PEG_ratio",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ROCE"
+    },
+    {
+      "name": "ROE"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "employed"
+    },
+    {
+      "name": "equity"
+    },
+    {
+      "name": "orders"
+    },
+    {
+      "name": "book"
+    },
+    {
+      "name": "backlog"
+    },
+    {
+      "name": "book-to-bill"
+    },
+    {
+      "name": "revenue"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "expense"
+    },
+    {
+      "name": "hedge"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "buyback"
+    },
+    {
+      "name": "robotics"
+    },
+    {
+      "name": "divestment"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "offer"
+    },
+    {
+      "name": "pence"
+    },
+    {
+      "name": "joint"
+    },
+    {
+      "name": "venture"
+    },
+    {
+      "name": "low-voltage"
+    },
+    {
+      "name": "business"
+    },
+    {
+      "name": "stake"
+    },
+    {
+      "name": "data"
+    },
+    {
+      "name": "centre"
+    },
+    {
+      "name": "52-week"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "mid"
+    },
+    {
+      "name": "beta"
+    },
+    {
+      "name": "undervalued"
+    },
+    {
+      "name": "adjusted"
+    },
+    {
+      "name": "motion"
+    },
+    {
+      "name": "electrification"
+    },
+    {
+      "name": "leverage"
+    },
+    {
+      "name": "capacity"
+    },
+    {
+      "name": "miss"
+    },
+    {
+      "name": "valuation"
+    },
+    {
+      "name": "conversion"
+    },
+    {
+      "name": "correction"
+    },
+    {
+      "name": "portfolio"
+    },
+    {
+      "name": "profitability"
+    },
+    {
+      "name": "cycle"
+    },
+    {
+      "name": "currency"
+    },
+    {
+      "name": "acquisition"
+    },
+    {
+      "name": "argument"
+    },
+    {
+      "name": "bull"
+    },
+    {
+      "name": "bear"
+    },
+    {
+      "name": "case"
+    },
+    {
+      "name": "sensitivity"
+    },
+    {
+      "name": "16"
+    },
+    {
+      "name": "19"
+    },
+    {
+      "name": "22"
+    },
+    {
+      "name": "25"
+    },
+    {
+      "name": "28"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "process"
+    },
+    {
+      "name": "catch"
+    },
+    {
+      "name": "input"
+    },
+    {
+      "name": "type"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "minimum"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "step"
+    },
+    {
+      "name": "calculator"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "hint"
+    },
+    {
+      "name": "assumption"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "highlight"
+    },
+    {
+      "name": "sign"
+    },
+    {
+      "name": "preset"
+    },
+    {
+      "name": "tag"
+    },
+    {
+      "name": "note"
+    },
+    {
+      "name": "scale"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "modelled"
+    },
+    {
+      "name": "confidence"
+    }
+  ],
+  "triples": [
+    {
+      "name": "ABBN (ticker)",
+      "from": "ABBN",
+      "verb": "is symbol for",
+      "to": "ABB",
+      "description": "the ticker symbol under which the ABB share is traded on SIX"
+    },
+    {
+      "name": "ABB share",
+      "from": "share",
+      "verb": "of",
+      "to": "ABB",
+      "description": "one registered share of ABB Ltd, quoted in Swiss francs on SIX under ABBN"
+    },
+    {
+      "name": "ABB share decision",
+      "from": "decision",
+      "verb": "of",
+      "to": "ABB share",
+      "description": "the question whether an investor should buy, sell or hold the ABB share: the page derives a target price from five valuation methods on the key figures of the company, weights them, compares the result with the price of 72.88 CHF of 28 October 2026 and gives the verdict buy, hold or sell with a margin of safety; every input can be changed, the numbers of this phrase are the worked example",
+      "view": "Calculator"
+    },
+    {
+      "from": "earnings",
+      "verb": "per",
+      "to": "share",
+      "description": "the net income attributable to the shareholders divided by the weighted number of shares",
+      "refs": [
+        {
+          "name": "Earnings_per_share",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "EPS",
+      "verb": "is an acronym for",
+      "to": "earnings per share"
+    },
+    {
+      "name": "estimate 2026",
+      "from": "estimate",
+      "verb": "of",
+      "to": "2026",
+      "description": "the analysts' consensus estimate for the year 2026"
+    },
+    {
+      "name": "estimate 2027",
+      "from": "estimate",
+      "verb": "of",
+      "to": "2027",
+      "description": "the analysts' consensus estimate for the year 2027"
+    },
+    {
+      "name": "EPS 2026 estimate",
+      "from": "EPS",
+      "verb": "of",
+      "to": "estimate 2026",
+      "description": "the consensus earnings per share for 2026; may or may not contain the gain of the Robotics divestment, so it is only used for the earnings growth of the PEG ratio"
+    },
+    {
+      "name": "EPS 2027 estimate",
+      "from": "EPS",
+      "verb": "of",
+      "to": "estimate 2027",
+      "description": "the consensus earnings per share for 2027, the earnings the earnings multiple is applied to"
+    },
+    {
+      "name": "trailing EPS",
+      "from": "EPS",
+      "verb": "kind of",
+      "to": "trailing",
+      "description": "the earnings per share of the last twelve months: the full year 2025 minus the first nine months of 2025 plus the first nine months of 2026"
+    },
+    {
+      "name": "full year",
+      "from": "year",
+      "verb": "kind of",
+      "to": "full",
+      "description": "the whole financial year, in contrast to a quarter or nine months"
+    },
+    {
+      "name": "nine months",
+      "from": "nine",
+      "verb": "times",
+      "to": "month",
+      "description": "the first nine months of a financial year, January to September"
+    },
+    {
+      "name": "third quarter",
+      "from": "quarter",
+      "verb": "kind of",
+      "to": "third",
+      "description": "July to September of a financial year"
+    },
+    {
+      "name": "cash flow",
+      "from": "cash",
+      "verb": "can",
+      "to": "flow"
+    },
+    {
+      "name": "free cash flow",
+      "from": "cash flow",
+      "verb": "kind of",
+      "to": "free",
+      "description": "the cash flow from operating activities minus the capital expenditure, the cash available to the providers of capital",
+      "refs": [
+        {
+          "name": "Free_cash_flow",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "free cash flow",
+      "verb": "per",
+      "to": "share",
+      "description": "the free cash flow of the year divided by the shares outstanding"
+    },
+    {
+      "name": "free cash flow growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "free cash flow",
+      "description": "the annual growth of the free cash flow per share in the explicit stage of the cash flow model"
+    },
+    {
+      "name": "explicit stage",
+      "from": "stage",
+      "verb": "kind of",
+      "to": "explicit",
+      "description": "the first stage of the two-stage cash flow model, in which the cash flow grows at the explicit rate for a set number of years before the terminal value"
+    },
+    {
+      "name": "terminal growth",
+      "from": "growth",
+      "verb": "kind of",
+      "to": "terminal",
+      "description": "the perpetual growth of the cash flow after the explicit stage, at most the growth of the economy"
+    },
+    {
+      "name": "dividend growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "dividend",
+      "description": "the perpetual growth of the dividend per share in the Gordon growth model"
+    },
+    {
+      "name": "required return",
+      "from": "return",
+      "verb": "kind of",
+      "to": "required",
+      "description": "the cost of equity: the annual return an investor requires for the risk of the share, the discount rate of the cash flow and dividend models"
+    },
+    {
+      "name": "expected return",
+      "from": "return",
+      "verb": "can be",
+      "to": "expected"
+    },
+    {
+      "name": "price return",
+      "from": "return",
+      "verb": "of",
+      "to": "price",
+      "description": "the return from the change of the price alone, without the dividend"
+    },
+    {
+      "name": "annualised price return",
+      "from": "price return",
+      "verb": "kind of",
+      "to": "annualised",
+      "description": "the price return per year over the holding period: the ratio of target to price to the power of one over the years, minus one"
+    },
+    {
+      "name": "holding period",
+      "from": "period",
+      "verb": "kind of",
+      "to": "holding",
+      "description": "the years over which the price is expected to reach the target"
+    },
+    {
+      "name": "present value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "present",
+      "refs": [
+        {
+          "name": "Present_value",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "present value factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "present value",
+      "description": "the multiplier that turns the cash flow per share of the first year into the present value of a stage of the cash flow model"
+    },
+    {
+      "name": "net debt",
+      "from": "debt",
+      "verb": "kind of",
+      "to": "net",
+      "description": "the financial debt minus the cash and marketable securities",
+      "refs": [
+        {
+          "name": "Net_debt",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "net debt",
+      "verb": "per",
+      "to": "share",
+      "description": "the net debt divided by the shares outstanding, converted into the currency of the share"
+    },
+    {
+      "name": "shares outstanding",
+      "from": "share",
+      "verb": "kind of",
+      "to": "outstanding",
+      "description": "the issued shares minus the treasury shares"
+    },
+    {
+      "name": "exchange rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "exchange"
+    },
+    {
+      "from": "CHF",
+      "verb": "per",
+      "to": "USD",
+      "description": "the unit of the USD/CHF exchange rate: how many Swiss francs one US dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "name": "enterprise value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "enterprise",
+      "description": "the market capitalisation plus the net debt, the value of the whole business",
+      "refs": [
+        {
+          "name": "Enterprise_value",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "EV",
+      "verb": "is an acronym for",
+      "to": "enterprise value"
+    },
+    {
+      "name": "operational EBITA",
+      "from": "EBITA",
+      "verb": "kind of",
+      "to": "operational",
+      "description": "ABB's main profit measure: EBITA adjusted for restructuring, acquisition-related and other non-operational items"
+    },
+    {
+      "name": "EV/EBITA",
+      "from": "EV",
+      "verb": "per",
+      "to": "EBITA",
+      "description": "the enterprise value divided by the operational EBITA, the multiple at which the whole business is valued"
+    },
+    {
+      "name": "EV/EBITDA",
+      "from": "EV",
+      "verb": "per",
+      "to": "EBITDA",
+      "description": "the enterprise value divided by the EBITDA, the multiple ABB names for its acquisitions"
+    },
+    {
+      "name": "fair EV/EBITA",
+      "from": "EV/EBITA",
+      "verb": "kind of",
+      "to": "fair",
+      "description": "the multiple the reader considers fair for the business"
+    },
+    {
+      "name": "fair P/E",
+      "from": "P/E",
+      "verb": "kind of",
+      "to": "fair",
+      "description": "the price-earnings ratio the reader considers fair on next year's earnings"
+    },
+    {
+      "name": "trailing P/E",
+      "from": "P/E",
+      "verb": "kind of",
+      "to": "trailing",
+      "description": "the price divided by the earnings per share of the last twelve months"
+    },
+    {
+      "name": "forward P/E",
+      "from": "P/E",
+      "verb": "kind of",
+      "to": "forward",
+      "description": "the price divided by the earnings per share estimate of the next year"
+    },
+    {
+      "name": "EPS growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "EPS",
+      "description": "the growth of the earnings per share from the 2026 estimate to the 2027 estimate"
+    },
+    {
+      "name": "target price",
+      "from": "price",
+      "verb": "kind of",
+      "to": "target",
+      "description": "the price a valuation method or an analyst expects the share to be worth"
+    },
+    {
+      "name": "earnings multiple",
+      "from": "multiple",
+      "verb": "of",
+      "to": "earnings",
+      "description": "the valuation method that multiplies the earnings per share by a fair price-earnings ratio"
+    },
+    {
+      "name": "discounted cash flow",
+      "from": "cash flow",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the valuation method that discounts the future free cash flows per share at the required return",
+      "refs": [
+        {
+          "name": "Discounted_cash_flow",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "enterprise value multiple",
+      "from": "multiple",
+      "verb": "of",
+      "to": "enterprise value",
+      "description": "the valuation method that multiplies the EBITA by a fair EV/EBITA and subtracts the net debt"
+    },
+    {
+      "name": "dividend discount",
+      "from": "dividend",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the Gordon growth model: the next dividend divided by the required return minus the dividend growth",
+      "refs": [
+        {
+          "name": "Dividend_discount_model",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "analyst consensus",
+      "from": "consensus",
+      "verb": "of",
+      "to": "analyst",
+      "description": "the average of the published analyst target prices"
+    },
+    {
+      "name": "weighted target price",
+      "from": "target price",
+      "verb": "kind of",
+      "to": "weighted",
+      "description": "the target prices of the five methods, each times its weight, divided by the sum of the weights"
+    },
+    {
+      "from": "margin",
+      "verb": "of",
+      "to": "safety",
+      "description": "the share of the price by which the target must differ from the price before the verdict leaves hold: buy only above, sell only below",
+      "refs": [
+        {
+          "name": "Margin_of_safety_(financial)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "buy threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "buy",
+      "description": "the price below which the verdict is buy: the target divided by one plus the margin of safety"
+    },
+    {
+      "name": "sell threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "sell",
+      "description": "the price above which the verdict is sell: the target divided by one minus the margin of safety"
+    },
+    {
+      "name": "market capitalisation",
+      "from": "capitalisation",
+      "verb": "of",
+      "to": "market",
+      "description": "the price times the shares outstanding",
+      "refs": [
+        {
+          "name": "Market_capitalization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "dividend yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "dividend",
+      "description": "the dividend per share divided by the price"
+    },
+    {
+      "name": "free cash flow yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "free cash flow",
+      "description": "the free cash flow per share divided by the price"
+    },
+    {
+      "name": "key figure",
+      "from": "figure",
+      "verb": "kind of",
+      "to": "key",
+      "description": "a ratio of the price to a figure of the company, as the market values the share today"
+    },
+    {
+      "name": "52-week high",
+      "from": "high",
+      "verb": "kind of",
+      "to": "52-week"
+    },
+    {
+      "name": "52-week low",
+      "from": "low",
+      "verb": "kind of",
+      "to": "52-week"
+    },
+    {
+      "name": "order backlog",
+      "from": "backlog",
+      "verb": "of",
+      "to": "orders",
+      "description": "the orders received but not yet delivered"
+    },
+    {
+      "name": "gross margin",
+      "from": "margin",
+      "verb": "kind of",
+      "to": "gross"
+    },
+    {
+      "name": "operational EBITA margin",
+      "from": "margin",
+      "verb": "of",
+      "to": "operational EBITA",
+      "description": "the operational EBITA divided by the revenues"
+    },
+    {
+      "name": "capital employed",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "employed"
+    },
+    {
+      "from": "return",
+      "verb": "on",
+      "to": "capital employed",
+      "refs": [
+        {
+          "name": "Return_on_capital_employed",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "ROCE",
+      "verb": "is an acronym for",
+      "to": "return on capital employed"
+    },
+    {
+      "from": "return",
+      "verb": "on",
+      "to": "equity",
+      "refs": [
+        {
+          "name": "Return_on_equity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "ROE",
+      "verb": "is an acronym for",
+      "to": "return on equity"
+    },
+    {
+      "name": "finance expense",
+      "from": "expense",
+      "verb": "of",
+      "to": "finance"
+    },
+    {
+      "name": "net finance expense",
+      "from": "finance expense",
+      "verb": "kind of",
+      "to": "net",
+      "description": "the interest and other financial expenses minus the financial income"
+    },
+    {
+      "name": "share buyback",
+      "from": "buyback",
+      "verb": "of",
+      "to": "share",
+      "description": "the repurchase of own shares by the company",
+      "refs": [
+        {
+          "name": "Share_repurchase",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ABB Robotics",
+      "from": "robotics",
+      "verb": "of",
+      "to": "ABB",
+      "description": "the robotics business of ABB, sold to SoftBank Group"
+    },
+    {
+      "name": "divestment gain",
+      "from": "gain",
+      "verb": "of",
+      "to": "divestment",
+      "description": "the book gain of the sale of a business"
+    },
+    {
+      "name": "Rotork offer",
+      "from": "offer",
+      "verb": "of",
+      "to": "Rotork",
+      "description": "ABB's cash offer for all shares of Rotork plc announced in July 2026"
+    },
+    {
+      "name": "joint venture",
+      "from": "venture",
+      "verb": "kind of",
+      "to": "joint"
+    },
+    {
+      "name": "low-voltage business",
+      "from": "business",
+      "verb": "kind of",
+      "to": "low-voltage"
+    },
+    {
+      "from": "low-voltage business",
+      "verb": "of",
+      "to": "Mitsubishi Electric",
+      "description": "the low-voltage business of Mitsubishi Electric that ABB brings into a joint venture with a 51 % stake"
+    },
+    {
+      "name": "data centre",
+      "from": "centre",
+      "verb": "of",
+      "to": "data",
+      "refs": [
+        {
+          "name": "Data_center",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "adjusted EPS",
+      "from": "EPS",
+      "verb": "kind of",
+      "to": "adjusted",
+      "description": "the earnings per share before non-operational items, the figure the analysts' consensus is compared with"
+    },
+    {
+      "name": "net debt to EBITA",
+      "from": "EBITA",
+      "verb": "per",
+      "to": "net debt",
+      "description": "the leverage: the net debt divided by the EBITA; the triple is written EBITA per net debt because the ratio is named net debt to EBITA"
+    },
+    {
+      "name": "bull case",
+      "from": "case",
+      "verb": "kind of",
+      "to": "bull",
+      "description": "the optimistic reading of the share: the arguments for buying and the preset of a data-centre supercycle"
+    },
+    {
+      "name": "bear case",
+      "from": "case",
+      "verb": "kind of",
+      "to": "bear",
+      "description": "the pessimistic reading of the share: the arguments for selling and the preset of a mean reversion"
+    },
+    {
+      "name": "consensus case",
+      "from": "case",
+      "verb": "kind of",
+      "to": "consensus",
+      "description": "the preset with the consensus estimates and the average analyst target"
+    },
+    {
+      "name": "cash flow case",
+      "from": "case",
+      "verb": "of",
+      "to": "cash flow",
+      "description": "the preset in which only the cash flow and dividend methods count"
+    },
+    {
+      "name": "order book",
+      "from": "book",
+      "verb": "of",
+      "to": "orders"
+    },
+    {
+      "name": "order book argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "order book"
+    },
+    {
+      "name": "profitability argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "profitability"
+    },
+    {
+      "name": "cash flow argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "free cash flow"
+    },
+    {
+      "name": "portfolio argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "portfolio"
+    },
+    {
+      "name": "correction argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "correction"
+    },
+    {
+      "name": "dividend argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "dividend"
+    },
+    {
+      "name": "valuation argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "valuation"
+    },
+    {
+      "name": "earnings miss argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "miss"
+    },
+    {
+      "name": "conversion argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "conversion"
+    },
+    {
+      "name": "acquisition argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "acquisition"
+    },
+    {
+      "name": "cycle argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "cycle"
+    },
+    {
+      "name": "currency argument",
+      "from": "argument",
+      "verb": "of",
+      "to": "currency"
+    },
+    {
+      "name": "fair P/E 16",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "16",
+      "description": "the row of the sensitivity grid with a fair P/E of 16"
+    },
+    {
+      "name": "fair P/E 19",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "19",
+      "description": "the row of the sensitivity grid with a fair P/E of 19"
+    },
+    {
+      "name": "fair P/E 22",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "22",
+      "description": "the row of the sensitivity grid with a fair P/E of 22"
+    },
+    {
+      "name": "fair P/E 25",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "25",
+      "description": "the row of the sensitivity grid with a fair P/E of 25"
+    },
+    {
+      "name": "fair P/E 28",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "28",
+      "description": "the row of the sensitivity grid with a fair P/E of 28"
+    },
+    {
+      "name": "EPS 2027 estimate low",
+      "from": "EPS 2027 estimate",
+      "verb": "can be",
+      "to": "low",
+      "description": "the column of the sensitivity grid with an EPS 2027 estimate of 3.30 USD"
+    },
+    {
+      "name": "EPS 2027 estimate mid",
+      "from": "EPS 2027 estimate",
+      "verb": "can be",
+      "to": "mid",
+      "description": "the column of the sensitivity grid with an EPS 2027 estimate of 3.75 USD"
+    },
+    {
+      "name": "EPS 2027 estimate high",
+      "from": "EPS 2027 estimate",
+      "verb": "can be",
+      "to": "high",
+      "description": "the column of the sensitivity grid with an EPS 2027 estimate of 4.20 USD"
+    },
+    {
+      "name": "zukunft.com system",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "description": "keyword for system internal triples such as the column definitions"
+    },
+    {
+      "name": "process catch",
+      "from": "catch",
+      "verb": "kind of",
+      "to": "process"
+    },
+    {
+      "name": "process catch field",
+      "from": "input",
+      "verb": "of",
+      "to": "process catch"
+    },
+    {
+      "name": "process catch field (system)",
+      "from": "process catch field",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    },
+    {
+      "name": "field type",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "type"
+    },
+    {
+      "name": "number with limits",
+      "from": "field type",
+      "verb": "can be",
+      "to": "number"
+    },
+    {
+      "name": "field limit down",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "minimum"
+    },
+    {
+      "name": "field limit up",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "maximum"
+    },
+    {
+      "name": "field step",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "step"
+    },
+    {
+      "name": "calculator (system)",
+      "from": "calculator",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    },
+    {
+      "name": "calculator label",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "label"
+    },
+    {
+      "name": "calculator hint",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "hint"
+    },
+    {
+      "name": "calculator input",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "input"
+    },
+    {
+      "name": "calculator assumption",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "assumption"
+    },
+    {
+      "name": "calculator result column",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "calculator row group",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "group"
+    },
+    {
+      "name": "calculator detail table",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "table"
+    },
+    {
+      "name": "calculator highlight",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "highlight"
+    },
+    {
+      "name": "calculator signed",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "sign"
+    },
+    {
+      "name": "calculator preset",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "preset"
+    },
+    {
+      "name": "calculator tag",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "tag"
+    },
+    {
+      "name": "calculator argument",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "argument"
+    },
+    {
+      "name": "calculator verdict",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "verdict"
+    },
+    {
+      "name": "calculator note",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "note"
+    },
+    {
+      "name": "calculator scale",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "scale"
+    },
+    {
+      "name": "buy verdict",
+      "from": "calculator verdict",
+      "verb": "can be",
+      "to": "buy"
+    },
+    {
+      "name": "hold verdict",
+      "from": "calculator verdict",
+      "verb": "can be",
+      "to": "hold"
+    },
+    {
+      "name": "sell verdict",
+      "from": "calculator verdict",
+      "verb": "can be",
+      "to": "sell"
+    },
+    {
+      "name": "analyst consensus weight",
+      "from": "weight",
+      "verb": "of",
+      "to": "analyst consensus",
+      "description": "the weight of the analyst consensus in the weighted target price"
+    },
+    {
+      "name": "ABB share decision label",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "ABB shares (SIX: ABBN): buy, sell or hold at 72.88 CHF?"
+    },
+    {
+      "name": "ABB share decision hint",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "ABB Ltd of Zurich sells electrification and automation equipment, reports in US dollars and is quoted in Swiss francs; 1.81 billion shares are outstanding, the market value is about 130 billion CHF [1][9]. The Q3 2026 results of 20 October 2026 brought record orders of 12.1 billion USD and a record operational EBITA margin of 20.8 %, but the adjusted earnings per share missed the consensus by 13 % and the share fell from a 52-week high of 89.14 CHF to 72.88 CHF at the close of 28 October [1][2][9]. Nine analysts rate the share hold with targets from 57 to 88 CHF, on average 77 CHF [3]. Behind the figures lie three portfolio moves: the sale of Robotics to SoftBank for 5.375 billion USD closing in Q4 2026, the 5.5 billion USD offer for the British valve maker Rotork closing in the first half of 2027, and a 51 % stake in Mitsubishi Electric's low-voltage business [1][5][11][13]. Below are the arguments of the bulls and the bears with their numbers, then a calculator: it derives a target price from five valuation methods (earnings multiple, discounted cash flow, enterprise value multiple, dividend discount, analyst consensus), weights them as you say, compares the result with the price - and tells you whether that suggests buying, holding or selling under your assumptions. A model is not investment advice; the assumptions are the decision."
+    },
+    {
+      "name": "ABB share decision model limits",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator note",
+      "description": "one price on one day against estimates that move every quarter; the EPS 2026 consensus may or may not contain the 2.4 billion USD Robotics gain and is used for the PEG only; the Rotork outflow of 2027 and the Robotics inflow of Q4 2026 are not in the net debt; no tax on the dividend, no transaction cost, no portfolio context, no scenario probabilities; the analysts' models, the ABB financial report and the quarterly press releases are the places to look for these"
+    },
+    {
+      "name": "ABB share decision inputs",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator input"
+    },
+    {
+      "name": "ABB share decision assumptions",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator assumption"
+    },
+    {
+      "name": "ABB share decision input price",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "price"
+    },
+    {
+      "name": "ABB share decision input price label",
+      "from": "ABB share decision input price",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Share price"
+    },
+    {
+      "name": "ABB share decision input price hint",
+      "from": "ABB share decision input price",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Close on SIX of 28 October 2026; 52-week range 53.78 to 89.14 CHF [9]"
+    },
+    {
+      "name": "ABB share decision input price tag",
+      "from": "ABB share decision input price",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured 28.10.2026"
+    },
+    {
+      "name": "ABB share decision input EPS 2027 estimate",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "EPS 2027 estimate"
+    },
+    {
+      "name": "ABB share decision input EPS 2027 estimate label",
+      "from": "ABB share decision input EPS 2027 estimate",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Earnings per share 2027 (estimate)"
+    },
+    {
+      "name": "ABB share decision input EPS 2027 estimate hint",
+      "from": "ABB share decision input EPS 2027 estimate",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Consensus 3.75 USD for 2027 and 3.35 USD for 2026 [9]; 2025 reported 2.59 USD [4]"
+    },
+    {
+      "name": "ABB share decision input EPS 2027 estimate tag",
+      "from": "ABB share decision input EPS 2027 estimate",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured consensus"
+    },
+    {
+      "name": "ABB share decision input EPS 2027 estimate order",
+      "from": "ABB share decision input EPS 2027 estimate",
+      "verb": "is follower of",
+      "to": "ABB share decision input price"
+    },
+    {
+      "name": "ABB share decision input fair P/E",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "fair P/E"
+    },
+    {
+      "name": "ABB share decision input fair P/E label",
+      "from": "ABB share decision input fair P/E",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Fair price-earnings ratio"
+    },
+    {
+      "name": "ABB share decision input fair P/E hint",
+      "from": "ABB share decision input fair P/E",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "What a quality industrial with 10 % earnings growth deserves on next year's earnings; the share trades at 27.6 times 2025 and 23 times 2027 [9]"
+    },
+    {
+      "name": "ABB share decision input fair P/E tag",
+      "from": "ABB share decision input fair P/E",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.5"
+    },
+    {
+      "name": "ABB share decision input fair P/E order",
+      "from": "ABB share decision input fair P/E",
+      "verb": "is follower of",
+      "to": "ABB share decision input EPS 2027 estimate"
+    },
+    {
+      "name": "ABB share decision input free cash flow",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "free cash flow"
+    },
+    {
+      "name": "ABB share decision input free cash flow label",
+      "from": "ABB share decision input free cash flow",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Free cash flow 2026"
+    },
+    {
+      "name": "ABB share decision input free cash flow hint",
+      "from": "ABB share decision input free cash flow",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "3.7 billion USD over nine months, \"near 5 billion\" for the year according to the CFO; 4.6 billion in 2025 [1][2][4]"
+    },
+    {
+      "name": "ABB share decision input free cash flow tag",
+      "from": "ABB share decision input free cash flow",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured guidance"
+    },
+    {
+      "name": "ABB share decision input free cash flow order",
+      "from": "ABB share decision input free cash flow",
+      "verb": "is follower of",
+      "to": "ABB share decision input fair P/E"
+    },
+    {
+      "name": "ABB share decision input free cash flow growth",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "free cash flow growth"
+    },
+    {
+      "name": "ABB share decision input free cash flow growth label",
+      "from": "ABB share decision input free cash flow growth",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Cash flow growth over the next ten years"
+    },
+    {
+      "name": "ABB share decision input free cash flow growth hint",
+      "from": "ABB share decision input free cash flow growth",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Revenue guidance 2026 \"low teens\", backlog up 35 %; the EPS consensus implies 12 % from 2026 to 2027 [1][9]"
+    },
+    {
+      "name": "ABB share decision input free cash flow growth tag",
+      "from": "ABB share decision input free cash flow growth",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.4"
+    },
+    {
+      "name": "ABB share decision input free cash flow growth order",
+      "from": "ABB share decision input free cash flow growth",
+      "verb": "is follower of",
+      "to": "ABB share decision input free cash flow"
+    },
+    {
+      "name": "ABB share decision input required return",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "required return"
+    },
+    {
+      "name": "ABB share decision input required return label",
+      "from": "ABB share decision input required return",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Required return (discount rate)"
+    },
+    {
+      "name": "ABB share decision input required return hint",
+      "from": "ABB share decision input required return",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Cost of equity of a large Swiss industrial with a beta of about 1: risk-free rate plus 5 to 6 % equity premium [10]"
+    },
+    {
+      "name": "ABB share decision input required return tag",
+      "from": "ABB share decision input required return",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.5"
+    },
+    {
+      "name": "ABB share decision input required return order",
+      "from": "ABB share decision input required return",
+      "verb": "is follower of",
+      "to": "ABB share decision input free cash flow growth"
+    },
+    {
+      "name": "ABB share decision input fair EV/EBITA",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "fair EV/EBITA"
+    },
+    {
+      "name": "ABB share decision input fair EV/EBITA label",
+      "from": "ABB share decision input fair EV/EBITA",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Fair EV/EBITA multiple"
+    },
+    {
+      "name": "ABB share decision input fair EV/EBITA hint",
+      "from": "ABB share decision input fair EV/EBITA",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "ABB paid 11 times EBITDA for the Mitsubishi Electric business; the share trades at about 19 times its own 2026 EBITA [13]"
+    },
+    {
+      "name": "ABB share decision input fair EV/EBITA tag",
+      "from": "ABB share decision input fair EV/EBITA",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.4"
+    },
+    {
+      "name": "ABB share decision input fair EV/EBITA order",
+      "from": "ABB share decision input fair EV/EBITA",
+      "verb": "is follower of",
+      "to": "ABB share decision input required return"
+    },
+    {
+      "name": "ABB share decision input analyst consensus",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "analyst consensus"
+    },
+    {
+      "name": "ABB share decision input analyst consensus label",
+      "from": "ABB share decision input analyst consensus",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Analyst consensus target"
+    },
+    {
+      "name": "ABB share decision input analyst consensus hint",
+      "from": "ABB share decision input analyst consensus",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Average of nine targets, median 80: UBS 88, RBC 82, Berenberg, Bernstein, JP Morgan 80, Deutsche Bank, Barclays 76, Goldman 74, Jefferies 57 [3]"
+    },
+    {
+      "name": "ABB share decision input analyst consensus tag",
+      "from": "ABB share decision input analyst consensus",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured 57-88"
+    },
+    {
+      "name": "ABB share decision input analyst consensus order",
+      "from": "ABB share decision input analyst consensus",
+      "verb": "is follower of",
+      "to": "ABB share decision input fair EV/EBITA"
+    },
+    {
+      "name": "ABB share decision input margin of safety",
+      "from": "ABB share decision inputs",
+      "verb": "has a",
+      "to": "margin of safety"
+    },
+    {
+      "name": "ABB share decision input margin of safety label",
+      "from": "ABB share decision input margin of safety",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Margin of safety (decision threshold)"
+    },
+    {
+      "name": "ABB share decision input margin of safety hint",
+      "from": "ABB share decision input margin of safety",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Buy only if the target is this much above the price, sell only if this much below; in between hold, because the error of the model is larger than the difference"
+    },
+    {
+      "name": "ABB share decision input margin of safety tag",
+      "from": "ABB share decision input margin of safety",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed"
+    },
+    {
+      "name": "ABB share decision input margin of safety order",
+      "from": "ABB share decision input margin of safety",
+      "verb": "is follower of",
+      "to": "ABB share decision input analyst consensus"
+    },
+    {
+      "name": "ABB share decision assumption EPS 2026 estimate",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "EPS 2026 estimate"
+    },
+    {
+      "name": "ABB share decision assumption EPS 2026 estimate label",
+      "from": "ABB share decision assumption EPS 2026 estimate",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Earnings per share 2026 (estimate)"
+    },
+    {
+      "name": "ABB share decision assumption EPS 2026 estimate hint",
+      "from": "ABB share decision assumption EPS 2026 estimate",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Consensus [9]; nine months reported 2.06 USD; only used for the earnings growth of the PEG ratio"
+    },
+    {
+      "name": "ABB share decision assumption EPS 2026 estimate tag",
+      "from": "ABB share decision assumption EPS 2026 estimate",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured consensus"
+    },
+    {
+      "name": "ABB share decision assumption trailing EPS",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "trailing EPS"
+    },
+    {
+      "name": "ABB share decision assumption trailing EPS label",
+      "from": "ABB share decision assumption trailing EPS",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Earnings per share, last twelve months"
+    },
+    {
+      "name": "ABB share decision assumption trailing EPS hint",
+      "from": "ABB share decision assumption trailing EPS",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Basic EPS: 2.59 for 2025 minus 1.89 for nine months 2025 plus 2.06 for nine months 2026 [1][4]"
+    },
+    {
+      "name": "ABB share decision assumption trailing EPS tag",
+      "from": "ABB share decision assumption trailing EPS",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured"
+    },
+    {
+      "name": "ABB share decision assumption trailing EPS order",
+      "from": "ABB share decision assumption trailing EPS",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption EPS 2026 estimate"
+    },
+    {
+      "name": "ABB share decision assumption dividend",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "dividend"
+    },
+    {
+      "name": "ABB share decision assumption dividend label",
+      "from": "ABB share decision assumption dividend",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Dividend per share"
+    },
+    {
+      "name": "ABB share decision assumption dividend hint",
+      "from": "ABB share decision assumption dividend",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Paid for 2025, after 0.90 CHF for 2024 [4]"
+    },
+    {
+      "name": "ABB share decision assumption dividend tag",
+      "from": "ABB share decision assumption dividend",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured"
+    },
+    {
+      "name": "ABB share decision assumption dividend order",
+      "from": "ABB share decision assumption dividend",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption trailing EPS"
+    },
+    {
+      "name": "ABB share decision assumption dividend growth",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "dividend growth"
+    },
+    {
+      "name": "ABB share decision assumption dividend growth label",
+      "from": "ABB share decision assumption dividend growth",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Dividend growth, perpetual"
+    },
+    {
+      "name": "ABB share decision assumption dividend growth hint",
+      "from": "ABB share decision assumption dividend growth",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "0.82 to 0.94 CHF from 2021 to 2025 is about 3.5 % a year; must stay below the required return"
+    },
+    {
+      "name": "ABB share decision assumption dividend growth tag",
+      "from": "ABB share decision assumption dividend growth",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.5"
+    },
+    {
+      "name": "ABB share decision assumption dividend growth order",
+      "from": "ABB share decision assumption dividend growth",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption dividend"
+    },
+    {
+      "name": "ABB share decision assumption explicit stage",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "explicit stage"
+    },
+    {
+      "name": "ABB share decision assumption explicit stage label",
+      "from": "ABB share decision assumption explicit stage",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Years of explicit cash flow growth"
+    },
+    {
+      "name": "ABB share decision assumption explicit stage tag",
+      "from": "ABB share decision assumption explicit stage",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.6"
+    },
+    {
+      "name": "ABB share decision assumption explicit stage order",
+      "from": "ABB share decision assumption explicit stage",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption dividend growth"
+    },
+    {
+      "name": "ABB share decision assumption terminal growth",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "terminal growth"
+    },
+    {
+      "name": "ABB share decision assumption terminal growth label",
+      "from": "ABB share decision assumption terminal growth",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Terminal growth after that"
+    },
+    {
+      "name": "ABB share decision assumption terminal growth hint",
+      "from": "ABB share decision assumption terminal growth",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Long-run nominal growth of the world economy; must stay below the required return"
+    },
+    {
+      "name": "ABB share decision assumption terminal growth tag",
+      "from": "ABB share decision assumption terminal growth",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.6"
+    },
+    {
+      "name": "ABB share decision assumption terminal growth order",
+      "from": "ABB share decision assumption terminal growth",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption explicit stage"
+    },
+    {
+      "name": "ABB share decision assumption operational EBITA",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "operational EBITA"
+    },
+    {
+      "name": "ABB share decision assumption operational EBITA label",
+      "from": "ABB share decision assumption operational EBITA",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Operational EBITA 2026"
+    },
+    {
+      "name": "ABB share decision assumption operational EBITA hint",
+      "from": "ABB share decision assumption operational EBITA",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "6.0 billion USD over nine months plus a Q4 slightly below Q3's 2.0 billion plus the 240 million CHF property gain; 6.3 billion in 2025 [1][4]"
+    },
+    {
+      "name": "ABB share decision assumption operational EBITA tag",
+      "from": "ABB share decision assumption operational EBITA",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.6"
+    },
+    {
+      "name": "ABB share decision assumption operational EBITA order",
+      "from": "ABB share decision assumption operational EBITA",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption terminal growth"
+    },
+    {
+      "name": "ABB share decision assumption net debt",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "net debt"
+    },
+    {
+      "name": "ABB share decision assumption net debt label",
+      "from": "ABB share decision assumption net debt",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Net debt"
+    },
+    {
+      "name": "ABB share decision assumption net debt hint",
+      "from": "ABB share decision assumption net debt",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "30 September 2026, excluding net pension assets of 0.6 billion; Robotics brings in 5.4 billion in Q4, Rotork takes 5.5 billion out in 2027 [1]"
+    },
+    {
+      "name": "ABB share decision assumption net debt tag",
+      "from": "ABB share decision assumption net debt",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured"
+    },
+    {
+      "name": "ABB share decision assumption net debt order",
+      "from": "ABB share decision assumption net debt",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption operational EBITA"
+    },
+    {
+      "name": "ABB share decision assumption shares outstanding",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "shares outstanding"
+    },
+    {
+      "name": "ABB share decision assumption shares outstanding label",
+      "from": "ABB share decision assumption shares outstanding",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Shares outstanding"
+    },
+    {
+      "name": "ABB share decision assumption shares outstanding hint",
+      "from": "ABB share decision assumption shares outstanding",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "1'808 million at 30 September 2026 after 5.7 million bought back in Q3 [1]"
+    },
+    {
+      "name": "ABB share decision assumption shares outstanding tag",
+      "from": "ABB share decision assumption shares outstanding",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured"
+    },
+    {
+      "name": "ABB share decision assumption shares outstanding order",
+      "from": "ABB share decision assumption shares outstanding",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption net debt"
+    },
+    {
+      "name": "ABB share decision assumption exchange rate",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "exchange rate"
+    },
+    {
+      "name": "ABB share decision assumption exchange rate label",
+      "from": "ABB share decision assumption exchange rate",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "US dollar in Swiss francs"
+    },
+    {
+      "name": "ABB share decision assumption exchange rate hint",
+      "from": "ABB share decision assumption exchange rate",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "0.827 on 15 October 2026 [8]; converts the USD earnings, cash flow and EBITA into the CHF of the share"
+    },
+    {
+      "name": "ABB share decision assumption exchange rate tag",
+      "from": "ABB share decision assumption exchange rate",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "measured 15.10.2026"
+    },
+    {
+      "name": "ABB share decision assumption exchange rate order",
+      "from": "ABB share decision assumption exchange rate",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption shares outstanding"
+    },
+    {
+      "name": "ABB share decision assumption holding period",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "holding period"
+    },
+    {
+      "name": "ABB share decision assumption holding period label",
+      "from": "ABB share decision assumption holding period",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Holding period"
+    },
+    {
+      "name": "ABB share decision assumption holding period hint",
+      "from": "ABB share decision assumption holding period",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Over how many years the price is expected to reach the target; only used for the expected annual return"
+    },
+    {
+      "name": "ABB share decision assumption holding period tag",
+      "from": "ABB share decision assumption holding period",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed"
+    },
+    {
+      "name": "ABB share decision assumption holding period order",
+      "from": "ABB share decision assumption holding period",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption exchange rate"
+    },
+    {
+      "name": "ABB share decision assumption earnings multiple",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "earnings multiple"
+    },
+    {
+      "name": "ABB share decision assumption earnings multiple label",
+      "from": "ABB share decision assumption earnings multiple",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Weight: earnings multiple"
+    },
+    {
+      "name": "ABB share decision assumption earnings multiple tag",
+      "from": "ABB share decision assumption earnings multiple",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.3"
+    },
+    {
+      "name": "ABB share decision assumption earnings multiple order",
+      "from": "ABB share decision assumption earnings multiple",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption holding period"
+    },
+    {
+      "name": "ABB share decision assumption discounted cash flow",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "discounted cash flow"
+    },
+    {
+      "name": "ABB share decision assumption discounted cash flow label",
+      "from": "ABB share decision assumption discounted cash flow",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Weight: discounted cash flow"
+    },
+    {
+      "name": "ABB share decision assumption discounted cash flow tag",
+      "from": "ABB share decision assumption discounted cash flow",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.3"
+    },
+    {
+      "name": "ABB share decision assumption discounted cash flow order",
+      "from": "ABB share decision assumption discounted cash flow",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption earnings multiple"
+    },
+    {
+      "name": "ABB share decision assumption enterprise value multiple",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "enterprise value multiple"
+    },
+    {
+      "name": "ABB share decision assumption enterprise value multiple label",
+      "from": "ABB share decision assumption enterprise value multiple",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Weight: enterprise value multiple"
+    },
+    {
+      "name": "ABB share decision assumption enterprise value multiple tag",
+      "from": "ABB share decision assumption enterprise value multiple",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.3"
+    },
+    {
+      "name": "ABB share decision assumption enterprise value multiple order",
+      "from": "ABB share decision assumption enterprise value multiple",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption discounted cash flow"
+    },
+    {
+      "name": "ABB share decision assumption dividend discount",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "dividend discount"
+    },
+    {
+      "name": "ABB share decision assumption dividend discount label",
+      "from": "ABB share decision assumption dividend discount",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Weight: dividend discount"
+    },
+    {
+      "name": "ABB share decision assumption dividend discount hint",
+      "from": "ABB share decision assumption dividend discount",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Low for a company that pays out only a third of its earnings and buys back shares instead"
+    },
+    {
+      "name": "ABB share decision assumption dividend discount tag",
+      "from": "ABB share decision assumption dividend discount",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.3"
+    },
+    {
+      "name": "ABB share decision assumption dividend discount order",
+      "from": "ABB share decision assumption dividend discount",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption enterprise value multiple"
+    },
+    {
+      "name": "ABB share decision assumption analyst consensus weight",
+      "from": "ABB share decision assumptions",
+      "verb": "has a",
+      "to": "analyst consensus weight"
+    },
+    {
+      "name": "ABB share decision assumption analyst consensus weight label",
+      "from": "ABB share decision assumption analyst consensus weight",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Weight: analyst consensus"
+    },
+    {
+      "name": "ABB share decision assumption analyst consensus weight hint",
+      "from": "ABB share decision assumption analyst consensus weight",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "The weights are normalised, so they need not add up to 100"
+    },
+    {
+      "name": "ABB share decision assumption analyst consensus weight tag",
+      "from": "ABB share decision assumption analyst consensus weight",
+      "verb": "has a",
+      "to": "calculator tag",
+      "description": "assumed 0.3"
+    },
+    {
+      "name": "ABB share decision assumption analyst consensus weight order",
+      "from": "ABB share decision assumption analyst consensus weight",
+      "verb": "is follower of",
+      "to": "ABB share decision assumption dividend discount"
+    },
+    {
+      "name": "field price",
+      "from": "price",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the price on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field EPS 2027 estimate",
+      "from": "EPS 2027 estimate",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the EPS 2027 estimate on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field fair P/E",
+      "from": "fair P/E",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the fair P/E on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field free cash flow",
+      "from": "free cash flow",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the free cash flow on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field free cash flow growth",
+      "from": "free cash flow growth",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the free cash flow growth on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field required return",
+      "from": "required return",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the required return on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field fair EV/EBITA",
+      "from": "fair EV/EBITA",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the fair EV/EBITA on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field analyst consensus",
+      "from": "analyst consensus",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the analyst consensus on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field margin of safety",
+      "from": "margin of safety",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the margin of safety on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field EPS 2026 estimate",
+      "from": "EPS 2026 estimate",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the EPS 2026 estimate on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field trailing EPS",
+      "from": "trailing EPS",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the trailing EPS on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field dividend",
+      "from": "dividend",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the dividend on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field dividend growth",
+      "from": "dividend growth",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the dividend growth on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field explicit stage",
+      "from": "explicit stage",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the explicit stage on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field terminal growth",
+      "from": "terminal growth",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the terminal growth on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field operational EBITA",
+      "from": "operational EBITA",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the operational EBITA on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field net debt",
+      "from": "net debt",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the net debt on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field shares outstanding",
+      "from": "shares outstanding",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the shares outstanding on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field exchange rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the exchange rate on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field holding period",
+      "from": "holding period",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the holding period on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field earnings multiple",
+      "from": "earnings multiple",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the earnings multiple on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field discounted cash flow",
+      "from": "discounted cash flow",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the discounted cash flow on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field enterprise value multiple",
+      "from": "enterprise value multiple",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the enterprise value multiple on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field dividend discount",
+      "from": "dividend discount",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the dividend discount on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "field analyst consensus weight",
+      "from": "analyst consensus weight",
+      "verb": "can be",
+      "to": "number with limits",
+      "description": "the input of the analyst consensus weight on the page, a number between the field limits in the field steps"
+    },
+    {
+      "name": "ABB share decision presets",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator preset"
+    },
+    {
+      "name": "ABB share decision preset consensus case",
+      "from": "ABB share decision presets",
+      "verb": "has a",
+      "to": "consensus case"
+    },
+    {
+      "name": "ABB share decision preset consensus case label",
+      "from": "ABB share decision preset consensus case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Consensus"
+    },
+    {
+      "name": "ABB share decision preset consensus case hint",
+      "from": "ABB share decision preset consensus case",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Consensus EPS 2027 of 3.75 USD, fair P/E 22, 8 % cash flow growth, analyst target 77 CHF"
+    },
+    {
+      "name": "ABB share decision preset bull case",
+      "from": "ABB share decision presets",
+      "verb": "has a",
+      "to": "bull case"
+    },
+    {
+      "name": "ABB share decision preset bull case label",
+      "from": "ABB share decision preset bull case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Bull: supercycle"
+    },
+    {
+      "name": "ABB share decision preset bull case hint",
+      "from": "ABB share decision preset bull case",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Data-centre supercycle: EPS 2027 4.20 USD, fair P/E 26, 11 % growth, EV/EBITA 21, target 88 CHF (UBS)"
+    },
+    {
+      "name": "ABB share decision preset bull case order",
+      "from": "ABB share decision preset bull case",
+      "verb": "is follower of",
+      "to": "ABB share decision preset consensus case"
+    },
+    {
+      "name": "ABB share decision preset bear case",
+      "from": "ABB share decision presets",
+      "verb": "has a",
+      "to": "bear case"
+    },
+    {
+      "name": "ABB share decision preset bear case label",
+      "from": "ABB share decision preset bear case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Bear: reversion"
+    },
+    {
+      "name": "ABB share decision preset bear case hint",
+      "from": "ABB share decision preset bear case",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Mean reversion: EPS 2027 3.40 USD, fair P/E 17, 4 % growth, EV/EBITA 15, target 57 CHF (Jefferies)"
+    },
+    {
+      "name": "ABB share decision preset bear case order",
+      "from": "ABB share decision preset bear case",
+      "verb": "is follower of",
+      "to": "ABB share decision preset bull case"
+    },
+    {
+      "name": "ABB share decision preset cash flow case",
+      "from": "ABB share decision presets",
+      "verb": "has a",
+      "to": "cash flow case"
+    },
+    {
+      "name": "ABB share decision preset cash flow case label",
+      "from": "ABB share decision preset cash flow case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Cash flow only"
+    },
+    {
+      "name": "ABB share decision preset cash flow case hint",
+      "from": "ABB share decision preset cash flow case",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Only cash counts: 70 % discounted cash flow, 30 % dividend discount, no multiples, no analysts"
+    },
+    {
+      "name": "ABB share decision preset cash flow case order",
+      "from": "ABB share decision preset cash flow case",
+      "verb": "is follower of",
+      "to": "ABB share decision preset bear case"
+    },
+    {
+      "name": "ABB share decision verdict",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator verdict"
+    },
+    {
+      "name": "ABB share decision verdict note",
+      "from": "ABB share decision verdict",
+      "verb": "has a",
+      "to": "calculator note",
+      "description": "The target price is the weighted result of five valuation methods under your assumptions; buy and sell need the margin of safety you set, everything in between is hold. This is a model of the key figures, not investment advice, and it knows nothing about your portfolio, taxes or horizon."
+    },
+    {
+      "name": "ABB share decision verdict scale",
+      "from": "ABB share decision verdict",
+      "verb": "has a",
+      "to": "calculator scale",
+      "description": "target below price: sell | -30 ... 0 ... +30 % upside | target above price: buy; the needle stands at the upside, 30 % to each side of the middle"
+    },
+    {
+      "name": "buy verdict label",
+      "from": "buy verdict",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Buy - under your assumptions the share trades {upside} % below its target"
+    },
+    {
+      "name": "buy verdict hint",
+      "from": "buy verdict",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "The weighted target price is {target} CHF against a price of {price} CHF, more than your margin of safety of {margin} %. If the price reaches the target in {holding period} years, the return is about {expected return} % a year including the dividend. The verdict turns to hold above {buy threshold} CHF."
+    },
+    {
+      "name": "sell verdict label",
+      "from": "sell verdict",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Sell - under your assumptions the share trades {upside} % above its target"
+    },
+    {
+      "name": "sell verdict hint",
+      "from": "sell verdict",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "The weighted target price is {target} CHF against a price of {price} CHF, more than your margin of safety of {margin} % below the price. Held for {holding period} years until the price meets the target, the return is about {expected return} % a year including the dividend. The verdict turns to hold below {sell threshold} CHF."
+    },
+    {
+      "name": "hold verdict label",
+      "from": "hold verdict",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Hold - the target is within your margin of safety of the price"
+    },
+    {
+      "name": "hold verdict hint",
+      "from": "hold verdict",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "The weighted target price is {target} CHF against a price of {price} CHF, a difference of {upside} %: less than the margin of safety of {margin} % you require, so the key figures neither call for buying nor for selling. The expected return is about {expected return} % a year including the dividend. Buy below {buy threshold} CHF, sell above {sell threshold} CHF - or change the assumptions that move the target most: the fair P/E, the cash flow growth and the required return."
+    },
+    {
+      "name": "ABB share decision result columns",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator result column"
+    },
+    {
+      "name": "ABB share decision result columns label",
+      "from": "ABB share decision result columns",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Main results at the price of 28 October 2026"
+    },
+    {
+      "name": "ABB share decision column target price",
+      "from": "ABB share decision result columns",
+      "verb": "has a",
+      "to": "target price"
+    },
+    {
+      "name": "ABB share decision column weight",
+      "from": "ABB share decision result columns",
+      "verb": "has a",
+      "to": "weight"
+    },
+    {
+      "name": "ABB share decision column weight order",
+      "from": "ABB share decision column weight",
+      "verb": "is follower of",
+      "to": "ABB share decision column target price"
+    },
+    {
+      "name": "ABB share decision column upside",
+      "from": "ABB share decision result columns",
+      "verb": "has a",
+      "to": "upside"
+    },
+    {
+      "name": "ABB share decision column upside label",
+      "from": "ABB share decision column upside",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "vs. price"
+    },
+    {
+      "name": "ABB share decision column upside order",
+      "from": "ABB share decision column upside",
+      "verb": "is follower of",
+      "to": "ABB share decision column weight"
+    },
+    {
+      "name": "ABB share decision row groups",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator row group"
+    },
+    {
+      "name": "ABB share decision rows method",
+      "from": "ABB share decision row groups",
+      "verb": "has a",
+      "to": "method"
+    },
+    {
+      "name": "ABB share decision rows method label",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Target price by method"
+    },
+    {
+      "name": "ABB share decision rows key figure",
+      "from": "ABB share decision row groups",
+      "verb": "has a",
+      "to": "key figure"
+    },
+    {
+      "name": "ABB share decision rows key figure label",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Key figures at the current price"
+    },
+    {
+      "name": "ABB share decision rows key figure order",
+      "from": "ABB share decision rows key figure",
+      "verb": "is follower of",
+      "to": "ABB share decision rows method"
+    },
+    {
+      "name": "ABB share decision row earnings multiple",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "earnings multiple"
+    },
+    {
+      "name": "ABB share decision row earnings multiple hint",
+      "from": "ABB share decision row earnings multiple",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "{EPS 2027 estimate in CHF} CHF x {fair P/E}"
+    },
+    {
+      "name": "ABB share decision row discounted cash flow",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "discounted cash flow"
+    },
+    {
+      "name": "ABB share decision row discounted cash flow hint",
+      "from": "ABB share decision row discounted cash flow",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "{free cash flow per share} CHF free cash flow per share, {growth} % for {years} years, then {terminal growth} %, at {required return} %"
+    },
+    {
+      "name": "ABB share decision row discounted cash flow order",
+      "from": "ABB share decision row discounted cash flow",
+      "verb": "is follower of",
+      "to": "ABB share decision row earnings multiple"
+    },
+    {
+      "name": "ABB share decision row enterprise value multiple",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "enterprise value multiple"
+    },
+    {
+      "name": "ABB share decision row enterprise value multiple hint",
+      "from": "ABB share decision row enterprise value multiple",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "{operational EBITA} billion USD x {fair EV/EBITA} minus {net debt} billion net debt"
+    },
+    {
+      "name": "ABB share decision row enterprise value multiple order",
+      "from": "ABB share decision row enterprise value multiple",
+      "verb": "is follower of",
+      "to": "ABB share decision row discounted cash flow"
+    },
+    {
+      "name": "ABB share decision row dividend discount",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "dividend discount"
+    },
+    {
+      "name": "ABB share decision row dividend discount hint",
+      "from": "ABB share decision row dividend discount",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "next dividend / (required return - dividend growth)"
+    },
+    {
+      "name": "ABB share decision row dividend discount order",
+      "from": "ABB share decision row dividend discount",
+      "verb": "is follower of",
+      "to": "ABB share decision row enterprise value multiple"
+    },
+    {
+      "name": "ABB share decision row analyst consensus",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "analyst consensus"
+    },
+    {
+      "name": "ABB share decision row analyst consensus order",
+      "from": "ABB share decision row analyst consensus",
+      "verb": "is follower of",
+      "to": "ABB share decision row dividend discount"
+    },
+    {
+      "name": "ABB share decision row weighted target price",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "weighted target price"
+    },
+    {
+      "name": "ABB share decision row weighted target price highlight",
+      "from": "ABB share decision row weighted target price",
+      "verb": "has a",
+      "to": "calculator highlight"
+    },
+    {
+      "name": "ABB share decision row weighted target price order",
+      "from": "ABB share decision row weighted target price",
+      "verb": "is follower of",
+      "to": "ABB share decision row analyst consensus"
+    },
+    {
+      "name": "ABB share decision row expected return",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "expected return"
+    },
+    {
+      "name": "ABB share decision row expected return label",
+      "from": "ABB share decision row expected return",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Expected annual return"
+    },
+    {
+      "name": "ABB share decision row expected return hint",
+      "from": "ABB share decision row expected return",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "price to target over {holding period} years, plus {dividend yield} % dividend yield"
+    },
+    {
+      "name": "ABB share decision row expected return order",
+      "from": "ABB share decision row expected return",
+      "verb": "is follower of",
+      "to": "ABB share decision row weighted target price"
+    },
+    {
+      "name": "ABB share decision row buy threshold",
+      "from": "ABB share decision rows method",
+      "verb": "has a",
+      "to": "buy threshold"
+    },
+    {
+      "name": "ABB share decision row buy threshold label",
+      "from": "ABB share decision row buy threshold",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Buy below / sell above"
+    },
+    {
+      "name": "ABB share decision row buy threshold hint",
+      "from": "ABB share decision row buy threshold",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "the prices at which the verdict flips, with your margin of safety; the buy threshold in the target column, the sell threshold in the vs. price column"
+    },
+    {
+      "name": "ABB share decision row buy threshold highlight",
+      "from": "ABB share decision row buy threshold",
+      "verb": "has a",
+      "to": "calculator highlight"
+    },
+    {
+      "name": "ABB share decision row buy threshold order",
+      "from": "ABB share decision row buy threshold",
+      "verb": "is follower of",
+      "to": "ABB share decision row expected return"
+    },
+    {
+      "name": "ABB share decision row trailing P/E",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "trailing P/E"
+    },
+    {
+      "name": "ABB share decision row trailing P/E label",
+      "from": "ABB share decision row trailing P/E",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Price-earnings ratio, last twelve months"
+    },
+    {
+      "name": "ABB share decision row forward P/E",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "forward P/E"
+    },
+    {
+      "name": "ABB share decision row forward P/E label",
+      "from": "ABB share decision row forward P/E",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Price-earnings ratio on 2027 estimate"
+    },
+    {
+      "name": "ABB share decision row forward P/E hint",
+      "from": "ABB share decision row forward P/E",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "{forward P/E minus fair P/E} x vs. fair"
+    },
+    {
+      "name": "ABB share decision row forward P/E order",
+      "from": "ABB share decision row forward P/E",
+      "verb": "is follower of",
+      "to": "ABB share decision row trailing P/E"
+    },
+    {
+      "name": "ABB share decision row PEG",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "PEG"
+    },
+    {
+      "name": "ABB share decision row PEG label",
+      "from": "ABB share decision row PEG",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "PEG ratio"
+    },
+    {
+      "name": "ABB share decision row PEG hint",
+      "from": "ABB share decision row PEG",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "forward P/E divided by {EPS growth} % earnings growth 2026 to 2027"
+    },
+    {
+      "name": "ABB share decision row PEG order",
+      "from": "ABB share decision row PEG",
+      "verb": "is follower of",
+      "to": "ABB share decision row forward P/E"
+    },
+    {
+      "name": "ABB share decision row EV/EBITA",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "EV/EBITA"
+    },
+    {
+      "name": "ABB share decision row EV/EBITA label",
+      "from": "ABB share decision row EV/EBITA",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "EV/EBITA 2026"
+    },
+    {
+      "name": "ABB share decision row EV/EBITA hint",
+      "from": "ABB share decision row EV/EBITA",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "{EV/EBITA minus fair EV/EBITA} x vs. fair"
+    },
+    {
+      "name": "ABB share decision row EV/EBITA order",
+      "from": "ABB share decision row EV/EBITA",
+      "verb": "is follower of",
+      "to": "ABB share decision row PEG"
+    },
+    {
+      "name": "ABB share decision row free cash flow yield",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "free cash flow yield"
+    },
+    {
+      "name": "ABB share decision row free cash flow yield order",
+      "from": "ABB share decision row free cash flow yield",
+      "verb": "is follower of",
+      "to": "ABB share decision row EV/EBITA"
+    },
+    {
+      "name": "ABB share decision row dividend yield",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "dividend yield"
+    },
+    {
+      "name": "ABB share decision row dividend yield order",
+      "from": "ABB share decision row dividend yield",
+      "verb": "is follower of",
+      "to": "ABB share decision row free cash flow yield"
+    },
+    {
+      "name": "ABB share decision row market capitalisation",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "market capitalisation"
+    },
+    {
+      "name": "ABB share decision row market capitalisation order",
+      "from": "ABB share decision row market capitalisation",
+      "verb": "is follower of",
+      "to": "ABB share decision row dividend yield"
+    },
+    {
+      "name": "ABB share decision row net debt per share",
+      "from": "ABB share decision rows key figure",
+      "verb": "has a",
+      "to": "net debt per share"
+    },
+    {
+      "name": "ABB share decision row net debt per share order",
+      "from": "ABB share decision row net debt per share",
+      "verb": "is follower of",
+      "to": "ABB share decision row market capitalisation"
+    },
+    {
+      "name": "ABB share decision column upside signed",
+      "from": "ABB share decision column upside",
+      "verb": "has a",
+      "to": "calculator signed",
+      "description": "the vs. price column shows a sign: positive is the good case for the buy side"
+    },
+    {
+      "name": "ABB share decision detail tables",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator detail table"
+    },
+    {
+      "name": "ABB share decision sensitivity",
+      "from": "ABB share decision detail tables",
+      "verb": "has a",
+      "to": "sensitivity"
+    },
+    {
+      "name": "ABB share decision sensitivity label",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Sensitivity: weighted target price by fair P/E and earnings 2027"
+    },
+    {
+      "name": "ABB share decision sensitivity hint",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "calculator hint",
+      "description": "Each cell: the weighted target price in CHF and, in brackets, the upside against the current price in percent with all other assumptions as set on the left (green: buy, red: sell, grey: hold within the margin of safety); only the earnings multiple and the PEG change along the grid, the other methods stay as set"
+    },
+    {
+      "name": "ABB share decision sensitivity row 16",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "fair P/E 16"
+    },
+    {
+      "name": "ABB share decision sensitivity row 19",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "fair P/E 19"
+    },
+    {
+      "name": "ABB share decision sensitivity row 19 order",
+      "from": "ABB share decision sensitivity row 19",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity row 16"
+    },
+    {
+      "name": "ABB share decision sensitivity row 22",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "fair P/E 22"
+    },
+    {
+      "name": "ABB share decision sensitivity row 22 order",
+      "from": "ABB share decision sensitivity row 22",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity row 19"
+    },
+    {
+      "name": "ABB share decision sensitivity row 25",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "fair P/E 25"
+    },
+    {
+      "name": "ABB share decision sensitivity row 25 order",
+      "from": "ABB share decision sensitivity row 25",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity row 22"
+    },
+    {
+      "name": "ABB share decision sensitivity row 28",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "fair P/E 28"
+    },
+    {
+      "name": "ABB share decision sensitivity row 28 order",
+      "from": "ABB share decision sensitivity row 28",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity row 25"
+    },
+    {
+      "name": "ABB share decision sensitivity column low",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "EPS 2027 estimate low"
+    },
+    {
+      "name": "ABB share decision sensitivity column low label",
+      "from": "ABB share decision sensitivity column low",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "EPS 2027 3.30 USD"
+    },
+    {
+      "name": "ABB share decision sensitivity column mid",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "EPS 2027 estimate mid"
+    },
+    {
+      "name": "ABB share decision sensitivity column mid label",
+      "from": "ABB share decision sensitivity column mid",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "EPS 2027 3.75 USD"
+    },
+    {
+      "name": "ABB share decision sensitivity column mid order",
+      "from": "ABB share decision sensitivity column mid",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity column low"
+    },
+    {
+      "name": "ABB share decision sensitivity column high",
+      "from": "ABB share decision sensitivity",
+      "verb": "has a",
+      "to": "EPS 2027 estimate high"
+    },
+    {
+      "name": "ABB share decision sensitivity column high label",
+      "from": "ABB share decision sensitivity column high",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "EPS 2027 4.20 USD"
+    },
+    {
+      "name": "ABB share decision sensitivity column high order",
+      "from": "ABB share decision sensitivity column high",
+      "verb": "is follower of",
+      "to": "ABB share decision sensitivity column mid"
+    },
+    {
+      "name": "ABB share decision arguments",
+      "from": "ABB share decision",
+      "verb": "has a",
+      "to": "calculator argument"
+    },
+    {
+      "name": "bull case label",
+      "from": "bull case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Arguments for buying (bull case)"
+    },
+    {
+      "name": "bear case label",
+      "from": "bear case",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Arguments for selling (bear case)"
+    },
+    {
+      "from": "order book argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "Q3 orders 12.1 billion USD, up 40 %, book-to-bill 1.24, backlog 32.3 billion USD, up 35 %; data-centre orders grew by a triple-digit percentage. The revenue of 2027 is largely in the books before it is sold. [1]"
+    },
+    {
+      "name": "order book argument label",
+      "from": "order book argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Record order book"
+    },
+    {
+      "name": "ABB share decision argument order book argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "order book argument"
+    },
+    {
+      "from": "profitability argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "Operational EBITA margin 20.8 % in Q3 and 21.4 % over nine months, guidance for 2026 of at least 270 basis points above 2025; return on capital employed 29.9 %, return on equity 33 %. [1][2]"
+    },
+    {
+      "name": "profitability argument label",
+      "from": "profitability argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Record profitability"
+    },
+    {
+      "name": "ABB share decision argument profitability argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "profitability argument"
+    },
+    {
+      "name": "profitability argument supports bull case order",
+      "from": "profitability argument supports bull case",
+      "verb": "is follower of",
+      "to": "order book argument supports bull case"
+    },
+    {
+      "from": "cash flow argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "Free cash flow 3.7 billion USD over nine months and about 5 billion USD for the year; net debt only 1.3 billion USD, 0.2 times EBITA; a 2 billion USD buyback runs until January 2027 and the CFO sees 13 to 14 billion USD of debt capacity. [1][2][4]"
+    },
+    {
+      "name": "cash flow argument label",
+      "from": "cash flow argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Cash machine with an unlevered balance sheet"
+    },
+    {
+      "name": "ABB share decision argument cash flow argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "cash flow argument"
+    },
+    {
+      "name": "cash flow argument supports bull case order",
+      "from": "cash flow argument supports bull case",
+      "verb": "is follower of",
+      "to": "profitability argument supports bull case"
+    },
+    {
+      "from": "portfolio argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "Robotics (12 % margin) sold for 5.375 billion USD with a 2.4 billion USD gain in Q4; Rotork (flow control) bought for 5.5 billion USD; Mitsubishi Electric low-voltage JV at 11 times EBITDA with a 20 % margin target. [1][5][11][13]"
+    },
+    {
+      "name": "portfolio argument label",
+      "from": "portfolio argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Portfolio shifted to the higher-margin businesses"
+    },
+    {
+      "name": "ABB share decision argument portfolio argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "portfolio argument"
+    },
+    {
+      "name": "portfolio argument supports bull case order",
+      "from": "portfolio argument supports bull case",
+      "verb": "is follower of",
+      "to": "cash flow argument supports bull case"
+    },
+    {
+      "from": "correction argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "18 % below the 52-week high of 89.14 CHF and more than 10 % down over the past month; a discounted cash flow model on Simply Wall St sees the share 14 % undervalued, Yahoo's one-year target estimate is 83.5 CHF. [6][10]"
+    },
+    {
+      "name": "correction argument label",
+      "from": "correction argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "The price has already corrected"
+    },
+    {
+      "name": "ABB share decision argument correction argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "correction argument"
+    },
+    {
+      "name": "correction argument supports bull case order",
+      "from": "correction argument supports bull case",
+      "verb": "is follower of",
+      "to": "portfolio argument supports bull case"
+    },
+    {
+      "from": "dividend argument",
+      "verb": "supports",
+      "to": "bull case",
+      "description": "0.94 CHF for 2025 after 0.90 CHF, raised every year; 1.3 % yield plus the buyback, and the proceeds of Robotics still to be deployed. [4]"
+    },
+    {
+      "name": "dividend argument label",
+      "from": "dividend argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Rising dividend"
+    },
+    {
+      "name": "ABB share decision argument dividend argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "dividend argument"
+    },
+    {
+      "name": "dividend argument supports bull case order",
+      "from": "dividend argument supports bull case",
+      "verb": "is follower of",
+      "to": "correction argument supports bull case"
+    },
+    {
+      "from": "valuation argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Trailing P/E about 32, 23 on the 2027 estimate, EV/EBITA about 19; nine analysts, nine hold ratings, average target 77 CHF only 6 % above the price, Jefferies at 57 CHF. [3][9][10]"
+    },
+    {
+      "name": "valuation argument label",
+      "from": "valuation argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Priced for perfection"
+    },
+    {
+      "name": "ABB share decision argument valuation argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "valuation argument"
+    },
+    {
+      "from": "earnings miss argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Adjusted EPS 0.69 USD against 0.79 USD expected, 13 % short; reported EPS 0.65 USD, down 2 %; revenue slightly below consensus; the share lost 5 % on the day. [2]"
+    },
+    {
+      "name": "earnings miss argument label",
+      "from": "earnings miss argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Earnings miss"
+    },
+    {
+      "name": "ABB share decision argument earnings miss argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "earnings miss argument"
+    },
+    {
+      "name": "earnings miss argument supports bear case order",
+      "from": "earnings miss argument supports bear case",
+      "verb": "is follower of",
+      "to": "valuation argument supports bear case"
+    },
+    {
+      "from": "conversion argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Bernstein: revenue and margin \"did not quite hold\" what the orders promised; gross margin down 0.6 points to 40.6 %, Motion margin down to 19.1 %, Gamesa Electric loss-making. [6][7]"
+    },
+    {
+      "name": "conversion argument label",
+      "from": "conversion argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Orders do not fully reach the bottom line"
+    },
+    {
+      "name": "ABB share decision argument conversion argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "conversion argument"
+    },
+    {
+      "name": "conversion argument supports bear case order",
+      "from": "conversion argument supports bear case",
+      "verb": "is follower of",
+      "to": "earnings miss argument supports bear case"
+    },
+    {
+      "from": "acquisition argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Rotork at a full price with closing only in H1 2027, a deal-contingent hedge already cost 115 million USD in Q3; the Japanese JV adds integration work. [1][2]"
+    },
+    {
+      "name": "acquisition argument label",
+      "from": "acquisition argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Acquisition risk"
+    },
+    {
+      "name": "ABB share decision argument acquisition argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "acquisition argument"
+    },
+    {
+      "name": "acquisition argument supports bear case order",
+      "from": "acquisition argument supports bear case",
+      "verb": "is follower of",
+      "to": "conversion argument supports bear case"
+    },
+    {
+      "from": "cycle argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Record margins tend to revert; Q4 margin guided to soften; the triple-digit data-centre growth is the first to fall if AI capital spending slows. [1]"
+    },
+    {
+      "name": "cycle argument label",
+      "from": "cycle argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Cycle and AI dependency"
+    },
+    {
+      "name": "ABB share decision argument cycle argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "cycle argument"
+    },
+    {
+      "name": "cycle argument supports bear case order",
+      "from": "cycle argument supports bear case",
+      "verb": "is follower of",
+      "to": "acquisition argument supports bear case"
+    },
+    {
+      "from": "currency argument",
+      "verb": "supports",
+      "to": "bear case",
+      "description": "Earnings in USD, share in CHF: the dollar is down to about 0.83 CHF; every cent lost cuts the CHF earnings and dividend capacity. [8]"
+    },
+    {
+      "name": "currency argument label",
+      "from": "currency argument",
+      "verb": "has a",
+      "to": "calculator label",
+      "description": "Currency drag"
+    },
+    {
+      "name": "ABB share decision argument currency argument",
+      "from": "ABB share decision arguments",
+      "verb": "has a",
+      "to": "currency argument"
+    },
+    {
+      "name": "currency argument supports bear case order",
+      "from": "currency argument supports bear case",
+      "verb": "is follower of",
+      "to": "cycle argument supports bear case"
+    },
+    {
+      "name": "duration unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "duration"
+    },
+    {
+      "name": "year (duration unit)",
+      "from": "year",
+      "verb": "must be one of",
+      "to": "duration unit",
+      "type": "measure_unit"
+    },
+    {
+      "from": "a",
+      "verb": "is symbol for",
+      "to": "year (duration unit)"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "trailing EPS formula",
+      "description": "the earnings per share of the last twelve months: the full year 2025 minus the first nine months of 2025 plus the first nine months of 2026",
+      "expression": "\"trailing EPS\" = \"EPS\",\"full year\" - \"EPS\",\"nine months\",\"2025\" + \"EPS\",\"nine months\",\"2026\"",
+      "assigned": [
+        "EPS"
+      ]
+    },
+    {
+      "name": "currency conversion per share",
+      "description": "ABB reports in US dollars and the share is quoted in Swiss francs, so every per-share figure in USD is multiplied by the USD/CHF rate before it meets the price",
+      "expression": "\"EPS 2027 estimate\",\"CHF\" = \"EPS 2027 estimate\",\"USD\" * \"exchange rate\"",
+      "assigned": [
+        "EPS 2027 estimate",
+        "exchange rate"
+      ]
+    },
+    {
+      "name": "earnings multiple target",
+      "description": "the target by the earnings multiple: the earnings per share 2027 times the fair price-earnings ratio, in CHF",
+      "expression": "\"target price\",\"earnings multiple\" = \"EPS 2027 estimate\",\"USD\" * \"fair P/E\" * \"exchange rate\"",
+      "assigned": [
+        "EPS 2027 estimate",
+        "fair P/E",
+        "exchange rate"
+      ]
+    },
+    {
+      "name": "free cash flow per share formula",
+      "description": "the free cash flow of 2026 divided by the shares outstanding; billion USD divided by billion shares gives USD per share, times the exchange rate CHF per share",
+      "expression": "\"free cash flow per share\" = \"free cash flow\",\"guidance\" / \"shares outstanding\" * \"exchange rate\"",
+      "assigned": [
+        "free cash flow",
+        "shares outstanding",
+        "exchange rate"
+      ]
+    },
+    {
+      "name": "net debt per share formula",
+      "description": "the net debt divided by the shares outstanding, in CHF",
+      "expression": "\"net debt per share\" = \"net debt\" / \"shares outstanding\" * \"exchange rate\"",
+      "assigned": [
+        "net debt",
+        "shares outstanding",
+        "exchange rate"
+      ]
+    },
+    {
+      "name": "discounted cash flow target",
+      "description": "two stages: the free cash flow per share grows at the explicit rate for the number of years set and each year's cash flow is discounted at the required return; after the last year a terminal value is the next year's cash flow divided by the required return minus the terminal growth, discounted over the explicit years; the net debt per share is subtracted because the cash flow belongs to the creditors first. The sums of the discount factors of the two stages need a power, which the zukunft.com formulas do not have, so they are stored as the modelled present value factors: the explicit stage factor is the sum over the years t = 1 to n of ((1 + growth) / (1 + return)) to the power of t, the terminal factor is (1 + growth) to the power of n times (1 + terminal growth) divided by (return - terminal growth) divided by (1 + return) to the power of n",
+      "expression": "\"target price\",\"discounted cash flow\" = \"free cash flow per share\" * ( \"present value factor\",\"explicit stage\" + \"present value factor\",\"terminal growth\" ) - \"net debt per share\"",
+      "assigned": [
+        "free cash flow per share",
+        "present value factor",
+        "net debt per share"
+      ]
+    },
+    {
+      "name": "enterprise value multiple target",
+      "description": "the operational EBITA 2026 times the fair EV/EBITA multiple gives the enterprise value; minus the net debt gives the equity value; divided by the shares and converted gives the target per share",
+      "expression": "\"target price\",\"enterprise value multiple\" = ( \"operational EBITA\" * \"fair EV/EBITA\" - \"net debt\" ) / \"shares outstanding\" * \"exchange rate\"",
+      "assigned": [
+        "operational EBITA",
+        "fair EV/EBITA",
+        "net debt",
+        "shares outstanding"
+      ]
+    },
+    {
+      "name": "dividend discount target",
+      "description": "the Gordon growth model: the dividend per share times one plus the growth, divided by the required return minus the growth; undefined if the growth is not below the return",
+      "expression": "\"target price\",\"dividend discount\" = \"dividend\" * ( 1 + \"dividend growth\" ) / ( \"required return\" - \"dividend growth\" )",
+      "assigned": [
+        "dividend",
+        "dividend growth",
+        "required return"
+      ]
+    },
+    {
+      "name": "weighted target price formula",
+      "description": "each method's target times its weight, summed and divided by the sum of the weights of the methods that produced a value; a method without a value (dividend discount with growth above the return) is left out by the page",
+      "expression": "\"weighted target price\" = ( \"target price\",\"earnings multiple\" * \"weight\",\"earnings multiple\" + \"target price\",\"discounted cash flow\" * \"weight\",\"discounted cash flow\" + \"target price\",\"enterprise value multiple\" * \"weight\",\"enterprise value multiple\" + \"target price\",\"dividend discount\" * \"weight\",\"dividend discount\" + \"target price\",\"analyst consensus\" * \"analyst consensus weight\" ) / ( \"weight\",\"earnings multiple\" + \"weight\",\"discounted cash flow\" + \"weight\",\"enterprise value multiple\" + \"weight\",\"dividend discount\" + \"analyst consensus weight\" )",
+      "assigned": [
+        "target price",
+        "weight",
+        "analyst consensus weight"
+      ]
+    },
+    {
+      "name": "upside formula",
+      "description": "the target divided by the price minus one, as a share; positive means the share is below its target; the percent measure shows it as a percentage",
+      "expression": "\"upside\" = \"weighted target price\" / \"price\" - 1",
+      "assigned": [
+        "weighted target price",
+        "price"
+      ]
+    },
+    {
+      "name": "method upside formula",
+      "description": "the upside of one method's target against the price, the vs. price column of the method rows",
+      "expression": "\"upside\",\"target price\" = \"target price\" / \"price\" - 1",
+      "assigned": [
+        "target price",
+        "price"
+      ]
+    },
+    {
+      "name": "share expected return formula",
+      "description": "the annual return if the price reaches the target over the holding period: the annualised price return, a modelled value because it needs the power of one over the years, plus the dividend yield",
+      "expression": "\"expected return\" = \"annualised price return\" + \"dividend yield\"",
+      "assigned": [
+        "annualised price return",
+        "dividend yield"
+      ]
+    },
+    {
+      "name": "buy threshold formula",
+      "description": "buy below the target divided by one plus the margin of safety",
+      "expression": "\"buy threshold\" = \"weighted target price\" / ( 1 + \"margin of safety\" )",
+      "assigned": [
+        "weighted target price",
+        "margin of safety"
+      ]
+    },
+    {
+      "name": "sell threshold formula",
+      "description": "sell above the target divided by one minus the margin of safety",
+      "expression": "\"sell threshold\" = \"weighted target price\" / ( 1 - \"margin of safety\" )",
+      "assigned": [
+        "weighted target price",
+        "margin of safety"
+      ]
+    },
+    {
+      "name": "trailing P/E formula",
+      "description": "the price divided by the last twelve months' EPS in CHF",
+      "expression": "\"trailing P/E\" = \"price\" / ( \"trailing EPS\" * \"exchange rate\" )",
+      "assigned": [
+        "price",
+        "trailing EPS",
+        "exchange rate"
+      ]
+    },
+    {
+      "name": "forward P/E formula",
+      "description": "the price divided by the EPS 2027 in CHF",
+      "expression": "\"forward P/E\" = \"price\" / \"EPS 2027 estimate\",\"CHF\"",
+      "assigned": [
+        "price",
+        "EPS 2027 estimate"
+      ]
+    },
+    {
+      "name": "EPS growth formula",
+      "description": "the earnings growth from the 2026 estimate to the 2027 estimate, as a share",
+      "expression": "\"EPS growth\" = \"EPS 2027 estimate\",\"USD\" / \"EPS 2026 estimate\" - 1",
+      "assigned": [
+        "EPS 2027 estimate",
+        "EPS 2026 estimate"
+      ]
+    },
+    {
+      "name": "PEG formula",
+      "description": "the forward P/E divided by the earnings growth in percent; the growth is stored as a share, so the factor 100 turns it into the percentage points the PEG convention uses",
+      "expression": "\"PEG\" = \"forward P/E\" / ( \"EPS growth\" * 100 )",
+      "assigned": [
+        "forward P/E",
+        "EPS growth"
+      ]
+    },
+    {
+      "name": "market capitalisation formula",
+      "description": "the price times the shares outstanding; CHF times billion shares gives billion CHF",
+      "expression": "\"market capitalisation\" = \"price\" * \"shares outstanding\"",
+      "assigned": [
+        "price",
+        "shares outstanding"
+      ]
+    },
+    {
+      "name": "enterprise value multiple formula",
+      "description": "the market capitalisation in USD plus the net debt, divided by the operational EBITA 2026",
+      "expression": "\"EV/EBITA\" = ( \"market capitalisation\" / \"exchange rate\" + \"net debt\" ) / \"operational EBITA\"",
+      "assigned": [
+        "market capitalisation",
+        "exchange rate",
+        "net debt",
+        "operational EBITA"
+      ]
+    },
+    {
+      "name": "free cash flow yield formula",
+      "description": "the free cash flow per share in CHF divided by the price",
+      "expression": "\"free cash flow yield\" = \"free cash flow per share\" / \"price\"",
+      "assigned": [
+        "free cash flow per share",
+        "price"
+      ]
+    },
+    {
+      "name": "dividend yield formula",
+      "description": "the dividend per share divided by the price",
+      "expression": "\"dividend yield\" = \"dividend\" / \"price\"",
+      "assigned": [
+        "dividend",
+        "price"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "ABB Q3 2026 press release",
+      "description": "ABB Ltd: Q3 2026 results, press release, Zurich, 20 October 2026. Orders 12'055 million USD (+40 %), revenues 9'701 million USD (+14 %), operational EBITA 2'026 million USD, margin 20.8 %, basic EPS 0.65 USD, free cash flow 1'576 million USD; nine months: orders 35'395, revenues 27'910, operational EBITA 6'000 million USD, margin 21.4 %, basic EPS 2.06 USD, free cash flow 3'707 million USD; backlog 32'256 million USD; net debt 1'332 million USD; 1'808 million shares outstanding; net finance expense 127 million USD incl. about 115 million of a deal-contingent FX hedge for Rotork; buyback of 5'726'505 shares for about 565 million USD in Q3; Rotork offer 503 pence per share; Robotics divestment gain of about 2.4 billion USD expected in Q4 2026; outlook 2026: comparable revenue growth in the low teens, operational EBITA margin up at least 270 basis points.",
+      "url": "https://library.e.abb.com/public/8954633d5ea54a4fb35da2ddbd1834f7/ABB-Q3-2026-press-release-English.pdf"
+    },
+    {
+      "name": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "Investing.com: Earnings call transcript: ABB posts record margins in Q3 2026 but misses EPS, October 2026. Adjusted EPS 0.6924 USD against a forecast of 0.792 USD (-12.6 %), revenue 9.7 billion USD about 70 million below the estimate, shares -5.19 % to 70.82 from 74.70 in premarket trading, 52-week range 53.78 to 89.14, return on equity 33 %, ROCE 29.9 %, net debt to EBITA about 0.2, leverage could rise toward 2x freeing 13 to 14 billion USD, free cash flow expected near 5 billion USD for 2026 (4.6 billion in 2025), capex about 1 billion USD a year, Rotork closing expected in the first half of 2027, Robotics divestment to complete by year-end, Q4 real estate gain of about 240 million CHF.",
+      "url": "https://www.investing.com/news/transcripts/earnings-call-transcript-abb-posts-record-margins-in-q3-2026-but-misses-eps-93CH-4959247"
+    },
+    {
+      "name": "finanzen.ch ABB Kursziele",
+      "description": "finanzen.ch: ABB Kursziele, analyst target prices of May to October 2026: Berenberg Hold 80 CHF (22.10.26), Bernstein Market-Perform 80 CHF (21.10.26), Deutsche Bank Hold 76 CHF (21.10.26), UBS Neutral 88 CHF (13.10.26), RBC Sector Perform 82 CHF (09.10.26), JP Morgan Neutral 80 CHF (09.07.26), Goldman Sachs Neutral 74 CHF (08.07.26), Barclays Equal Weight 76 CHF (29.06.26), Jefferies Hold 57 CHF (07.05.26); average 77, median 80 CHF.",
+      "url": "https://www.finanzen.ch/kursziele/abb"
+    },
+    {
+      "name": "ABB Q4 2025 results",
+      "description": "ABB Ltd: Q4 and full-year 2025 results, 29 January 2026. Full year 2025: orders 36.8 billion USD (+17 %), revenues 33.2 billion USD (+9 %), operational EBITA 6'314 million USD, margin 19.0 %, net income 4'734 million USD, basic EPS 2.59 USD (+21 %), free cash flow 4'566 million USD, return on capital employed 25.3 %, proposed dividend 0.94 CHF per share (2024: 0.90 CHF), new share buyback of up to 2.0 billion USD until 27 January 2027; outlook 2026: comparable revenue growth 6 to 9 %.",
+      "url": "https://new.abb.com/news/detail/132985/q4-2025-results"
+    },
+    {
+      "name": "ABB Robotics sale to SoftBank",
+      "description": "ABB Ltd: ABB verkauft Robotics-Division an SoftBank Group, press release, Zurich, 8 October 2025. Enterprise value 5.375 billion USD, Robotics revenue 2024 2.3 billion USD (about 7 % of the group), operational EBITA margin 12.1 %, closing expected mid-to-late 2026.",
+      "url": "https://new.abb.com/news/de/detail/129685/abb-verkauft-robotics-division-an-softbank-group"
+    },
+    {
+      "name": "Simply Wall St ABB Q3 2026 article",
+      "description": "Simply Wall St via Yahoo Finance: ABB (SWX:ABBN) Q3 Earnings Showcase Record Margins Despite Stock Slump, October 2026. Share down more than 10 % over the past month and quarter, Electrification margin 25.6 %, Motion margin 19.1 %, Gamesa Electric dilutes Motion by about 40 basis points and is loss-making, a discounted cash flow model sees the share about 14 % undervalued.",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/abb-swx-abbn-q3-earnings-042723759.html"
+    },
+    {
+      "name": "dpa-AFX Bernstein on ABB 21 October 2026",
+      "description": "dpa-AFX via wallstreet-online: Bernstein Research stuft ABB Ltd auf 'Neutral', 21 October 2026. Analyst Alasdair Leslie keeps Market-Perform with a target of 80 CHF: solid results, but revenue and operating margin did not quite hold what the order growth had suggested.",
+      "url": "https://www.wallstreet-online.de/nachricht/21559505-bernstein-research-stuft-abb-ltd-neutral"
+    },
+    {
+      "name": "Trading Economics USD/CHF",
+      "description": "Trading Economics: Swiss franc, USD/CHF 0.82711 on 15 October 2026.",
+      "url": "https://de.tradingeconomics.com/liechtenstein/currency"
+    },
+    {
+      "name": "finanzen.ch ABB Aktie",
+      "description": "finanzen.ch: ABB Aktie, quote of 28 October 2026 17:30: 72.88 CHF on SIX (+1.38, +1.93 %), previous close 71.50 CHF, 52-week high 89.14, low 53.78 CHF, market capitalisation 129.44 billion CHF, P/E 27.58 (2025), 25.81 (2026e), 23.01 (2027e), dividend yield 1.59 % (2025), 1.38 % (2026e), 1.49 % (2027e), EPS estimates 3.35 USD (2026e) and 3.75 USD (2027e).",
+      "url": "https://www.finanzen.ch/aktien/abb-aktie"
+    },
+    {
+      "name": "Yahoo Finance ABBN.SW",
+      "description": "Yahoo Finance: ABB Ltd (ABBN.SW), quote of 19 October 2026: 74.70 CHF, previous close 75.68, 52-week range 53.78 to 89.14, market capitalisation 135.142 billion CHF, trailing P/E 34.27, EPS (TTM) 2.18, forward dividend 0.94 CHF (1.24 %), beta 0.98, one-year target estimate 83.52 CHF.",
+      "url": "https://finance.yahoo.com/quote/ABBN.SW/"
+    },
+    {
+      "name": "Börse Express Rotork takeover",
+      "description": "Börse Express: ABB Aktie: Rotork-Übernahme für 5,5 Milliarden Dollar, July 2026. ABB offers 503 pence in cash per Rotork share, about 5.5 billion USD in total.",
+      "url": "https://www.boerse-express.com/news/articles/abb-aktie-rotork-uebernahme-fuer-55-milliarden-dollar-933939"
+    },
+    {
+      "name": "dpa-AFX Deutsche Bank on ABB 21 October 2026",
+      "description": "dpa-AFX via wallstreet-online: Deutsche Bank Research stuft ABB Ltd auf 'Hold', 21 October 2026. Analyst Gael de-Bray keeps Hold with a 12-month target of 76 CHF: the key figures broadly in line with expectations, strong order intake in electrification.",
+      "url": "https://www.wallstreet-online.de/nachricht/21558011-deutsche-bank-research-stuft-abb-ltd-hold"
+    },
+    {
+      "name": "ABB Q3 2026 results page",
+      "description": "ABB Ltd: Q3 2026 results, abb.com news page, October 2026. Mitsubishi Electric low-voltage joint venture: ABB acquires a 51 % controlling stake with an option for full ownership, contributed revenues about 102 billion JPY (about 640 million USD) in fiscal 2025 with a low double-digit EBITDA margin, consideration about 79 billion JPY (about 495 million USD), combined enterprise value about 890 million USD, EV/Sales about 1.4 and EV/EBITDA about 11.1, target of at least 20 % operational EBITA margin within five years; data-centre orders up by a triple-digit percentage; outlook Q4 2026: comparable revenue growth broadly similar to Q3, margin to soften sequentially, excluding about 240 million CHF from property sales.",
+      "url": "https://www.abb.com/global/en/news/139696/q3-2026-results"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026",
+        "CHF"
+      ],
+      "number": "72.88",
+      "source": "finanzen.ch ABB Aktie",
+      "description": "the closing price on SIX of 28 October 2026, the first input of the page"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS 2027 estimate",
+        "USD"
+      ],
+      "number": "3.75",
+      "source": "finanzen.ch ABB Aktie",
+      "description": "the analysts' consensus earnings per share for 2027, the second input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "fair P/E",
+        "factor",
+        "assumed"
+      ],
+      "number": "22",
+      "description": "the price-earnings ratio the reader considers fair on the 2027 earnings, the third input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "fair P/E",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a quality industrial with 10 % growth trades between 18 and 26 times; the middle is a judgement"
+    },
+    {
+      "words": [
+        "ABB",
+        "free cash flow",
+        "guidance",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "5.0",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the free cash flow the CFO expects for 2026, 'near 5 billion', the fourth input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "free cash flow growth",
+        "explicit stage",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08",
+      "description": "the annual growth of the free cash flow per share over the explicit stage, the fifth input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "free cash flow growth",
+        "explicit stage",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.4",
+      "description": "the backlog and the guidance support a high growth in the near years, the ten-year average is a guess"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "required return",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08",
+      "description": "the cost of equity, the sixth input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "required return",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "the risk-free rate of the Swiss franc is low, the equity premium of 5 to 6 % is a convention"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "fair EV/EBITA",
+        "factor",
+        "assumed"
+      ],
+      "number": "18",
+      "description": "the multiple the reader considers fair for the whole business, the seventh input of the page"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "fair EV/EBITA",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.4",
+      "description": "between the 11 times ABB paid for the Mitsubishi business and the 19 times the market pays for ABB"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "analyst consensus",
+        "October",
+        "2026",
+        "CHF"
+      ],
+      "number": "77",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "the average of the nine analyst targets, the eighth input of the page; the median is 80 CHF"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "margin of safety",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1",
+      "description": "the ninth input of the page: buy only above, sell only below this difference between target and price"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS 2026 estimate",
+        "USD"
+      ],
+      "number": "3.35",
+      "source": "finanzen.ch ABB Aktie",
+      "description": "the analysts' consensus earnings per share for 2026; only used for the earnings growth of the PEG ratio"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS",
+        "full year",
+        "2025",
+        "USD"
+      ],
+      "number": "2.59",
+      "source": "ABB Q4 2025 results",
+      "description": "basic earnings per share of the full year 2025"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS",
+        "nine months",
+        "2025",
+        "USD"
+      ],
+      "number": "1.89",
+      "source": "ABB Q3 2026 press release",
+      "description": "basic earnings per share of the first nine months of 2025"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS",
+        "nine months",
+        "2026",
+        "USD"
+      ],
+      "number": "2.06",
+      "source": "ABB Q3 2026 press release",
+      "description": "basic earnings per share of the first nine months of 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "dividend",
+        "2025",
+        "CHF"
+      ],
+      "number": "0.94",
+      "source": "ABB Q4 2025 results",
+      "description": "the dividend per share paid for 2025"
+    },
+    {
+      "words": [
+        "ABB share",
+        "dividend",
+        "2024",
+        "CHF"
+      ],
+      "number": "0.9",
+      "source": "ABB Q4 2025 results",
+      "description": "the dividend per share paid for 2024"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "dividend growth",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.05",
+      "description": "the perpetual growth of the dividend in the Gordon model; 0.82 to 0.94 CHF from 2021 to 2025 is about 3.5 % a year"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "dividend growth",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "explicit stage",
+        "year (duration unit)",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "the years of explicit cash flow growth before the terminal value"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "explicit stage",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "terminal growth",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.025",
+      "description": "the perpetual growth after the explicit stage, the long-run nominal growth of the world economy"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "terminal growth",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA",
+        "2026",
+        "billion",
+        "USD",
+        "assumed"
+      ],
+      "number": "8.3",
+      "description": "6.0 billion USD over nine months plus a Q4 slightly below Q3's 2.0 billion plus the 240 million CHF property gain; 6.3 billion in 2025"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA",
+        "2026",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6",
+      "description": "three quarters are reported, only the fourth is an estimate"
+    },
+    {
+      "words": [
+        "ABB",
+        "net debt",
+        "September",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "1.33",
+      "source": "ABB Q3 2026 press release",
+      "description": "the net debt at 30 September 2026, excluding net pension assets of 619 million USD"
+    },
+    {
+      "words": [
+        "ABB",
+        "shares outstanding",
+        "September",
+        "2026",
+        "billion"
+      ],
+      "number": "1.808",
+      "source": "ABB Q3 2026 press release",
+      "description": "1'808 million shares outstanding at 30 September 2026, 1'823'154'373 issued including treasury shares"
+    },
+    {
+      "words": [
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "2026",
+        "CHF per USD"
+      ],
+      "number": "0.83",
+      "source": "Trading Economics USD/CHF",
+      "description": "0.827 on 15 October 2026, rounded; converts the USD figures of the company into the CHF of the share"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "holding period",
+        "year (duration unit)",
+        "assumed"
+      ],
+      "number": "3",
+      "description": "the years over which the price is expected to reach the target; only used for the expected annual return"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "earnings multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "the weight of the earnings multiple in the weighted target price"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "earnings multiple",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "discounted cash flow",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "the weight of the discounted cash flow in the weighted target price"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "discounted cash flow",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "enterprise value multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2",
+      "description": "the weight of the enterprise value multiple in the weighted target price"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "enterprise value multiple",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "dividend discount",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.05",
+      "description": "the weight of the dividend discount in the weighted target price"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "weight",
+        "dividend discount",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "analyst consensus weight",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15",
+      "description": "the weight of the analyst consensus in the weighted target price"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "analyst consensus weight",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "present value factor",
+        "explicit stage",
+        "factor",
+        "modelled"
+      ],
+      "number": "10",
+      "description": "the sum over the years t = 1 to 10 of ((1 + 0.08) / (1 + 0.08)) to the power of t: with a growth equal to the required return every year's cash flow has the present value of the first year's, so the factor is the number of years; needs a power, so stored as a modelled value"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "present value factor",
+        "terminal growth",
+        "factor",
+        "modelled"
+      ],
+      "number": "18.636364",
+      "description": "(1 + 0.08) to the power of 10 times (1 + 0.025) divided by (0.08 - 0.025), divided by (1 + 0.08) to the power of 10, so 1.025 / 0.055; the present value of the terminal value per CHF of first-year cash flow; needs a power, so stored as a modelled value"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "annualised price return",
+        "percent",
+        "modelled"
+      ],
+      "number": "-0.028287",
+      "description": "(66.87 / 72.88) to the power of one third minus one: the price return per year if the price reaches the weighted target in three years; needs a power, so stored as a modelled value"
+    },
+    {
+      "words": [
+        "ABB",
+        "orders",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "12.055",
+      "source": "ABB Q3 2026 press release",
+      "description": "record orders of Q3 2026, up 40 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "orders",
+        "third quarter",
+        "2025",
+        "billion",
+        "USD"
+      ],
+      "number": "8.606",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "revenue",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "9.701",
+      "source": "ABB Q3 2026 press release",
+      "description": "revenues of Q3 2026, up 14 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "revenue",
+        "third quarter",
+        "2025",
+        "billion",
+        "USD"
+      ],
+      "number": "8.491",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "book-to-bill",
+        "third quarter",
+        "2026",
+        "factor"
+      ],
+      "number": "1.24",
+      "source": "ABB Q3 2026 press release",
+      "description": "orders divided by revenues in Q3 2026"
+    },
+    {
+      "words": [
+        "ABB",
+        "order backlog",
+        "September",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "32.256",
+      "source": "ABB Q3 2026 press release",
+      "description": "up 35 %, 37 % comparable"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "2.026",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA margin",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.208",
+      "source": "ABB Q3 2026 press release",
+      "description": "a record Q3 margin, up 1.6 points"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA margin",
+        "nine months",
+        "2026",
+        "percent"
+      ],
+      "number": "0.214",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA",
+        "nine months",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "6.0",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA",
+        "full year",
+        "2025",
+        "billion",
+        "USD"
+      ],
+      "number": "6.314",
+      "source": "ABB Q4 2025 results"
+    },
+    {
+      "words": [
+        "ABB",
+        "operational EBITA margin",
+        "full year",
+        "2025",
+        "percent"
+      ],
+      "number": "0.19",
+      "source": "ABB Q4 2025 results"
+    },
+    {
+      "words": [
+        "ABB",
+        "gross margin",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.406",
+      "source": "ABB Q3 2026 press release",
+      "description": "down 0.6 points from 41.2 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "motion",
+        "operational EBITA margin",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.191",
+      "source": "Simply Wall St ABB Q3 2026 article",
+      "description": "the margin of the Motion business area, diluted by about 40 basis points by Gamesa Electric"
+    },
+    {
+      "words": [
+        "ABB",
+        "electrification",
+        "operational EBITA margin",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.256",
+      "source": "Simply Wall St ABB Q3 2026 article"
+    },
+    {
+      "words": [
+        "ABB",
+        "return on capital employed",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.299",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "return on equity",
+        "third quarter",
+        "2026",
+        "percent"
+      ],
+      "number": "0.33",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS",
+        "third quarter",
+        "2026",
+        "USD"
+      ],
+      "number": "0.65",
+      "source": "ABB Q3 2026 press release",
+      "description": "basic EPS of Q3 2026, down 2 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "EPS",
+        "third quarter",
+        "2025",
+        "USD"
+      ],
+      "number": "0.66",
+      "source": "ABB Q3 2026 press release"
+    },
+    {
+      "words": [
+        "ABB",
+        "adjusted EPS",
+        "third quarter",
+        "2026",
+        "USD"
+      ],
+      "number": "0.6924",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the adjusted EPS reported against the consensus"
+    },
+    {
+      "words": [
+        "ABB",
+        "adjusted EPS",
+        "estimate",
+        "third quarter",
+        "2026",
+        "USD"
+      ],
+      "number": "0.792",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the consensus the adjusted EPS missed by 12.6 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "free cash flow",
+        "nine months",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "3.707",
+      "source": "ABB Q3 2026 press release",
+      "description": "up 22 %"
+    },
+    {
+      "words": [
+        "ABB",
+        "free cash flow",
+        "full year",
+        "2025",
+        "billion",
+        "USD"
+      ],
+      "number": "4.566",
+      "source": "ABB Q4 2025 results"
+    },
+    {
+      "words": [
+        "ABB",
+        "net debt to EBITA",
+        "September",
+        "2026",
+        "factor"
+      ],
+      "number": "0.2",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the leverage the CFO named at the end of Q3"
+    },
+    {
+      "words": [
+        "ABB",
+        "net finance expense",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "0.127",
+      "source": "ABB Q3 2026 press release",
+      "description": "including about 115 million USD of a non-cash revaluation of the deal-contingent FX hedge linked to Rotork"
+    },
+    {
+      "words": [
+        "ABB",
+        "hedge",
+        "loss",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "0.115",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the non-cash unrealised loss of the deal-contingent FX hedge for the Rotork acquisition"
+    },
+    {
+      "words": [
+        "ABB",
+        "share buyback",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "2.0",
+      "source": "ABB Q4 2025 results",
+      "description": "the programme launched on 9 February 2026 running until 27 January 2027"
+    },
+    {
+      "words": [
+        "ABB",
+        "share buyback",
+        "third quarter",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "0.565",
+      "source": "ABB Q3 2026 press release",
+      "description": "5'726'505 shares repurchased in Q3 2026"
+    },
+    {
+      "words": [
+        "ABB",
+        "leverage",
+        "capacity",
+        "billion",
+        "USD"
+      ],
+      "number": "13.5",
+      "source": "Investing.com ABB Q3 2026 earnings call transcript",
+      "description": "the 13 to 14 billion USD of debt the CFO sees if the leverage rises toward 2 times EBITA; the middle of the range"
+    },
+    {
+      "words": [
+        "ABB Robotics",
+        "SoftBank",
+        "enterprise value",
+        "billion",
+        "USD"
+      ],
+      "number": "5.375",
+      "source": "ABB Robotics sale to SoftBank",
+      "description": "the price of the Robotics division"
+    },
+    {
+      "words": [
+        "ABB Robotics",
+        "divestment gain",
+        "2026",
+        "billion",
+        "USD"
+      ],
+      "number": "2.4",
+      "source": "ABB Q3 2026 press release",
+      "description": "expected in Q4 2026, excluded from the guidance"
+    },
+    {
+      "words": [
+        "ABB Robotics",
+        "operational EBITA margin",
+        "2024",
+        "percent"
+      ],
+      "number": "0.121",
+      "source": "ABB Robotics sale to SoftBank"
+    },
+    {
+      "words": [
+        "ABB Robotics",
+        "revenue",
+        "2024",
+        "billion",
+        "USD"
+      ],
+      "number": "2.3",
+      "source": "ABB Robotics sale to SoftBank",
+      "description": "about 7 % of the group revenue"
+    },
+    {
+      "words": [
+        "Rotork offer",
+        "billion",
+        "USD"
+      ],
+      "number": "5.5",
+      "source": "Börse Express Rotork takeover",
+      "description": "the total consideration of the cash offer of July 2026"
+    },
+    {
+      "words": [
+        "Rotork offer",
+        "pence"
+      ],
+      "number": "503",
+      "source": "ABB Q3 2026 press release",
+      "description": "the cash offer per Rotork share, plus an interim dividend of up to 3 pence"
+    },
+    {
+      "words": [
+        "low-voltage business of Mitsubishi Electric",
+        "stake",
+        "percent"
+      ],
+      "number": "0.51",
+      "source": "ABB Q3 2026 results page",
+      "description": "the controlling stake ABB acquires in the joint venture"
+    },
+    {
+      "words": [
+        "low-voltage business of Mitsubishi Electric",
+        "EV/EBITDA",
+        "factor"
+      ],
+      "number": "11.1",
+      "source": "ABB Q3 2026 results page",
+      "description": "the implied multiple on the reported fiscal 2025 EBITDA"
+    },
+    {
+      "words": [
+        "low-voltage business of Mitsubishi Electric",
+        "enterprise value",
+        "billion",
+        "USD"
+      ],
+      "number": "0.89",
+      "source": "ABB Q3 2026 results page"
+    },
+    {
+      "words": [
+        "low-voltage business of Mitsubishi Electric",
+        "revenue",
+        "2025",
+        "billion",
+        "USD"
+      ],
+      "number": "0.64",
+      "source": "ABB Q3 2026 results page",
+      "description": "about 102 billion JPY in fiscal 2025"
+    },
+    {
+      "words": [
+        "ABB share",
+        "52-week high",
+        "CHF"
+      ],
+      "number": "89.14",
+      "source": "finanzen.ch ABB Aktie"
+    },
+    {
+      "words": [
+        "ABB share",
+        "52-week low",
+        "CHF"
+      ],
+      "number": "53.78",
+      "source": "finanzen.ch ABB Aktie"
+    },
+    {
+      "words": [
+        "ABB share",
+        "Simply Wall St",
+        "undervalued",
+        "October",
+        "2026",
+        "percent"
+      ],
+      "number": "0.14",
+      "source": "Simply Wall St ABB Q3 2026 article",
+      "description": "the discount of the price to the fair value of the discounted cash flow model of Simply Wall St"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "estimate",
+        "2027",
+        "CHF"
+      ],
+      "number": "83.52",
+      "source": "Yahoo Finance ABBN.SW",
+      "description": "the one-year target estimate shown by Yahoo Finance"
+    },
+    {
+      "words": [
+        "ABB share",
+        "beta"
+      ],
+      "number": "0.98",
+      "source": "Yahoo Finance ABBN.SW",
+      "description": "five-year monthly beta"
+    },
+    {
+      "words": [
+        "ABB share",
+        "market capitalisation",
+        "October",
+        "2026",
+        "billion",
+        "CHF"
+      ],
+      "number": "129.44",
+      "source": "finanzen.ch ABB Aktie",
+      "description": "the market capitalisation shown by finanzen.ch on 28 October 2026; 72.88 CHF times 1.808 billion shares gives 131.8"
+    },
+    {
+      "words": [
+        "ABB share",
+        "P/E",
+        "2025",
+        "factor"
+      ],
+      "number": "27.58",
+      "source": "finanzen.ch ABB Aktie",
+      "description": "the price-earnings ratio on the 2025 earnings as shown by finanzen.ch"
+    },
+    {
+      "words": [
+        "ABB share",
+        "P/E",
+        "estimate 2026",
+        "factor"
+      ],
+      "number": "25.81",
+      "source": "finanzen.ch ABB Aktie"
+    },
+    {
+      "words": [
+        "ABB share",
+        "P/E",
+        "estimate 2027",
+        "factor"
+      ],
+      "number": "23.01",
+      "source": "finanzen.ch ABB Aktie"
+    },
+    {
+      "words": [
+        "ABB share",
+        "dividend yield",
+        "2025",
+        "percent"
+      ],
+      "number": "0.0159",
+      "source": "finanzen.ch ABB Aktie"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Berenberg",
+        "2026",
+        "CHF"
+      ],
+      "number": "80",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Hold, 22 October 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Bernstein",
+        "2026",
+        "CHF"
+      ],
+      "number": "80",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Market-Perform, 21 October 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Deutsche Bank",
+        "2026",
+        "CHF"
+      ],
+      "number": "76",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Hold, 21 October 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "UBS",
+        "2026",
+        "CHF"
+      ],
+      "number": "88",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Neutral, 13 October 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "RBC",
+        "2026",
+        "CHF"
+      ],
+      "number": "82",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Sector Perform, 9 October 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "JP Morgan",
+        "2026",
+        "CHF"
+      ],
+      "number": "80",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Neutral, 9 July 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Goldman Sachs",
+        "2026",
+        "CHF"
+      ],
+      "number": "74",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Neutral, 8 July 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Barclays",
+        "2026",
+        "CHF"
+      ],
+      "number": "76",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Equal Weight, 29 June 2026"
+    },
+    {
+      "words": [
+        "ABB share",
+        "target price",
+        "Jefferies",
+        "2026",
+        "CHF"
+      ],
+      "number": "57",
+      "source": "finanzen.ch ABB Kursziele",
+      "description": "Hold, 7 May 2026"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "EPS 2027 estimate",
+        "USD",
+        "assumed"
+      ],
+      "number": "3.75"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "fair P/E",
+        "factor",
+        "assumed"
+      ],
+      "number": "22"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "free cash flow growth",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "fair EV/EBITA",
+        "factor",
+        "assumed"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "target price",
+        "analyst consensus",
+        "CHF",
+        "assumed"
+      ],
+      "number": "77"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "weight",
+        "earnings multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "weight",
+        "discounted cash flow",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "weight",
+        "enterprise value multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "weight",
+        "dividend discount",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "consensus case",
+        "analyst consensus weight",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bull case",
+        "EPS 2027 estimate",
+        "USD",
+        "assumed"
+      ],
+      "number": "4.2"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bull case",
+        "fair P/E",
+        "factor",
+        "assumed"
+      ],
+      "number": "26"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bull case",
+        "free cash flow growth",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.11"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bull case",
+        "fair EV/EBITA",
+        "factor",
+        "assumed"
+      ],
+      "number": "21"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bull case",
+        "target price",
+        "analyst consensus",
+        "CHF",
+        "assumed"
+      ],
+      "number": "88",
+      "description": "the UBS target"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bear case",
+        "EPS 2027 estimate",
+        "USD",
+        "assumed"
+      ],
+      "number": "3.4"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bear case",
+        "fair P/E",
+        "factor",
+        "assumed"
+      ],
+      "number": "17"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bear case",
+        "free cash flow growth",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.04"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bear case",
+        "fair EV/EBITA",
+        "factor",
+        "assumed"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "bear case",
+        "target price",
+        "analyst consensus",
+        "CHF",
+        "assumed"
+      ],
+      "number": "57",
+      "description": "the Jefferies target"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "cash flow case",
+        "weight",
+        "earnings multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "cash flow case",
+        "weight",
+        "discounted cash flow",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.7"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "cash flow case",
+        "weight",
+        "enterprise value multiple",
+        "percent",
+        "assumed"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "cash flow case",
+        "weight",
+        "dividend discount",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "cash flow case",
+        "analyst consensus weight",
+        "percent",
+        "assumed"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "price",
+        "field limit down"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "price",
+        "field limit up"
+      ],
+      "number": "120"
+    },
+    {
+      "words": [
+        "price",
+        "field step"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "EPS 2027 estimate",
+        "field limit down"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "EPS 2027 estimate",
+        "field limit up"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "EPS 2027 estimate",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "fair P/E",
+        "field limit down"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "fair P/E",
+        "field limit up"
+      ],
+      "number": "35"
+    },
+    {
+      "words": [
+        "fair P/E",
+        "field step"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "free cash flow",
+        "field limit down"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "free cash flow",
+        "field limit up"
+      ],
+      "number": "7"
+    },
+    {
+      "words": [
+        "free cash flow",
+        "field step"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "free cash flow growth",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "free cash flow growth",
+        "field limit up"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "free cash flow growth",
+        "field step"
+      ],
+      "number": "0.005"
+    },
+    {
+      "words": [
+        "required return",
+        "field limit down"
+      ],
+      "number": "0.04"
+    },
+    {
+      "words": [
+        "required return",
+        "field limit up"
+      ],
+      "number": "0.14"
+    },
+    {
+      "words": [
+        "required return",
+        "field step"
+      ],
+      "number": "0.005"
+    },
+    {
+      "words": [
+        "fair EV/EBITA",
+        "field limit down"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "fair EV/EBITA",
+        "field limit up"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "fair EV/EBITA",
+        "field step"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "analyst consensus",
+        "field limit down"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "analyst consensus",
+        "field limit up"
+      ],
+      "number": "120"
+    },
+    {
+      "words": [
+        "analyst consensus",
+        "field step"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "margin of safety",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "margin of safety",
+        "field limit up"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "margin of safety",
+        "field step"
+      ],
+      "number": "0.01"
+    },
+    {
+      "words": [
+        "EPS 2026 estimate",
+        "field limit down"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "EPS 2026 estimate",
+        "field limit up"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "EPS 2026 estimate",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "trailing EPS",
+        "field limit down"
+      ],
+      "number": "1.5"
+    },
+    {
+      "words": [
+        "trailing EPS",
+        "field limit up"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "trailing EPS",
+        "field step"
+      ],
+      "number": "0.01"
+    },
+    {
+      "words": [
+        "dividend",
+        "field limit down"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "dividend",
+        "field limit up"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "dividend",
+        "field step"
+      ],
+      "number": "0.01"
+    },
+    {
+      "words": [
+        "dividend growth",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "dividend growth",
+        "field limit up"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "dividend growth",
+        "field step"
+      ],
+      "number": "0.005"
+    },
+    {
+      "words": [
+        "explicit stage",
+        "field limit down"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "explicit stage",
+        "field limit up"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "explicit stage",
+        "field step"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "terminal growth",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "terminal growth",
+        "field limit up"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "terminal growth",
+        "field step"
+      ],
+      "number": "0.0025"
+    },
+    {
+      "words": [
+        "operational EBITA",
+        "field limit down"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "operational EBITA",
+        "field limit up"
+      ],
+      "number": "11"
+    },
+    {
+      "words": [
+        "operational EBITA",
+        "field step"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "net debt",
+        "field limit down"
+      ],
+      "number": "-6"
+    },
+    {
+      "words": [
+        "net debt",
+        "field limit up"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "net debt",
+        "field step"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "shares outstanding",
+        "field limit down"
+      ],
+      "number": "1.6"
+    },
+    {
+      "words": [
+        "shares outstanding",
+        "field limit up"
+      ],
+      "number": "1.9"
+    },
+    {
+      "words": [
+        "shares outstanding",
+        "field step"
+      ],
+      "number": "0.001"
+    },
+    {
+      "words": [
+        "exchange rate",
+        "field limit down"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "exchange rate",
+        "field limit up"
+      ],
+      "number": "1.1"
+    },
+    {
+      "words": [
+        "exchange rate",
+        "field step"
+      ],
+      "number": "0.01"
+    },
+    {
+      "words": [
+        "holding period",
+        "field limit down"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "holding period",
+        "field limit up"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "holding period",
+        "field step"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "earnings multiple",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "earnings multiple",
+        "field limit up"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "earnings multiple",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "discounted cash flow",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "discounted cash flow",
+        "field limit up"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "discounted cash flow",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "enterprise value multiple",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "enterprise value multiple",
+        "field limit up"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "enterprise value multiple",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "dividend discount",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "dividend discount",
+        "field limit up"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "dividend discount",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "analyst consensus weight",
+        "field limit down"
+      ],
+      "number": "0"
+    },
+    {
+      "words": [
+        "analyst consensus weight",
+        "field limit up"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "analyst consensus weight",
+        "field step"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 16",
+        "factor",
+        "assumed"
+      ],
+      "number": "16",
+      "description": "the fair P/E of this row of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 19",
+        "factor",
+        "assumed"
+      ],
+      "number": "19",
+      "description": "the fair P/E of this row of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 22",
+        "factor",
+        "assumed"
+      ],
+      "number": "22",
+      "description": "the fair P/E of this row of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 25",
+        "factor",
+        "assumed"
+      ],
+      "number": "25",
+      "description": "the fair P/E of this row of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 28",
+        "factor",
+        "assumed"
+      ],
+      "number": "28",
+      "description": "the fair P/E of this row of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "EPS 2027 estimate low",
+        "USD",
+        "assumed"
+      ],
+      "number": "3.3",
+      "description": "the EPS 2027 of this column of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "EPS 2027 estimate mid",
+        "USD",
+        "assumed"
+      ],
+      "number": "3.75",
+      "description": "the EPS 2027 of this column of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "EPS 2027 estimate high",
+        "USD",
+        "assumed"
+      ],
+      "number": "4.2",
+      "description": "the EPS 2027 of this column of the grid"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 16",
+        "EPS 2027 estimate low",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "59.47",
+      "description": "the earnings multiple target of the cell 43.82 CHF times 0.3 plus the other four targets of the page times their weights; upside -18 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 16",
+        "EPS 2027 estimate mid",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "61.27",
+      "description": "the earnings multiple target of the cell 49.80 CHF times 0.3 plus the other four targets of the page times their weights; upside -16 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 16",
+        "EPS 2027 estimate high",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "63.06",
+      "description": "the earnings multiple target of the cell 55.78 CHF times 0.3 plus the other four targets of the page times their weights; upside -13 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 19",
+        "EPS 2027 estimate low",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "61.94",
+      "description": "the earnings multiple target of the cell 52.04 CHF times 0.3 plus the other four targets of the page times their weights; upside -15 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 19",
+        "EPS 2027 estimate mid",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "64.07",
+      "description": "the earnings multiple target of the cell 59.14 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 19",
+        "EPS 2027 estimate high",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "66.2",
+      "description": "the earnings multiple target of the cell 66.23 CHF times 0.3 plus the other four targets of the page times their weights; upside -9 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 22",
+        "EPS 2027 estimate low",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "64.4",
+      "description": "the earnings multiple target of the cell 60.26 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 22",
+        "EPS 2027 estimate mid",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "66.87",
+      "description": "the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 22",
+        "EPS 2027 estimate high",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "69.33",
+      "description": "the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 25",
+        "EPS 2027 estimate low",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "66.87",
+      "description": "the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 25",
+        "EPS 2027 estimate mid",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "69.67",
+      "description": "the earnings multiple target of the cell 77.81 CHF times 0.3 plus the other four targets of the page times their weights; upside -4 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 25",
+        "EPS 2027 estimate high",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "72.47",
+      "description": "the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 28",
+        "EPS 2027 estimate low",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "69.33",
+      "description": "the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 28",
+        "EPS 2027 estimate mid",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "72.47",
+      "description": "the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %"
+    },
+    {
+      "words": [
+        "ABB share decision",
+        "sensitivity",
+        "fair P/E 28",
+        "EPS 2027 estimate high",
+        "weighted target price",
+        "CHF",
+        "modelled"
+      ],
+      "number": "75.61",
+      "description": "the earnings multiple target of the cell 97.61 CHF times 0.3 plus the other four targets of the page times their weights; upside +4 %"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "ABB",
+        "EPS",
+        "full year",
+        "2025",
+        "nine months",
+        "2026",
+        "USD"
+      ],
+      "formula": "trailing EPS formula",
+      "words": [
+        "ABB",
+        "trailing EPS",
+        "USD"
+      ],
+      "number": "2.76"
+    },
+    {
+      "context": [
+        "ABB",
+        "EPS 2027 estimate",
+        "USD",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "2026",
+        "CHF per USD"
+      ],
+      "formula": "currency conversion per share",
+      "words": [
+        "ABB",
+        "EPS 2027 estimate",
+        "CHF"
+      ],
+      "number": "3.1125"
+    },
+    {
+      "context": [
+        "ABB",
+        "EPS 2027 estimate",
+        "USD",
+        "ABB share decision",
+        "fair P/E",
+        "factor",
+        "assumed",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "2026",
+        "CHF per USD"
+      ],
+      "formula": "earnings multiple target",
+      "words": [
+        "ABB share decision",
+        "target price",
+        "earnings multiple",
+        "CHF"
+      ],
+      "number": "68.475"
+    },
+    {
+      "context": [
+        "ABB",
+        "free cash flow",
+        "guidance",
+        "2026",
+        "billion",
+        "USD",
+        "shares outstanding",
+        "September",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "CHF per USD"
+      ],
+      "formula": "free cash flow per share formula",
+      "words": [
+        "ABB share decision",
+        "free cash flow per share",
+        "CHF"
+      ],
+      "number": "2.295354"
+    },
+    {
+      "context": [
+        "ABB",
+        "net debt",
+        "September",
+        "2026",
+        "billion",
+        "USD",
+        "shares outstanding",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "CHF per USD"
+      ],
+      "formula": "net debt per share formula",
+      "words": [
+        "ABB share decision",
+        "net debt per share",
+        "CHF"
+      ],
+      "number": "0.610564"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "free cash flow per share",
+        "CHF",
+        "present value factor",
+        "explicit stage",
+        "terminal growth",
+        "factor",
+        "modelled",
+        "net debt per share"
+      ],
+      "formula": "discounted cash flow target",
+      "words": [
+        "ABB share decision",
+        "target price",
+        "discounted cash flow",
+        "CHF"
+      ],
+      "number": "65.120029"
+    },
+    {
+      "context": [
+        "ABB",
+        "operational EBITA",
+        "2026",
+        "billion",
+        "USD",
+        "assumed",
+        "ABB share decision",
+        "fair EV/EBITA",
+        "factor",
+        "net debt",
+        "September",
+        "shares outstanding",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "CHF per USD"
+      ],
+      "formula": "enterprise value multiple target",
+      "words": [
+        "ABB share decision",
+        "target price",
+        "enterprise value multiple",
+        "CHF"
+      ],
+      "number": "67.974613"
+    },
+    {
+      "context": [
+        "ABB share",
+        "dividend",
+        "2025",
+        "CHF",
+        "ABB share decision",
+        "dividend growth",
+        "percent",
+        "assumed",
+        "required return"
+      ],
+      "formula": "dividend discount target",
+      "words": [
+        "ABB share decision",
+        "target price",
+        "dividend discount",
+        "CHF"
+      ],
+      "number": "32.9"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "target price",
+        "earnings multiple",
+        "discounted cash flow",
+        "enterprise value multiple",
+        "dividend discount",
+        "CHF",
+        "weight",
+        "percent",
+        "assumed",
+        "analyst consensus weight",
+        "ABB share",
+        "analyst consensus",
+        "October",
+        "2026"
+      ],
+      "formula": "weighted target price formula",
+      "words": [
+        "ABB share decision",
+        "weighted target price",
+        "CHF"
+      ],
+      "number": "66.868431"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "weighted target price",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "percent"
+      ],
+      "number": "-0.082486"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "target price",
+        "earnings multiple",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "method upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "target price",
+        "earnings multiple",
+        "percent"
+      ],
+      "number": "-0.060442"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "target price",
+        "discounted cash flow",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "method upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "target price",
+        "discounted cash flow",
+        "percent"
+      ],
+      "number": "-0.106476"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "target price",
+        "enterprise value multiple",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "method upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "target price",
+        "enterprise value multiple",
+        "percent"
+      ],
+      "number": "-0.067308"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "target price",
+        "dividend discount",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "method upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "target price",
+        "dividend discount",
+        "percent"
+      ],
+      "number": "-0.548573"
+    },
+    {
+      "context": [
+        "ABB share",
+        "target price",
+        "analyst consensus",
+        "October",
+        "2026",
+        "CHF",
+        "price",
+        "close"
+      ],
+      "formula": "method upside formula",
+      "words": [
+        "ABB share decision",
+        "upside",
+        "target price",
+        "analyst consensus",
+        "percent"
+      ],
+      "number": "0.056531"
+    },
+    {
+      "context": [
+        "ABB share",
+        "dividend",
+        "2025",
+        "CHF",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "dividend yield formula",
+      "words": [
+        "ABB share decision",
+        "dividend yield",
+        "percent"
+      ],
+      "number": "0.012898"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "annualised price return",
+        "percent",
+        "modelled",
+        "dividend yield"
+      ],
+      "formula": "share expected return formula",
+      "words": [
+        "ABB share decision",
+        "expected return",
+        "percent"
+      ],
+      "number": "-0.015389"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "weighted target price",
+        "CHF",
+        "margin of safety",
+        "percent",
+        "assumed"
+      ],
+      "formula": "buy threshold formula",
+      "words": [
+        "ABB share decision",
+        "buy threshold",
+        "CHF"
+      ],
+      "number": "60.789483"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "weighted target price",
+        "CHF",
+        "margin of safety",
+        "percent",
+        "assumed"
+      ],
+      "formula": "sell threshold formula",
+      "words": [
+        "ABB share decision",
+        "sell threshold",
+        "CHF"
+      ],
+      "number": "74.298257"
+    },
+    {
+      "context": [
+        "ABB",
+        "trailing EPS",
+        "USD",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026",
+        "CHF",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "CHF per USD"
+      ],
+      "formula": "trailing P/E formula",
+      "words": [
+        "ABB share decision",
+        "trailing P/E",
+        "factor"
+      ],
+      "number": "31.814213"
+    },
+    {
+      "context": [
+        "ABB",
+        "EPS 2027 estimate",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "forward P/E formula",
+      "words": [
+        "ABB share decision",
+        "forward P/E",
+        "factor"
+      ],
+      "number": "23.415261"
+    },
+    {
+      "context": [
+        "ABB",
+        "EPS 2027 estimate",
+        "EPS 2026 estimate",
+        "USD"
+      ],
+      "formula": "EPS growth formula",
+      "words": [
+        "ABB share decision",
+        "EPS growth",
+        "percent"
+      ],
+      "number": "0.119403"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "forward P/E",
+        "factor",
+        "EPS growth",
+        "percent"
+      ],
+      "formula": "PEG formula",
+      "words": [
+        "ABB share decision",
+        "PEG",
+        "factor"
+      ],
+      "number": "1.961028"
+    },
+    {
+      "context": [
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026",
+        "CHF",
+        "ABB",
+        "shares outstanding",
+        "September",
+        "billion"
+      ],
+      "formula": "market capitalisation formula",
+      "words": [
+        "ABB share decision",
+        "market capitalisation",
+        "billion",
+        "CHF"
+      ],
+      "number": "131.76704"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "market capitalisation",
+        "billion",
+        "CHF",
+        "ABB",
+        "net debt",
+        "September",
+        "2026",
+        "USD",
+        "operational EBITA",
+        "assumed",
+        "US dollar",
+        "Swiss franc",
+        "exchange rate",
+        "October",
+        "CHF per USD"
+      ],
+      "formula": "enterprise value multiple formula",
+      "words": [
+        "ABB share decision",
+        "EV/EBITA",
+        "factor"
+      ],
+      "number": "19.287406"
+    },
+    {
+      "context": [
+        "ABB share decision",
+        "free cash flow per share",
+        "CHF",
+        "ABB share",
+        "price",
+        "close",
+        "October",
+        "2026"
+      ],
+      "formula": "free cash flow yield formula",
+      "words": [
+        "ABB share decision",
+        "free cash flow yield",
+        "percent"
+      ],
+      "number": "0.031495"
+    }
+  ],
+  "view-validation": [
+    {
+      "url": "mask=Calculator&words=ABB share decision",
+      "result": "# ABB share decision\n \nthe question whether an investor should buy, sell or hold the ABB share: the page derives a target price from five valuation methods on the key figures of the company, weights them, compares the result with the price of 72.88 CHF of 28 October 2026 and gives the verdict buy, hold or sell with a margin of safety; every input can be changed, the numbers of this phrase are the worked example\n \n## Hold - the target is within your margin of safety of the price\n \n## Target price by method\n \n| | target price | weight | vs. price |\n| --- | ---: | ---: | ---: |\n| earnings multiple in CHF | 68.48 | 30% | -6.0% |\n| discounted cash flow in CHF | 65.12 | 30% | -10.6% |\n| enterprise value multiple in CHF | 67.97 | 20% | -6.7% |\n| dividend discount in CHF | 32.9 | 5% | -54.9% |\n| analyst consensus in CHF | 77 | 15% | +5.7% |\n| weighted target price in CHF | 66.87 | 100% | -8.2% |\n| expected return in percent | -1.5% | | |\n| buy threshold in CHF | 60.79 | | 74.3 |\n \n## Key figures at the current price\n \n| | target price | weight | vs. price |\n| --- | ---: | ---: | ---: |\n| trailing P/E | 31.8 | | |\n| forward P/E | 23.4 | | +1.4 |\n| PEG | 1.96 | | |\n| EV/EBITA | 19.3 | | +1.3 |\n| free cash flow yield in percent | 3.15% | | |\n| dividend yield in percent | 1.29% | | |\n| market capitalisation in billion CHF | 131.8 | | |\n| net debt per share in CHF | 0.61 | | |\n"
+    }
+  ]
+}

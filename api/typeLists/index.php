@@ -61,12 +61,14 @@ if ($db_con->is_open()) {
     // no parameters needed
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    // the types api message is cached in the types db_cache row (see ui_config::get)
+    $ui_cfg = new ui_config();
     if ($usr->id > 0) {
-        $ui_cfg = new ui_config();
         $result = $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $msg);
     }
 
     $ctrl = new controller();
+    $ctrl->cache_header($ui_cfg->from_cache);
 
     $ctrl->get_json($result, $msg);
 

@@ -102,7 +102,7 @@ class user_read_tests
         $test_name = 'without the own pod flag an unprivileged session keeps its own user';
         $t->assert($test_name, $unprivileged->data_user($session->id(), $msg)->id(), $unprivileged->id());
 
-        // TODO test type and view
+        // TODO Prio 2 test type and view
 
 
         $t->subheader($ts . 'login does not leak which users exist');
