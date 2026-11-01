@@ -2221,6 +2221,7 @@ enum messages: string
     // the label of the field for the name of a case above the save button and the reason if the api does not name one
     case CALCULATOR_CASE_NAME = 'calculator_case_name';
     case CALCULATOR_CASE_FAILED = 'calculator_case_failed';
+    case CALCULATOR_CASE_NO_JS = 'calculator_case_no_js';
     // the column headers of the target positions and the heading of the formulas of the pdf report of a calculator page
     case CALCULATOR_REPORT_QUANTITY = 'calculator_report_quantity';
     case CALCULATOR_REPORT_SECURITY = 'calculator_report_security';
@@ -2231,6 +2232,15 @@ enum messages: string
     case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
     case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
+    // the steps that the page shows while the pdf report is created, its result and its failure
+    case CALCULATOR_REPORT_STEP_LOAD = 'calculator_report_step_load';
+    case CALCULATOR_REPORT_STEP_NUMBERS = 'calculator_report_step_numbers';
+    case CALCULATOR_REPORT_STEP_POSITIONS = 'calculator_report_step_positions';
+    case CALCULATOR_REPORT_STEP_TABLES = 'calculator_report_step_tables';
+    case CALCULATOR_REPORT_STEP_FORMULAS = 'calculator_report_step_formulas';
+    case CALCULATOR_REPORT_STEP_FILE = 'calculator_report_step_file';
+    case CALCULATOR_REPORT_READY = 'calculator_report_ready';
+    case CALCULATOR_REPORT_FAILED = 'calculator_report_failed';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page

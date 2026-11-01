@@ -204,6 +204,7 @@ class system_page extends component
         'download' => triples::CALCULATOR_DOWNLOAD,
         'report' => triples::CALCULATOR_REPORT,
         'copy' => triples::CALCULATOR_COPY,
+        'case' => triples::CALCULATOR_CASE,
         'note' => triples::CALCULATOR_NOTE,
         'check' => triples::CALCULATOR_CHECK,
         'diagram' => triples::CALCULATOR_DIAGRAM,
@@ -223,6 +224,16 @@ class system_page extends component
         'step' => triples::FIELD_STEP,
         'value_phrases' => triples::FIELD_VALUE_PHRASES,
         'confidence' => words::CONFIDENCE,
+        'slider' => triples::CALCULATOR_SLIDER,
+        'preset' => triples::CALCULATOR_PRESET,
+        'tag' => triples::CALCULATOR_TAG,
+        'more' => triples::CALCULATOR_MORE,
+        'argument' => triples::CALCULATOR_ARGUMENT,
+        'verdict' => triples::CALCULATOR_VERDICT,
+        'scale' => triples::CALCULATOR_SCALE,
+        'difference' => triples::CALCULATOR_DIFFERENCE,
+        'cell' => triples::CALCULATOR_CELL,
+        'sensitivity' => triples::CALCULATOR_SENSITIVITY,
     ];
     // the code ids of the verbs by the key that the script reads, which gets their names from the type cache
     const array CALC_PAGE_VERB_CODE_IDS = [
@@ -236,6 +247,8 @@ class system_page extends component
         'rank' => verbs::RANK,
         'symbol' => verbs::SYMBOL,
         'acronym' => verbs::ACRONYM,
+        'supports' => verbs::SUPPORTS,
+        'limits' => verbs::LIMITS,
     ];
     // the translated texts of the calculator page script by their message id
     const array CALC_PAGE_TEXT_IDS = [
@@ -244,11 +257,13 @@ class system_page extends component
         msg_id::CALCULATOR_RESULT,
         msg_id::CALCULATOR_DETAILS,
         msg_id::CALCULATOR_SOURCES,
+        msg_id::AND_MORE,
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
         msg_id::CALCULATOR_DIAGRAM_FINAL,
         msg_id::CALCULATOR_CASE_NAME,
         msg_id::CALCULATOR_CASE_FAILED,
+        msg_id::CALCULATOR_CASE_NO_JS,
         msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
@@ -1284,6 +1299,9 @@ class system_page extends component
             if ($calc->lead() != '') {
                 $result .= $html->p($html->esc($calc->lead()));
             }
+            if ($cfg != null) {
+                $result .= new ui_list()->calculator_arguments($calc, $dbo, $cfg, new user_message());
+            }
         }
         return $result;
     }
@@ -1323,10 +1341,11 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_INPUT))
                     ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
+                    . $list->calculator_presets($calc)
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
                     . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
-                    . $this->calculator_button_save($form_name, $msk_key, $dbo)
-                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT)),
+                    . $list->calculator_case_field($calc)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT), $this->calculator_button_save($form_name, $msk_key, $dbo)),
                     styles::INPUTS);
                 $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
                 $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
@@ -1578,12 +1597,13 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
             }
+            $result = $list->calculator_verdict($calc, $dbo, $cfg, $lst, $msg) . $result . $list->calculator_sensitivity($calc);
             $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
                 . $list->calculator_diagrams($calc, $lst, $msg)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
                 . $list->calculator_notes($calc)
                 . $list->calculator_imports($calc);
-            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $notes = $list->formula_notes($dbo, $msg, $cfg) . $list->calculator_notes($calc, true);
             $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
                 . $list->calculator_sources($calc, $dbo, $msg, $cfg);

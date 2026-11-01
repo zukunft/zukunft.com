@@ -94,6 +94,8 @@ use DateTime;
 class use_case_ui_tests
 {
 
+    // a save button for the test of the buttons of the input list
+    const string CALC_SAVE_HTML = '<form id="save"></form>';
     // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js)
     const string PUT_MESSAGE_ID = 'putMessage';
     // the time of the save is replaced by this fixed time, so the message can be compared with the expected file
@@ -749,6 +751,15 @@ class use_case_ui_tests
         $zh_city = new test_triples($t)->zh_city_ui();
         $form = views::CALCULATOR;
         $in_html = $page->calculator_input($zh_city, $msg, $dto_in, $form, views::CALCULATOR, []);
+        // a text shows its placeholders and escapes the text around them
+        $text_html = new ui_list()->calculator_text('<b> {num:36 %} {source:unknown}', $zh_city, $dto_in, $dto_in->val_lst, [], $msg);
+        $test_name = 'a text shows a number placeholder in the style of a number';
+        $t->assert_text_contains($test_name, $text_html, $html->span('36 %', styles::CALC_NUM));
+        // negative: no number instead of a wrong one for a source that the page does not list
+        $test_name = '... and nothing for an unknown source';
+        $t->assert_text_not_contains($test_name, $text_html, '{source');
+        $test_name = '... and escapes the text around it';
+        $t->assert_text_not_contains($test_name, $text_html, '<b>');
         $test_name = 'the calculator input starts with the default heading in the inputs frame';
         $t->assert_text_contains($test_name, $in_html, '<div class="' . styles::INPUTS . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_INPUTS)));
@@ -805,11 +816,26 @@ class use_case_ui_tests
         $btn_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_button_ui());
         $btn_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT));
         $t->assert_text_contains($test_name, $btn_html, '>' . triple_names::CALC_BUTTON_COM . '</button>');
+        // the input list shows two buttons per line with the save button in front of the download
+        $test_name = 'the save button is part of the two buttons per line of the input list';
+        $save_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT), self::CALC_SAVE_HTML);
+        $t->assert_text_contains($test_name, $save_html, '<div class="' . styles::CALC_ACTIONS . '">' . self::CALC_SAVE_HTML);
+        // negative: a list without the save button keeps its buttons without the two per line
+        $test_name = '... but not the buttons of another list';
+        $t->assert_text_not_contains($test_name, $btn_html, styles::CALC_ACTIONS);
+        // the page of the server shows the case name, which only the page of the browser can change
+        $test_name = 'a page built from another phrase shows the field of the case name';
+        $case_html = $list->calculator_case_field($btn_calc);
+        $t->assert_text_contains($test_name, $case_html, 'id="' . ui_list::CALC_CASE_FIELD_ID . '"');
+        $test_name = '... which cannot be changed without javascript';
+        $t->assert_text_contains($test_name, $case_html, ' disabled>');
         // negative: a list without a button keyword has no button, also not without a list
         $test_name = '... but a list without the keyword has none';
         $no_btn_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
         $no_btn_html = $list->calculator_buttons($no_btn_calc, $no_btn_calc->group(triples::CALCULATOR_INPUT));
         $t->assert($test_name, $no_btn_html, '');
+        $test_name = '... and inputs without the case keyword have no field of the case name';
+        $t->assert($test_name, $list->calculator_case_field($no_btn_calc), '');
         $test_name = '... and no list has none';
         $null_btn_html = $list->calculator_buttons($no_btn_calc, null);
         $t->assert($test_name, $null_btn_html, '');

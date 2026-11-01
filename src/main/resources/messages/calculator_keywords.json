@@ -123,10 +123,44 @@
       "name": "copy"
     },
     {
+      "name": "case"
+    },
+    {
       "name": "page"
     },
     {
       "name": "independent"
+    },
+    {
+      "name": "slider"
+    },
+    {
+      "name": "preset",
+      "description": "a named set of input values that the user can apply at once"
+    },
+    {
+      "name": "tag"
+    },
+    {
+      "name": "more"
+    },
+    {
+      "name": "argument"
+    },
+    {
+      "name": "verdict"
+    },
+    {
+      "name": "scale"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "cell"
+    },
+    {
+      "name": "sensitivity"
     }
   ],
   "triples": [
@@ -417,6 +451,14 @@
       "code_id": "system_calculator_copy"
     },
     {
+      "name": "calculator case",
+      "description": "flag: a triple from the inputs list to this keyword shows the field for the name of a case above the save button of a page that is built from another phrase, so that the user can save the inputs as an own case",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "case",
+      "code_id": "system_calculator_case"
+    },
+    {
       "name": "calculator page independent",
       "description": "PROPOSED NEW ELEMENT: flag: an item, a detail table or the check table with a triple to this keyword selects its numbers without the page phrase e.g. the holdings of a bank statement, which are the same for every split of the depot; needs the numbers of the walked phrases without the page phrase in calculator_numbers",
       "from": "calculator (system)",
@@ -431,6 +473,86 @@
       "verb": "has a",
       "to": "column unit",
       "code_id": "system_calculator_column_unit"
+    },
+    {
+      "name": "calculator slider",
+      "description": "PROPOSED NEW ELEMENT: flag: an input with a triple to this keyword also shows a range slider coupled to its number field, with the field limit down, the field limit up and the field step of its phrase; a field step value of the triple itself is the step of the slider",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "slider",
+      "code_id": "system_calculator_slider"
+    },
+    {
+      "name": "calculator preset",
+      "description": "PROPOSED NEW ELEMENT: list: each item is a button with the label and the hint of the item that sets the inputs to the values of the item phrase",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "preset",
+      "code_id": "system_calculator_preset"
+    },
+    {
+      "name": "calculator tag",
+      "description": "PROPOSED NEW ELEMENT: text property: the description of a triple from an input to this keyword replaces the generated measured or assumed tag e.g. measured 5-8 %",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "tag",
+      "code_id": "system_calculator_tag"
+    },
+    {
+      "name": "calculator more",
+      "description": "PROPOSED NEW ELEMENT: text property: the description of a triple from the base phrase to this keyword is the lead text behind the collapsed more section below the hint",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "more",
+      "code_id": "system_calculator_more"
+    },
+    {
+      "name": "calculator argument",
+      "description": "PROPOSED NEW ELEMENT: list: the supports triples to the phrase of its with triple are the pro arguments and the limits triples the contra arguments, each with its label in bold and its description as the text; the label of the list is the heading of both sides separated by a vertical bar; the first argument of a side is shown and the others are collapsed",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "argument",
+      "code_id": "system_calculator_argument"
+    },
+    {
+      "name": "calculator verdict",
+      "description": "PROPOSED NEW ELEMENT: block: compares the number of its first with triple with the number of its second with triple as the threshold; its three items in their order are the states below minus the threshold, above the threshold and in between, each with the label as the headline and the hint as the text",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "verdict",
+      "code_id": "system_calculator_verdict"
+    },
+    {
+      "name": "calculator scale",
+      "description": "PROPOSED NEW ELEMENT: text property: a triple from a verdict to this keyword draws the meter; the description is the text below it with the parts separated by a vertical bar and the field limit down and the field limit up of the triple are the ends of the meter",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "scale",
+      "code_id": "system_calculator_scale"
+    },
+    {
+      "name": "calculator difference",
+      "description": "PROPOSED NEW ELEMENT: flag: a result column with a triple to this keyword shows the first column minus the second column of its row and stays empty if one of them has no number",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "difference",
+      "code_id": "system_calculator_difference"
+    },
+    {
+      "name": "calculator cell",
+      "description": "PROPOSED NEW ELEMENT: list: the items of a row are the phrases of its cell of the column of their with triple instead of the row phrase; the items of a sensitivity table are the numbers of each of its cells",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "cell",
+      "code_id": "system_calculator_cell"
+    },
+    {
+      "name": "calculator sensitivity",
+      "description": "PROPOSED NEW ELEMENT: block: a table that calculates the page again for each cell; the has a items are the columns and the with items the rows, each an instance of an input phrase whose value replaces the number of the input; the verdict of the page colours the cell",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "sensitivity",
+      "code_id": "system_calculator_sensitivity"
     }
   ]
 }

@@ -143,6 +143,7 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator($t);
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
+        $this->run_npp_ch_vote($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -476,6 +477,11 @@ class system_views_read_tests
             $test_name = 'the short url ' . $url_name . ' opens ' . $pin[words::URL];
             $t->assert_file($test_name, $html->forward_url_page($pin[words::URL]), test_files::PINNED_PAGE_PATH . $url_name);
         }
+        // negative: an inactive pinned view has no target, so its short url page is removed
+        foreach (array_keys($t->pinned_views_inactive()) as $url_name) {
+            $test_name = 'the inactive pinned view ' . $url_name . ' has no short url page';
+            $t->assert_no_file($test_name, test_files::PINNED_PAGE_PATH . $url_name);
+        }
         $test_name = 'the start page links the pinned views of config.yaml';
         $start_page = file_get_contents(test_files::START_PAGE);
         $t->assert_file($test_name, $html->start_page($start_page, $pin_lst, new user_message()), test_files::START_PAGE);
@@ -485,6 +491,10 @@ class system_views_read_tests
         $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
         $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr->id()]);
         $t->assert($test_name, $this->pinned_url($t, $pin_by_names, $msg), $expected);
+        $test_name = '... and only the view if it has no phrase name';
+        $pin_view_only = [triples::VIEW_NAME => views::CALCULATOR_NAME];
+        $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID]);
+        $t->assert($test_name, $this->pinned_url($t, $pin_view_only, $msg), $expected);
     }
 
     /**
@@ -496,26 +506,20 @@ class system_views_read_tests
     private function pinned_url(test_cleanup $t, array $pin, user_message_cfg $msg): string
     {
         $url = $pin[words::URL] ?? '';
-        if ($this->is_by_names($pin)) {
+        if ($url == '') {
             $msk = new view($t->usr1);
             $msk->load_by_name($pin[triples::VIEW_NAME], $msg);
-            $phr = new phrase($t->usr1);
-            $phr->load_by_name($pin[triples::PHRASE_NAME], $msg);
-            // the phrase id of a triple is negative, so the view shows the triple
-            $url = new html_base()->page_url([url_var::MASK => $msk->id(), url_var::ID => $phr->id()]);
+            $url_array = [url_var::MASK => $msk->id()];
+            $phr_name = $pin[triples::PHRASE_NAME] ?? '';
+            if ($phr_name != '') {
+                $phr = new phrase($t->usr1);
+                $phr->load_by_name($phr_name, $msg);
+                // the phrase id of a triple is negative, so the view shows the triple
+                $url_array[url_var::ID] = $phr->id();
+            }
+            $url = new html_base()->page_url($url_array);
         }
         return $url;
-    }
-
-    /**
-     * @param array $pin the url or the view name and the phrase name of a pinned view of config.yaml
-     * @return bool true if the pinned view has no url but a view name and a phrase name
-     */
-    private function is_by_names(array $pin): bool
-    {
-        return ($pin[words::URL] ?? '') == ''
-            and ($pin[triples::VIEW_NAME] ?? '') != ''
-            and ($pin[triples::PHRASE_NAME] ?? '') != '';
     }
 
     /**
@@ -941,6 +945,28 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS);
+    }
+
+    /**
+     * the Swiss NPP vote page without javascript and as the browser builds it and the differences of the
+     * page without javascript to the hand made sample as a report, which names what the page still misses
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_ch_vote(test_cleanup $t): void
+    {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_NO_JS,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
+        $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
+            test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
     }
 
     /**

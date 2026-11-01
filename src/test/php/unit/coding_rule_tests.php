@@ -285,6 +285,7 @@ class coding_rule_tests
         $this->json_view_component_defined_tests($t);
         $this->json_section_covered_tests($t);
         $this->json_file_loaded_tests($t);
+        $this->json_triple_order_tests($t);
 
         $t->subheader($ts . 'verb consistency');
         $this->verb_group_tests($t);
@@ -947,6 +948,73 @@ class coding_rule_tests
 
         $test_name = 'every import json is in an import list or read by a test';
         $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that a triple of an import json links only to triples defined before it in the file,
+     * because the database setup saves the triples in the order of the file and stops the import
+     * of the complete file with 'Cannot find word or triple', which the import check without a
+     * database does not report
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_triple_order_tests(test_cleanup $t): void
+    {
+        $chk = new json_validation();
+        $names = [];
+        foreach (json_validation::SCAN_PATHS as $sec => $path) {
+            foreach ($chk->json_file_list($path) as $file_path) {
+                $json = json_decode(file_get_contents($file_path), true);
+                $triples = is_array($json) ? ($json[json_fields::TRIPLES] ?? []) : [];
+                foreach ($this->triple_forward_references($triples) as $name) {
+                    $names[] = $sec . ': ' . basename($file_path) . ' - ' . $name;
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'every triple of an import json links only to triples defined before it';
+        $t->assert($test_name, implode(', ', $names), '');
+        $test_name = 'a triple defined before its use is no forward reference';
+        $defined_first = [
+            [json_fields::NAME => 'a', json_fields::EX_FROM => 'x', json_fields::EX_TO => 'y'],
+            [json_fields::NAME => 'b', json_fields::EX_FROM => 'a', json_fields::EX_TO => 'y'],
+        ];
+        $t->assert($test_name, $this->triple_forward_references($defined_first), []);
+        // negative: both link ends are checked, e.g. the to of the first triple that fails above
+        $test_name = '... but a triple defined after its use is one';
+        $t->assert($test_name, $this->triple_forward_references(array_reverse($defined_first)), ['a']);
+        $defined_after_to = [
+            [json_fields::NAME => 'b', json_fields::EX_FROM => 'y', json_fields::EX_TO => 'a'],
+            [json_fields::NAME => 'a', json_fields::EX_FROM => 'x', json_fields::EX_TO => 'y'],
+        ];
+        $t->assert($test_name, $this->triple_forward_references($defined_after_to), ['a']);
+    }
+
+    /**
+     * @param array $triples the triples section of an import json
+     * @return array the names of the triples that an earlier triple of the list links to
+     */
+    private function triple_forward_references(array $triples): array
+    {
+        $first = [];
+        foreach ($triples as $pos => $trp) {
+            $name = $trp[json_fields::NAME] ?? '';
+            if ($name != '' and !array_key_exists($name, $first)) {
+                $first[$name] = $pos;
+            }
+        }
+        $result = [];
+        foreach ($triples as $pos => $trp) {
+            foreach ([json_fields::EX_FROM, json_fields::EX_TO] as $end) {
+                $name = $trp[$end] ?? '';
+                if (($first[$name] ?? $pos) > $pos) {
+                    $result[] = $name;
+                }
+            }
+        }
+        return array_values(array_unique($result));
     }
 
     /**

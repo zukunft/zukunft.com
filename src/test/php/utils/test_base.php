@@ -1926,16 +1926,58 @@ class test_base
     }
 
     /**
-     * @return array the pinned views of config.yaml by url name, each with the url or the view name
+     * @return array the active pinned views of config.yaml by url name, each with the url or the view name
      *               and the phrase name and with the name and the tooltip (see html_base::start_page)
      */
     function pinned_views(): array
+    {
+        return array_filter($this->pinned_views_all(), fn(array $pin) => $this->pin_is_active($pin));
+    }
+
+    /**
+     * @return array the pinned views of config.yaml by url name that have no url and no view name
+     */
+    function pinned_views_inactive(): array
+    {
+        return array_diff_key($this->pinned_views_all(), $this->pinned_views());
+    }
+
+    /**
+     * @param array $pin a pinned view of config.yaml
+     * @return bool true if the pinned view has a url or a view name, so it has a target to open
+     */
+    function pin_is_active(array $pin): bool
+    {
+        return ($pin[words::URL] ?? '') != '' or ($pin[triples::VIEW_NAME] ?? '') != '';
+    }
+
+    /**
+     * @return array the active and the inactive pinned views of config.yaml by url name
+     */
+    private function pinned_views_all(): array
     {
         $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
         $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
             [words::STARTUP][triples::PINNED_VIEWS] ?? [];
         unset($pin_lst[words::TOOLTIP_COMMENT]);
         return $pin_lst;
+    }
+
+    /**
+     * check that a generated file that is no longer used does not exist
+     * and remove it if test_files::AUTO_UPDATE_TEST_FILES is true
+     *
+     * @param string $test_name the description of the test
+     * @param string $file_path the full path of the file that should not exist
+     * @return bool true if the file does not exist
+     */
+    function assert_no_file(string $test_name, string $file_path): bool
+    {
+        $result = $this->assert($test_name, file_exists($file_path), false);
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            unlink($file_path);
+        }
+        return $result;
     }
 
     /**

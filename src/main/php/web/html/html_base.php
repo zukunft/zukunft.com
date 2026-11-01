@@ -153,6 +153,9 @@ class html_base
     const string STYLESHEET = 'stylesheet';
     const string A = 'a';
     const string HREF = 'href';
+    const string IFRAME = 'iframe';
+    const string TARGET = 'target';
+    const string CLASS_FRAME_STEP = 'frame-step';
     const string NAV = 'nav';
     const string IMG = 'img';
     const string SRC = 'src';
@@ -989,6 +992,60 @@ class html_base
         $css .= ' counter-reset: ' . self::LOADING_COUNTER . ' var(' . $var . ');}';
         $css .= ' .' . self::CLASS_LOADING_SECONDS . '::after {content: counter(' . self::LOADING_COUNTER . ');}';
         return $css . ' @keyframes ' . self::LOADING_COUNT_ANIMATION . ' {to {' . $var . ': ' . $limit . ';}}';
+    }
+
+    /**
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html start of the small frame next to a button, in which only the last step of a long running job is shown
+     */
+    function frame_start(user_message|Message $msg): string
+    {
+        $css = '.' . self::CLASS_FRAME_STEP . ':not(:last-child) {display: none;}';
+        $css .= ' ' . self::BODY . ' {min-height: 0;}';
+        $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
+        return $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
+    }
+
+    /**
+     * @param string $text the step that a long running job is doing now
+     * @return string the html code of the step, which hides the step before
+     */
+    function frame_step(string $text): string
+    {
+        return $this->div($this->esc($text), self::CLASS_FRAME_STEP);
+    }
+
+    /**
+     * @param string $name the name of the frame, which a link selects as its target, and its style
+     * @param string $title the text that a screen reader tells for the frame
+     * @return string the html code of the frame
+     */
+    function frame(string $name, string $title): string
+    {
+        return '<' . self::IFRAME . ' ' . self::NAME . '="' . $name . '" ' . self::CLASS_HTML . '="' . $name . '" '
+            . self::TITLE_HTML . '="' . $this->esc($title) . '"></' . self::IFRAME . '>';
+    }
+
+    /**
+     * @param string $url the url that the frame loads
+     * @param string $name the text of the link
+     * @param string $frame the name of the frame, so that the page with the link stays
+     * @param string $css_class the style of the link
+     * @return string the html code of the link
+     */
+    function ref_to_frame(string $url, string $name, string $frame, string $css_class): string
+    {
+        return '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '" ' . self::TARGET . '="' . $frame . '" '
+            . self::CLASS_HTML . '="' . $css_class . '">' . $this->esc($name) . '</' . self::A . '>';
+    }
+
+    /**
+     * @param string $url the url that the browser loads next, which starts a download without a script if it is a file
+     * @return string the html code that loads the url at once
+     */
+    function refresh(string $url): string
+    {
+        return '<' . self::META . ' http-equiv="refresh" content="0; url=' . htmlspecialchars($url, ENT_QUOTES) . '">';
     }
 
     /**

@@ -1,11 +1,39 @@
 # pending - list of planned llm prompts with prio 1
 
-## portfolio split page compared with its sample
+## Calculator editor
+
+### Swiss NPP
+
+add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+## table editor
+
+similar to the 'Calculator editor' create a table editor e.g. for http://localhost/http/view.php?m=2&id=-1257 that 
+is called by the already linked url  http://localhost/http/view.php?m=194&id=-1257&9m=2&9id=-1257&u=11
+The existing table editor will be completely redesigned and can be parked in the no_js url
+so the standard table editor should be JavaScript based and like the 'Calculator editor' load all needed parameter with seed json api calls 
+
+## result tooltip
+
+if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
+to show the formula used for the calculation of the result in the latex format with the values used for the result 
+and a 'click for more details' hint
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+### portfolio split page compared with its sample
 
 The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
 and the related reports.
 
-### import
+#### import
 
 based on a csv and a list of context phrases e.g. 'example portfolio split' a zukunft import json should be created.
 
@@ -90,7 +118,7 @@ so create the csv file and as a unit test result create or update a zukunft.com 
 
 create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
 
-### check
+#### check
 
 Differences remaining
 
@@ -101,12 +129,12 @@ Differences remaining
 - Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
 - Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
 
-### step 2: add a "Add child" and remove
+#### step 2: add a "Add child" and remove
 
 Add an add two children and remove one child test case similar to the high and low test cases 
 so that all main test cases are covered
 
-### step 3: the input fields (1), (2), (3), (4)
+#### step 3: the input fields (1), (2), (3), (4)
 
 - the formulas of the warnings name the first and the second child: 
   a new child needs a sum over the instances, so update them with the add child task
@@ -116,26 +144,26 @@ because a new child has no allocation before the walk is calculated:
 a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
 and the page needs the remove button per field. The button stays without a function until then.
 
-### step 4: the result table (9), (17)
+#### step 4: the result table (9), (17)
 
 - the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
 
-### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
 - the colours of the walk cells and the hint below the holdings
 
-### step 7: the buttons (13)
+#### step 7: the buttons (13)
 
 - the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
 - the icons of the sample
 
-### step 8: decide what the generated page keeps
+#### step 8: decide what the generated page keeps
 
 - the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
 - which the generated page shows at the assumptions and the holdings
 
-### step 9: calculate the split again in the browser (18)
+#### step 9: calculate the split again in the browser (18)
 
 The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
 
@@ -145,50 +173,31 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
 5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
 ## ID check
 
 include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
 
 ## Calculator editor
 
-## use cases
+### use cases
 
-### portfolio split calculator
+#### ahv vat
 
-the files and the diff check exist (`docs/deployment.md` "use case pages and their samples"); next steps:
-- bring `portfolio_split_calculator_no_js.html` and `_js.html` closer to the sample with `portfolio_split_calculator_diff.md` and `_diff_high.md`
-- give both pages the same fields, then add more input cases and set `$all_fields` of `assert_sample_case` to true
-- add the same setup for the other samples of the table in `docs/deployment.md`
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the
+possibility to set the weight of the targets and combine them with the personal gain to one index rating
 
-### Swiss NPP
+#### config yaml
 
-based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
-src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+add these to the config.yaml at 'pinned views'
 
-add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
 
-create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
-and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
 
-add costs of CO2-eq reduction to the npp
+#### more sample
 
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+write a script that for all *_sample.html files within src/test/resources/web/html/use_cases
+a generated file exists and is generated
 
-### ahv vat 
-
-Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
-possibility to set the weight of the targets and combine them with the personal gain to one index rating 
-
-## pure HTML ans JavaScript views
+## pure HTML and JavaScript views
 
 add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
 

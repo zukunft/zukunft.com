@@ -39,6 +39,8 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 class pdf_writer
 {
 
+    const string MIME_TYPE = 'application/pdf';
+    const string FILE_EXTENSION = '.pdf';
     // the size of a landscape A4 page in points
     const int PAGE_WIDTH = 842;
     const int PAGE_HEIGHT = 595;
@@ -54,7 +56,7 @@ class pdf_writer
     const string FONT_NORMAL = 'F1';
     const string FONT_BOLD = 'F2';
     const string IMAGE_NAME = 'Im1';
-    const string JPEG_MIME = 'image/jpeg';
+    const string JPEG_START = "\xFF\xD8\xFF";
     const string ENCODING = 'Windows-1252';
     // the width of the printable ascii chars from the space on in 1/1000 of the font size of the standard font Helvetica
     const array CHAR_WIDTHS = [
@@ -93,8 +95,9 @@ class pdf_writer
      */
     function image(string $data): bool
     {
-        $info = $data == '' ? false : getimagesizefromstring($data);
-        $is_jpeg = ($info !== false and $info['mime'] == self::JPEG_MIME);
+        // only a jpeg start, because php raises a notice for a short text
+        $info = str_starts_with($data, self::JPEG_START) ? getimagesizefromstring($data) : false;
+        $is_jpeg = $info !== false;
         if ($is_jpeg) {
             $this->img_data = $data;
             $this->img_width = $info[0];

@@ -347,6 +347,8 @@ class triple_names
     // the keyword, the button and its label of the button test, which follow the check
     const int CALC_BUTTON_FIRST_ID = 906;
     const string CALC_BUTTON_COM = 'Download the inhabitants';
+    // the keyword and the flag of the field of the case name
+    const int CALC_CASE_FIRST_ID = 1970;
     // the triples of the test with two instances of a repeated field and the imports, which follow the button
     const int CALC_INSTANCES_FIRST_ID = 902;
     const string CALC_SHORT_LABEL = 'Short canton';
@@ -539,6 +541,8 @@ class triple_names
     const string EXAMPLE_TUBE_IMPORT = 'example tube import';
     // the worked example of the use case portfolio_split_calculator.json, selected by the name only
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
+    // the page phrase of the use case npp_ch_vote.json, selected by the name only
+    const string NEW_NPP_VOTE = 'new NPP vote 2027';
     // the beneficiary whose allocation the use case portfolio_split_calculator.json models
     const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
     const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
@@ -625,9 +629,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2758;
+    const int SHARE_RATIO_ID = 2769;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2810;
+    const int SHARE_SYMBOL_ID = 2821;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

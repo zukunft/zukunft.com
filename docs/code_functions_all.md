@@ -6534,6 +6534,19 @@
     \-- page_label - section for function page_label not yet defined that it should be page in /component/execute/calcul
             ator.php
     \-- lead - section for function lead not yet defined that it should be page in /component/execute/calculator.php
+    \-- more - section for function more not yet defined that it should be lists in /component/execute/calculator.php
+    \-- tag - section for function tag not yet defined that it should be lists in /component/execute/calculator.php
+    \-- arguments - section for function arguments not yet defined that it should be lists in /component/execute/calcula
+            tor.php
+    \-- own_keyword_text - section for function own_keyword_text not yet defined that it should be lists in /component/e
+            xecute/calculator.php
+    \-- keyword_item - section for function keyword_item not yet defined that it should be lists in /component/execute/c
+            alculator.php
+    \-- cell_phrase - section for function cell_phrase not yet defined that it should be lists in /component/execute/cal
+            culator.php
+    \-- is_difference - section for function is_difference is expected to be info in /component/execute/calculator.php
+    \-- text_sources - section for function text_sources not yet defined that it should be lists in /component/execute/c
+            alculator.php
     \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
     \-- items - section for function items not yet defined that it should be lists in /component/execute/calculator.php
     \-- sub_items - section for function sub_items not yet defined that it should be lists in /component/execute/calcula
@@ -6548,6 +6561,10 @@
             xecute/calculator.php
     \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- has_base - section for function has_base not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
+    \-- case_name - section for function case_name not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
     \-- phrase_id - section for function phrase_id not yet defined that it should be texts and flags in /component/execu
             te/calculator.php
     \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
@@ -7004,6 +7021,11 @@
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- calculator_presets - section for function calculator_presets missing in /component/execute/ui_list.php
+    \-- calculator_text - section for function calculator_text missing in /component/execute/ui_list.php
+    \-- calculator_arguments - section for function calculator_arguments missing in /component/execute/ui_list.php
+    \-- calculator_verdict - section for function calculator_verdict missing in /component/execute/ui_list.php
+    \-- calculator_sensitivity - section for function calculator_sensitivity missing in /component/execute/ui_list.php
     \-- calculator_remove_button - section for function calculator_remove_button missing in /component/execute/ui_list.p
             hp
     \-- calculator_imports - section for function calculator_imports missing in /component/execute/ui_list.php
@@ -7012,6 +7034,7 @@
     \-- field_shown - section for function field_shown missing in /component/execute/ui_list.php
     \-- field_unit - section for function field_unit missing in /component/execute/ui_list.php
     \-- calculator_option_text - section for function calculator_option_text missing in /component/execute/ui_list.php
+    \-- calculator_source_ids - section for function calculator_source_ids missing in /component/execute/ui_list.php
     \-- calculator_hint - section for function calculator_hint missing in /component/execute/ui_list.php
     \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
@@ -7023,6 +7046,7 @@
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
     \-- calculator_buttons - section for function calculator_buttons missing in /component/execute/ui_list.php
+    \-- calculator_case_field - section for function calculator_case_field missing in /component/execute/ui_list.php
     \-- calculator_report_url - section for function calculator_report_url missing in /component/execute/ui_list.php
     \-- calculator_check - section for function calculator_check missing in /component/execute/ui_list.php
     \-- calculator_check_same - section for function calculator_check_same missing in /component/execute/ui_list.php
@@ -7243,6 +7267,10 @@
     \-- url_to_html - section for function url_to_html not yet defined that it should be view in /frontend.php
     \-- send_loading_start - section for function send_loading_start not yet defined that it should be view in /frontend
             .php
+    \-- send_report_start - section for function send_report_start not yet defined that it should be view in /frontend.p
+            hp
+    \-- report_end_html - section for function report_end_html not yet defined that it should be view in /frontend.php
+    \-- report_watch - section for function report_watch not yet defined that it should be view in /frontend.php
     \-- loading_start - section for function loading_start not yet defined that it should be view in /frontend.php
     \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in 
             /frontend.php
@@ -7484,6 +7512,14 @@
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_start - section for function loading_start not yet defined that it should be header & footer in /html/ht
             ml_base.php
+    \-- frame_start - section for function frame_start not yet defined that it should be header & footer in /html/html_b
+            ase.php
+    \-- frame_step - section for function frame_step not yet defined that it should be header & footer in /html/html_bas
+            e.php
+    \-- frame - section for function frame not yet defined that it should be header & footer in /html/html_base.php
+    \-- ref_to_frame - section for function ref_to_frame not yet defined that it should be header & footer in /html/html
+            _base.php
+    \-- refresh - section for function refresh not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_end - section for function loading_end not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -9804,6 +9840,16 @@
         \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- calculator_presets
+        \-- ui_list - the buttons that set several inputs at once, which the script of the page gives their function
+    \-- calculator_text
+        \-- ui_list - a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
+    \-- calculator_arguments
+        \-- ui_list - the collapsed lead text and the arguments of both sides below the title of the page
+    \-- calculator_verdict
+        \-- ui_list - the verdict box: the state that the number of the first phrase has compared with the
+    \-- calculator_sensitivity
+        \-- ui_list - the sensitivity table with its rows and columns; the numbers need a calculation per cell, so
     \-- calculator_remove_button
         \-- ui_list - the button to remove an instance of a repeated field at its place,
                  without a function so far (docs/llm/pending.md)
@@ -9821,6 +9867,8 @@
         \-- ui_list - @param sandbox_value $val the value that a number field shows
     \-- calculator_option_text
         \-- ui_list - @param string $label the label of the option
+    \-- calculator_source_ids
+        \-- ui_list - the sources of a calculator page in the order of their first use on the page: the values
     \-- calculator_hint
         \-- ui_list - @param string $hint the hint of a calculator field
     \-- calculator_hint_numbers
@@ -9842,6 +9890,8 @@
     \-- calculator_buttons
         \-- ui_list - the buttons of a list or a detail table at their place: the report is a link to the pdf,
                  which also
+    \-- calculator_case_field
+        \-- ui_list - the field of the name of a case of the page of the server, which only shows the name, because
     \-- calculator_report_url
         \-- ui_list - @param int $phr_id the phrase id of the page, which is negative for a triple
     \-- calculator_check
@@ -10106,8 +10156,28 @@
     \-- static_page
         \-- html_base - write the font and the colours of config.yaml between the markers in the head of a static
 \-- lists
+    \-- more
+        \-- calculator - @return string the collapsed lead text of the page phrase, else of the phrase it is built from,
+                 else an empty string
+    \-- tag
+        \-- calculator - @param phrase $item an input or assumption of the page
+    \-- arguments
+        \-- calculator - @param bool $pro true for the items whose triple supports the claim,
+                 false for those that limit it
+    \-- own_keyword_text
+        \-- calculator - @param phrase|null $phr a phrase with a text e.g. the verdict
+    \-- keyword_item
+        \-- calculator - @param phrase|null $phr a phrase e.g. the verdict
+    \-- cell_phrase
+        \-- calculator - @param phrase $row a row of the result table
+    \-- is_difference
+        \-- calculator - @param phrase|null $col_phr the phrase of a result column
+    \-- text_sources
+        \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
+                order of the page
     \-- group
-        \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
+        \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
+                order of the page
     \-- items
         \-- calculator - @param string $list the name of the list keyword e.g. triples::CALCULATOR_INPUT
     \-- sub_items
@@ -10123,6 +10193,11 @@
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- button_label
         \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- has_base
+        \-- calculator - @return bool true if the page is built from another phrase, of which a case can be another kind
+    \-- case_name
+        \-- calculator - @return string the name of the case that the page shows e.g. Miller family of Miller family por
+                tfolio split, empty for the default case
     \-- phrase_id
         \-- calculator - @return int the phrase id of the page, which is negative for a triple
     \-- diagram_title
@@ -10665,6 +10740,13 @@
         \-- frontend - create the HTML code based on the given url
     \-- send_loading_start
         \-- frontend - send the start of the page at once, because the creation of the page can take longer than
+    \-- send_report_start
+        \-- frontend - send the start of the frame in which the steps of the report are shown
+    \-- report_end_html
+        \-- frontend - the end of the report frame: the request of the created file, whose download keeps the page,
+                 or the failure
+    \-- report_watch
+        \-- frontend - give the report more time than a page and tell the user if it fails anyway, because a fatal
     \-- loading_start
         \-- frontend - the html start of the page with the logo, the loading text and the footer
 \-- cached page
@@ -10782,6 +10864,17 @@
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
     \-- loading_start
         \-- html_base - the start of a page that is sent before the page is created, because the creation can take
+    \-- frame_start
+        \-- html_base - @param user_message|Message $msg to report a configured font or colour that css could misread
+    \-- frame_step
+        \-- html_base - @param string $text the step that a long running job is doing now
+    \-- frame
+        \-- html_base - @param string $name the name of the frame, which a link selects as its target, and its style
+    \-- ref_to_frame
+        \-- html_base - @param string $url the url that the frame loads
+    \-- refresh
+        \-- html_base - @param string $url the url that the browser loads next,
+                 which starts a download without a script if it is a file
     \-- loading_end
         \-- html_base - @return string the html code that hides the start of the page sent by loading_start
 \-- wrapper for the basic html elements used

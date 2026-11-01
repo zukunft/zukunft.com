@@ -1707,7 +1707,11 @@ class test_triples extends test_objects
             }
         }
         $btn = $this->calc_triple($id, 'Zurich inputs download', $grp->phrase(), $has, $kw);
-        return [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM)];
+        $case_id = triple_names::CALC_CASE_FIRST_ID;
+        $case_kw = new triple($this->env->usr1);
+        $case_kw->set($case_id--, triples::CALCULATOR_CASE);
+        $case = $this->calc_triple($case_id, 'Zurich inputs case', $grp->phrase(), $has, $case_kw);
+        return [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM), $case_kw, $case];
     }
 
     /**

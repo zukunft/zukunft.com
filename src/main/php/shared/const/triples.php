@@ -421,6 +421,8 @@ class triples
     const string CALCULATOR_REPORT_CODE_ID = 'system_calculator_printable_report';
     const string CALCULATOR_COPY = 'calculator copy';
     const string CALCULATOR_COPY_CODE_ID = 'system_calculator_copy';
+    const string CALCULATOR_CASE = 'calculator case';
+    const string CALCULATOR_CASE_CODE_ID = 'system_calculator_case';
     // the buttons of a calculator list or table by their code id
     const array CALCULATOR_BUTTONS = [
         self::CALCULATOR_FILE_IMPORT => self::CALCULATOR_FILE_IMPORT_CODE_ID,
@@ -439,6 +441,29 @@ class triples
         self::CALCULATOR_NOTE => self::CALCULATOR_NOTE_CODE_ID,
         self::CALCULATOR_CHECK => self::CALCULATOR_CHECK_CODE_ID,
         self::CALCULATOR_DIAGRAM => self::CALCULATOR_DIAGRAM_CODE_ID,
+    ];
+    const string CALCULATOR_SLIDER = 'calculator slider';
+    const string CALCULATOR_PRESET = 'calculator preset';
+    const string CALCULATOR_TAG = 'calculator tag';
+    const string CALCULATOR_MORE = 'calculator more';
+    const string CALCULATOR_ARGUMENT = 'calculator argument';
+    const string CALCULATOR_VERDICT = 'calculator verdict';
+    const string CALCULATOR_SCALE = 'calculator scale';
+    const string CALCULATOR_DIFFERENCE = 'calculator difference';
+    const string CALCULATOR_CELL = 'calculator cell';
+    const string CALCULATOR_SENSITIVITY = 'calculator sensitivity';
+    // the elements of a calculator page for a decision e.g. a vote by their code id
+    const array CALCULATOR_PROPOSED = [
+        self::CALCULATOR_SLIDER => 'system_calculator_slider',
+        self::CALCULATOR_PRESET => 'system_calculator_preset',
+        self::CALCULATOR_TAG => 'system_calculator_tag',
+        self::CALCULATOR_MORE => 'system_calculator_more',
+        self::CALCULATOR_ARGUMENT => 'system_calculator_argument',
+        self::CALCULATOR_VERDICT => 'system_calculator_verdict',
+        self::CALCULATOR_SCALE => 'system_calculator_scale',
+        self::CALCULATOR_DIFFERENCE => 'system_calculator_difference',
+        self::CALCULATOR_CELL => 'system_calculator_cell',
+        self::CALCULATOR_SENSITIVITY => 'system_calculator_sensitivity',
     ];
     const string CALCULATOR_COLOUR = 'calculator colour';
     const string CALCULATOR_DECIMALS = 'calculator decimals';
@@ -486,7 +511,9 @@ class triples
         ...triples::CALCULATOR_FIELD_KINDS,
         ...triples::CALCULATOR_DETAIL_FLAGS,
         ...triples::CALCULATOR_BLOCKS,
+        ...triples::CALCULATOR_PROPOSED,
         ...triples::CALCULATOR_BUTTONS,
+        self::CALCULATOR_CASE => self::CALCULATOR_CASE_CODE_ID,
         self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
         self::CALCULATOR_RESULT_WIDTH => self::CALCULATOR_RESULT_WIDTH_CODE_ID,
     ];

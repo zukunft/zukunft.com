@@ -309,14 +309,16 @@ in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 
 ### The pinned views of the static start page are written by the test run
 
-`/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
+`/index.html` and the short urls in the docroot (`/pv`, `/nnp`, …) are static
 files, so no request reads the config for them. The pinned views of
 `config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
 their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
 with an empty `url`, which the import does not save as a value, and with a
-`view name` and a `phrase name` opens that view with
-that phrase e.g. the view `Calculator` with the triple `example PV installation`,
+`view name` opens that view, with its `phrase name` if it has one,
+e.g. the view `Calculator` with the triple `example PV installation`,
 whose negative phrase id names the triple, because the ids differ by pod.
+A pinned view with an empty `url` and an empty `view name` is inactive: it has
+no link on the start page, no short url page and no entry in the `.htaccess`.
 `system_views_read_tests::run_pinned_views` loads these ids from the database
 and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
 other static pages like the forward pages of `api::FORWARD_VIEWS`:
@@ -328,9 +330,10 @@ other static pages like the forward pages of `api::FORWARD_VIEWS`:
 - `html_base::static_page` writes the font and the colours between the same
   comments of the other static pages of `test_files::STATIC_PAGES` e.g.
   `optional/ip_reject.html`.
-- `html_base::forward_url_page` writes one forward page per url name of
+- `html_base::forward_url_page` writes one forward page per active url name of
   `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
-  javascript.
+  javascript; `test_base::assert_no_file` reports and with
+  `AUTO_UPDATE_TEST_FILES` removes the page of an inactive pinned view.
 
 A new pinned view therefore needs only its url name in the extensionless
 allow-list of the `.htaccess`, and the test fails until it is there. The url
@@ -425,6 +428,15 @@ replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
 result whose formula or values the page does not have keeps its stored number.
 The save with the backend job and its compare is the next step
 (`docs/llm/pending.md` "PV lifetime balance page").
+
+The report button loads `url_var::REPORT` into a small frame below the buttons, so
+that the page stays and no script is needed. The frame shows only the last step with
+the seconds so far (`calculator_report::pdf`, `frontend::report_step`, the css of
+`html_base::frame_start`). At the end the pdf is kept in the session and the frame
+refreshes to `url_var::REPORT_FILE`, which sends it once as a download
+(`frontend::report_end_html`). The request has its own time limit
+(`calculator_report::MAX_TIME_SEC`) and a fatal error shows the last step to the
+user instead of a blank answer (`frontend::report_watch`).
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 

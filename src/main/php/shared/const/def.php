@@ -141,6 +141,8 @@ class def
         '--page-label' => [words::LABEL, '#777', '#8492ad'], // the sub header of a menu
         '--page-file' => [words::FILE, '#6e706e', '#b4c1da'], // a setting with the value of config.yaml
         '--page-negative' => [words::NEGATIVE, '#dc3545', '#f08a80'], // a negative number
+        '--page-success' => [words::SUCCESS, '#198754', '#7fd1a3'], // the green of a positive decision
+        '--page-warning' => [words::WARNING, '#ffc107', '#e9b45a'], // the yellow of an open decision
         '--page-hover' => [words::HOVER, '#7a9fbf', '#4f6fa8'], // a button when the mouse is over it
         '--page-black' => [words::BLACK, 'black', '#e3eaf7'], // the fraction line of a formula
     ];

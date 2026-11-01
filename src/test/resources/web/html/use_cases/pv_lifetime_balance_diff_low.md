@@ -4,10 +4,11 @@ Change the generated page pv_lifetime_balance_js.html#low so that it shows what 
 
 ## Missing in the generated page (0)
 
-## Different (0)
+## Different (2)
 
-## Only in the generated page (1)
+- row: Electricity / Self-consumption rate, cells: the sample shows " | 72 %" and the generated page "72 % | 72 %"
+- row: Electricity / Autarky, cells: the sample shows " | 72 %" and the generated page "72 % | 72 %"
 
-- field: Case name
+## Only in the generated page (0)
 
 ## Different order (0)
