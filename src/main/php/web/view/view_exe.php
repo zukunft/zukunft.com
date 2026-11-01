@@ -417,7 +417,8 @@ class view_exe extends view_base
      */
     private function add_calculator_data(phrase $phr, data_object $dto, user_message $msg): void
     {
-        if (!$dto->page_data_complete) {
+        // the title step and the show step both call this, and a second fill would add every formula and source twice
+        if ($dto->page_data == []) {
             $phd = new phrase_data();
             $json = $phd->load_from_walk($phr, $msg);
             $dto->page_data = $json;

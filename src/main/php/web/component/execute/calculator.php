@@ -249,6 +249,14 @@ class calculator
     }
 
     /**
+     * @return int the phrase id of the page, which is negative for a triple
+     */
+    function phrase_id(): int
+    {
+        return $this->phr->id();
+    }
+
+    /**
      * @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative deviation
      * @return string the title of the diagram of the column, '' for a column without a diagram
      */

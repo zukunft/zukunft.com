@@ -3830,7 +3830,8 @@ class ui_list extends ui_base
     }
 
     /**
-     * the buttons of a list or a detail table at their place, without a function so far (docs/llm/pending.md)
+     * the buttons of a list or a detail table at their place: the report is a link to the pdf, which also
+     * works without javascript, and the others have no function so far (docs/llm/pending.md)
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
@@ -3840,19 +3841,34 @@ class ui_list extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $labels = [];
-        foreach ([triples::CALCULATOR_FILE_IMPORT, triples::CALCULATOR_DOWNLOAD, triples::CALCULATOR_REPORT] as $keyword) {
-            $labels[] = $calc->button_label($item, $keyword);
-        }
+        $labels = [$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT), $calc->button_label($item, triples::CALCULATOR_DOWNLOAD)];
+        $copy = [];
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
-            $labels[] = $mtr->txt(msg_id::CALCULATOR_COPY_JSON);
-            $labels[] = $mtr->txt(msg_id::CALCULATOR_COPY_CSV);
+            $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
         }
         $result = '';
         foreach (array_filter($labels) as $label) {
             $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
         }
+        $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
+        if ($report != '') {
+            $result .= $html->ref($this->calculator_report_url($calc->phrase_id()), $report, '', styles::CALC_BUTTON, false, false);
+        }
+        foreach ($copy as $label) {
+            $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
         return $result;
+    }
+
+    /**
+     * @param int $phr_id the phrase id of the page, which is negative for a triple
+     * @return string the url of the pdf report of the page with the user
+     */
+    function calculator_report_url(int $phr_id): string
+    {
+        $html = new html_base();
+        $url = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr_id, url_var::REPORT => url_var::TRUE];
+        return $html->url_with_user($html->page_url($url));
     }
 
     /**
@@ -4064,7 +4080,7 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the phrase types
      * @return phrase[] the row phrases of the table, by the biggest number of the phrase that the table "is ranked by" if it has one, a tie in the order of the follower chain
      */
-    private function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
+    function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
     {
         $result = $calc->row_phrases($tbl_phr);
         $rank = $calc->sub_items($tbl, verbs::RANK_ID)[0] ?? null;
@@ -4109,7 +4125,7 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the phrase types
      * @return array per phrase column its text e.g. EUR
      */
-    private function calculator_phrase_cells(calculator $calc, ?phrase $row_phr, array $cols, value_list $lst, user_message $msg): array
+    function calculator_phrase_cells(calculator $calc, ?phrase $row_phr, array $cols, value_list $lst, user_message $msg): array
     {
         $result = [];
         foreach ($cols as $c => [, $col_phr, , , , $is_phrase]) {
@@ -4923,7 +4939,7 @@ class ui_list extends ui_base
      * @param bool $with_results true to take the one result if no one value qualifies, for a table whose rows belong to no page
      * @return sandbox_value|null the one value with all the phrases or null if there is none or several
      */
-    private function calculator_general_value(array $phrases, value_list $lst, user_message $msg, array $skip = [], bool $with_results = false): ?sandbox_value
+    function calculator_general_value(array $phrases, value_list $lst, user_message $msg, array $skip = [], bool $with_results = false): ?sandbox_value
     {
         $phr_lst = array_filter($phrases);
         $found = [];

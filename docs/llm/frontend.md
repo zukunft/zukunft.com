@@ -220,6 +220,13 @@ whose new number links to the default view of the value (`frontend::calculator_s
 shown as safe html via `user_message::add_info_html`), after a failed save (e.g. a user without login) with the entered
 numbers and the message, so that no input is lost.
 
+The page that the browser builds also has a field for the name of a case above the save button. A new
+name does not submit the form: `saveCase` of `calculator_json.js` sends an update put message
+with the word of the name, the triple `<name> <base phrase>` (`<base phrase>` · `of` · `<name>`) and the
+values of the page phrase with this triple and the entered numbers, and then opens the page of
+the new triple, which loads the new database ids, so that the next save is the normal form. The
+results of a case are never sent, because the backend job calculates them.
+
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as
 its own app consuming the same api; that is a future, additional client and does
 not relax this rule for the current server-rendered HTML frontend.

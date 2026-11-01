@@ -1,5 +1,25 @@
 # pending prio 2
 
+## case name of a calculator page
+
+`calculator_json.js` (`caseMessage`, `saveCase`) creates a case by the updatePut api:
+- a case copies all values of the page phrase, also the `modelled` numbers of the page, because a case has no own numbers for its result table until the split is calculated again in the browser (pending.md step 9) or by the backend
+- the walk results of the portfolio split have no page phrase, so each case shows the same walk until then
+- the selected option of a selector is not saved, so a case takes the options that the page has stored
+- a name that exists already updates this case, and only the source of a value is sent by its database id, because a value does not keep a source that is named only
+- the page of the server (no javascript) has no case name, because the updatePut api needs javascript
+- `caseMessage` and `saveCase` have only been checked with a stubbed api in a browser, a run against a pod and a page test are missing
+
+## pdf report of a calculator page
+
+`web/component/execute/calculator_report.php` shows what the backend has saved:
+- numbers that a user has changed in the browser and not saved are not part of the pdf
+- the diagrams are not drawn, because `pdf_writer` has no vector graphics; their numbers are in the walk table
+- `pdf_writer` uses the standard fonts of Windows-1252, so a char outside of it is shown as a question mark
+- the setting `report logo` needs a jpeg in the images folder of the server, so a user without server access needs an upload
+- the isin column stays empty until the portfolio import adds a triple from a holding to a phrase that is an `ISIN`
+- `user_logo` has no unit test, because the test has no config value with a logo; the fallback to the zukunft.com logo is tested
+
 ## test run speed
 
 Candidates from a full `test/test.php` run of 1347 s with `xdebug.mode=debug`; the savings are estimates from that log and none is measured yet. About 131 s of the run were the two stops of a breakpoint at the two test errors in `coding_rule_tests::use_case_no_test_formula_tests`, so that time is no candidate.

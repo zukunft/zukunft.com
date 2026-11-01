@@ -188,7 +188,7 @@ Two proposed rules for the detail tables need no keyword:
 |---|---|---|
 | file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase; on the page or its base phrase the triple is a list: a collapsed section with its label and an import button per item |
 | download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
-| printable report | `house heating inputs` · `has a` · `calculator printable report` | shows the page as a printable pdf |
+| printable report | `house heating inputs` · `has a` · `calculator printable report` | a link to the pdf report of the page: the logo of the user setting `report logo` or of zukunft.com, a table per column filtered by `split count` with the positions of this portfolio, the other tables, notes and sources of the page and the formulas used |
 | copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |
 
 ### Calculations

@@ -170,6 +170,7 @@ class system_page extends component
     const string CALC_PAGE_FORMAT = 'format';
     const string CALC_PAGE_FORM = 'form';
     const string CALC_PAGE_SAVE = 'save';
+    const string CALC_PAGE_REPORT = 'report';
     const string CALC_PAGE_TEXTS = 'texts';
     const string CALC_PAGE_KEYWORDS = 'keywords';
     const string CALC_PAGE_VERBS = 'verbs';
@@ -227,6 +228,7 @@ class system_page extends component
     const array CALC_PAGE_VERB_CODE_IDS = [
         'is' => verbs::IS,
         'has' => verbs::HAS,
+        'of' => verbs::OF,
         'with' => verbs::WITH,
         'uses' => verbs::USES,
         'follow' => verbs::FOLLOW,
@@ -245,6 +247,8 @@ class system_page extends component
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
         msg_id::CALCULATOR_DIAGRAM_FINAL,
+        msg_id::CALCULATOR_CASE_NAME,
+        msg_id::CALCULATOR_CASE_FAILED,
         msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
@@ -1703,6 +1707,7 @@ class system_page extends component
             self::CALC_PAGE_FORMAT => new ui_list()->calculator_number_format(),
             self::CALC_PAGE_FORM => $form_name,
             self::CALC_PAGE_SAVE => $this->calculator_button_save($form_name, $msk_key, $dbo),
+            self::CALC_PAGE_REPORT => new ui_list()->calculator_report_url($dbo->phrase()->id()),
             self::CALC_PAGE_TEXTS => $this->message_texts(self::CALC_PAGE_TEXT_IDS),
             self::CALC_PAGE_KEYWORDS => self::CALC_PAGE_KEYWORD_NAMES,
             self::CALC_PAGE_VERBS => $this->calculator_type_names($ui_sys?->typ_lst_cache?->vrb, self::CALC_PAGE_VERB_CODE_IDS),

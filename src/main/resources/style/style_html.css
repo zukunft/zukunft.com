@@ -408,7 +408,7 @@ body {
 .btn {
     background: var(--btn-main); /* Sets the button background to zukunft.com specific grey */
     color: var(--btn-main-ink) !important; /* Forces the text color to white, overriding link defaults */
-    padding: 10px 20px; /* Adds space inside the button (top/bottom and left/right) */
+    padding: 7px 20px; /* Adds space inside the button, top/bottom so that it is as high as an input field */
     border-radius: 4px; /* Matches the rounded corners of the input fields */
     text-decoration: none; /* Removes the underline typically found on links */
     border: none; /* Removes the default browser button border */

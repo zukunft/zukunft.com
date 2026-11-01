@@ -71,6 +71,8 @@ class files
     // the data that api/phraseData returns at least for the example PV installation
     CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
+    CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
     // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)

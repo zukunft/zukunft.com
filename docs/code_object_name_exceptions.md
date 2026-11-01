@@ -62,7 +62,7 @@ word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $m
 
 ## Classes without a suggested var name
 
-DOMDocument: $dom
+DOMDocument: $doc, $dom
 DOMXPath: $result
 DateTime: $actual_time, $before, $cut_time, $cutoff, $dt, $end_time, $expired, $first_start, $fix_now, $fixed, $fresh_time, $now, $request_time, $request_timestamp, $reset_end, $result, $since, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout, $upd
 ListOfIdNamedCodeObjects: $del_lst, $lst
@@ -168,6 +168,7 @@ log: $log_ui
 math_function_report: $mth
 message: $ui_msg
 number_format: $fmt, $no_cnv, $noise_fmt
+pdf_writer: $pdf
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
 phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed

@@ -847,6 +847,27 @@ instead, if the name has exactly one id in the database and the `list.csv` has t
 the run still uses the old values, so the tests are run again, the diff of the const
 files is reviewed and the flag is set back to `false`.
 
+### The steps to a stable test result after a new seed object
+
+If a word, triple or other object is added to the database, e.g. by adding data to a main
+json file, the developer does these steps; an LLM runs none of the scripts and sets none of the
+flags (see *An LLM never runs the `/test/*` scripts*):
+
+0. A human reviews the code.
+1. Run `test/reset_db.php` once to update the database and fix the ids.
+2. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` again, which updates the
+   test files with an id directly, the `list.csv` files and the re-pin report
+   `docs/pinned_id_findings.md`.
+3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run the complete `test/test.php`, which re-pins the
+   id consts in the code.
+4. Set `AUTO_RE_PIN_OBJECT_ID` to `false` and run the complete `test/test.php` again, which
+   updates the test files with the updated id consts and the re-pin report, which should now be empty.
+5. Run the full `test/test.php` again and fix any errors, if needed step by step in a debug run
+   with a break on the error.
+6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
+   double-check that no test case is volatile. If it is fine, do a final code review, which an
+   LLM may support, and commit with a matching commit message.
+
 Two traps that make the drift look smaller than it is:
 
 - `library::diff_msg` compares the **keys** of two arrays; a const id that still
@@ -983,12 +1004,13 @@ baseline to match its own new output, that diff goes silent and the developer ca
 no longer tell what changed (or whether it was intended). Regenerating a baseline
 is the developer's deliberate act of accepting the new output, never the LLM's.
 
-The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must always
-stay `false` and must never be changed by an LLM** — not even temporarily and
+The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must be
+`false` before every commit and must never be changed by an LLM** — not even temporarily and
 reverted within the same change. Setting it to `true` is how the *existing
 scripts* (run deliberately by a human) or a *human code reviewer* regenerate the
 baselines; it is never part of an automated code edit. Treat the constant as
-read-only just like the resource files it controls.
+read-only just like the resource files it controls. See also *The steps to a stable
+test result after a new seed object*, in which the developer sets it to `true` on purpose.
 
 Existing resources are regenerated only by **the existing scripts** (the
 `AUTO_UPDATE_TEST_FILES` mechanism, run deliberately) or by a **human code
@@ -1216,7 +1238,8 @@ Worked examples of rules that belong here:
   `fas fa-*` strings in `web/**` (already a documented rule).
 - **`AUTO_UPDATE_TEST_FILES` is `false`** — fail the run if
   `files::AUTO_UPDATE_TEST_FILES` is `true`, so a forgotten (or LLM-introduced)
-  `true` cannot land on a branch.
+  `true` cannot land on a branch. See also *The steps to a stable test result after a
+  new seed object*, whose runs need the flag to be `true`, so this check belongs before a commit.
 
 Each check is one positive + one negative test in `coding_rule_tests.php` (the
 positive proves the check catches a known bad fixture line; the negative proves

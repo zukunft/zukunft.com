@@ -5,21 +5,12 @@
 The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
 and the related reports.
 
-### fix errors
-
-the call of http://localhost/http/view.php?m=16&id=-3286&u=11 shows on the screen these messages:
-
-no word or triple found with the name "", trying to add ""scale million to one" (16)" which is already part of the formula list, trying to add ""scale billion to one" (17)" which is already part of the formula list, trying to add ""increase" (21)" which is already part of the formula list, trying to add ""currency conversion calculation" (32)" which is already part of the formula list, trying to add ""reverse currency conversion" (33)" which is already part of the formula list, trying to add ""bid-ask spread absolut" (34)" which is already part of the formula list, trying to add ""bid-ask spread percent" (35)" which is already part of the formula list, trying to add ""rate percent change" (36)" which is already part of the formula list, trying to add ""forward rate from spot" (37)" which is already part of the formula list, trying to add ""yearly average turnover by month sum" (38)" which is already part of the formula list, trying to add ""USD cross rate" (39)" which is already part of the formula list, trying to add ""density (formula)" (56)" which is already part of the formula list, trying to add ""share of canton (formula)" (57)" which is already part of the formula list, trying to add ""GDP per capita (formula)" (59)" which is already part of the formula list, trying to add ""foreign count (formula)" (60)" which is already part of the formula list, trying to add ""welfare (formula)" (61)" which is already part of the formula list, trying to add ""annual damage in money" (107)" which is already part of the formula list, trying to add ""person years per billion USD by the carbon border tariff" (117)" which is already part of the formula list, trying to add ""annual damage share from the reasons" (121)" which is already part of the formula list, trying to add ""annual total formula" (180)" which is already part of the formula list, trying to add ""stock holding value" (200)" which is already part of the formula list, trying to add ""bond holding value" (201)" which is already part of the formula list, trying to add ""foreign bond holding value" (202)" which is already part of the formula list, trying to add ""foreign cash holding value" (203)" which is already part of the formula list, trying to add ""CHF cash holding value" (204)" which is already part of the formula list, trying to add ""lot value of a holding" (205)" which is already part of the formula list, trying to add ""walk count of the parent" (206)" which is already part of the formula list, trying to add ""target value of a beneficiary" (207)" which is already part of the formula list, trying to add ""target share excess formula" (208)" which is already part of the formula list, trying to add ""target share difference formula" (209)" which is already part of the formula list, trying to add ""unit value of a holding" (210)" which is already part of the formula list, trying to add ""walk target of a child" (211)" which is already part of the formula list, trying to add ""walk count of the first child" (212)" which is already part of the formula list, trying to add ""walk count of the second child" (213)" which is already part of the formula list, trying to add ""walk deviation of a child" (214)" which is already part of the formula list, trying to add ""split deviation formula" (215)" which is already part of the formula list, trying to add ""currency conversion per share" (242)" which is already part of the formula list, trying to add ""earnings multiple target" (243)" which is already part of the formula list, trying to add ""free cash flow per share formula" (244)" which is already part of the formula list, trying to add ""net debt per share formula" (245)" which is already part of the formula list, trying to add ""upside formula" (250)" which is already part of the formula list, trying to add ""method upside formula" (251)" which is already part of the formula list, trying to add ""trailing P/E formula" (255)" which is already part of the formula list, trying to add ""forward P/E formula" (256)" which is already part of the formula list, trying to add ""market capitalisation formula" (259)" which is already part of the formula list, trying to add ""enterprise value multiple formula" (260)" which is already part of the formula list, trying to add ""free cash flow yield formula" (261)" which is already part of the formula list, trying to add ""dividend yield formula" (262)" which is already part of the formula list, trying to add ""BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022" (11)" which is already part of the source list, trying to add ""BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover" (12)" which is already part of the source list, trying to add ""Wikipedia Template:Most traded currencies" (13)" which is already part of the source list, trying to add ""Statistik Stadt Zürich 2025" (25)" which is already part of the source list, trying to add ""Wikipedia Zurich" (27)" which is already part of the source list, trying to add ""BAK Economics 2025" (30)" which is already part of the source list, trying to add ""Statistik Kanton Zürich 2025" (43)" which is already part of the source list, trying to add ""BFS 2024/2025" (44)" which is already part of the source list, trying to add ""S&P Global 2025" (46)" which is already part of the source list, trying to add ""bank reporting bank leu client xy" (264)" which is already part of the source list, trying to add ""split agreement" (265)" which is already part of the source list, trying to add ""Trading Economics USD/CHF" (289)" which is already part of the source list
-
-try to fix these issues
-
-### case name 
-
-add to the src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html 
-
 ### import
 
-based on this csv and a list of context phrases e.g. 'example portfolio split'
+based on a csv and a list of context phrases e.g. 'example portfolio split' a zukunft import json should be created.
+
+additional to the json creation create test case files for this sample csv.
+The portfolio number 040270501213 and all other data of this csv are generated and have no connection to any real life case:
 
 Portfolio,040270501213,Date,06.02.26,,,,,,,,,,,,,,,,,,,
 List of Positions,,,,,,,,,,,,,,,,,,,,,,
@@ -95,17 +86,9 @@ Equities and similar positions , Verizon Comm Rg,US92343V1044,2500,North America
 Equities and similar positions , Xtr MSCI Jap 1CC,LU0274209740,1450,Japan,USD,106.7701,USD,05.02.26,,0.8036,124405.71,CHF,0.81101724,68.09,CHF,0.9137,90210.64,CHF,49.96,-12.05,37.91,70
 Alternative investments , SwCHGETF -EA (USD)-,CH0047533549,56,Switzerland,USD,4295.92,USD,05.02.26,,0.8036,193315.58,CHF,1.260249775,1805.68,CHF,0.9001,91011.61,CHF,123.13,-10.72,112.41,70
 
-create a zukunft.com json that can be imported
+so create the csv file and as a unit test result create or update a zukunft.com json that can be imported
 
-### pdf
-
-create a pdf that includes on the top the target portfolio positions with these columns
-
-'Total Anzahl Wertpapier	Bezeichnung	ISIN	Währung	Kurs    FX rate	 Wert in CHF 	Wert in EUR'
-
-and a logo of the presenting firm and use the zukunft logo as fallback
-
-and the other result data of  http://localhost/http/view.php?m=16&id=-3286&u=11 plus the formulas used
+create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
 
 ### check
 
@@ -496,11 +479,6 @@ write a script that recreates the open API yaml based on the code and create a t
 the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
 
 ## cleanup
-
-### nav bar
-
-reduce the height of the button 'Get numbers' in the navbar by around 10% so that it matches the height of the input field 'word or formula'.
-This css change might reduce the height of many buttons which is fine and should be the case.  
 
 ### id usage
 

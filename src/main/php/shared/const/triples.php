@@ -135,6 +135,8 @@ class triples
     // makes the settings page offer the selection of the light or the dark colours (see base_phrases.json)
     const string COLOUR_MODE = 'colour mode';
     const string COLOUR_MODE_CODE_ID = 'colour_mode';
+    // the file name of the image of the firm that presents a report (config.yaml user default frontend layout)
+    const string REPORT_LOGO = 'report logo';
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';

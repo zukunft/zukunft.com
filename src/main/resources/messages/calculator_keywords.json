@@ -402,7 +402,7 @@
     },
     {
       "name": "calculator printable report",
-      "description": "PROPOSED NEW ELEMENT: button: a triple from the inputs list to this keyword shows a report button that shows the page as a printable pdf",
+      "description": "button: a triple from the inputs list to this keyword shows a report button that opens the page as a pdf",
       "from": "calculator (system)",
       "verb": "has a",
       "to": "printable report",

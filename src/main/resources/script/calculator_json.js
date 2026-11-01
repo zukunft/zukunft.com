@@ -46,6 +46,10 @@
     const HOST_ID = 'calcPage';
     const SEED_ID = 'seed';
     const SETTINGS_ID = 'calcPageSettings';
+    // the field of the name of a case, the api that creates a case and the url var of the page phrase, the same as url_var ID
+    const CASE_FIELD_ID = 'caseName';
+    const CASE_ROUTE = '/api/updatePut/';
+    const ID_VAR = 'id';
     // the url var of a number field and of its save vars, the same as url_var NUMERIC_VALUE, GROUP, PRE, NAME and PHRASE
     const NUMBER_VAR = 'n';
     // in front of the phrase id of a selector option without a number, the same as ui_list CALC_OPTION_PHRASE
@@ -100,6 +104,7 @@
         details: 'calculator_details', sources: 'calculator_sources',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
         diagram_final: 'calculator_diagram_final',
+        case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
         check_calculated: 'calculator_check_calculated', check_status: 'calculator_check_status',
         check_match: 'calculator_check_match', check_differs: 'calculator_check_differs',
@@ -1562,7 +1567,7 @@
         if (inputs.length > 0 || assumptions.length > 0) {
             const heading = ownText((group(KW.input) || {}).name, KW.label) || TEXTS[TXT.inputs];
             result = block('div', block('h2', esc(heading)) + fields(inputs, false)
-                + block('div', warningTexts(), STYLE.warnings) + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
+                + block('div', warningTexts(), STYLE.warnings) + caseField() + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
             const listed = assumptions.map(function (item) {
                 return item.to;
             });
@@ -1573,6 +1578,89 @@
             }
         }
         return block('aside', result, STYLE.panel);
+    }
+
+    /* the name of the case that the page shows, empty for the default case e.g. Miller family of the triple Miller family portfolio split */
+    function caseName() {
+        return page.verb === VERB.of && page.from === base ? page.to : '';
+    }
+
+    /* the field for the name of a case, only for a page that is built from another phrase, of which a case is another kind */
+    function caseField() {
+        const input = '<input type="text" id="' + CASE_FIELD_ID + '" value="' + esc(caseName()) + '">';
+        return base === null ? '' : block('div', '<label for="' + CASE_FIELD_ID + '">' + esc(TEXTS[TXT.case_name]) + '</label>' + input, STYLE.field);
+    }
+
+    /* the updatePut message of a new case without a database id: the word of the name, the triple of the case, the triples and the values of the page with the triple of the case instead of the page phrase and with the entered numbers; the results are calculated by the backend */
+    function caseMessage(name) {
+        const caseTriple = name + ' ' + base;
+        const pageTriples = (seed.triples || []).filter(function (t) {
+            return t.from === page.name;
+        }).map(function (t) {
+            return {name: t.name.replace(page.name, caseTriple), from: caseTriple, verb: t.verb, to: t.to};
+        });
+        const values = pool.filter(function (e) {
+            return !e.result && e.words.indexOf(page.name) >= 0;
+        }).map(function (e) {
+            const json = {
+                words: e.words.map(function (w) {
+                    return w === page.name ? caseTriple : w;
+                }),
+                number: Number(e.number)
+            };
+            // a source exists already, and only its id makes the new value keep the source
+            if (e.source && sources.has(e.source)) {
+                json.source_id = sources.get(e.source).id;
+            }
+            return json;
+        });
+        return {
+            pod: seed.pod,
+            type: 'updatePut',
+            user_id: seed.user_id,
+            user: seed.user,
+            version: seed.version,
+            timestamp: new Date().toISOString(),
+            body: {
+                words: [{name: name}],
+                triples: [{name: caseTriple, from: base, verb: VERB.of, to: name}].concat(pageTriples),
+                values: values
+            }
+        };
+    }
+
+    /* show why a case has not been saved below the warnings of the inputs */
+    function caseProblem(text) {
+        host.querySelector('div.' + STYLE.warnings).insertAdjacentHTML('beforeend', block('div', esc(text), STYLE.warning));
+    }
+
+    /* a new case name first creates the case by the updatePut api and then opens its page, which loads the new database ids, so that the next save updates the values by the normal form */
+    function saveCase(event) {
+        const name = document.getElementById(CASE_FIELD_ID)?.value.trim() || '';
+        if (event.target.id === FORM && name !== '' && name !== caseName()) {
+            event.preventDefault();
+            const token = event.target.querySelector('input[name="token"]').value;
+            fetch(CASE_ROUTE, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type': 'application/json', 'X-CSRF-Token': token},
+                body: JSON.stringify(caseMessage(name))
+            }).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                const id = json.body?.triples?.[0]?.id;
+                if (id) {
+                    const url = new URL(location.href);
+                    // the phrase id of a triple is negative
+                    url.searchParams.set(ID_VAR, String(-id));
+                    location.assign(url.toString());
+                } else {
+                    caseProblem(json.message || TEXTS[TXT.case_failed]);
+                }
+            }).catch(function (error) {
+                caseProblem(error.message);
+            });
+        }
     }
 
     /* the own hint of a table item below the table (ui_list::calculator_table_hint) */
@@ -1815,18 +1903,31 @@
         return result;
     }
 
-    /* the buttons of a list or a detail table at their place, without a function so far (ui_list::calculator_buttons) */
+    /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far (ui_list::calculator_buttons) */
     function buttons(item) {
-        const labels = [];
+        let labels = [];
+        let report = null;
+        let copy = [];
         if (item !== null && item !== undefined) {
-            [KW.file_import, KW.download, KW.report].forEach(function (keyword) {
-                const prop = property(item.name, keyword);
-                labels.push(prop === null ? null : ownText(prop.name, KW.label));
+            labels = [KW.file_import, KW.download].map(function (keyword) {
+                return buttonLabel(item, keyword);
             });
+            report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
-                labels.push(TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]);
+                copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
             }
         }
+        const link = report ? '<a href="' + esc(settings.report) + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
+        return plainButtons(labels) + link + plainButtons(copy);
+    }
+
+    /* the label of the triple from the item to the button keyword, null if the item has no such button (calculator::button_label) */
+    function buttonLabel(item, keyword) {
+        const prop = property(item.name, keyword);
+        return prop === null ? null : ownText(prop.name, KW.label);
+    }
+
+    function plainButtons(labels) {
         return labels.filter(function (text) {
             return text;
         }).map(function (text) {
@@ -2102,5 +2203,6 @@
     host.innerHTML = title() + block('div', inputPanel() + resultPanel(), STYLE.grid);
     host.addEventListener('input', refreshResults);
     host.addEventListener('change', refreshResults);
+    host.addEventListener('submit', saveCase);
 
 })();
