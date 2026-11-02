@@ -173,6 +173,13 @@ class value_list extends ListBase
     // the column names per column tier selection of the last table or chart created from this
     // list (see table_model::tier_names), which the page hands to the column menu of the navbar
     public array $tier_names = [];
+    // the entries of the column menu per table design (def::TABLE_DESIGNS)
+    const array TABLE_DESIGN_NAMES = [
+        words::PLAIN => msg_id::TABLE_DESIGN_PLAIN,
+        words::BORDERED => msg_id::TABLE_DESIGN_BORDERED,
+    ];
+    // true if the table of this list has own columns, so that the column menu offers the values that fit none of them
+    public bool $own_columns = false;
 
     /*
      * set and get
@@ -895,6 +902,11 @@ class value_list extends ListBase
         // the table asks for the children of the same phrases many times and does not change
         // the related phrases, so they are linked once for the whole build
         $rel_lst = $rel_lst?->with_link_index();
+        // an own column can name its unit e.g. "potential gain in EUR", but the values carry the phrase and the unit
+        // a grid of its columns e.g. the ranking of the start page has fixed columns
+        $own_cols = $col_values_only ? [] : $this->own_columns_of($context_phr_lst, $rel_lst);
+        $this->own_columns = ($own_cols != []);
+        $col_order = $this->columns_without_unit($col_order, $own_cols);
         // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
         // so it is no column of the values and a column of it with another phrase, e.g. "potential
         // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
@@ -905,7 +917,70 @@ class value_list extends ListBase
         // that phrase, e.g. the reasons page, before it can make a value column of a phrase column
         $own_lst = $this->without_values_of_two_phrase_columns($tbl_cols, $rel_lst, $msg);
         return $own_lst->table_model_of_columns($msg, $context_phr_lst, $row_col, $tbl_cols, $rel_lst,
-            $limit, $url_array, $col_values_only, $col_tiers, $value_rows_only);
+            $limit, $url_array, $col_values_only, $col_tiers, $value_rows_only, $own_cols);
+    }
+
+    /**
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. the phrase of the table
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the table definition
+     * @return array per own column name e.g. "potential gain in EUR" the column name and the unit name, '' for any unit
+     */
+    private function own_columns_of(phrase_list $context_phr_lst, ?phrase_list $rel_lst): array
+    {
+        $result = [];
+        if ($rel_lst != null) {
+            foreach ($context_phr_lst->lst() as $phr) {
+                foreach (new calculator($phr, $rel_lst)->table_column_phrases() as $col) {
+                    [$col_phr, $unit] = $rel_lst->column_and_unit($col);
+                    $result[$col->name()] = [$col_phr?->name() ?? $col->name(), $unit?->name() ?? ''];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $col_order the defined column names, which can be an own column with its unit
+     * @param array $own_cols the own columns of own_columns_of
+     * @return array the defined column names without the units and without a double name
+     */
+    private function columns_without_unit(array $col_order, array $own_cols): array
+    {
+        $result = [];
+        foreach ($col_order as $name) {
+            $col_name = $own_cols[$name][0] ?? $name;
+            if (!in_array($col_name, $result)) {
+                $result[] = $col_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $own_cols the own columns of own_columns_of
+     * @param array $col_phr the value columns by column id
+     * @param array $phr_col the phrase columns by column id, which have no unit
+     * @param array $val_col per value id the id of its column
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return array per column id the name of the own column in the order of the definition
+     */
+    private function own_column_ids(array $own_cols, array $col_phr, array $phr_col, array $val_col, user_message $msg): array
+    {
+        if ($own_cols == []) {
+            return [];
+        }
+        $result = [];
+        $col_unit = $this->column_units($col_phr, $val_col, $msg);
+        foreach ($own_cols as $own_name => [$col_name, $unit_name]) {
+            foreach ($col_phr + $phr_col as $col_id => $phr) {
+                $unit_names = isset($col_unit[$col_id]) ? $col_unit[$col_id]->names() : [];
+                $fits_unit = ($unit_name == '' or in_array($unit_name, $unit_names));
+                if ($phr->name() == $col_name and $fits_unit) {
+                    $result[$col_id] = $own_name;
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -921,6 +996,7 @@ class value_list extends ListBase
      * @param bool $col_values_only true to leave out the values that fit no column
      * @param int $col_tiers the number of column tiers left out from the bottom
      * @param bool $value_rows_only true to drop a row without a number in a shown column
+     * @param array $own_cols the own columns of own_columns_of, which come first and without url_var::DISPLAY_LIST_UNMATCHED are the only ones
      * @return table_model the rows, columns, units and variance of the table
      */
     private function table_model_of_columns(
@@ -933,7 +1009,8 @@ class value_list extends ListBase
         array        $url_array,
         bool         $col_values_only,
         int          $col_tiers,
-        bool         $value_rows_only
+        bool         $value_rows_only,
+        array        $own_cols
     ): table_model
     {
         $model = new table_model();
@@ -971,7 +1048,15 @@ class value_list extends ListBase
         // a table that is a grid of its columns leaves out the values that fit no column, e.g.
         // the measured figures of a problem that are no part of the ranking of the start page
         $vals = $this->lst();
-        if ($col_values_only) {
+        $own_ids = $this->own_column_ids($own_cols, $col_phr, $phr_col, $val_col, $msg);
+        $own_value_ids = array_intersect_key($own_ids, $col_phr);
+        // the own columns of a table say what it shows, so a value of another column is only shown if the url asks for
+        // it; if no value fits an own column, all values stay visible, because an empty table would hide the problem
+        $hide_unmatched = ($own_value_ids != [] and !url_var::show_unmatched($url_array));
+        if ($hide_unmatched) {
+            $val_col = array_filter($val_col, fn($col_id) => array_key_exists($col_id, $own_ids));
+        }
+        if ($col_values_only or $hide_unmatched) {
             $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
         }
         [$row_label, $row_phr, $cells, $phr_cells, $phr_more] = $this->table_cells(
@@ -979,6 +1064,8 @@ class value_list extends ListBase
         // a phrase column is defined like a value column, so both kinds are shown in one
         // order, e.g. the "solution" column between the "loss" and the "gain" column
         $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
+        $other_ids = $hide_unmatched ? [] : array_diff($col_ids, array_keys($own_ids));
+        $col_ids = [...array_keys($own_ids), ...$other_ids];
         // a simple table shows the first tiers only, and the table of the mayor tier alone
         // one unit per column; the columns left out are still reachable via the edit menu of
         // the navbar
@@ -1015,6 +1102,10 @@ class value_list extends ListBase
         $model->col_unit = $col_unit;
         // the names are set before the orders, because a defined order names its column
         $model->col_names = $this->column_names_of($col_phr, $model->col_head, $col_parts, $all_by_id);
+        // an own sorting names the own column e.g. "numeric descending of potential gain in EUR"
+        foreach ($own_value_ids as $col_id => $own_name) {
+            $model->col_names[$col_id][] = $own_name;
+        }
         // a page must not fill the screen, because the user messages are shown below the
         // view and would else be hidden below the fold, so the rows are cut to the number
         // named by the url or else the configured number before the header is built; the
@@ -1426,7 +1517,7 @@ class value_list extends ListBase
             $more_url = $this->more_url($url_array, $model->row_limit, $msg);
             $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
         }
-        return $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
+        return $with_border ? $html->tbl_design($rows, $url_array, $msg) : $html->tbl($rows, styles::TABLE_PUR);
     }
 
     /**
@@ -2969,9 +3060,10 @@ class value_list extends ListBase
      * @param array $url_array the url parameters of the page that shows the table
      * @param array $tier_names per column tier selection the column names of the tables of the
      *                          page (table_model::tier_names), which the tooltips name
+     * @param bool $own_columns true if a table of the page has own columns, so that the entry for the values that fit none of them has an effect
      * @return string the html list items of the menu entries
      */
-    function columns_menu_items(array $url_array, array $tier_names = []): string
+    function columns_menu_items(array $url_array, array $tier_names = [], bool $own_columns = false): string
     {
         $html = new html_base();
         $result = '';
@@ -2983,6 +3075,17 @@ class value_list extends ListBase
                 $names = $tier_names[$tiers] ?? [];
                 $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false, $names);
                 $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true, $names);
+            }
+            if ($own_columns) {
+                $result .= $this->unmatched_menu_item($url_array);
+            }
+            $result .= $html->list_item(msg_id::TABLE_MENU_DESIGN->text(), styles::MENU_HEADER);
+            // the design shown is not offered again, like the form below
+            $shown_design = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? $html->table_design_configured();
+            foreach (self::TABLE_DESIGN_NAMES as $design => $design_msg) {
+                if ($design != $shown_design) {
+                    $result .= $this->design_menu_item($url_array, $design, $design_msg);
+                }
             }
             // the form shown is not offered again, so the menu names only the ways to change
             $result .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
@@ -3106,6 +3209,39 @@ class value_list extends ListBase
         // without a table on the page the tooltip says only what the entry shows
         $tip = $html->tip_with_names($tip_id, msg_id::TABLE_COLUMNS_NAMES_TIP, implode(', ', $names));
         return $html->list_item($html->ref($url, $name, $tip));
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @return string the menu entry that shows the values that fit no own column or hides them again
+     */
+    private function unmatched_menu_item(array $url_array): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        $shown = url_var::show_unmatched($url_array);
+        unset($url_pars[url_var::DISPLAY_LIST_UNMATCHED]);
+        if (!$shown) {
+            $url_pars[url_var::DISPLAY_LIST_UNMATCHED] = url_var::TRUE;
+        }
+        $name_msg = $shown ? msg_id::TABLE_UNMATCHED_HIDE : msg_id::TABLE_UNMATCHED_SHOW;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        return $html->list_item($html->ref($url, $name_msg->text()));
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param string $design the name of the table design
+     * @param msg_id $design_msg the text of the menu entry
+     * @return string the menu entry that shows the table in the design
+     */
+    private function design_menu_item(array $url_array, string $design, msg_id $design_msg): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        $url_pars[url_var::DISPLAY_LIST_DESIGN] = $design;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        return $html->list_item($html->ref($url, $design_msg->text()));
     }
 
     /**

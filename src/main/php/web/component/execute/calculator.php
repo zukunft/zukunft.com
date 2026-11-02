@@ -226,7 +226,15 @@ class calculator
      */
     function table_columns(): array
     {
-        return array_map(fn(phrase $item) => $this->item_phrase($item)?->name() ?? '', $this->table_items(triples::TABLE_COLUMN));
+        return array_map(fn(phrase $col) => $col->name(), $this->table_column_phrases());
+    }
+
+    /**
+     * @return phrase[] the own columns of the table of the page phrase in their order e.g. potential gain in EUR
+     */
+    function table_column_phrases(): array
+    {
+        return $this->table_item_phrases(triples::TABLE_COLUMN);
     }
 
     /**
@@ -234,7 +242,17 @@ class calculator
      */
     function table_sorts(): array
     {
-        return array_filter(array_map(fn(phrase $item) => $this->item_phrase($item), $this->table_items(triples::TABLE_SORT)));
+        return $this->table_item_phrases(triples::TABLE_SORT);
+    }
+
+    /**
+     * @param string $keyword the keyword of the table definition e.g. triples::TABLE_COLUMN
+     * @return phrase[] the phrases that the items of the definition name, in their order
+     */
+    private function table_item_phrases(string $keyword): array
+    {
+        $phrases = array_map(fn(phrase $item) => $this->item_phrase($item), $this->table_items($keyword));
+        return array_values(array_filter($phrases));
     }
 
     /**

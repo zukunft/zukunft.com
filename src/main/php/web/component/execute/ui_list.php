@@ -1711,6 +1711,7 @@ class ui_list extends ui_base
                 // columns of each selection are kept for its tooltips
                 if ($dto != null) {
                     $dto->add_tier_names($tbl_lst->tier_names);
+                    $dto->table_own_columns = ($dto->table_own_columns or $tbl_lst->own_columns);
                 }
             }
         }

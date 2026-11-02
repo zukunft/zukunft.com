@@ -145,6 +145,13 @@ follower triples of the items. `ui_list::table_with_related_columns` and `value_
 definition of the page phrase itself, else the column tiers and the sort orders of all tables, and the url wins
 over both. The frame below the lists shows the saved table.
 
+An own column can name its unit, e.g. `potential gain in EUR`. The table then shows only the own columns in their
+order and leaves out every other value, unless `url_var::DISPLAY_LIST_UNMATCHED` = 1 (an entry of the edit menu) adds
+them behind the own columns. If no value fits an own column, all values stay visible. A value table uses the table
+design that `url_var::DISPLAY_LIST_DESIGN` names, else `frontend.layout.table.design` of `config.yaml`; each design
+of `frontend.layout.table.designs` names colours of `colours.page`, so that it also fits the dark mode. A new design
+needs a row in `def::TABLE_DESIGNS` and `value_list::TABLE_DESIGN_NAMES`.
+
 The calculator editor (`system_page::calculator_editor`) has no page without the
 script: it renders the empty host, the answer of the phraseData api for the page
 phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the

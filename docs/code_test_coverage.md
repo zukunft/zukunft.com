@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1579 of 6385 public functions have at least 2 unit test calls; the 4601 functions below do not; the 205 functions of the last section are called nowhere
+1580 of 6390 public functions have at least 2 unit test calls; the 4605 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 1998 functions of main backend have no test at all
 
@@ -2176,7 +2176,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- generate_valid_xml_from_obj - 0 unit test calls
 ```
 
-## 64 functions of shared have no test at all
+## 65 functions of shared have no test at all
 
 ```
 \-- IdObject
@@ -2251,6 +2251,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- url_var
     \-- back_par - 0 unit test calls
     \-- prefixed_vars - 0 unit test calls
+    \-- show_unmatched - 0 unit test calls
     \-- without_back - 0 unit test calls
     \-- without_secrets - 0 unit test calls
 \-- users
@@ -2265,7 +2266,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 907 functions of frontend have no test at all
+## 910 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2300,6 +2301,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- phrase_label - 0 unit test calls
     \-- property - 0 unit test calls
     \-- repeat_label - 0 unit test calls
+    \-- table_column_phrases - 0 unit test calls
     \-- tag - 0 unit test calls
     \-- text_sources - 0 unit test calls
     \-- used - 0 unit test calls shared by 2 classes
@@ -2585,6 +2587,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sub - 0 unit test calls
     \-- sup - 0 unit test calls
     \-- tab_id - 0 unit test calls
+    \-- table_design_configured - 0 unit test calls
     \-- tbl_start_borderless_grey - 0 unit test calls
     \-- tbl_start_half - 0 unit test calls
     \-- tbl_start_hist - 0 unit test calls
@@ -2689,6 +2692,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- cached_phrase - 0 unit test calls
     \-- category_subtitle - 0 unit test calls
     \-- children - 0 unit test calls shared by 6 classes
+    \-- column_and_unit - 0 unit test calls
     \-- common - 0 unit test calls shared by 2 classes
     \-- dsp_graph - 0 unit test calls shared by 3 classes
     \-- ex_info_list - 0 unit test calls

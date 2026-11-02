@@ -1981,6 +1981,19 @@ class test_phrases
     }
 
     /**
+     * @param array $columns the own columns as triples in their order e.g. potential gain in htp
+     * @return phrase_list_ui the related phrases of a table of Zurich (city) with own columns that name their unit
+     */
+    function list_table_definition_units_ui(array $columns): phrase_list_ui
+    {
+        $lst = new phrase_list($this->env->usr1);
+        foreach (new test_triples($this->env)->table_definition_units($columns) as $trp) {
+            $lst->add($trp->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the proposed keyword test: the calculator input
      *         test with a triple from the inputs to a keyword that the page does not show yet
      */

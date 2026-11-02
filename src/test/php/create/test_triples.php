@@ -1830,6 +1830,34 @@ class test_triples extends test_objects
     }
 
     /**
+     * the own table of Zurich (city) with columns that name their unit
+     *
+     * @param array $columns the own columns as triples or words in their order e.g. potential gain in htp
+     * @return array the page phrase, the keyword, the group, the columns, the items and their follower triples
+     */
+    function table_definition_units(array $columns): array
+    {
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $page = $this->zh_city();
+        $id = triple_names::TABLE_OWN_COLUMNS_FIRST_ID;
+        $keyword = new triple($this->env->usr1);
+        $keyword->set($id--, triples::TABLE_COLUMN);
+        $group = $this->calc_triple($id, 'Zurich city unit columns', $page->phrase(), $has, $keyword);
+        $result = [$page, $keyword, $group];
+        $prev = null;
+        foreach ($columns as $col) {
+            $item = $this->calc_triple($id, 'Zurich city unit column ' . $col->name(), $group->phrase(), $has, $col->phrase());
+            $result = [...$result, $col, $item];
+            if ($prev != null) {
+                $result[] = $this->calc_triple($id, $item->name() . ' order', $item->phrase(), $t_vrb->verb_follow(), $prev);
+            }
+            $prev = $item;
+        }
+        return $result;
+    }
+
+    /**
      * @return triple[] the keyword and the group of the check table that the check test adds to the calculator input test
      */
     function calculator_zh_check(): array

@@ -1766,6 +1766,8 @@ class frontend
         $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
         $list_variance = $url_array[url_var::DISPLAY_LIST_VARIANCE] ?? '';
         $list_as = $url_array[url_var::DISPLAY_LIST_AS] ?? '';
+        $list_unmatched = $url_array[url_var::DISPLAY_LIST_UNMATCHED] ?? '';
+        $list_design = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
@@ -1782,10 +1784,12 @@ class frontend
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_VARIANCE, url_var::DISPLAY_LIST_AS,
+                url_var::DISPLAY_LIST_UNMATCHED, url_var::DISPLAY_LIST_DESIGN,
                 ...table_orders::URL_VARS,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
-            if (!$is_key_param and !$is_show_step) {
+            // an array e.g. from dld[]=plain cannot be part of the key
+            if ((!$is_key_param and !$is_show_step) or !is_scalar($url_val)) {
                 $is_view_only = false;
             }
         }
@@ -1841,6 +1845,12 @@ class frontend
             }
             if ($list_as != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_AS . url_var::EQ . $list_as;
+            }
+            if ($list_unmatched != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_UNMATCHED . url_var::EQ . $list_unmatched;
+            }
+            if ($list_design != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_DESIGN . url_var::EQ . rawurlencode((string)$list_design);
             }
             // the order of the rows is a view-only state of the same page like the list size
             foreach (table_orders::URL_VARS as $order_var) {
@@ -3464,7 +3474,7 @@ class frontend
         $typ_lst = $this->dto?->typ_lst_cache;
         if ($typ_lst != null) {
             if ($msk_ui->shows_value_table($typ_lst, $msg_ui)) {
-                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names);
+                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names, $dto->table_own_columns);
             }
             // the editor of the view as defined by a view relation e.g. the table editor
             if ($msk_ui->editor_id != null) {

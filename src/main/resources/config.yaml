@@ -656,9 +656,9 @@ zukunft.com:
                     tooltip-comment: "the colour of the lines"
                   background:
                     sys-conf-value: "none"
-                    tooltip-comment: "the colour of the background of the header"
+                    tooltip-comment: "the background of every second row"
                 bordered:
-                  tooltip-comment: "a table with lines and a grey background of the header"
+                  tooltip-comment: "a table with lines and a grey background of every second row"
                   colour:
                     sys-conf-value: "grey"
                     tooltip-comment: "the colour of the text"
@@ -667,7 +667,7 @@ zukunft.com:
                     tooltip-comment: "the colour of the lines"
                   background:
                     sys-conf-value: "panel"
-                    tooltip-comment: "the colour of the background of the header"
+                    tooltip-comment: "the background of every second row"
             colours:
               tooltip-comment: "the css colours of the pages and the editors e.g. #385eb7, rgba(0, 0, 0, 0.1) or white"
               page:

@@ -371,6 +371,8 @@ class triple_names
     // the own columns and the own sorting of the table test, which follow the test of a page for a decision
     const int TABLE_DEFINITION_FIRST_ID = 1900;
     const string TABLE_SORT_ORDER = 'numeric descending of inhabitants';
+    // the own columns with a unit of the table test
+    const int TABLE_OWN_COLUMNS_FIRST_ID = 1880;
     // the triples of the test with two instances of a repeated field and the imports, which follow the button
     const int CALC_INSTANCES_FIRST_ID = 902;
     const string CALC_SHORT_LABEL = 'Short canton';

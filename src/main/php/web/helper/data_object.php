@@ -247,6 +247,8 @@ class data_object
     // the column names per column tier selection of the value tables of the page
     // (value_list::tier_names), which the tooltips of the column menu of the navbar name
     public array $tier_names = [];
+    // true if a value table of the page has own columns, so that the column menu of the navbar offers the values that fit none of them
+    public bool $table_own_columns = false;
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;

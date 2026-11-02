@@ -300,6 +300,23 @@ class base_ui_tests
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
         $t->assert($test_name, $url_std[url_var::JAVASCRIPT] ?? '', url_var::FALSE);
 
+        // the values that fit no own column and the table design are view-only states of the same page
+        $test_name = 'the other values and the design are cached per selection';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_UNMATCHED => url_var::TRUE, url_var::DISPLAY_LIST_DESIGN => words::BORDERED];
+        $t->assert_text_contains($test_name, $ui->url_cache_key($url_array), url_var::DISPLAY_LIST_DESIGN . '=' . words::BORDERED);
+        // negative: an array e.g. from dld[]=plain cannot be part of the key
+        $test_name = 'an array in the url is not cached';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_DESIGN => [words::PLAIN]];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the other values and the design are mapped to the short url vars';
+        $url_array = [url_var::MASK_HUMAN => views::TABLE, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_UNMATCHED_HUMAN => url_var::TRUE, url_var::DISPLAY_LIST_DESIGN_HUMAN => words::BORDERED];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_DESIGN] ?? '', words::BORDERED);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_UNMATCHED] ?? '', url_var::TRUE);
+
         // the login and signup form pages are served from the page cache even though they are process
         // masks, because the plain form is static (the per-session token is restored per request)
         $test_name = 'the login form is cached';

@@ -119,6 +119,15 @@ class def
     const int MODE_LIGHT = 1;
     const int MODE_DARK = 2;
     const int FALLBACK_MODE = self::MODE_LIGHT;
+    // the table designs of config.yaml frontend.layout.table.designs: the design name => the colour of the
+    // text, of the lines and of every second row as the name of a colour of frontend.layout.colours.page,
+    // each with the same value as in config.yaml
+    const string TABLE_DESIGN_NONE = 'none';
+    const string TABLE_DESIGN_DEFAULT = words::PLAIN;
+    const array TABLE_DESIGNS = [
+        words::PLAIN => [words::GREY, self::TABLE_DESIGN_NONE, self::TABLE_DESIGN_NONE],
+        words::BORDERED => [words::GREY, words::RULE, words::PANEL],
+    ];
     // fallback for the colours of the pages in the light and in the dark mode, which the page head
     // sets as css variables (html_base::theme_style) for style_html.css; the css variable => the
     // config.yaml key below frontend.layout.colours.page, the light colour and the dark colour of

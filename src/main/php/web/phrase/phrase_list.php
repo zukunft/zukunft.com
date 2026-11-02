@@ -899,7 +899,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase|null $phr the from side of a column definition e.g. "potential gain in EUR"
      * @return array the column phrase e.g. "potential gain" and the unit phrase or null for any unit
      */
-    private function column_and_unit(?phrase $phr): array
+    function column_and_unit(?phrase $phr): array
     {
         $result = [$phr, null];
         if ($phr != null and $phr->is_triple()) {

@@ -24,9 +24,9 @@ group_id,user_id,group_name,description
 0A-1X+1Z+9e+BA+BB+,1,,the initial number of best predictors that are assigned as peers on account opening
 0A-1X+1Z+9G+9a+9e+Ba+Be+,1,,the name of the table design below that a table uses by default
 0A-1X+1Z+9G+9a+9e+Ba+Bf+Bg+Bh+,1,,the colour of the lines
-0A-1X+1Z+9G+9a+9e+Ba+Bf+Bg+Bi+,1,,the colour of the background of the header
+0A-1X+1Z+9G+9a+9e+Ba+Bf+Bg+Bi+,1,,the background of every second row
 0A-1X+1Z+9G+9a+9e+Ba+Bf+Bh+Bj+,1,,the colour of the lines
-0A-1X+1Z+9G+9a+9e+Ba+Bf+Bi+Bj+,1,,the colour of the background of the header
+0A-1X+1Z+9G+9a+9e+Ba+Bf+Bi+Bj+,1,,the background of every second row
 0A-1X+1Z+9G+9c+9e+,1,,"either 'pure HTML' for forms without javascript e.g. to add a value by selecting its words and triples step by step, 'HTML with js phrase selection' for forms that select the words and triples with javascript or 'full js' for a javascript frontend"
 0A-1X+1Z+9G+9e+Ba+Bi+Bk+C0+C1+,1,,the background of the editor in the dark mode
 0A-1X+1Z+9G+9e+Ba+Bi+Bk+C0+CF+,1,,the background of a chart in the dark mode

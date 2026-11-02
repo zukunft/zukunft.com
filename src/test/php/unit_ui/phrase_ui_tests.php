@@ -259,8 +259,12 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name, $tbl_no_header, '<table');
 
         // the border is switched off where the page already groups the tables by a title
-        $test_name = 'with the border the table has the lines between the cells';
-        $t->assert_text_contains($test_name, $tbl_header, 'table-bordered');
+        $test_name = 'the default design has no lines between the cells';
+        $t->assert_text_contains($test_name, $tbl_header, 'table-borderless');
+        $test_name = 'the design with lines has the lines between the cells';
+        $tbl_bordered = $list->table_with_related_columns($trp_zh_city, $msg, $dto, true, true,
+            [url_var::DISPLAY_LIST_DESIGN => words::BORDERED]);
+        $t->assert_text_contains($test_name, $tbl_bordered, 'table-bordered');
         $test_name = 'without the border the table has no lines between the cells';
         $tbl_no_border = $list->table_with_related_columns($trp_zh_city, $msg, $dto, true, false);
         $t->assert_text_not_contains($test_name, $tbl_no_border, 'table-bordered');

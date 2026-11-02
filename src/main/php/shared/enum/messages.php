@@ -266,6 +266,12 @@ enum messages: string
     // the sub headers of the edit menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';
+    case TABLE_MENU_DESIGN = 'table_menu_design';
+    case TABLE_UNMATCHED_SHOW = 'table_unmatched_show';
+    case TABLE_UNMATCHED_HIDE = 'table_unmatched_hide';
+    case TABLE_DESIGN_PLAIN = 'table_design_plain';
+    case TABLE_DESIGN_BORDERED = 'table_design_bordered';
+    case TABLE_DESIGN_UNKNOWN = 'table_design_unknown';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';

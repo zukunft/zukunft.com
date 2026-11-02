@@ -6545,6 +6545,8 @@
             alculator.php
     \-- table_columns - section for function table_columns not yet defined that it should be lists in /component/execute
             /calculator.php
+    \-- table_column_phrases - section for function table_column_phrases not yet defined that it should be lists in /com
+            ponent/execute/calculator.php
     \-- table_sorts - section for function table_sorts not yet defined that it should be lists in /component/execute/cal
             culator.php
     \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
@@ -7607,6 +7609,10 @@
             used in zukunft.com in /html/html_base.php
     \-- tbl_start_hist - section for function tbl_start_hist not yet defined that it should be the HTML table functions 
             used in zukunft.com in /html/html_base.php
+    \-- tbl_design - section for function tbl_design not yet defined that it should be the HTML table functions used in 
+            zukunft.com in /html/html_base.php
+    \-- table_design_configured - section for function table_design_configured not yet defined that it should be the HTM
+            L table functions used in zukunft.com in /html/html_base.php
     \-- tbl_start_pur - section for function tbl_start_pur not yet defined that it should be the HTML table functions us
             ed in zukunft.com in /html/html_base.php
     \-- tbl_start_borderless_grey - section for function tbl_start_borderless_grey not yet defined that it should be the
@@ -7951,6 +7957,8 @@
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- column_and_unit - section for function column_and_unit not yet defined that it should be related in /phrase/phra
+            se_list.php
     \-- column_phrases - section for function column_phrases not yet defined that it should be related in /phrase/phrase
             _list.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/
@@ -10190,6 +10198,9 @@
     \-- table_columns
         \-- calculator - @return array the names of the own columns of the table of the page phrase in their order,
                  empty if the table uses the columns of all tables
+    \-- table_column_phrases
+        \-- calculator - @return phrase[] the own columns of the table of the page phrase in their order e.g. potential 
+                gain in EUR
     \-- table_sorts
         \-- calculator - @return phrase[] the order triples of the own sorting of the table of the page phrase in their 
                 order e.g. numeric descending of reward ratio
@@ -10766,6 +10777,8 @@
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier
         \-- phrase_list - the tier of the table column of the given phrase name
+    \-- column_and_unit
+        \-- phrase_list - the column phrase and the unit of a column definition: "<phrase> can be <tier>" defines the
     \-- column_phrases
         \-- phrase_list - the phrases that this list defines as table columns, found with one walk over the list
     \-- category_subtitle
@@ -11041,10 +11054,14 @@
         \-- html_base - create the html code to display a table
     \-- tbl_start_hist
         \-- html_base - create the html code to display a table
+    \-- tbl_design
+        \-- html_base - a value table in the design that the url names, else the default design of config.yaml
+    \-- table_design_configured
+        \-- html_base - @return string the name of the default table design of config.yaml, which is not yet checked
     \-- tbl_start_pur
-        \-- html_base - create the html code to display a table
+        \-- html_base - @param string $design the name of the design
     \-- tbl_start_borderless_grey
-        \-- html_base - create the html code to display a table
+        \-- html_base - @param string $design the name of the design
     \-- tbl_start_select
         \-- html_base - a table for a list of selectors
 \-- the form HTML elements used in zukunft.com
