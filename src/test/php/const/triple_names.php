@@ -271,23 +271,23 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2628;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2640;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2629;
+    const int GAIN_AND_LOSS_ID = 2641;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2630;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2642;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2631;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2643;
     // the field types and properties of process_catch_fields.json, appended like the chart
     // triples above, so they move with them; check them in the triple list.csv
     const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
-    const int FIELD_NUMBER_WITH_LIMITS_ID = 2661;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 2768;
     const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
-    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2663;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2770;
     const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
-    const int FIELD_LIMIT_DOWN_ID = 2647;
+    const int FIELD_LIMIT_DOWN_ID = 2754;
     const string FIELD_STEP = shared_triples::FIELD_STEP;
-    const int FIELD_STEP_ID = 2648;
+    const int FIELD_STEP_ID = 2755;
     // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
     // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
     const string FIELD_INHABITANTS = 'field inhabitants';
@@ -651,9 +651,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2771;
+    const int SHARE_RATIO_ID = 2878;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2823;
+    const int SHARE_SYMBOL_ID = 2930;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

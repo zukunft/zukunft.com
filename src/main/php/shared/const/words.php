@@ -339,6 +339,12 @@ class words
     const string YEAR_CAP = 'year';
     const int YEAR_CAP_ID = 105;
 
+    // the keys of the named table designs of config.yaml user > default > frontend > layout > table
+    const string DESIGN = 'design';
+    const string DESIGNS = 'designs';
+    const string PLAIN = 'plain';
+    const string BORDERED = 'bordered';
+    const string COLOUR = 'colour';
     // the colour keys of config.yaml user > default > frontend > layout > colours (see def::FALLBACK_PAGE_COLOURS)
     // the dark or light mode of the user (see def::MODE_BROWSER)
     const string MODE = 'mode';

@@ -1,6 +1,6 @@
 [
     {
-        "id": 976,
+        "id": 980,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -31,7 +31,7 @@
         "class": "triple"
     },
     {
-        "id": 3404,
+        "id": 3511,
         "name": "bond (finance)",
         "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
         "class": "triple"
@@ -50,13 +50,13 @@
         "class": "word"
     },
     {
-        "id": 2524,
+        "id": 2536,
         "name": "CBAM good",
         "description": "a good listed in Annex I of the CBAM regulation, whose import into the EU needs CBAM certificates for its embedded emission",
         "class": "triple"
     },
     {
-        "id": 3492,
+        "id": 3599,
         "name": "child portfolio",
         "description": "the part of the original portfolio that one child receives; every child portfolio is a child portfolio, so that the page shows one input and one column per child",
         "class": "triple"
@@ -87,7 +87,7 @@
         "class": "triple"
     },
     {
-        "id": 2549,
+        "id": 2561,
         "name": "CN code",
         "class": "triple"
     },
@@ -152,7 +152,7 @@
         "class": "triple"
     },
     {
-        "id": 1807,
+        "id": 1810,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -171,14 +171,14 @@
         "class": "triple"
     },
     {
-        "id": 2159,
+        "id": 2230,
         "name": "EPR",
         "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2961,
+        "id": 3068,
         "name": "existing NPP",
         "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
         "class": "triple"
@@ -244,21 +244,21 @@
         "class": "triple"
     },
     {
-        "id": 2246,
+        "id": 2317,
         "name": "holding",
         "description": "the quantity of one security or currency in a portfolio, also called a position",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 1805,
+        "id": 1808,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 1806,
+        "id": 1809,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -317,7 +317,7 @@
         "class": "triple"
     },
     {
-        "id": 2960,
+        "id": 3067,
         "name": "new NPP",
         "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
         "class": "triple"
@@ -375,14 +375,14 @@
         "class": "word"
     },
     {
-        "id": 994,
+        "id": 998,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2760,
+        "id": 2867,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"
@@ -424,7 +424,7 @@
         "class": "word"
     },
     {
-        "id": 1687,
+        "id": 1690,
         "name": "stock",
         "type_id": 1,
         "class": "word"

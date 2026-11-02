@@ -459,6 +459,36 @@
     },
     {
       "name": "gross"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort order"
+    },
+    {
+      "name": "numeric descending"
     }
   ],
   "triples": [
@@ -1954,6 +1984,104 @@
       "from": "GDP mismeasurement solution",
       "verb": "is a",
       "to": "global problem solution"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "from": "potential gain",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "from": "potential gain",
+      "verb": "in",
+      "to": "htp"
+    },
+    {
+      "from": "initial effort",
+      "verb": "in",
+      "to": "person year"
+    },
+    {
+      "name": "populism solution columns",
+      "description": "the own columns of the table of the populism solutions",
+      "from": "populism solution",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "populism solution columns potential gain in EUR",
+      "from": "populism solution columns",
+      "verb": "has a",
+      "to": "potential gain in EUR"
+    },
+    {
+      "name": "populism solution columns potential gain in htp",
+      "from": "populism solution columns",
+      "verb": "has a",
+      "to": "potential gain in htp"
+    },
+    {
+      "name": "populism solution columns initial effort in person year",
+      "from": "populism solution columns",
+      "verb": "has a",
+      "to": "initial effort in person year"
+    },
+    {
+      "from": "populism solution columns potential gain in htp",
+      "verb": "is follower of",
+      "to": "populism solution columns potential gain in EUR"
+    },
+    {
+      "from": "populism solution columns initial effort in person year",
+      "verb": "is follower of",
+      "to": "populism solution columns potential gain in htp"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential gain in EUR"
+    },
+    {
+      "name": "populism solution sort",
+      "description": "the own default sorting of the table of the populism solutions, the biggest potential gain on top",
+      "from": "populism solution",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "populism solution sort numeric descending of potential gain in EUR",
+      "from": "populism solution sort",
+      "verb": "has a",
+      "to": "numeric descending of potential gain in EUR"
     }
   ],
   "values": [

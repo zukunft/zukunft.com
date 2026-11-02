@@ -1,5 +1,70 @@
 # pending - list of planned llm prompts with prio 1
 
+## table populism solution
+
+The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
+solutions sorted by default by potential gain descending. 
+The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
+and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
+
+the border and grey background colours should be removed by default with an option to show them.
+The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
+
+## table editor
+
+The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the
+definition of the rows, a preview before the save (the frame shows the saved table) and the alpha sort conditions.
+
+**Target:** `use_cases/table_editor.html` is generated like `use_cases/calculator_editor.html` and matches the hand made
+`use_cases/table_editor_sample.html`, proven by tests. All paths below are in `src/test/resources/web/html/`. The
+generated page fully replaces the current list editor of `script/table_editor.js`; the server page stays behind `sc=0`.
+
+1. **Sample: same page frame and colours.** Change `table_editor_sample.html` to the frame of
+   `calculator_editor_sample.html`: the stylesheets of the pod (bootstrap, fontawesome, `style_html.css`) instead of the
+   inlined navbar rules and the IBM Plex fonts, and the `:root` colour settings of the calculator editor (`--ink`,
+   `--accent: #385eb7`, ...) instead of the teal ones, without the dark variants if the calculator editor has none.
+2. **Sample: same top line.** Replace the `h1` and the buttons above the rail by the `.bar` of the calculator editor:
+   the title, `for <phrase name>` with `Load`, `no changes`, `Undo`, `Redo`, `Discard changes`, `Export` and `Save`, with
+   the same html ids (`phraseIn`, `btnLoad`, `changeCount`, `btnUndo`, `btnRedo`, `btnReset`, `btnExport`, `btnSave`).
+   Save writes to the database and not to `localStorage`; `Reset to default` and `Sample data` are dropped.
+3. **Import json of the example.** Extract `DATA`, `COLUMN_PHRASES` and `DEFAULT_VIEW` of the sample into a use case file
+   `messages/use_cases/table_editor_sample.json` at the end of `files::USE_CASE_FILES_APPENDED`, without a `code_id`: the
+   sectors as lower-case words with their `is part of` triples and abbreviations, the row phrase `sector of revenue`,
+   the values per year in million CHF with their sources, the entries without a number and without a parent as they
+   are, `growth` and `share` as formulas, and the definition of the view as triples to the table keywords of
+   `editor_views.json`. Name the id shift in the report and re-pin.
+4. **Align the keywords.** Compare the fields of `SPEC` and `DEFAULT_VIEW` with the keywords of `editor_views.json` and
+   resolve each difference at one place, e.g. `columns_major` is `mayor column (system)`, `value_decimals` and
+   `value_thousands` are `value_format`, `row_order_col` and `row_order_dir` are `row_order`.
+5. **Sample: seed from the api.** Replace the constants of step 3 in the sample by a
+   `<script type="application/json" id="seed">` with the `/api/phraseData` answer of the imported phrase, in the same
+   structure as `calculator_editor_sample.html`, and `seedName` with the name of the import file. `SPEC` moves to the
+   script with translated labels. Check that the walk of the phraseData api returns the view definition, the order
+   triples and the results; extend the walk if not.
+6. **Script and style.** Move the script of the sample to `script/table_editor.js` and its css to
+   `style/table_editor.css`, nested in the host, and let the sample load both like the other samples. Every text comes
+   from the seed (`table_editor_` messages in `en.yaml` and `de.yaml`, the texts of the calculator editor for the top line).
+7. **Page of the server.** `system_page::table_editor` renders the host and the seed with `CALC_EDITOR_SEED_ID`, so that
+   the seed has the same id and the volatile time is fixed in one way; remove `TABLE_EDITOR_SEED_ID` and the keys around
+   the phraseData answer that step 6 no longer needs. The table is rendered by the script from the seed without an api call.
+8. **Save.** Undo, redo, the change count and the save with the `updatePut` body follow the calculator editor; reuse its
+   logic where the code can be shared. Every problem of a save is shown to the user, and a save deletes only with the logged `del()`.
+9. **Tests.**
+   - `system_views_read_tests`: `assert_editor_view` with the imported phrase writes `use_cases/table_editor.html`.
+   - Compare the page with the sample by `html_page_diff` and write the differences as `use_cases/table_editor_diff.md`.
+   - Add scenarios in `src/test/js` like `calculator_editor_scenarios.js` with one positive and one negative case per
+     action: add, move and remove a column, change a sort and a row parameter, undo, redo, discard, export, save.
+   - Compare each resulting `updatePut` body with a fixture in `src/test/resources/web/table_editor/` and run it in
+     `update_put_write_tests`, also reading the saved definition back.
+   - `coding_rule_tests::use_case_no_test_formula_tests` stays clean for the new use case.
+10. **Docs.** Update "The table editor" in `docs/llm/frontend.md` and the steps in `docs/table_creation.md`.
+
+## result tooltip
+
+if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
+to show the formula used for the calculation of the result in the latex format with the values used for the result 
+and a 'click for more details' hint
+
 ## Calculator editor
 
 ### Swiss NPP
@@ -8,17 +73,6 @@ add costs of CO2-eq reduction to the npp
 
 add to the calculator a 'Share assumptions and vote' button
 and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
-
-## table editor
-
-The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the
-definition of the rows, a preview before the save (the frame shows the saved table) and the alpha sort conditions.
-
-## result tooltip
-
-if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
-to show the formula used for the calculation of the result in the latex format with the values used for the result 
-and a 'click for more details' hint
 
 ## prime group id within 2^53
 

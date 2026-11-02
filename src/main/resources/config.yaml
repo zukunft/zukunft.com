@@ -639,6 +639,35 @@ zukunft.com:
             colour mode:
               sys-conf-value: 1
               tooltip-comment: "1 to show the pages always light, which is the default, 2 always dark and 0 light or dark like the setting of the browser; the user menu switches between light and dark"
+            table:
+              tooltip-comment: "the look of the tables"
+              design:
+                sys-conf-value: "plain"
+                tooltip-comment: "the name of the table design below that a table uses by default"
+              designs:
+                tooltip-comment: "the named table designs; each value is the name of a colour of colours > page, so that a design also fits the dark mode, or none"
+                plain:
+                  tooltip-comment: "a table without lines and without a background"
+                  colour:
+                    sys-conf-value: "grey"
+                    tooltip-comment: "the colour of the text"
+                  border:
+                    sys-conf-value: "none"
+                    tooltip-comment: "the colour of the lines"
+                  background:
+                    sys-conf-value: "none"
+                    tooltip-comment: "the colour of the background of the header"
+                bordered:
+                  tooltip-comment: "a table with lines and a grey background of the header"
+                  colour:
+                    sys-conf-value: "grey"
+                    tooltip-comment: "the colour of the text"
+                  border:
+                    sys-conf-value: "rule"
+                    tooltip-comment: "the colour of the lines"
+                  background:
+                    sys-conf-value: "panel"
+                    tooltip-comment: "the colour of the background of the header"
             colours:
               tooltip-comment: "the css colours of the pages and the editors e.g. #385eb7, rgba(0, 0, 0, 0.1) or white"
               page:
