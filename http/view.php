@@ -259,6 +259,7 @@ if ($db_con->is_open()) {
                             session_write_close();
                         } else {
                             $ui->report_pdf = '';
+                            log_err_msg_ui('the session for the pdf report of ' . $ui->report_name . ' cannot be opened again', $msg_ui);
                         }
                     }
                     $page_html = $ui->report_end_html($url_array, $msg_ui);

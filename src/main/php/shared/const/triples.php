@@ -192,6 +192,13 @@ class triples
     const string SYSTEM_SORT_ORDER_CODE_ID = 'system_sort_order';
     const string SYSTEM_SORT_ORDER_DEFAULT = 'default sort order (system)';
     const string SYSTEM_SORT_ORDER_DEFAULT_CODE_ID = 'system_sort_order_default';
+    // the own columns and the own default sorting of the table of one phrase, set by the table editor
+    const string TABLE_COLUMN = 'table column';
+    const string TABLE_COLUMN_CODE_ID = 'system_table_column';
+    const string TABLE_SORT = 'table sort';
+    const string TABLE_SORT_CODE_ID = 'system_table_sort';
+    // the words of the sort conditions that the table editor offers, the name of the word is part of an order triple
+    const array TABLE_SORT_CONDITIONS = ['numeric descending', 'numeric ascending'];
     // the number of digits shown of a number, defined in base_phrases.json like the column tiers:
     // a view, a value or a result is assigned to a precision tier with "<phrase> can be <tier>",
     // the default tier is used if none is assigned; the number of digits of each tier is set in

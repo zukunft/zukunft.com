@@ -133,6 +133,18 @@ of `style/formula_editor.css` are nested in the hosts, so that the page keeps th
 database read test writes `use_cases/formula_editor.html` next to the hand made
 `use_cases/formula_editor_sample.html`, which loads the same script and style with a fixed seed.
 
+### The table editor
+
+The table editor view (`views::TABLE_EDITOR`) is built by `script/table_editor.js` from a seed
+(`system_page::table_editor`): the phraseData answer with the saved triples and the header of a save, the
+columns to select, the names of the keywords and verbs, the urls and the texts with the prefix `table_editor_`.
+`url_var::JAVASCRIPT` = 0, or a config that allows no javascript for the calculator, shows the components of the
+view instead. The save sends `<phrase> columns` · `has a` · `table column` with one `has a` item per column and a
+`table sort` list of order triples `<condition> of <column>` to the updatePut api; a change of the order changes the
+follower triples of the items. `ui_list::table_with_related_columns` and `value_list::row_orders` use this
+definition of the page phrase itself, else the column tiers and the sort orders of all tables, and the url wins
+over both. The frame below the lists shows the saved table.
+
 The calculator editor (`system_page::calculator_editor`) has no page without the
 script: it renders the empty host, the answer of the phraseData api for the page
 phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the

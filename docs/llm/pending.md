@@ -11,10 +11,8 @@ and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ..
 
 ## table editor
 
-similar to the 'Calculator editor' create a table editor e.g. for http://localhost/http/view.php?m=2&id=-1257 that 
-is called by the already linked url  http://localhost/http/view.php?m=194&id=-1257&9m=2&9id=-1257&u=11
-The existing table editor will be completely redesigned and can be parked in the no_js url
-so the standard table editor should be JavaScript based and like the 'Calculator editor' load all needed parameter with seed json api calls 
+The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the
+definition of the rows, a preview before the save (the frame shows the saved table) and the alpha sort conditions.
 
 ## result tooltip
 

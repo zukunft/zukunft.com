@@ -84,7 +84,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $btn_calc, $calc, $calc_be, $calc_empty, $calc_in, $calc_no, $calc_word, $chk_calc, $fld_calc, $in_calc, $ins_calc, $js_calc, $no_btn_calc, $no_chk_calc, $one_calc, $wrn_calc
+calculator: $btn_calc, $calc, $calc_base, $calc_be, $calc_empty, $calc_in, $calc_no, $calc_word, $chk_calc, $fld_calc, $in_calc, $ins_calc, $js_calc, $no_btn_calc, $no_chk_calc, $one_calc, $wrn_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
@@ -171,7 +171,7 @@ number_format: $fmt, $no_cnv, $noise_fmt
 pdf_writer: $pdf
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $def_lst, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ, $phr_typ_map

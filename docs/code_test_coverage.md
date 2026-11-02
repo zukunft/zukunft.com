@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1576 of 6379 public functions have at least 2 unit test calls; the 4599 functions below do not; the 204 functions of the last section are called nowhere
+1579 of 6385 public functions have at least 2 unit test calls; the 4601 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 1998 functions of main backend have no test at all
 
@@ -2265,7 +2265,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 905 functions of frontend have no test at all
+## 907 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2719,6 +2719,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- plural - 0 unit test calls
     \-- scaling_list - 0 unit test calls
     \-- select_file - 0 unit test calls shared by 2 classes
+    \-- sort_definitions_of - 0 unit test calls
     \-- stands_for - 0 unit test calls shared by 2 classes
     \-- symbol_links - 0 unit test calls
     \-- symbol_of - 0 unit test calls
@@ -3110,6 +3111,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- results - 0 unit test calls
     \-- results_related - 0 unit test calls
     \-- sources_used - 0 unit test calls
+    \-- table_column_candidates - 0 unit test calls
     \-- value_chart - 0 unit test calls
     \-- value_input_fields - 0 unit test calls
     \-- values_by_triple - 0 unit test calls
@@ -5472,6 +5474,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- value
     \-- btn_undo_add_value
     \-- dsp_add_fast
+\-- value_list
+    \-- table_column_names
 \-- view
     \-- dsp_navbar_no_view
 \-- view_base

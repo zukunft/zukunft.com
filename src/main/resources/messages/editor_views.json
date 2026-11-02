@@ -16,6 +16,17 @@
     },
     {
       "name": "system"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "sort order"
+    },
+    {
+      "name": "numeric ascending",
+      "description": "sort condition: by the number of the column, the smallest number on top",
+      "code_id": "numeric_asc"
     }
   ],
   "triples": [
@@ -30,6 +41,22 @@
       "from": "column",
       "verb": "can be",
       "to": "zukunft.com system"
+    },
+    {
+      "name": "table column",
+      "description": "list: the items of a triple from a phrase to this keyword are the own columns of the table of the phrase in their order, instead of the columns of all tables",
+      "from": "table",
+      "verb": "has a",
+      "to": "column",
+      "code_id": "system_table_column"
+    },
+    {
+      "name": "table sort",
+      "description": "list: the items of a triple from a phrase to this keyword are the own default sort orders of the table of the phrase, each a triple of the condition word with the verb of and the column e.g. numeric descending of reward ratio",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order",
+      "code_id": "system_table_sort"
     }
   ],
   "components": [

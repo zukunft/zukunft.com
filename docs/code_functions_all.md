@@ -6543,6 +6543,10 @@
     \-- is_difference - section for function is_difference is expected to be info in /component/execute/calculator.php
     \-- text_sources - section for function text_sources not yet defined that it should be lists in /component/execute/c
             alculator.php
+    \-- table_columns - section for function table_columns not yet defined that it should be lists in /component/execute
+            /calculator.php
+    \-- table_sorts - section for function table_sorts not yet defined that it should be lists in /component/execute/cal
+            culator.php
     \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
     \-- items - section for function items not yet defined that it should be lists in /component/execute/calculator.php
     \-- sub_items - section for function sub_items not yet defined that it should be lists in /component/execute/calcula
@@ -6929,6 +6933,8 @@
             ponent/execute/system_page.php
     \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
             omponent/execute/system_page.php
+    \-- table_editor - section for function table_editor not yet defined that it should be process catch in /component/e
+            xecute/system_page.php
     \-- formula_editor - section for function formula_editor not yet defined that it should be process catch in /compone
             nt/execute/system_page.php
     \-- formula_editor_selector - section for function formula_editor_selector not yet defined that it should be process
@@ -7013,6 +7019,7 @@
     \-- values_in_columns - section for function values_in_columns missing in /component/execute/ui_list.php
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
+    \-- table_column_candidates - section for function table_column_candidates missing in /component/execute/ui_list.php
     \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
@@ -7919,6 +7926,8 @@
             ase_list.php
     \-- sort_definitions - section for function sort_definitions not yet defined that it should be load in /phrase/phras
             e_list.php
+    \-- sort_definitions_of - section for function sort_definitions_of not yet defined that it should be load in /phrase
+            /phrase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
@@ -8711,6 +8720,8 @@
             php
     \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
             p
+    \-- table_column_names - section for function table_column_names not yet defined that it should be display in /value
+            /value_list.php
     \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
             /value_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
@@ -9259,7 +9270,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 13
+    \-- 14
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -9827,6 +9838,8 @@
         \-- ui_list - show the values related to the given phrase in up to four columns that are shown side by side
     \-- table_with_related_columns
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
+    \-- table_column_candidates
+        \-- ui_list - @param word|triple $dbo the phrase of the table
     \-- prior_names
         \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
     \-- value_input_fields
@@ -10174,6 +10187,12 @@
     \-- text_sources
         \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
                 order of the page
+    \-- table_columns
+        \-- calculator - @return array the names of the own columns of the table of the page phrase in their order,
+                 empty if the table uses the columns of all tables
+    \-- table_sorts
+        \-- calculator - @return phrase[] the order triples of the own sorting of the table of the page phrase in their 
+                order e.g. numeric descending of reward ratio
     \-- group
         \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
     \-- items
@@ -10580,6 +10599,9 @@
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- calculator_editor
         \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+    \-- table_editor
+        \-- system_page - the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script buil
+                ds
     \-- formula_editor
         \-- system_page - the formula editor of the page phrase: the script builds the expression of the selected formul
                 a

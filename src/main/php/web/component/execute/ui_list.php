@@ -186,6 +186,8 @@ class ui_list extends ui_base
     const string CALC_DIAGRAMS = 'diagrams';
     const string CALC_DIAGRAM_ID = 'calc-diagram-';
     const string CALC_DIAGRAM_LEGEND_SUFFIX = '-legend';
+    // from a phrase over the group and its item to the follower triple of the item
+    const int TABLE_DEFINITION_LEVELS = 3;
     // the html id of the field of the name of a case, the same in calculator_json.js
     const string CALC_CASE_FIELD_ID = 'caseName';
     const string CALC_DIAGRAM_LABEL = 'label';
@@ -1637,11 +1639,11 @@ class ui_list extends ui_base
                 ]);
                 return $result;
             }
-            $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
-            // a phrase whose rows are the phrases linked to it, e.g. "global warming reason", has
-            // no value of its own, so the values of the linked phrases are loaded like on the start page
-            if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
-                $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+            $val_lst = $this->table_numbers($dbo, $msg, $dto);
+            // the own columns of the table of the table editor; the grid of the start page has fixed columns
+            if ($col_names == [] and !$col_values_only and $dto != null) {
+                $this->add_table_definition($dbo->phrase(), $dto, $msg);
+                $col_names = new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
             }
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
@@ -1713,6 +1715,55 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the table
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $dto the data cache
+     * @return value_list|null the values of the phrase, else of the phrases linked to it e.g. "global warming reason", which has no value of its own
+     */
+    private function table_numbers(word|triple $dbo, user_message $msg, ?data_object $dto): ?value_list
+    {
+        $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
+        if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
+            $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+        }
+        return $val_lst;
+    }
+
+    /**
+     * load the own columns and the own sorting of the table of a phrase into the request cache;
+     * an offline cache is never filled from the api, so a unit test shows only what it has cached
+     *
+     * @param phrase $phr the phrase of the table
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_table_definition(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        $def_lst = new phrase_list();
+        if ($dto->online and $def_lst->load_related_by_name($phr->name(), foaf_direction::UP, $msg, self::TABLE_DEFINITION_LEVELS)) {
+            $dto->add_phrases($def_lst, $msg);
+        }
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the table
+     * @param user_message $msg to report a problem of the load
+     * @param data_object $dto the request cache
+     * @return array the names of the columns that the table editor offers: those that the numbers of the table can show and the columns of all tables, in the order of the name
+     */
+    function table_column_candidates(word|triple $dbo, user_message $msg, data_object $dto): array
+    {
+        $this->add_column_definitions($dto, $msg);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        $names = $this->table_numbers($dbo, $msg, $dto)?->table_column_names($msg, $phr_lst, $dto->phr_lst) ?? [];
+        $names = array_unique([...$names, ...$dto->phr_lst->column_names()]);
+        sort($names);
+        return $names;
     }
 
     /**

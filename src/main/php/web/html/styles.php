@@ -217,6 +217,8 @@ class styles
     const string CALC_MORE = 'more';
     const string CALC_NOTES = 'notes';
     const string CALC_SOURCES = 'src';
+    // the host of the table editor, which table_editor.css formats
+    const string TABLE_EDITOR = 'table-editor';
     // the host of the calculator editor, which calculator_editor.css formats
     const string CALC_EDITOR = 'editor';
     // the hosts of the formula editor, the selector and the result compare, in which formula_editor.css nests all its rules

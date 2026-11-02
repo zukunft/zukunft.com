@@ -1800,6 +1800,36 @@ class test_triples extends test_objects
     }
 
     /**
+     * the own table of Zurich (city): the columns 2020 and 2019 in this order and the sorting by the inhabitants
+     *
+     * @return triple[] the keywords and the triples
+     */
+    function table_definition_zh(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $page = $this->zh_city()->phrase();
+        $id = triple_names::TABLE_DEFINITION_FIRST_ID;
+        $kw = [];
+        foreach ([triples::TABLE_COLUMN, triples::TABLE_SORT] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $add = function (string $key, string $name, phrase $from, verb $vrb, triple|phrase $to) use (&$id, &$kw) {
+            $kw[$key] = $this->calc_triple($id, $name, $from, $vrb, $to);
+        };
+        $add('columns', 'Zurich city columns', $page, $has, $kw[triples::TABLE_COLUMN]);
+        $add('2019', 'Zurich city column 2019', $kw['columns']->phrase(), $has, $t_wrd->word_2019()->phrase());
+        $add('2020', 'Zurich city column 2020', $kw['columns']->phrase(), $has, $t_wrd->word_2020()->phrase());
+        $add('order', 'Zurich city column 2019 order', $kw['2019']->phrase(), $t_vrb->verb_follow(), $kw['2020']->phrase());
+        $add('sort', 'Zurich city sort', $page, $has, $kw[triples::TABLE_SORT]);
+        $add('by', triple_names::TABLE_SORT_ORDER, $t_wrd->word_bern()->phrase(), $t_vrb->verb_of(), $t_wrd->word_inhabitant()->phrase());
+        $add('sort item', 'Zurich city sort inhabitants', $kw['sort']->phrase(), $has, $kw['by']);
+        return array_values($kw);
+    }
+
+    /**
      * @return triple[] the keyword and the group of the check table that the check test adds to the calculator input test
      */
     function calculator_zh_check(): array

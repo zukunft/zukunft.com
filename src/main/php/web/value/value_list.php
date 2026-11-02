@@ -47,6 +47,7 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -1022,7 +1024,7 @@ class value_list extends ListBase
         // the url or the definition can ask for another order than the impact, e.g. the rows by
         // the name of their solution, which is applied before the cut, so that the first page
         // shows the first rows of that order
-        $model->orders = $this->row_orders($url_array, $model, $rel_lst, $msg);
+        $model->orders = $this->row_orders($url_array, $model, $context_phr_lst, $rel_lst, $msg);
         $model->sort_rows($rel_lst);
         if ($model->row_limit != self::LIMIT_ALL) {
             $model->first_row = $this->first_row($url_array, $model->row_limit);
@@ -1034,17 +1036,55 @@ class value_list extends ListBase
     }
 
     /**
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. the phrase of the table
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param user_message $msg to report a condition word without the code id of a condition
+     * @return array per order the condition and the name of the column: the own sorting of the table, else the orders of all tables
+     */
+    private function defined_orders(phrase_list $context_phr_lst, ?phrase_list $rel_lst, user_message $msg): array
+    {
+        $own = [];
+        if ($rel_lst != null) {
+            foreach ($context_phr_lst->lst() as $phr) {
+                $orders = new calculator($phr, $rel_lst)->table_sorts();
+                $own = [...$own, ...$rel_lst->sort_definitions_of($orders, $msg)];
+            }
+        }
+        return $own ?: ($rel_lst?->sort_definitions($msg) ?? []);
+    }
+
+    /**
+     * the names of all columns that the numbers of this list can show, for the table editor
+     *
+     * @param user_message $msg to report a problem of the table
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return array the column names in the order of their name
+     */
+    function table_column_names(user_message $msg, phrase_list $context_phr_lst, ?phrase_list $rel_lst): array
+    {
+        $names = [];
+        if (!$this->is_empty()) {
+            $model = $this->table_model($msg, $context_phr_lst, [], $rel_lst, null, [], false, self::COLUMN_TIERS_ALL, false);
+            $names = array_map(fn($phr) => $phr->name(), array_values($model->col_phr));
+        }
+        sort($names);
+        return $names;
+    }
+
+    /**
      * the orders of the rows, the prime order first: the orders that the url asks for, or else
      * the default orders of the table definition (phrase_list::sort_definitions)
      *
      * @param array $url_array the url parameters of the page that shows the table
      * @param table_model $model the rows and columns of the table
+     * @param phrase_list $context_phr_lst the phrases of the page, whose own sorting wins over the defined orders of all tables
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param user_message $msg to warn of an order that names no column of the table or an unknown
      *                          condition, which keeps the table with the impact order
      * @return array per order the phrase id of the column and the condition (table_orders)
      */
-    private function row_orders(array $url_array, table_model $model, ?phrase_list $rel_lst, user_message $msg): array
+    private function row_orders(array $url_array, table_model $model, phrase_list $context_phr_lst, ?phrase_list $rel_lst, user_message $msg): array
     {
         $result = [];
         $orders = [];
@@ -1057,7 +1097,7 @@ class value_list extends ListBase
         }
         // a url without any order shows the defined order, a url with a wrong order the impact order
         if ($orders == []) {
-            foreach ($rel_lst?->sort_definitions($msg) ?? [] as [$cond, $name]) {
+            foreach ($this->defined_orders($context_phr_lst, $rel_lst, $msg) as [$cond, $name]) {
                 $orders[] = [$name, $model->col_id_of_name($name) ?? 0, $cond];
             }
         }

@@ -636,6 +636,10 @@ class use_case_ui_tests
         $seed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $later]);
         $fixed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $fixed]);
         $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
+        $test_name = '... also of the seed of the table editor';
+        $seed_html = $html->script_data(system_page::TABLE_EDITOR_SEED_ID, [system_page::TABLE_EDITOR_SEED_DOC => [json_fields::TIME => $later]]);
+        $fixed_html = $html->script_data(system_page::TABLE_EDITOR_SEED_ID, [system_page::TABLE_EDITOR_SEED_DOC => [json_fields::TIME => $fixed]]);
+        $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
         // negative: a time outside the seed is a real part of the page and stays
         $test_name = '... but not a time outside the seed';
         $other_html = $html->script_data(ui_list::CALC_DATA_ID, [json_fields::TIME => $later]);
@@ -1156,6 +1160,7 @@ class use_case_ui_tests
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
 
         $this->calculator_decision_tests($t, $ts);
+        $this->table_editor_tests($t, $ts);
         $this->calculator_save_tests($t, $ts);
         $this->calculator_editor_scenario_tests($t, $ts);
 
@@ -1647,6 +1652,56 @@ class use_case_ui_tests
         // negative: another view keeps its own name in the title
         $test_name = '... and another view its own name';
         $t->assert_text_contains($test_name, $msk->title($wrd, $msg, $dto_res), $msk->name());
+    }
+
+    /**
+     * the own columns and the own sorting of a table and the page of the table editor
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function table_editor_tests(test_cleanup $t, string $ts): void
+    {
+        global $ui_sys;
+        $html = new html_base();
+        $page = new system_page();
+        $msg = new user_message();
+        $t_phr = new test_phrases($t);
+        $zh_city = new test_triples($t)->zh_city_ui();
+        $dto = new data_object();
+        $dto->online = false;
+        $dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto->phr_lst = $t_phr->list_table_definition_ui();
+        $dto->val_lst = new test_values($t)->value_list_calculator_input_ui();
+        $calc = new calculator($zh_city->phrase(), $dto->phr_lst);
+        $calc_base = new calculator(new test_words($t)->zh_ui()->phrase(), $dto->phr_lst);
+        $no_def_lst = $t_phr->list_calculator_input_ui();
+
+        $t->subheader($ts . 'table editor');
+        $test_name = 'a table has its own columns in their order';
+        $t->assert($test_name, $calc->table_columns(), [word_names::YEAR_2020, word_names::YEAR_2019]);
+        $test_name = '... and its own sorting';
+        $sorts = $calc->table_sorts();
+        $t->assert($test_name, $sorts[0]?->name(), triple_names::TABLE_SORT_ORDER);
+        // negative: a definition is only valid for its own phrase, not for the phrase it is built from
+        $test_name = '... but another phrase has none';
+        $t->assert($test_name, $calc_base->table_columns(), []);
+        $t->assert($test_name, $calc_base->table_sorts(), []);
+        $test_name = '... and a table without a definition too';
+        $t->assert($test_name, new calculator($zh_city->phrase(), $no_def_lst)->table_columns(), []);
+
+        $editor_html = $page->table_editor($zh_city, $msg, $dto);
+        $test_name = 'the table editor loads its script';
+        $t->assert_text_contains($test_name, $editor_html, $html->script_src(files::TABLE_EDITOR_SCRIPT));
+        $test_name = '... the seed with the keywords';
+        $t->assert_text_contains($test_name, $editor_html, triples::TABLE_COLUMN);
+        $test_name = '... and the page of the server for a browser without javascript';
+        $t->assert_text_contains($test_name, $editor_html, url_var::JAVASCRIPT . '=' . url_var::FALSE);
+        // negative: without a phrase the view shows its phrase selector
+        $test_name = '... but no script without a phrase';
+        $t->assert($test_name, $page->table_editor(null, $msg, $dto), '');
+        $test_name = '... and without a request cache';
+        $t->assert($test_name, $page->table_editor($zh_city, $msg, null), '');
     }
 
     /**

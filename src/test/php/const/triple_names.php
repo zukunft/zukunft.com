@@ -281,13 +281,13 @@ class triple_names
     // the field types and properties of process_catch_fields.json, appended like the chart
     // triples above, so they move with them; check them in the triple list.csv
     const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
-    const int FIELD_NUMBER_WITH_LIMITS_ID = 2659;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 2661;
     const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
-    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2661;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2663;
     const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
-    const int FIELD_LIMIT_DOWN_ID = 2645;
+    const int FIELD_LIMIT_DOWN_ID = 2647;
     const string FIELD_STEP = shared_triples::FIELD_STEP;
-    const int FIELD_STEP_ID = 2646;
+    const int FIELD_STEP_ID = 2648;
     // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
     // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
     const string FIELD_INHABITANTS = 'field inhabitants';
@@ -368,6 +368,9 @@ class triple_names
     const string CALC_LEVEL_ROW_LABEL = 'Few people';
     const string CALC_LEVEL_COLUMN_LABEL = 'Late year';
     const string CALC_CASE_PAGE = 'Zurich of Bern';
+    // the own columns and the own sorting of the table test, which follow the test of a page for a decision
+    const int TABLE_DEFINITION_FIRST_ID = 1900;
+    const string TABLE_SORT_ORDER = 'numeric descending of inhabitants';
     // the triples of the test with two instances of a repeated field and the imports, which follow the button
     const int CALC_INSTANCES_FIRST_ID = 902;
     const string CALC_SHORT_LABEL = 'Short canton';
@@ -648,9 +651,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2769;
+    const int SHARE_RATIO_ID = 2771;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2821;
+    const int SHARE_SYMBOL_ID = 2823;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

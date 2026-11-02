@@ -1852,8 +1852,8 @@ class test_base
     }
 
     /**
-     * the phrase data that a calculator editor page embeds as its seed carries the time of its
-     * creation, so the time is replaced by the fixed test time before the page is compared;
+     * the phrase data that a calculator or table editor page embeds as its seed carries the time
+     * of its creation, so the time is replaced by the fixed test time before the page is compared;
      * only for the snapshot, the real page keeps the time of the phrase data
      *
      * @param string $html the rendered html page
@@ -1861,7 +1861,8 @@ class test_base
      */
     function fix_volatile_phrase_data_time(string $html): string
     {
-        $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
+        $seed_ids = system_page::CALC_EDITOR_SEED_ID . '|' . system_page::TABLE_EDITOR_SEED_ID;
+        $pattern = '/(id="(?:' . $seed_ids . ')">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
         return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
     }
 

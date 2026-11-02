@@ -77,6 +77,8 @@ class files
     CONST string CALCULATOR_EDITOR_SAMPLE = test_paths::RESOURCE . 'web' . DIRECTORY_SEPARATOR . 'calculator_editor' . DIRECTORY_SEPARATOR . 'calculator_editor_sample' . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the table editor that the browser builds from its seed
+    CONST string TABLE_EDITOR = 'table_editor';
     // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
     CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
     // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html

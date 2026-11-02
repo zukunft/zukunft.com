@@ -584,8 +584,12 @@ class system_views_read_tests
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
         $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
-        // the table editor placeholder shows only its title and the phrase selector
-        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        // the parked table editor of the server with its title and the phrase selector
+        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
+            '', [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the table editor from its seed
+        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
+            test_paths::HTML . test_paths::USE_CASES . test_files::TABLE_EDITOR);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);

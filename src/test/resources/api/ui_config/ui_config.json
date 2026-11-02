@@ -29685,12 +29685,12 @@
                 "class": "triple"
             },
             {
-                "id": 4226,
+                "id": 4228,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2308,
+                "from_id": 2309,
                 "from_phrase": {
-                    "id": 2308,
+                    "id": 2309,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -29950,7 +29950,7 @@
                 "class": "triple"
             },
             {
-                "id": 2308,
+                "id": 2309,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30038,7 +30038,7 @@
                 "class": "triple"
             },
             {
-                "id": 2862,
+                "id": 2864,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1180,
                 "from_phrase": {
@@ -30062,9 +30062,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2820,
+                "to_id": -2822,
                 "to_phrase": {
-                    "id": 2820,
+                    "id": 2822,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -30742,7 +30742,7 @@
                 "class": "word"
             },
             {
-                "id": 2820,
+                "id": 2822,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -31316,11 +31316,11 @@
                 "class": "triple"
             },
             {
-                "id": 2770,
+                "id": 2772,
                 "name": "g\/kWh is symbol for gram per kWh",
-                "from_id": 2119,
+                "from_id": 2120,
                 "from_phrase": {
-                    "id": 2119,
+                    "id": 2120,
                     "name": "g\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -31803,7 +31803,7 @@
                 "class": "triple"
             },
             {
-                "id": 2119,
+                "id": 2120,
                 "name": "g\/kWh",
                 "type_id": 1,
                 "class": "word"
@@ -31985,11 +31985,11 @@
                 "class": "triple"
             },
             {
-                "id": 2822,
+                "id": 2824,
                 "name": "kg\/kWh is symbol for kg per kWh",
-                "from_id": 2120,
+                "from_id": 2121,
                 "from_phrase": {
-                    "id": 2120,
+                    "id": 2121,
                     "name": "kg\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32009,9 +32009,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2735,
+                "to_id": -2737,
                 "to_phrase": {
-                    "id": 2735,
+                    "id": 2737,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -32287,11 +32287,11 @@
                 "class": "triple"
             },
             {
-                "id": 2818,
+                "id": 2820,
                 "name": "kWh\/a is symbol for kilowatthours per year",
-                "from_id": 2117,
+                "from_id": 2118,
                 "from_phrase": {
-                    "id": 2117,
+                    "id": 2118,
                     "name": "kWh\/a",
                     "description": null,
                     "type_id": 1,
@@ -32311,9 +32311,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2766,
+                "to_id": -2768,
                 "to_phrase": {
-                    "id": 2766,
+                    "id": 2768,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -32324,11 +32324,11 @@
                 "class": "triple"
             },
             {
-                "id": 2819,
+                "id": 2821,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
-                "from_id": 2118,
+                "from_id": 2119,
                 "from_phrase": {
-                    "id": 2118,
+                    "id": 2119,
                     "name": "kWh\/kWp\u00b7a",
                     "description": null,
                     "type_id": 1,
@@ -32348,9 +32348,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2767,
+                "to_id": -2769,
                 "to_phrase": {
-                    "id": 2767,
+                    "id": 2769,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -32673,13 +32673,13 @@
                 "class": "word"
             },
             {
-                "id": 2120,
+                "id": 2121,
                 "name": "kg\/kWh",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2735,
+                "id": 2737,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -32758,26 +32758,26 @@
                 "class": "word"
             },
             {
-                "id": 2117,
+                "id": 2118,
                 "name": "kWh\/a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2766,
+                "id": 2768,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
                 "class": "triple"
             },
             {
-                "id": 2118,
+                "id": 2119,
                 "name": "kWh\/kWp\u00b7a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2767,
+                "id": 2769,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33855,7 +33855,7 @@
                 "class": "triple"
             },
             {
-                "id": 2821,
+                "id": 2823,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -33879,9 +33879,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2769,
+                "to_id": -2771,
                 "to_phrase": {
-                    "id": 2769,
+                    "id": 2771,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34581,7 +34581,7 @@
                 "class": "word"
             },
             {
-                "id": 2769,
+                "id": 2771,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,

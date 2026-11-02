@@ -222,6 +222,32 @@ class calculator
     }
 
     /**
+     * @return array the names of the own columns of the table of the page phrase in their order, empty if the table uses the columns of all tables
+     */
+    function table_columns(): array
+    {
+        return array_map(fn(phrase $item) => $this->item_phrase($item)?->name() ?? '', $this->table_items(triples::TABLE_COLUMN));
+    }
+
+    /**
+     * @return phrase[] the order triples of the own sorting of the table of the page phrase in their order e.g. numeric descending of reward ratio
+     */
+    function table_sorts(): array
+    {
+        return array_filter(array_map(fn(phrase $item) => $this->item_phrase($item), $this->table_items(triples::TABLE_SORT)));
+    }
+
+    /**
+     * @param string $keyword the keyword of the table definition e.g. triples::TABLE_COLUMN
+     * @return phrase[] the items of the page phrase itself, because a table definition is not taken over from the phrase it is built from
+     */
+    private function table_items(string $keyword): array
+    {
+        $grp = $this->property($this->phr, $keyword);
+        return $grp == null ? [] : $this->sub_items($grp, verbs::HAS_ID);
+    }
+
+    /**
      * the group triple of a list: the triple from the page phrase to the list keyword, else the
      * one of the phrase that the page phrase is built from, so that every installation that is
      * built from PV installation gets the page without own triples

@@ -2242,6 +2242,20 @@ enum messages: string
     case CALCULATOR_REPORT_READY = 'calculator_report_ready';
     case CALCULATOR_REPORT_FAILED = 'calculator_report_failed';
     case CALCULATOR_REPORT_NONE = 'calculator_report_none';
+    // the texts of the table editor script, which gets all messages with this prefix (see system_page::table_editor_seed)
+    case TABLE_EDITOR_COLUMNS = 'table_editor_columns';
+    case TABLE_EDITOR_COLUMNS_HINT = 'table_editor_columns_hint';
+    case TABLE_EDITOR_SORTING = 'table_editor_sorting';
+    case TABLE_EDITOR_SORTING_HINT = 'table_editor_sorting_hint';
+    case TABLE_EDITOR_ADD = 'table_editor_add';
+    case TABLE_EDITOR_UP = 'table_editor_up';
+    case TABLE_EDITOR_DOWN = 'table_editor_down';
+    case TABLE_EDITOR_REMOVE = 'table_editor_remove';
+    case TABLE_EDITOR_PREVIEW = 'table_editor_preview';
+    case TABLE_EDITOR_SHOW_TABLE = 'table_editor_show_table';
+    case TABLE_EDITOR_NO_JS = 'table_editor_no_js';
+    case TABLE_EDITOR_REFUSED = 'table_editor_refused';
+    case TABLE_EDITOR_UNREACHABLE = 'table_editor_unreachable';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page

@@ -96,5 +96,7 @@ class files
     const string FORMULA_EDITOR_SCRIPT = self::SCRIPT_PATH . 'formula_editor' . self::JS;
     const string FORMULA_EDITOR_STYLE = self::STYLE_PATH . 'formula_editor' . self::CSS;
     const string CALCULATOR_EDITOR_STYLE = self::STYLE_PATH . 'calculator_editor' . self::CSS;
+    const string TABLE_EDITOR_SCRIPT = self::SCRIPT_PATH . 'table_editor' . self::JS;
+    const string TABLE_EDITOR_STYLE = self::STYLE_PATH . 'table_editor' . self::CSS;
 
 }

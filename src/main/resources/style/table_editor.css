@@ -1,0 +1,52 @@
+/* the table editor (script/table_editor.js, system_page::table_editor); it reuses the buttons and the
+   form fields of the page, so only its layout is defined here */
+.table-editor {
+    text-align: left;
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .toolbar h4 {
+        margin: 0 auto 0 0;
+    }
+
+    .lists {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+    }
+
+    .entry,
+    .add {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+
+    .entry .name {
+        flex: 1 1 auto;
+    }
+
+    .hint {
+        font-size: .85em;
+        color: var(--page-grey);
+    }
+
+    .notice {
+        color: var(--page-negative);
+        margin-bottom: 12px;
+    }
+
+    iframe {
+        display: block;
+        width: 100%;
+        height: 60vh;
+        border: 1px solid var(--page-border);
+    }
+}

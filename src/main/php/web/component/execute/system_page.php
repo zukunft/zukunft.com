@@ -164,6 +164,19 @@ class system_page extends component
         msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
         msg_id::CALCULATOR_SAVE,
     ];
+    // the html ids and the keys of the seed that the table editor script reads (script/table_editor.js)
+    const string TABLE_EDITOR_HOST_ID = 'tableEditor';
+    const string TABLE_EDITOR_SEED_ID = 'tableEditorSeed';
+    const string TABLE_EDITOR_SEED_DOC = 'doc';
+    const string TABLE_EDITOR_SEED_COLUMNS = 'columns';
+    const string TABLE_EDITOR_SEED_CONDITIONS = 'conditions';
+    const string TABLE_EDITOR_SEED_NAMES = 'names';
+    const string TABLE_EDITOR_SEED_URLS = 'urls';
+    const string TABLE_EDITOR_SEED_TITLE = 'title';
+    const string TABLE_EDITOR_SEED_TEXTS = 'texts';
+    const string TABLE_EDITOR_PUT_ROUTE = 'updatePut';
+    // the table editor script gets all messages with this prefix
+    const string TABLE_EDITOR_TEXT_PREFIX = 'table_editor_';
     // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
     const string CALC_PAGE_HOST_ID = 'calcPage';
     const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
@@ -1430,6 +1443,71 @@ class system_page extends component
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;
+    }
+
+    /**
+     * the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script builds
+     * the editor from the seed, so that the editor starts without an api call of the browser
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed, so that the page of the server is shown
+     */
+    function table_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $cfg != null and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $result = $html->link_style(files::TABLE_EDITOR_STYLE)
+                . $html->div('', styles::TABLE_EDITOR, self::TABLE_EDITOR_HOST_ID)
+                . $html->form_session_token()
+                . $html->script_data(self::TABLE_EDITOR_SEED_ID, $this->table_editor_seed($dbo, $msg, $cfg))
+                . $html->script_src(files::TABLE_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object $cfg the request cache, which says if the phrase data may be read from the api
+     * @return array the phraseData answer with the saved definition, the columns to select, the names and urls
+     *               that the script needs and the translated texts
+     */
+    private function table_editor_seed(word|triple $dbo, user_message $msg, data_object $cfg): array
+    {
+        $html = new html_base();
+        $table_url = [url_var::MASK => views::TABLE_ID, url_var::ID => $dbo->phrase()->id()];
+        $editor_url = $html->page_url([url_var::MASK => views::TABLE_EDITOR_ID, url_var::ID => $dbo->phrase()->id()]);
+        // added afterwards, because page_url keeps only the vars that identify the page
+        $no_js_url = html_base::url_set_par($editor_url, url_var::JAVASCRIPT, url_var::FALSE);
+        return [
+            self::TABLE_EDITOR_SEED_DOC => $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg),
+            self::TABLE_EDITOR_SEED_COLUMNS => new ui_list()->table_column_candidates($dbo, $msg, $cfg),
+            self::TABLE_EDITOR_SEED_CONDITIONS => triples::TABLE_SORT_CONDITIONS,
+            self::TABLE_EDITOR_SEED_NAMES => [
+                'phrase' => $dbo->name(),
+                'column' => triples::TABLE_COLUMN,
+                'sort' => triples::TABLE_SORT,
+                'has' => verbs::HAS_NAME,
+                'follow' => verbs::FOLLOW_NAME,
+                'of' => verbs::OF_NAME,
+            ],
+            self::TABLE_EDITOR_SEED_URLS => [
+                'put' => $html->url_api(self::TABLE_EDITOR_PUT_ROUTE),
+                'table' => $html->url_with_user($html->page_url($table_url)),
+                'no_js' => $html->url_with_user($no_js_url),
+            ],
+            self::TABLE_EDITOR_SEED_TITLE => $this->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR, $dbo),
+            self::TABLE_EDITOR_SEED_TEXTS => $this->message_texts([
+                msg_id::CALCULATOR_SAVE, ...$this->message_ids_by_prefix(self::TABLE_EDITOR_TEXT_PREFIX)]),
+        ];
     }
 
     /**
