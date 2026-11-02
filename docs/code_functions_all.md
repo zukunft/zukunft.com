@@ -6538,10 +6538,6 @@
     \-- tag - section for function tag not yet defined that it should be lists in /component/execute/calculator.php
     \-- arguments - section for function arguments not yet defined that it should be lists in /component/execute/calcula
             tor.php
-    \-- own_keyword_text - section for function own_keyword_text not yet defined that it should be lists in /component/e
-            xecute/calculator.php
-    \-- keyword_item - section for function keyword_item not yet defined that it should be lists in /component/execute/c
-            alculator.php
     \-- cell_phrase - section for function cell_phrase not yet defined that it should be lists in /component/execute/cal
             culator.php
     \-- is_difference - section for function is_difference is expected to be info in /component/execute/calculator.php
@@ -6605,6 +6601,10 @@
             culator.php
     \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+    \-- own_text - section for function own_text not yet defined that it should be internal in /component/execute/calcul
+            ator.php
+    \-- property - section for function property not yet defined that it should be internal in /component/execute/calcul
+            ator.php
 \-- calculator_report
     \-- pdf - section for function pdf missing in /component/execute/calculator_report.php
     \-- add_html - section for function add_html missing in /component/execute/calculator_report.php
@@ -7021,7 +7021,6 @@
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
-    \-- calculator_presets - section for function calculator_presets missing in /component/execute/ui_list.php
     \-- calculator_text - section for function calculator_text missing in /component/execute/ui_list.php
     \-- calculator_arguments - section for function calculator_arguments missing in /component/execute/ui_list.php
     \-- calculator_verdict - section for function calculator_verdict missing in /component/execute/ui_list.php
@@ -7040,6 +7039,7 @@
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_table_unit - section for function calculation_table_unit missing in /component/execute/ui_list.php
     \-- result_width - section for function result_width missing in /component/execute/ui_list.php
+    \-- calculator_difference - section for function calculator_difference missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
             hp
@@ -7271,6 +7271,8 @@
             hp
     \-- report_end_html - section for function report_end_html not yet defined that it should be view in /frontend.php
     \-- report_watch - section for function report_watch not yet defined that it should be view in /frontend.php
+    \-- report_release_session - section for function report_release_session not yet defined that it should be view in /
+            frontend.php
     \-- loading_start - section for function loading_start not yet defined that it should be view in /frontend.php
     \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in 
             /frontend.php
@@ -7756,6 +7758,7 @@
             _base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- div_at - section for function div_at not yet defined that it should be internal in /html/html_base.php
     \-- block - section for function block not yet defined that it should be internal in /html/html_base.php
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
     \-- concat_entry_text - section for function concat_entry_text not yet defined that it should be internal in /html/h
@@ -9840,8 +9843,6 @@
         \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
-    \-- calculator_presets
-        \-- ui_list - the buttons that set several inputs at once, which the script of the page gives their function
     \-- calculator_text
         \-- ui_list - a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
     \-- calculator_arguments
@@ -9881,6 +9882,8 @@
                  row and column the number of the cell or null (calculation_table_values)
     \-- result_width
         \-- ui_list - @param phrase $phr the phrase of the calculator page
+    \-- calculator_difference
+        \-- ui_list - @param sandbox_value|null $first the number of the first column
     \-- calculation_row_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_side_context
@@ -10164,10 +10167,6 @@
     \-- arguments
         \-- calculator - @param bool $pro true for the items whose triple supports the claim,
                  false for those that limit it
-    \-- own_keyword_text
-        \-- calculator - @param phrase|null $phr a phrase with a text e.g. the verdict
-    \-- keyword_item
-        \-- calculator - @param phrase|null $phr a phrase e.g. the verdict
     \-- cell_phrase
         \-- calculator - @param phrase $row a row of the result table
     \-- is_difference
@@ -10176,8 +10175,7 @@
         \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
                 order of the page
     \-- group
-        \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
-                order of the page
+        \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
     \-- items
         \-- calculator - @param string $list the name of the list keyword e.g. triples::CALCULATOR_INPUT
     \-- sub_items
@@ -10241,6 +10239,59 @@
         \-- calculator - the phrase whose numbers a row shows: the option that the page phrase uses if the phrase
     \-- phrases
         \-- calculator - the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
+\-- internal
+    \-- own_text
+        \-- calculator - @param phrase|null $phr the phrase or the item e.g. battery discharge
+    \-- property
+        \-- calculator - @param phrase|null $phr the phrase or the item e.g. PV installation
+    \-- main
+        \-- html_base - wrap the main tag around html body code
+    \-- div
+        \-- html_base - wrap the div tag around html code
+    \-- div_at
+        \-- html_base - @param string $style the html class name of an absolute positioned block e.g. a needle
+    \-- block
+        \-- html_base - wrap a block tag e.g. the header, aside or section of a use case page around html code
+    \-- concat_text
+        \-- html_base - concatenate two text snippets with the given separator if both are set
+    \-- concat_entry_text
+        \-- html_base - concatenate two text snippets with the configured list entry separator e.g. ", "
+    \-- concat_category_text
+        \-- html_base - concatenate two text snippets with the configured list category separator e.g. " / "
+    \-- concat_title_text
+        \-- html_base - concatenate two text snippets with the configured page-title separator e.g. " - "
+    \-- nav
+        \-- html_base - wrap the nav tag around html code
+    \-- div_bs
+        \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
+    \-- button_icon
+        \-- html_base - @param string $icon the html code of the icon
+    \-- button
+        \-- html_base - wrap the button tag around html code
+    \-- button_bs
+        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
+    \-- list_item
+        \-- html_base - html list item entry
+    \-- details
+        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- definition
+        \-- html_base - one row of a description list, e.g. a setting and its value
+    \-- mark
+        \-- html_base - @param string $txt the already escaped text that matches a search
+    \-- search_input
+        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
+    \-- popover
+        \-- html_base - a button that shows a long text above the page without javascript (html popover)
+    \-- list_unsorted
+        \-- html_base - html unsorted list
+    \-- script_data
+        \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
+    \-- script_src
+        \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+    \-- link_style
+        \-- html_base - @param string $stylesheet path to the stylesheet file
+    \-- text_width
+        \-- pdf_writer - @param string $text the text in utf-8
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -10747,6 +10798,8 @@
                  or the failure
     \-- report_watch
         \-- frontend - give the report more time than a page and tell the user if it fails anyway, because a fatal
+    \-- report_release_session
+        \-- frontend - end the lock of the session, which keeps its values readable; the settings allow to open it
     \-- loading_start
         \-- frontend - the html start of the page with the logo, the loading text and the footer
 \-- cached page
@@ -11133,53 +11186,6 @@
         \-- html_base - display a message immediately to the user
     \-- ui_progress
         \-- html_base - 
-\-- internal
-    \-- main
-        \-- html_base - wrap the main tag around html body code
-    \-- div
-        \-- html_base - wrap the div tag around html code
-    \-- block
-        \-- html_base - wrap a block tag e.g. the header, aside or section of a use case page around html code
-    \-- concat_text
-        \-- html_base - concatenate two text snippets with the given separator if both are set
-    \-- concat_entry_text
-        \-- html_base - concatenate two text snippets with the configured list entry separator e.g. ", "
-    \-- concat_category_text
-        \-- html_base - concatenate two text snippets with the configured list category separator e.g. " / "
-    \-- concat_title_text
-        \-- html_base - concatenate two text snippets with the configured page-title separator e.g. " - "
-    \-- nav
-        \-- html_base - wrap the nav tag around html code
-    \-- div_bs
-        \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
-    \-- button_icon
-        \-- html_base - @param string $icon the html code of the icon
-    \-- button
-        \-- html_base - wrap the button tag around html code
-    \-- button_bs
-        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
-    \-- list_item
-        \-- html_base - html list item entry
-    \-- details
-        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
-    \-- definition
-        \-- html_base - one row of a description list, e.g. a setting and its value
-    \-- mark
-        \-- html_base - @param string $txt the already escaped text that matches a search
-    \-- search_input
-        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
-    \-- popover
-        \-- html_base - a button that shows a long text above the page without javascript (html popover)
-    \-- list_unsorted
-        \-- html_base - html unsorted list
-    \-- script_data
-        \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
-    \-- script_src
-        \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
-    \-- link_style
-        \-- html_base - @param string $stylesheet path to the stylesheet file
-    \-- text_width
-        \-- pdf_writer - @param string $text the text in utf-8
 \-- add
     \-- image
         \-- pdf_writer - add a jpeg image at the current position, of which a pdf can use the data as it is

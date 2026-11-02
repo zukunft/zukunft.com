@@ -349,6 +349,25 @@ class triple_names
     const string CALC_BUTTON_COM = 'Download the inhabitants';
     // the keyword and the flag of the field of the case name
     const int CALC_CASE_FIRST_ID = 1970;
+    // the keywords and the triples of the test of a page for a decision, which follow the field of the case name
+    const int CALC_DECISION_FIRST_ID = 1968;
+    const string CALC_MORE_COM = 'Why the city grows';
+    const string CALC_ARGUMENTS_LABEL = 'For | Against';
+    const string CALC_PRO_FIRST = 'Bern supports Zurich';
+    const string CALC_PRO_FIRST_COM = 'More jobs';
+    const string CALC_PRO_SECOND = 'Geneva supports Zurich';
+    const string CALC_PRO_SECOND_COM = 'More trade';
+    const string CALC_CONTRA = 'Bern limits Zurich';
+    const string CALC_CONTRA_COM = 'Less space';
+    const string CALC_PRESET_LABEL = 'Last census';
+    const string CALC_VERDICT_YES = 'Clear yes';
+    const string CALC_VERDICT_NOTE = 'A rough estimate';
+    const string CALC_VERDICT_SCALE = 'Zurich verdict scale';
+    const string CALC_SCALE_COM = 'yes | no';
+    const string CALC_SENSITIVITY_LABEL = 'What if';
+    const string CALC_LEVEL_ROW_LABEL = 'Few people';
+    const string CALC_LEVEL_COLUMN_LABEL = 'Late year';
+    const string CALC_CASE_PAGE = 'Zurich of Bern';
     // the triples of the test with two instances of a repeated field and the imports, which follow the button
     const int CALC_INSTANCES_FIRST_ID = 902;
     const string CALC_SHORT_LABEL = 'Short canton';

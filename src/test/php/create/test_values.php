@@ -1769,6 +1769,29 @@ class test_values extends test_objects
     }
 
     /**
+     * @param float $num the number of the verdict, below minus 10 for the first state, above 10 for the second and else the third
+     * @return value_list_ui the number and the threshold of the verdict and the ends of its meter from -100 to 100 (test_triples::calculator_zh_decision)
+     */
+    function value_list_calculator_verdict_ui(float $num): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $page = $t_trp->zh_city()->phrase();
+        $trp_by_name = [];
+        foreach ($t_trp->calculator_zh_decision() as $trp) {
+            $trp_by_name[$trp->name()] = $trp;
+        }
+        $scale = $trp_by_name[triple_names::CALC_VERDICT_SCALE]->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$page, $t_wrd->word_inhabitant()->phrase()], $num));
+        $lst->add($this->value_for_phrases([$page, $t_wrd->word_2019()->phrase()], 10));
+        $lst->add($this->value_for_phrases([$scale, $t_trp->field_limit_down()->phrase()], -100));
+        $lst->add($this->value_for_phrases([$scale, $trp_by_name[triples::FIELD_LIMIT_UP]->phrase()], 100));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the number of the option 2020 of the phrase selector canton (test_triples::calculator_zh_input)
      */
     function value_list_calculator_option_ui(): value_list_ui

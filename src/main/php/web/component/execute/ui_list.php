@@ -2697,9 +2697,6 @@ class ui_list extends ui_base
             $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
             $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
             $this->field_shown($this->field_property($phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
-        if ($calc->has_flag($item, triples::CALCULATOR_SLIDER)) {
-            $input = $this->calculator_slider($calc, $item, $phr, $name, $num, $val, $dto, $msg) . $input;
-        }
         $unit = $val == null ? '' : $this->field_unit($val, $msg);
         if ($val != null) {
             $input .= $this->calculator_save_vars((string)$field_phr->id(), $val, $label, $unit, $form_name);
@@ -2716,67 +2713,8 @@ class ui_list extends ui_base
     }
 
     /**
-     * the range slider of a number field; it has no name, so that only the number field is sent,
-     * and the script of the page keeps the two in line
-     *
-     * @param calculator $calc the calculator reader of the page
-     * @param phrase $item the item of the field
-     * @param phrase $phr the phrase of the field
-     * @param string $name the name of the number field
-     * @param float|null $num the shown number
-     * @param sandbox_value|null $val the value of the field
-     * @param data_object $dto the request cache with the field values
-     * @param user_message $msg to report a problem of the phrase types
-     * @return string the html code of the slider
-     */
-    private function calculator_slider(
-        calculator     $calc,
-        phrase         $item,
-        phrase         $phr,
-        string         $name,
-        ?float         $num,
-        ?sandbox_value $val,
-        data_object    $dto,
-        user_message   $msg
-    ): string
-    {
-        $html = new html_base();
-        $slider = $calc->keyword_item($item, triples::CALCULATOR_SLIDER);
-        $step = $slider == null ? null : $this->field_property($slider, triples::FIELD_STEP, $dto);
-        $step = $step ?? $this->field_property($phr, triples::FIELD_STEP, $dto);
-        $attr = '';
-        foreach ([
-                     html_base::VALUE => $num,
-                     'min' => $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
-                     'max' => $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
-                     'step' => $this->field_shown($step, $val, $msg)
-                 ] as $key => $number) {
-            $attr .= $number === null ? '' : ' ' . $key . '="' . $html->number_value($number) . '"';
-        }
-        return '<input type="range" id="r' . $html->esc($name) . '" data-field="' . $html->esc($name) . '"' . $attr . '>';
-    }
-
-    /**
-     * the buttons that set several inputs at once, which the script of the page gives their function
-     *
-     * @param calculator $calc the calculator reader of the page
-     * @return string the html code of the buttons or an empty string if the page has no preset
-     */
-    function calculator_presets(calculator $calc): string
-    {
-        $html = new html_base();
-        $buttons = '';
-        foreach ($calc->items(triples::CALCULATOR_PRESET) as $item) {
-            $buttons .= '<button type="button" class="' . styles::CALC_BUTTON_ADD_FULL . '" data-preset="'
-                . $html->esc($calc->item_phrase($item)?->name() ?? '') . '" title="' . $html->esc($calc->hint($item)) . '">'
-                . $html->esc($calc->label($item)) . '</button>';
-        }
-        return $buttons == '' ? '' : $html->div($buttons, styles::CALC_PRESETS);
-    }
-
-    /**
      * a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
-     * of the source and {result:phrase:decimals} as the number of the phrase for the page
+     * of the source and {result:phrase:decimals} as the number of the phrase for the page, without decimals if they are not named
      *
      * @param string $text the text e.g. the description of an argument
      * @param word|triple $dbo the phrase of the page
@@ -2800,8 +2738,10 @@ class ui_list extends ui_base
                 $result = $pos === false ? '' : $html->span('[' . ($pos + 1) . ']', styles::CALC_REF);
             } else {
                 $sep = strrpos($arg, ':');
-                $val = $this->calculator_hint_value(substr($arg, 0, $sep), $dbo, $dto, $lst, $msg);
-                $result = $val == null ? '' : $this->calculator_fixed_number((float)$val->number(), (int)substr($arg, $sep + 1));
+                $name = $sep === false ? $arg : substr($arg, 0, $sep);
+                $decimals = $sep === false ? 0 : (int)substr($arg, $sep + 1);
+                $val = $this->calculator_hint_value($name, $dbo, $dto, $lst, $msg);
+                $result = $val == null ? '' : $this->calculator_fixed_number((float)$val->number(), $decimals);
             }
             return $result;
         }, $html->esc($text));
@@ -2841,10 +2781,10 @@ class ui_list extends ui_base
         $heads = explode('|', $calc->own_label($calc->group(triples::CALCULATOR_ARGUMENT)));
         $sides = '';
         foreach ([true, false] as $pos => $pro) {
-            $items = '';
+            $items = [];
             foreach ($calc->arguments($pro) as $item) {
-                $items .= '<li>' . $html->bold($html->esc($calc->label($item))) . ' '
-                    . $this->calculator_text($calc->item_phrase($item)?->get_description() ?? '', $dbo, $dto, $dto->val_lst, $src_ids, $msg) . '</li>';
+                $items[] = $html->block(html_base::LI, $html->bold($html->esc($calc->label($item))) . ' '
+                    . $this->calculator_text($calc->item_phrase($item)?->get_description() ?? '', $dbo, $dto, $dto->val_lst, $src_ids, $msg));
             }
             $sides .= $this->calculator_argument_side(trim($heads[$pos] ?? ''), $items, $pro, $more);
         }
@@ -2853,20 +2793,18 @@ class ui_list extends ui_base
 
     /**
      * @param string $head the heading of the side
-     * @param string $items the html code of the list items of the side
+     * @param string[] $items the html code of each list item of the side
      * @param bool $pro true for the arguments in favour
      * @param string $more the summary of the collapsed arguments
      * @return string the side with its first argument and the others collapsed
      */
-    private function calculator_argument_side(string $head, string $items, bool $pro, string $more): string
+    private function calculator_argument_side(string $head, array $items, bool $pro, string $more): string
     {
         $html = new html_base();
-        $end = strpos($items, '</li>');
-        $first = $end === false ? $items : substr($items, 0, $end + 5);
-        $others = $end === false ? '' : substr($items, $end + 5);
-        $list = fn(string $li) => $html->block(html_base::UL, $li, styles::CALC_ARGUMENT_LIST);
-        $body = $html->block(html_base::H2, $html->esc($head)) . $list($first);
-        if ($others != '') {
+        $list = fn(array $lis) => $html->block(html_base::UL, implode('', $lis), styles::CALC_ARGUMENT_LIST);
+        $others = array_slice($items, 1);
+        $body = $html->block(html_base::H2, $html->esc($head)) . $list(array_slice($items, 0, 1));
+        if ($others != []) {
             $body .= $html->details($html->esc($more), $list($others));
         }
         return $html->block(html_base::SECTION, $body, styles::CALC_PANEL . ' ' . ($pro ? styles::CALC_PRO : styles::CALC_CONTRA));
@@ -2898,7 +2836,7 @@ class ui_list extends ui_base
             $idx = $num < -$thr ? 0 : ($num > $thr ? 1 : 2);
             $src_ids = $this->calculator_source_ids($calc, $dbo, $dto, $msg);
             $state = $states[$idx];
-            $scale = $calc->keyword_item($grp, triples::CALCULATOR_SCALE);
+            $scale = $calc->property($grp, triples::CALCULATOR_SCALE);
             $down = $scale == null ? null : $this->field_property($scale, triples::FIELD_LIMIT_DOWN, $dto);
             $up = $scale == null ? null : $this->field_property($scale, triples::FIELD_LIMIT_UP, $dto);
             $body = $html->p($html->span($html->esc($calc->label($state)), styles::CALC_HEADLINE))
@@ -2909,11 +2847,10 @@ class ui_list extends ui_base
                 foreach (explode('|', $scale->get_description()) as $part) {
                     $parts .= $html->span($html->esc(trim($part)));
                 }
-                $body .= '<div class="' . styles::CALC_METER . '"><div class="' . styles::CALC_NEEDLE . '" style="left: '
-                    . round($left, 1) . '%"></div></div>' . $html->div($parts, styles::CALC_SCALE);
+                $body .= $html->div($html->div_at(styles::CALC_NEEDLE, round($left, 1)), styles::CALC_METER) . $html->div($parts, styles::CALC_SCALE);
             }
-            $note = $calc->own_keyword_text($grp, triples::CALCULATOR_NOTE);
-            if ($note != '') {
+            $note = $calc->own_text($grp, triples::CALCULATOR_NOTE);
+            if ($note != null) {
                 $body .= $html->p($html->span($html->esc($note), styles::CALC_SUB));
             }
             $result = $html->div($body, styles::CALC_VERDICT . ' ' . self::CALC_VERDICT_STATES[$idx]);
@@ -3754,7 +3691,7 @@ class ui_list extends ui_base
                     $decimals = $this->row_decimals($calc->item_phrase($row), $dto->val_lst);
                     $cells = '';
                     foreach (array_keys($cols) as $c) {
-                        $col_plus = ($cols[$c][6] ?? false);
+                        $col_plus = ($cols[$c][calculator::COLUMN_PLUS] ?? false);
                         $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed and !$col_plus, $with_unit, $msg, $decimals, $plus or $col_plus);
                     }
                     $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
@@ -3928,7 +3865,7 @@ class ui_list extends ui_base
      * @param sandbox_value|null $second the number of the second column
      * @return sandbox_value|null the first minus the second number or null if one of them is missing
      */
-    private function calculator_difference(?sandbox_value $first, ?sandbox_value $second): ?sandbox_value
+    function calculator_difference(?sandbox_value $first, ?sandbox_value $second): ?sandbox_value
     {
         $result = null;
         if ($first != null and $second != null and !$first->is_null() and !$second->is_null()) {
@@ -4377,6 +4314,7 @@ class ui_list extends ui_base
      * the notes of a calculator: per item of the list the label in bold in front of the description
      *
      * @param calculator $calc the calculator reader of the page
+     * @param bool $plain true for only the notes without a label, which are shown with the formula descriptions, false for the collapsed section of the notes with a label
      * @return string the html code of the section with the notes or an empty string if the page has none
      */
     function calculator_notes(calculator $calc, bool $plain = false): string
@@ -4388,10 +4326,11 @@ class ui_list extends ui_base
         }
         $result = '';
         $summary = $calc->own_label($calc->group(triples::CALCULATOR_NOTE));
-        if ($notes != '') {
+        if ($notes != '' and $summary == '' and $plain) {
             // without a label the notes are shown with the descriptions of the formulas
-            $result = $summary == '' && $plain ? $notes
-                : ($summary == '' || $plain ? '' : $html->details($html->esc($summary), $html->div($notes, styles::CALC_NOTES)));
+            $result = $notes;
+        } elseif ($notes != '' and $summary != '' and !$plain) {
+            $result = $html->details($html->esc($summary), $html->div($notes, styles::CALC_NOTES));
         }
         return $result;
     }
@@ -5083,20 +5022,22 @@ class ui_list extends ui_base
         $ctx = $this->calculation_side_context($calc, $dbo, $row);
         if (preg_match(self::CALC_TEXT_PATTERN, $calc->hint($row))) {
             $text = $this->calculator_text($calc->hint($row), $dbo, $dto, $lst, $this->calculator_source_ids($calc, $dbo, $dto, $msg), $msg);
-            return $html->span($text, styles::CALC_SUB);
-        }
-        $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
-        if ($sub == '') {
-            $parts = [];
-            foreach ($calc->side_results($row) as $side) {
-                $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
-                if ($val != null and !$val->is_null()) {
-                    $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
+            $result = $html->span($text, styles::CALC_SUB);
+        } else {
+            $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
+            if ($sub == '') {
+                $parts = [];
+                foreach ($calc->side_results($row) as $side) {
+                    $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
+                    if ($val != null and !$val->is_null()) {
+                        $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
+                    }
                 }
+                $sub = implode(', ', $parts);
             }
-            $sub = implode(', ', $parts);
+            $result = $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
         }
-        return $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
+        return $result;
     }
 
     /**

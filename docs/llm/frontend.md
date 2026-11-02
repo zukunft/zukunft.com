@@ -436,7 +436,9 @@ the seconds so far (`calculator_report::pdf`, `frontend::report_step`, the css o
 refreshes to `url_var::REPORT_FILE`, which sends it once as a download
 (`frontend::report_end_html`). The request has its own time limit
 (`calculator_report::MAX_TIME_SEC`) and a fatal error shows the last step to the
-user instead of a blank answer (`frontend::report_watch`).
+user instead of a blank answer (`frontend::report_watch`). The session is not locked
+while the report is created (`frontend::report_release_session`), so that the other
+pages of the user do not wait, and any other request removes a report that was not fetched.
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 

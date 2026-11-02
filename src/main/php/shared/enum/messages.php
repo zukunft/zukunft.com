@@ -2241,6 +2241,7 @@ enum messages: string
     case CALCULATOR_REPORT_STEP_FILE = 'calculator_report_step_file';
     case CALCULATOR_REPORT_READY = 'calculator_report_ready';
     case CALCULATOR_REPORT_FAILED = 'calculator_report_failed';
+    case CALCULATOR_REPORT_NONE = 'calculator_report_none';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page

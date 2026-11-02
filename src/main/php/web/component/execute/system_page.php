@@ -1281,11 +1281,13 @@ class system_page extends component
      * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load of the arguments
      * @param data_object|null $cfg the request cache with the calculator triples of the page
      * @return string the html code of the title or an empty string if the page has no phrase
      */
     function calculator_title(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
         ?data_object                                          $cfg
     ): string
     {
@@ -1300,7 +1302,7 @@ class system_page extends component
                 $result .= $html->p($html->esc($calc->lead()));
             }
             if ($cfg != null) {
-                $result .= new ui_list()->calculator_arguments($calc, $dbo, $cfg, new user_message());
+                $result .= new ui_list()->calculator_arguments($calc, $dbo, $cfg, $msg);
             }
         }
         return $result;
@@ -1341,7 +1343,6 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_INPUT))
                     ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
-                    . $list->calculator_presets($calc)
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
                     . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
                     . $list->calculator_case_field($calc)

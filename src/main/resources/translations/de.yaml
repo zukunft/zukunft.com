@@ -384,6 +384,7 @@ messages:
   calculator_report_step_file: "PDF-Datei wird geschrieben"
   calculator_report_ready: "Der Bericht wurde erstellt und wird heruntergeladen"
   calculator_report_failed: "Der Bericht konnte nicht erstellt werden. Der Administrator wurde informiert. Letzter Schritt:"
+  calculator_report_none: "Für diese Seite gibt es keine Berichtsdatei."
   calculator_remove: "Entfernen:"
   calculator_check_value: "Wert"
   calculator_check_expected: "Erwartet"

@@ -135,8 +135,8 @@ repeated input.
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
 | repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
-| slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider |
-| preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency` |
+| slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider; without javascript only the number field is shown |
+| preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency`; without javascript the buttons are not shown |
 | tag | `house heating input heated area` · `has a` · `calculator tag` | the description replaces the generated measured or assumed tag, e.g. `measured 50-500` |
 
 A repeated input:
@@ -167,7 +167,7 @@ A repeated input:
 | colour | `house heating column heat pump` · `has a` · `calculator colour` | a flagged single column gets the first colour of the page palette and the instances of a repeated column the others cycling, in the header and in the cells of a detail table |
 | difference column | `house heating column difference` · `has a` · `calculator difference` | the result column shows the first column minus the second column of its row; the cell stays empty if one of them has no number |
 | cell | `house heating row annual heat demand` · `has a` · `calculator cell` | a list: an item with a `with` triple to a column phrase shows the number of the page phrase and the item phrase in this column of the row, e.g. the cost of the alternative in the column without the plant; the first column shows the number of the row phrase also without the column phrase if no number has both |
-| sensitivity | `house heating` · `has a` · `calculator sensitivity` | a collapsed table that the browser calculates per cell: its first `has a` item names the input of the rows, the second the input of the columns; their `has a` items are the levels with a label, and the value of the table phrase and the level replaces the input; the items of its `calculator cell` list are the numbers of a cell, and the verdict colours the cell; without javascript the cells are empty |
+| sensitivity | `house heating` · `has a` · `calculator sensitivity` | a collapsed table that the browser calculates per cell while it is open: its first `has a` item names the input of the rows, the second the input of the columns; their `has a` items are the levels with a label, and the value of the table phrase and the level replaces the input; the items of its `calculator cell` list are the numbers of a cell, and the verdict colours the cell; without javascript the cells are empty |
 
 Two proposed rules for the detail tables need no keyword:
 
@@ -211,7 +211,7 @@ The description of a text triple or an argument can contain:
 |---|---|---|
 | `{num:text}` | the text in the style of a number | `{num:820 CHF}` |
 | `{source:name}` | the `[n]` link to the source in the source list | `{source:sample fuel price statistic}` |
-| `{result:phrase:decimals}` | the live number of the phrase for the page phrase, formatted with these decimals; also a sub text of a row and a verdict text use it | `{result:annual saving:0}` |
+| `{result:phrase:decimals}` | the live number of the phrase for the page phrase, formatted with these decimals, or without decimals if the placeholder names none; also a sub text of a row and a verdict text use it | `{result:annual saving:0}` |
 
 ### Buttons
 

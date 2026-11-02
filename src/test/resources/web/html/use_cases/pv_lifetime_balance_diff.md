@@ -4,10 +4,7 @@ Change the generated page pv_lifetime_balance_no_js.html so that it shows what t
 
 ## Missing in the generated page (0)
 
-## Different (2)
-
-- row: Electricity / Self-consumption rate, cells: the sample shows " | 49 %" and the generated page "49 % | 49 %"
-- row: Electricity / Autarky, cells: the sample shows " | 84 %" and the generated page "84 % | 84 %"
+## Different (0)
 
 ## Only in the generated page (0)
 

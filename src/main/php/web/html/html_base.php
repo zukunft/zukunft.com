@@ -1000,7 +1000,8 @@ class html_base
      */
     function frame_start(user_message|Message $msg): string
     {
-        $css = '.' . self::CLASS_FRAME_STEP . ':not(:last-child) {display: none;}';
+        // not by the last child, because a user message can follow the last step
+        $css = '.' . self::CLASS_FRAME_STEP . ':has(~ .' . self::CLASS_FRAME_STEP . ') {display: none;}';
         $css .= ' ' . self::BODY . ' {min-height: 0;}';
         $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
         return $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
@@ -3756,6 +3757,16 @@ class html_base
     function div(string $txt, string $style = '', string $id = ''): string
     {
         return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * @param string $style the html class name of an absolute positioned block e.g. a needle
+     * @param float $percent the position from the left of the parent in percent
+     * @return string the html code of the empty block at the position
+     */
+    function div_at(string $style, float $percent): string
+    {
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $style . '" style="left: ' . $percent . '%"></' . self::DIV . '>';
     }
 
     /**

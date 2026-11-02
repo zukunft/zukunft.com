@@ -548,7 +548,7 @@
     },
     {
       "name": "calculator sensitivity",
-      "description": "PROPOSED NEW ELEMENT: block: a table that calculates the page again for each cell; the has a items are the columns and the with items the rows, each an instance of an input phrase whose value replaces the number of the input; the verdict of the page colours the cell",
+      "description": "PROPOSED NEW ELEMENT: block: a table that calculates the page again for each cell; its first has a item names the input of the rows and the second the input of the columns; their has a items are the levels, whose value replaces the number of the input; the verdict of the page colours the cell",
       "from": "calculator (system)",
       "verb": "has a",
       "to": "sensitivity",

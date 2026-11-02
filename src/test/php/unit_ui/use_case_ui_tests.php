@@ -722,11 +722,11 @@ class use_case_ui_tests
         $dto_calc = new data_object();
         $dto_calc->online = false;
         $dto_calc->phr_lst = $cac;
-        $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
+        $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $msg, $dto_calc),
             $html->block(html_base::H4, triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
         // negative: a page without a phrase has no calculator title
         $test_name = '... and a page without a phrase has no calculator title';
-        $t->assert($test_name, $page->calculator_title(null, $dto_calc), '');
+        $t->assert($test_name, $page->calculator_title(null, $msg, $dto_calc), '');
         // the page sets the width of its result panel e.g. the wide table of the portfolio split
         $test_name = 'a page with a result width sets it as a style';
         $dto_width = new data_object();
@@ -1155,6 +1155,7 @@ class use_case_ui_tests
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
 
+        $this->calculator_decision_tests($t, $ts);
         $this->calculator_save_tests($t, $ts);
         $this->calculator_editor_scenario_tests($t, $ts);
 
@@ -1646,6 +1647,166 @@ class use_case_ui_tests
         // negative: another view keeps its own name in the title
         $test_name = '... and another view its own name';
         $t->assert_text_contains($test_name, $msk->title($wrd, $msg, $dto_res), $msk->name());
+    }
+
+    /**
+     * the parts of a page for a decision, each compared with a page that does not have it
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_decision_tests(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $list = new ui_list();
+        $page = new system_page();
+        $msg = new user_message();
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
+        $zh_city = new test_triples($t)->zh_city_ui();
+        $dto = new data_object();
+        $dto->online = false;
+        $dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto->phr_lst = $t_phr->list_calculator_decision_ui();
+        $dto->val_lst = $t_val->value_list_calculator_input_ui();
+        $calc = new calculator($zh_city->phrase(), $dto->phr_lst);
+        $dto_no = new data_object();
+        $dto_no->online = false;
+        $dto_no->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_no->phr_lst = $t_phr->list_calculator_input_ui();
+        $dto_no->val_lst = $t_val->value_list_calculator_input_ui();
+        $calc_no = new calculator($zh_city->phrase(), $dto_no->phr_lst);
+
+        $t->subheader($ts . 'calculator arguments');
+        $more = $mtr->txt(msg_id::AND_MORE);
+        $arg_html = $list->calculator_arguments($calc, $zh_city, $dto, $msg);
+        $test_name = 'the lead text is collapsed';
+        $t->assert_text_contains($test_name, $arg_html, $html->details($html->esc($more), $html->p(triple_names::CALC_MORE_COM)));
+        $test_name = 'the first argument of a side is shown';
+        $first_li = $html->block(html_base::LI, $html->bold(triple_names::CALC_PRO_FIRST) . ' ' . triple_names::CALC_PRO_FIRST_COM);
+        $t->assert_text_contains($test_name, $arg_html, $html->block(html_base::UL, $first_li, styles::CALC_ARGUMENT_LIST));
+        $test_name = '... and the others are collapsed';
+        $second_li = $html->block(html_base::LI, $html->bold(triple_names::CALC_PRO_SECOND) . ' ' . triple_names::CALC_PRO_SECOND_COM);
+        $collapsed = $html->details($html->esc($more), $html->block(html_base::UL, $second_li, styles::CALC_ARGUMENT_LIST));
+        $t->assert_text_contains($test_name, $arg_html, $collapsed);
+        $test_name = 'a limiting argument is on the other side';
+        $t->assert_text_contains($test_name, $arg_html, triple_names::CALC_CONTRA_COM);
+        $test_name = '... which has its own heading';
+        $t->assert_text_contains($test_name, $arg_html, $html->block(html_base::H2, 'Against'));
+        // negative: a page without the keywords has neither the lead text nor the arguments
+        $test_name = 'a page without arguments shows nothing';
+        $t->assert($test_name, $list->calculator_arguments($calc_no, $zh_city, $dto_no, $msg), '');
+        $test_name = 'the title shows the arguments';
+        $t->assert_text_contains($test_name, $page->calculator_title($zh_city, $msg, $dto), triple_names::CALC_CONTRA_COM);
+        $test_name = '... but not without a request cache';
+        $t->assert_text_not_contains($test_name, $page->calculator_title($zh_city, $msg, null), triple_names::CALC_CONTRA_COM);
+
+        // a preset and a slider need the script, so the page of the server has no control without a function
+        $t->subheader($ts . 'calculator preset and slider');
+        $input_html = $page->calculator_input($zh_city, $msg, $dto, views::CALCULATOR, views::CALCULATOR, []);
+        $test_name = 'the page of the server shows the input with a slider flag';
+        $t->assert_text_contains($test_name, $input_html, 'type="number"');
+        $test_name = '... but no slider';
+        $t->assert_text_not_contains($test_name, $input_html, 'type="range"');
+        $test_name = '... and no preset';
+        $t->assert_text_not_contains($test_name, $input_html, triple_names::CALC_PRESET_LABEL);
+
+        $t->subheader($ts . 'calculator verdict');
+        $yes_class = '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[0] . '"';
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(-50);
+        $vd_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $test_name = 'a number below minus the threshold selects the first state';
+        $t->assert_text_contains($test_name, $vd_html, $yes_class);
+        $test_name = '... with its label';
+        $t->assert_text_contains($test_name, $vd_html, triple_names::CALC_VERDICT_YES);
+        $test_name = '... and the note';
+        $t->assert_text_contains($test_name, $vd_html, triple_names::CALC_VERDICT_NOTE);
+        $test_name = '... and the needle at its place on the meter';
+        $t->assert_text_contains($test_name, $vd_html, 'left: 25%');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(50);
+        $test_name = 'a number above the threshold selects the second state';
+        $vd_no_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $t->assert_text_contains($test_name, $vd_no_html, '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[1] . '"');
+        $test_name = '... and not the first';
+        $t->assert_text_not_contains($test_name, $vd_no_html, $yes_class);
+        $test_name = 'a result placeholder shows the named decimals';
+        $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . ':1}', $zh_city, $dto, $dto->val_lst, [], $msg), '50.0');
+        $test_name = '... and no decimals if it names none';
+        $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $dto->val_lst, [], $msg), '50');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(5);
+        $test_name = 'a number within the threshold selects the third state';
+        $vd_open_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $t->assert_text_contains($test_name, $vd_open_html, '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[2] . '"');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(500);
+        $test_name = 'a number outside the meter keeps the needle on the meter';
+        $t->assert_text_contains($test_name, $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg), 'left: 99%');
+        // negative: no state instead of a wrong one if the numbers are missing
+        $test_name = 'a verdict without a number shows nothing';
+        $dto->val_lst = $t_val->value_list_calculator_option_ui();
+        $t->assert($test_name, $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg), '');
+        $test_name = '... and a page without a verdict too';
+        $t->assert($test_name, $list->calculator_verdict($calc_no, $zh_city, $dto_no, $dto_no->val_lst, $msg), '');
+
+        $t->subheader($ts . 'calculator cell and difference');
+        $y2019 = $dto->phr_lst->get_by_name(word_names::YEAR_2019, $msg);
+        $y2020 = $dto->phr_lst->get_by_name(word_names::YEAR_2020, $msg);
+        $row_be = $dto->phr_lst->get_by_name(triple_names::CALC_ZH_ROW_BE, $msg);
+        $row_inh = $dto->phr_lst->get_by_name(triple_names::CALC_ZH_ROW_INHABITANTS, $msg);
+        $test_name = 'a cell shows the phrase of its column';
+        $t->assert($test_name, $calc->cell_phrase($row_be, $y2019)?->name(), word_names::INHABITANTS);
+        $test_name = '... but not in another column';
+        $t->assert_null($test_name, $calc->cell_phrase($row_be, $y2020)?->name());
+        $test_name = '... or without a column';
+        $t->assert_null($test_name, $calc->cell_phrase($row_be, null)?->name());
+        $test_name = '... and a row without a cell has none';
+        $t->assert_null($test_name, $calc->cell_phrase($row_inh, $y2019)?->name());
+        $test_name = 'a column with the flag is a difference';
+        $t->assert_true($test_name, $calc->is_difference($y2020));
+        $test_name = '... and a column without the flag is none';
+        $t->assert_false($test_name, $calc->is_difference($y2019));
+        $test_name = '... and no column too';
+        $t->assert_false($test_name, $calc->is_difference(null));
+        $vals = $t_val->value_list_calculator_verdict_ui(50);
+        $first = $vals->get_by_names([$zh_city->name(), word_names::INHABITANTS]);
+        $second = $vals->get_by_names([$zh_city->name(), word_names::YEAR_2019]);
+        $test_name = 'the difference is the first minus the second number';
+        $diff = $list->calculator_difference($first, $second);
+        $t->assert($test_name, $diff?->number(), 40.0);
+        $test_name = '... and keeps the first number';
+        $t->assert($test_name, $first->number(), 50.0);
+        $test_name = '... and is empty if a number is missing';
+        $t->assert_null($test_name, $list->calculator_difference($first, null)?->number());
+        $t->assert_null($test_name, $list->calculator_difference(null, $second)?->number());
+
+        $t->subheader($ts . 'calculator sensitivity');
+        $sens_html = $list->calculator_sensitivity($calc);
+        $test_name = 'the sensitivity table is collapsed with its label';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_SENSITIVITY_LABEL);
+        $test_name = '... the label of a column';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_LEVEL_COLUMN_LABEL);
+        $test_name = '... the label of a row';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_LEVEL_ROW_LABEL);
+        $test_name = '... and an empty cell, which only the script of the page fills';
+        $t->assert_text_contains($test_name, $sens_html, $html->block(html_base::TD, '', styles::CALC_NUMBER));
+        $test_name = 'a page without the table has none';
+        $t->assert($test_name, $list->calculator_sensitivity($calc_no), '');
+
+        $t->subheader($ts . 'calculator case');
+        $test_name = 'a page built from another phrase has a base';
+        $t->assert_true($test_name, $calc->has_base());
+        $test_name = '... and a word has none';
+        $calc_word = new calculator($t_wrd->zh_ui()->phrase(), $dto->phr_lst);
+        $t->assert_false($test_name, $calc_word->has_base());
+        $test_name = 'a page with the verb of is the case of its to phrase';
+        $case_phr = $dto->phr_lst->get_by_name(triple_names::CALC_CASE_PAGE, $msg);
+        $t->assert($test_name, new calculator($case_phr, $dto->phr_lst)->case_name(), word_names::BE);
+        $test_name = '... but another triple is no case';
+        $t->assert($test_name, $calc->case_name(), '');
+        $test_name = '... and a word too';
+        $t->assert($test_name, $calc_word->case_name(), '');
     }
 
     /**

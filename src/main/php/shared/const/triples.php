@@ -443,27 +443,37 @@ class triples
         self::CALCULATOR_DIAGRAM => self::CALCULATOR_DIAGRAM_CODE_ID,
     ];
     const string CALCULATOR_SLIDER = 'calculator slider';
+    const string CALCULATOR_SLIDER_CODE_ID = 'system_calculator_slider';
     const string CALCULATOR_PRESET = 'calculator preset';
+    const string CALCULATOR_PRESET_CODE_ID = 'system_calculator_preset';
     const string CALCULATOR_TAG = 'calculator tag';
+    const string CALCULATOR_TAG_CODE_ID = 'system_calculator_tag';
     const string CALCULATOR_MORE = 'calculator more';
+    const string CALCULATOR_MORE_CODE_ID = 'system_calculator_more';
     const string CALCULATOR_ARGUMENT = 'calculator argument';
+    const string CALCULATOR_ARGUMENT_CODE_ID = 'system_calculator_argument';
     const string CALCULATOR_VERDICT = 'calculator verdict';
+    const string CALCULATOR_VERDICT_CODE_ID = 'system_calculator_verdict';
     const string CALCULATOR_SCALE = 'calculator scale';
+    const string CALCULATOR_SCALE_CODE_ID = 'system_calculator_scale';
     const string CALCULATOR_DIFFERENCE = 'calculator difference';
+    const string CALCULATOR_DIFFERENCE_CODE_ID = 'system_calculator_difference';
     const string CALCULATOR_CELL = 'calculator cell';
+    const string CALCULATOR_CELL_CODE_ID = 'system_calculator_cell';
     const string CALCULATOR_SENSITIVITY = 'calculator sensitivity';
+    const string CALCULATOR_SENSITIVITY_CODE_ID = 'system_calculator_sensitivity';
     // the elements of a calculator page for a decision e.g. a vote by their code id
     const array CALCULATOR_PROPOSED = [
-        self::CALCULATOR_SLIDER => 'system_calculator_slider',
-        self::CALCULATOR_PRESET => 'system_calculator_preset',
-        self::CALCULATOR_TAG => 'system_calculator_tag',
-        self::CALCULATOR_MORE => 'system_calculator_more',
-        self::CALCULATOR_ARGUMENT => 'system_calculator_argument',
-        self::CALCULATOR_VERDICT => 'system_calculator_verdict',
-        self::CALCULATOR_SCALE => 'system_calculator_scale',
-        self::CALCULATOR_DIFFERENCE => 'system_calculator_difference',
-        self::CALCULATOR_CELL => 'system_calculator_cell',
-        self::CALCULATOR_SENSITIVITY => 'system_calculator_sensitivity',
+        self::CALCULATOR_SLIDER => self::CALCULATOR_SLIDER_CODE_ID,
+        self::CALCULATOR_PRESET => self::CALCULATOR_PRESET_CODE_ID,
+        self::CALCULATOR_TAG => self::CALCULATOR_TAG_CODE_ID,
+        self::CALCULATOR_MORE => self::CALCULATOR_MORE_CODE_ID,
+        self::CALCULATOR_ARGUMENT => self::CALCULATOR_ARGUMENT_CODE_ID,
+        self::CALCULATOR_VERDICT => self::CALCULATOR_VERDICT_CODE_ID,
+        self::CALCULATOR_SCALE => self::CALCULATOR_SCALE_CODE_ID,
+        self::CALCULATOR_DIFFERENCE => self::CALCULATOR_DIFFERENCE_CODE_ID,
+        self::CALCULATOR_CELL => self::CALCULATOR_CELL_CODE_ID,
+        self::CALCULATOR_SENSITIVITY => self::CALCULATOR_SENSITIVITY_CODE_ID,
     ];
     const string CALCULATOR_COLOUR = 'calculator colour';
     const string CALCULATOR_DECIMALS = 'calculator decimals';

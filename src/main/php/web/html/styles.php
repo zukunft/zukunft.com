@@ -206,8 +206,6 @@ class styles
     const string CALC_ARGUMENT_LIST = 'argument-list';
     const string CALC_NUM = 'num';
     const string CALC_REF = 'ref';
-    const string CALC_PRESETS = 'presets';
-    const string CALC_BUTTON_ADD_FULL = 'btn btn-outline-primary btn-sm';
     const string CALC_REPORT_FRAME = 'report-frame';
     const string CALC_VERDICT = 'verdict';
     const string CALC_HEADLINE = 'headline';

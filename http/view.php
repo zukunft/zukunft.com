@@ -185,6 +185,10 @@ if ($db_con->is_open()) {
         // a pdf report is never a cached page
         $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
         $is_report_file = ($url_array[url_var::REPORT_FILE] ?? '') == url_var::TRUE;
+        // a report that was never fetched does not stay in the session, which each request reads
+        if (!$is_report_file) {
+            unset($_SESSION[url_var::SESSION_REPORT_PDF], $_SESSION[url_var::SESSION_REPORT_NAME]);
+        }
         if ($redirect_msg === null and !$is_report and !$is_report_file) {
             $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
         }
@@ -193,7 +197,7 @@ if ($db_con->is_open()) {
             $report_pdf = $_SESSION[url_var::SESSION_REPORT_PDF] ?? '';
             $report_name = $_SESSION[url_var::SESSION_REPORT_NAME] ?? '';
             unset($_SESSION[url_var::SESSION_REPORT_PDF], $_SESSION[url_var::SESSION_REPORT_NAME]);
-            $web_txt .= $mtr->txt(msg_id::CALCULATOR_REPORT_FAILED);
+            $web_txt .= $mtr->txt(msg_id::CALCULATOR_REPORT_NONE);
         } elseif ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
@@ -243,13 +247,19 @@ if ($db_con->is_open()) {
                 $sys->times->switch(system_time_type::URL_TO_HTML);
                 if ($is_report) {
                     $ui->report_watch();
+                    // the other pages of the user do not wait for the session while the report is created
+                    $ui->report_release_session();
                     $ui->send_report_start($msg_ui);
                     $ui->url_to_html($url_array, $msg_ui, $ui->dto);
                     if ($ui->report_pdf != '') {
-                        $_SESSION[url_var::SESSION_REPORT_PDF] = $ui->report_pdf;
-                        $_SESSION[url_var::SESSION_REPORT_NAME] = $ui->report_name;
-                        // the request of the file waits for the session, which else ends with this script
-                        session_write_close();
+                        if (session_start()) {
+                            $_SESSION[url_var::SESSION_REPORT_PDF] = $ui->report_pdf;
+                            $_SESSION[url_var::SESSION_REPORT_NAME] = $ui->report_name;
+                            // the request of the file waits for the session, which else ends with this script
+                            session_write_close();
+                        } else {
+                            $ui->report_pdf = '';
+                        }
                     }
                     $page_html = $ui->report_end_html($url_array, $msg_ui);
                 } else {

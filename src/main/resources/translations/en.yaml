@@ -946,6 +946,7 @@ messages:
   calculator_report_step_file: "Writing the pdf file"
   calculator_report_ready: "The report has been created and is downloaded"
   calculator_report_failed: "The report could not be created. The administrator has been informed. Last step:"
+  calculator_report_none: "There is no report file for this page."
   calculator_remove: "Remove the"
   calculator_check_value: "Value"
   calculator_check_expected: "Expected"

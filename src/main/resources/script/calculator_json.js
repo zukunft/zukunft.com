@@ -78,7 +78,7 @@
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
-        arguments: 'arguments', argumentList: 'argument-list', num: 'num', ref: 'ref', presets: 'presets', headline: 'headline', scale: 'scale',
+        arguments: 'arguments', argumentList: 'argument-list', num: 'num', ref: 'ref', presets: 'presets', headline: 'headline', scale: 'scale', sensitivity: 'sensitivity',
         notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
         addButton: 'btn btn-outline-primary btn-sm', removeButton: 'btn btn-outline-secondary btn-sm', imports: 'imports',
         warnings: 'warnings', warning: 'warn', actions: 'input-actions', reportFrame: 'report-frame',
@@ -189,6 +189,8 @@
     let pageSources = [];
     // per name of a number field its phrase, which a preset sets
     const inputPhrases = new Map();
+    // the sensitivity table calculates the page once per cell, so only while the user has it open
+    let sensitivityOpen = false;
     // the values and results that the results of the page use (see operandValues)
     let pageOperands = new Set();
     // the results of the page phrase, whose operands are the assumptions and whose formulas are the notes of the page
@@ -1332,8 +1334,10 @@
                 result = pos < 0 ? '' : block('span', '[' + (pos + 1) + ']', STYLE.ref);
             } else {
                 const sep = name.lastIndexOf(':');
-                const entry = fieldEntry(name.slice(0, sep)) || cellEntry([page.name, name.slice(0, sep)]);
-                result = entry === null ? '' : formatNumber(entry.number, Number(name.slice(sep + 1)));
+                const phrase = sep < 0 ? name : name.slice(0, sep);
+                const decimals = sep < 0 ? 0 : Number(name.slice(sep + 1));
+                const entry = fieldEntry(phrase) || cellEntry([page.name, phrase]);
+                result = entry === null ? '' : formatNumber(entry.number, decimals);
             }
             return result;
         });
@@ -1363,7 +1367,7 @@
         return result;
     }
 
-    /* the buttons that set several inputs at once (ui_list::calculator_presets) */
+    /* the buttons that set several inputs at once, only here, because they need the script */
     function presets() {
         const html = items(KW.preset).map(function (item) {
             return '<button type="button" class="' + STYLE.addButton + '" data-preset="' + esc(item.to) + '" title="' + esc(hint(item)) + '">' + esc(label(item)) + '</button>';
@@ -1435,7 +1439,7 @@
                     let html = '';
                     const rowLevel = cellEntry([grp.name, r.to]);
                     const colLevel = cellEntry([grp.name, c.to]);
-                    if (rowEntry !== null && colEntry !== null && rowLevel !== null && colLevel !== null) {
+                    if (sensitivityOpen && rowEntry !== null && colEntry !== null && rowLevel !== null && colLevel !== null) {
                         const rowNum = rowEntry.number;
                         const colNum = colEntry.number;
                         rowEntry.number = rowLevel.number;
@@ -1457,10 +1461,12 @@
                 }).join('');
                 return block('tr', block('td', esc(label(r))) + cells);
             }).join('');
-            recalculate();
+            if (sensitivityOpen) {
+                recalculate();
+            }
             const text = ownText(grp.name, KW.hint);
             result = block('details', block('summary', esc(label(grp))) + block('div', table(head, body)
-                + (text ? block('p', block('span', esc(text), STYLE.hint)) : ''), STYLE.more));
+                + (text ? block('p', block('span', esc(text), STYLE.hint)) : ''), STYLE.more), STYLE.sensitivity);
         }
         return result;
     }
@@ -2406,9 +2412,9 @@
         return result;
     }
 
-    /* the result panel again with the numbers of the inputs, the open blocks staying open */
-    function refreshResults(event) {
-        let input = event.target;
+    /* the changed input for the next calculation; true if it has a number */
+    function applyInput(changed) {
+        let input = changed;
         // a slider and its number field show the same number
         if (input.dataset.field) {
             const number = document.getElementById(input.dataset.field);
@@ -2421,10 +2427,24 @@
             }
         }
         const entry = inputEntries.get(input.name);
-        const panel = host.querySelector('.' + STYLE.grid + ' > section.' + STYLE.panel);
         const value = enteredNumber(input, entry);
-        if (entry !== undefined && panel !== null && input.value !== '' && isFinite(value)) {
+        const hasNumber = entry !== undefined && input.value !== '' && isFinite(value);
+        if (hasNumber) {
             entry.number = value;
+        }
+        return hasNumber;
+    }
+
+    function refreshResults(event) {
+        if (applyInput(event.target)) {
+            redrawResults();
+        }
+    }
+
+    /* the result panel again with the numbers of the inputs, the open blocks staying open */
+    function redrawResults() {
+        const panel = host.querySelector('.' + STYLE.grid + ' > section.' + STYLE.panel);
+        if (panel !== null) {
             recalculate();
             const open = Array.from(panel.querySelectorAll('details')).map(function (d) {
                 return d.open;
@@ -2441,14 +2461,27 @@
     function applyPreset(event) {
         const name = event.target.dataset ? event.target.dataset.preset : undefined;
         if (name) {
+            let changed = false;
             inputPhrases.forEach(function (phrase, field) {
                 const entry = cellEntry([name, phrase]);
                 const input = document.getElementById(field);
                 if (entry !== null && input !== null) {
                     input.value = fieldShown(entry.number, inputEntries.get(field) || entry);
-                    input.dispatchEvent(new Event('input', {bubbles: true}));
+                    changed = applyInput(input) || changed;
                 }
             });
+            if (changed) {
+                redrawResults();
+            }
+        }
+    }
+
+    /* the sensitivity table gets its numbers when the user opens it; the toggle event does not bubble */
+    function toggleSensitivity(event) {
+        const isTable = event.target.classList.contains(STYLE.sensitivity);
+        if (isTable && event.target.open !== sensitivityOpen) {
+            sensitivityOpen = event.target.open;
+            redrawResults();
         }
     }
 
@@ -2462,5 +2495,6 @@
     host.addEventListener('change', refreshResults);
     host.addEventListener('submit', saveCase);
     host.addEventListener('click', applyPreset);
+    host.addEventListener('toggle', toggleSensitivity, true);
 
 })();

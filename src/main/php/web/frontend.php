@@ -1327,7 +1327,6 @@ class frontend
                 $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
                 $this->load_page_end();
                 $this->report_pdf = $this->report_of_url($is_report, $dbo, $msg_ui, $dto);
-                $this->report_name = $dbo->name();
                 // the report is shown in a frame of the page, which ends with report_end_html
                 $title = $is_report ? '' : $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $is_report ? '' : $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
@@ -1373,6 +1372,7 @@ class frontend
     {
         $result = '';
         if ($is_report and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+            $this->report_name = $dbo->name();
             $result = new calculator_report()->pdf($dbo, $msg_ui, $dto, $this->report_step(...));
         }
         return $result;
@@ -1430,7 +1430,7 @@ class frontend
         global $mtr;
         $html = new html_base();
         if ($this->report_pdf == '') {
-            $result = $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_FAILED));
+            $result = $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_NONE));
         } else {
             $url = $url_array;
             unset($url[url_var::REPORT]);
@@ -1455,6 +1455,19 @@ class frontend
     }
 
     /**
+     * end the lock of the session, which keeps its values readable; the settings allow to open it
+     * again for the created report, because a session cannot send a header after the first output
+     *
+     * @return void
+     */
+    function report_release_session(): void
+    {
+        session_write_close();
+        ini_set('session.use_cookies', '0');
+        session_cache_limiter('');
+    }
+
+    /**
      * @param array|null $err the last error of the request
      * @return void
      */
@@ -1462,7 +1475,7 @@ class frontend
     {
         global $mtr;
         if (in_array($err['type'] ?? 0, self::FATAL_ERRORS)) {
-            $step = $this->report_step_id == null ? '' : ' ' . $mtr->txt($this->report_step_id);
+            $step = ' ' . $mtr->txt($this->report_step_id ?? msg_id::CALCULATOR_REPORT_STEP_LOAD);
             echo new html_base()->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_FAILED) . $step);
             flush();
             log_err('pdf report failed at' . $step . ': ' . $err['message']);

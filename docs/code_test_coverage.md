@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1565 of 6377 public functions have at least 2 unit test calls; the 4608 functions below do not; the 204 functions of the last section are called nowhere
+1576 of 6379 public functions have at least 2 unit test calls; the 4599 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 1998 functions of main backend have no test at all
 
@@ -2265,7 +2265,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 915 functions of frontend have no test at all
+## 905 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2289,20 +2289,16 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- calculator
     \-- arguments - 0 unit test calls
     \-- button_label - 0 unit test calls
-    \-- case_name - 0 unit test calls
-    \-- cell_phrase - 0 unit test calls
     \-- diagram_title - 0 unit test calls
-    \-- has_base - 0 unit test calls
-    \-- is_difference - 0 unit test calls
-    \-- keyword_item - 0 unit test calls
     \-- more - 0 unit test calls
     \-- number_note - 0 unit test calls
     \-- options - 0 unit test calls
     \-- own_hint - 0 unit test calls
-    \-- own_keyword_text - 0 unit test calls
     \-- own_label - 0 unit test calls
+    \-- own_text - 0 unit test calls
     \-- page_label - 0 unit test calls
     \-- phrase_label - 0 unit test calls
+    \-- property - 0 unit test calls
     \-- repeat_label - 0 unit test calls
     \-- tag - 0 unit test calls
     \-- text_sources - 0 unit test calls
@@ -2483,7 +2479,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_cache - 0 unit test calls shared by 2 classes
     \-- load_dummy_cache_from_test_resources - 0 unit test calls
     \-- log_info - 0 unit test calls shared by 2 classes
-    \-- report_end_html - 0 unit test calls
+    \-- report_release_session - 0 unit test calls
     \-- report_watch - 0 unit test calls
     \-- save_html_page - 0 unit test calls
     \-- send_loading_start - 0 unit test calls
@@ -2504,7 +2500,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- html_base
     \-- about_page - 0 unit test calls
     \-- add_style - 0 unit test calls
-    \-- bold - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
     \-- button - 0 unit test calls
@@ -2518,9 +2513,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- concat_text - 0 unit test calls
     \-- concat_title_text - 0 unit test calls
     \-- definition - 0 unit test calls
-    \-- details - 0 unit test calls
     \-- details_end - 0 unit test calls shared by 2 classes
     \-- details_start - 0 unit test calls shared by 2 classes
+    \-- div_at - 0 unit test calls
     \-- div_bs - 0 unit test calls
     \-- div_center - 0 unit test calls
     \-- div_col_min_width - 0 unit test calls
@@ -3092,17 +3087,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_start_page_data - 0 unit test calls
     \-- assumption_fields - 0 unit test calls
     \-- calculation_detail_tables - 0 unit test calls
-    \-- calculator_arguments - 0 unit test calls
     \-- calculator_fields - 0 unit test calls
     \-- calculator_general_value - 0 unit test calls
     \-- calculator_number_format - 0 unit test calls
     \-- calculator_phrase_cells - 0 unit test calls
-    \-- calculator_presets - 0 unit test calls
     \-- calculator_report_url - 0 unit test calls
-    \-- calculator_sensitivity - 0 unit test calls
     \-- calculator_source_ids - 0 unit test calls
-    \-- calculator_text - 0 unit test calls
-    \-- calculator_verdict - 0 unit test calls
     \-- calculator_warnings - 0 unit test calls
     \-- formula_notes - 0 unit test calls
     \-- formulas_of_parents - 0 unit test calls
@@ -4558,7 +4548,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 539 functions of frontend have incomplete tests
+## 540 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4750,7 +4740,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- list - 8 unit test calls shared by 7 classes
     \-- list_item - 1 unit test calls
     \-- loading_end - 1 unit test calls
-    \-- p - 1 unit test calls
     \-- refresh - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
@@ -5061,8 +5050,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- ui_list
     \-- calculation_row_context - 1 unit test calls
     \-- calculation_side_context - 1 unit test calls
+    \-- calculator_arguments - 1 unit test calls
     \-- calculator_diagrams - 1 unit test calls
     \-- calculator_notes - 1 unit test calls
+    \-- calculator_sensitivity - 1 unit test calls
     \-- calculator_sources - 1 unit test calls
     \-- formula_list - 6 unit test calls shared by 4 classes
     \-- result_list - 5 unit test calls shared by 3 classes

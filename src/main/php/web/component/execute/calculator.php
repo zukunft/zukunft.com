@@ -57,6 +57,10 @@ class calculator
 {
 
     // the phrases and triples of the request cache
+    // the position in a column of self::columns of the flag that it shows the plus sign
+    // TODO Prio 2 review
+    const int COLUMN_PLUS = 6;
+
     private phrase_list $cac;
     // the phrase of the page e.g. example PV installation
     private phrase $phr;
@@ -138,14 +142,6 @@ class calculator
      */
 
     /**
-     * the group triple of a list: the triple from the page phrase to the list keyword, else the
-     * one of the phrase that the page phrase is built from, so that every installation that is
-     * built from PV installation gets the page without own triples
-     *
-     * @param string $list the name of the list keyword e.g. triples::CALCULATOR_INPUT
-     * @return phrase|null the group triple e.g. PV installation inputs or null if there is no such list
-     */
-    /**
      * @return string the collapsed lead text of the page phrase, else of the phrase it is built from, else an empty string
      */
     function more(): string
@@ -176,26 +172,6 @@ class calculator
     }
 
     /**
-     * @param phrase|null $phr a phrase with a text e.g. the verdict
-     * @param string $keyword the keyword of the text e.g. triples::CALCULATOR_NOTE
-     * @return string the text or an empty string
-     */
-    function own_keyword_text(?phrase $phr, string $keyword): string
-    {
-        return $this->own_text($phr, $keyword) ?? '';
-    }
-
-    /**
-     * @param phrase|null $phr a phrase e.g. the verdict
-     * @param string $keyword the keyword of the property e.g. triples::CALCULATOR_SCALE
-     * @return phrase|null the triple from the phrase to the keyword
-     */
-    function keyword_item(?phrase $phr, string $keyword): ?phrase
-    {
-        return $this->property($phr, $keyword);
-    }
-
-    /**
      * @param phrase $row a row of the result table
      * @param phrase|null $col_phr the phrase of a column
      * @return phrase|null the phrase whose number the cell of the column shows instead of the row phrase
@@ -204,9 +180,11 @@ class calculator
     {
         $result = null;
         $grp = $this->property($row, triples::CALCULATOR_CELL);
-        foreach ($grp == null || $col_phr == null ? [] : $this->sub_items($grp, verbs::HAS_ID) as $cell) {
-            if ($this->filter($cell)?->name() == $col_phr->name()) {
-                $result = $this->item_phrase($cell);
+        if ($grp != null and $col_phr != null) {
+            foreach ($this->sub_items($grp, verbs::HAS_ID) as $cell) {
+                if ($this->filter($cell)?->name() == $col_phr->name()) {
+                    $result = $this->item_phrase($cell);
+                }
             }
         }
         return $result;
@@ -243,6 +221,14 @@ class calculator
         return array_values(array_unique($found[1]));
     }
 
+    /**
+     * the group triple of a list: the triple from the page phrase to the list keyword, else the
+     * one of the phrase that the page phrase is built from, so that every installation that is
+     * built from PV installation gets the page without own triples
+     *
+     * @param string $list the name of the list keyword e.g. triples::CALCULATOR_INPUT
+     * @return phrase|null the group triple e.g. PV installation inputs or null if there is no such list
+     */
     function group(string $list): ?phrase
     {
         return $this->property($this->phr, $list) ?? $this->property($this->base, $list);
@@ -743,7 +729,7 @@ class calculator
      * @param string $keyword the name of the text keyword e.g. triples::CALCULATOR_LABEL
      * @return string|null the description of the triple from the phrase to the keyword or null if there is none
      */
-    private function own_text(?phrase $phr, string $keyword): ?string
+    function own_text(?phrase $phr, string $keyword): ?string
     {
         $txt = $this->property($phr, $keyword)?->get_description();
         return $txt == '' ? null : $txt;
@@ -770,7 +756,7 @@ class calculator
      * @param string $keyword the name of the keyword e.g. triples::CALCULATOR_INPUT
      * @return phrase|null the triple from the phrase to the keyword e.g. PV installation inputs
      */
-    private function property(?phrase $phr, string $keyword): ?phrase
+    function property(?phrase $phr, string $keyword): ?phrase
     {
         $result = null;
         if ($phr != null) {
