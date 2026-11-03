@@ -1,11 +1,37 @@
 # pending - list of planned llm prompts with prio 1
 
-## start page
+## table populism solution
 
-on the start page http://localhost/index.html the button to login and signup show the message 
-'This pod does not allow changes without a login. Please log in to add or change data.'
-which should not be the case. Instead to signup or login page should be show, so these two pages are an 
-exception to the no edit by user not logged in rules
+The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
+solutions sorted by default by potential gain descending. 
+The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
+and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
+
+the border and grey background colours should be removed by default with an option to show them.
+The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
+
+### adjust the table data
+
+add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708 
+and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
+and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
+
+### test factory with percent htp
+
+The start page problem files now state the loss share of the happy time points with the one triple `percent htp`
+(percent *of* htp, type `percent`) instead of the two phrases `percent` and `htp`, because a value has only one number
+type (docs/llm/json_structure.md). The test factory still builds the old group, so it no longer matches the import:
+
+- `test_values::value_list_start_page()` (`src/test/php/create/test_values.php:1160`) builds
+  `[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()]`; use the new triple instead of `$pct` and the htp word.
+- add `test_triples::percent_htp()` like `percent_symbol()`, with `set_type(phrase_types::PERCENT, ...)`, the consts
+  `triple_names::PERCENT_HTP` / `PERCENT_HTP_ID` and the entry in `test_pinned_ids.php`; take the id from the
+  regenerated `src/test/resources/unit/triple/list.csv` after the re-pin run, never guess it.
+- check the start page snapshots: the loss column header should still read "loss in percent htp".
+- `value_list_two_units()` (`[..., "potential", "loss", "percent", "htp"]`) mirrors `values.json` and
+  `solution_prio.json`, which still have the two phrases (one finding in `docs/json_findings.md`); change it together
+  with those files, not alone.
+
 
 ## table editor
 
@@ -1498,8 +1524,7 @@ one range factor pair 0.4 / 2.5 per measure, 9 results per solution. what is sti
 - values and results use the qualified name `fact-checking (populism solution)` for every measure,
   because fact-checking, media literacy, prebunking etc. are measures of the disinformation problem
   too and the same user must not state two numbers for one phrase group; the climate solutions
-  qualify the names that clash with `problem_global_warming_solutions.json`, which uses the plain
-  name for its own chain, e.g. `solar energy (climate solution)`
+  qualify only the names that clashed at the time (`research (climate solution)`)
 - a measure with a space is a composition triple of single word atoms (`civic education` =
   education kind of civic, `campaign finance reform` = reform of `campaign finance`), the head noun
   as from, an adjective joined by `kind of`, a noun by `of`, a preposition of the name by its verb

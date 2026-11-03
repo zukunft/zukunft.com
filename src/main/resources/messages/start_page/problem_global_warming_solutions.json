@@ -9,7 +9,7 @@
     "initial effort",
     "gain per effort"
   ],
-  "description": "47 climate solutions ranked by potential gain per initial effort. Chain per solution: reduction potential at full deployment (gigatonne CO2eq per year) times the effective years of the period 2025 to 2050 gives the avoided emissions; times the social cost of carbon (Rennert et al. 2022, converted to EUR) gives the gain in trillion EUR; times the welfare cost of carbon (Bressler 2021 mortality cost, times life years lost per death, times the Maslow extension to the two lowest need levels) gives the gain in billion htp; divided by the initial effort in person years gives the ratio the solutions are sorted by. Potentials are gross and not additive: instruments and the hardware they finance avoid the same tonnes. Anchors with a source: coal and total fossil CO2 (Global Carbon Budget 2024), methane (UNEP CCAC 2021 with IPCC AR6 GWP100), solar and wind ranges (IPCC AR6 WG3), fossil fuel price reform (IMF 2023). Every other potential and every effort is assumed with its own confidence.",
+  "description": "47 climate solutions ranked by potential gain per initial effort. Chain per solution: reduction potential at full deployment (gigatonne CO2eq per year) times the effective years of the period 2025 to 2050 gives the avoided emissions; times the social cost of carbon (Rennert et al. 2022, converted to EUR) gives the gain in trillion EUR; times the welfare cost of carbon (Bressler 2021 mortality cost, times life years lost per death, times the Maslow extension to the two lowest need levels) gives the gain in billion htp; divided by the initial effort in person years gives the ratio the solutions are sorted by. Potentials are gross and not additive: instruments and the hardware they finance avoid the same tonnes. Anchors with a source: coal and total fossil CO2 (Global Carbon Budget 2024), methane (UNEP CCAC 2021 with IPCC AR6 GWP100), solar and wind ranges (IPCC AR6 WG3), the 2030 potentials of efficiency, buildings, transport, materials and food (IPCC AR6 WG3 Figure SPM.7), fossil fuel price reform (IMF 2023). Every other potential and every effort is assumed with its own confidence.",
   "words": [
     {
       "name": "trillion"
@@ -918,7 +918,6 @@
       "type": "measure_unit"
     },
     {
-      "name": "EUR per person year",
       "from": "EUR",
       "verb": "per",
       "to": "person year",
@@ -926,7 +925,6 @@
       "type": "measure_unit"
     },
     {
-      "name": "htp per person year",
       "from": "htp",
       "verb": "per",
       "to": "person year",
@@ -942,7 +940,6 @@
       "type": "measure_unit"
     },
     {
-      "name": "gigatonne CO2eq per year",
       "from": "gigatonne CO2eq",
       "verb": "per",
       "to": "year",
@@ -950,28 +947,24 @@
       "type": "measure_unit"
     },
     {
-      "name": "megatonne per year",
       "from": "megatonne",
       "verb": "per",
       "to": "year",
       "type": "measure_unit"
     },
     {
-      "name": "EUR per tonne",
       "from": "EUR",
       "verb": "per",
       "to": "tonne",
       "type": "measure_unit"
     },
     {
-      "name": "USD per tonne",
       "from": "USD",
       "verb": "per",
       "to": "tonne",
       "type": "measure_unit"
     },
     {
-      "name": "USD per EUR",
       "from": "USD",
       "verb": "per",
       "to": "EUR",
@@ -979,7 +972,6 @@
       "type": "measure_unit"
     },
     {
-      "name": "death per tonne",
       "from": "death",
       "verb": "per",
       "to": "tonne",
@@ -987,7 +979,6 @@
       "type": "measure_unit"
     },
     {
-      "name": "year per death",
       "from": "year",
       "verb": "per",
       "to": "death",
@@ -995,14 +986,12 @@
       "type": "measure_unit"
     },
     {
-      "name": "DALY per tonne",
       "from": "DALY",
       "verb": "per",
       "to": "tonne",
       "type": "measure_unit"
     },
     {
-      "name": "htp per tonne",
       "from": "htp",
       "verb": "per",
       "to": "tonne",
@@ -1016,14 +1005,12 @@
       "type": "measure_unit"
     },
     {
-      "name": "death per year",
       "from": "death",
       "verb": "per",
       "to": "year",
       "type": "measure_unit"
     },
     {
-      "name": "2025 to 2050",
       "from": "2025",
       "verb": "to",
       "to": "2050",
@@ -1122,11 +1109,9 @@
       "to": "social"
     },
     {
-      "name": "social cost of carbon",
       "from": "social cost",
       "verb": "of",
       "to": "carbon",
-      "description": "the marginal damage to society of emitting one additional tonne of CO2, discounted to the year of emission",
       "refs": [
         {
           "name": "Social_cost_of_carbon",
@@ -1290,7 +1275,6 @@
       "to": "carbon"
     },
     {
-      "name": "carbon capture and storage",
       "from": "carbon capture",
       "verb": "and",
       "to": "storage",
@@ -1306,7 +1290,6 @@
       ]
     },
     {
-      "name": "carbon capture and utilization",
       "from": "carbon capture",
       "verb": "and",
       "to": "utilization",
@@ -2592,6 +2575,7 @@
         "assumed"
       ],
       "number": "3",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "industrial process efficiency, efficient appliances and lighting, vehicle efficiency; IPCC lists about 3 gigatonnes across the sectors for 2030"
     },
     {
@@ -2631,6 +2615,7 @@
         "assumed"
       ],
       "number": "1",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "insulation and window replacement of the existing stock; IPCC about 0.5 gigatonnes for 2030, doubled for a further decade"
     },
     {
@@ -3060,6 +3045,7 @@
         "assumed"
       ],
       "number": "0.5",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "modal shift from cars; IPCC about 0.4 gigatonnes for 2030"
     },
     {
@@ -3099,6 +3085,7 @@
         "assumed"
       ],
       "number": "0.3",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "modal shift to bikes and e-bikes; IPCC about 0.2 gigatonnes for 2030"
     },
     {
@@ -3315,6 +3302,7 @@
         "assumed"
       ],
       "number": "2.5",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "battery electric cars and trucks; IPCC about 1.4 gigatonnes for 2030, raised for a further decade"
     },
     {
@@ -3432,6 +3420,7 @@
         "assumed"
       ],
       "number": "0.5",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "enhanced recycling of metals, plastics and paper; IPCC about 0.4 gigatonnes for 2030"
     },
     {
@@ -3471,6 +3460,7 @@
         "assumed"
       ],
       "number": "0.8",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "lighter products and longer lifetimes; IPCC about 0.7 gigatonnes for 2030"
     },
     {
@@ -3822,6 +3812,7 @@
         "assumed"
       ],
       "number": "2",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "shift to sustainable healthy diets; IPCC about 1.7 gigatonnes for 2030"
     },
     {
@@ -3861,6 +3852,7 @@
         "assumed"
       ],
       "number": "1.3",
+      "source": "IPCC AR6 WG3 Figure SPM.7",
       "description": "reduction of food loss and waste; IPCC about 1.3 gigatonnes for 2030"
     },
     {

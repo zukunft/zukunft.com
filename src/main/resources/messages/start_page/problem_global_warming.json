@@ -420,6 +420,21 @@
     },
     {
       "name": "2023"
+    },
+    {
+      "name": "long"
+    },
+    {
+      "name": "run"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "welfare"
     }
   ],
   "triples": [
@@ -1355,6 +1370,34 @@
       "from": "global warming",
       "verb": "can cause",
       "to": "extreme weather"
+    },
+    {
+      "name": "percent htp",
+      "description": "a share of the happy time points of the world, one number type, so that a loss is shown in percent htp",
+      "from": "percent",
+      "verb": "of",
+      "to": "htp",
+      "type": "percent"
+    },
+    {
+      "name": "long run",
+      "from": "run",
+      "verb": "kind of",
+      "to": "long"
+    },
+    {
+      "name": "long run growth",
+      "description": "how many times bigger the long run loss is than the loss per year",
+      "from": "growth",
+      "verb": "kind of",
+      "to": "long run"
+    },
+    {
+      "name": "welfare weight",
+      "description": "how many times bigger the loss in happy time points is than the loss in GDP",
+      "from": "weight",
+      "verb": "kind of",
+      "to": "welfare"
     }
   ],
   "formulas": [
@@ -1402,16 +1445,16 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"loss\",\"long run growth\",\"percent\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent htp\" = \"potential loss\",\"percent\",\"GDP\" * \"welfare weight\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
-      "assigned_word": "htp"
+      "assigned_word": "welfare weight"
     },
     {
       "name": "initial effort of a solution",
@@ -1423,7 +1466,7 @@
     {
       "name": "avoided welfare loss",
       "description": "the happy time points that a solution saves, the world happy time points multiplied by the share of them that the problem costs and by the share of that loss which the solution avoids; the result is stated positive, because it is a gain",
-      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r",
       "assigned_word": "loss reduction"
     },
@@ -1761,8 +1804,7 @@
     {
       "words": [
         "global warming",
-        "percent",
-        "htp",
+        "percent htp",
         "probability range factor",
         "variance low (system)"
       ],
@@ -1772,8 +1814,7 @@
     {
       "words": [
         "global warming",
-        "percent",
-        "htp",
+        "percent htp",
         "probability range factor",
         "variance high (system)"
       ],
@@ -1851,9 +1892,9 @@
     {
       "words": [
         "global warming",
+        "loss",
+        "long run growth",
         "percent",
-        "GDP",
-        "factor",
         "assumed"
       ],
       "number": "16",
@@ -1862,8 +1903,7 @@
     {
       "words": [
         "global warming",
-        "htp",
-        "GDP",
+        "welfare weight",
         "factor",
         "assumed"
       ],
@@ -9309,8 +9349,9 @@
         "percent",
         "GDP",
         "annual",
-        "factor",
-        "assumed"
+        "assumed",
+        "loss",
+        "long run growth"
       ],
       "formula": "long run damage share of the GDP",
       "words": [
@@ -9329,7 +9370,7 @@
         "potential loss",
         "percent",
         "GDP",
-        "htp",
+        "welfare weight",
         "factor",
         "assumed"
       ],
@@ -9337,8 +9378,7 @@
       "words": [
         "global warming",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed"
       ],
       "number": "-0.37",
@@ -9375,7 +9415,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "formula": "avoided welfare loss",
       "words": [
@@ -9552,8 +9593,7 @@
       "context": [
         "global warming",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "probability range factor",
         "variance low (system)"
@@ -9562,8 +9602,7 @@
       "words": [
         "global warming",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "variance low (system)"
       ],
@@ -9574,8 +9613,7 @@
       "context": [
         "global warming",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "probability range factor",
         "variance high (system)"
@@ -9584,8 +9622,7 @@
       "words": [
         "global warming",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "variance high (system)"
       ],
@@ -9865,7 +9902,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "coal phase-out (climate solution)",
@@ -10059,7 +10097,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "methane reduction (climate solution)",
@@ -10252,7 +10291,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "energy efficiency (climate solution)",
@@ -10445,7 +10485,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "building renovation",
@@ -10638,7 +10679,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "heat pumps",
@@ -10831,7 +10873,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "district heating (climate solution)",
@@ -11024,7 +11067,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "solar energy (climate solution)",
@@ -11217,7 +11261,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "wind energy (climate solution)",
@@ -11410,7 +11455,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "hydropower (climate solution)",
@@ -11603,7 +11649,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "nuclear energy (climate solution)",
@@ -11796,7 +11843,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "geothermal energy (climate solution)",
@@ -11989,7 +12037,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "energy storage (climate solution)",
@@ -12182,7 +12231,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "grid expansion (climate solution)",
@@ -12375,7 +12425,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "electrification (climate solution)",
@@ -12568,7 +12619,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "public transport",
@@ -12761,7 +12813,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "cycling",
@@ -12954,7 +13007,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "speed limit (climate solution)",
@@ -13147,7 +13201,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "carbon price",
@@ -13340,7 +13395,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "climate dividend",
@@ -13533,7 +13589,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "emissions trading (climate solution)",
@@ -13726,7 +13783,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "electric mobility (climate solution)",
@@ -13919,7 +13977,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "freight transport (climate solution)",
@@ -14112,7 +14171,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "circular economy (climate solution)",
@@ -14305,7 +14365,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "recycling (climate solution)",
@@ -14498,7 +14559,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "material efficiency (climate solution)",
@@ -14691,7 +14753,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "sufficiency (climate solution)",
@@ -14884,7 +14947,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "afforestation",
@@ -15077,7 +15141,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "peatland rewetting",
@@ -15270,7 +15335,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "soil carbon buildup",
@@ -15463,7 +15529,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "carbon capture and storage",
@@ -15656,7 +15723,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "carbon capture and utilization",
@@ -15849,7 +15917,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "green hydrogen (climate solution)",
@@ -16042,7 +16111,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "sustainable agriculture (climate solution)",
@@ -16235,7 +16305,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "reduced meat consumption (climate solution)",
@@ -16428,7 +16499,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "food waste reduction",
@@ -16621,7 +16693,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "aviation emission reduction",
@@ -16814,7 +16887,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "emission standards",
@@ -17007,7 +17081,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "research (climate solution)",
@@ -17200,7 +17275,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "innovation (climate solution)",
@@ -17393,7 +17469,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "climate finance (climate solution)",
@@ -17586,7 +17663,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "supply chain laws",
@@ -17779,7 +17857,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "fossil subsidy removal",
@@ -17972,7 +18051,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "education (climate solution)",
@@ -18165,7 +18245,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "digitalization (climate solution)",
@@ -18358,7 +18439,8 @@
         "world",
         "billion",
         "loss reduction",
-        "assumed"
+        "assumed",
+        "percent htp"
       ],
       "words": [
         "international agreements",
