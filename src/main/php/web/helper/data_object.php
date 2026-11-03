@@ -247,6 +247,11 @@ class data_object
     // the column names per column tier selection of the value tables of the page
     // (value_list::tier_names), which the tooltips of the column menu of the navbar name
     public array $tier_names = [];
+    // true if a value table of the page has own columns, so that the column menu of the navbar offers the values that fit none of them
+    public bool $table_own_columns = false;
+    // the csv of the value tables of the page, which the entry point sends as a download, and the name of the first table for the file name
+    public string $table_csv = '';
+    public string $table_csv_name = '';
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
@@ -710,6 +715,20 @@ class data_object
     {
         foreach ($chg_log->lst() as $log) {
             $this->chg_log->add($log, $msg);
+        }
+    }
+
+    /**
+     * add the csv of a value table of the page; several tables are separated by an empty line
+     *
+     * @param string $csv the csv of the table, empty if the url does not ask for the export
+     * @param string $name the name of the phrase of the table, of which the first names the file
+     */
+    function add_table_csv(string $csv, string $name): void
+    {
+        if ($csv != '') {
+            $this->table_csv .= ($this->table_csv == '' ? '' : "\n") . $csv;
+            $this->table_csv_name = $this->table_csv_name == '' ? $name : $this->table_csv_name;
         }
     }
 

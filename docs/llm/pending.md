@@ -1,11 +1,98 @@
 # pending - list of planned llm prompts with prio 1
 
-## portfolio split page compared with its sample
+## table populism solution
+
+The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
+solutions sorted by default by potential gain descending. 
+The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
+and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
+
+the border and grey background colours should be removed by default with an option to show them.
+The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
+
+### adjust the table data
+
+add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708 
+and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
+and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
+
+
+## table editor
+
+The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the
+definition of the rows, a preview before the save (the frame shows the saved table) and the alpha sort conditions.
+
+**Target:** `use_cases/table_editor.html` is generated like `use_cases/calculator_editor.html` and matches the hand made
+`use_cases/table_editor_sample.html`, proven by tests. All paths below are in `src/test/resources/web/html/`. The
+generated page fully replaces the current list editor of `script/table_editor.js`; the server page stays behind `sc=0`.
+
+1. **Sample: same page frame and colours.** Change `table_editor_sample.html` to the frame of
+   `calculator_editor_sample.html`: the stylesheets of the pod (bootstrap, fontawesome, `style_html.css`) instead of the
+   inlined navbar rules and the IBM Plex fonts, and the `:root` colour settings of the calculator editor (`--ink`,
+   `--accent: #385eb7`, ...) instead of the teal ones, without the dark variants if the calculator editor has none.
+2. **Sample: same top line.** Replace the `h1` and the buttons above the rail by the `.bar` of the calculator editor:
+   the title, `for <phrase name>` with `Load`, `no changes`, `Undo`, `Redo`, `Discard changes`, `Export` and `Save`, with
+   the same html ids (`phraseIn`, `btnLoad`, `changeCount`, `btnUndo`, `btnRedo`, `btnReset`, `btnExport`, `btnSave`).
+   Save writes to the database and not to `localStorage`; `Reset to default` and `Sample data` are dropped.
+3. **Import json of the example.** Extract `DATA`, `COLUMN_PHRASES` and `DEFAULT_VIEW` of the sample into a use case file
+   `messages/use_cases/table_editor_sample.json` at the end of `files::USE_CASE_FILES_APPENDED`, without a `code_id`: the
+   sectors as lower-case words with their `is part of` triples and abbreviations, the row phrase `sector of revenue`,
+   the values per year in million CHF with their sources, the entries without a number and without a parent as they
+   are, `growth` and `share` as formulas, and the definition of the view as triples to the table keywords of
+   `editor_views.json`. Name the id shift in the report and re-pin.
+4. **Align the keywords.** Compare the fields of `SPEC` and `DEFAULT_VIEW` with the keywords of `editor_views.json` and
+   resolve each difference at one place, e.g. `columns_major` is `mayor column (system)`, `value_decimals` and
+   `value_thousands` are `value_format`, `row_order_col` and `row_order_dir` are `row_order`.
+5. **Sample: seed from the api.** Replace the constants of step 3 in the sample by a
+   `<script type="application/json" id="seed">` with the `/api/phraseData` answer of the imported phrase, in the same
+   structure as `calculator_editor_sample.html`, and `seedName` with the name of the import file. `SPEC` moves to the
+   script with translated labels. Check that the walk of the phraseData api returns the view definition, the order
+   triples and the results; extend the walk if not.
+6. **Script and style.** Move the script of the sample to `script/table_editor.js` and its css to
+   `style/table_editor.css`, nested in the host, and let the sample load both like the other samples. Every text comes
+   from the seed (`table_editor_` messages in `en.yaml` and `de.yaml`, the texts of the calculator editor for the top line).
+7. **Page of the server.** `system_page::table_editor` renders the host and the seed with `CALC_EDITOR_SEED_ID`, so that
+   the seed has the same id and the volatile time is fixed in one way; remove `TABLE_EDITOR_SEED_ID` and the keys around
+   the phraseData answer that step 6 no longer needs. The table is rendered by the script from the seed without an api call.
+8. **Save.** Undo, redo, the change count and the save with the `updatePut` body follow the calculator editor; reuse its
+   logic where the code can be shared. Every problem of a save is shown to the user, and a save deletes only with the logged `del()`.
+9. **Tests.**
+   - `system_views_read_tests`: `assert_editor_view` with the imported phrase writes `use_cases/table_editor.html`.
+   - Compare the page with the sample by `html_page_diff` and write the differences as `use_cases/table_editor_diff.md`.
+   - Add scenarios in `src/test/js` like `calculator_editor_scenarios.js` with one positive and one negative case per
+     action: add, move and remove a column, change a sort and a row parameter, undo, redo, discard, export, save.
+   - Compare each resulting `updatePut` body with a fixture in `src/test/resources/web/table_editor/` and run it in
+     `update_put_write_tests`, also reading the saved definition back.
+   - `coding_rule_tests::use_case_no_test_formula_tests` stays clean for the new use case.
+10. **Docs.** Update "The table editor" in `docs/llm/frontend.md` and the steps in `docs/table_creation.md`.
+
+## result tooltip
+
+if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
+to show the formula used for the calculation of the result in the latex format with the values used for the result 
+and a 'click for more details' hint
+
+## Calculator editor
+
+### Swiss NPP
+
+add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+### portfolio split page compared with its sample
 
 The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
 and the related reports.
 
-### import
+#### import
 
 based on a csv and a list of context phrases e.g. 'example portfolio split' a zukunft import json should be created.
 
@@ -90,7 +177,7 @@ so create the csv file and as a unit test result create or update a zukunft.com 
 
 create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
 
-### check
+#### check
 
 Differences remaining
 
@@ -101,12 +188,12 @@ Differences remaining
 - Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
 - Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
 
-### step 2: add a "Add child" and remove
+#### step 2: add a "Add child" and remove
 
 Add an add two children and remove one child test case similar to the high and low test cases 
 so that all main test cases are covered
 
-### step 3: the input fields (1), (2), (3), (4)
+#### step 3: the input fields (1), (2), (3), (4)
 
 - the formulas of the warnings name the first and the second child: 
   a new child needs a sum over the instances, so update them with the add child task
@@ -116,26 +203,26 @@ because a new child has no allocation before the walk is calculated:
 a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
 and the page needs the remove button per field. The button stays without a function until then.
 
-### step 4: the result table (9), (17)
+#### step 4: the result table (9), (17)
 
 - the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
 
-### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
 - the colours of the walk cells and the hint below the holdings
 
-### step 7: the buttons (13)
+#### step 7: the buttons (13)
 
 - the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
 - the icons of the sample
 
-### step 8: decide what the generated page keeps
+#### step 8: decide what the generated page keeps
 
 - the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
 - which the generated page shows at the assumptions and the holdings
 
-### step 9: calculate the split again in the browser (18)
+#### step 9: calculate the split again in the browser (18)
 
 The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
 
@@ -145,50 +232,31 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
 5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
 ## ID check
 
 include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
 
 ## Calculator editor
 
-## use cases
+### use cases
 
-### portfolio split calculator
+#### ahv vat
 
-the files and the diff check exist (`docs/deployment.md` "use case pages and their samples"); next steps:
-- bring `portfolio_split_calculator_no_js.html` and `_js.html` closer to the sample with `portfolio_split_calculator_diff.md` and `_diff_high.md`
-- give both pages the same fields, then add more input cases and set `$all_fields` of `assert_sample_case` to true
-- add the same setup for the other samples of the table in `docs/deployment.md`
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the
+possibility to set the weight of the targets and combine them with the personal gain to one index rating
 
-### Swiss NPP
+#### config yaml
 
-based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
-src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+add these to the config.yaml at 'pinned views'
 
-add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
 
-create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
-and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
 
-add costs of CO2-eq reduction to the npp
+#### more sample
 
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+write a script that for all *_sample.html files within src/test/resources/web/html/use_cases
+a generated file exists and is generated
 
-### ahv vat 
-
-Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
-possibility to set the weight of the targets and combine them with the personal gain to one index rating 
-
-## pure HTML ans JavaScript views
+## pure HTML and JavaScript views
 
 add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
 

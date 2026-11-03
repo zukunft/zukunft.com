@@ -52,6 +52,7 @@ class html_page_diff
     // the separator of the numbers of the generated pages, which a number input of a sample cannot hold
     const string THOUSAND_SEP = "'";
     const string CLASS_FIELD = 'field';
+    const string CLASS_BUTTON = 'btn';
     const string CLASS_CHECK = 'check';
     const string CLASS_READ_ONLY = 'ro';
     const string CLASS_WARNING = 'warn';
@@ -108,7 +109,8 @@ class html_page_diff
             $warnings = '//main//div[' . $this->has_class(self::CLASS_WARNING) . '][not(@hidden)]';
             $this->add_text_items($xpath, $warnings, self::KIND_WARNING, $result);
             $this->add_table_items($xpath, $result);
-            $this->add_text_items($xpath, '//main//button', self::KIND_BUTTON, $result);
+            // a link that looks like a button is a button for the reader e.g. the pdf report
+            $this->add_text_items($xpath, '//main//button | //main//a[' . $this->has_class(self::CLASS_BUTTON) . ']', self::KIND_BUTTON, $result);
             $this->add_text_items($xpath, '//main//li', self::KIND_LIST_ITEM, $result);
         }
         return $result;
@@ -464,7 +466,7 @@ class html_page_diff
      * @param array $lines the findings of the section
      * @return string the markdown of the section with the number of findings in the heading and one list entry per finding
      */
-    private function report_section(string $title, array $lines): string
+    function report_section(string $title, array $lines): string
     {
         $result = "\n" . '## ' . $title . ' (' . count($lines) . ')' . "\n";
         if ($lines != []) {

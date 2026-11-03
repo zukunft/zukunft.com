@@ -58,6 +58,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 
+use Closure;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -82,6 +83,9 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 class calculator_report
 {
 
+    // the report reads and calculates the complete page, which can take longer than the php limit of a page
+    const int MAX_TIME_SEC = 600;
+    const string FILE_NAME_UNSAFE = '/[^A-Za-z0-9 ._-]/';
     // the phrases of the use case that the positions are read from, selected by their name
     const string SPLIT_COUNT = 'split count';
     const string UNIT_VALUE = 'unit value';
@@ -119,19 +123,23 @@ class calculator_report
      * @param word|triple|null $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load
      * @param data_object $dto the request cache filled with the data of the page
+     * @param Closure|null $step called with the msg_id of each step before it starts, to show the progress
      * @return string the pdf file or an empty string if the phrase is no calculator
      */
-    function pdf(word|triple|null $dbo, user_message $msg, data_object $dto): string
+    function pdf(word|triple|null $dbo, user_message $msg, data_object $dto, ?Closure $step = null): string
     {
         $result = '';
         $calc = $dbo == null ? null : new calculator($dbo->phrase(), $dto->phr_lst);
         if ($calc?->is_calculator()) {
             $list = new ui_list();
+            $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_NUMBERS);
             $lst = $list->calculator_numbers($dbo, $dto, $msg);
             $pdf = new pdf_writer();
             $this->add_logo($pdf);
             $pdf->title($calc->title());
+            $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_POSITIONS);
             $this->add_positions($pdf, $calc, $lst, $dto, $msg);
+            $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_TABLES);
             $this->add_html($pdf, $list->calculator_warnings($calc, $dbo, $dto, $msg)
                 . $list->calculation_table($calc, $dbo, $lst, $dto, $msg)
                 . $list->calculator_check($calc, $lst, $dto, $msg)
@@ -140,10 +148,23 @@ class calculator_report
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . $list->formula_notes($dbo, $msg, $dto)
                 . $list->calculator_sources($calc, $dbo, $msg, $dto));
+            $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_FORMULAS);
             $this->add_formulas($pdf, $lst, $dto);
+            $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_FILE);
             $result = $pdf->output();
         }
         return $result;
+    }
+
+    /**
+     * @param string $name the name of the page, which is the suggested file name
+     * @param string $extension the file extension of the download e.g. the csv of a table
+     * @return string the http header that starts the download, with only the chars that are safe in a header
+     */
+    static function attachment_header(string $name, string $extension = pdf_writer::FILE_EXTENSION): string
+    {
+        $file = preg_replace(self::FILE_NAME_UNSAFE, '_', $name) . $extension;
+        return 'Content-Disposition: attachment; filename="' . $file . '"';
     }
 
     /**

@@ -73,8 +73,12 @@ class files
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
     // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
     CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
+    // the hand made sample of the calculator editor json, which uses every proposed calculator element
+    CONST string CALCULATOR_EDITOR_SAMPLE = test_paths::RESOURCE . 'web' . DIRECTORY_SEPARATOR . 'calculator_editor' . DIRECTORY_SEPARATOR . 'calculator_editor_sample' . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the table editor that the browser builds from its seed
+    CONST string TABLE_EDITOR = 'table_editor';
     // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
     CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
     // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
@@ -96,8 +100,18 @@ class files
     CONST string PV_CASE_LOW = 'low';
     CONST string PV_CASE_MISSING_FIELD = 'missing_field';
     CONST array PV_CASES = [self::PV_CASE_STANDARD, self::PV_CASE_HIGH, self::PV_CASE_LOW];
+    // the Swiss NPP vote page without javascript and as the browser builds it, the hand made sample and the report of their differences
+    CONST string NPP_CH_VOTE_NO_JS = 'npp_ch_vote';
+    CONST string NPP_CH_VOTE_JS = 'npp_ch_vote_js';
+    CONST string NPP_CH_VOTE_SAMPLE = 'npp_ch_vote_sample';
+    CONST string NPP_CH_VOTE_DIFF = 'npp_ch_vote_diff';
+    // the expected csv export of the table of the global warming solutions and the report of the differences of the real export
+    CONST string GLOBAL_WARMING_SOLUTIONS_CSV = test_paths::EXPORT_START_PAGE . 'global_warming_solutions' . self::CSV;
+    CONST string GLOBAL_WARMING_SOLUTIONS_DIFF = test_paths::EXPORT_START_PAGE . 'global_warming_solutions_diff' . self::MD;
+    // the sample fills its verdict and its tables by its script, so the compare reads it after a browser has run it
+    CONST string NPP_CH_VOTE_CASES = test_paths::JS . 'npp_ch_vote_cases' . self::JS;
     // the calculator page of the example portfolio split that the server renders without javascript
-    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS ='portfolio_split_calculator_no_js';
     // the same page that the browser builds with javascript from the database
     CONST string PORTFOLIO_SPLIT_CALCULATOR_JS = 'portfolio_split_calculator_js';
     CONST string PORTFOLIO_SPLIT_CALCULATOR_SAMPLE = 'portfolio_split_calculator_sample';

@@ -416,6 +416,8 @@
             er/user.php
     \-- can_set_code_id - section for function can_set_code_id not yet defined that it should be owner and access in /us
             er/user.php
+    \-- can_overwrite_code_id - section for function can_overwrite_code_id not yet defined that it should be owner and a
+            ccess in /user/user.php
     \-- can_set_ui_msg_id - section for function can_set_ui_msg_id not yet defined that it should be owner and access in
              /user/user.php
     \-- delta - section for function delta is expected to be del in /user/user.php
@@ -6534,6 +6536,21 @@
     \-- page_label - section for function page_label not yet defined that it should be page in /component/execute/calcul
             ator.php
     \-- lead - section for function lead not yet defined that it should be page in /component/execute/calculator.php
+    \-- more - section for function more not yet defined that it should be lists in /component/execute/calculator.php
+    \-- tag - section for function tag not yet defined that it should be lists in /component/execute/calculator.php
+    \-- arguments - section for function arguments not yet defined that it should be lists in /component/execute/calcula
+            tor.php
+    \-- cell_phrase - section for function cell_phrase not yet defined that it should be lists in /component/execute/cal
+            culator.php
+    \-- is_difference - section for function is_difference is expected to be info in /component/execute/calculator.php
+    \-- text_sources - section for function text_sources not yet defined that it should be lists in /component/execute/c
+            alculator.php
+    \-- table_columns - section for function table_columns not yet defined that it should be lists in /component/execute
+            /calculator.php
+    \-- table_column_phrases - section for function table_column_phrases not yet defined that it should be lists in /com
+            ponent/execute/calculator.php
+    \-- table_sorts - section for function table_sorts not yet defined that it should be lists in /component/execute/cal
+            culator.php
     \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
     \-- items - section for function items not yet defined that it should be lists in /component/execute/calculator.php
     \-- sub_items - section for function sub_items not yet defined that it should be lists in /component/execute/calcula
@@ -6548,6 +6565,10 @@
             xecute/calculator.php
     \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- has_base - section for function has_base not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
+    \-- case_name - section for function case_name not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
     \-- phrase_id - section for function phrase_id not yet defined that it should be texts and flags in /component/execu
             te/calculator.php
     \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
@@ -6588,6 +6609,10 @@
             culator.php
     \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+    \-- own_text - section for function own_text not yet defined that it should be internal in /component/execute/calcul
+            ator.php
+    \-- property - section for function property not yet defined that it should be internal in /component/execute/calcul
+            ator.php
 \-- calculator_report
     \-- pdf - section for function pdf missing in /component/execute/calculator_report.php
     \-- add_html - section for function add_html missing in /component/execute/calculator_report.php
@@ -6912,6 +6937,8 @@
             ponent/execute/system_page.php
     \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
             omponent/execute/system_page.php
+    \-- table_editor - section for function table_editor not yet defined that it should be process catch in /component/e
+            xecute/system_page.php
     \-- formula_editor - section for function formula_editor not yet defined that it should be process catch in /compone
             nt/execute/system_page.php
     \-- formula_editor_selector - section for function formula_editor_selector not yet defined that it should be process
@@ -6996,6 +7023,7 @@
     \-- values_in_columns - section for function values_in_columns missing in /component/execute/ui_list.php
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
+    \-- table_column_candidates - section for function table_column_candidates missing in /component/execute/ui_list.php
     \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
@@ -7004,6 +7032,10 @@
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- calculator_text - section for function calculator_text missing in /component/execute/ui_list.php
+    \-- calculator_arguments - section for function calculator_arguments missing in /component/execute/ui_list.php
+    \-- calculator_verdict - section for function calculator_verdict missing in /component/execute/ui_list.php
+    \-- calculator_sensitivity - section for function calculator_sensitivity missing in /component/execute/ui_list.php
     \-- calculator_remove_button - section for function calculator_remove_button missing in /component/execute/ui_list.p
             hp
     \-- calculator_imports - section for function calculator_imports missing in /component/execute/ui_list.php
@@ -7012,17 +7044,20 @@
     \-- field_shown - section for function field_shown missing in /component/execute/ui_list.php
     \-- field_unit - section for function field_unit missing in /component/execute/ui_list.php
     \-- calculator_option_text - section for function calculator_option_text missing in /component/execute/ui_list.php
+    \-- calculator_source_ids - section for function calculator_source_ids missing in /component/execute/ui_list.php
     \-- calculator_hint - section for function calculator_hint missing in /component/execute/ui_list.php
     \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_table_unit - section for function calculation_table_unit missing in /component/execute/ui_list.php
     \-- result_width - section for function result_width missing in /component/execute/ui_list.php
+    \-- calculator_difference - section for function calculator_difference missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
             hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
     \-- calculator_buttons - section for function calculator_buttons missing in /component/execute/ui_list.php
+    \-- calculator_case_field - section for function calculator_case_field missing in /component/execute/ui_list.php
     \-- calculator_report_url - section for function calculator_report_url missing in /component/execute/ui_list.php
     \-- calculator_check - section for function calculator_check missing in /component/execute/ui_list.php
     \-- calculator_check_same - section for function calculator_check_same missing in /component/execute/ui_list.php
@@ -7243,6 +7278,12 @@
     \-- url_to_html - section for function url_to_html not yet defined that it should be view in /frontend.php
     \-- send_loading_start - section for function send_loading_start not yet defined that it should be view in /frontend
             .php
+    \-- send_report_start - section for function send_report_start not yet defined that it should be view in /frontend.p
+            hp
+    \-- report_end_html - section for function report_end_html not yet defined that it should be view in /frontend.php
+    \-- report_watch - section for function report_watch not yet defined that it should be view in /frontend.php
+    \-- report_release_session - section for function report_release_session not yet defined that it should be view in /
+            frontend.php
     \-- loading_start - section for function loading_start not yet defined that it should be view in /frontend.php
     \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in 
             /frontend.php
@@ -7381,6 +7422,8 @@
             ect.php
     \-- add_changes - section for function add_changes not yet defined that it should be set and get in /helper/data_obj
             ect.php
+    \-- add_table_csv - section for function add_table_csv not yet defined that it should be set and get in /helper/data
+            _object.php
     \-- add_tier_names - section for function add_tier_names not yet defined that it should be set and get in /helper/da
             ta_object.php
     \-- change_log - section for function change_log not yet defined that it should be set and get in /helper/data_objec
@@ -7484,6 +7527,14 @@
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_start - section for function loading_start not yet defined that it should be header & footer in /html/ht
             ml_base.php
+    \-- frame_start - section for function frame_start not yet defined that it should be header & footer in /html/html_b
+            ase.php
+    \-- frame_step - section for function frame_step not yet defined that it should be header & footer in /html/html_bas
+            e.php
+    \-- frame - section for function frame not yet defined that it should be header & footer in /html/html_base.php
+    \-- ref_to_frame - section for function ref_to_frame not yet defined that it should be header & footer in /html/html
+            _base.php
+    \-- refresh - section for function refresh not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_end - section for function loading_end not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -7562,6 +7613,10 @@
             used in zukunft.com in /html/html_base.php
     \-- tbl_start_hist - section for function tbl_start_hist not yet defined that it should be the HTML table functions 
             used in zukunft.com in /html/html_base.php
+    \-- tbl_design - section for function tbl_design not yet defined that it should be the HTML table functions used in 
+            zukunft.com in /html/html_base.php
+    \-- table_design_configured - section for function table_design_configured not yet defined that it should be the HTM
+            L table functions used in zukunft.com in /html/html_base.php
     \-- tbl_start_pur - section for function tbl_start_pur not yet defined that it should be the HTML table functions us
             ed in zukunft.com in /html/html_base.php
     \-- tbl_start_borderless_grey - section for function tbl_start_borderless_grey not yet defined that it should be the
@@ -7720,6 +7775,7 @@
             _base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- div_at - section for function div_at not yet defined that it should be internal in /html/html_base.php
     \-- block - section for function block not yet defined that it should be internal in /html/html_base.php
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
     \-- concat_entry_text - section for function concat_entry_text not yet defined that it should be internal in /html/h
@@ -7880,6 +7936,8 @@
             ase_list.php
     \-- sort_definitions - section for function sort_definitions not yet defined that it should be load in /phrase/phras
             e_list.php
+    \-- sort_definitions_of - section for function sort_definitions_of not yet defined that it should be load in /phrase
+            /phrase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
@@ -7903,6 +7961,8 @@
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- column_and_unit - section for function column_and_unit not yet defined that it should be related in /phrase/phra
+            se_list.php
     \-- column_phrases - section for function column_phrases not yet defined that it should be related in /phrase/phrase
             _list.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/
@@ -8602,6 +8662,7 @@
     \-- phrase_col_ids - section for function phrase_col_ids missing in /value/table_model.php
     \-- col_id_by_name - section for function col_id_by_name missing in /value/table_model.php
     \-- cell_numbers - section for function cell_numbers missing in /value/table_model.php
+    \-- cell_centres - section for function cell_centres missing in /value/table_model.php
     \-- has_column - section for function has_column missing in /value/table_model.php
     \-- col_id_of_name - section for function col_id_of_name missing in /value/table_model.php
     \-- sort_rows - section for function sort_rows missing in /value/table_model.php
@@ -8672,6 +8733,8 @@
             php
     \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
             p
+    \-- table_column_names - section for function table_column_names not yet defined that it should be display in /value
+            /value_list.php
     \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
             /value_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
@@ -9220,7 +9283,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 13
+    \-- 14
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -9471,6 +9534,8 @@
         \-- data_object - @return bool true if this context object contains at least some phrases
     \-- add_changes
         \-- data_object - @return bool true if this context object contains at least some phrases
+    \-- add_table_csv
+        \-- data_object - add the csv of a value table of the page; several tables are separated by an empty line
     \-- add_tier_names
         \-- data_object - add the column names of a value table of the page, so that the column menu of the navbar
     \-- change_log
@@ -9788,6 +9853,8 @@
         \-- ui_list - show the values related to the given phrase in up to four columns that are shown side by side
     \-- table_with_related_columns
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
+    \-- table_column_candidates
+        \-- ui_list - @param word|triple $dbo the phrase of the table
     \-- prior_names
         \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
     \-- value_input_fields
@@ -9804,6 +9871,14 @@
         \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- calculator_text
+        \-- ui_list - a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
+    \-- calculator_arguments
+        \-- ui_list - the collapsed lead text and the arguments of both sides below the title of the page
+    \-- calculator_verdict
+        \-- ui_list - the verdict box: the state that the number of the first phrase has compared with the
+    \-- calculator_sensitivity
+        \-- ui_list - the sensitivity table with its rows and columns; the numbers need a calculation per cell, so
     \-- calculator_remove_button
         \-- ui_list - the button to remove an instance of a repeated field at its place,
                  without a function so far (docs/llm/pending.md)
@@ -9821,6 +9896,8 @@
         \-- ui_list - @param sandbox_value $val the value that a number field shows
     \-- calculator_option_text
         \-- ui_list - @param string $label the label of the option
+    \-- calculator_source_ids
+        \-- ui_list - the sources of a calculator page in the order of their first use on the page: the values
     \-- calculator_hint
         \-- ui_list - @param string $hint the hint of a calculator field
     \-- calculator_hint_numbers
@@ -9833,6 +9910,8 @@
                  row and column the number of the cell or null (calculation_table_values)
     \-- result_width
         \-- ui_list - @param phrase $phr the phrase of the calculator page
+    \-- calculator_difference
+        \-- ui_list - @param sandbox_value|null $first the number of the first column
     \-- calculation_row_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_side_context
@@ -9842,6 +9921,8 @@
     \-- calculator_buttons
         \-- ui_list - the buttons of a list or a detail table at their place: the report is a link to the pdf,
                  which also
+    \-- calculator_case_field
+        \-- ui_list - the field of the name of a case of the page of the server, which only shows the name, because
     \-- calculator_report_url
         \-- ui_list - @param int $phr_id the phrase id of the page, which is negative for a triple
     \-- calculator_check
@@ -10080,6 +10161,8 @@
         \-- table_model - @param string $name a name that selects a value column e.g. "loss" or "potential loss"
     \-- cell_numbers
         \-- table_model - the numbers of one cell sorted by their role, like value_list::cell shows them
+    \-- cell_centres
+        \-- table_model - @param string $row_key the key of the row
     \-- has_column
         \-- table_model - @param int $phr_id the phrase id of a column
     \-- col_id_of_name
@@ -10106,6 +10189,30 @@
     \-- static_page
         \-- html_base - write the font and the colours of config.yaml between the markers in the head of a static
 \-- lists
+    \-- more
+        \-- calculator - @return string the collapsed lead text of the page phrase, else of the phrase it is built from,
+                 else an empty string
+    \-- tag
+        \-- calculator - @param phrase $item an input or assumption of the page
+    \-- arguments
+        \-- calculator - @param bool $pro true for the items whose triple supports the claim,
+                 false for those that limit it
+    \-- cell_phrase
+        \-- calculator - @param phrase $row a row of the result table
+    \-- is_difference
+        \-- calculator - @param phrase|null $col_phr the phrase of a result column
+    \-- text_sources
+        \-- calculator - @return array the names of the sources that the texts of the page name by a placeholder in the 
+                order of the page
+    \-- table_columns
+        \-- calculator - @return array the names of the own columns of the table of the page phrase in their order,
+                 empty if the table uses the columns of all tables
+    \-- table_column_phrases
+        \-- calculator - @return phrase[] the own columns of the table of the page phrase in their order e.g. potential 
+                gain in EUR
+    \-- table_sorts
+        \-- calculator - @return phrase[] the order triples of the own sorting of the table of the page phrase in their 
+                order e.g. numeric descending of reward ratio
     \-- group
         \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
     \-- items
@@ -10123,6 +10230,11 @@
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- button_label
         \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- has_base
+        \-- calculator - @return bool true if the page is built from another phrase, of which a case can be another kind
+    \-- case_name
+        \-- calculator - @return string the name of the case that the page shows e.g. Miller family of Miller family por
+                tfolio split, empty for the default case
     \-- phrase_id
         \-- calculator - @return int the phrase id of the page, which is negative for a triple
     \-- diagram_title
@@ -10166,6 +10278,59 @@
         \-- calculator - the phrase whose numbers a row shows: the option that the page phrase uses if the phrase
     \-- phrases
         \-- calculator - the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
+\-- internal
+    \-- own_text
+        \-- calculator - @param phrase|null $phr the phrase or the item e.g. battery discharge
+    \-- property
+        \-- calculator - @param phrase|null $phr the phrase or the item e.g. PV installation
+    \-- main
+        \-- html_base - wrap the main tag around html body code
+    \-- div
+        \-- html_base - wrap the div tag around html code
+    \-- div_at
+        \-- html_base - @param string $style the html class name of an absolute positioned block e.g. a needle
+    \-- block
+        \-- html_base - wrap a block tag e.g. the header, aside or section of a use case page around html code
+    \-- concat_text
+        \-- html_base - concatenate two text snippets with the given separator if both are set
+    \-- concat_entry_text
+        \-- html_base - concatenate two text snippets with the configured list entry separator e.g. ", "
+    \-- concat_category_text
+        \-- html_base - concatenate two text snippets with the configured list category separator e.g. " / "
+    \-- concat_title_text
+        \-- html_base - concatenate two text snippets with the configured page-title separator e.g. " - "
+    \-- nav
+        \-- html_base - wrap the nav tag around html code
+    \-- div_bs
+        \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
+    \-- button_icon
+        \-- html_base - @param string $icon the html code of the icon
+    \-- button
+        \-- html_base - wrap the button tag around html code
+    \-- button_bs
+        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
+    \-- list_item
+        \-- html_base - html list item entry
+    \-- details
+        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- definition
+        \-- html_base - one row of a description list, e.g. a setting and its value
+    \-- mark
+        \-- html_base - @param string $txt the already escaped text that matches a search
+    \-- search_input
+        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
+    \-- popover
+        \-- html_base - a button that shows a long text above the page without javascript (html popover)
+    \-- list_unsorted
+        \-- html_base - html unsorted list
+    \-- script_data
+        \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
+    \-- script_src
+        \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+    \-- link_style
+        \-- html_base - @param string $stylesheet path to the stylesheet file
+    \-- text_width
+        \-- pdf_writer - @param string $text the text in utf-8
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -10454,6 +10619,9 @@
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- calculator_editor
         \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+    \-- table_editor
+        \-- system_page - the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script buil
+                ds
     \-- formula_editor
         \-- system_page - the formula editor of the page phrase: the script builds the expression of the selected formul
                 a
@@ -10618,6 +10786,8 @@
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier
         \-- phrase_list - the tier of the table column of the given phrase name
+    \-- column_and_unit
+        \-- phrase_list - the column phrase and the unit of a column definition: "<phrase> can be <tier>" defines the
     \-- column_phrases
         \-- phrase_list - the phrases that this list defines as table columns, found with one walk over the list
     \-- category_subtitle
@@ -10665,6 +10835,15 @@
         \-- frontend - create the HTML code based on the given url
     \-- send_loading_start
         \-- frontend - send the start of the page at once, because the creation of the page can take longer than
+    \-- send_report_start
+        \-- frontend - send the start of the frame in which the steps of the report are shown
+    \-- report_end_html
+        \-- frontend - the end of the report frame: the request of the created file, whose download keeps the page,
+                 or the failure
+    \-- report_watch
+        \-- frontend - give the report more time than a page and tell the user if it fails anyway, because a fatal
+    \-- report_release_session
+        \-- frontend - end the lock of the session, which keeps its values readable; the settings allow to open it
     \-- loading_start
         \-- frontend - the html start of the page with the logo, the loading text and the footer
 \-- cached page
@@ -10782,6 +10961,17 @@
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
     \-- loading_start
         \-- html_base - the start of a page that is sent before the page is created, because the creation can take
+    \-- frame_start
+        \-- html_base - @param user_message|Message $msg to report a configured font or colour that css could misread
+    \-- frame_step
+        \-- html_base - @param string $text the step that a long running job is doing now
+    \-- frame
+        \-- html_base - @param string $name the name of the frame, which a link selects as its target, and its style
+    \-- ref_to_frame
+        \-- html_base - @param string $url the url that the frame loads
+    \-- refresh
+        \-- html_base - @param string $url the url that the browser loads next,
+                 which starts a download without a script if it is a file
     \-- loading_end
         \-- html_base - @return string the html code that hides the start of the page sent by loading_start
 \-- wrapper for the basic html elements used
@@ -10873,10 +11063,14 @@
         \-- html_base - create the html code to display a table
     \-- tbl_start_hist
         \-- html_base - create the html code to display a table
+    \-- tbl_design
+        \-- html_base - a value table in the design that the url names, else the default design of config.yaml
+    \-- table_design_configured
+        \-- html_base - @return string the name of the default table design of config.yaml, which is not yet checked
     \-- tbl_start_pur
-        \-- html_base - create the html code to display a table
+        \-- html_base - @param string $design the name of the design
     \-- tbl_start_borderless_grey
-        \-- html_base - create the html code to display a table
+        \-- html_base - @param string $design the name of the design
     \-- tbl_start_select
         \-- html_base - a table for a list of selectors
 \-- the form HTML elements used in zukunft.com
@@ -11040,53 +11234,6 @@
         \-- html_base - display a message immediately to the user
     \-- ui_progress
         \-- html_base - 
-\-- internal
-    \-- main
-        \-- html_base - wrap the main tag around html body code
-    \-- div
-        \-- html_base - wrap the div tag around html code
-    \-- block
-        \-- html_base - wrap a block tag e.g. the header, aside or section of a use case page around html code
-    \-- concat_text
-        \-- html_base - concatenate two text snippets with the given separator if both are set
-    \-- concat_entry_text
-        \-- html_base - concatenate two text snippets with the configured list entry separator e.g. ", "
-    \-- concat_category_text
-        \-- html_base - concatenate two text snippets with the configured list category separator e.g. " / "
-    \-- concat_title_text
-        \-- html_base - concatenate two text snippets with the configured page-title separator e.g. " - "
-    \-- nav
-        \-- html_base - wrap the nav tag around html code
-    \-- div_bs
-        \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
-    \-- button_icon
-        \-- html_base - @param string $icon the html code of the icon
-    \-- button
-        \-- html_base - wrap the button tag around html code
-    \-- button_bs
-        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
-    \-- list_item
-        \-- html_base - html list item entry
-    \-- details
-        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
-    \-- definition
-        \-- html_base - one row of a description list, e.g. a setting and its value
-    \-- mark
-        \-- html_base - @param string $txt the already escaped text that matches a search
-    \-- search_input
-        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
-    \-- popover
-        \-- html_base - a button that shows a long text above the page without javascript (html popover)
-    \-- list_unsorted
-        \-- html_base - html unsorted list
-    \-- script_data
-        \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
-    \-- script_src
-        \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
-    \-- link_style
-        \-- html_base - @param string $stylesheet path to the stylesheet file
-    \-- text_width
-        \-- pdf_writer - @param string $text the text in utf-8
 \-- add
     \-- image
         \-- pdf_writer - add a jpeg image at the current position, of which a pdf can use the data as it is

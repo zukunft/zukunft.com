@@ -203,6 +203,8 @@ class files
     const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
     // the reasons that cause costs due to global warming with the study numbers per country
     const string PROBLEM_GLOBAL_WARMING_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming_reasons' . self::JSON;
+    // the climate solutions ranked by their potential gain per initial effort
+    const string PROBLEM_GLOBAL_WARMING_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming_solutions' . self::JSON;
     // the reasons that cause costs due to populism with the study numbers per country
     const string PROBLEM_POPULISM_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_populism_reasons' . self::JSON;
     // the reasons that cause costs due to poverty with the study numbers per country
@@ -443,6 +445,7 @@ class files
         self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
         // appended last, so that the ids of the files above stay stable
         self::PROBLEM_GLOBAL_WARMING_REASONS_FILE,
+        self::PROBLEM_GLOBAL_WARMING_SOLUTIONS_FILE,
         self::PROBLEM_POPULISM_REASONS_FILE,
         self::PROBLEM_POVERTY_REASONS_FILE,
         self::PROBLEM_BIASED_INFORMATION_REASONS_FILE,

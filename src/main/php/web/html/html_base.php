@@ -153,6 +153,9 @@ class html_base
     const string STYLESHEET = 'stylesheet';
     const string A = 'a';
     const string HREF = 'href';
+    const string IFRAME = 'iframe';
+    const string TARGET = 'target';
+    const string CLASS_FRAME_STEP = 'frame-step';
     const string NAV = 'nav';
     const string IMG = 'img';
     const string SRC = 'src';
@@ -165,6 +168,10 @@ class html_base
     const array MODE_PATH = [...html_base::LAYOUT_PATH, triples::COLOUR_MODE];
     // the config.yaml keys above the colour groups page, editor and chart (see theme_style)
     const array COLOUR_PATH = [...html_base::LAYOUT_PATH, words::COLOURS];
+    // the config.yaml keys of the table designs (see tbl_design)
+    const array TABLE_PATH = [...html_base::LAYOUT_PATH, words::TABLE];
+    // a design setting must name a colour of the page or def::TABLE_DESIGN_NONE, so that it cannot end the style attribute
+    const string TABLE_DESIGN_VALUE_PATTERN = '/^[a-z]+$/';
     const string CLASS_HTML = 'class';
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
@@ -989,6 +996,61 @@ class html_base
         $css .= ' counter-reset: ' . self::LOADING_COUNTER . ' var(' . $var . ');}';
         $css .= ' .' . self::CLASS_LOADING_SECONDS . '::after {content: counter(' . self::LOADING_COUNTER . ');}';
         return $css . ' @keyframes ' . self::LOADING_COUNT_ANIMATION . ' {to {' . $var . ': ' . $limit . ';}}';
+    }
+
+    /**
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html start of the small frame next to a button, in which only the last step of a long running job is shown
+     */
+    function frame_start(user_message|Message $msg): string
+    {
+        // not by the last child, because a user message can follow the last step
+        $css = '.' . self::CLASS_FRAME_STEP . ':has(~ .' . self::CLASS_FRAME_STEP . ') {display: none;}';
+        $css .= ' ' . self::BODY . ' {min-height: 0;}';
+        $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
+        return $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
+    }
+
+    /**
+     * @param string $text the step that a long running job is doing now
+     * @return string the html code of the step, which hides the step before
+     */
+    function frame_step(string $text): string
+    {
+        return $this->div($this->esc($text), self::CLASS_FRAME_STEP);
+    }
+
+    /**
+     * @param string $name the name of the frame, which a link selects as its target, and its style
+     * @param string $title the text that a screen reader tells for the frame
+     * @return string the html code of the frame
+     */
+    function frame(string $name, string $title): string
+    {
+        return '<' . self::IFRAME . ' ' . self::NAME . '="' . $name . '" ' . self::CLASS_HTML . '="' . $name . '" '
+            . self::TITLE_HTML . '="' . $this->esc($title) . '"></' . self::IFRAME . '>';
+    }
+
+    /**
+     * @param string $url the url that the frame loads
+     * @param string $name the text of the link
+     * @param string $frame the name of the frame, so that the page with the link stays
+     * @param string $css_class the style of the link
+     * @return string the html code of the link
+     */
+    function ref_to_frame(string $url, string $name, string $frame, string $css_class): string
+    {
+        return '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '" ' . self::TARGET . '="' . $frame . '" '
+            . self::CLASS_HTML . '="' . $css_class . '">' . $this->esc($name) . '</' . self::A . '>';
+    }
+
+    /**
+     * @param string $url the url that the browser loads next, which starts a download without a script if it is a file
+     * @return string the html code that loads the url at once
+     */
+    function refresh(string $url): string
+    {
+        return '<' . self::META . ' http-equiv="refresh" content="0; url=' . htmlspecialchars($url, ENT_QUOTES) . '">';
     }
 
     /**
@@ -2108,6 +2170,83 @@ class html_base
             $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="change_hist"';
         }
         return $result;
+    }
+
+    /**
+     * a value table in the design that the url names, else the default design of config.yaml
+     *
+     * @param string $tbl_rows the html code of the rows
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param user_message $msg to report a design or a setting that is not known
+     * @return string the html code of the table
+     */
+    function tbl_design(string $tbl_rows, array $url_array, user_message $msg): string
+    {
+        $name = $this->table_design_name($url_array, $msg);
+        [$colour, $border, $background] = def::TABLE_DESIGNS[$name];
+        $colour = $this->table_design_value($name, words::COLOUR, $colour, $msg);
+        $border = $this->table_design_value($name, words::BORDER, $border, $msg);
+        $background = $this->table_design_value($name, words::BACKGROUND, $background, $msg);
+        $classes = ['table', $border == def::TABLE_DESIGN_NONE ? 'table-borderless' : 'table-bordered'];
+        $vars = '';
+        if ($colour != def::TABLE_DESIGN_NONE) {
+            $vars .= '--bs-table-color: var(--page-' . $colour . '); ';
+        }
+        if ($border != def::TABLE_DESIGN_NONE) {
+            $vars .= '--bs-table-border-color: var(--page-' . $border . '); ';
+        }
+        if ($background != def::TABLE_DESIGN_NONE) {
+            $classes[] = 'table-striped';
+            $vars .= '--bs-table-striped-bg: var(--page-' . $background . '); ';
+            // bootstrap gives a striped row an own text colour
+            if ($colour != def::TABLE_DESIGN_NONE) {
+                $vars .= '--bs-table-striped-color: var(--page-' . $colour . '); ';
+            }
+        }
+        return '<' . self::TABLE . ' ' . self::CLASS_HTML . '="' . implode(' ', $classes) . '" '
+            . self::STYLE . '="' . trim($vars) . '">' . $tbl_rows . $this->tbl_end();
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param user_message $msg to report a name that is no design
+     * @return string the name of a design of def::TABLE_DESIGNS
+     */
+    private function table_design_name(array $url_array, user_message $msg): string
+    {
+        $wanted = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? $this->table_design_configured();
+        // user input, which may also be an array e.g. from dld[]=plain
+        $name = is_scalar($wanted) ? (string)$wanted : '';
+        if (array_key_exists($name, def::TABLE_DESIGNS)) {
+            $result = $name;
+        } else {
+            $msg->add_warning_with_vars(msg_id::TABLE_DESIGN_UNKNOWN, [msg_id::VAR_VALUE => $name]);
+            $result = def::TABLE_DESIGN_DEFAULT;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the default table design of config.yaml, which is not yet checked
+     */
+    function table_design_configured(): string
+    {
+        global $ui_sys;
+
+        return $ui_sys?->cfg?->text_by([...html_base::TABLE_PATH, words::DESIGN]) ?? def::TABLE_DESIGN_DEFAULT;
+    }
+
+    /**
+     * @param string $design the name of the design
+     * @param string $key the config.yaml key of the setting e.g. words::BORDER
+     * @param string $fallback the setting of def::TABLE_DESIGNS
+     * @param user_message|Message $msg to report a setting that is no colour name
+     * @return string the name of a colour of the page or def::TABLE_DESIGN_NONE
+     */
+    private function table_design_value(string $design, string $key, string $fallback, user_message|Message $msg): string
+    {
+        $names = [...html_base::TABLE_PATH, words::DESIGNS, $design, $key];
+        return $this->theme_value($names, $fallback, self::TABLE_DESIGN_VALUE_PATTERN, msg_id::CONFIG_COLOUR_INVALID, $msg);
     }
 
     function tbl_start_pur(): string
@@ -3699,6 +3838,16 @@ class html_base
     function div(string $txt, string $style = '', string $id = ''): string
     {
         return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * @param string $style the html class name of an absolute positioned block e.g. a needle
+     * @param float $percent the position from the left of the parent in percent
+     * @return string the html code of the empty block at the position
+     */
+    function div_at(string $style, float $percent): string
+    {
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $style . '" style="left: ' . $percent . '%"></' . self::DIV . '>';
     }
 
     /**

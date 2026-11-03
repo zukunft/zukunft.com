@@ -132,7 +132,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 480;
+    const int CHF_ID = 484;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -309,7 +309,7 @@ class words
     const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 407;
+    const int TOTAL_ID = 411;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -322,7 +322,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 821;
+    const int VERBS_ID = 825;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';
@@ -339,6 +339,12 @@ class words
     const string YEAR_CAP = 'year';
     const int YEAR_CAP_ID = 105;
 
+    // the keys of the named table designs of config.yaml user > default > frontend > layout > table
+    const string DESIGN = 'design';
+    const string DESIGNS = 'designs';
+    const string PLAIN = 'plain';
+    const string BORDERED = 'bordered';
+    const string COLOUR = 'colour';
     // the colour keys of config.yaml user > default > frontend > layout > colours (see def::FALLBACK_PAGE_COLOURS)
     // the dark or light mode of the user (see def::MODE_BROWSER)
     const string MODE = 'mode';

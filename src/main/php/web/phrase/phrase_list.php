@@ -429,8 +429,18 @@ class phrase_list extends sandbox_list_named
      */
     function sort_definitions(user_message $msg): array
     {
+        return $this->sort_definitions_of($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg), $msg);
+    }
+
+    /**
+     * @param phrase[] $orders the order triples "<condition> of <column>" e.g. of one table
+     * @param user_message $msg to report a condition word without the code id of a condition
+     * @return array per order the condition (table_orders) and the name of the column
+     */
+    function sort_definitions_of(array $orders, user_message $msg): array
+    {
         $result = [];
-        foreach ($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) as $order) {
+        foreach ($orders as $order) {
             // the condition word nested in the order triple carries the condition as its code id
             $cond_wrd = $order->get_from();
             $cond = table_orders::tryFrom($cond_wrd?->obj()?->code_id ?? '');
@@ -889,7 +899,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase|null $phr the from side of a column definition e.g. "potential gain in EUR"
      * @return array the column phrase e.g. "potential gain" and the unit phrase or null for any unit
      */
-    private function column_and_unit(?phrase $phr): array
+    function column_and_unit(?phrase $phr): array
     {
         $result = [$phr, null];
         if ($phr != null and $phr->is_triple()) {

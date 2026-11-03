@@ -725,14 +725,15 @@ edit the file:
 An LLM patching the generated line by hand masks the signal, and the next run
 overwrites the edit anyway.
 
-### No page of the local webserver is called during a `test/test.php` run
+### No other database call during a `test/test.php` run
 
-A page called from the local webserver while `test/test.php` runs updates data in
-the test database, e.g. the order of the users in `src/test/resources/unit/user/list.csv`,
-so the types get a different view and a regenerated api fixture such as
-`src/test/resources/api/type_lists/type_lists.json` switches its format or its fields
-from one run to the next. The solution is to call no page of the local webserver until
-the run has finished. A long term fix that makes the run independent of parallel page
+A call that reaches the database while `test/test.php` runs interferes with the run: e.g. a page
+of the local webserver updates data in the test database, such as the order of the users in
+`src/test/resources/unit/user/list.csv`, so the types get a different view and a regenerated api
+fixture such as `src/test/resources/api/type_lists/type_lists.json` switches its format or its
+fields from one run to the next. The solution is to make no other call to the database until the
+run has finished: no page of the local webserver, no api call, no second test script and no
+database client. A long term fix that makes the run independent of parallel page
 calls is a Prio 3 task.
 
 ### The test coverage counter stays simple

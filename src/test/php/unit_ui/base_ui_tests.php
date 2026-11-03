@@ -300,6 +300,33 @@ class base_ui_tests
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
         $t->assert($test_name, $url_std[url_var::JAVASCRIPT] ?? '', url_var::FALSE);
 
+        // the values that fit no own column and the table design are view-only states of the same page
+        $test_name = 'the other values and the design are cached per selection';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_UNMATCHED => url_var::TRUE, url_var::DISPLAY_LIST_DESIGN => words::BORDERED];
+        $t->assert_text_contains($test_name, $ui->url_cache_key($url_array), url_var::DISPLAY_LIST_DESIGN . '=' . words::BORDERED);
+        // negative: an array e.g. from dld[]=plain cannot be part of the key
+        $test_name = 'an array in the url is not cached';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_DESIGN => [words::PLAIN]];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the other values and the design are mapped to the short url vars';
+        $url_array = [url_var::MASK_HUMAN => views::TABLE, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_UNMATCHED_HUMAN => url_var::TRUE, url_var::DISPLAY_LIST_DESIGN_HUMAN => words::BORDERED];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_DESIGN] ?? '', words::BORDERED);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_UNMATCHED] ?? '', url_var::TRUE);
+        // the csv is a download of the live data and never a cached page
+        $test_name = 'the csv export is not cached';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_CSV => url_var::TRUE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the csv export is mapped to the short url var';
+        $url_array = [url_var::MASK_HUMAN => views::TABLE, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_CSV_HUMAN => url_var::TRUE];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_CSV] ?? '', url_var::TRUE);
+
         // the login and signup form pages are served from the page cache even though they are process
         // masks, because the plain form is static (the per-session token is restored per request)
         $test_name = 'the login form is cached';
@@ -473,6 +500,14 @@ class base_ui_tests
         // e.g. a moved yaml key would else skip every test of the pinned views silently
         $test_name = 'config.yaml has pinned views';
         $t->assert_greater_zero($test_name, count($pin_lst));
+        $test_name = 'a pinned view with a url is active';
+        $t->assert_true($test_name, $t->pin_is_active([words::URL => api::MAIN_SCRIPT, triples::VIEW_NAME => '']));
+        $test_name = '... and with a view name';
+        $t->assert_true($test_name, $t->pin_is_active([words::URL => '', triples::VIEW_NAME => views::CALCULATOR_NAME]));
+        // negative: a phrase name or a name without a view is no target to open
+        $test_name = '... but not without both';
+        $t->assert_false($test_name, $t->pin_is_active([
+            words::URL => '', triples::VIEW_NAME => '', triples::PHRASE_NAME => triple_names::EXAMPLE_PV_INSTALLATION, words::NAME => views::CALCULATOR_NAME]));
         $test_name = 'a pinned view is linked by its name with the tooltip';
         $pin = array_slice($pin_lst, 0, 1, true);
         $pin_fields = reset($pin) ?: [];
@@ -508,6 +543,9 @@ class base_ui_tests
         $t->assert($test_name, array_values(array_diff($forward_lst, $allow_lst)), []);
         $test_name = '... and each short url of a pinned view';
         $t->assert($test_name, array_values(array_diff(array_keys($pin_lst), $allow_lst)), []);
+        // negative: an inactive pinned view has no short url
+        $test_name = '... but not of an inactive pinned view';
+        $t->assert($test_name, array_values(array_intersect(array_keys($t->pinned_views_inactive()), $allow_lst)), []);
 
         // the login link forwards a '9'-prefixed back target of the current page (the logout
         // page carries the original page as back target, see frontend::action_logout), so after
@@ -652,6 +690,10 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $head, '--font-page: ' . def::FALLBACK_FONT . ';');
         $test_name = '... and the fallback colours of the page';
         $t->assert_text_contains($test_name, $head, '--page-link: ' . def::FALLBACK_PAGE_COLOURS['--page-link'][1] . ';');
+        $test_name = '... with the green and the yellow of a decision';
+        $t->assert_text_contains($test_name, $head, '--page-success: ' . def::FALLBACK_PAGE_COLOURS['--page-success'][1] . ';');
+        $t->assert_text_contains($test_name, $head, '--page-warning: ' . def::FALLBACK_PAGE_COLOURS['--page-warning'][1] . ';');
+        $t->assert_text_not_contains($test_name, $head, '--page-success: ' . def::FALLBACK_PAGE_COLOURS['--page-success'][2] . ';');
         $test_name = '... and of the editors in the light mode';
         $t->assert_text_contains($test_name, $head, '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][1] . ';');
         // a user without a mode gets the light mode, so a page looks the same for every user

@@ -9,7 +9,16 @@
   "description": "The leverage plot as a chart type and as the chart of the start page ranking that shows the mayor columns only: one labelled point per problem with the potential gain of its solution up and its potential loss to the right, the quadrants of the big and the small numbers and the dashed lines of an equal gain per loss, like global-problems-top4_scatter.svg. A chart of the mayor chart type tier is shown instead of the default charts if the table shows the mayor columns only, because a default chart may plot a column that the table does not show. The borrowed system phrases are repeated without their code id; this file is imported as the last step of the db setup, so that no database id of a tested phrase moves.",
   "words": [
     {
-      "name": "chart type"
+      "name": "chart"
+    },
+    {
+      "name": "type"
+    },
+    {
+      "name": "plot"
+    },
+    {
+      "name": "leverage"
     },
     {
       "name": "zukunft.com"
@@ -28,14 +37,23 @@
     },
     {
       "name": "loss"
+    }
+  ],
+  "triples": [
+    {
+      "name": "chart type",
+      "from": "chart",
+      "verb": "has a",
+      "to": "type"
     },
     {
       "name": "leverage plot",
       "description": "chart with one labelled point per table row placed by two numbers of the row, the first number up and the second to the right, with the dashed lines of an equal ratio of the two numbers",
+      "from": "plot",
+      "verb": "kind of",
+      "to": "leverage",
       "code_id": "leverage_plot"
-    }
-  ],
-  "triples": [
+    },
     {
       "name": "zukunft.com system",
       "from": "zukunft.com",

@@ -116,6 +116,9 @@ class styles
     const string CALC_BUTTON_ADD = 'btn-outline-primary btn-sm';
     // a button of a list or a detail table of a calculator page e.g. download
     const string CALC_BUTTON = 'btn-outline-primary';
+    // the same for a link e.g. the pdf report, and the two buttons per line of the input list (style_html.css)
+    const string CALC_BUTTON_LINK = 'btn btn-outline-primary';
+    const string CALC_ACTIONS = 'input-actions';
     // the button to remove an instance of a repeated input and the block of the import buttons of a calculator page
     const string CALC_BUTTON_REMOVE = 'btn-outline-secondary btn-sm';
     const string CALC_IMPORTS = 'imports';
@@ -196,11 +199,26 @@ class styles
     const string CALC_KEY = 'key';
     const string CALC_SUB = 'sub';
     const string CALC_NUMBER = 'n';
+    const string CALC_PANEL = 'panel';
+    const string CALC_PRO = 'pro';
+    const string CALC_CONTRA = 'contra';
+    const string CALC_ARGUMENTS = 'arguments';
+    const string CALC_ARGUMENT_LIST = 'argument-list';
+    const string CALC_NUM = 'num';
+    const string CALC_REF = 'ref';
+    const string CALC_REPORT_FRAME = 'report-frame';
+    const string CALC_VERDICT = 'verdict';
+    const string CALC_HEADLINE = 'headline';
+    const string CALC_METER = 'meter';
+    const string CALC_NEEDLE = 'needle';
+    const string CALC_SCALE = 'scale';
     const string CALC_POSITIVE = 'pos';
     const string CALC_NEGATIVE = 'neg';
     const string CALC_MORE = 'more';
     const string CALC_NOTES = 'notes';
     const string CALC_SOURCES = 'src';
+    // the host of the table editor, which table_editor.css formats
+    const string TABLE_EDITOR = 'table-editor';
     // the host of the calculator editor, which calculator_editor.css formats
     const string CALC_EDITOR = 'editor';
     // the hosts of the formula editor, the selector and the result compare, in which formula_editor.css nests all its rules

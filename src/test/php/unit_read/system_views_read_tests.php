@@ -44,6 +44,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
+include_once test_paths::UTILS . 'csv_table_diff.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\csv_table_diff;
 use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\utils\html_page_diff;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -143,6 +145,8 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator($t);
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
+        $this->run_npp_ch_vote($t);
+        $this->run_global_warming_solutions_csv($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -476,6 +480,11 @@ class system_views_read_tests
             $test_name = 'the short url ' . $url_name . ' opens ' . $pin[words::URL];
             $t->assert_file($test_name, $html->forward_url_page($pin[words::URL]), test_files::PINNED_PAGE_PATH . $url_name);
         }
+        // negative: an inactive pinned view has no target, so its short url page is removed
+        foreach (array_keys($t->pinned_views_inactive()) as $url_name) {
+            $test_name = 'the inactive pinned view ' . $url_name . ' has no short url page';
+            $t->assert_no_file($test_name, test_files::PINNED_PAGE_PATH . $url_name);
+        }
         $test_name = 'the start page links the pinned views of config.yaml';
         $start_page = file_get_contents(test_files::START_PAGE);
         $t->assert_file($test_name, $html->start_page($start_page, $pin_lst, new user_message()), test_files::START_PAGE);
@@ -485,6 +494,10 @@ class system_views_read_tests
         $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
         $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr->id()]);
         $t->assert($test_name, $this->pinned_url($t, $pin_by_names, $msg), $expected);
+        $test_name = '... and only the view if it has no phrase name';
+        $pin_view_only = [triples::VIEW_NAME => views::CALCULATOR_NAME];
+        $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID]);
+        $t->assert($test_name, $this->pinned_url($t, $pin_view_only, $msg), $expected);
     }
 
     /**
@@ -496,26 +509,20 @@ class system_views_read_tests
     private function pinned_url(test_cleanup $t, array $pin, user_message_cfg $msg): string
     {
         $url = $pin[words::URL] ?? '';
-        if ($this->is_by_names($pin)) {
+        if ($url == '') {
             $msk = new view($t->usr1);
             $msk->load_by_name($pin[triples::VIEW_NAME], $msg);
-            $phr = new phrase($t->usr1);
-            $phr->load_by_name($pin[triples::PHRASE_NAME], $msg);
-            // the phrase id of a triple is negative, so the view shows the triple
-            $url = new html_base()->page_url([url_var::MASK => $msk->id(), url_var::ID => $phr->id()]);
+            $url_array = [url_var::MASK => $msk->id()];
+            $phr_name = $pin[triples::PHRASE_NAME] ?? '';
+            if ($phr_name != '') {
+                $phr = new phrase($t->usr1);
+                $phr->load_by_name($phr_name, $msg);
+                // the phrase id of a triple is negative, so the view shows the triple
+                $url_array[url_var::ID] = $phr->id();
+            }
+            $url = new html_base()->page_url($url_array);
         }
         return $url;
-    }
-
-    /**
-     * @param array $pin the url or the view name and the phrase name of a pinned view of config.yaml
-     * @return bool true if the pinned view has no url but a view name and a phrase name
-     */
-    private function is_by_names(array $pin): bool
-    {
-        return ($pin[words::URL] ?? '') == ''
-            and ($pin[triples::VIEW_NAME] ?? '') != ''
-            and ($pin[triples::PHRASE_NAME] ?? '') != '';
     }
 
     /**
@@ -580,8 +587,12 @@ class system_views_read_tests
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
         $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
-        // the table editor placeholder shows only its title and the phrase selector
-        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        // the parked table editor of the server with its title and the phrase selector
+        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
+            '', [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the table editor from its seed
+        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
+            test_paths::HTML . test_paths::USE_CASES . test_files::TABLE_EDITOR);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
@@ -941,6 +952,96 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS);
+    }
+
+    /**
+     * the csv export of the table of the global warming solutions through the view of the page, and the
+     * differences to the expected csv as a report
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_global_warming_solutions_csv(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $row_col = word_names::SOLUTION;
+
+        $test_name = 'the compare reads a cell by the name of its row and column';
+        $csv_txt = "rank,solution,gain\n1,wind,1.5\n";
+        $cells = $ctd->table_cells($csv_txt, $row_col);
+        $t->assert($test_name, $cells, ['wind' => ['rank' => '1', 'gain' => '1.5']]);
+        $test_name = '... and keeps two rows with the same name';
+        $same_cells = $ctd->table_cells("solution,gain\nwind,1\nwind,2\n", $row_col);
+        $t->assert($test_name, array_keys($same_cells), ['wind', 'wind' . csv_table_diff::SAME_NAME_SEP . '2']);
+        $test_name = 'the same number in another format is no difference';
+        $format_cells = $ctd->table_cells("solution,gain\nwind,1.78e+03\n", $row_col);
+        $number_cells = $ctd->table_cells("solution,gain\nwind,1780\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($format_cells, $number_cells, 'a', 'b'), 'Different cells (0)');
+        // negative: a rounded number stays a difference
+        $test_name = '... but a rounded number is one';
+        $full_cells = $ctd->table_cells("solution,gain\nwind,1784.3\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $full_cells, 'a', 'b'), 'Different cells (1)');
+        $test_name = 'a missing row is reported';
+        $none_cells = $ctd->table_cells("solution,gain\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $none_cells, 'a', 'b'), 'Rows missing in the export (1)');
+
+        // through the view, so that the url var, the component and the table are tested together
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_WARMING_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $test_name = 'the table of the global warming solutions is exported as csv';
+        $t->assert_text_contains($test_name, $export_csv, word_names::SOLUTION);
+
+        $target = $ctd->table_cells($t->path_file(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), $row_col);
+        $export = $ctd->table_cells($export_csv, $row_col);
+        // a result names the solution but not the page phrase and is still in the row of the solution
+        $test_name = 'the export has the calculated gain of a solution';
+        $t->assert($test_name, ($export['solar energy']['potential gain in trillion EUR'] ?? '') != '', true);
+        // negative: a solution without a calculated gain would be a row with an empty cell
+        $test_name = '... and the calculated reduction potential of a solution without a stated one';
+        $t->assert($test_name, ($export['coal phase-out']['reduction potential in gigatonne CO2eq per year'] ?? '') != '', true);
+        // the gain per effort uses the calculated gain of this table, the numbers are the calc-validation of the json
+        $eur_col = 'gain per effort in billion EUR per person year';
+        $htp_col = 'gain per effort in million htp per person year';
+        foreach ([
+                     ['circular economy', 89.11, 3.56],
+                     ['digitalization', 29.7, 1.19],
+                     ['coal phase-out', 594.63, 23.75],
+                 ] as [$row, $eur, $htp]) {
+            $test_name = 'the gain per effort of ' . $row . ' in EUR uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$eur_col] ?? 0), 2), $eur);
+            $test_name = 'the gain per effort of ' . $row . ' in htp uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$htp_col] ?? 0), 2), $htp);
+        }
+        // negative: the assumed gain of problem_global_warming.json in the same row is not used
+        $test_name = 'the gain per effort does not use the assumed gain of the same solution';
+        $t->assert($test_name, round((float)($export['coal phase-out'][$htp_col] ?? 0), 2) != 533.19, true);
+        $test_name = 'the differences of the export of the global warming solutions are reported';
+        $report = $ctd->report($target, $export, basename(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), triple_names::GLOBAL_WARMING_SOLUTION);
+        $t->assert_file($test_name, $report, test_files::GLOBAL_WARMING_SOLUTIONS_DIFF, test_files::MD);
+    }
+
+    /**
+     * the Swiss NPP vote page without javascript and as the browser builds it and the differences of the
+     * page without javascript to the hand made sample as a report, which names what the page still misses
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_ch_vote(test_cleanup $t): void
+    {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_NO_JS,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
+        $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
+            test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
     }
 
     /**

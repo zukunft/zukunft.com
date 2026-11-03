@@ -164,6 +164,19 @@ class system_page extends component
         msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
         msg_id::CALCULATOR_SAVE,
     ];
+    // the html ids and the keys of the seed that the table editor script reads (script/table_editor.js)
+    const string TABLE_EDITOR_HOST_ID = 'tableEditor';
+    const string TABLE_EDITOR_SEED_ID = 'tableEditorSeed';
+    const string TABLE_EDITOR_SEED_DOC = 'doc';
+    const string TABLE_EDITOR_SEED_COLUMNS = 'columns';
+    const string TABLE_EDITOR_SEED_CONDITIONS = 'conditions';
+    const string TABLE_EDITOR_SEED_NAMES = 'names';
+    const string TABLE_EDITOR_SEED_URLS = 'urls';
+    const string TABLE_EDITOR_SEED_TITLE = 'title';
+    const string TABLE_EDITOR_SEED_TEXTS = 'texts';
+    const string TABLE_EDITOR_PUT_ROUTE = 'updatePut';
+    // the table editor script gets all messages with this prefix
+    const string TABLE_EDITOR_TEXT_PREFIX = 'table_editor_';
     // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
     const string CALC_PAGE_HOST_ID = 'calcPage';
     const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
@@ -204,6 +217,7 @@ class system_page extends component
         'download' => triples::CALCULATOR_DOWNLOAD,
         'report' => triples::CALCULATOR_REPORT,
         'copy' => triples::CALCULATOR_COPY,
+        'case' => triples::CALCULATOR_CASE,
         'note' => triples::CALCULATOR_NOTE,
         'check' => triples::CALCULATOR_CHECK,
         'diagram' => triples::CALCULATOR_DIAGRAM,
@@ -223,6 +237,16 @@ class system_page extends component
         'step' => triples::FIELD_STEP,
         'value_phrases' => triples::FIELD_VALUE_PHRASES,
         'confidence' => words::CONFIDENCE,
+        'slider' => triples::CALCULATOR_SLIDER,
+        'preset' => triples::CALCULATOR_PRESET,
+        'tag' => triples::CALCULATOR_TAG,
+        'more' => triples::CALCULATOR_MORE,
+        'argument' => triples::CALCULATOR_ARGUMENT,
+        'verdict' => triples::CALCULATOR_VERDICT,
+        'scale' => triples::CALCULATOR_SCALE,
+        'difference' => triples::CALCULATOR_DIFFERENCE,
+        'cell' => triples::CALCULATOR_CELL,
+        'sensitivity' => triples::CALCULATOR_SENSITIVITY,
     ];
     // the code ids of the verbs by the key that the script reads, which gets their names from the type cache
     const array CALC_PAGE_VERB_CODE_IDS = [
@@ -236,6 +260,8 @@ class system_page extends component
         'rank' => verbs::RANK,
         'symbol' => verbs::SYMBOL,
         'acronym' => verbs::ACRONYM,
+        'supports' => verbs::SUPPORTS,
+        'limits' => verbs::LIMITS,
     ];
     // the translated texts of the calculator page script by their message id
     const array CALC_PAGE_TEXT_IDS = [
@@ -244,11 +270,13 @@ class system_page extends component
         msg_id::CALCULATOR_RESULT,
         msg_id::CALCULATOR_DETAILS,
         msg_id::CALCULATOR_SOURCES,
+        msg_id::AND_MORE,
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
         msg_id::CALCULATOR_DIAGRAM_FINAL,
         msg_id::CALCULATOR_CASE_NAME,
         msg_id::CALCULATOR_CASE_FAILED,
+        msg_id::CALCULATOR_CASE_NO_JS,
         msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
@@ -1266,11 +1294,13 @@ class system_page extends component
      * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load of the arguments
      * @param data_object|null $cfg the request cache with the calculator triples of the page
      * @return string the html code of the title or an empty string if the page has no phrase
      */
     function calculator_title(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
         ?data_object                                          $cfg
     ): string
     {
@@ -1283,6 +1313,9 @@ class system_page extends component
             $result = $html->block(html_base::H4, $html->esc($calc->title()));
             if ($calc->lead() != '') {
                 $result .= $html->p($html->esc($calc->lead()));
+            }
+            if ($cfg != null) {
+                $result .= new ui_list()->calculator_arguments($calc, $dbo, $cfg, $msg);
             }
         }
         return $result;
@@ -1325,8 +1358,8 @@ class system_page extends component
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
                     . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
-                    . $this->calculator_button_save($form_name, $msk_key, $dbo)
-                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT)),
+                    . $list->calculator_case_field($calc)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT), $this->calculator_button_save($form_name, $msk_key, $dbo)),
                     styles::INPUTS);
                 $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
                 $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
@@ -1410,6 +1443,71 @@ class system_page extends component
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;
+    }
+
+    /**
+     * the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script builds
+     * the editor from the seed, so that the editor starts without an api call of the browser
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed, so that the page of the server is shown
+     */
+    function table_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $cfg != null and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $result = $html->link_style(files::TABLE_EDITOR_STYLE)
+                . $html->div('', styles::TABLE_EDITOR, self::TABLE_EDITOR_HOST_ID)
+                . $html->form_session_token()
+                . $html->script_data(self::TABLE_EDITOR_SEED_ID, $this->table_editor_seed($dbo, $msg, $cfg))
+                . $html->script_src(files::TABLE_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object $cfg the request cache, which says if the phrase data may be read from the api
+     * @return array the phraseData answer with the saved definition, the columns to select, the names and urls
+     *               that the script needs and the translated texts
+     */
+    private function table_editor_seed(word|triple $dbo, user_message $msg, data_object $cfg): array
+    {
+        $html = new html_base();
+        $table_url = [url_var::MASK => views::TABLE_ID, url_var::ID => $dbo->phrase()->id()];
+        $editor_url = $html->page_url([url_var::MASK => views::TABLE_EDITOR_ID, url_var::ID => $dbo->phrase()->id()]);
+        // added afterwards, because page_url keeps only the vars that identify the page
+        $no_js_url = html_base::url_set_par($editor_url, url_var::JAVASCRIPT, url_var::FALSE);
+        return [
+            self::TABLE_EDITOR_SEED_DOC => $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg),
+            self::TABLE_EDITOR_SEED_COLUMNS => new ui_list()->table_column_candidates($dbo, $msg, $cfg),
+            self::TABLE_EDITOR_SEED_CONDITIONS => triples::TABLE_SORT_CONDITIONS,
+            self::TABLE_EDITOR_SEED_NAMES => [
+                'phrase' => $dbo->name(),
+                'column' => triples::TABLE_COLUMN,
+                'sort' => triples::TABLE_SORT,
+                'has' => verbs::HAS_NAME,
+                'follow' => verbs::FOLLOW_NAME,
+                'of' => verbs::OF_NAME,
+            ],
+            self::TABLE_EDITOR_SEED_URLS => [
+                'put' => $html->url_api(self::TABLE_EDITOR_PUT_ROUTE),
+                'table' => $html->url_with_user($html->page_url($table_url)),
+                'no_js' => $html->url_with_user($no_js_url),
+            ],
+            self::TABLE_EDITOR_SEED_TITLE => $this->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR, $dbo),
+            self::TABLE_EDITOR_SEED_TEXTS => $this->message_texts([
+                msg_id::CALCULATOR_SAVE, ...$this->message_ids_by_prefix(self::TABLE_EDITOR_TEXT_PREFIX)]),
+        ];
     }
 
     /**
@@ -1578,12 +1676,13 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
             }
+            $result = $list->calculator_verdict($calc, $dbo, $cfg, $lst, $msg) . $result . $list->calculator_sensitivity($calc);
             $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
                 . $list->calculator_diagrams($calc, $lst, $msg)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
                 . $list->calculator_notes($calc)
                 . $list->calculator_imports($calc);
-            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $notes = $list->formula_notes($dbo, $msg, $cfg) . $list->calculator_notes($calc, true);
             $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
                 . $list->calculator_sources($calc, $dbo, $msg, $cfg);

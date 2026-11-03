@@ -266,6 +266,14 @@ enum messages: string
     // the sub headers of the edit menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';
+    case TABLE_MENU_DESIGN = 'table_menu_design';
+    case TABLE_UNMATCHED_SHOW = 'table_unmatched_show';
+    case TABLE_UNMATCHED_HIDE = 'table_unmatched_hide';
+    case TABLE_DESIGN_PLAIN = 'table_design_plain';
+    case TABLE_DESIGN_BORDERED = 'table_design_bordered';
+    case TABLE_DESIGN_UNKNOWN = 'table_design_unknown';
+    case TABLE_EXPORT_CSV = 'table_export_csv';
+    case TABLE_CSV_EMPTY = 'table_csv_empty';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
@@ -2221,6 +2229,7 @@ enum messages: string
     // the label of the field for the name of a case above the save button and the reason if the api does not name one
     case CALCULATOR_CASE_NAME = 'calculator_case_name';
     case CALCULATOR_CASE_FAILED = 'calculator_case_failed';
+    case CALCULATOR_CASE_NO_JS = 'calculator_case_no_js';
     // the column headers of the target positions and the heading of the formulas of the pdf report of a calculator page
     case CALCULATOR_REPORT_QUANTITY = 'calculator_report_quantity';
     case CALCULATOR_REPORT_SECURITY = 'calculator_report_security';
@@ -2231,6 +2240,30 @@ enum messages: string
     case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
     case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
+    // the steps that the page shows while the pdf report is created, its result and its failure
+    case CALCULATOR_REPORT_STEP_LOAD = 'calculator_report_step_load';
+    case CALCULATOR_REPORT_STEP_NUMBERS = 'calculator_report_step_numbers';
+    case CALCULATOR_REPORT_STEP_POSITIONS = 'calculator_report_step_positions';
+    case CALCULATOR_REPORT_STEP_TABLES = 'calculator_report_step_tables';
+    case CALCULATOR_REPORT_STEP_FORMULAS = 'calculator_report_step_formulas';
+    case CALCULATOR_REPORT_STEP_FILE = 'calculator_report_step_file';
+    case CALCULATOR_REPORT_READY = 'calculator_report_ready';
+    case CALCULATOR_REPORT_FAILED = 'calculator_report_failed';
+    case CALCULATOR_REPORT_NONE = 'calculator_report_none';
+    // the texts of the table editor script, which gets all messages with this prefix (see system_page::table_editor_seed)
+    case TABLE_EDITOR_COLUMNS = 'table_editor_columns';
+    case TABLE_EDITOR_COLUMNS_HINT = 'table_editor_columns_hint';
+    case TABLE_EDITOR_SORTING = 'table_editor_sorting';
+    case TABLE_EDITOR_SORTING_HINT = 'table_editor_sorting_hint';
+    case TABLE_EDITOR_ADD = 'table_editor_add';
+    case TABLE_EDITOR_UP = 'table_editor_up';
+    case TABLE_EDITOR_DOWN = 'table_editor_down';
+    case TABLE_EDITOR_REMOVE = 'table_editor_remove';
+    case TABLE_EDITOR_PREVIEW = 'table_editor_preview';
+    case TABLE_EDITOR_SHOW_TABLE = 'table_editor_show_table';
+    case TABLE_EDITOR_NO_JS = 'table_editor_no_js';
+    case TABLE_EDITOR_REFUSED = 'table_editor_refused';
+    case TABLE_EDITOR_UNREACHABLE = 'table_editor_unreachable';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page

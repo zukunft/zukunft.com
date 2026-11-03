@@ -6,8 +6,6 @@ Change the generated page pv_lifetime_balance_js.html#high so that it shows what
 
 ## Different (0)
 
-## Only in the generated page (1)
-
-- field: Case name
+## Only in the generated page (0)
 
 ## Different order (0)

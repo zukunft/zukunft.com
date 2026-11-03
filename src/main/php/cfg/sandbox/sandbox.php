@@ -2559,6 +2559,35 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * the rule for saving a code id of any object: an object without a code id keeps the code id of
+     * the database, e.g. a triple of an import file that repeats the triple of its home file, and
+     * an existing code id is only replaced by a user that can_overwrite_code_id; that a user may
+     * set a code id at all is checked by set_code_id
+     *
+     * @param string|null $db_code_id the code id in the database
+     * @param string|null $code_id the code id of this object
+     * @param user_message $msg with the requesting user to report a refused overwrite
+     * @return bool true if the code id of this object should be saved
+     */
+    protected function save_code_id(?string $db_code_id, ?string $code_id, user_message $msg): bool
+    {
+        $result = false;
+        if ($code_id != '' and $code_id !== $db_code_id) {
+            if ($db_code_id == '' or $msg->usr?->can_overwrite_code_id()) {
+                $result = true;
+            } else {
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $msg->usr?->name() ?? '',
+                    msg_id::VAR_USER_PROFILE => $msg->usr?->profile_code_id() ?? '',
+                    msg_id::VAR_NAME => fields::FLD_CODE_ID,
+                    msg_id::VAR_CLASS_NAME => new library()->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated

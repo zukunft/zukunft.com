@@ -429,7 +429,7 @@ class component_exe extends component
             component_types::ASSUMPTION_FIELDS => $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr),
             component_types::FORMULA_NOTES => $list->formula_notes($dbo, $msg, $cfg),
             // calculator page - the parts are selected by the calculator triples of the page phrase
-            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $cfg),
+            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $msg, $cfg),
             component_types::CALCULATOR_INPUT => $page->calculator_input(
                 $dbo, $msg, $cfg, $form_name, $adm_dto->view_code_id($msk_id) ?: $msk_id, $url_arr),
             component_types::CALCULATION_RESULT => $page->calculation_result($dbo, $msg, $cfg),

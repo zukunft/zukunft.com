@@ -2262,3 +2262,12 @@ it only holds the predicate consts `WORD_TYPE` and `PLURAL`, which no code uses,
 `cfg/db/sql.php` without needing it; either implement the RDF mapping of a word (e.g. for the qlever
 import above) with a positive and a negative unit test or remove the class; its header still says
 `model/word/word_rdf.php` instead of `cfg/word/word_rdf.php`
+
+## values with more than one number type phrase
+
+`docs/json_findings.md` still lists 105 main data entries with more than one measure unit, percent or factor
+phrase: `"percent","htp"` (65), `"htp","factor"` (25) and `"percent","factor"` (13) in the `problem_*.json` files
+and `"person","km2"` (2) in `zurich.json`. Each pair needs one triple with the one type, but the pairs are also
+the operands and results of the formulas of these files, e.g. `"potential loss","percent","htp"`, and of the test
+fixtures in `test_values.php`, so all of them change together in one step with a test run, and the column and unit
+logic of `value_list` has to show the new triple like the two phrases before.

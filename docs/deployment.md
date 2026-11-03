@@ -42,7 +42,7 @@ two pages yourself in a browser, unless the page has the sample setup of the tab
 | portfolio_split_calculator_sample.html | portfolio_split_calculator_no_js.html, portfolio_split_calculator_js.html | use_cases/portfolio_split_calculator.json, calculator files | portfolio_split_calculator_diff.md | standard, high, low | portfolio_split_calculator_diff_standard.md, _high.md, _low.md |
 | CBAM_tree_calculator_sample.html | CBAM_tree_calculator.html | use_cases/cbam_calculator.json with its view CBAM Part Tree Calculator | none yet | none yet | none yet |
 | ahv_vat_vote_sample.html | ahv_vat_vote.html, ahv_vat_vote_single.html (no test writes them yet) | use_cases/ahv_vat_vote.json, calculator files | none yet | none yet | none yet |
-| npp_ch_vote_sample.html | npp_ch_vote.html (no test writes it yet) | use_cases/npp_ch_vote.json, calculator files | none yet | none yet | none yet |
+| npp_ch_vote_sample.html | npp_ch_vote.html, npp_ch_vote_js.html | use_cases/npp_ch_vote.json, calculator files | npp_ch_vote_diff.md | none yet | none yet |
 | share_buy_sell_abb_sample.html | share_buy_sell_abb.html (no test writes it yet) | use_cases/share_buy_sell_abb.json, calculator files | none yet | none yet | none yet |
 | calculator_editor_sample.html | calculator_editor.html | use_cases/pv_lifetime_balance.json, editor_views.json, calculator_views.json | none yet | none yet | none yet |
 | formula_editor_sample.html | formula_editor.html | use_cases/pv_lifetime_balance.json, calculator_views.json | none yet | none yet | none yet |

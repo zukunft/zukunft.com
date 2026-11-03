@@ -124,6 +124,8 @@ class views
     // the views whose phrase selector sends the name of the phrase that the view shows next
     // (see frontend::url_with_selected_phrase)
     const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATOR_EDITOR];
+    // the views that the browser builds from json data unless the url asks for the page of the server
+    const array JAVASCRIPT_PAGES = [self::CALCULATOR, self::TABLE_EDITOR];
     // the four pages of a process catch, which guide the user of a question phrase e.g. the PV
     // calculator from one easy question to the result (process_catch_views.json)
     const string PROCESS_CATCH_START = 'process_catch_start';

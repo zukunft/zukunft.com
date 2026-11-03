@@ -304,6 +304,19 @@
   ],
   "triples": [
     {
+      "name": "USD per person",
+      "from": "USD",
+      "verb": "per",
+      "to": "person"
+    },
+    {
+      "name": "USD per person per day",
+      "from": "USD per person",
+      "verb": "per",
+      "to": "day",
+      "type": "measure_unit"
+    },
+    {
       "name": "variance low (system)",
       "from": "variance",
       "verb": "can be",
@@ -1018,9 +1031,7 @@
       "words": [
         "poverty line",
         "extreme poverty",
-        "person",
-        "day",
-        "USD"
+        "USD per person per day"
       ],
       "number": "2.15",
       "source": "World Bank international poverty line"

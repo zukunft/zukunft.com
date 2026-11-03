@@ -305,12 +305,12 @@
                         </tr>
                         <tr>
                             <td>Self-consumption rate<span class="sub">share of PV used on site</span></td>
-                            <td class="n"></td>
+                            <td class="n">49 %</td>
                             <td class="n">49 %</td>
                         </tr>
                         <tr class="key">
                             <td>Autarky<span class="sub">share of load covered by PV</span></td>
-                            <td class="n"></td>
+                            <td class="n">84 %</td>
                             <td class="n">84 %</td>
                         </tr>
                         <tr class="sec">
@@ -756,8 +756,8 @@
         h += row("Exported to grid", "", fmt(s.export * L, 0) + " kWh", fmt(s.export, 0) + " kWh");
         h += row("Battery losses", "", fmt((s.battIn - s.battOut) * L, 0) + " kWh", fmt(s.battIn - s.battOut, 0) + " kWh");
         h += row("Grid import still needed", "", fmt(s.grid * L, 0) + " kWh", fmt(s.grid, 0) + " kWh");
-        h += row("Self-consumption rate", "share of PV used on site", "", fmt(selfRate, 0) + " %");
-        h += row("Autarky", "share of load covered by PV", "", fmt(autarky, 0) + " %", "key");
+        h += row("Self-consumption rate", "share of PV used on site", fmt(selfRate, 0) + " %", fmt(selfRate, 0) + " %");
+        h += row("Autarky", "share of load covered by PV", fmt(autarky, 0) + " %", fmt(autarky, 0) + " %", "key");
 
         h += section("Production emissions");
         const massValues = [pvEmb, battEmb, netA, netB, netC, battEffect];

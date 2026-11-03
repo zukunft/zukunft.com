@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::ELEMENT . 'element_group.php';
+include_once html_paths::FORMULA . 'formula_calc.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_calc as formula_calc_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -88,6 +90,17 @@ class formula_calc_tests
         // start the test section (ts)
         $ts = 'unit formula calc ';
         $t->header($ts);
+
+        $t->subheader($ts . 'stored result compare');
+        $test_name = 'numbers on both sides of a rounding edge are the same result';
+        $t->assert($test_name, formula_calc_ui::differs(0.035, 0.034999999), false);
+        $test_name = 'a stored result that the page calculates the same does not differ';
+        $t->assert($test_name, formula_calc_ui::differs(2.4, 2.4), false);
+        // negative: a real difference is still reported
+        $test_name = 'a result calculated from another number differs';
+        $t->assert($test_name, formula_calc_ui::differs(2.4, 8.0), true);
+        $test_name = '... also if it is only slightly bigger than the compared decimals';
+        $t->assert($test_name, formula_calc_ui::differs(1.0, 1.02), true);
 
         $t->subheader($ts . 'prior operand');
         // Bern follows Zurich and Geneva follows Bern e.g. in the rows of a walk

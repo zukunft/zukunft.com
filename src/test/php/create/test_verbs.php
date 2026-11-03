@@ -290,6 +290,16 @@ class test_verbs extends test_objects
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
     }
 
+    function verb_supports(): verb
+    {
+        return new verb(verbs::SUPPORTS_ID, verbs::SUPPORTS_NAME, verbs::SUPPORTS);
+    }
+
+    function verb_limits(): verb
+    {
+        return new verb(verbs::LIMITS_ID, verbs::LIMITS_NAME, verbs::LIMITS);
+    }
+
     function verb_uses(): verb
     {
         return new verb(verbs::USES_ID, verbs::USES_NAME, verbs::USES);

@@ -701,13 +701,26 @@ class word_tests
         $wrd_db->fill($wrd_imp, $t->usr1);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
+        // the fill does not take over the code id for a normal user and an object without a code id
+        // never clears the code id of the database, so nothing is saved
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_code_id('test code id', new user_message(test_users::user_sys_test()));
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $t->usr_normal);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, []);
+        $test_name = 'a system test user can overwrite the code id of a word';
+        $wrd_db = $t_wrd->word();
+        $wrd_db->set_code_id_db('old code id');
+        $wrd_new = $t_wrd->word();
+        $wrd_new->set_code_id_db('new code id');
+        $names = $wrd_new->db_fields_changed($wrd_db, new user_message(test_users::user_sys_test()))->names();
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $names), true);
+        // negative: the code id links a row to program code
+        $test_name = 'a normal user cannot overwrite the code id of a word';
+        $names = $wrd_new->db_fields_changed($wrd_db, new user_message($t->usr_normal))->names();
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $names), false);
 
         // the api write path maps the code id from the client json; a normal user must not be able
         // to plant a system code_id (see sandbox_code_id::api_mapper -> the privilege-checked setter)

@@ -47,6 +47,8 @@ include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'chart_types.php';
+include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -72,6 +74,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -1707,7 +1711,198 @@ class test_triples extends test_objects
             }
         }
         $btn = $this->calc_triple($id, 'Zurich inputs download', $grp->phrase(), $has, $kw);
-        return [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM)];
+        $result = [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM)];
+        $case_id = triple_names::CALC_CASE_FIRST_ID;
+        $kw = new triple($this->env->usr1);
+        $kw->set($case_id--, triples::CALCULATOR_CASE);
+        return [...$result, $kw, $this->calc_triple($case_id, 'Zurich inputs case', $grp->phrase(), $has, $kw)];
+    }
+
+    /**
+     * the page for a decision that the test adds to the calculation result test: a lead text, two
+     * supporting and one limiting argument, a preset, a slider of the inhabitants, the verdict of the
+     * inhabitants with the year 2019 as threshold and its meter, a cell and a difference column and a
+     * sensitivity table, and a page that is the case Bern of Zurich
+     *
+     * @return triple[] the keywords and the triples
+     */
+    function calculator_zh_decision(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $with = $t_vrb->verb_with();
+        $follow = $t_vrb->verb_follow();
+        $zh = $t_wrd->word_zh()->phrase();
+        $be = $t_wrd->word_bern()->phrase();
+        $ge = $t_wrd->word_ge()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $y2019 = $t_wrd->word_2019()->phrase();
+        $y2020 = $t_wrd->word_2020()->phrase();
+        $calc = [];
+        foreach ([...$this->calculator_zh(), ...$this->calculator_zh_result()] as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $lbl = $calc[triples::CALCULATOR_LABEL];
+        $hint = $calc[triples::CALCULATOR_HINT];
+        $id = triple_names::CALC_DECISION_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_MORE, triples::CALCULATOR_ARGUMENT, triples::CALCULATOR_PRESET, triples::CALCULATOR_SLIDER,
+                     triples::CALCULATOR_VERDICT, triples::CALCULATOR_SCALE, triples::CALCULATOR_NOTE, triples::CALCULATOR_CELL,
+                     triples::CALCULATOR_DIFFERENCE, triples::CALCULATOR_SENSITIVITY, triples::FIELD_LIMIT_UP] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        // by a short key, so that one named list holds the triples of this large fixture
+        $add = function (string $key, string $name, phrase $from, verb $vrb, triple|phrase $to, string $com = '') use (&$id, &$kw) {
+            $kw[$key] = $this->calc_triple($id, $name, $from, $vrb, $to, $com);
+        };
+        $add('args', 'Zurich arguments', $zh, $has, $kw[triples::CALCULATOR_ARGUMENT]);
+        $add('pro 1', triple_names::CALC_PRO_FIRST, $be, $t_vrb->verb_supports(), $zh, triple_names::CALC_PRO_FIRST_COM);
+        $add('pro 2', triple_names::CALC_PRO_SECOND, $ge, $t_vrb->verb_supports(), $zh, triple_names::CALC_PRO_SECOND_COM);
+        $add('contra', triple_names::CALC_CONTRA, $be, $t_vrb->verb_limits(), $zh, triple_names::CALC_CONTRA_COM);
+        $add('arg 1', 'Zurich argument first', $kw['args']->phrase(), $has, $kw['pro 1']);
+        $add('arg 2', 'Zurich argument second', $kw['args']->phrase(), $has, $kw['pro 2']);
+        $add('arg 3', 'Zurich argument third', $kw['args']->phrase(), $has, $kw['contra']);
+        $add('more', 'Zurich more', $zh, $has, $kw[triples::CALCULATOR_MORE], triple_names::CALC_MORE_COM);
+        $add('args label', 'Zurich arguments label', $kw['args']->phrase(), $has, $lbl, triple_names::CALC_ARGUMENTS_LABEL);
+        $add('arg order', 'Zurich argument second order', $kw['arg 2']->phrase(), $follow, $kw['arg 1']->phrase());
+        $add('presets', 'Zurich presets', $zh, $has, $kw[triples::CALCULATOR_PRESET]);
+        $add('preset', 'Zurich preset 2019', $kw['presets']->phrase(), $has, $y2019);
+        $add('preset label', 'Zurich preset 2019 label', $kw['preset']->phrase(), $has, $lbl, triple_names::CALC_PRESET_LABEL);
+        $add('slider', 'Zurich input inhabitants slider', $calc[triple_names::CALC_ZH_INPUT_INHABITANTS]->phrase(), $has, $kw[triples::CALCULATOR_SLIDER]);
+        $add('verdict', 'Zurich verdict', $zh, $has, $kw[triples::CALCULATOR_VERDICT]);
+        $vd = $kw['verdict']->phrase();
+        $add('number', 'Zurich verdict number', $vd, $with, $inhab);
+        $add('limit', 'Zurich verdict limit', $vd, $with, $y2019);
+        $add('limit order', 'Zurich verdict limit order', $kw['limit']->phrase(), $follow, $kw['number']->phrase());
+        $add('yes', 'Zurich verdict yes', $vd, $has, $be);
+        $add('no', 'Zurich verdict no', $vd, $has, $ge);
+        $add('open', 'Zurich verdict open', $vd, $has, $y2020);
+        $add('no order', 'Zurich verdict no order', $kw['no']->phrase(), $follow, $kw['yes']->phrase());
+        $add('open order', 'Zurich verdict open order', $kw['open']->phrase(), $follow, $kw['no']->phrase());
+        $add('yes label', 'Zurich verdict yes label', $kw['yes']->phrase(), $has, $lbl, triple_names::CALC_VERDICT_YES);
+        $add('yes hint', 'Zurich verdict yes hint', $kw['yes']->phrase(), $has, $hint, triple_names::CALC_ZH_HINT_COM);
+        $add('note', 'Zurich verdict note', $vd, $has, $kw[triples::CALCULATOR_NOTE], triple_names::CALC_VERDICT_NOTE);
+        $add('scale', triple_names::CALC_VERDICT_SCALE, $vd, $has, $kw[triples::CALCULATOR_SCALE], triple_names::CALC_SCALE_COM);
+        $add('row cell', 'Zurich row Bern cell', $calc[triple_names::CALC_ZH_ROW_BE]->phrase(), $has, $kw[triples::CALCULATOR_CELL]);
+        $add('cell', 'Zurich row Bern cell inhabitants', $kw['row cell']->phrase(), $has, $inhab);
+        $add('cell column', 'Zurich row Bern cell column', $kw['cell']->phrase(), $with, $y2019);
+        $add('col diff', 'Zurich column difference', $calc['Zurich result columns']->phrase(), $has, $y2020);
+        $add('diff flag', 'Zurich column difference flag', $kw['col diff']->phrase(), $has, $kw[triples::CALCULATOR_DIFFERENCE]);
+        $add('sens', 'Zurich sensitivity', $zh, $has, $kw[triples::CALCULATOR_SENSITIVITY]);
+        $add('sens label', 'Zurich sensitivity label', $kw['sens']->phrase(), $has, $lbl, triple_names::CALC_SENSITIVITY_LABEL);
+        $add('rows', 'Zurich sensitivity rows', $kw['sens']->phrase(), $has, $inhab);
+        $add('cols', 'Zurich sensitivity columns', $kw['sens']->phrase(), $has, $y2019);
+        $add('cols order', 'Zurich sensitivity columns order', $kw['cols']->phrase(), $follow, $kw['rows']->phrase());
+        $add('row level', 'Zurich sensitivity row level', $kw['rows']->phrase(), $has, $be);
+        $add('col level', 'Zurich sensitivity column level', $kw['cols']->phrase(), $has, $ge);
+        $add('row label', 'Zurich sensitivity row level label', $kw['row level']->phrase(), $has, $lbl, triple_names::CALC_LEVEL_ROW_LABEL);
+        $add('col label', 'Zurich sensitivity column level label', $kw['col level']->phrase(), $has, $lbl, triple_names::CALC_LEVEL_COLUMN_LABEL);
+        $add('case', triple_names::CALC_CASE_PAGE, $zh, $t_vrb->verb_of(), $be);
+        return array_values($kw);
+    }
+
+    /**
+     * the own table of Zurich (city): the columns 2020 and 2019 in this order and the sorting by the inhabitants
+     *
+     * @return triple[] the keywords and the triples
+     */
+    function table_definition_zh(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $page = $this->zh_city()->phrase();
+        $id = triple_names::TABLE_DEFINITION_FIRST_ID;
+        $kw = [];
+        foreach ([triples::TABLE_COLUMN, triples::TABLE_SORT] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $add = function (string $key, string $name, phrase $from, verb $vrb, triple|phrase $to) use (&$id, &$kw) {
+            $kw[$key] = $this->calc_triple($id, $name, $from, $vrb, $to);
+        };
+        $add('columns', 'Zurich city columns', $page, $has, $kw[triples::TABLE_COLUMN]);
+        $add('2019', 'Zurich city column 2019', $kw['columns']->phrase(), $has, $t_wrd->word_2019()->phrase());
+        $add('2020', 'Zurich city column 2020', $kw['columns']->phrase(), $has, $t_wrd->word_2020()->phrase());
+        $add('order', 'Zurich city column 2019 order', $kw['2019']->phrase(), $t_vrb->verb_follow(), $kw['2020']->phrase());
+        $add('sort', 'Zurich city sort', $page, $has, $kw[triples::TABLE_SORT]);
+        $add('by', triple_names::TABLE_SORT_ORDER, $t_wrd->word_bern()->phrase(), $t_vrb->verb_of(), $t_wrd->word_inhabitant()->phrase());
+        $add('sort item', 'Zurich city sort inhabitants', $kw['sort']->phrase(), $has, $kw['by']);
+        return array_values($kw);
+    }
+
+    /**
+     * @return triple "range bars" with the code id that selects the chart type (see chart_types)
+     */
+    function range_bars(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RANGE_BARS_ID, triple_names::RANGE_BARS);
+        $trp->set_code_id_db(chart_types::RANGE_BARS->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "scatter plot" with the code id that selects the chart type (see chart_types)
+     */
+    function scatter_plot(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SCATTER_PLOT_ID, triple_names::SCATTER_PLOT);
+        $trp->set_code_id_db(chart_types::SCATTER->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "leverage plot" with the code id that selects the chart type (see chart_types)
+     */
+    function leverage_plot(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LEVERAGE_PLOT_ID, triple_names::LEVERAGE_PLOT);
+        $trp->set_code_id_db(chart_types::LEVERAGE->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "numeric descending" with the code id that selects the sort condition (see table_orders)
+     */
+    function numeric_descending(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::NUMERIC_DESCENDING_ID, triple_names::NUMERIC_DESCENDING);
+        $trp->set_code_id_db(table_orders::NUMERIC_DESC->value);
+        return $trp;
+    }
+
+    /**
+     * the own table of Zurich (city) with columns that name their unit
+     *
+     * @param array $columns the own columns as triples or words in their order e.g. potential gain in htp
+     * @return array the page phrase, the keyword, the group, the columns, the items and their follower triples
+     */
+    function table_definition_units(array $columns): array
+    {
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $page = $this->zh_city();
+        $id = triple_names::TABLE_OWN_COLUMNS_FIRST_ID;
+        $trp = new triple($this->env->usr1);
+        $trp->set($id--, triples::TABLE_COLUMN);
+        $group = $this->calc_triple($id, 'Zurich city unit columns', $page->phrase(), $has, $trp);
+        $result = [$page, $trp, $group];
+        $prev = null;
+        foreach ($columns as $col) {
+            $item = $this->calc_triple($id, 'Zurich city unit column ' . $col->name(), $group->phrase(), $has, $col->phrase());
+            $result = [...$result, $col, $item];
+            if ($prev != null) {
+                $result[] = $this->calc_triple($id, $item->name() . ' order', $item->phrase(), $t_vrb->verb_follow(), $prev);
+            }
+            $prev = $item;
+        }
+        return $result;
     }
 
     /**
@@ -2444,7 +2639,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::RANGE_BARS_OF_LOSS_ID, triple_names::RANGE_BARS_OF_LOSS);
-        $trp->set_from($t_wrd->word_range_bars()->phrase());
+        $trp->set_from($this->range_bars()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->potential_loss()->phrase());
         return $trp;
@@ -2473,7 +2668,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::SCATTER_OF_GAIN_AND_EFFORT);
-        $trp->set_from($t_wrd->word_scatter_plot()->phrase());
+        $trp->set_from($this->scatter_plot()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->gain_and_effort()->phrase());
         return $trp;
@@ -2545,7 +2740,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::LEVERAGE_OF_GAIN_AND_LOSS);
-        $trp->set_from($t_wrd->word_leverage_plot()->phrase());
+        $trp->set_from($this->leverage_plot()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->gain_and_loss()->phrase());
         return $trp;
@@ -2619,7 +2814,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::NUMERIC_DESC_OF_LOSS_ID, triple_names::NUMERIC_DESC_OF_LOSS);
-        $trp->set_from($t_wrd->word_numeric_descending()->phrase());
+        $trp->set_from($this->numeric_descending()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->potential_loss()->phrase());
         return $trp;

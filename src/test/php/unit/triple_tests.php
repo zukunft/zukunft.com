@@ -17,12 +17,14 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_phrases.php';
+include_once test_paths::CREATE . 'test_users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -34,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -44,6 +47,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_tests
@@ -134,6 +138,19 @@ class triple_tests
         $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
 
+        $t->subheader($ts . 'code id in the api message');
+
+        // the frontend reads the sort condition from the triple nested in the order triple
+        $test_name = 'the api message of a triple has its code id';
+        $json = $t_trp->numeric_descending()->api_json_array([api_types::TEST_MODE, api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $json[json_fields::CODE_ID] ?? '', table_orders::NUMERIC_DESC->value);
+        $test_name = '... and the triple nested in another triple too';
+        $json = $t_trp->numeric_desc_of_loss()->api_json_array([api_types::TEST_MODE, api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $json[json_fields::FROM_PHRASE][json_fields::CODE_ID] ?? '', table_orders::NUMERIC_DESC->value);
+        // negative: a triple without a code id does not send an empty one
+        $test_name = '... but a triple without a code id has none';
+        $t->assert($test_name, array_key_exists(json_fields::CODE_ID, $json), false);
+
         $t->subheader($ts . 'code id on load');
 
         // the code id is read from the database for every user, because the permission
@@ -151,6 +168,48 @@ class triple_tests
         $trp = new triple($t->usr_normal);
         $t->assert_false($test_name, $trp->set_code_id(
             triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
+
+        $t->subheader($ts . 'code id on save');
+
+        $old_code = triple_names::SYSTEM_TEST_ADD_CODE_ID;
+        $new_code = $old_code . ' changed';
+        $code_fields = function (?string $db_code, ?string $code, user $usr) use ($t_trp): array {
+            $trp_db = $t_trp->triple();
+            $trp_db->set_code_id_db($db_code);
+            $trp_new = $t_trp->triple();
+            $trp_new->set_code_id_db($code);
+            return $trp_new->db_fields_changed($trp_db, new user_message($usr))->names();
+        };
+        $test_name = 'a new code id of a triple is saved';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields(null, $old_code, $t->usr1)), true);
+        $test_name = 'the code id is one of the fields of a triple';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $t_trp->triple()->db_fields_all()), true);
+        $test_name = 'the same code id is not saved again';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, $old_code, $t->usr1)), false);
+        // a borrowed triple repeats the triple of its home file without the code id
+        $test_name = 'a save without a code id keeps the code id of the database';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, null, $t->usr1)), false);
+        $test_name = 'a system test user can overwrite a code id';
+        // not usr1, which is a user with the normal email profile in the unit tests
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, $new_code, test_users::user_sys_test())), true);
+        $test_name = 'a system user can overwrite a code id';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, $new_code, $t->usr_system)), true);
+        // negative: a developer can set a code id, but not overwrite one
+        $usr_dev = new test_users()->user_dev(new user_message($t->usr_system));
+        $test_name = 'a developer can set a missing code id';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields(null, $old_code, $usr_dev)), true);
+        $test_name = 'a developer cannot overwrite a code id';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, $new_code, $usr_dev)), false);
+        $test_name = '... and is told so';
+        $trp_db = $t_trp->triple();
+        $trp_db->set_code_id_db($old_code);
+        $trp_new = $t_trp->triple();
+        $trp_new->set_code_id_db($new_code);
+        $msg_dev = new user_message($usr_dev);
+        $trp_new->db_fields_changed($trp_db, $msg_dev);
+        $t->assert_false($test_name, $msg_dev->is_ok());
+        $test_name = 'a normal user cannot overwrite a code id';
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $code_fields($old_code, $new_code, $t->usr_normal)), false);
 
         $t->subheader($ts . 'view on load');
 

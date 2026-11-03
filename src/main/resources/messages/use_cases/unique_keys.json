@@ -102,8 +102,7 @@
       ]
     },
     {
-      "name": "A Theory of Justice, revised edition",
-      "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
+      "name": "A Theory of Justice",
       "refs": [
         {
           "name": "A Theory of Justice",
@@ -112,15 +111,58 @@
       ]
     },
     {
-      "name": "Mercedes-Benz Group share",
-      "description": "the registered share of Mercedes-Benz Group AG"
+      "name": "edition"
     },
     {
-      "name": "Nestlé registered share",
-      "description": "the registered share of Nestlé S.A."
+      "name": "revised"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "registered"
+    },
+    {
+      "name": "Mercedes-Benz Group"
+    },
+    {
+      "name": "Nestlé"
     }
   ],
   "triples": [
+    {
+      "name": "revised edition",
+      "from": "edition",
+      "verb": "kind of",
+      "to": "revised"
+    },
+    {
+      "name": "A Theory of Justice, revised edition",
+      "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
+      "from": "revised edition",
+      "verb": "of",
+      "to": "A Theory of Justice"
+    },
+    {
+      "name": "Mercedes-Benz Group share",
+      "description": "the registered share of Mercedes-Benz Group AG",
+      "from": "share",
+      "verb": "of",
+      "to": "Mercedes-Benz Group"
+    },
+    {
+      "name": "registered share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "registered"
+    },
+    {
+      "name": "Nestlé registered share",
+      "description": "the registered share of Nestlé S.A.",
+      "from": "registered share",
+      "verb": "of",
+      "to": "Nestlé"
+    },
     {
       "from": "978-0-679-73373-7",
       "verb": "is a",

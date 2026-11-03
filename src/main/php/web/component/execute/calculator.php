@@ -57,6 +57,10 @@ class calculator
 {
 
     // the phrases and triples of the request cache
+    // the position in a column of self::columns of the flag that it shows the plus sign
+    // TODO Prio 2 review
+    const int COLUMN_PLUS = 6;
+
     private phrase_list $cac;
     // the phrase of the page e.g. example PV installation
     private phrase $phr;
@@ -136,6 +140,130 @@ class calculator
     /*
      * lists
      */
+
+    /**
+     * @return string the collapsed lead text of the page phrase, else of the phrase it is built from, else an empty string
+     */
+    function more(): string
+    {
+        return $this->own_text($this->phr, triples::CALCULATOR_MORE)
+            ?? $this->own_text($this->base, triples::CALCULATOR_MORE)
+            ?? '';
+    }
+
+    /**
+     * @param phrase $item an input or assumption of the page
+     * @return string the configured tag of the field or an empty string for the generated tag
+     */
+    function tag(phrase $item): string
+    {
+        return $this->own_text($item, triples::CALCULATOR_TAG) ?? '';
+    }
+
+    /**
+     * @param bool $pro true for the items whose triple supports the claim, false for those that limit it
+     * @return phrase[] the argument items of one side of the page in their order
+     */
+    function arguments(bool $pro): array
+    {
+        $vrb_id = $pro ? verbs::SUPPORTS_ID : verbs::LIMITS_ID;
+        return array_values(array_filter($this->items(triples::CALCULATOR_ARGUMENT),
+            fn(phrase $item) => $this->item_phrase($item)?->get_verb()?->id() == $vrb_id));
+    }
+
+    /**
+     * @param phrase $row a row of the result table
+     * @param phrase|null $col_phr the phrase of a column
+     * @return phrase|null the phrase whose number the cell of the column shows instead of the row phrase
+     */
+    function cell_phrase(phrase $row, ?phrase $col_phr): ?phrase
+    {
+        $result = null;
+        $grp = $this->property($row, triples::CALCULATOR_CELL);
+        if ($grp != null and $col_phr != null) {
+            foreach ($this->sub_items($grp, verbs::HAS_ID) as $cell) {
+                if ($this->filter($cell)?->name() == $col_phr->name()) {
+                    $result = $this->item_phrase($cell);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase|null $col_phr the phrase of a result column
+     * @return bool true if the column shows the first column minus the second column
+     */
+    function is_difference(?phrase $col_phr): bool
+    {
+        $result = false;
+        foreach ($this->items(triples::CALCULATOR_RESULT_COLUMN) as $col) {
+            if ($this->item_phrase($col)?->name() == $col_phr?->name() and $this->has_flag($col, triples::CALCULATOR_DIFFERENCE)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the names of the sources that the texts of the page name by a placeholder in the order of the page
+     */
+    function text_sources(): array
+    {
+        $texts = [$this->more()];
+        foreach ([...$this->arguments(true), ...$this->arguments(false)] as $item) {
+            $texts[] = $this->item_phrase($item)?->get_description() ?? '';
+        }
+        foreach ([...$this->items(triples::CALCULATOR_INPUT), ...$this->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
+            $texts[] = $this->hint($item);
+        }
+        preg_match_all('/\{source:([^{}]+)\}/', implode(' ', $texts), $found);
+        return array_values(array_unique($found[1]));
+    }
+
+    /**
+     * @return array the names of the own columns of the table of the page phrase in their order, empty if the table uses the columns of all tables
+     */
+    function table_columns(): array
+    {
+        return array_map(fn(phrase $col) => $col->name(), $this->table_column_phrases());
+    }
+
+    /**
+     * @return phrase[] the own columns of the table of the page phrase in their order e.g. potential gain in EUR
+     */
+    function table_column_phrases(): array
+    {
+        return $this->table_item_phrases(triples::TABLE_COLUMN);
+    }
+
+    /**
+     * @return phrase[] the order triples of the own sorting of the table of the page phrase in their order e.g. numeric descending of reward ratio
+     */
+    function table_sorts(): array
+    {
+        return $this->table_item_phrases(triples::TABLE_SORT);
+    }
+
+    /**
+     * @param string $keyword the keyword of the table definition e.g. triples::TABLE_COLUMN
+     * @return phrase[] the phrases that the items of the definition name, in their order
+     */
+    private function table_item_phrases(string $keyword): array
+    {
+        $phrases = array_map(fn(phrase $item) => $this->item_phrase($item), $this->table_items($keyword));
+        return array_values(array_filter($phrases));
+    }
+
+    /**
+     * @param string $keyword the keyword of the table definition e.g. triples::TABLE_COLUMN
+     * @return phrase[] the items of the page phrase itself, because a table definition is not taken over from the phrase it is built from
+     */
+    private function table_items(string $keyword): array
+    {
+        $grp = $this->property($this->phr, $keyword);
+        return $grp == null ? [] : $this->sub_items($grp, verbs::HAS_ID);
+    }
 
     /**
      * the group triple of a list: the triple from the page phrase to the list keyword, else the
@@ -246,6 +374,23 @@ class calculator
     function button_label(?phrase $item, string $keyword): string
     {
         return $this->own_label($this->property($item, $keyword));
+    }
+
+    /**
+     * @return bool true if the page is built from another phrase, of which a case can be another kind
+     */
+    function has_base(): bool
+    {
+        return $this->base != null;
+    }
+
+    /**
+     * @return string the name of the case that the page shows e.g. Miller family of Miller family portfolio split, empty for the default case
+     */
+    function case_name(): string
+    {
+        $is_case = ($this->phr->is_triple() and $this->phr->get_verb()?->id() == verbs::OF_ID);
+        return $is_case ? ($this->phr->get_to()?->name() ?? '') : '';
     }
 
     /**
@@ -628,7 +773,7 @@ class calculator
      * @param string $keyword the name of the text keyword e.g. triples::CALCULATOR_LABEL
      * @return string|null the description of the triple from the phrase to the keyword or null if there is none
      */
-    private function own_text(?phrase $phr, string $keyword): ?string
+    function own_text(?phrase $phr, string $keyword): ?string
     {
         $txt = $this->property($phr, $keyword)?->get_description();
         return $txt == '' ? null : $txt;
@@ -655,7 +800,7 @@ class calculator
      * @param string $keyword the name of the keyword e.g. triples::CALCULATOR_INPUT
      * @return phrase|null the triple from the phrase to the keyword e.g. PV installation inputs
      */
-    private function property(?phrase $phr, string $keyword): ?phrase
+    function property(?phrase $phr, string $keyword): ?phrase
     {
         $result = null;
         if ($phr != null) {

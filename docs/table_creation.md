@@ -44,11 +44,21 @@ name.
 2) Select the 'table editor' view
 ---------------------------------
 
+Open the table of the phrase and select **"Table editor"** in the edit menu. The editor shows the
+columns and the default sorting of this table, and below them the table as it is saved.
+
 3) Choose the columns
 ---------------------
 
+Select a column in the list **"Columns"** and click **"Add"**. Use the arrows to change the order and
+the **x** to remove a column. Without an own column the table shows the columns of all tables.
+
 4) Select the default sorting
 -----------------------------
+
+Select a column in the list **"Default sorting"**, click **"Add"** and select the direction. The first
+entry is the prime order and the next ones are the sub orders. Click **"Save"** to store both lists; a
+change only affects this table.
 
 5) Fill the data
 ----------------

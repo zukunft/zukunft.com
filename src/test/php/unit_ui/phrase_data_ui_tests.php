@@ -64,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -293,6 +294,8 @@ class phrase_data_ui_tests
         $t->assert_false($test_name, $pdf->image(self::PDF_HEAD));
         $test_name = '... and no empty file';
         $t->assert_false($test_name, $pdf->image(''));
+        $test_name = '... and no incomplete jpeg';
+        $t->assert_false($test_name, $pdf->image(pdf_writer::JPEG_START));
 
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
@@ -327,6 +330,53 @@ class phrase_data_ui_tests
         $t->assert($test_name, new calculator_report()->pdf($no_calc_wrd, $msg, $no_calc_dto), '');
         $test_name = '... and no phrase too';
         $t->assert($test_name, new calculator_report()->pdf(null, $msg, $no_calc_dto), '');
+        $steps = [];
+        $collect = function (msg_id $id) use (&$steps) {
+            $steps[] = $id->value;
+        };
+        new calculator_report()->pdf($trp, $msg, $dto, $collect);
+        $test_name = 'the report names its steps in their order';
+        $t->assert($test_name, implode(',', $steps), implode(',', [
+            msg_id::CALCULATOR_REPORT_STEP_NUMBERS->value,
+            msg_id::CALCULATOR_REPORT_STEP_POSITIONS->value,
+            msg_id::CALCULATOR_REPORT_STEP_TABLES->value,
+            msg_id::CALCULATOR_REPORT_STEP_FORMULAS->value,
+            msg_id::CALCULATOR_REPORT_STEP_FILE->value]));
+        $steps = [];
+        new calculator_report()->pdf($no_calc_wrd, $msg, $no_calc_dto, $collect);
+        $test_name = '... and a phrase without calculator triples has no step';
+        $t->assert($test_name, implode(',', $steps), '');
+        $test_name = 'the report file is downloaded with the name of the page';
+        $t->assert($test_name, calculator_report::attachment_header('example split'), 'Content-Disposition: attachment; filename="example split.pdf"');
+        $test_name = '... and a char that could break the header is replaced';
+        $t->assert($test_name, calculator_report::attachment_header("a\"b\r\nc"), 'Content-Disposition: attachment; filename="a_b__c.pdf"');
+        $html_base = new html_base();
+        $test_name = 'a step of a frame escapes its text';
+        $t->assert_text_contains($test_name, $html_base->frame_step('a <b>'), 'a &lt;b&gt;');
+        $test_name = '... and hides the step before';
+        $t->assert_text_contains($test_name, $html_base->frame_start($msg), html_base::CLASS_FRAME_STEP . ':has(~ .' . html_base::CLASS_FRAME_STEP . ')');
+        $test_name = 'the refresh of a frame escapes the url';
+        $t->assert_text_contains($test_name, $html_base->refresh('a"b'), 'url=a&quot;b"');
+        $ui = new frontend();
+        $url = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => self::NO_CALC_ID, url_var::REPORT => url_var::TRUE];
+        $ui->report_pdf = pdf_writer::JPEG_START;
+        $end_html = $ui->report_end_html($url, $msg);
+        $test_name = 'a created report starts its download';
+        $t->assert_text_contains($test_name, $end_html, url_var::REPORT_FILE . '=' . url_var::TRUE);
+        $test_name = '... by the refresh of the frame';
+        $t->assert_text_contains($test_name, $end_html, 'http-equiv="refresh"');
+        $test_name = '... and does not create the report again';
+        $t->assert_text_not_contains($test_name, $end_html, url_var::REPORT . '=' . url_var::TRUE);
+        // negative: no download of a report that has not been created
+        $ui->report_pdf = '';
+        global $mtr;
+        $no_file_html = $ui->report_end_html($url, $msg);
+        $test_name = 'a report without a file has no refresh';
+        $t->assert_text_not_contains($test_name, $no_file_html, 'http-equiv="refresh"');
+        $test_name = '... and says so';
+        $t->assert_text_contains($test_name, $no_file_html, $mtr->txt(msg_id::CALCULATOR_REPORT_NONE));
+        $test_name = '... without naming a failure';
+        $t->assert_text_not_contains($test_name, $no_file_html, $mtr->txt(msg_id::CALCULATOR_REPORT_FAILED));
         $test_name = 'the report button of a page is a link to the pdf';
         $calc = new calculator($trp->phrase(), $dto->phr_lst);
         $btn_html = new ui_list()->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT));

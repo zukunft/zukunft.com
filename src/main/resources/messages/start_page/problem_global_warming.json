@@ -424,6 +424,13 @@
   ],
   "triples": [
     {
+      "name": "USD per tonne",
+      "from": "USD",
+      "verb": "per",
+      "to": "tonne",
+      "type": "measure_unit"
+    },
+    {
       "name": "variance low (system)",
       "from": "variance",
       "verb": "can be",
@@ -1586,8 +1593,7 @@
     {
       "words": [
         "carbon price",
-        "tonne",
-        "USD"
+        "USD per tonne"
       ],
       "number": "19",
       "source": "World Bank (2025) State and Trends of Carbon Pricing"

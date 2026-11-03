@@ -382,6 +382,7 @@ class import_tests
             ...triples::CALCULATOR_DETAIL_FLAGS,
             ...triples::CALCULATOR_BLOCKS,
             ...triples::CALCULATOR_BUTTONS,
+            ...triples::CALCULATOR_PROPOSED,
             triples::CALCULATOR_DECIMALS => triples::CALCULATOR_DECIMALS_CODE_ID,
             triples::CALCULATOR_RESULT_WIDTH => triples::CALCULATOR_RESULT_WIDTH_CODE_ID
         ];
@@ -390,6 +391,14 @@ class import_tests
             $kwd_code_id = $trp_lst->get_by_name($name, $msg)?->get_code_id();
             $t->assert($test_name, $kwd_code_id, $code_id);
         }
+        // the sample of the calculator editor json uses every proposed element at least once
+        $sample = json_decode(file_get_contents(test_files::CALCULATOR_EDITOR_SAMPLE), true);
+        $sample_to = array_column($sample[json_fields::TRIPLES] ?? [], json_fields::EX_TO);
+        $test_name = 'the calculator editor sample uses every proposed element';
+        $t->assert($test_name, array_values(array_diff(array_keys(triples::CALCULATOR_PROPOSED), $sample_to)), []);
+        // negative: a difference column of the result columns replaces the former scenario column
+        $test_name = '... and not the replaced scenario column';
+        $t->assert_false($test_name, in_array('calculator scenario column', $sample_to));
         // negative: only a system, system test or developer user may set a code id
         $test_name = 'a normal user cannot import the code id of a calculator keyword';
         $msg = new user_message($t->usr_normal);

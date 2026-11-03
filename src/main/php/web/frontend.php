@@ -256,6 +256,8 @@ class frontend
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
     // the http header that asks a proxy to pass the start of a page at once (see send_loading_start)
     const string HEADER_NO_BUFFERING = 'X-Accel-Buffering: no';
+    // the php errors that end a request e.g. the time or the memory limit
+    const array FATAL_ERRORS = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
 
     // the lists whose api answers are cached (see db_cache_page::api_key)
     const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
@@ -319,8 +321,11 @@ class frontend
 
     // the main data cache of the frontend
     public ?data_object $dto = null;
-    // the pdf that a request with url_var::REPORT has created, which the entry point sends instead of the page
+    // the pdf that a request with url_var::REPORT has created and the name of its page, which the entry point keeps for the request of the file
     public string $report_pdf = '';
+    public string $report_name = '';
+    // the step of the pdf report that a request with url_var::REPORT is doing, to name it if the report fails
+    private ?msg_id $report_step_id = null;
 
 
     /*
@@ -1314,20 +1319,25 @@ class frontend
             } else {
                 // the title of a calculator reads the calculator triples of the request cache and
                 // the components read their data from it, so it is filled before the html is created
+                $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
+                if ($is_report) {
+                    $this->report_step(msg_id::CALCULATOR_REPORT_STEP_LOAD);
+                }
                 $this->load_page_start();
                 $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
                 $this->load_page_end();
-                $this->report_pdf = $this->report_of_url($url_array, $dbo, $msg_ui, $dto);
-                $title = $msk_ui->title($dbo, $msg_ui, $dto);
-                $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
+                $this->report_pdf = $this->report_of_url($is_report, $dbo, $msg_ui, $dto);
+                // the report is shown in a frame of the page, which ends with report_end_html
+                $title = $is_report ? '' : $msk_ui->title($dbo, $msg_ui, $dto);
+                $dsp_text = $is_report ? '' : $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
-                if ($dsp_text == '' or $msk_ui->name() == '') {
+                if (!$is_report and ($dsp_text == '' or $msk_ui->name() == '')) {
                     $dsp_text = $msk_ui->name_tip();
                 }
-                if ($dsp_text == '') {
+                if ($dsp_text == '' and !$is_report) {
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
-                } else {
+                } elseif (!$is_report) {
                     $html = new html_base();
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
@@ -1352,18 +1362,18 @@ class frontend
     }
 
     /**
-     * @param array $url_array the parsed url as an array
+     * @param bool $is_report true if the url asks for the report
      * @param mixed $dbo the object of the page
      * @param user_message_ui $msg_ui to report a problem of the load
      * @param data_object $dto the request cache filled with the data of the page
      * @return string the pdf report if the url asks for it and the page is a calculator, else an empty string, so that the page is shown
      */
-    private function report_of_url(array $url_array, mixed $dbo, user_message_ui $msg_ui, data_object $dto): string
+    private function report_of_url(bool $is_report, mixed $dbo, user_message_ui $msg_ui, data_object $dto): string
     {
         $result = '';
-        $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
         if ($is_report and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
-            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto);
+            $this->report_name = $dbo->name();
+            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto, $this->report_step(...));
         }
         return $result;
     }
@@ -1379,12 +1389,111 @@ class frontend
      */
     function send_loading_start(user_message_ui $msg_ui, float $start_time): void
     {
+        $this->send_at_once($this->loading_start($msg_ui, $start_time));
+    }
+
+    /**
+     * send the start of the frame in which the steps of the report are shown
+     *
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @return void
+     */
+    function send_report_start(user_message_ui $msg_ui): void
+    {
+        $this->send_at_once(new html_base()->frame_start($msg_ui));
+    }
+
+    /**
+     * @param string $html the html code that the browser should get now and not with the end of the page
+     * @return void
+     */
+    private function send_at_once(string $html): void
+    {
         // e.g. nginx would otherwise hold back the start until the page is complete
         header(self::HEADER_NO_BUFFERING);
         while (ob_get_level() > 0) {
             ob_end_flush();
         }
-        echo $this->loading_start($msg_ui, $start_time);
+        echo $html;
+        flush();
+    }
+
+    /**
+     * the end of the report frame: the request of the created file, whose download keeps the page, or the failure
+     *
+     * @param array $url_array the parsed url of the report request
+     * @param user_message_ui $msg_ui with the messages of the creation
+     * @return string the html code that ends the frame
+     */
+    function report_end_html(array $url_array, user_message_ui $msg_ui): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if ($this->report_pdf == '') {
+            $result = $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_NONE));
+        } else {
+            $url = $url_array;
+            unset($url[url_var::REPORT]);
+            $url[url_var::REPORT_FILE] = url_var::TRUE;
+            // before the last step, because the steps show only the last element of the frame
+            $result = $html->refresh($html->url_with_user($html->page_url($url)));
+            $result .= $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_READY));
+        }
+        return $result . $this->user_msg_html($msg_ui);
+    }
+
+    /**
+     * give the report more time than a page and tell the user if it fails anyway, because a fatal
+     * error e.g. of the time or memory limit cannot be caught and would leave the count running
+     *
+     * @return void
+     */
+    function report_watch(): void
+    {
+        set_time_limit(calculator_report::MAX_TIME_SEC);
+        register_shutdown_function(fn() => $this->report_failed(error_get_last()));
+    }
+
+    /**
+     * end the lock of the session, which keeps its values readable; the settings allow to open it
+     * again for the created report, because a session cannot send a header after the first output
+     *
+     * @return void
+     */
+    function report_release_session(): void
+    {
+        session_write_close();
+        ini_set('session.use_cookies', '0');
+        session_cache_limiter('');
+    }
+
+    /**
+     * @param array|null $err the last error of the request
+     * @return void
+     */
+    private function report_failed(?array $err): void
+    {
+        global $mtr;
+        if (in_array($err['type'] ?? 0, self::FATAL_ERRORS)) {
+            $step = ' ' . $mtr->txt($this->report_step_id ?? msg_id::CALCULATOR_REPORT_STEP_LOAD);
+            echo new html_base()->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_FAILED) . $step);
+            flush();
+            log_err('pdf report failed at' . $step . ': ' . $err['message']);
+        }
+    }
+
+    /**
+     * show the step that the report is doing now with the seconds since the start of the request
+     *
+     * @param msg_id $id the step
+     * @return void
+     */
+    private function report_step(msg_id $id): void
+    {
+        global $mtr;
+        $this->report_step_id = $id;
+        $sec = (int)round(microtime(true) - $this->start_time);
+        echo new html_base()->frame_step($mtr->txt($id) . ' (' . $sec . ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS) . ')');
         flush();
     }
 
@@ -1657,6 +1766,8 @@ class frontend
         $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
         $list_variance = $url_array[url_var::DISPLAY_LIST_VARIANCE] ?? '';
         $list_as = $url_array[url_var::DISPLAY_LIST_AS] ?? '';
+        $list_unmatched = $url_array[url_var::DISPLAY_LIST_UNMATCHED] ?? '';
+        $list_design = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
@@ -1673,10 +1784,12 @@ class frontend
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_VARIANCE, url_var::DISPLAY_LIST_AS,
+                url_var::DISPLAY_LIST_UNMATCHED, url_var::DISPLAY_LIST_DESIGN,
                 ...table_orders::URL_VARS,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
-            if (!$is_key_param and !$is_show_step) {
+            // an array e.g. from dld[]=plain cannot be part of the key
+            if ((!$is_key_param and !$is_show_step) or !is_scalar($url_val)) {
                 $is_view_only = false;
             }
         }
@@ -1732,6 +1845,12 @@ class frontend
             }
             if ($list_as != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_AS . url_var::EQ . $list_as;
+            }
+            if ($list_unmatched != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_UNMATCHED . url_var::EQ . $list_unmatched;
+            }
+            if ($list_design != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_DESIGN . url_var::EQ . rawurlencode((string)$list_design);
             }
             // the order of the rows is a view-only state of the same page like the list size
             foreach (table_orders::URL_VARS as $order_var) {
@@ -3355,7 +3474,7 @@ class frontend
         $typ_lst = $this->dto?->typ_lst_cache;
         if ($typ_lst != null) {
             if ($msk_ui->shows_value_table($typ_lst, $msg_ui)) {
-                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names);
+                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names, $dto->table_own_columns);
             }
             // the editor of the view as defined by a view relation e.g. the table editor
             if ($msk_ui->editor_id != null) {

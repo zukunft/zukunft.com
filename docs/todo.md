@@ -8,23 +8,26 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
-    TODO use case PV calculator
-
-    TODO add admin dashboard and jobs 
+    TODO add new ch npp (AKW) example as test on smartvote for initiatives
+    TODO add table editor
+    TODO add on results a latex formula tooltip with the calculation
+    TODO clean up http_old - deprecate the http_old scripts
+    TODO cleaup *_old - deprecate *_old functions
+    TODO fix all Prio 0
+    TODO add job dashboard to normal users 
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
     TODO limit the prime phrase id by the int number that can be processed in JavaScript
-    TODO clean up http_old
-    TODO cleaup *_old
 
     ->  launch
 
-    TODO test on smartvote for initiatives, CBAM, SNSF decitions
 
     TODO Release 0.0.4
 
+    TODO add equity calculator example
+    TODO add CBAM calculator example
+    TODO add calculator for SNSF decitions (what should snf.ch focus on)
     TODO if in the calculator Editor an unknown word is typed use a local embadding model model to suggest a wikipedia link and a list of suggested triples, if the new word has spaces or other parts suggest using the parts and create a triple
-    TODO add a Swiss NPP (AKW) sample
     TODO add translations for the pinned view e.g. NPP -> de: AKW
     TODO for CH AKW yes/no to top field is to vote yes or no based on the total price per kWh
     TODO by default guess the location of the user e.g. to auto switch the language

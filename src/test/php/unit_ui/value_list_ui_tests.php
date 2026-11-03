@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -444,6 +445,16 @@ class value_list_ui_tests
         $test_name = '... and no value of the cell';
         $t->assert($test_name, substr_count($tbl_wider, '<' . html_base::TR . '>'), 2);
 
+        // several confidence values that qualify no value are not compared with each other
+        $tbl_unmatched = $t_val->value_list_confidence_unmatched_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $wider_lst->column_names(), false, true, $wider_lst);
+        $hdr_unmatched = $lib->html_to_text($lib->str_left_of($tbl_unmatched, '</tr>'));
+        $test_name = 'two confidence values that qualify no value keep the column of the value';
+        $t->assert_text_contains($test_name, $hdr_unmatched, word_names::LOSS . $unit_sep);
+        // negative: they share the column of their unit and do not open one each
+        $test_name = '... and do not open a column each';
+        $t->assert($test_name, substr_count($hdr_unmatched, word_names::LOSS . $unit_sep) <= 2, true);
+
         // a column shows one measure, so a phrase with values in two units gets one column per
         // unit, the unit of the most relevant value first, and no value is lost; the "loss"
         // column is defined here, because the two values differ in their unit only, so without
@@ -530,6 +541,10 @@ class value_list_ui_tests
         $hdr_gain_any = $lib->html_to_text($lib->str_left_of($tbl_gain_any, '</tr>'));
         $test_name = 'without a unit definition the mayor column shows the unit of the most values';
         $t->assert_text_contains($test_name, $hdr_gain_any, word_names::HTP);
+
+        $this->table_own_columns_tests($t);
+        $this->table_design_tests($t);
+        $this->table_csv_tests($t);
 
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
@@ -884,7 +899,7 @@ class value_list_ui_tests
         $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
         $test_name = 'a chart type word without code id is reported and its chart left out';
         $t->assert($test_name, $t_phr->list_chart_without_type_ui()->chart_definitions($msg_ui), []);
-        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::RANGE_BARS);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::RANGE_BARS);
         $msg_ui->reset();
         $test_name = 'a list without chart definitions defines no chart';
         $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
@@ -1084,7 +1099,7 @@ class value_list_ui_tests
         $t->assert($test_name, $rank_lst->sort_definitions($msg_ui), []);
         $test_name = 'a condition word without code id is reported and its order left out';
         $t->assert($test_name, $t_phr->list_sort_without_condition_ui()->sort_definitions($msg_ui), []);
-        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::NUMERIC_DESCENDING);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::NUMERIC_DESCENDING);
         $msg_ui->reset();
         // without an order in the url the rows follow the default order, which puts the health
         // problem with the bigger loss before the wealth concentration with the bigger gain
@@ -1265,6 +1280,185 @@ class value_list_ui_tests
         //      on mouseover show the complete phrase name with the description
 
 
+    }
+
+    /**
+     * a table with own columns that name their unit shows only these columns unless the url asks for the other values
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    private function table_own_columns_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $msg_ui = new user_message_ui();
+        $t_trp = new test_triples($t);
+        $t_val = new test_values($t);
+        $t_phr = new test_phrases($t);
+        $rel_lst = $t_phr->list_table_definition_units_ui([$t_trp->potential_gain_in_htp()]);
+        $page = $rel_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg_ui);
+        $ctx_lst = new phrase_list_ui();
+        $ctx_lst->add_phrase($page);
+        $cols = new calculator($page, $rel_lst)->table_columns();
+
+        $test_name = 'an own column names its unit';
+        $t->assert($test_name, $cols, [triple_names::POTENTIAL_GAIN_IN_HTP]);
+
+        $lst = $t_val->value_list_gain_units_ui();
+        $tbl = $lst->table_by_related_columns($msg_ui, $ctx_lst, $cols, false, true, $rel_lst);
+        $hdr = $lib->html_to_text($lib->str_left_of($tbl, '</tr>'));
+        $test_name = 'the table shows the own column in its unit';
+        $t->assert_text_contains($test_name, $hdr, word_names::HTP);
+        $test_name = '... but not the values in another unit';
+        $t->assert_text_not_contains($test_name, $hdr, word_names::EUR);
+        $test_name = '... and says that it has own columns for the menu';
+        $t->assert_true($test_name, $lst->own_columns);
+
+        $url_all = [url_var::DISPLAY_LIST_UNMATCHED => url_var::TRUE];
+        $tbl_all = $lst->table_by_related_columns($msg_ui, $ctx_lst, $cols, false, true, $rel_lst, null, $url_all);
+        $hdr_all = $lib->html_to_text($lib->str_left_of($tbl_all, '</tr>'));
+        $test_name = 'the url shows also the values in another unit';
+        $t->assert_text_contains($test_name, $hdr_all, word_names::EUR);
+        $test_name = '... behind the own column';
+        $t->assert_text_contains($test_name, $lib->str_left_of($hdr_all, word_names::EUR), word_names::HTP);
+
+        $order_lst = $t_phr->list_table_definition_units_ui([$t_trp->potential_gain_in_eur(), $t_trp->potential_gain_in_htp()]);
+        $order_page = $order_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg_ui);
+        $order_cols = new calculator($order_page, $order_lst)->table_columns();
+        $tbl_order = $t_val->value_list_gain_units_ui()->table_by_related_columns(
+            $msg_ui, $ctx_lst, $order_cols, false, true, $order_lst);
+        $hdr_order = $lib->html_to_text($lib->str_left_of($tbl_order, '</tr>'));
+        $test_name = 'the own columns keep their order, not the order of the most values';
+        $t->assert_text_contains($test_name, $lib->str_left_of($hdr_order, word_names::HTP), word_names::EUR);
+
+        // an own column can name a phrase of the row instead of a number
+        $sol_lst = $t_phr->list_global_problems_ui();
+        $sol_lst->merge($t_phr->list_table_definition_units_ui([$t_trp->potential_loss(), new test_words($t)->solution()]), $msg_ui);
+        $sol_ctx = $t_phr->list_global_problem_context_ui();
+        $sol_ctx->add_phrase($sol_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg_ui));
+        $sol_cols = new calculator($sol_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg_ui), $sol_lst)->table_columns();
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $sol_ctx, $sol_cols, false, true, $sol_lst);
+        $test_name = 'an own phrase column stays in the table';
+        $t->assert_text_contains($test_name, $lib->str_left_of($tbl_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
+
+        // negative: a grid of its columns e.g. the ranking of the start page has fixed columns
+        $grid =$t_val->value_list_gain_units_ui();
+        $tbl_grid = $grid->table_by_related_columns($msg_ui, $ctx_lst, [], false, true, $rel_lst, null, [], true);
+        $test_name = 'a grid ignores the own columns';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_grid), word_names::EUR);
+        $test_name = '... and has no own columns for the menu';
+        $t->assert_false($test_name, $grid->own_columns);
+
+        // negative: a table without own columns keeps every value and offers no entry for the other values
+        $no_def =$t_val->value_list_gain_units_ui();
+        $tbl_no_def = $no_def->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true);
+        $test_name = 'a table without own columns shows all units';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_no_def), word_names::EUR);
+        $test_name = '... and has no own columns for the menu';
+        $t->assert_false($test_name, $no_def->own_columns);
+
+        $url_page = [url_var::MASK => views::TABLE_ID];
+        $test_name = 'the menu of a table with own columns offers the other values';
+        $t->assert_text_contains($test_name, $lst->columns_menu_items($url_page, [], true), url_var::DISPLAY_LIST_UNMATCHED . '=' . url_var::TRUE);
+        $test_name = '... and hides them again';
+        $menu_all = $lst->columns_menu_items([...$url_page, ...$url_all], [], true);
+        $t->assert_text_contains($test_name, $lib->html_to_text($menu_all), msg_id::TABLE_UNMATCHED_HIDE->text());
+        $test_name = '... but the menu of another table does not';
+        $t->assert_text_not_contains($test_name, $lst->columns_menu_items($url_page), url_var::DISPLAY_LIST_UNMATCHED);
+    }
+
+    /**
+     * the url asks for the complete table as csv and the edit menu offers it
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    private function table_csv_tests(test_cleanup $t): void
+    {
+        $msg_ui = new user_message_ui();
+        $t_val = new test_values($t);
+        $url_csv = [url_var::DISPLAY_LIST_CSV => url_var::TRUE];
+
+        $lst = $t_val->value_list_gain_units_ui();
+        $lst->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true, null, null, $url_csv);
+        $test_name = 'the csv has the unit in the header';
+        $t->assert_text_contains($test_name, $lst->table_csv, word_names::HTP);
+        $test_name = '... and the number without rounding';
+        $t->assert_text_contains($test_name, $lst->table_csv, '320.01');
+
+        // the complete table is exported, also the rows behind the limit of the page
+        $cut = $t_val->value_list_gain_units_ui();
+        $cut->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true, null, 1, $url_csv);
+        $test_name = 'the csv has also the rows behind the limit of the page';
+        $t->assert_text_contains($test_name, $cut->table_csv, '26.4');
+
+        // negative: without the url var no csv is created
+        $no_csv = $t_val->value_list_gain_units_ui();
+        $no_csv->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true);
+        $test_name = 'without the url var the table has no csv';
+        $t->assert($test_name, $no_csv->table_csv, '');
+
+        $test_name = 'the edit menu offers the csv';
+        $menu = $lst->columns_menu_items([url_var::MASK => views::TABLE_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value]);
+        $t->assert_text_contains($test_name, $menu, url_var::DISPLAY_LIST_CSV . '=' . url_var::TRUE);
+        // negative: a page without a known url has no menu entries
+        $test_name = '... but not if the page is not known';
+        $t->assert($test_name, $lst->columns_menu_items([]), '');
+    }
+
+    /**
+     * a value table has no lines and no background by default and the url can select another design
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    private function table_design_tests(test_cleanup $t): void
+    {
+        $msg_ui = new user_message_ui();
+        $t_val = new test_values($t);
+        $rows = '<tr><td>1</td></tr>';
+        $html = new html_base();
+
+        $test_name = 'the default table design has no lines';
+        $t->assert_text_contains($test_name, $html->tbl_design($rows, [], $msg_ui), 'table-borderless');
+        $test_name = '... and no background';
+        $t->assert_text_not_contains($test_name, $html->tbl_design($rows, [], $msg_ui), 'table-striped');
+        $test_name = '... which the value table uses';
+        $tbl = $t_val->value_list_variance_ui()->table_by_related_columns($msg_ui);
+        $t->assert_text_contains($test_name, $tbl, 'table-borderless');
+
+        $url_design = [url_var::DISPLAY_LIST_DESIGN => words::BORDERED];
+        $bordered = $html->tbl_design($rows, $url_design, $msg_ui);
+        $test_name = 'the url selects the design with lines';
+        $t->assert_text_contains($test_name, $bordered, 'table-bordered');
+        $test_name = '... and the background';
+        $t->assert_text_contains($test_name, $bordered, 'table-striped');
+        $test_name = '... in the colours of the page';
+        $t->assert_text_contains($test_name, $bordered, '--bs-table-border-color: var(--page-' . words::RULE . ')');
+
+        // negative: an unknown design falls back to the default and says so
+        $test_name = 'an unknown design uses the default design';
+        $unknown_url = [url_var::DISPLAY_LIST_DESIGN => 'unknown design'];
+        $unknown = $html->tbl_design($rows, $unknown_url, $msg_ui);
+        $t->assert_text_contains($test_name, $unknown, 'table-borderless');
+        $test_name = '... and tells the user';
+        $t->assert_text_contains($test_name, $msg_ui->text(), 'unknown design');
+        $msg_ui->reset();
+
+        $test_name = '... and a striped row has the same text colour';
+        $t->assert_text_contains($test_name, $bordered, '--bs-table-striped-color: var(--page-' . words::GREY . ')');
+
+        $url_page = [url_var::MASK => views::TABLE_ID];
+        $menu = $t_val->value_list_variance_ui()->columns_menu_items($url_page);
+        $test_name = 'the menu offers the other design';
+        $t->assert_text_contains($test_name, $menu, url_var::DISPLAY_LIST_DESIGN . '=' . words::BORDERED);
+        // negative: the design shown is not offered again
+        $test_name = '... but not the design shown';
+        $t->assert_text_not_contains($test_name, $menu, url_var::DISPLAY_LIST_DESIGN . '=' . words::PLAIN);
+        $test_name = 'the menu of the design with lines offers the default design';
+        $menu_bordered = $t_val->value_list_variance_ui()->columns_menu_items([...$url_page, ...$url_design]);
+        $t->assert_text_contains($test_name, $menu_bordered, url_var::DISPLAY_LIST_DESIGN . '=' . words::PLAIN);
     }
 
 }
