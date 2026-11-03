@@ -2012,6 +2012,86 @@ sees the difference and can empty the given name to fall back to the generated o
 (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable
 fields impact and inactive as display-only info in the edit view next to the existing usage component
 
+## deprecate http_old
+
+**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
+`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
+of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
+
+**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
+when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
+feature with it that is not written down.
+
+### http_old scripts and the functionality to move
+
+The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
+http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
+
+| script | generic replacement | functionality to move |
+|---|---|---|
+| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
+| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
+| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
+| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
+| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
+| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
+| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
+| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
+| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
+| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
+| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
+| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
+| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
+| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
+| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
+| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
+| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
+| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
+| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
+| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
+| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
+| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
+| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
+| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
+| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
+| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
+| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
+| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
+| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
+| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
+| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
+| `view_select.php` | views tab of the word and triple page | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
+
+1. **List the functionality to move per script.** Done: see the table above.
+2. **Fix the defects found during the check,** each with a positive and a negative unit test:
+   - `web/verb/verb.php::url_mapper` sets `frm_name` from `url_var::IMPACT` instead of `url_var::NAME_IN_FORMULA`.
+   - `system_form::form_field_name_in_formulas` uses the label `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of
+     `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
+   - `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula only to the
+     local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is found, so the verb is added
+     anyway (found by reading the code, confirm it with the negative test first).
+3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
+   `verb_edit` (appended component position, no new component), with the workflow snapshots.
+4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
+   test in `unit_ui/`.
+5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
+   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
+   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
+6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
+   formulas (replacing `calculate.php`), both shown on the job control view.
+7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
+   (`api/json`, the export views, the upload of the import view).
+8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
+   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
+   the order of their prio, one section per commit.
+9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
+   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
+   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
+   that might still define a class.
+10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
+    other than the scripts in `http/`, so a retired script cannot get a new caller.
+11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
+
 ## later
 
 add the word splitter to convert_wikipedia_table.php
