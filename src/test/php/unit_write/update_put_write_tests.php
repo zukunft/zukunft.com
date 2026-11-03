@@ -119,6 +119,26 @@ class update_put_write_tests
     // the numbers that the scenarios pv_capacity_number and pv_capacity_maximum type
     const float PV_CAPACITY_NUMBER = 12.5;
     const float PV_CAPACITY_MAXIMUM = 100;
+    // the triples of the table definition of sector of revenue (table_editor_sample.json) that the table editor actions remove, in the order of the delete list
+    const array TABLE_MOVE_COLUMN_FOLLOWERS = [
+        'sector of revenue columns 2025 is follower of sector of revenue columns 2024',
+        'sector of revenue columns 2023 is follower of sector of revenue columns 2025'
+    ];
+    const array TABLE_REMOVE_COLUMN_TRIPLES = [
+        'sector of revenue columns confidence is follower of sector of revenue columns source',
+        'sector of revenue columns confidence marginal',
+        'sector of revenue columns confidence'
+    ];
+    const array TABLE_ORDER_RULE_LISTED = ['sector of revenue column order rule listed'];
+    // the flag that the header_rotate action adds
+    const string TABLE_HEADER_ROTATE = 'sector of revenue header rotate';
+    // the row limit value and the number that the row_limit action types
+    const array TABLE_ROW_LIMIT_PHRASES = [triple_names::SECTOR_OF_REVENUE, triples::SYSTEM_ROW_LIMIT];
+    const float TABLE_ROW_LIMIT = 20;
+    // the title triple with its description of the import and the one that the title action types
+    const string TABLE_TITLE = 'sector of revenue title';
+    const string TABLE_TITLE_COM = 'Revenue by sector';
+    const string TABLE_TITLE_COM_CHANGED = 'Revenue by business area';
 
     function run(test_cleanup $t): void
     {
@@ -301,6 +321,122 @@ class update_put_write_tests
         $this->run_use_case($t);
         $this->run_formula($t);
         $this->run_scenarios($t);
+        $this->run_table_editor($t);
+    }
+
+    /**
+     * save the messages of the table editor actions on the definition of sector of revenue and undo them;
+     * the changes of the imported definition are saved by a user who does not own it, so that the undo
+     * restores the definition without a new database row
+     * public to run the actions also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_table_editor(test_cleanup $t): void
+    {
+        $ts = 'db write update put table editor ';
+        $this->run_table_refused($t, $ts);
+        $t->subheader($ts . 'new column');
+        $this->run_order_change($t, test_files::UPDATE_PUT_TABLE_ADD_COLUMN, []);
+        $t->subheader($ts . 'column moved');
+        $this->run_order_change($t, test_files::UPDATE_PUT_TABLE_MOVE_COLUMN, self::TABLE_MOVE_COLUMN_FOLLOWERS);
+        $t->subheader($ts . 'column removed');
+        $this->run_order_change($t, test_files::UPDATE_PUT_TABLE_REMOVE_COLUMN, self::TABLE_REMOVE_COLUMN_TRIPLES);
+        $t->subheader($ts . 'column order rule');
+        $this->run_order_change($t, test_files::UPDATE_PUT_TABLE_COLUMN_ORDER_RULE, self::TABLE_ORDER_RULE_LISTED);
+        $t->subheader($ts . 'flag set');
+        $this->run_order_change($t, test_files::UPDATE_PUT_TABLE_HEADER_ROTATE, []);
+        $t->subheader($ts . 'row limit');
+        $this->run_number($t, test_files::UPDATE_PUT_TABLE_ROW_LIMIT, self::TABLE_ROW_LIMIT_PHRASES, self::TABLE_ROW_LIMIT);
+        $t->subheader($ts . 'title');
+        $this->run_description_change($t, test_files::UPDATE_PUT_TABLE_TITLE, self::TABLE_TITLE,
+            self::TABLE_TITLE_COM, self::TABLE_TITLE_COM_CHANGED);
+    }
+
+    /**
+     * a table editor message with a bad item is refused and changes nothing
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     * @return void
+     */
+    private function run_table_refused(test_cleanup $t, string $ts): void
+    {
+        $t->subheader($ts . 'refused flag');
+        $upd = new update_put();
+        $usr = $t->usr_normal;
+        $msg = new user_message($usr);
+        $chk_msg = new user_message($usr);
+
+        $test_name = 'a flag with a verb that does not exist is refused';
+        $json = $this->scenario_message(test_files::UPDATE_PUT_TABLE_HEADER_ROTATE, $usr);
+        $json[json_fields::BODY][json_fields::TRIPLES][0][json_fields::EX_VERB] = verbs::TEST_ADD_NAME;
+        $upd->put($json, $msg);
+        $expected = $this->expected_text(msg_id::TRIPLE_VERB_NOT_FOUND, [msg_id::VAR_NAME => verbs::TEST_ADD_NAME]);
+        $t->assert_msg_false($test_name, $msg, $expected);
+        $test_name = '... and the flag is not added';
+        $trp = new triple($usr);
+        $trp->load_by_name(self::TABLE_HEADER_ROTATE, $chk_msg);
+        $t->assert($test_name, $trp->id(), 0, test_base::TIMEOUT_LIMIT_DB);
+    }
+
+    /**
+     * the changed description of a triple by a user who does not own it, which the user then sees but
+     * another user not, and the undo with the description before the change
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $file the message of the action e.g. test_files::UPDATE_PUT_TABLE_TITLE
+     * @param string $name the name of the triple that the message changes
+     * @param string $description the description of the triple before the change
+     * @param string $changed the description that the message sends
+     * @return void
+     */
+    private function run_description_change(
+        test_cleanup $t,
+        string       $file,
+        string       $name,
+        string       $description,
+        string       $changed
+    ): void
+    {
+        $upd = new update_put();
+        $usr = $t->usr_normal;
+        $msg = new user_message($usr);
+        $chk_msg = new user_message($usr);
+        $std_msg = new user_message($t->usr1);
+
+        $test_name = 'the user sees the description before the change';
+        $trp = new triple($usr);
+        $trp->load_by_name($name, $chk_msg);
+        $t->assert($test_name, $trp->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the changed description';
+        $json = $this->scenario_message($file, $usr);
+        $json[json_fields::BODY][json_fields::TRIPLES][0][json_fields::ID] = $trp->id();
+        $upd->put($json, $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = 'the user sees the changed description';
+        $trp_chk = new triple($usr);
+        $trp_chk->load_by_id($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_chk->get_description(), $changed, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... but another user still sees the description before the change';
+        $trp_std = new triple($t->usr1);
+        $trp_std->load_by_id($trp->id(), $std_msg);
+        $t->assert($test_name, $trp_std->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the undo with the description before the change';
+        $json[json_fields::BODY][json_fields::TRIPLES][0][json_fields::DESCRIPTION] = $description;
+        $upd->put($json, $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = 'the user sees the description before the change again';
+        $trp_chk = new triple($usr);
+        $trp_chk->load_by_id($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_chk->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and has no own version left';
+        $t->assert_false($test_name, $trp_chk->has_usr_cfg());
     }
 
     /**
@@ -316,7 +452,8 @@ class update_put_write_tests
         $ts = 'db write update put scenario ';
         $this->run_add_input($t, $ts);
         $this->run_field_limit($t, $ts);
-        $this->run_number($t, $ts);
+        $t->subheader($ts . 'number of a field');
+        $this->run_number($t, test_files::UPDATE_PUT_PV_CAPACITY_NUMBER, self::PV_CAPACITY_PHRASES, self::PV_CAPACITY_NUMBER);
         $t->subheader($ts . 'rename of an input field');
         $this->run_triple_change($t, test_files::UPDATE_PUT_PV_CAPACITY_RENAME,
             [triple_names::PV_CAPACITY_INPUT, triple_names::YIELD_FACTOR_ORDER]);
@@ -429,26 +566,27 @@ class update_put_write_tests
     }
 
     /**
-     * the changed number of an input field by a user who does not own the value and its undo with
+     * the changed number of a value by a user who does not own the value and its undo with
      * the number of another user
      *
      * @param test_cleanup $t the test environment with the test users
-     * @param string $ts the name of the test section
+     * @param string $file the message that changes the number e.g. test_files::UPDATE_PUT_PV_CAPACITY_NUMBER
+     * @param array $phrases the names of the phrases of the changed value
+     * @param float $number the number that the message sends
      * @return void
      */
-    private function run_number(test_cleanup $t, string $ts): void
+    private function run_number(test_cleanup $t, string $file, array $phrases, float $number): void
     {
-        $t->subheader($ts . 'number of a field');
         $upd = new update_put();
         $usr = $t->usr_normal;
         $msg = new user_message($usr);
         $chk_msg = new user_message($usr);
         $std_msg = new user_message($t->usr1);
         $std = new value($t->usr1);
-        $std->load_by_names(self::PV_CAPACITY_PHRASES, $std_msg);
+        $std->load_by_names($phrases, $std_msg);
 
-        $test_name = 'put the changed number of the PV capacity';
-        $json = $this->scenario_message(test_files::UPDATE_PUT_PV_CAPACITY_NUMBER, $usr);
+        $test_name = 'put the changed number';
+        $json = $this->scenario_message($file, $usr);
         $json[json_fields::BODY][json_fields::VALUES][0][json_fields::ID] = (string)$std->id();
         $upd->put($json, $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
@@ -456,7 +594,7 @@ class update_put_write_tests
         $test_name = 'the user sees the changed number';
         $val = new value($usr);
         $val->load_by_id($std->id(), $chk_msg);
-        $t->assert($test_name, $val->number(), self::PV_CAPACITY_NUMBER, test_base::TIMEOUT_LIMIT_DB);
+        $t->assert($test_name, $val->number(), $number, test_base::TIMEOUT_LIMIT_DB);
         $test_name = '... but another user still sees the number before the change';
         $val_other = new value($t->usr1);
         $val_other->load_by_id($std->id(), $std_msg);
@@ -547,14 +685,14 @@ class update_put_write_tests
     }
 
     /**
-     * the moved items of a scenario by a user who does not own the order triples: the message removes
-     * the order triples of the moved items for the user and adds the ones of the new order, which the
-     * user then sees but another user not; the undo removes the added order triples and adds the removed
-     * ones again, like the editor does if the user moves the items back
+     * the added and removed triples of a scenario e.g. the moved items, by a user who does not own the
+     * removed triples: the message removes them for the user and adds the new ones, which the user then
+     * sees but another user still sees the removed ones; the undo removes the added triples and the added
+     * words and adds the removed triples again, like the editor does if the user moves the items back
      *
      * @param test_cleanup $t the test environment with the test users
      * @param string $file the message of the scenario e.g. test_files::UPDATE_PUT_AUTARKY_UP
-     * @param array $names the names of the order triples that the message removes in the order of its delete list
+     * @param array $names the names of the triples that the message removes in the order of its delete list, the children first
      * @return void
      */
     private function run_order_change(test_cleanup $t, string $file, array $names): void
@@ -566,47 +704,58 @@ class update_put_write_tests
         $std_msg = new user_message($t->usr1);
         $std_lst = $this->triples_by_name($names, $std_msg);
         $std_ids = $this->triple_ids($std_lst);
-
-        $test_name = 'put the order triples of the moved items';
         $json = $this->scenario_message($file, $usr);
+        $msg_trp = $json[json_fields::BODY][json_fields::TRIPLES];
+
+        $test_name = 'the named triples of the message are not yet in the database';
+        $shown = $this->shown_names($this->triples_by_name($this->message_names($msg_trp), $chk_msg));
+        $t->assert($test_name, $shown, [], test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the changed triples';
         foreach ($std_ids as $pos => $id) {
             $json[json_fields::BODY][json_fields::DELETE][$pos][json_fields::ID] = $id;
         }
         $put = $upd->put($json, $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $msg->reset();
-        $test_name = 'the user sees the added order triples with the links of the message';
+        $test_name = 'the user sees the added triples with the links of the message';
         $add_ids = array_column($put[json_fields::TRIPLES] ?? [], json_fields::ID);
         $add_lst = $this->triples_by_id($add_ids, $chk_msg);
         $add_links = $this->links_json($add_lst);
-        $msg_links = $json[json_fields::BODY][json_fields::TRIPLES];
+        $msg_links = $this->message_links($msg_trp);
         $t->assert($test_name, $add_links, $msg_links, test_base::TIMEOUT_LIMIT_DB);
-        $test_name = '... and no longer the order triples before the move';
+        $test_name = '... and no longer the removed triples';
         $shown = $this->shown_names($this->triples_by_id($std_ids, $chk_msg));
         $t->assert($test_name, $shown, [], test_base::TIMEOUT_LIMIT_DB);
-        $test_name = '... but another user still sees the order triples before the move';
+        $test_name = '... but another user still sees the removed triples';
         $shown = $this->shown_names($this->triples_by_id($std_ids, $std_msg));
         $t->assert($test_name, $shown, $names, test_base::TIMEOUT_LIMIT_DB);
 
-        $test_name = 'put the undo that removes the added order triples and adds the ones before the move again';
-        $undo = $this->delete_message($file, $usr, $add_lst);
+        $test_name = 'put the undo that removes the added triples and adds the removed ones again';
+        // the children first, because the message adds the parents first, and the words after the triples that use them
+        $add_wrd = $this->added_words($put, $chk_msg);
+        $undo = $this->delete_message($file, $usr, array_merge(array_reverse($add_lst), $add_wrd));
         $undo[json_fields::BODY][json_fields::TRIPLES] = [];
-        foreach ($std_lst as $std) {
+        // the parents first, because the message removes the children first
+        foreach (array_reverse($std_lst) as $std) {
             $undo[json_fields::BODY][json_fields::TRIPLES][] = [json_fields::NAME => $std->name()] + $this->link_json($std);
         }
         $upd->put($undo, $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $msg->reset();
-        $test_name = 'the user sees the order triples before the move again';
+        $test_name = 'the user sees the removed triples again';
         $usr_lst = $this->triples_by_id($std_ids, $chk_msg);
         $shown = $this->shown_names($usr_lst);
         $t->assert($test_name, $shown, $names, test_base::TIMEOUT_LIMIT_DB);
         $test_name = '... and has no own version of them left';
         $own_names = $this->own_versions($usr_lst);
         $t->assert($test_name, $own_names, []);
-        $test_name = '... and the added order triples are deleted';
+        $test_name = '... and the added triples are deleted';
         $shown = $this->shown_names($this->triples_by_id($add_ids, $chk_msg));
         $t->assert($test_name, $shown, [], test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and the added words';
+        $wrd_names = $this->shown_word_names($add_wrd, $chk_msg);
+        $t->assert($test_name, $wrd_names, [], test_base::TIMEOUT_LIMIT_DB);
 
         // a change log entry must never point to a deleted test row
         if ($add_lst != []) {
@@ -711,6 +860,74 @@ class update_put_write_tests
         $result = [];
         foreach ($trp_lst as $trp) {
             $result[] = $this->link_json($trp);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $trp_json_lst the triples of a message
+     * @return array the links of the triples without the given name, which the loaded triples are compared with
+     */
+    private function message_links(array $trp_json_lst): array
+    {
+        $result = [];
+        foreach ($trp_json_lst as $trp_json) {
+            $result[] = [
+                json_fields::EX_FROM => $trp_json[json_fields::EX_FROM],
+                json_fields::EX_VERB => $trp_json[json_fields::EX_VERB],
+                json_fields::EX_TO => $trp_json[json_fields::EX_TO]
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $trp_json_lst the triples of a message
+     * @return array the names of the triples that the message names, so without e.g. an order triple
+     */
+    private function message_names(array $trp_json_lst): array
+    {
+        $result = [];
+        foreach ($trp_json_lst as $trp_json) {
+            if (key_exists(json_fields::NAME, $trp_json)) {
+                $result[] = $trp_json[json_fields::NAME];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $put the answer of the put
+     * @param user_message $msg with the user who loads the words
+     * @return word[] the words that the put has added, but not the existing words that the message names to make sure they exist
+     */
+    private function added_words(array $put, user_message $msg): array
+    {
+        $result = [];
+        foreach ($put[json_fields::WORDS] ?? [] as $wrd_json) {
+            if (($wrd_json[json_fields::ACTION] ?? '') == update_put::ADDED) {
+                $wrd = new word($msg->usr);
+                $wrd->load_by_id($wrd_json[json_fields::ID], $msg);
+                $result[] = $wrd;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param word[] $wrd_lst the words loaded before e.g. a delete
+     * @param user_message $msg with the user who loads the words
+     * @return array the names of the words that the user still finds in the database
+     */
+    private function shown_word_names(array $wrd_lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($wrd_lst as $wrd) {
+            $wrd_chk = new word($msg->usr);
+            $wrd_chk->load_by_id($wrd->id(), $msg);
+            if ($wrd_chk->id() != 0) {
+                $result[] = $wrd_chk->name();
+            }
         }
         return $result;
     }

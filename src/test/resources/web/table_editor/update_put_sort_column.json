@@ -1,0 +1,23 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "name": "sector of revenue row order",
+                "description": "2024 asc",
+                "from": "sector of revenue",
+                "verb": "has a",
+                "to": "order row (system)"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

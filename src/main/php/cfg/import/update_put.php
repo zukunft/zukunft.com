@@ -297,10 +297,13 @@ class update_put
             $action = self::ADDED;
         } elseif ($changes == []) {
             $action = self::UNCHANGED;
-            $msg->add_warning_with_vars(msg_id::UPDATE_PUT_UNCHANGED, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
-                msg_id::VAR_ID => (string)$dbo->id()
-            ]);
+            // an object without id e.g. a column word is sent only to make sure that it exists, so finding it is no warning
+            if (array_key_exists(json_fields::ID, $obj_json)) {
+                $msg->add_warning_with_vars(msg_id::UPDATE_PUT_UNCHANGED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
+                    msg_id::VAR_ID => (string)$dbo->id()
+                ]);
+            }
         } else {
             $action = self::CHANGED;
         }

@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\phrase_data_walks;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -212,6 +213,44 @@ class phrase_data_read_tests
         $test_name = '... but a page without such a table does not';
         $other_row_vals = $this->values_by_phrase($vars[json_fields::VALUES] ?? [], word_names::LISP, true);
         $t->assert($test_name, $this->value_keys($other_row_vals), []);
+
+        // the import file is the expected minimum of the walk of a phrase with own columns: the
+        // definition of its table, its rows with their abbreviations, parents, values and sources
+        $t->subheader($ts . 'from walk of a phrase with own columns');
+        $test_name = 'the phrase data of an own table contains every word of its import file';
+        $tbl_sample = json_decode(file_get_contents(files::TABLE_EDITOR_SAMPLE_FILE), true);
+        $phr_tbl = new phrase($t->usr1);
+        $phr_tbl->load_by_name($tbl_sample[json_fields::SELECTION][0] ?? '', $msg);
+        $tbl_vars = $phd->export_json($phr_tbl->id(), phrase_data_walks::FROM, true, $msg);
+        $t->write_api_actual_file(test_files::PHRASE_DATA_TABLE_EDITOR, $tbl_vars);
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::WORDS] ?? []), $this->names($tbl_sample[json_fields::WORDS]), $t::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... every triple, also the rows below the phrase';
+        $tbl_trp_keys = $this->triple_keys($tbl_vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $tbl_trp_keys, $this->triple_keys($tbl_sample[json_fields::TRIPLES]));
+        $test_name = '... every formula';
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::FORMULAS] ?? []), $this->names($tbl_sample[json_fields::FORMULAS]));
+        $test_name = '... every source';
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::SOURCES] ?? []), $this->names($tbl_sample[json_fields::SOURCES]));
+        $test_name = '... every value, also of the parent rows';
+        $t->assert_contains($test_name, $this->value_keys($tbl_vars[json_fields::VALUES] ?? []), $this->value_keys($tbl_sample[json_fields::VALUES]));
+        // negative: the walk stops at the table keywords, which every table definition links to
+        $test_name = '... and not much more objects than the import file';
+        $t->assert_max($test_name, $this->max_object_count($tbl_sample), count($this->objects($tbl_vars)));
+        $test_name = '... with a parent row';
+        $tbl_trp_names = $this->names($tbl_vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $tbl_trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        // negative: the rows are added only for the phrase with own columns
+        $test_name = '... but a page without own columns has none of these rows';
+        $t->assert_contains_not($test_name, $trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        // negative: the walk of a triple ends before its word, because e.g. sector is shared by every page
+        $test_name = '... and none of the triples of the word that the phrase is built from';
+        $t->assert_contains_not($test_name, $tbl_trp_names, [triple_names::PUBLIC_SECTOR]);
+        // negative: export is only a side of the keyword export (system), so the formula that the PV page assigns to it is not added
+        $test_name = '... and no formula of a word that only names a triple';
+        $tbl_frm_names = $this->names($tbl_vars[json_fields::FORMULAS] ?? []);
+        $t->assert_contains_not($test_name, $tbl_frm_names, [formula_names::DELIVERED_ELECTRICITY]);
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';

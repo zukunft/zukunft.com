@@ -17,7 +17,8 @@
     - FROM: the walked phrases, e.g. the whole calculator tree of a calculator page
 
     the data of a phrase are
-    - for the from walk the walked phrases: the phrase, the phrases it is built from and every triple whose from
+    - for the from walk the walked phrases: the phrase, the triples it is built from (the chain ends before a word
+      e.g. sector of sector of revenue, because every page shares a word) and every triple whose from
       side is a walked phrase; the to side of a triple is walked too if it is an item ("has a")
       e.g. "PV capacity" of "PV installation input PV capacity", because the to side of another
       triple is a category e.g. "climate solution", which links to the data of other phrases
@@ -25,8 +26,12 @@
       never walked, because every page phrase links to them; a phrase selector field follows its
       calculator rule instead and adds its options, the phrases that "is a" the field phrase,
       and a repeated input adds its instances, the phrases that "is a" the item phrase
-    - the values of the phrase resp. of the walked triples with all their phrases, the formulas of the phrases with
-      the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
+    - the table keywords (triples::TABLE_KEYWORDS) are never walked either and the choice of a table
+      parameter is a leaf e.g. normal of "sector of revenue density"; a phrase with own columns adds
+      the rows of its table, the phrases that "is a" or "is part of" it with their values and results
+      e.g. "Example AG energy" for "sector of revenue"
+    - the values of the phrase resp. of the walked triples with all their phrases, the formulas of these phrases
+      (not of the sides that only name a triple e.g. export of export (system)) with the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
       triple is built from and the sources of the values
     - on request the results of the phrase with their context, the phrases that select the
@@ -204,7 +209,10 @@ class phrase_data
             $this->value_phrase_ids($val_lst, $msg),
             $this->result_phrase_ids($res_lst));
         $phr_lst = $this->complete_phrases($ids, $msg);
-        $frm_lst = $phr_lst->frm_lst($msg);
+        // the formulas of the phrases of the data, but not of the sides that only name a triple, because a
+        // formula that a page assigns to a shared word e.g. export would be added to every page that names it
+        $data_phr_lst = $this->phrases_by_ids(array_values(array_unique($ids)), $msg);
+        $frm_lst = $data_phr_lst->frm_lst($msg);
         $frm_lst->filter_readable_by($usr);
         $this->debug_step('formulas loaded', $frm_lst->count());
         $frm_ids = array_merge($phr_lst->id_lst(), $this->formula_phrase_ids($frm_lst));
@@ -287,16 +295,17 @@ class phrase_data
      * (docs/llm/pending_prio_2.md "code id of a triple"), and mapped to their code id
      *
      * @param user_message $msg with the requesting user
-     * @return array the phrase ids of the calculator and the field keywords by their code id e.g.
+     * @return array the phrase ids of the calculator, the field and the table keywords by their code id e.g.
      *               system_calculator_label => -2727; these phrases are never walked
      */
     private function keyword_ids(user_message $msg): array
     {
+        $keywords = array_merge(triples::CALCULATOR_KEYWORDS, triples::TABLE_KEYWORDS);
         $trp_lst = new triple_list($msg->usr);
-        $trp_lst->load_by_names(array_keys(triples::CALCULATOR_KEYWORDS), $msg);
+        $trp_lst->load_by_names(array_keys($keywords), $msg);
         $result = [];
         foreach ($trp_lst->lst() as $kwd) {
-            $code_id = triples::CALCULATOR_KEYWORDS[$kwd->name()] ?? '';
+            $code_id = $keywords[$kwd->name()] ?? '';
             if ($code_id != '') {
                 $result[$code_id] = $kwd->phrase()->id();
             }
@@ -339,7 +348,7 @@ class phrase_data
     /**
      * @param phrase $phr the requested phrase e.g. example PV installation
      * @param user_message $msg with the requesting user
-     * @return phrase_list the phrase and the phrases it is built from e.g. PV installation and installation
+     * @return phrase_list the phrase and the triples it is built from e.g. PV installation, but not the word installation
      */
     private function built_from(phrase $phr, user_message $msg): phrase_list
     {
@@ -359,13 +368,17 @@ class phrase_data
     }
 
     /**
+     * a word ends the chain, because the triples of a shared word e.g. public sector of sector
+     * would add the values, formulas and sources of every page that uses the word
+     *
      * @param int $from_id the phrase id of the from side of the last phrase of the chain or zero for a word
      * @param phrase_list $chain the phrases of the chain so far
-     * @return bool true if the from side is a phrase that the chain does not yet contain
+     * @return bool true if the from side is a triple that the chain does not yet contain
      */
     private function is_new_from(int $from_id, phrase_list $chain): bool
     {
-        return ($from_id != 0 and !$chain->has_id($from_id));
+        $is_triple = $from_id < 0;
+        return ($is_triple and !$chain->has_id($from_id));
     }
 
     /**
@@ -414,9 +427,21 @@ class phrase_data
         $src_phr_lst = new phrase_list($msg->usr);
         $lvl_lst = new phrase_list($msg->usr);
         $ind_lst = new phrase_list($msg->usr);
+        $own_tbl_lst = new phrase_list($msg->usr);
+        $tbl_kwd_ids = array_intersect_key($kwd_ids, array_flip(triples::TABLE_KEYWORDS));
+        $col_kwd_ids = array_intersect_key($kwd_ids, [triples::TABLE_COLUMN_CODE_ID => 0]);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
         foreach ($trp_lst->lst() as $trp) {
+            // a parameter of a table definition e.g. sector of revenue density is a list, so that
+            // its choice e.g. normal is a leaf and the walk does not follow a shared option word
+            if (in_array($trp->to_id(), $tbl_kwd_ids)) {
+                $this->add_new($itm_lst, $walked, $kwd_ids, $trp->phrase(), $msg);
+            }
+            // a phrase with own columns e.g. sector of revenue has the rows of its table below it
+            if (in_array($trp->to_id(), $col_kwd_ids)) {
+                $own_tbl_lst->add($trp->get_from(), false, $msg);
+            }
             if ($this->is_calculator_link($trp)) {
                 $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);
             }
@@ -444,6 +469,8 @@ class phrase_data
         $this->add_kinds($next, $walked, $kwd_ids, $src_phr_lst, $msg);
         $this->add_levels($next, $walked, $kwd_ids, $lvl_lst, $msg);
         $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $ind_lst, $msg));
+        // with the parent rows, because a parent row of an own table e.g. Example AG energy has its own values and results
+        $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $own_tbl_lst, $msg, true));
         return $next;
     }
 
@@ -466,12 +493,20 @@ class phrase_data
      * @param phrase_list $next the phrases to walk in the next step
      * @param phrase_list $walked all phrases walked so far
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
-     * @param phrase_list $lvl_lst the tables and the columns of the detail tables
+     * @param phrase_list $lvl_lst the tables and the columns of the detail tables or the phrases with own columns
      * @param user_message $msg with the requesting user
+     * @param bool $with_kinds true to include the phrases with phrases below them e.g. the parent rows of an own table
      * @return phrase_list the phrases at the end of the levels, which are the rows e.g. LISP, but not stock,
      *                     because a kind like stock has the values and results of every use case
      */
-    private function add_levels(phrase_list $next, phrase_list $walked, array $kwd_ids, phrase_list $lvl_lst, user_message $msg): phrase_list
+    private function add_levels(
+        phrase_list  $next,
+        phrase_list  $walked,
+        array        $kwd_ids,
+        phrase_list  $lvl_lst,
+        user_message $msg,
+        bool         $with_kinds = false
+    ): phrase_list
     {
         global $sys;
         $level = $lvl_lst;
@@ -495,7 +530,7 @@ class phrase_data
         }
         $result = new phrase_list($msg->usr);
         foreach ($seen->lst() as $phr) {
-            if (!in_array($phr->id(), $kind_ids)) {
+            if ($with_kinds or !in_array($phr->id(), $kind_ids)) {
                 $result->add($phr, false, $msg);
             }
         }

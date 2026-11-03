@@ -71,14 +71,24 @@ class files
     // the data that api/phraseData returns at least for the example PV installation
     CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // the phrase data of the row phrase of the table editor sample; only the received json is written, as the seed of use_cases/table_editor_sample.html
+    CONST string PHRASE_DATA_TABLE_EDITOR_NAME = 'phrase_data_table_editor';
+    CONST string PHRASE_DATA_TABLE_EDITOR = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_TABLE_EDITOR_NAME . self::JSON;
     // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
     CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
     // the hand made sample of the calculator editor json, which uses every proposed calculator element
     CONST string CALCULATOR_EDITOR_SAMPLE = test_paths::RESOURCE . 'web' . DIRECTORY_SEPARATOR . 'calculator_editor' . DIRECTORY_SEPARATOR . 'calculator_editor_sample' . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
-    // the table editor that the browser builds from its seed
+    // the table editor of sector of revenue that the browser builds from its seed, next to the hand made table_editor_sample.html
     CONST string TABLE_EDITOR = 'table_editor';
+    CONST string TABLE_EDITOR_SAMPLE = 'table_editor_sample';
+    // the table editor of the global warming solutions of the start page: own columns, but no table parameters and many rows
+    CONST string TABLE_EDITOR_GLOBAL_WARMING_SOLUTION = 'table_editor_global_warming_solution';
+    // the differences of table_editor.html to the sample as a markdown prompt for an llm
+    CONST string TABLE_EDITOR_DIFF = 'table_editor_diff';
+    // the script builds the editor of both pages, so the compare reads both after a browser has run them
+    CONST string TABLE_EDITOR_CASES = test_paths::JS . 'table_editor_cases' . self::JS;
     // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
     CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
     // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
@@ -166,10 +176,45 @@ class files
     CONST string UPDATE_PUT_ADD_INPUT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_ADD_INPUT . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_UP = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_UP . self::JSON;
     CONST string UPDATE_PUT_EMBODIED_EMISSION_DOWN = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_EMBODIED_EMISSION_DOWN . self::JSON;
+    // the update put messages that the table editor of sector of revenue sends after an action, which the write test saves and undoes
+    CONST string TABLE_SCENARIO_ADD_COLUMN = 'add_column';
+    CONST string TABLE_SCENARIO_MOVE_COLUMN = 'move_column';
+    CONST string TABLE_SCENARIO_REMOVE_COLUMN = 'remove_column';
+    CONST string TABLE_SCENARIO_COLUMN_ORDER_RULE = 'column_order_rule';
+    CONST string TABLE_SCENARIO_HEADER_ROTATE = 'header_rotate';
+    CONST string TABLE_SCENARIO_ROW_LIMIT = 'row_limit';
+    CONST string TABLE_SCENARIO_TITLE = 'title';
+    CONST string UPDATE_PUT_TABLE_ADD_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_ADD_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_MOVE_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_MOVE_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_REMOVE_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_REMOVE_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_COLUMN_ORDER_RULE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_COLUMN_ORDER_RULE . self::JSON;
+    CONST string UPDATE_PUT_TABLE_HEADER_ROTATE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_HEADER_ROTATE . self::JSON;
+    CONST string UPDATE_PUT_TABLE_ROW_LIMIT = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_ROW_LIMIT . self::JSON;
+    CONST string UPDATE_PUT_TABLE_TITLE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_TITLE . self::JSON;
+    // the user actions that a headless browser runs in a copy of the table editor snapshot, selected by the scenario name as the url hash;
+    // the update put message is compared with UI_PUT_PREFIX + scenario name and the exported csv with the scenario name in web/table_editor
+    CONST string TABLE_EDITOR_SCENARIOS = test_paths::JS . 'table_editor_scenarios' . self::JS;
+    CONST string TABLE_SCENARIO_ADD_COLUMN_TO_TIER = 'add_column_to_tier';
+    CONST string TABLE_SCENARIO_ADD_COLUMN_USED = 'add_column_used';
+    CONST string TABLE_SCENARIO_MOVE_COLUMN_FIRST = 'move_column_first';
+    CONST string TABLE_SCENARIO_REMOVE_COLUMN_ADDED_AGAIN = 'remove_column_added_again';
+    CONST string TABLE_SCENARIO_SORT_COLUMN = 'sort_column';
+    CONST string TABLE_SCENARIO_SORT_LABEL = 'sort_label';
+    CONST string TABLE_SCENARIO_ROW_LIMIT_BACK = 'row_limit_back';
+    CONST string TABLE_SCENARIO_UNDO = 'undo';
+    CONST string TABLE_SCENARIO_UNDO_ALL = 'undo_all';
+    CONST string TABLE_SCENARIO_REDO = 'redo';
+    CONST string TABLE_SCENARIO_REDO_AFTER_NEW_STEP = 'redo_after_new_step';
+    CONST string TABLE_SCENARIO_DISCARD_UNDO = 'discard_undo';
+    CONST string TABLE_SCENARIO_DISCARD = 'discard';
+    CONST string TABLE_SCENARIO_EXPORT = 'export';
+    CONST string TABLE_SCENARIO_EXPORT_NO_ROWS = 'export_no_rows';
+    CONST string TABLE_SCENARIO_SAVE_UNCHANGED = 'save_unchanged';
+    CONST string TABLE_SCENARIO_SAVE_REFUSED = 'save_refused';
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
-    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL];
+    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL, self::PHRASE_DATA_TABLE_EDITOR];
 
     // the static forward pages in the docroot by their url path, which the test run rewrites
     // from the view of api::FORWARD_VIEWS (see base_ui_tests)

@@ -44,21 +44,26 @@ name.
 2) Select the 'table editor' view
 ---------------------------------
 
-Open the table of the phrase and select **"Table editor"** in the edit menu. The editor shows the
-columns and the default sorting of this table, and below them the table as it is saved.
+Open the table of the phrase and select **"Table editor"** in the edit menu. On the left are the
+settings of the table in groups, e.g. **Columns**, **Rows**, **Hierarchy** and **Values**; on the right
+is the table, which changes with every setting before anything is saved.
 
 3) Choose the columns
 ---------------------
 
-Select a column in the list **"Columns"** and click **"Add"**. Use the arrows to change the order and
-the **x** to remove a column. Without an own column the table shows the columns of all tables.
+Type a phrase in **"Mayor columns"** (always shown), **"Main columns"**, **"Minor columns"** or
+**"Marginal columns"** and pick it from the suggestions. Drag a column to change its order and click
+its **x** to remove it. **"Level shown"** selects down to which tier the columns are shown. Without an
+own column the table shows the columns of all tables.
 
-4) Select the default sorting
------------------------------
+4) Choose the rows and the sorting
+----------------------------------
 
-Select a column in the list **"Default sorting"**, click **"Add"** and select the direction. The first
-entry is the prime order and the next ones are the sub orders. Click **"Save"** to store both lists; a
-change only affects this table.
+In **Rows**, the **"Row phrase"**, the **"Row verb"** and the **"Direction"** select which phrases
+become the rows, e.g. the solutions of global warming. In **Hierarchy**, the
+**"Sub-row verb"** selects the sub-rows. Enter the **"Sort order"** as the column and `asc` or `desc`,
+e.g. *reward ratio desc*. **Undo** and **Redo** step through the changes; click **"Save"** to store
+them. A change only affects this table.
 
 5) Fill the data
 ----------------

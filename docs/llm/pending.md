@@ -1,9 +1,93 @@
 # pending - list of planned llm prompts with prio 1
 
+**How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
+prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
+- see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
+  removes it from this file, asks the developer the decisions that the sections name, starts the agents of a phase in
+  parallel and waits for all of them before the next phase
+- a phase that says "stop for a run" ends with the lead asking the developer for the named test run; the lead continues
+  with the next phase only after the developer has reported the result
+- each agent gets the prompt, the sections of its task and the result of the earlier phases as context, changes only
+  the files of its task (a change that another agent of the same phase owns goes as a note to the lead), uses
+  Edit/Write only, never commits, never runs a `/test/*` script and reports the changed files and the open points
+- in the end the lead reviews the whole change as one (one style, no doubled code, lint clean), keeps every open point
+  here or moves it to `docs/llm/pending_prio_2.md`, removes the done sections and reports the id shift, the tests to
+  run and a short commit message
+- the size is S (one agent, a few files), M (two or three agents) or L (four or more agents or several phases)
+- the marker after `**next prompt**` is the test run of the developer before the next prompt:
+  - `**full test run: /test/test.php**` if no seed data changes
+  - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
+    seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
+    `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
+
+**Prompt:** table fine-tuning, view tabs, result tooltip, populism table and percent htp (size L, after the table
+editor prompt; re-pin, because the populism data changes). One phase, five agents in parallel:
+- agent for table_editor_diff.md is not empty. It lists two buttons as "only in the generated page": "Show the table" and "Editor without javascript". The sample hides them because its settings have empty urls.table and urls.no_js. Either give the sample both urls so it shows the buttons, or leave the two entries as known.
+- agent for Rule 2, one element per line: in table_editor.js paintCsv, rowIds packs a ternary with two inline map callbacks into one statement. That is my change. A helper such as exportedRowIds(m) would read better.
+- agent for Size of the second case: table_editor_global_warming_solution.html is 456 KB, because its seed has 1069 values and 528 results. I checked that it holds only solution data and nothing from PV, LiMux, Example AG, the portfolio or NPP. So it is correct, just a large snapshot to review in diffs.
+- agent for The sample has two .editor .btn rules. calculator_editor_sample.html has the old color rule further down and the new scoped rule. It is a hand-made sample, so this is minor; the two could be merged.
+- agent table editor: "fine-tuning of table editor" (the preview tabs and the collapsible groups) in
+  `script/table_editor.js`, `style/table_editor.css` and the `table_editor_` messages
+- agent views tab: "view tabs", the views tab of every page whose alternative views are in the edit icon menu
+- agent tooltip: "result tooltip", the result renderer with the latex formula, the used values and the hint
+- agent populism: "table populism solution" and "adjust the table data": the rows, the default sorting, the columns,
+  the hidden values, the named table designs in `config.yaml` and the csv export test with its diff file
+- agent percent htp: "test factory with percent htp", with the id of `unit/triple/list.csv` of this tree, which the
+  re-pin run corrects
+
+### fine-tuning of table editor
+
+#### preview section
+
+in the table editor the preview has the tabs 'Table', 'Definition (JSON)' and 'Export (CSV)'
+remove the 'Export (CSV)' but add similar to the 'Calculator editor' 'All texts' amd 'Changes'
+with similar functionality than the 'Calculator editor'
+and rename the tab 'Table' to 'Table preview'
+
+#### collapse prio 2 settings
+
+in the table editor on the left side can this be collapsed and expanded:
+Columns
+Rows
+Hierarchy
+Values
+Aggregation
+Layout
+Interaction
+Context
+Export
+State
+
+add 'Column details' and 'Row details'
+
+and move all parts from 'Columns' to 'Column details' except:
+Level shown
+Major columns
+Main columns
+
+and move all parts from 'Rows' to 'Row details' except:
+Row phrase
+Sort column
+Sort direction
+
+'Columns' and 'Rows' are by default expanded and all others collapsed
+
+## view tabs
+
+for many views the alternative views like 'values (detail with range)' are shown in the edit icon menu of the navbar.
+for all these pages the views tab in the page is not needed so it can be removed
+
+
+## result tooltip
+
+if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
+to show the formula used for the calculation of the result in the latex format with the values used for the result 
+and a 'click for more details' hint
+
 ## table populism solution
 
 The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
-solutions sorted by default by potential gain descending. 
+solutions sorted by default by potential gain descending.
 The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
 and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
 
@@ -12,69 +96,54 @@ The colour, border and background settings should be taken from config.yaml and 
 
 ### adjust the table data
 
-add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708 
+add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708
 and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
 and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
 
+### test factory with percent htp
 
-## table editor
+The start page problem files now state the loss share of the happy time points with the one triple `percent htp`
+(percent *of* htp, type `percent`) instead of the two phrases `percent` and `htp`, because a value has only one number
+type (docs/llm/json_structure.md). The test factory still builds the old group, so it no longer matches the import:
 
-The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the
-definition of the rows, a preview before the save (the frame shows the saved table) and the alpha sort conditions.
+- `test_values::value_list_start_page()` (`src/test/php/create/test_values.php:1160`) builds
+  `[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()]`; use the new triple instead of `$pct` and the htp word.
+- add `test_triples::percent_htp()` like `percent_symbol()`, with `set_type(phrase_types::PERCENT, ...)`, the consts
+  `triple_names::PERCENT_HTP` / `PERCENT_HTP_ID` and the entry in `test_pinned_ids.php`; take the id from the
+  regenerated `src/test/resources/unit/triple/list.csv` after the re-pin run, never guess it.
+- check the start page snapshots: the loss column header should still read "loss in percent htp".
+- `value_list_two_units()` (`[..., "potential", "loss", "percent", "htp"]`) mirrors `values.json` and
+  `solution_prio.json`, which still have the two phrases (one finding in `docs/json_findings.md`); change it together
+  with those files, not alone.
 
-**Target:** `use_cases/table_editor.html` is generated like `use_cases/calculator_editor.html` and matches the hand made
-`use_cases/table_editor_sample.html`, proven by tests. All paths below are in `src/test/resources/web/html/`. The
-generated page fully replaces the current list editor of `script/table_editor.js`; the server page stays behind `sc=0`.
+if done remove this prompt from pending.md
 
-1. **Sample: same page frame and colours.** Change `table_editor_sample.html` to the frame of
-   `calculator_editor_sample.html`: the stylesheets of the pod (bootstrap, fontawesome, `style_html.css`) instead of the
-   inlined navbar rules and the IBM Plex fonts, and the `:root` colour settings of the calculator editor (`--ink`,
-   `--accent: #385eb7`, ...) instead of the teal ones, without the dark variants if the calculator editor has none.
-2. **Sample: same top line.** Replace the `h1` and the buttons above the rail by the `.bar` of the calculator editor:
-   the title, `for <phrase name>` with `Load`, `no changes`, `Undo`, `Redo`, `Discard changes`, `Export` and `Save`, with
-   the same html ids (`phraseIn`, `btnLoad`, `changeCount`, `btnUndo`, `btnRedo`, `btnReset`, `btnExport`, `btnSave`).
-   Save writes to the database and not to `localStorage`; `Reset to default` and `Sample data` are dropped.
-3. **Import json of the example.** Extract `DATA`, `COLUMN_PHRASES` and `DEFAULT_VIEW` of the sample into a use case file
-   `messages/use_cases/table_editor_sample.json` at the end of `files::USE_CASE_FILES_APPENDED`, without a `code_id`: the
-   sectors as lower-case words with their `is part of` triples and abbreviations, the row phrase `sector of revenue`,
-   the values per year in million CHF with their sources, the entries without a number and without a parent as they
-   are, `growth` and `share` as formulas, and the definition of the view as triples to the table keywords of
-   `editor_views.json`. Name the id shift in the report and re-pin.
-4. **Align the keywords.** Compare the fields of `SPEC` and `DEFAULT_VIEW` with the keywords of `editor_views.json` and
-   resolve each difference at one place, e.g. `columns_major` is `mayor column (system)`, `value_decimals` and
-   `value_thousands` are `value_format`, `row_order_col` and `row_order_dir` are `row_order`.
-5. **Sample: seed from the api.** Replace the constants of step 3 in the sample by a
-   `<script type="application/json" id="seed">` with the `/api/phraseData` answer of the imported phrase, in the same
-   structure as `calculator_editor_sample.html`, and `seedName` with the name of the import file. `SPEC` moves to the
-   script with translated labels. Check that the walk of the phraseData api returns the view definition, the order
-   triples and the results; extend the walk if not.
-6. **Script and style.** Move the script of the sample to `script/table_editor.js` and its css to
-   `style/table_editor.css`, nested in the host, and let the sample load both like the other samples. Every text comes
-   from the seed (`table_editor_` messages in `en.yaml` and `de.yaml`, the texts of the calculator editor for the top line).
-7. **Page of the server.** `system_page::table_editor` renders the host and the seed with `CALC_EDITOR_SEED_ID`, so that
-   the seed has the same id and the volatile time is fixed in one way; remove `TABLE_EDITOR_SEED_ID` and the keys around
-   the phraseData answer that step 6 no longer needs. The table is rendered by the script from the seed without an api call.
-8. **Save.** Undo, redo, the change count and the save with the `updatePut` body follow the calculator editor; reuse its
-   logic where the code can be shared. Every problem of a save is shown to the user, and a save deletes only with the logged `del()`.
-9. **Tests.**
-   - `system_views_read_tests`: `assert_editor_view` with the imported phrase writes `use_cases/table_editor.html`.
-   - Compare the page with the sample by `html_page_diff` and write the differences as `use_cases/table_editor_diff.md`.
-   - Add scenarios in `src/test/js` like `calculator_editor_scenarios.js` with one positive and one negative case per
-     action: add, move and remove a column, change a sort and a row parameter, undo, redo, discard, export, save.
-   - Compare each resulting `updatePut` body with a fixture in `src/test/resources/web/table_editor/` and run it in
-     `update_put_write_tests`, also reading the saved definition back.
-   - `coding_rule_tests::use_case_no_test_formula_tests` stays clean for the new use case.
-10. **Docs.** Update "The table editor" in `docs/llm/frontend.md` and the steps in `docs/table_creation.md`.
+**next prompt**
 
-## result tooltip
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
-to show the formula used for the calculation of the result in the latex format with the values used for the result 
-and a 'click for more details' hint
+**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
+gets the CO2-eq costs). One phase, four agents in parallel:
+- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
+- agent npp: "Swiss NPP": the compare test of the editor preview with the calculator page, its `*_diff.md`, the
+  missing argument sections and the CO2-eq reduction costs in the NPP use case json
+- agent share: the "Share assumptions and vote" button of the calculator page
+- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
 
 ## Calculator editor
 
+### JSON tab
+
+similar to the table editor add right of the 'Page preview' tab a tab with 'Definition (JSON)'
+
 ### Swiss NPP
+
+in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=16&9id=-3321&u=11
+in 'Page preview' the same view should be shown as e.g. http://localhost/http/view.php?m=calculator&id=-3321
+For the 'new CH npp' case e.g. the 'Undecided on cost - decide on the other arguments' and the 
+'Arguments for lifting the ban (yes)' and 'Arguments for keeping the ban (no)' seems to be missing
+create a compare test that the inner part of the editor matches the page view and the differences
+are reported in a *_diff.md file based on the 'new CH npp' case
 
 add costs of CO2-eq reduction to the npp
 
@@ -86,6 +155,26 @@ and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ..
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
+`portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
+- phase 1, five agents in parallel:
+  - agent import: "import": the csv of the sample, the csv of the existing test data and the json created from each
+  - agent cases: "step 2", the add two children and remove one child test case
+  - agent look: "check", step 4, step 5 (the colours and the hint) and the icons of step 7
+  - agent prior: part 1 of step 9, the write test of the previous row
+  - agent cell: the unit test of a cell with a result of part 4 of step 9
+  - stop for a run: `/test/test.php`
+- phase 2, one agent: parts 2 and 3 of step 9 (the walk order and the formulas, because they decide together);
+  stop for a run with re-pin
+- phase 3, two agents in parallel: agent fields with part 5 of step 9 (the number fields of the holdings) and agent
+  child with step 3 (add child and remove, the warnings by the instances)
 
 ### portfolio split page compared with its sample
 
@@ -232,6 +321,21 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
 5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** id check, use cases of the calculator editor, the sample compare and pure HTML views (size L; re-pin,
+because the ahv vat use case gets new data). One phase, four agents in parallel:
+- agent id check: "ID check", the api fixtures like `phrase_data_pv_install.json` in the re-pin check
+- agent ahv vat: "ahv vat", the other targets, their weights and the combined index rating in the use case json
+- agent samples: "config yaml", "more sample" and "compare" of the calculator section below: the pinned views, one
+  check script that every `*_sample.html` has a generated page and is part of the compare and the generation build
+- agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
+  version of the formula editor
+
 ## ID check
 
 include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
@@ -249,8 +353,6 @@ possibility to set the weight of the targets and combine them with the personal 
 
 add these to the config.yaml at 'pinned views'
 
-
-
 #### more sample
 
 write a script that for all *_sample.html files within src/test/resources/web/html/use_cases
@@ -261,6 +363,30 @@ a generated file exists and is generated
 add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
 
 create a JavaScript version of the formula editor view
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** calculator: evaluators, functions, tests, phraseData load and the json page (size L, two phases; re-pin,
+because `math.json` gets the law type and the IRF formula changes). "compare" is part of the prompt above. The lead
+asks the developer the rename of point 3 of "base on json" first.
+- phase 1, five agents in parallel:
+  - agent evaluators: "differences between the evaluators" and the function `C` of step 3 of "functions used in the
+    data but not calculated" in all five evaluators
+  - agent law: steps 1 and 2 of "functions used in the data but not calculated": the law formula type, the skip in
+    `math_function_report` and the IRF formula in the data
+  - agent tests: "list functions", "assert_contains names the wrong entry" and "saved result of a failed calculation"
+  - agent load once: "load the phrase data once per step", the fix of `phrase_list::get_by_ids` with its test first
+  - agent conversions: point 1 of "base on json", the unit test of `number_format::unit_conversions`
+- phase 2, three agents in parallel, after the agent evaluators:
+  - agent formula editor: "formula editor", the blocked save and the test of the "... more" buttons
+  - agent json script: points 5 and 6 of "base on json" and "PV calculator page compared with its sample": the shared
+    script code, the plain match instead of the ranking, the json rule fixtures for PHP and the script, the sub texts
+  - agent json page: points 4 and 7 of "base on json", the page without the related objects and without the unused
+    embedded data; point 2 follows from point 5 and is checked by the lead
 
 ## calculator
 
@@ -376,6 +502,24 @@ places load per object:
 `phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
 an empty list; fix it and add a unit test before it is used to set the group phrase lists
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** new words in the calculator editor, the math operators, external links, the names a user has given and the
+phrase selector of the settings (size L; re-pin, because the settings selector gets a system triple with a code id).
+The power sign `^` is already calculated (`chars::POW`, `calculator.js`), so "power sign" is only the other operators
+and the formula editor buttons. One phase, five agents in parallel:
+- agent new words: "add new words", the offer to add the missing words and triples and the wikipedia references
+- agent operators: "power sign", the missing usual math operators in all evaluators and the formula editor
+- agent dependencies: "external links", the script that writes `docs/dependencies.md`
+- agent user names: the four tasks of "names that a user has given" one after the other, the tests first; the sql
+  fixtures are regenerated by the developer
+- agent selector: "settings" and "check past changes again", the pattern based phrase selector by the triple
+  `phrase selector (system)` and the same for the view selector and the other db row fields
+
 ## Calculator editor
 
 ### add new words
@@ -433,6 +577,23 @@ like for the phrase selector do the same for view selector and other fields wher
 ### check past changes again
 
 dark / light mode switch, phrase selector, view selector, colour picker, font selector
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** calculation editor messages, code rules and api security (size M). The save of the calculator editor sends
+its message to the existing `api/updatePut` (`update_put_write_tests`), so "update json message" and "test case" mean
+`updatePut` where they name `/api/updateDrop`, and `unitNames` is read from the seed (`typeUnits()`) already. One
+phase, four agents in parallel:
+- agent rules: "general" and "javascript" as rules in `docs/llm/`, and the documented options of "unitNames"
+- agent verbs: "verb names", the verb names of `script/calculator_editor.js` written by a php script
+- agent save cases: the open points of "test case": the deleted rows of a cleared limit, a removed and a moved input,
+  the new triples in `triple_names::TEST_TRIPLES`, the sub-item scenarios and the write test with an undo per message
+- agent security: "api security" and "relogin": the test that an api request without a session is rejected and the
+  login link in the message of the calculator editor
 
 ## calculation editor
 
@@ -499,10 +660,6 @@ to cover the case that a verb name changes the js script should be created by a 
 every time a verb is renamed. for the moment it is fine if the script is updated with the full test run because 
 adding or changing a verb is at the moment a code change which requires a full test run
 
-### api updatePut
-
-create a new api 'updatePut' that takes json messages and saves them in the database
-
 ## api security
 
 if it does not yet exist create a test that checks if an api request is rejected if it is not part of a previous created session
@@ -515,13 +672,27 @@ or using a predefined api session login that uses e.g. a public / private key pa
 if the calculation editor gets a message from the backend that might indicate that e.g. the session id is missing or invalide
 suggest to the user to login again with a link in the message shown to the user
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** system triple ids in production and the view and component editor (size L, three phases like the table
+editor; re-pin, because the editor adds system views). The table editor is the prompt at the top, and the process
+editor is part of the process catch prompt of "PV installation calculator" below.
+- phase 1, lead: the solution concept of "other editors" for system triples whose id differs in production, as a
+  section of `docs/llm/architecture.md`, and a hand made `use_cases/view_editor_sample.html` with its use case json,
+  built like `calculator_editor_sample.html`
+- phase 2, three agents in parallel: agent script (`script/view_editor.js`, its css and messages, the save with the
+  `updatePut` body), agent server (the system view, its page and the generated `use_cases/view_editor.html` with the
+  diff to the sample) and agent docs (`docs/llm/frontend.md`)
+- phase 3, two agents in parallel: agent js tests (the scenarios per action) and agent save tests (the `updatePut`
+  fixtures and their write tests)
+
 ## other editors
 
 be aware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
-
-### table editor
-
-uss the calculation editor as a base and create a similar table editor
 
 ### view editor
 
@@ -530,6 +701,19 @@ uss the calculation editor as a base and create a view and component editor
 ### process editor
 
 uss the calculation editor as a base and process editor, so multi step input views
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** phraseData cache, the open API script, the server busy view and the id usage check (size M). One phase,
+four agents in parallel:
+- agent cache: "speed up user data creations", the phraseData answer from the api cache with the user overwrites
+- agent openapi: "open API update", the generator script, the diff test and the generated yaml
+- agent busy: "server busy", the waiting view and the parallel cache check
+- agent id usage: "id usage", the code test that a pinned `*_ID` const is used by tests only
 
 ## phrase data api
 
@@ -548,9 +732,32 @@ the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writ
 
 ## cleanup
 
+### server busy
+
+similar to the 'collecting data' waiting view if the response takes longer
+add to all pages a 'server busy' view if the server has not finished the page view
+
+is it possible that at least the check if a view is already in the cache is done in parallel 
+even if the server is collection data for another view?
+
 ### id usage
 
 create a code test script that checks that the pinned word, triple, ... id (*_ID) are never used in the real code and only used for testing
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** test coverage (size L, three phases). The rules of "steps" stay: one class per agent, so each agent owns
+the test files of its classes and every diff stays reviewable per class.
+- phase 1, up to six agents in parallel, each with a disjoint set of test files: step 1, the shared functions of its
+  classes; stop for a run: `/test/test.php`
+- phase 2, up to six agents in parallel, each with a disjoint set of classes: steps 2 and 3; stop for a run:
+  `/test/test.php`
+- phase 3, three agents in parallel: agent db with step 4, agent unreachable with step 5 (the exception list is a
+  decision of the developer) and agent guard with step 6
 
 ### test coverage
 
@@ -618,6 +825,21 @@ rules for every step:
 6. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
    with a const in `src/test/php/const/` and fails if it drops, so a new function without
    tests is reported at once; the const is raised after each step
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** no `TODO Prio 0` left and the test clean up (size L, three phases). The rules of "TODO" stay; a file that
+two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
+- phase 1, three agents in parallel: agent triage with step 1, agent report with step 2 and agent backend with step 3;
+  stop for a run: `/test/test.php`
+- phase 2, up to five agents in parallel: step 4 with one agent per group of test files, agent stubs with step 5 and
+  agent tests with step 6; stop for a run: `/test/test.php`
+- phase 3, three agents in parallel: agent deprecate with the deprecate and merge parts of step 7, agent rename with
+  the rest of step 7 and agent clean up with the items 1 to 6 of "clean up"; item 7 is decided by the lead
 
 ### TODO
 
@@ -743,6 +965,20 @@ rules for every step:
 6. A second message is created mid-test in user_ui_tests.php ("the api url of the system user…"): $sys_msg = new user_message($sys_ui). This only names what was already inline before. The test needs a message for the system user, but the rule says to create $msg once.
 7. docs/llm/pending.md has a new "view edit" entry (move the "main + variance" entries to the navbar edit menu). It isn't part of this work; I assume it's yours. Commit it separately or name it in the message.
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** the calculator page in less than 3 seconds (size L, two phases). The rules of "calculator" stay; the
+developer measures the debug=9 url before the prompt and in each stop, and the lead writes the times into the report.
+- phase 1, four agents in parallel: agent values with step 1 and 1c (step 1b only if the developer's `EXPLAIN` shows
+  the regex scans as the bigger part, because it needs a database upgrade), agent names with step 2, agent bootstrap
+  with step 6 and agent page cache with step 8; stop for a run: `/test/test.php` and the debug=9 url
+- phase 2, three agents in parallel: agent cells with step 3 and then step 4 (both extend the same api calls), agent
+  php with step 5 and agent tree with step 7
+
 ### calculator
 
 goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the
@@ -835,6 +1071,24 @@ so the split between query, phrase names, json and cache insert is not visible y
 8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
    request of the same url gets the page from the cache; if not, fix the insert, so that a
    second request takes less than 0.2 s
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** PV lifetime balance page matches its sample (size L, two phases; re-pin, because `pv_lifetime_balance.json`
+changes). The steps of "general" are partly done (the calculator editor exists): the lead checks them first, and asks
+the developer the decision of step 2 of "general" (retire or keep the component types).
+- phase 1, four agents in parallel:
+  - agent save: step 1 of "remaining" and step 4 of "general"
+  - agent data: steps 2, 3 and 6 of "remaining" and the monthly table, the replacement mix and the context load of
+    "open for the calculator page"
+  - agent texts: steps 4 and 5 of "remaining" (the formula sample and the notes)
+  - agent checks: the value ranking and the repeated loads of "open for the calculator page"
+  - stop for a run with re-pin
+- phase 2, one agent: step 7 of "remaining" and step 5 of "general", the comparison of the page with the sample
 
 ## PV lifetime balance page
 
@@ -965,6 +1219,19 @@ open for the calculator page:
   has found calculator triples, so for a phrase without them that is opened with the
   `Calculator` view all api loads run twice
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** navbar menus and the order of the start page problems (size M; re-pin, because the problem files change).
+The column entries are in the edit icon menu already and are named "+ variance" (see the table page snapshots), so
+the lead checks "view edit" for the "... more" limit only. One phase, three agents in parallel:
+- agent menu: the rest of "view edit" and "import / export", the import and export entries of the user menu
+- agent problem order: "start page", the numbers of the problem json files in the listed order
+- agent menu test: the snapshot and the negative test of the "... more" limit from `config.yaml`
+
 ## view edit
 
 move the entries like 'main + variance' from the '...' menu in the table component to the 'edit icon' menu in the navbar
@@ -975,8 +1242,6 @@ if there are more than 5 (config.yaml value) entries in one group show a '... mo
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
 
 ## start page
-
-rename the '...'-menu entries like 'mayor + range' to 'mayor + variance' and 'main + range' to 'main + variance', ...
 
 adjust the numbers in the json data files so that the problem / solution are in this order
 
@@ -990,6 +1255,21 @@ adjust the numbers in the json data files so that the problem / solution are in 
 8. Achieve digital sovereignty through free software
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** process catch views and the process editor (size L, three phases; re-pin, because system phrases, views
+and the PV calculator use case are added). "LLM KI prompt suggestion" is the plan, "PV installation calculator" the
+background; the "process editor" of "other editors" is phase 3.
+- phase 1, lead: step 1, the system phrases of a field definition; stop for a run with re-pin
+- phase 2, two agents in parallel: agent model with step 2 and agent components with step 3; stop for a run:
+  `/test/test.php`
+- phase 3, three agents in parallel: agent views with step 4, agent use case with step 5 and agent editor with the
+  process editor built on the calculator editor; the lead writes step 6, the docs, after the three
 
 ### PV installation calculator
 
@@ -1156,6 +1436,25 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
    question on the start page, at most three fields on the main page, the fine tuning in tabs
    on the detail page and the money on the result page; pending.md loses this section.
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** new use cases, the code id rule, the calculator data, config value 0, the import time, the job list and
+the phrase default view (size L; re-pin, because new use case files are imported). "to recheck" are review notes of
+an old change: the lead checks each, fixes point 3 and 4 if still open and removes the rest. One phase, six agents in
+parallel:
+- agent use cases: "use cases", the CBAM and the company sheet use case and the pinned views in `config.yaml`
+  (portfolio split is pinned already)
+- agent code id: the first part of "clean up", the coding rule test that production code selects a db row by its
+  code id only
+- agent calc data: "calculator data only with the numbers the page uses"
+- agent config: "config value 0 is treated as missing", backend and frontend
+- agent import time: "unlink import chain time measurement", the counters reset per import file
+- agent pages: "job list" and "phrase default view" (the jobs entry of the user menu and the pie chart)
+
 ## use cases
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
@@ -1216,6 +1515,26 @@ add to the user submenu of the navbar an entry 'jobs' that links to a view that 
 ## phrase default view
 
 add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** admin dashboard (size L, two phases; re-pin, because new job types and statuses are seeded). The error
+log view and the admin jobs of "deprecate http_old" (its steps 4 and 6) and the `sys_log_detail` view of "fill the
+language, log, import, ..." are done here. All agents add their own functions to
+`web/component/execute/system_page.php`; the lead merges the dashboard layout.
+- phase 1, five agents in parallel:
+  - agent health: "system health", the read only button, the ip and email lists, the health section and the sanity api
+  - agent errors: "errors", the backend selection, the sys log detail page and the summary line
+  - agent logins: "failed logins", the ip address from the entry point, the db test and the retry delay
+  - agent usage: "usage and settings"
+  - agent security: "security", the whitelist state and the blacklist with the change log
+  - stop for a run with re-pin
+- phase 2, one agent: "jobs", the job views, the recalculation job, the reload of the base configuration, the config
+  change requests and the calc status, each start refused for a non admin
 
 ## admin dashboard
 
@@ -1285,6 +1604,24 @@ add a section with the number of connected pods, their usage and the most likely
 
 add to the admin dashboard a security section that shows the state of the ip and user whitelist mode (server_admin/state.json), the newest entries of the database user and ip blacklist with the reason and the time and a remove button for each entry, and an input to add an ip address or range to the blacklist (docs/todo.md "allow admin users to change IP blacklist"); every change is written with the change log
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** group id follow ups, email accounts, the value and word edit views and two import and triple details (size
+L; re-pin, because the value line component is split into new system components). "todo from group id change" are
+review notes: points 6 to 9 are checked and removed by the lead, points 1 to 5 are fixed. One phase, six agents in
+parallel:
+- agent group id: points 1 to 5 of "todo from group id change"
+- agent email: "email accounts", the two accounts in `.env.example` and the error mail limit of `config.yaml`
+- agent value line: "add value", the split of `system form phrase value line`
+- agent edit mode: "word default view", the edit mode url vars with their numeric prefix, the inline edit and add of
+  values, the formula unlink and the triple list with its add icon
+- agent names: "json import: word and triple names", the import check with its exceptions
+- agent triple view: "triple view", the add value and add formula icons
+
 ## todo from group id change
 
 Things to fix or check
@@ -1326,6 +1663,21 @@ add to the JSON import check that word and triple names in English start always 
 ## triple view
 
 add values icon and add formula icon
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** every number of the start page is a result (size L, two phases; re-pin, because the problem files change).
+The global warming row is the pattern; each problem file is owned by one agent, and a shared building block is
+declared verbatim as the section says.
+- phase 1, six agents in parallel, each with two of the twelve other problem files: the chain of the row as results
+  by the four rules, the calc validations target first, and the open points of its files as notes for the lead
+- phase 2, three agents in parallel: agent percent with the '%' format of a percent column with an empty cell, agent
+  reasons with the 'reasons' column extension and agent meanings with the qualifier triples of `power` and
+  `displacement`, if the developer accepts the changed phrase groups
 
 ## start page
 
@@ -1511,6 +1863,22 @@ math_propagation_of_uncertainty.json, the energy per time of economics.json) and
 of` qualifier triple per meaning (`power (math)`, `power (physics)`) would give each its description
 back, but changes the phrase groups of the values that use the bare word
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** open review notes of earlier changes (size M). "temp", "add formula" and "start page temp" are review
+notes: the lead asks the developer the decisions they name ("Worth a decision" 1 to 4, the judgement call of
+"temp") and removes what is done or declined. One phase, three agents in parallel:
+- agent triple fixtures: the not found triple 998 of `del_triple_wf6` and `change_triple_wf5` in "add formula", the
+  cause first, with a test
+- agent messages: "Nice to have" of "add formula": the object neutral formula message, the error workflows that
+  assert the reason and the word name of `SYSTEM_TEST_INVALID_EXP`
+- agent result page: "start page temp" 1, 2 and 4: the tests of the three loaders, the result page snapshot with data
+  and the include order
+
 ## temp
 
 One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
@@ -1555,6 +1923,22 @@ The new snapshot does not actually show a longer list. 1_start_page_more.html is
 5. Nice to have — docs/code_object_name_exceptions.md gained $res_tab (the tab-box test variable, mirroring $val_tab on the value side).
 
 6. For the record: a result built from an url renders the three columns as nothing — no message, no error (the choice documented in the renderers, following ui_list::formula_list() for a word). An empty column therefore means either "nothing used" or "not loaded"; only the loaded page distinguishes them via the info messages. And system show result value is now linked by no view, left defined so the component ids do not shift again.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** fill the configuration, job and skeleton views (size L, two phases; re-pin, because the view ids are pinned
+after the reset). `sys_log_detail` is part of the admin dashboard prompt; quarantine stays postponed. Each agent adds
+its own functions to `web/component/execute/system_page.php` and a page test per view.
+- phase 1, five agents in parallel: agent config with the three configuration views and the config change request
+  job, agent language, agent log with the change log views, agent import export and agent find lists with the find
+  and object list views of "fill the language, log, ..."
+- phase 2, two agents in parallel: agent jobs with `job_detail`, `calc_status` and the job placeholders, and agent
+  placeholders with `word_find`, `search_full`, `undo`, `error_update`, `system_log` and `verbs` (fill or remove); the
+  lead pins the view ids and the `views::ADMIN_MASK_IDS` after the re-pin run
 
 ## fill the configuration and quarantine views
 
@@ -1602,6 +1986,21 @@ unit/view/list.csv and the component ids from unit/component/list.csv after the 
 also fill or remove the existing placeholder views word_find, search_full, undo, error_log, error_update, system_log
 (no components) and verbs (no components)
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** the missing workflows and small page fixes (size L; re-pin, because the confirm pages add system views).
+"maybe to fix" is decided by the lead (a load before the sort is either fixed for all three loaders or moved to
+prio 2). One phase, five agents in parallel, each with its workflow snapshots:
+- agent links: the link and unlink workflows of "general" with the fa-plus icon and the confirm page of a formula
+- agent quick: the quick workflows of "general"
+- agent groups: the group add, change and del workflows
+- agent views check: "views", which `views_by_id` snapshots are useful, as a list for the developer
+- agent pages: "admin" (the system errors entry of the admin menu) and "main pages" (the logout page)
+
 ## workflows
 
 ### general
@@ -1648,6 +2047,23 @@ logged out" bigger
 Limit before sort — load_values_similar () reads with value_list::read_limit (), but the impact sort happens in the
    renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before
    sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** cleanup scripts, value_base abstract and the open points of the object pages (size L). "value page tabs" and
+"component page tabs" are notes: the lead keeps only their open points. One phase, six agents in parallel:
+- agent scripts: the check scripts of "cleanup" (default page of each main class, the shown fields, the queries
+  without a limit) and the open API check in `/test/test.php`
+- agent docs speed: why the diff of `docs/code_functions_all.md` takes long
+- agent views tab: the edit link of the views tab and the view selector link of the word default page
+- agent value: `value_base` abstract and the undo and apply icons of a text, time and geo value
+- agent counts: the count query of "verb default view" and "user page", and whether the triple name fields are needed
+- agent change log: the empty field name of `change_log_list::table_field_to_query_name` for all branches, with the
+  renamed prepared statements and their fixtures
 
 ## cleanup
 check why diff for docs/code_functions_all.md still takes very long
@@ -1734,6 +2150,22 @@ its own change
 
 adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the
 value tab box did before
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** triage of "more" (size L, two phases). The section mixes open tasks and review notes of old changes.
+- phase 1, lead: check each item against the code, remove what is done or no longer true and sort the rest into the
+  groups of phase 2; ask the developer the items of "Worth deciding"
+- phase 2, up to five agents in parallel, each with one group: agent reset (the silent not-ok of the forced reset,
+  `Message::add_err`, the type of a no update import and the dropped fill results), agent buttons (the button review,
+  `dsp_edit`, `$back`, the tooltips with the object name, the dead code and the test constants in `web/`), agent
+  lists (the verb list add button, `type_list::get`, the docblocks, `text_h4`, the sort test), agent fixtures (the
+  volatile change time, the half regenerated fixtures, the untracked files) and agent views (the last component
+  without `div_row`, the owner field, the view relation position, the empty changes tab, the missing translations)
 
 ### more
 
@@ -1951,6 +2383,18 @@ api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_
 either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the
 next regeneration — worth confirming it is intended.
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+**Prompt:** alias direction check and the test data set (size M). "start page" below lists the basic steps of the start
+page, which are done (the start page shows the global issues by impact with the column tiers): the lead checks and
+removes it. One phase, two agents in parallel:
+- agent alias: `triple_list::validate_alias_direction` with a positive and a negative test
+- agent test data: the filled `$dto` of `solution_prio.json` from the `/test/create/` factories
+
 ## prepare
 
 create in triple list a 'validate_alias_direction' function that checks if the alias verb always leads to the same main
@@ -1969,7 +2413,21 @@ the basic steps to show the start page are
 - the order of the column may differ and is relative e.g. 'per cent is after number'
 - the number of rows to show is taken from the config but can be overwritten
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
 # move to Prio 2
+
+**Prompt:** the condition formula of a word and a triple, the user picture and the language fields (size L, two phases;
+re-pin, because the database structure changes with a minor version raise and a `db_check` upgrade).
+- phase 1, one agent: "word db table" and "triple db table", the field `condition_formula_id` of both tables with the
+  rename, the sql fixtures and the upgrade; stop for a run with re-pin
+- phase 2, four agents in parallel: agent triple view ("triple add and edit view" and "triple" of "language"), agent
+  word view ("word add and edit view" and "word" of "language"), agent picture ("log in") and agent default view (the
+  language line of the word default view)
 
 ## triple add and edit view
 
@@ -2012,7 +2470,145 @@ sees the difference and can empty the given name to fall back to the generated o
 (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable
 fields impact and inactive as display-only info in the edit view next to the existing usage component
 
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
+"Other" are part of the admin dashboard prompt; step 1 is done.
+- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
+  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
+- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
+  step 5 and agent export import with step 7; stop for a run with re-pin
+- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
+  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
+
+## deprecate http_old
+
+**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
+`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
+of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
+
+**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
+when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
+feature with it that is not written down.
+
+### http_old scripts and the functionality to move
+
+The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
+http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
+
+| script | generic replacement | functionality to move |
+|---|---|---|
+| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
+| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
+| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
+| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
+| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
+| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
+| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
+| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
+| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
+| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
+| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
+| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
+| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
+| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
+| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
+| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
+| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
+| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
+| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
+| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
+| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
+| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
+| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
+| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
+| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
+| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
+| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
+| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
+| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
+| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
+| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
+| `view_select.php` | views tab of the word and triple page | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
+
+### bugs found while checking http_old
+
+All found by reading the code, none by a test run; confirm each with a failing test before the fix.
+
+#### Code
+
+1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
+   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
+2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
+   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
+3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
+   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
+   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
+   never-fail-silently violation.
+4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
+   about the verb, and it writes nothing (the update is commented out, the db field is missing).
+
+#### Documentation
+
+5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
+   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
+   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
+   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
+   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
+   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
+   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
+   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
+   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
+   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
+   seed view; m=20 is now even the value add view instead of the value del view.
+
+#### Other
+
+1. **List the functionality to move per script.** Done: see the table above.
+2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
+   by replacing the numbers with the consts.
+3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
+   `verb_edit` (appended component position, no new component), with the workflow snapshots.
+4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
+   test in `unit_ui/`.
+5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
+   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
+   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
+6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
+   formulas (replacing `calculate.php`), both shown on the job control view.
+7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
+   (`api/json`, the export views, the upload of the import view).
+8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
+   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
+   the order of their prio, one section per commit.
+9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
+   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
+   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
+   that might still define a class.
+10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
+    other than the scripts in `http/`, so a retired script cannot get a new caller.
+11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** the word splitter (size S). One agent: "later", the word splitter in `convert_wikipedia_table.php` with a
+positive and a negative test.
+
 ## later
 
 add the word splitter to convert_wikipedia_table.php
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
 

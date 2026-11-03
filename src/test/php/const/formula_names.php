@@ -178,6 +178,9 @@ class formula_names
 
     const string TEST_SPEED_PREFIX = 'System Test Formula for speed testing ';
 
+    // a formula of pv_lifetime_balance.json that is assigned to the shared word export, selected by the name only
+    const string DELIVERED_ELECTRICITY = 'delivered electricity formula';
+
     // formula names used for integration tests
     // that are removed after each test
     // and therefore cannot be used by users

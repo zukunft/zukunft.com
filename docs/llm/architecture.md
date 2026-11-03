@@ -9,7 +9,9 @@ zukunft.com is a "Giant Global Graph" browser — a PHP/PostgreSQL web app that
 lets users build personal OLAP cubes using words, triples (RDF-like
 subject-verb-object), formulas, and values. The core concept is "calculating
 with words." Requires PHP 8.4+ and PostgreSQL (MySQL also supported). Minimum
-server: LAPP/LAMP stack.
+server: LAPP/LAMP stack. The servers of the pod zukunft.com itself (load balancer,
+static cache servers, webservers, db balancers and database servers) are in
+[server_structure.md](../server_structure.md).
 
 ## Source layout
 

@@ -1752,23 +1752,6 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param word|triple $dbo the phrase of the table
-     * @param user_message $msg to report a problem of the load
-     * @param data_object $dto the request cache
-     * @return array the names of the columns that the table editor offers: those that the numbers of the table can show and the columns of all tables, in the order of the name
-     */
-    function table_column_candidates(word|triple $dbo, user_message $msg, data_object $dto): array
-    {
-        $this->add_column_definitions($dto, $msg);
-        $phr_lst = new phrase_list();
-        $phr_lst->add_phrase($dbo->phrase());
-        $names = $this->table_numbers($dbo, $msg, $dto)?->table_column_names($msg, $phr_lst, $dto->phr_lst) ?? [];
-        $names = array_unique([...$names, ...$dto->phr_lst->column_names()]);
-        sort($names);
-        return $names;
-    }
-
-    /**
      * the default charts of a value table beside each other, e.g. the range bars of the loss
      * and the scatter plot of the gain against the effort of the start page ranking, or the
      * mayor charts if the table shows the mayor columns only, e.g. the leverage plot of the

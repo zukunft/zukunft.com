@@ -183,6 +183,9 @@ class files
     const string AHV_VAT_VOTE_FILE = self::USE_CASE_PATH . 'ahv_vat_vote' . self::JSON;
     // the buy, sell or hold decision on the ABB share from a target price of several valuation methods
     const string SHARE_BUY_SELL_ABB_FILE = self::USE_CASE_PATH . 'share_buy_sell_abb' . self::JSON;
+    // the revenue by sector of a fictional company with the definition of its table, the example
+    // of the table editor (src/test/resources/web/html/use_cases/table_editor_sample.html)
+    const string TABLE_EDITOR_SAMPLE_FILE = self::USE_CASE_PATH . 'table_editor_sample' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -207,6 +210,8 @@ class files
     const string PROBLEM_GLOBAL_WARMING_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming_solutions' . self::JSON;
     // the reasons that cause costs due to populism with the study numbers per country
     const string PROBLEM_POPULISM_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_populism_reasons' . self::JSON;
+    // the populism solutions with their loss reduction, potential gain and initial effort
+    const string PROBLEM_POPULISM_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_populism_solutions' . self::JSON;
     // the reasons that cause costs due to poverty with the study numbers per country
     const string PROBLEM_POVERTY_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_poverty_reasons' . self::JSON;
     // the reasons that cause costs due to the other start page problems with the study numbers per country
@@ -220,6 +225,18 @@ class files
     const string PROBLEM_MARKET_POWER_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_market_power_reasons' . self::JSON;
     const string PROBLEM_PROPRIETARY_SOFTWARE_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software_reasons' . self::JSON;
     const string PROBLEM_WEALTH_CONCENTRATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration_reasons' . self::JSON;
+    // the compared solutions of the other start page problems with their loss reduction, potential gain and initial effort
+    const string PROBLEM_POVERTY_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_poverty_solutions' . self::JSON;
+    const string PROBLEM_BIASED_INFORMATION_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_biased_information_solutions' . self::JSON;
+    const string PROBLEM_BLACK_BOX_AI_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_black_box_ai_solutions' . self::JSON;
+    const string PROBLEM_WEALTH_CONCENTRATION_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration_solutions' . self::JSON;
+    const string PROBLEM_CITIZEN_PARTICIPATION_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation_solutions' . self::JSON;
+    const string PROBLEM_DISINFORMATION_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_disinformation_solutions' . self::JSON;
+    const string PROBLEM_EDUCATION_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_education_solutions' . self::JSON;
+    const string PROBLEM_GDP_MISMEASUREMENT_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement_solutions' . self::JSON;
+    const string PROBLEM_HEALTH_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_health_solutions' . self::JSON;
+    const string PROBLEM_MARKET_POWER_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_market_power_solutions' . self::JSON;
+    const string PROBLEM_PROPRIETARY_SOFTWARE_SOLUTIONS_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software_solutions' . self::JSON;
     // the main reason of each problem with the loss it causes for the reason column of the ranking
     const string PROBLEM_MAIN_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_main_reasons' . self::JSON;
     // the chart types and the charts of the start page added after solution_prio.json, e.g. the
@@ -410,6 +427,7 @@ class files
         self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         self::AHV_VAT_VOTE_FILE,
         self::SHARE_BUY_SELL_ABB_FILE,
+        self::TABLE_EDITOR_SAMPLE_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config
@@ -447,17 +465,29 @@ class files
         self::PROBLEM_GLOBAL_WARMING_REASONS_FILE,
         self::PROBLEM_GLOBAL_WARMING_SOLUTIONS_FILE,
         self::PROBLEM_POPULISM_REASONS_FILE,
+        self::PROBLEM_POPULISM_SOLUTIONS_FILE,
         self::PROBLEM_POVERTY_REASONS_FILE,
+        self::PROBLEM_POVERTY_SOLUTIONS_FILE,
         self::PROBLEM_BIASED_INFORMATION_REASONS_FILE,
+        self::PROBLEM_BIASED_INFORMATION_SOLUTIONS_FILE,
         self::PROBLEM_BLACK_BOX_AI_REASONS_FILE,
+        self::PROBLEM_BLACK_BOX_AI_SOLUTIONS_FILE,
         self::PROBLEM_CITIZEN_PARTICIPATION_REASONS_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_SOLUTIONS_FILE,
         self::PROBLEM_DISINFORMATION_REASONS_FILE,
+        self::PROBLEM_DISINFORMATION_SOLUTIONS_FILE,
         self::PROBLEM_EDUCATION_REASONS_FILE,
+        self::PROBLEM_EDUCATION_SOLUTIONS_FILE,
         self::PROBLEM_GDP_MISMEASUREMENT_REASONS_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_SOLUTIONS_FILE,
         self::PROBLEM_HEALTH_REASONS_FILE,
+        self::PROBLEM_HEALTH_SOLUTIONS_FILE,
         self::PROBLEM_MARKET_POWER_REASONS_FILE,
+        self::PROBLEM_MARKET_POWER_SOLUTIONS_FILE,
         self::PROBLEM_PROPRIETARY_SOFTWARE_REASONS_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_SOLUTIONS_FILE,
         self::PROBLEM_WEALTH_CONCENTRATION_REASONS_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_SOLUTIONS_FILE,
     ];
 
 }

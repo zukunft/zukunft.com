@@ -7023,7 +7023,6 @@
     \-- values_in_columns - section for function values_in_columns missing in /component/execute/ui_list.php
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
-    \-- table_column_candidates - section for function table_column_candidates missing in /component/execute/ui_list.php
     \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
@@ -8733,8 +8732,6 @@
             php
     \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
             p
-    \-- table_column_names - section for function table_column_names not yet defined that it should be display in /value
-            /value_list.php
     \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
             /value_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
@@ -9853,8 +9850,6 @@
         \-- ui_list - show the values related to the given phrase in up to four columns that are shown side by side
     \-- table_with_related_columns
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
-    \-- table_column_candidates
-        \-- ui_list - @param word|triple $dbo the phrase of the table
     \-- prior_names
         \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
     \-- value_input_fields

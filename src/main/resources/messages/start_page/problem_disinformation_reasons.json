@@ -6,7 +6,7 @@
   "selection": [
     "disinformation reasons that cause costs"
   ],
-  "description": "The most relevant reasons why disinformation causes costs, each linked to disinformation with 'can cause' and quantified by the studies that report it for the world and per country: the vaccine hesitancy with the drop of the COVID-19 vaccination intent in a randomised trial (Loomba et al. 2021), the people in Canada and the United States who did not get vaccinated because of misinformation (Council of Canadian Academies 2023, Johns Hopkins Center for Health Security 2021) and the fall of the MMR vaccination coverage in the United Kingdom after the retracted Wakefield paper (Leask, Booy & McIntyre 2010); the COVID-19 deaths, hospitalizations and ICU patients in Canada (Council of Canadian Academies 2023); the social cost of the COVID-19 vaccine misinformation in the United States (Bruns et al. 2021) and of the fake news worldwide (CHEQ & Cavazos 2019); the stock market loss, e.g. of the false AP tweet of 2013 (Reuters); the election interference with the concentrated exposure to the Russian influence campaign and to untrustworthy websites in the US election of 2016 (Eady et al. 2023, Guess, Nyhan & Reifler 2020); and the virality of false news (Vosoughi, Roy & Aral 2018). The share of the public discourse, the annual GDP loss of disinformation and its solution are stated in problem_disinformation.json instead, because they are the row of the global problem ranking of the start page. Most studies measure misinformation, i.e. false information whatever the intent, and do not separate the deliberate disinformation; their numbers are linked to disinformation because it is the problem phrase of the ranking, and the source description says what was measured. The global fake news cost of CHEQ & Cavazos is a report commissioned by a commercial ad-security vendor, not peer reviewed and summed from heterogeneous items, so it is a weak upper indication only. The measles outbreaks in England and Wales and in Samoa are added as the consequence of a low vaccination coverage; these values are not attributed to disinformation by their sources, because the coverage also depends on access and trust, so they do not carry a '<reason> due to disinformation' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; the Canadian dollar hospital cost of the Council of Canadian Academies is kept in the description only, because the source states no share it could be stored as. A value of a reason carries the triple '<reason> due to disinformation' and not the word 'disinformation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why disinformation causes costs, each linked to disinformation with 'can cause' and quantified by the studies that report it for the world and per country: the vaccine hesitancy with the drop of the COVID-19 vaccination intent in a randomised trial (Loomba et al. 2021), the people in Canada and the United States who did not get vaccinated because of misinformation (Council of Canadian Academies 2023, Johns Hopkins Center for Health Security 2021) and the fall of the MMR vaccination coverage in the United Kingdom after the retracted Wakefield paper (Leask, Booy & McIntyre 2010); the COVID-19 deaths, hospitalizations and ICU patients in Canada (Council of Canadian Academies 2023); the social cost of the COVID-19 vaccine misinformation in the United States (Bruns et al. 2021) and of the fake news worldwide (CHEQ & Cavazos 2019); the stock market loss, e.g. of the false AP tweet of 2013 (Reuters); the election interference with the concentrated exposure to the Russian influence campaign and to untrustworthy websites in the US election of 2016 (Eady et al. 2023, Guess, Nyhan & Reifler 2020); and the virality of false news (Vosoughi, Roy & Aral 2018). The share of the public discourse, the annual GDP loss of disinformation and its solution are stated in problem_disinformation.json instead, because they are the row of the global problem ranking of the start page. Most studies measure misinformation, i.e. false information whatever the intent, and do not separate the deliberate disinformation; their numbers are linked to disinformation because it is the problem phrase of the ranking, and the source description says what was measured. The global fake news cost of CHEQ & Cavazos is a report commissioned by a commercial ad-security vendor, not peer reviewed and summed from heterogeneous items, so it is a weak upper indication only. The measles outbreaks in England and Wales and in Samoa are added as the consequence of a low vaccination coverage; these values are not attributed to disinformation by their sources, because the coverage also depends on access and trust, so they do not carry a '<reason> due to disinformation' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; the Canadian dollar hospital cost of the Council of Canadian Academies is kept in the description only, because the source states no share it could be stored as. A value of a reason carries the triple '<reason> due to disinformation' and not the word 'disinformation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the disinformation reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "disinformation"
@@ -215,6 +215,30 @@
     },
     {
       "name": "2021"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -385,6 +409,132 @@
       "verb": "can cause",
       "to": "virality",
       "description": "false news is more novel than the truth and is therefore shared more often and faster, so a correction rarely reaches all people who saw the falsehood"
+    },
+    {
+      "name": "disinformation reason",
+      "description": "a reason of the potential loss of disinformation; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "disinformation"
+    },
+    {
+      "name": "election interference (disinformation reason)",
+      "from": "election interference",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "vaccine hesitancy (disinformation reason)",
+      "from": "vaccine hesitancy",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "COVID-19 deaths (disinformation reason)",
+      "from": "COVID-19 deaths",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "health cost (disinformation reason)",
+      "from": "health cost",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "social cost (disinformation reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "stock market loss (disinformation reason)",
+      "from": "stock market loss",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "virality (disinformation reason)",
+      "from": "virality",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "disinformation reason columns",
+      "description": "the own columns of the table of the disinformation reasons",
+      "from": "disinformation reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "disinformation reason columns reason",
+      "from": "disinformation reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "disinformation reason columns potential loss in EUR",
+      "from": "disinformation reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "disinformation reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "disinformation reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "disinformation reason sort",
+      "description": "the own default sorting of the table of the disinformation reasons, the biggest potential loss on top",
+      "from": "disinformation reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "disinformation reason sort numeric descending of potential loss in EUR",
+      "from": "disinformation reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

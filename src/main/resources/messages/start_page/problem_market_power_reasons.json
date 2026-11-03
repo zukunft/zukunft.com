@@ -6,7 +6,7 @@
   "selection": [
     "market power reasons that cause costs"
   ],
-  "description": "The most relevant reasons why market power causes costs, each linked to market power with 'can cause' and quantified by the studies that report it for the world and per country: the rising markups of the firms above their marginal cost in the United States (De Loecker, Eeckhout & Unger 2020) and per country of the world (De Loecker & Eeckhout 2020), the deadweight loss of the markups as loss of the total factor productivity (Baqaee & Farhi 2020) and of the consumption (Edmond, Midrigan & Xu 2018), the fall of the labour share and the rise of the excess profits (Barkai 2020, De Loecker, Eeckhout & Unger 2020), the wage markdown of the employers with monopsony power (Yeh, Macaluso & Hershbein 2022), the overcharge of the cartels (Connor 2014) and the lower investment (Gutiérrez & Philippon 2017). The cartel fines of the European Commission are added as the scale of the cartels that were detected; they are not a cost estimate and not attributed to market power by their source, so they do not carry a '<reason> due to market power' triple. The annual damage of market power and the market share tax as its solution are stated in problem_market_power.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a markup or a markdown that the source states as a ratio, e.g. 1.6 for a price 60 percent above the marginal cost, is stored as that ratio without the word percent. Each study has its own sample and metric, e.g. the listed firms of one country or the manufacturing plants, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to market power' and not the triple 'market power' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why market power causes costs, each linked to market power with 'can cause' and quantified by the studies that report it for the world and per country: the rising markups of the firms above their marginal cost in the United States (De Loecker, Eeckhout & Unger 2020) and per country of the world (De Loecker & Eeckhout 2020), the deadweight loss of the markups as loss of the total factor productivity (Baqaee & Farhi 2020) and of the consumption (Edmond, Midrigan & Xu 2018), the fall of the labour share and the rise of the excess profits (Barkai 2020, De Loecker, Eeckhout & Unger 2020), the wage markdown of the employers with monopsony power (Yeh, Macaluso & Hershbein 2022), the overcharge of the cartels (Connor 2014) and the lower investment (Gutiérrez & Philippon 2017). The cartel fines of the European Commission are added as the scale of the cartels that were detected; they are not a cost estimate and not attributed to market power by their source, so they do not carry a '<reason> due to market power' triple. The annual damage of market power and the market share tax as its solution are stated in problem_market_power.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a markup or a markdown that the source states as a ratio, e.g. 1.6 for a price 60 percent above the marginal cost, is stored as that ratio without the word percent. Each study has its own sample and metric, e.g. the listed firms of one country or the manufacturing plants, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to market power' and not the triple 'market power' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the market power reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "power"
@@ -153,6 +153,30 @@
     },
     {
       "name": "2019"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -332,6 +356,132 @@
       "verb": "can cause",
       "to": "investment loss",
       "description": "a dominant firm earns high profits without investing, because it does not need to defend its market share against competitors"
+    },
+    {
+      "name": "market power reason",
+      "description": "a reason of the potential loss of market power; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "market power"
+    },
+    {
+      "name": "deadweight loss (market power reason)",
+      "from": "deadweight loss",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "markup (market power reason)",
+      "from": "markup",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "labour share change (market power reason)",
+      "from": "labour share change",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "excess profit (market power reason)",
+      "from": "excess profit",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "wage markdown (market power reason)",
+      "from": "wage markdown",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "cartel overcharge (market power reason)",
+      "from": "cartel overcharge",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "investment loss (market power reason)",
+      "from": "investment loss",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "market power reason columns",
+      "description": "the own columns of the table of the market power reasons",
+      "from": "market power reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "market power reason columns reason",
+      "from": "market power reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "market power reason columns potential loss in EUR",
+      "from": "market power reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "market power reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "market power reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "market power reason sort",
+      "description": "the own default sorting of the table of the market power reasons, the biggest potential loss on top",
+      "from": "market power reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "market power reason sort numeric descending of potential loss in EUR",
+      "from": "market power reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

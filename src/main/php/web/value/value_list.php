@@ -1252,25 +1252,6 @@ class value_list extends ListBase
     }
 
     /**
-     * the names of all columns that the numbers of this list can show, for the table editor
-     *
-     * @param user_message $msg to report a problem of the table
-     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
-     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
-     * @return array the column names in the order of their name
-     */
-    function table_column_names(user_message $msg, phrase_list $context_phr_lst, ?phrase_list $rel_lst): array
-    {
-        $names = [];
-        if (!$this->is_empty()) {
-            $model = $this->table_model($msg, $context_phr_lst, [], $rel_lst, null, [], false, self::COLUMN_TIERS_ALL, false);
-            $names = array_map(fn($phr) => $phr->name(), array_values($model->col_phr));
-        }
-        sort($names);
-        return $names;
-    }
-
-    /**
      * the orders of the rows, the prime order first: the orders that the url asks for, or else
      * the default orders of the table definition (phrase_list::sort_definitions)
      *
