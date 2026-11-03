@@ -466,7 +466,7 @@ class html_page_diff
      * @param array $lines the findings of the section
      * @return string the markdown of the section with the number of findings in the heading and one list entry per finding
      */
-    private function report_section(string $title, array $lines): string
+    function report_section(string $title, array $lines): string
     {
         $result = "\n" . '## ' . $title . ' (' . count($lines) . ')' . "\n";
         if ($lines != []) {

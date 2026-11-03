@@ -130,6 +130,7 @@ class url_var
     const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the edit menu of the navbar
     const string DISPLAY_LIST_UNMATCHED = 'dlu'; // 1 to show also the values that fit no own column of a table, which are hidden by default
     const string DISPLAY_LIST_DESIGN = 'dld'; // the name of the table design of config.yaml that a value table uses instead of the default design
+    const string DISPLAY_LIST_CSV = 'dlx'; // 1 to download the value tables of the page as csv instead of showing the page
     const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
     const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
     const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
@@ -468,6 +469,7 @@ class url_var
         self::DISPLAY_LIST_AS,
         self::DISPLAY_LIST_UNMATCHED,
         self::DISPLAY_LIST_DESIGN,
+        self::DISPLAY_LIST_CSV,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
@@ -585,6 +587,7 @@ class url_var
     const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
     const string DISPLAY_LIST_UNMATCHED_HUMAN = 'display_list_unmatched'; // 1 to show also the values that fit no own column of a table
     const string DISPLAY_LIST_DESIGN_HUMAN = 'display_list_design'; // the name of the table design of a value table
+    const string DISPLAY_LIST_CSV_HUMAN = 'display_list_csv'; // 1 to download the value tables of the page as csv
     const string TAB_HUMAN = 'tab'; // the number of the selected tab of a page
     const string PLACE_HUMAN = 'place'; // the place name or postal code entered in the geolocator
     const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
@@ -852,6 +855,7 @@ class url_var
         [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
         [self::DISPLAY_LIST_UNMATCHED_HUMAN, self::DISPLAY_LIST_UNMATCHED],
         [self::DISPLAY_LIST_DESIGN_HUMAN, self::DISPLAY_LIST_DESIGN],
+        [self::DISPLAY_LIST_CSV_HUMAN, self::DISPLAY_LIST_CSV],
         [self::TAB_HUMAN, self::TAB],
         [self::PLACE_HUMAN, self::PLACE],
         [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
@@ -1168,6 +1172,15 @@ class url_var
     {
         $id_var = self::id_var($url_array[self::MASK] ?? 0);
         return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
+    }
+
+    /**
+     * @param array $url_array the url of a request e.g. [DISPLAY_LIST_CSV => TRUE]
+     * @return bool true if the value tables of the page should be downloaded as csv
+     */
+    static function is_csv_export(array $url_array): bool
+    {
+        return ($url_array[self::DISPLAY_LIST_CSV] ?? '') == self::TRUE;
     }
 
     /**

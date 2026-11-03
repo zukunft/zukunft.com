@@ -161,6 +161,9 @@ class json_validation
         triples::FIELD_LIMIT_DOWN,
         triples::FIELD_LIMIT_UP,
         triples::FIELD_STEP,
+        // a setting of how a page shows its numbers is no measured value
+        triples::CALCULATOR_DECIMALS,
+        triples::CALCULATOR_RESULT_WIDTH,
     ];
     const string CHK_NUMBER_TYPE = 'value with more than one measure unit, percent or factor phrase';
     // the phrase types that say how a number is stated, so a value has only one phrase of them

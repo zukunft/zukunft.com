@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
@@ -61,6 +62,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 $web_txt = '';
 $report_pdf = '';
 $report_name = '';
+$table_csv = '';
+$table_csv_name = '';
 
 // init global objects for the database connection until the api is completed
 global $debug;
@@ -264,9 +267,20 @@ if ($db_con->is_open()) {
                     }
                     $page_html = $ui->report_end_html($url_array, $msg_ui);
                 } else {
-                    $ui->send_loading_start($msg_ui, $start_time);
+                    $is_csv = url_var::is_csv_export($url_array);
+                    // a download sends no page, so the header of the file must be the first output
+                    if (!$is_csv) {
+                        $ui->send_loading_start($msg_ui, $start_time);
+                    }
                     $is_live = ($is_action or $redirect_msg !== null);
                     $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
+                    if ($is_csv) {
+                        $table_csv = $ui->dto?->table_csv ?? '';
+                        $table_csv_name = $ui->dto?->table_csv_name ?? '';
+                        if ($table_csv == '') {
+                            $redirect_msg = ($redirect_msg ?? '') . $mtr->txt(msg_id::TABLE_CSV_EMPTY);
+                        }
+                    }
                 }
                 $web_txt .= $is_report ? '' : new html_base()->loading_end();
                 $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
@@ -295,6 +309,10 @@ if ($redirect_url != '') {
     header('Content-Type: ' . pdf_writer::MIME_TYPE);
     header(calculator_report::attachment_header($report_name));
     echo $report_pdf;
+} elseif ($table_csv != '') {
+    header('Content-Type: ' . value_list_ui::CSV_MIME_TYPE);
+    header(calculator_report::attachment_header($table_csv_name, value_list_ui::CSV_FILE_EXTENSION));
+    echo $table_csv;
 } else {
     echo $web_txt;
 }

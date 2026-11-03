@@ -218,6 +218,16 @@ on rename/translation. The `code_id` is the stable identity that survives
 migrations, renames, and pod-to-pod import/export, because the import resolver
 matches by code_id alone.
 
+Because a code id connects program code to a row, saving it is restricted the same
+way for words, triples, formulas, sources, views and components (`sandbox::save_code_id`):
+
+| action | who |
+|---|---|
+| read the code id | everyone; the permission is checked on the write |
+| set a missing code id | `can_set_code_id`: system, test and developer users |
+| replace an existing code id | `can_overwrite_code_id`: system and test users |
+| save without a code id | keeps the code id of the database, for every user |
+
 ## Boolean db fields are nullable smallint — null reads as false
 
 A boolean database field is defined with `sql_field_type::BOOL` (which maps to

@@ -105,6 +105,9 @@ class files
     CONST string NPP_CH_VOTE_JS = 'npp_ch_vote_js';
     CONST string NPP_CH_VOTE_SAMPLE = 'npp_ch_vote_sample';
     CONST string NPP_CH_VOTE_DIFF = 'npp_ch_vote_diff';
+    // the expected csv export of the table of the global warming solutions and the report of the differences of the real export
+    CONST string GLOBAL_WARMING_SOLUTIONS_CSV = test_paths::EXPORT_START_PAGE . 'global_warming_solutions' . self::CSV;
+    CONST string GLOBAL_WARMING_SOLUTIONS_DIFF = test_paths::EXPORT_START_PAGE . 'global_warming_solutions_diff' . self::MD;
     // the sample fills its verdict and its tables by its script, so the compare reads it after a browser has run it
     CONST string NPP_CH_VOTE_CASES = test_paths::JS . 'npp_ch_vote_cases' . self::JS;
     // the calculator page of the example portfolio split that the server renders without javascript

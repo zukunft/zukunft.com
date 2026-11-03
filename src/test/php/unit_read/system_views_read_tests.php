@@ -44,6 +44,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
+include_once test_paths::UTILS . 'csv_table_diff.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\csv_table_diff;
 use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\utils\html_page_diff;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -144,6 +146,7 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
+        $this->run_global_warming_solutions_csv($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -949,6 +952,74 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS);
+    }
+
+    /**
+     * the csv export of the table of the global warming solutions through the view of the page, and the
+     * differences to the expected csv as a report
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_global_warming_solutions_csv(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $row_col = word_names::SOLUTION;
+
+        $test_name = 'the compare reads a cell by the name of its row and column';
+        $csv_txt = "rank,solution,gain\n1,wind,1.5\n";
+        $cells = $ctd->table_cells($csv_txt, $row_col);
+        $t->assert($test_name, $cells, ['wind' => ['rank' => '1', 'gain' => '1.5']]);
+        $test_name = '... and keeps two rows with the same name';
+        $same_cells = $ctd->table_cells("solution,gain\nwind,1\nwind,2\n", $row_col);
+        $t->assert($test_name, array_keys($same_cells), ['wind', 'wind' . csv_table_diff::SAME_NAME_SEP . '2']);
+        $test_name = 'the same number in another format is no difference';
+        $format_cells = $ctd->table_cells("solution,gain\nwind,1.78e+03\n", $row_col);
+        $number_cells = $ctd->table_cells("solution,gain\nwind,1780\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($format_cells, $number_cells, 'a', 'b'), 'Different cells (0)');
+        // negative: a rounded number stays a difference
+        $test_name = '... but a rounded number is one';
+        $full_cells = $ctd->table_cells("solution,gain\nwind,1784.3\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $full_cells, 'a', 'b'), 'Different cells (1)');
+        $test_name = 'a missing row is reported';
+        $none_cells = $ctd->table_cells("solution,gain\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $none_cells, 'a', 'b'), 'Rows missing in the export (1)');
+
+        // through the view, so that the url var, the component and the table are tested together
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_WARMING_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $test_name = 'the table of the global warming solutions is exported as csv';
+        $t->assert_text_contains($test_name, $export_csv, word_names::SOLUTION);
+
+        $target = $ctd->table_cells($t->path_file(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), $row_col);
+        $export = $ctd->table_cells($export_csv, $row_col);
+        // a result names the solution but not the page phrase and is still in the row of the solution
+        $test_name = 'the export has the calculated gain of a solution';
+        $t->assert($test_name, ($export['solar energy']['potential gain in trillion EUR'] ?? '') != '', true);
+        // negative: a solution without a calculated gain would be a row with an empty cell
+        $test_name = '... and the calculated reduction potential of a solution without a stated one';
+        $t->assert($test_name, ($export['coal phase-out']['reduction potential in gigatonne CO2eq per year'] ?? '') != '', true);
+        // the gain per effort uses the calculated gain of this table, the numbers are the calc-validation of the json
+        $eur_col = 'gain per effort in billion EUR per person year';
+        $htp_col = 'gain per effort in million htp per person year';
+        foreach ([
+                     ['circular economy', 89.11, 3.56],
+                     ['digitalization', 29.7, 1.19],
+                     ['coal phase-out', 594.63, 23.75],
+                 ] as [$row, $eur, $htp]) {
+            $test_name = 'the gain per effort of ' . $row . ' in EUR uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$eur_col] ?? 0), 2), $eur);
+            $test_name = 'the gain per effort of ' . $row . ' in htp uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$htp_col] ?? 0), 2), $htp);
+        }
+        // negative: the assumed gain of problem_global_warming.json in the same row is not used
+        $test_name = 'the gain per effort does not use the assumed gain of the same solution';
+        $t->assert($test_name, round((float)($export['coal phase-out'][$htp_col] ?? 0), 2) != 533.19, true);
+        $test_name = 'the differences of the export of the global warming solutions are reported';
+        $report = $ctd->report($target, $export, basename(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), triple_names::GLOBAL_WARMING_SOLUTION);
+        $t->assert_file($test_name, $report, test_files::GLOBAL_WARMING_SOLUTIONS_DIFF, test_files::MD);
     }
 
     /**

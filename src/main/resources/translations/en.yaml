@@ -467,6 +467,8 @@ messages:
   table_menu_design: "design"
   table_unmatched_show: "with the other values"
   table_unmatched_hide: "only the values of the columns"
+  table_export_csv: "export as csv"
+  table_csv_empty: "This page has no table with numbers, so there is nothing to export as csv."
   table_design_plain: "without lines and background"
   table_design_bordered: "with lines and background"
   table_design_unknown: "the table design z$VarValue$z is not known, so the default design is used; please select a design in the edit menu"

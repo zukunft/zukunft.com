@@ -10,6 +10,13 @@ and values that does not fit to the columns and rows should not be shown be defa
 the border and grey background colours should be removed by default with an option to show them.
 The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
 
+### adjust the table data
+
+add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708 
+and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
+and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
+
+
 ## table editor
 
 The editor saves the own columns and the own default sorting of the table of a phrase. Still open: the

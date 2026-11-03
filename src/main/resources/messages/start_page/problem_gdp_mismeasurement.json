@@ -117,6 +117,13 @@
   ],
   "triples": [
     {
+      "name": "USD per month",
+      "from": "USD",
+      "verb": "per",
+      "to": "month",
+      "type": "measure_unit"
+    },
+    {
       "name": "variance low (system)",
       "from": "variance",
       "verb": "can be",
@@ -325,8 +332,7 @@
       "words": [
         "willingness to accept",
         "free good",
-        "month",
-        "USD"
+        "USD per month"
       ],
       "number": "42",
       "source": "Brynjolfsson et al. (2019) GDP-B"

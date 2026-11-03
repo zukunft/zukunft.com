@@ -21,32 +21,22 @@
       "name": "table"
     },
     {
-      "name": "sort order"
+      "name": "sort"
     },
     {
-      "name": "numeric ascending",
-      "description": "sort condition: by the number of the column, the smallest number on top",
-      "code_id": "numeric_asc"
+      "name": "ascending"
     },
     {
-      "name": "alpha ascending",
-      "description": "sort condition: by the text of the column, from a to z",
-      "code_id": "alpha_asc"
+      "name": "descending"
     },
     {
-      "name": "alpha descending",
-      "description": "sort condition: by the text of the column, from z to a",
-      "code_id": "alpha_desc"
+      "name": "numeric"
     },
     {
-      "name": "alpha parent ascending",
-      "description": "sort condition: by the text of the parent in the column, from a to z",
-      "code_id": "alpha_parent_asc"
+      "name": "alpha"
     },
     {
-      "name": "alpha parent descending",
-      "description": "sort condition: by the text of the parent in the column, from z to a",
-      "code_id": "alpha_parent_desc"
+      "name": "parent"
     },
     {
       "name": "row"
@@ -88,7 +78,7 @@
       "name": "order"
     },
     {
-      "name": "order rule"
+      "name": "rule"
     },
     {
       "name": "groups"
@@ -100,10 +90,10 @@
       "name": "width"
     },
     {
-      "name": "hidden user"
+      "name": "hidden"
     },
     {
-      "name": "pivot phrase"
+      "name": "pivot"
     },
     {
       "name": "phrase"
@@ -121,13 +111,10 @@
       "name": "limit"
     },
     {
-      "name": "page size"
+      "name": "size"
     },
     {
       "name": "page"
-    },
-    {
-      "name": "show all"
     },
     {
       "name": "pinned"
@@ -139,22 +126,16 @@
       "name": "expand"
     },
     {
-      "name": "max depth"
+      "name": "depth"
     },
     {
       "name": "indent"
     },
     {
-      "name": "parent value"
-    },
-    {
       "name": "orphans"
     },
     {
-      "name": "multi parent"
-    },
-    {
-      "name": "sort scope"
+      "name": "multi"
     },
     {
       "name": "type"
@@ -172,13 +153,13 @@
       "name": "time"
     },
     {
-      "name": "source mode"
+      "name": "mode"
     },
     {
-      "name": "show source"
+      "name": "source"
     },
     {
-      "name": "show confidence"
+      "name": "confidence"
     },
     {
       "name": "missing"
@@ -190,19 +171,13 @@
       "name": "truncate"
     },
     {
-      "name": "conditional style"
+      "name": "style"
     },
     {
       "name": "delta"
     },
     {
       "name": "editable"
-    },
-    {
-      "name": "totals row"
-    },
-    {
-      "name": "totals column"
     },
     {
       "name": "subtotals"
@@ -220,13 +195,7 @@
       "name": "rotate"
     },
     {
-      "name": "show unit"
-    },
-    {
       "name": "tooltip"
-    },
-    {
-      "name": "row label mode"
     },
     {
       "name": "title"
@@ -247,10 +216,7 @@
       "name": "transpose"
     },
     {
-      "name": "max width"
-    },
-    {
-      "name": "responsive mode"
+      "name": "responsive"
     },
     {
       "name": "sortable"
@@ -274,13 +240,13 @@
       "name": "resizable"
     },
     {
-      "name": "refresh mode"
+      "name": "refresh"
     },
     {
-      "name": "view owner"
+      "name": "owner"
     },
     {
-      "name": "view shared"
+      "name": "shared"
     },
     {
       "name": "language"
@@ -289,28 +255,28 @@
       "name": "profile"
     },
     {
-      "name": "time reference"
+      "name": "reference"
     },
     {
       "name": "formats"
     },
     {
-      "name": "include sources"
+      "name": "sources"
     },
     {
-      "name": "persist user changes"
+      "name": "persist"
     },
     {
-      "name": "reset to default"
+      "name": "reset"
     },
     {
-      "name": "view version"
+      "name": "version"
     },
     {
-      "name": "table parameter"
+      "name": "parameter"
     },
     {
-      "name": "unmatched values"
+      "name": "unmatched"
     },
     {
       "name": "background"
@@ -333,6 +299,58 @@
       "to": "zukunft.com system"
     },
     {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric ascending",
+      "description": "sort condition: by the number of the column, the smallest number on top",
+      "from": "ascending",
+      "verb": "kind of",
+      "to": "numeric",
+      "code_id": "numeric_asc"
+    },
+    {
+      "name": "alpha ascending",
+      "description": "sort condition: by the text of the column, from a to z",
+      "from": "ascending",
+      "verb": "kind of",
+      "to": "alpha",
+      "code_id": "alpha_asc"
+    },
+    {
+      "name": "alpha descending",
+      "description": "sort condition: by the text of the column, from z to a",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "alpha",
+      "code_id": "alpha_desc"
+    },
+    {
+      "name": "alpha parent",
+      "from": "alpha",
+      "verb": "of",
+      "to": "parent"
+    },
+    {
+      "name": "alpha parent ascending",
+      "description": "sort condition: by the text of the parent in the column, from a to z",
+      "from": "ascending",
+      "verb": "kind of",
+      "to": "alpha parent",
+      "code_id": "alpha_parent_asc"
+    },
+    {
+      "name": "alpha parent descending",
+      "description": "sort condition: by the text of the parent in the column, from z to a",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "alpha parent",
+      "code_id": "alpha_parent_desc"
+    },
+    {
       "name": "table column",
       "description": "list: the items of a triple from a phrase to this keyword are the own columns of the table of the phrase in their order, instead of the columns of all tables",
       "from": "table",
@@ -351,9 +369,9 @@
     {
       "name": "table parameter (system)",
       "description": "keyword for the parameters of a table; the groups are on its to side, so that the phrase data of a page that uses a word such as export does not walk to them",
-      "from": "table parameter",
-      "verb": "can be",
-      "to": "zukunft.com system",
+      "from": "zukunft.com system",
+      "verb": "has a",
+      "to": "parameter",
       "code_id": "system_table_parameter"
     },
     {
@@ -393,7 +411,7 @@
       "description": "Rule used when no explicit order is given: alphabetical, by value count, by last change, by relevance.",
       "from": "table column (system)",
       "verb": "can be",
-      "to": "order rule",
+      "to": "rule",
       "code_id": "system_column_order_rule"
     },
     {
@@ -425,7 +443,7 @@
       "description": "Columns the user has explicitly hidden, overriding the level.",
       "from": "table column (system)",
       "verb": "can be",
-      "to": "hidden user",
+      "to": "hidden",
       "code_id": "system_column_hidden_user"
     },
     {
@@ -433,7 +451,7 @@
       "description": "The phrase whose related phrases become the columns (e.g. “year” → 2024, 2025 …).",
       "from": "table column (system)",
       "verb": "can be",
-      "to": "pivot phrase",
+      "to": "pivot",
       "code_id": "system_column_pivot_phrase"
     },
     {
@@ -489,7 +507,7 @@
       "description": "Default sort when nothing is chosen: alphabetical, by first value column, by hierarchy position.",
       "from": "row (system)",
       "verb": "can be",
-      "to": "order rule",
+      "to": "rule",
       "code_id": "system_row_order_rule"
     },
     {
@@ -505,7 +523,7 @@
       "description": "Rows per page when paging is on.",
       "from": "row (system)",
       "verb": "can be",
-      "to": "page size",
+      "to": "size",
       "code_id": "system_row_page_size"
     },
     {
@@ -521,7 +539,7 @@
       "description": "Flag: ignore the limit and show all rows (with paging).",
       "from": "row (system)",
       "verb": "can be",
-      "to": "show all",
+      "to": "all",
       "code_id": "system_row_show_all"
     },
     {
@@ -545,7 +563,7 @@
       "description": "Rows the user has explicitly removed from the view.",
       "from": "row (system)",
       "verb": "can be",
-      "to": "hidden user",
+      "to": "hidden",
       "code_id": "system_row_hidden_user"
     },
     {
@@ -585,7 +603,7 @@
       "description": "How many levels of sub-rows may be opened.",
       "from": "hierarchy (system)",
       "verb": "can be",
-      "to": "max depth",
+      "to": "depth",
       "code_id": "system_hierarchy_max_depth"
     },
     {
@@ -601,7 +619,7 @@
       "description": "How the parent row’s value is shown: own value, sum of children, both, or blank.",
       "from": "hierarchy (system)",
       "verb": "can be",
-      "to": "parent value",
+      "to": "value",
       "code_id": "system_hierarchy_parent_value"
     },
     {
@@ -617,7 +635,7 @@
       "description": "A phrase can be part of several phrases: show it under each, under the first, or once with a marker.",
       "from": "hierarchy (system)",
       "verb": "can be",
-      "to": "multi parent",
+      "to": "multi",
       "code_id": "system_hierarchy_multi_parent"
     },
     {
@@ -625,7 +643,7 @@
       "description": "Sorting applies within siblings only or flattens the tree.",
       "from": "hierarchy (system)",
       "verb": "can be",
-      "to": "sort scope",
+      "to": "scope",
       "code_id": "system_hierarchy_sort_scope"
     },
     {
@@ -681,7 +699,7 @@
       "description": "Which value wins when several sources exist: preferred source, latest, average, user’s own.",
       "from": "value (system)",
       "verb": "can be",
-      "to": "source mode",
+      "to": "mode",
       "code_id": "system_value_source_mode"
     },
     {
@@ -689,7 +707,7 @@
       "description": "Show the source inline, as tooltip, as a separate column, or not at all.",
       "from": "value (system)",
       "verb": "can be",
-      "to": "show source",
+      "to": "source",
       "code_id": "system_value_show_source"
     },
     {
@@ -697,7 +715,7 @@
       "description": "Show measured / assumed flag and confidence number.",
       "from": "value (system)",
       "verb": "can be",
-      "to": "show confidence",
+      "to": "confidence",
       "code_id": "system_value_show_confidence"
     },
     {
@@ -729,7 +747,7 @@
       "description": "Rules for colour, bold or icon depending on the value (thresholds, deltas).",
       "from": "value (system)",
       "verb": "can be",
-      "to": "conditional style",
+      "to": "style",
       "code_id": "system_value_conditional_style"
     },
     {
@@ -753,7 +771,7 @@
       "description": "Flag: show the values that fit to no column or no row, which are hidden by default.",
       "from": "value (system)",
       "verb": "can be",
-      "to": "unmatched values",
+      "to": "unmatched",
       "code_id": "system_value_unmatched"
     },
     {
@@ -769,7 +787,7 @@
       "description": "Show a total row: sum, average, count, none.",
       "from": "aggregation (system)",
       "verb": "can be",
-      "to": "totals row",
+      "to": "row",
       "code_id": "system_totals_row"
     },
     {
@@ -777,7 +795,7 @@
       "description": "Show a total column across the visible columns.",
       "from": "aggregation (system)",
       "verb": "can be",
-      "to": "totals column",
+      "to": "column",
       "code_id": "system_totals_column"
     },
     {
@@ -833,7 +851,7 @@
       "description": "Unit in the header instead of the cell.",
       "from": "header (system)",
       "verb": "can be",
-      "to": "show unit",
+      "to": "unit",
       "code_id": "system_header_show_unit"
     },
     {
@@ -849,7 +867,7 @@
       "description": "Row label as phrase name, abbreviation, id, or with description.",
       "from": "header (system)",
       "verb": "can be",
-      "to": "row label mode",
+      "to": "mode",
       "code_id": "system_row_label_mode"
     },
     {
@@ -913,7 +931,7 @@
       "description": "Table width in px, percent, or fit-to-content.",
       "from": "layout (system)",
       "verb": "can be",
-      "to": "max width",
+      "to": "width",
       "code_id": "system_max_width"
     },
     {
@@ -921,7 +939,7 @@
       "description": "On small screens: horizontal scroll, stack columns, drop minor columns first.",
       "from": "layout (system)",
       "verb": "can be",
-      "to": "responsive mode",
+      "to": "responsive",
       "code_id": "system_responsive_mode"
     },
     {
@@ -1009,7 +1027,7 @@
       "description": "Static, reload on demand, live update.",
       "from": "interaction (system)",
       "verb": "can be",
-      "to": "refresh mode",
+      "to": "refresh",
       "code_id": "system_refresh_mode"
     },
     {
@@ -1025,7 +1043,7 @@
       "description": "The user or group that defined this view (for sharing).",
       "from": "context (system)",
       "verb": "can be",
-      "to": "view owner",
+      "to": "owner",
       "code_id": "system_view_owner"
     },
     {
@@ -1033,7 +1051,7 @@
       "description": "Whether other users may reuse the definition.",
       "from": "context (system)",
       "verb": "can be",
-      "to": "view shared",
+      "to": "shared",
       "code_id": "system_view_shared"
     },
     {
@@ -1057,7 +1075,7 @@
       "description": "Global “as of” date for all values.",
       "from": "context (system)",
       "verb": "can be",
-      "to": "time reference",
+      "to": "reference",
       "code_id": "system_time_reference"
     },
     {
@@ -1089,7 +1107,7 @@
       "description": "Attach the source list to the export.",
       "from": "export (system)",
       "verb": "can be",
-      "to": "include sources",
+      "to": "sources",
       "code_id": "system_export_include_sources"
     },
     {
@@ -1105,7 +1123,7 @@
       "description": "Remember the user’s column/row choices between sessions.",
       "from": "state (system)",
       "verb": "can be",
-      "to": "persist user changes",
+      "to": "persist",
       "code_id": "system_persist_user_changes"
     },
     {
@@ -1113,7 +1131,7 @@
       "description": "Allow the user to return to the defined view.",
       "from": "state (system)",
       "verb": "can be",
-      "to": "reset to default",
+      "to": "reset",
       "code_id": "system_reset_to_default"
     },
     {
@@ -1121,7 +1139,7 @@
       "description": "Version of the definition, so changes to the view can be traced like values.",
       "from": "state (system)",
       "verb": "can be",
-      "to": "view version",
+      "to": "version",
       "code_id": "system_view_version"
     }
   ],

@@ -416,6 +416,8 @@
             er/user.php
     \-- can_set_code_id - section for function can_set_code_id not yet defined that it should be owner and access in /us
             er/user.php
+    \-- can_overwrite_code_id - section for function can_overwrite_code_id not yet defined that it should be owner and a
+            ccess in /user/user.php
     \-- can_set_ui_msg_id - section for function can_set_ui_msg_id not yet defined that it should be owner and access in
              /user/user.php
     \-- delta - section for function delta is expected to be del in /user/user.php
@@ -7420,6 +7422,8 @@
             ect.php
     \-- add_changes - section for function add_changes not yet defined that it should be set and get in /helper/data_obj
             ect.php
+    \-- add_table_csv - section for function add_table_csv not yet defined that it should be set and get in /helper/data
+            _object.php
     \-- add_tier_names - section for function add_tier_names not yet defined that it should be set and get in /helper/da
             ta_object.php
     \-- change_log - section for function change_log not yet defined that it should be set and get in /helper/data_objec
@@ -8658,6 +8662,7 @@
     \-- phrase_col_ids - section for function phrase_col_ids missing in /value/table_model.php
     \-- col_id_by_name - section for function col_id_by_name missing in /value/table_model.php
     \-- cell_numbers - section for function cell_numbers missing in /value/table_model.php
+    \-- cell_centres - section for function cell_centres missing in /value/table_model.php
     \-- has_column - section for function has_column missing in /value/table_model.php
     \-- col_id_of_name - section for function col_id_of_name missing in /value/table_model.php
     \-- sort_rows - section for function sort_rows missing in /value/table_model.php
@@ -9529,6 +9534,8 @@
         \-- data_object - @return bool true if this context object contains at least some phrases
     \-- add_changes
         \-- data_object - @return bool true if this context object contains at least some phrases
+    \-- add_table_csv
+        \-- data_object - add the csv of a value table of the page; several tables are separated by an empty line
     \-- add_tier_names
         \-- data_object - add the column names of a value table of the page, so that the column menu of the navbar
     \-- change_log
@@ -10154,6 +10161,8 @@
         \-- table_model - @param string $name a name that selects a value column e.g. "loss" or "potential loss"
     \-- cell_numbers
         \-- table_model - the numbers of one cell sorted by their role, like value_list::cell shows them
+    \-- cell_centres
+        \-- table_model - @param string $row_key the key of the row
     \-- has_column
         \-- table_model - @param int $phr_id the phrase id of a column
     \-- col_id_of_name

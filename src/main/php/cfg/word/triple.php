@@ -134,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -854,6 +855,11 @@ class triple extends sandbox_link_named
                 }
             } else {
                 $vars = parent::api_json_array($typ_lst, $msg, $usr);
+                // like a word, because the frontend also reads the code id of a triple nested in
+                // another triple e.g. the sort condition of "numeric descending of potential loss"
+                if ($this->get_code_id() != null) {
+                    $vars[json_fields::CODE_ID] = $this->get_code_id();
+                }
                 // the from, verb and to names are included for a page request (incl_related)
                 // or when the phrases are explicitly requested, so the frontend can show e.g.
                 // the triple page title "<from> <verb> <to>" with a link to each part
@@ -3215,7 +3221,8 @@ class triple extends sandbox_link_named
                 triple_fields::FLD_COND_ID,
                 fields::FLD_USAGE,
                 fields::FLD_IMPACT,
-                fields::FLD_VIEW
+                fields::FLD_VIEW,
+                fields::FLD_CODE_ID
             ],
             parent::db_fields_all_sandbox()
         );
@@ -3390,6 +3397,22 @@ class triple extends sandbox_link_named
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
                 $obj->excluded,
+            );
+        }
+        // the code id links the standard row to program code, so a user row never has one
+        if (!$usr_tbl and $this->save_code_id($obj->code_id, $this->code_id, $msg)) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $obj->code_id
             );
         }
         if ($obj->name_given() !== $this->name_given()) {

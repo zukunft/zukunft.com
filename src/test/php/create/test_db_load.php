@@ -1616,7 +1616,9 @@ class test_db_load
         $result = '';
         if (in_array($class, self::LOGGED_ROW_CLASSES)) {
             $chg_lst = new change_log_list();
-            $chg_lst->load_by_obj_fld($class, $msg, $lib->csv_line_to_array($row)[0], $this->env->usr1);
+            // a csv cell is a text, but the row id of the change log is a number
+            $id = $lib->csv_line_to_array($row)[0];
+            $chg_lst->load_by_obj_fld($class, $msg, is_numeric($id) ? (int)$id : $id, $this->env->usr1);
             foreach ($chg_lst->lst() as $chg) {
                 $result .= ' logged: ' . $chg->dsp();
             }

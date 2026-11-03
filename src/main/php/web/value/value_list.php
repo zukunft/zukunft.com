@@ -173,6 +173,13 @@ class value_list extends ListBase
     // the column names per column tier selection of the last table or chart created from this
     // list (see table_model::tier_names), which the page hands to the column menu of the navbar
     public array $tier_names = [];
+    // the csv of the table of this list if the url asks for the export, which the entry point sends as a download
+    public string $table_csv = '';
+    const string CSV_MIME_TYPE = 'text/csv; charset=utf-8';
+    const string CSV_FILE_EXTENSION = '.csv';
+    const string CSV_NUMBER_SEPARATOR = '; ';
+    // the first chars with which a spreadsheet starts a formula
+    const string CSV_FORMULA_START = '/^[=+\-@\t\r]/';
     // the entries of the column menu per table design (def::TABLE_DESIGNS)
     const array TABLE_DESIGN_NAMES = [
         words::PLAIN => msg_id::TABLE_DESIGN_PLAIN,
@@ -720,6 +727,9 @@ class value_list extends ListBase
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
             $this->tier_names = $model->tier_names;
+            if (url_var::is_csv_export($url_array)) {
+                $this->table_csv = $this->table_to_csv($model);
+            }
             $result = $this->table_html($model, $msg, $context_phr_lst, $rel_lst,
                 $url_array, $with_variance, $with_border);
             if ($with_header) {
@@ -727,6 +737,102 @@ class value_list extends ListBase
             }
         }
         return $result;
+    }
+
+    /**
+     * the complete table as csv: every row, also behind the limit of the page, and the numbers without rounding
+     *
+     * @param table_model $model the rows and columns of the table
+     * @return string the csv text, the header in the first line
+     */
+    private function table_to_csv(table_model $model): string
+    {
+        $lib = new library();
+        $rest_col = false;
+        foreach ($model->all_keys as $row_key) {
+            $rest_col = ($rest_col or ($model->cells[$row_key][''] ?? []) != []);
+        }
+        $header = [$model->row_col?->name() ?? ''];
+        foreach ($model->col_ids as $col_id) {
+            $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
+            $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
+            $header[] = $lib->html_to_text($this->column_header($this->column_head($phr, $model->tbl_phr), $unit_lst));
+        }
+        if ($rest_col) {
+            $header[] = msg_id::FORM_SUB_TITLE_VALUES->text();
+        }
+        $rows = [$header];
+        foreach ($model->all_keys as $row_key) {
+            $row = [$lib->html_to_text($model->row_label[$row_key])];
+            foreach ($model->col_ids as $col_id) {
+                $row[] = $this->csv_cell($model, $row_key, $col_id);
+            }
+            if ($rest_col) {
+                $row[] = $this->csv_numbers($model, $row_key, '');
+            }
+            $rows[] = $row;
+        }
+        return $this->csv_text($rows);
+    }
+
+    /**
+     * @param table_model $model the rows and columns of the table
+     * @param string $row_key the key of the row
+     * @param int|string $col_id the id of the column
+     * @return string the numbers of a value column or the phrase of a phrase column, followed by ", ..." if the row has more of them
+     */
+    private function csv_cell(table_model $model, string $row_key, int|string $col_id): string
+    {
+        if (array_key_exists($col_id, $model->col_phr)) {
+            return $this->csv_numbers($model, $row_key, $col_id);
+        }
+        $result = ($model->phr_cells[$row_key][$col_id] ?? null)?->name() ?? '';
+        if ($model->phr_cells_more[$row_key][$col_id] ?? false) {
+            $result .= ', ' . msg_id::THREE_POINTS->text();
+        }
+        return $result;
+    }
+
+    /**
+     * @param table_model $model the rows and columns of the table
+     * @param string $row_key the key of the row
+     * @param int|string $col_id the id of the column, '' for the values without a column
+     * @return string the numbers of the cell without their variance and confidence, several joined by a semicolon
+     */
+    private function csv_numbers(table_model $model, string $row_key, int|string $col_id): string
+    {
+        $numbers = [];
+        foreach ($model->cell_centres($row_key, $col_id) as $val) {
+            $numbers[] = (string)($val->number() ?? $val->text_value() ?? '');
+        }
+        return implode(self::CSV_NUMBER_SEPARATOR, $numbers);
+    }
+
+    /**
+     * @param array $rows per row the texts of the cells
+     * @return string the csv text, where a text that a spreadsheet would run as a formula is marked as text
+     */
+    private function csv_text(array $rows): string
+    {
+        $stream = fopen('php://memory', 'r+');
+        foreach ($rows as $row) {
+            fputcsv($stream, array_map(fn($txt) => $this->csv_safe_text($txt), $row),
+                library::CSV_DELIMITER, library::CSV_ENCLOSURE, '');
+        }
+        rewind($stream);
+        $result = stream_get_contents($stream);
+        fclose($stream);
+        return $result;
+    }
+
+    /**
+     * @param string $txt the text of a cell e.g. a user given phrase name
+     * @return string the text, with a leading apostrophe if it is no number and a spreadsheet would run it as a formula
+     */
+    private function csv_safe_text(string $txt): string
+    {
+        $is_formula = (!is_numeric($txt) and preg_match(self::CSV_FORMULA_START, $txt) === 1);
+        return $is_formula ? "'" . $txt : $txt;
     }
 
     /**
@@ -1117,6 +1223,7 @@ class value_list extends ListBase
         // shows the first rows of that order
         $model->orders = $this->row_orders($url_array, $model, $context_phr_lst, $rel_lst, $msg);
         $model->sort_rows($rel_lst);
+        $model->all_keys = $model->shown_keys;
         if ($model->row_limit != self::LIMIT_ALL) {
             $model->first_row = $this->first_row($url_array, $model->row_limit);
             $model->shown_keys = array_slice($model->shown_keys, $model->first_row, $model->row_limit);
@@ -2158,8 +2265,11 @@ class value_list extends ListBase
                 }
             }
         }
+        // a confidence value qualifies a value but never another confidence value, so the placed
+        // confidence values are not added to the values that are searched
+        $val_by_unit = $result;
         foreach ($conf_lst as $conf_val) {
-            $found = $this->unit_of_qualified($result, $conf_val, $subjects, $msg);
+            $found = $this->unit_of_qualified($val_by_unit, $conf_val, $subjects, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where
             // it is shown like a value instead of a tooltip (see cell), so that it is not lost
             if ($found == '') {
@@ -3094,6 +3204,7 @@ class value_list extends ListBase
                     $result .= $this->form_menu_item($url_array, $form);
                 }
             }
+            $result .= $this->csv_menu_item($url_array);
         }
         return $result;
     }
@@ -3209,6 +3320,20 @@ class value_list extends ListBase
         // without a table on the page the tooltip says only what the entry shows
         $tip = $html->tip_with_names($tip_id, msg_id::TABLE_COLUMNS_NAMES_TIP, implode(', ', $names));
         return $html->list_item($html->ref($url, $name, $tip));
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @return string the menu entry that downloads the table with the selected columns as csv, also if the page shows only its charts
+     */
+    private function csv_menu_item(array $url_array): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        unset($url_pars[url_var::DISPLAY_LIST_AS]);
+        $url_pars[url_var::DISPLAY_LIST_CSV] = url_var::TRUE;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        return $html->list_item($html->ref($url, msg_id::TABLE_EXPORT_CSV->text()));
     }
 
     /**

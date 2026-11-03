@@ -445,6 +445,16 @@ class value_list_ui_tests
         $test_name = '... and no value of the cell';
         $t->assert($test_name, substr_count($tbl_wider, '<' . html_base::TR . '>'), 2);
 
+        // several confidence values that qualify no value are not compared with each other
+        $tbl_unmatched = $t_val->value_list_confidence_unmatched_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $wider_lst->column_names(), false, true, $wider_lst);
+        $hdr_unmatched = $lib->html_to_text($lib->str_left_of($tbl_unmatched, '</tr>'));
+        $test_name = 'two confidence values that qualify no value keep the column of the value';
+        $t->assert_text_contains($test_name, $hdr_unmatched, word_names::LOSS . $unit_sep);
+        // negative: they share the column of their unit and do not open one each
+        $test_name = '... and do not open a column each';
+        $t->assert($test_name, substr_count($hdr_unmatched, word_names::LOSS . $unit_sep) <= 2, true);
+
         // a column shows one measure, so a phrase with values in two units gets one column per
         // unit, the unit of the most relevant value first, and no value is lost; the "loss"
         // column is defined here, because the two values differ in their unit only, so without
@@ -534,6 +544,7 @@ class value_list_ui_tests
 
         $this->table_own_columns_tests($t);
         $this->table_design_tests($t);
+        $this->table_csv_tests($t);
 
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
@@ -888,7 +899,7 @@ class value_list_ui_tests
         $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
         $test_name = 'a chart type word without code id is reported and its chart left out';
         $t->assert($test_name, $t_phr->list_chart_without_type_ui()->chart_definitions($msg_ui), []);
-        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::RANGE_BARS);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::RANGE_BARS);
         $msg_ui->reset();
         $test_name = 'a list without chart definitions defines no chart';
         $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
@@ -1088,7 +1099,7 @@ class value_list_ui_tests
         $t->assert($test_name, $rank_lst->sort_definitions($msg_ui), []);
         $test_name = 'a condition word without code id is reported and its order left out';
         $t->assert($test_name, $t_phr->list_sort_without_condition_ui()->sort_definitions($msg_ui), []);
-        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::NUMERIC_DESCENDING);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::NUMERIC_DESCENDING);
         $msg_ui->reset();
         // without an order in the url the rows follow the default order, which puts the health
         // problem with the bigger loss before the wealth concentration with the bigger gain
@@ -1355,6 +1366,45 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $lib->html_to_text($menu_all), msg_id::TABLE_UNMATCHED_HIDE->text());
         $test_name = '... but the menu of another table does not';
         $t->assert_text_not_contains($test_name, $lst->columns_menu_items($url_page), url_var::DISPLAY_LIST_UNMATCHED);
+    }
+
+    /**
+     * the url asks for the complete table as csv and the edit menu offers it
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    private function table_csv_tests(test_cleanup $t): void
+    {
+        $msg_ui = new user_message_ui();
+        $t_val = new test_values($t);
+        $url_csv = [url_var::DISPLAY_LIST_CSV => url_var::TRUE];
+
+        $lst = $t_val->value_list_gain_units_ui();
+        $lst->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true, null, null, $url_csv);
+        $test_name = 'the csv has the unit in the header';
+        $t->assert_text_contains($test_name, $lst->table_csv, word_names::HTP);
+        $test_name = '... and the number without rounding';
+        $t->assert_text_contains($test_name, $lst->table_csv, '320.01');
+
+        // the complete table is exported, also the rows behind the limit of the page
+        $cut = $t_val->value_list_gain_units_ui();
+        $cut->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true, null, 1, $url_csv);
+        $test_name = 'the csv has also the rows behind the limit of the page';
+        $t->assert_text_contains($test_name, $cut->table_csv, '26.4');
+
+        // negative: without the url var no csv is created
+        $no_csv = $t_val->value_list_gain_units_ui();
+        $no_csv->table_by_related_columns($msg_ui, new phrase_list_ui(), [], false, true);
+        $test_name = 'without the url var the table has no csv';
+        $t->assert($test_name, $no_csv->table_csv, '');
+
+        $test_name = 'the edit menu offers the csv';
+        $menu = $lst->columns_menu_items([url_var::MASK => views::TABLE_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value]);
+        $t->assert_text_contains($test_name, $menu, url_var::DISPLAY_LIST_CSV . '=' . url_var::TRUE);
+        // negative: a page without a known url has no menu entries
+        $test_name = '... but not if the page is not known';
+        $t->assert($test_name, $lst->columns_menu_items([]), '');
     }
 
     /**

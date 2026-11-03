@@ -1712,6 +1712,7 @@ class ui_list extends ui_base
                 if ($dto != null) {
                     $dto->add_tier_names($tbl_lst->tier_names);
                     $dto->table_own_columns = ($dto->table_own_columns or $tbl_lst->own_columns);
+                    $dto->add_table_csv($tbl_lst->table_csv, $dbo->name());
                 }
             }
         }
@@ -1888,13 +1889,7 @@ class ui_list extends ui_base
     private function child_values(phrase $phr, data_object $dto, user_message $msg): ?value_list
     {
         $result = null;
-        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
-            $child_lst = new phrase_list();
-            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
-                $dto->add_phrases($child_lst, $msg);
-            }
-        }
-        $children = $dto->phr_lst->child_phrases($phr);
+        $children = $this->child_phrases($phr, $dto, $msg);
         if (!$children->is_empty()) {
             $val_lst = new value_list();
             if ($val_lst->load_by_phr_lst($children, $msg)) {
@@ -1905,10 +1900,28 @@ class ui_list extends ui_base
     }
 
     /**
-     * add the results of the page phrase to the request cache, e.g. the production and the
-     * avoided emission of a PV installation, so that the table shows the calculated numbers
-     * next to the measured ones; the stored results are shown until the frontend calculates
-     * them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+     * @param phrase $phr the phrase of the page e.g. "global warming solution"
+     * @param data_object $dto the request cache that gets the links
+     * @param user_message $msg to report a problem of an api call
+     * @return phrase_list the phrases linked to the given phrase, which are the rows of its table
+     */
+    private function child_phrases(phrase $phr, data_object $dto, user_message $msg): phrase_list
+    {
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        return $dto->phr_lst->child_phrases($phr);
+    }
+
+    /**
+     * add the results of the page phrase and of its rows to the request cache, e.g. the
+     * production and the avoided emission of a PV installation or the gain of each global warming
+     * solution, whose result names the solution but not the page phrase, so that the table shows
+     * the calculated numbers next to the measured ones; the stored results are shown until the
+     * frontend calculates them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
      *
      * an offline cache is never filled from the api, like add_column_definitions, so a unit
      * test shows only the results it has cached upfront
@@ -1922,7 +1935,7 @@ class ui_list extends ui_base
     {
         // the cache can hold the results of another phrase e.g. of a table on the same page
         if ($dto->online and !$dto->page_data_complete and !$dto->has_results_of($phr->id())) {
-            $phr_lst = new phrase_list();
+            $phr_lst = $this->child_phrases($phr, $dto, $msg);
             $phr_lst->add_phrase($phr);
             $res_lst = new result_list();
             if ($res_lst->load_by_phrase_list($phr_lst, $msg)) {
@@ -1977,7 +1990,7 @@ class ui_list extends ui_base
         foreach ($tbl_lst->lst() as $res) {
             if ($res instanceof result) {
                 $num = $calc->result($res, $tbl_lst, $frm_lst);
-                if ($num !== null and round($num, formula_calc::DECIMALS) != round($res->number(), formula_calc::DECIMALS)) {
+                if ($num !== null and formula_calc::differs($res->number(), $num)) {
                     $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_PAGE, [
                         msg_id::VAR_NAME => $res->name(),
                         msg_id::VAR_VALUE => $res->number(),

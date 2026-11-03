@@ -962,8 +962,10 @@
       "type": "value_status"
     },
     {
-      "name": "chart type",
-      "description": "how the rows of a table are drawn as a chart e.g. as range bars or as a scatter plot"
+      "name": "chart"
+    },
+    {
+      "name": "type"
     },
     {
       "name": "default",
@@ -974,23 +976,25 @@
       "description": "the one offered beside the default"
     },
     {
-      "name": "range bars",
-      "description": "chart with one row per table row with a dot for the number and a bar for its range, the biggest number on top",
-      "code_id": "range_bars"
+      "name": "bars"
     },
     {
-      "name": "scatter plot",
-      "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
-      "code_id": "scatter"
+      "name": "plot"
     },
     {
-      "name": "sort order",
-      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first"
+      "name": "scatter"
     },
     {
-      "name": "numeric descending",
-      "description": "sort condition: by the number of the column, the biggest number on top",
-      "code_id": "numeric_desc"
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     },
     {
       "name": "reason",
@@ -998,6 +1002,44 @@
     }
   ],
   "triples": [
+    {
+      "name": "chart type",
+      "description": "how the rows of a table are drawn as a chart e.g. as range bars or as a scatter plot",
+      "from": "chart",
+      "verb": "has a",
+      "to": "type"
+    },
+    {
+      "name": "range bars",
+      "description": "chart with one row per table row with a dot for the number and a bar for its range, the biggest number on top",
+      "from": "bars",
+      "verb": "kind of",
+      "to": "range",
+      "code_id": "range_bars"
+    },
+    {
+      "name": "scatter plot",
+      "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
+      "from": "plot",
+      "verb": "kind of",
+      "to": "scatter",
+      "code_id": "scatter"
+    },
+    {
+      "name": "sort order",
+      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "description": "sort condition: by the number of the column, the biggest number on top",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric",
+      "code_id": "numeric_desc"
+    },
     {
       "name": "variance low (system)",
       "from": "variance",

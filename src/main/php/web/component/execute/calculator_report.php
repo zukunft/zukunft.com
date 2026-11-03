@@ -158,11 +158,12 @@ class calculator_report
 
     /**
      * @param string $name the name of the page, which is the suggested file name
+     * @param string $extension the file extension of the download e.g. the csv of a table
      * @return string the http header that starts the download, with only the chars that are safe in a header
      */
-    static function attachment_header(string $name): string
+    static function attachment_header(string $name, string $extension = pdf_writer::FILE_EXTENSION): string
     {
-        $file = preg_replace(self::FILE_NAME_UNSAFE, '_', $name) . pdf_writer::FILE_EXTENSION;
+        $file = preg_replace(self::FILE_NAME_UNSAFE, '_', $name) . $extension;
         return 'Content-Disposition: attachment; filename="' . $file . '"';
     }
 

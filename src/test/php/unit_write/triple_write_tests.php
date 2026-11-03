@@ -228,6 +228,20 @@ class triple_write_tests
         $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         $t->assert('triple load changed name of ' . triple_names::SYSTEM_TEST_ADD, $trp->name(), triple_names::SYSTEM_TEST_ADD);
 
+        // the code id connects the triple to program code, so it must be in the database
+        $msg_code = new user_message($t->usr1);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $msg_code);
+        $trp->save($msg_code);
+        $trp_code = new triple($t->usr1);
+        $trp_code->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $t->assert('triple->save stores the code id', $trp_code->get_code_id(), triple_names::SYSTEM_TEST_ADD_CODE_ID);
+        // negative: a save without a code id, like an import file that repeats the triple, keeps it
+        $trp_code->set_code_id_db(null);
+        $trp_code->save($msg_code);
+        $trp_code = new triple($t->usr1);
+        $trp_code->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $t->assert('triple->save without a code id keeps it', $trp_code->get_code_id(), triple_names::SYSTEM_TEST_ADD_CODE_ID);
+
         // check the correct logging
         $log = new change_link($t->usr1);
         $log->set_table(change_tables::TRIPLE, $msg);

@@ -89,6 +89,7 @@ class paths
     const string DB_USER = self::DB_RES . 'user' . DIRECTORY_SEPARATOR;
     const string EXPORT = self::RESOURCE . 'export' . DIRECTORY_SEPARATOR;
     const string EXPORT_WORD = self::EXPORT . 'word' . DIRECTORY_SEPARATOR;
+    const string EXPORT_START_PAGE = self::EXPORT . 'start_page' . DIRECTORY_SEPARATOR;
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_INCONSISTENCY = self::IMPORT . 'inconsistency_tests' . DIRECTORY_SEPARATOR;

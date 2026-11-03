@@ -316,6 +316,16 @@ class base_ui_tests
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
         $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_DESIGN] ?? '', words::BORDERED);
         $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_UNMATCHED] ?? '', url_var::TRUE);
+        // the csv is a download of the live data and never a cached page
+        $test_name = 'the csv export is not cached';
+        $url_array = [url_var::MASK => views::TABLE_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_CSV => url_var::TRUE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the csv export is mapped to the short url var';
+        $url_array = [url_var::MASK_HUMAN => views::TABLE, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::DISPLAY_LIST_CSV_HUMAN => url_var::TRUE];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::DISPLAY_LIST_CSV] ?? '', url_var::TRUE);
 
         // the login and signup form pages are served from the page cache even though they are process
         // masks, because the plain form is static (the per-session token is restored per request)

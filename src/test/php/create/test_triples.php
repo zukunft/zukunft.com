@@ -47,6 +47,8 @@ include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'chart_types.php';
+include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -72,6 +74,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -1830,6 +1834,50 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "range bars" with the code id that selects the chart type (see chart_types)
+     */
+    function range_bars(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RANGE_BARS_ID, triple_names::RANGE_BARS);
+        $trp->set_code_id_db(chart_types::RANGE_BARS->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "scatter plot" with the code id that selects the chart type (see chart_types)
+     */
+    function scatter_plot(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SCATTER_PLOT_ID, triple_names::SCATTER_PLOT);
+        $trp->set_code_id_db(chart_types::SCATTER->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "leverage plot" with the code id that selects the chart type (see chart_types)
+     */
+    function leverage_plot(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LEVERAGE_PLOT_ID, triple_names::LEVERAGE_PLOT);
+        $trp->set_code_id_db(chart_types::LEVERAGE->value);
+        return $trp;
+    }
+
+    /**
+     * @return triple "numeric descending" with the code id that selects the sort condition (see table_orders)
+     */
+    function numeric_descending(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::NUMERIC_DESCENDING_ID, triple_names::NUMERIC_DESCENDING);
+        $trp->set_code_id_db(table_orders::NUMERIC_DESC->value);
+        return $trp;
+    }
+
+    /**
      * the own table of Zurich (city) with columns that name their unit
      *
      * @param array $columns the own columns as triples or words in their order e.g. potential gain in htp
@@ -1841,10 +1889,10 @@ class test_triples extends test_objects
         $has = $t_vrb->verb_has();
         $page = $this->zh_city();
         $id = triple_names::TABLE_OWN_COLUMNS_FIRST_ID;
-        $keyword = new triple($this->env->usr1);
-        $keyword->set($id--, triples::TABLE_COLUMN);
-        $group = $this->calc_triple($id, 'Zurich city unit columns', $page->phrase(), $has, $keyword);
-        $result = [$page, $keyword, $group];
+        $trp = new triple($this->env->usr1);
+        $trp->set($id--, triples::TABLE_COLUMN);
+        $group = $this->calc_triple($id, 'Zurich city unit columns', $page->phrase(), $has, $trp);
+        $result = [$page, $trp, $group];
         $prev = null;
         foreach ($columns as $col) {
             $item = $this->calc_triple($id, 'Zurich city unit column ' . $col->name(), $group->phrase(), $has, $col->phrase());
@@ -2591,7 +2639,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::RANGE_BARS_OF_LOSS_ID, triple_names::RANGE_BARS_OF_LOSS);
-        $trp->set_from($t_wrd->word_range_bars()->phrase());
+        $trp->set_from($this->range_bars()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->potential_loss()->phrase());
         return $trp;
@@ -2620,7 +2668,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::SCATTER_OF_GAIN_AND_EFFORT);
-        $trp->set_from($t_wrd->word_scatter_plot()->phrase());
+        $trp->set_from($this->scatter_plot()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->gain_and_effort()->phrase());
         return $trp;
@@ -2692,7 +2740,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::LEVERAGE_OF_GAIN_AND_LOSS);
-        $trp->set_from($t_wrd->word_leverage_plot()->phrase());
+        $trp->set_from($this->leverage_plot()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->gain_and_loss()->phrase());
         return $trp;
@@ -2766,7 +2814,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::NUMERIC_DESC_OF_LOSS_ID, triple_names::NUMERIC_DESC_OF_LOSS);
-        $trp->set_from($t_wrd->word_numeric_descending()->phrase());
+        $trp->set_from($this->numeric_descending()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($this->potential_loss()->phrase());
         return $trp;

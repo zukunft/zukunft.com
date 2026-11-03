@@ -297,6 +297,13 @@
   ],
   "triples": [
     {
+      "name": "CHF per DALY",
+      "from": "CHF",
+      "verb": "per",
+      "to": "DALY",
+      "type": "measure_unit"
+    },
+    {
       "name": "status quo",
       "from": "status",
       "verb": "of",
@@ -1018,9 +1025,7 @@
     {
       "words": [
         "conversion ratio",
-        "factor",
-        "CHF",
-        "DALY",
+        "CHF per DALY",
         "assumed"
       ],
       "number": "50000",
@@ -1455,8 +1460,7 @@
       "context": [
         "financial study cost",
         "conversion ratio",
-        "CHF",
-        "DALY"
+        "CHF per DALY"
       ],
       "formula": "study cost in HTP formula",
       "words": [

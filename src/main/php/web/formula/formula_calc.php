@@ -90,6 +90,19 @@ class formula_calc
     }
 
     /**
+     * compared by the difference like the import validation, because rounding each number would
+     * report e.g. 0.035 and 0.034999999, which round to 0.04 and 0.03
+     *
+     * @param float $stored the number of the stored result
+     * @param float $calculated the number calculated with the values of the page
+     * @return bool true if the numbers differ by the compared decimals or more
+     */
+    static function differs(float $stored, float $calculated): bool
+    {
+        return abs($stored - $calculated) >= pow(10, -self::DECIMALS);
+    }
+
+    /**
      * repeat the calculation of a result with the values and results of the page, e.g. the
      * lifetime production from the annual production and the lifetime of the installation
      *

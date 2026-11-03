@@ -485,10 +485,16 @@
       "name": "column"
     },
     {
-      "name": "sort order"
+      "name": "sort"
     },
     {
-      "name": "numeric descending"
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -1984,6 +1990,18 @@
       "from": "GDP mismeasurement solution",
       "verb": "is a",
       "to": "global problem solution"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
     },
     {
       "name": "table column",

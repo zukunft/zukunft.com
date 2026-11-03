@@ -2144,6 +2144,17 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * replacing a code id can disconnect program code from its database row, so it is more
+     * restricted than setting a missing code id: a developer can set one, but not overwrite one
+     *
+     * @return bool true if the existing code id of an object can be replaced by another code id
+     */
+    function can_overwrite_code_id(): bool
+    {
+        return $this->is_system() or $this->is_system_test();
+    }
+
+    /**
      * check if the user is allowed to set the user interface message code id of an object
      * the system users, developer and administrators are allowed to change
      * because this might be used for online corrections that are not critical

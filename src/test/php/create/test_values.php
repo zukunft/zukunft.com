@@ -1563,6 +1563,29 @@ class test_values extends test_objects
     }
 
     /**
+     * the potential loss of the solution of global warming and two confidence values of the loss
+     * that qualify no value, because each names a place that the loss does not name
+     *
+     * @return value_list_ui the loss and two confidence values without a qualified value
+     */
+    function value_list_confidence_unmatched_ui(): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $conf = $t_wrd->word_confidence()->phrase();
+        $percent = $t_wrd->word_percent()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$problem, $t_trp->reduce_emissions()->phrase(), $potential, $loss,
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase()], 2.2));
+        $lst->add($this->value_for_phrases([$problem, $t_wrd->word_zh()->phrase(), $potential, $loss, $conf, $percent], 0.2));
+        $lst->add($this->value_for_phrases([$problem, $t_wrd->word_ch()->phrase(), $potential, $loss, $conf, $percent], 0.3));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values related to the word Zurich but assigned to phrases of a different impact
      * so that the sort by impact and the display on the default word page can be tested
      * @return value_list with values related to Zurich of a low and a high impact

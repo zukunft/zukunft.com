@@ -152,6 +152,11 @@ design that `url_var::DISPLAY_LIST_DESIGN` names, else `frontend.layout.table.de
 of `frontend.layout.table.designs` names colours of `colours.page`, so that it also fits the dark mode. A new design
 needs a row in `def::TABLE_DESIGNS` and `value_list::TABLE_DESIGN_NAMES`.
 
+The "export as csv" entry of the edit menu calls the page with `url_var::DISPLAY_LIST_CSV` = 1: `http/view.php` then
+sends `data_object::table_csv` as a download instead of the page, or the page with a message if it has no value table.
+The csv has the selected columns and every row, also behind the limit of the page, and the numbers without rounding,
+variance and confidence; a text that a spreadsheet would run as a formula starts with an apostrophe.
+
 The calculator editor (`system_page::calculator_editor`) has no page without the
 script: it renders the empty host, the answer of the phraseData api for the page
 phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the
@@ -945,7 +950,7 @@ the format of the table cell (`5.5a trillion EUR (2.2 – 13.75)`), so the chart
 tells the reader the same as the full table.
 
 Which charts a table offers is data, defined in `solution_prio.json` like the
-column tiers: a chart type word carries the `chart_types` value as its
+column tiers: a chart type triple carries the `chart_types` value as its
 `code_id` (`range bars` → `range_bars`, `scatter plot` → `scatter`), a chart is
 the triple `<chart type> of <column>` (`range bars of potential loss`) or, for
 two columns, `<chart type> of <column> and <column>` with the y column first

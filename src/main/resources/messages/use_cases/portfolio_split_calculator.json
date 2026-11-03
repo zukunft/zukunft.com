@@ -36,8 +36,6 @@
     {"name": "rate"},
     {"name": "exchange"},
     {"name": "expected"},
-    {"name": "portfolio file"},
-    {"name": "exchange rate file"},
     {"name": "assumed"},
     {"name": "modelled"},
     {"name": "percent"},
@@ -170,6 +168,8 @@
   ],
   "triples": [
     {"name": "exchange rate", "from": "rate", "verb": "of", "to": "exchange", "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.", "refs": [{"name": "Exchange rate", "type": "wikipedia"}, {"name": "Q66100", "type": "wikidata"}]},
+    {"name": "portfolio file", "from": "file", "verb": "of", "to": "portfolio"},
+    {"name": "exchange rate file", "from": "file", "verb": "of", "to": "exchange rate"},
     {"name": "ranking number", "from": "ranking", "verb": "with", "to": "number", "description": "an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit"},
     {"name": "second (ranking)", "from": "second", "verb": "must be one of", "to": "ranking number", "description": "the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip"},
     {"name": "bond (finance)", "from": "bond", "verb": "must be one of", "to": "finance", "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest", "refs": [{"name": "Bond (finance)", "type": "wikipedia"}]},

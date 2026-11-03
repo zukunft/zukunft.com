@@ -272,6 +272,8 @@ enum messages: string
     case TABLE_DESIGN_PLAIN = 'table_design_plain';
     case TABLE_DESIGN_BORDERED = 'table_design_bordered';
     case TABLE_DESIGN_UNKNOWN = 'table_design_unknown';
+    case TABLE_EXPORT_CSV = 'table_export_csv';
+    case TABLE_CSV_EMPTY = 'table_csv_empty';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';

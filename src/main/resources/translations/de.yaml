@@ -1260,6 +1260,8 @@ messages:
   table_menu_design: "Darstellung"
   table_unmatched_show: "mit den weiteren Werten"
   table_unmatched_hide: "nur die Werte der Spalten"
+  table_export_csv: "als CSV exportieren"
+  table_csv_empty: "Diese Seite hat keine Tabelle mit Zahlen, daher gibt es nichts als CSV zu exportieren."
   table_design_plain: "ohne Linien und Hintergrund"
   table_design_bordered: "mit Linien und Hintergrund"
   table_design_unknown: "Die Tabellendarstellung z$VarValue$z ist nicht bekannt, daher wird die Standarddarstellung verwendet; bitte im Bearbeitungsmenü eine Darstellung wählen"
