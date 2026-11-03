@@ -9,6 +9,7 @@
 - a verb of a view parameter (`row_verb`, `hierarchy_verb`) is a text in the description of its triple, because a triple cannot point to a verb
 - the tier of an own column is a choice triple from the column item to `mayor`, `main`, `minor` or `marginal`, the to side of the tier keyword, because a triple to `mayor column (system)` itself would be listed by `ui_list::triples_of_types` with the tiers of every table; no code reads the tier of an own column yet
 - `order row (system)` and `table sort` both hold the default sorting of a table, and `order table column (system)` and `table column` both the order of the columns; the code reads `table sort` and `table column` only, so one of each pair should go; until then the sample sets `row_order` as `<column> asc|desc` and has no default sorting, so `row_order` has no triple
+- the phraseData walk of a phrase with own columns keeps every phrase below it as a row, also a kind with rows below it, because a parent row e.g. `Example AG energy` has its own values; a shared word below the table phrase would add its values and results of every other page, so the rows of an own table must be triples of its owner e.g. `Example AG` until the walk can limit the values of a row to the table
 - `row_filter` and `value_conditional_style` hold a minimum number only, although their keywords allow any condition and style rule
 - the options of the table keywords (`dash`, `tooltip`, `scroll`, ...) are defined in the use case file; as part of the keyword set they would belong to `editor_views.json`
 

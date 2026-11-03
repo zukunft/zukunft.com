@@ -529,8 +529,9 @@ class base_ui_tests
         $test_name = '... and to the login view';
         $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN . '"');
         // negative: e.g. the outdated id 61 opened an empty result page with the notice that a change needs a login
-        $test_name = '... but not by the view id';
-        $t->assert_text_not_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN_ID . '"');
+        $test_name = '... but not by a view id';
+        $has_view_id = preg_match('/' . url_var::MASK . '=[0-9]+"/', $start_page) == 1;
+        $t->assert($test_name, $has_view_id, false);
         foreach (test_files::STATIC_PAGES as $static_path) {
             $test_name = 'the static page ' . basename($static_path) . ' has the font and the colours of config.yaml';
             $static_page = file_get_contents($static_path);

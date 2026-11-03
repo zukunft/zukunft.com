@@ -421,6 +421,7 @@ class phrase_data
         $ind_lst = new phrase_list($msg->usr);
         $own_tbl_lst = new phrase_list($msg->usr);
         $tbl_kwd_ids = array_intersect_key($kwd_ids, array_flip(triples::TABLE_KEYWORDS));
+        $col_kwd_ids = array_intersect_key($kwd_ids, [triples::TABLE_COLUMN_CODE_ID => 0]);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
         foreach ($trp_lst->lst() as $trp) {
@@ -430,8 +431,8 @@ class phrase_data
                 $this->add_new($itm_lst, $walked, $kwd_ids, $trp->phrase(), $msg);
             }
             // a phrase with own columns e.g. sector of revenue has the rows of its table below it
-            if ($trp->to_id() == ($kwd_ids[triples::TABLE_COLUMN_CODE_ID] ?? 0)) {
-                $this->add_new($own_tbl_lst, new phrase_list($msg->usr), [], $trp->get_from(), $msg);
+            if (in_array($trp->to_id(), $col_kwd_ids)) {
+                $own_tbl_lst->add($trp->get_from(), false, $msg);
             }
             if ($this->is_calculator_link($trp)) {
                 $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);

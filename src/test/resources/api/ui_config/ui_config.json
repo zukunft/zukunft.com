@@ -29500,11 +29500,11 @@
                 "class": "triple"
             },
             {
-                "id": 2232,
+                "id": 2991,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
-                "from_id": 1858,
+                "from_id": 2045,
                 "from_phrase": {
-                    "id": 1858,
+                    "id": 2045,
                     "name": "9 780674 000780",
                     "description": null,
                     "type_id": 1,
@@ -29524,9 +29524,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2228,
+                "to_id": -2987,
                 "to_phrase": {
-                    "id": 2228,
+                    "id": 2987,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -29537,11 +29537,11 @@
                 "class": "triple"
             },
             {
-                "id": 2231,
+                "id": 2990,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
-                "from_id": 1857,
+                "from_id": 2044,
                 "from_phrase": {
-                    "id": 1857,
+                    "id": 2044,
                     "name": "978-0-674-00078-0",
                     "description": null,
                     "type_id": 1,
@@ -29561,9 +29561,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2228,
+                "to_id": -2987,
                 "to_phrase": {
-                    "id": 2228,
+                    "id": 2987,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -29574,11 +29574,11 @@
                 "class": "triple"
             },
             {
-                "id": 2221,
+                "id": 2980,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
-                "from_id": 1855,
+                "from_id": 2042,
                 "from_phrase": {
-                    "id": 1855,
+                    "id": 2042,
                     "name": "978-0-679-73373-7",
                     "description": null,
                     "type_id": 1,
@@ -29598,9 +29598,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1861,
+                "to_id": 2048,
                 "to_phrase": {
-                    "id": 1861,
+                    "id": 2048,
                     "name": "The Myth of Sisyphus",
                     "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                     "type_id": 1,
@@ -29611,11 +29611,11 @@
                 "class": "triple"
             },
             {
-                "id": 2223,
+                "id": 2982,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
-                "from_id": 1856,
+                "from_id": 2043,
                 "from_phrase": {
-                    "id": 1856,
+                    "id": 2043,
                     "name": "978-0-8021-3098-3",
                     "description": null,
                     "type_id": 1,
@@ -29635,9 +29635,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1862,
+                "to_id": 2049,
                 "to_phrase": {
-                    "id": 1862,
+                    "id": 2049,
                     "name": "Rhinoceros and Other Plays",
                     "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                     "type_id": 1,
@@ -29685,12 +29685,12 @@
                 "class": "triple"
             },
             {
-                "id": 4538,
+                "id": 5198,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2393,
+                "from_id": 2577,
                 "from_phrase": {
-                    "id": 2393,
+                    "id": 2577,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -29892,44 +29892,44 @@
                 "class": "triple"
             },
             {
-                "id": 1858,
+                "id": 2045,
                 "name": "9 780674 000780",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2228,
+                "id": 2987,
                 "name": "A Theory of Justice, revised edition",
                 "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                 "class": "triple"
             },
             {
-                "id": 1857,
+                "id": 2044,
                 "name": "978-0-674-00078-0",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1855,
+                "id": 2042,
                 "name": "978-0-679-73373-7",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1861,
+                "id": 2048,
                 "name": "The Myth of Sisyphus",
                 "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1856,
+                "id": 2043,
                 "name": "978-0-8021-3098-3",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1862,
+                "id": 2049,
                 "name": "Rhinoceros and Other Plays",
                 "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                 "type_id": 1,
@@ -29949,7 +29949,7 @@
                 "class": "triple"
             },
             {
-                "id": 2393,
+                "id": 2577,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30037,7 +30037,7 @@
                 "class": "triple"
             },
             {
-                "id": 3164,
+                "id": 3824,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1186,
                 "from_phrase": {
@@ -30061,9 +30061,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3122,
+                "to_id": -3782,
                 "to_phrase": {
-                    "id": 3122,
+                    "id": 3782,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -30524,11 +30524,11 @@
                 "class": "triple"
             },
             {
-                "id": 2233,
+                "id": 2992,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
-                "from_id": 1860,
+                "from_id": 2047,
                 "from_phrase": {
-                    "id": 1860,
+                    "id": 2047,
                     "name": "CH0038863350",
                     "description": null,
                     "type_id": 1,
@@ -30548,9 +30548,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2229,
+                "to_id": -2988,
                 "to_phrase": {
-                    "id": 2229,
+                    "id": 2988,
                     "name": "Nestl\u00e9 registered share",
                     "description": "the registered share of Nestl\u00e9 S.A.",
                     "type_id": null,
@@ -30741,7 +30741,7 @@
                 "class": "word"
             },
             {
-                "id": 3122,
+                "id": 3782,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -30888,13 +30888,13 @@
                 "class": "word"
             },
             {
-                "id": 1860,
+                "id": 2047,
                 "name": "CH0038863350",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2229,
+                "id": 2988,
                 "name": "Nestl\u00e9 registered share",
                 "description": "the registered share of Nestl\u00e9 S.A.",
                 "class": "triple"
@@ -31051,11 +31051,11 @@
                 "class": "triple"
             },
             {
-                "id": 2230,
+                "id": 2989,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
-                "from_id": 1859,
+                "from_id": 2046,
                 "from_phrase": {
-                    "id": 1859,
+                    "id": 2046,
                     "name": "DE0007100000",
                     "description": null,
                     "type_id": 1,
@@ -31075,9 +31075,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2218,
+                "to_id": -2977,
                 "to_phrase": {
-                    "id": 2218,
+                    "id": 2977,
                     "name": "Mercedes-Benz Group share",
                     "description": "the registered share of Mercedes-Benz Group AG",
                     "type_id": null,
@@ -31314,11 +31314,11 @@
                 "class": "triple"
             },
             {
-                "id": 3072,
+                "id": 3732,
                 "name": "g\/kWh is symbol for gram per kWh",
-                "from_id": 2210,
+                "from_id": 2395,
                 "from_phrase": {
-                    "id": 2210,
+                    "id": 2395,
                     "name": "g\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -31338,9 +31338,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2213,
+                "to_id": -2972,
                 "to_phrase": {
-                    "id": 2213,
+                    "id": 2972,
                     "name": "gram per kWh",
                     "description": "the unit of the emission intensity of electricity",
                     "type_id": 2,
@@ -31719,13 +31719,13 @@
                 "class": "triple"
             },
             {
-                "id": 1859,
+                "id": 2046,
                 "name": "DE0007100000",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2218,
+                "id": 2977,
                 "name": "Mercedes-Benz Group share",
                 "description": "the registered share of Mercedes-Benz Group AG",
                 "class": "triple"
@@ -31800,13 +31800,13 @@
                 "class": "triple"
             },
             {
-                "id": 2210,
+                "id": 2395,
                 "name": "g\/kWh",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2213,
+                "id": 2972,
                 "name": "gram per kWh",
                 "description": "the unit of the emission intensity of electricity",
                 "type_id": 2,
@@ -31982,11 +31982,11 @@
                 "class": "triple"
             },
             {
-                "id": 3124,
+                "id": 3784,
                 "name": "kg\/kWh is symbol for kg per kWh",
-                "from_id": 2211,
+                "from_id": 2396,
                 "from_phrase": {
-                    "id": 2211,
+                    "id": 2396,
                     "name": "kg\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32006,9 +32006,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3037,
+                "to_id": -3697,
                 "to_phrase": {
-                    "id": 3037,
+                    "id": 3697,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -32284,11 +32284,11 @@
                 "class": "triple"
             },
             {
-                "id": 3120,
+                "id": 3780,
                 "name": "kWh\/a is symbol for kilowatthours per year",
-                "from_id": 2208,
+                "from_id": 2393,
                 "from_phrase": {
-                    "id": 2208,
+                    "id": 2393,
                     "name": "kWh\/a",
                     "description": null,
                     "type_id": 1,
@@ -32308,9 +32308,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3068,
+                "to_id": -3728,
                 "to_phrase": {
-                    "id": 3068,
+                    "id": 3728,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -32321,11 +32321,11 @@
                 "class": "triple"
             },
             {
-                "id": 3121,
+                "id": 3781,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
-                "from_id": 2209,
+                "from_id": 2394,
                 "from_phrase": {
-                    "id": 2209,
+                    "id": 2394,
                     "name": "kWh\/kWp\u00b7a",
                     "description": null,
                     "type_id": 1,
@@ -32345,9 +32345,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3069,
+                "to_id": -3729,
                 "to_phrase": {
-                    "id": 3069,
+                    "id": 3729,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -32670,13 +32670,13 @@
                 "class": "word"
             },
             {
-                "id": 2211,
+                "id": 2396,
                 "name": "kg\/kWh",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3037,
+                "id": 3697,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -32755,26 +32755,26 @@
                 "class": "word"
             },
             {
-                "id": 2208,
+                "id": 2393,
                 "name": "kWh\/a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3068,
+                "id": 3728,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
                 "class": "triple"
             },
             {
-                "id": 2209,
+                "id": 2394,
                 "name": "kWh\/kWp\u00b7a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3069,
+                "id": 3729,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33852,7 +33852,7 @@
                 "class": "triple"
             },
             {
-                "id": 3123,
+                "id": 3783,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -33876,9 +33876,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3071,
+                "to_id": -3731,
                 "to_phrase": {
-                    "id": 3071,
+                    "id": 3731,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34578,7 +34578,7 @@
                 "class": "word"
             },
             {
-                "id": 3071,
+                "id": 3731,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,
@@ -35728,7 +35728,7 @@
                 "class": "word"
             },
             {
-                "id": 1873,
+                "id": 2060,
                 "name": "kWp",
                 "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
                 "type_id": 2,
@@ -36128,21 +36128,12 @@
                 "latex": "\\text{htp} = \\text{htp},\\text{%} \\cdot \\text{global},\\text{human},\\text{population}"
             },
             {
-                "id": 109,
-                "name": "welfare damage share",
-                "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-                "type_id": 1,
-                "user_text": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
-                "ref_text": "{t182},{w160},{w297}={t182},{w160},{w304}*{w297},{w304},{w163}",
-                "latex": "d_{htp} = d_{GDP} \\cdot w"
-            },
-            {
                 "id": 117,
                 "name": "person years per billion USD by the carbon border tariff",
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1247},{w163}={t206},{t208}\/(({t206},{w1249}+{t206},{w1246})\/2)",
+                "ref_text": "{t1250},{w163}={t206},{t208}\/(({t206},{w1249}+{t206},{w1246})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]
