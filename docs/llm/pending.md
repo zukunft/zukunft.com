@@ -2062,14 +2062,40 @@ http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
 | `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
 | `view_select.php` | views tab of the word and triple page | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
 
+### bugs found while checking http_old
+
+All found by reading the code, none by a test run; confirm each with a failing test before the fix.
+
+**Code**
+
+1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
+   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
+2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
+   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
+3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
+   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
+   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
+   never-fail-silently violation.
+4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
+   about the verb, and it writes nothing (the update is commented out, the db field is missing).
+
+**Documentation**
+
+5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
+   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
+   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
+   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
+   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
+   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
+   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
+   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
+   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
+   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
+   seed view; m=20 is now even the value add view instead of the value del view.
+
 1. **List the functionality to move per script.** Done: see the table above.
-2. **Fix the defects found during the check,** each with a positive and a negative unit test:
-   - `web/verb/verb.php::url_mapper` sets `frm_name` from `url_var::IMPACT` instead of `url_var::NAME_IN_FORMULA`.
-   - `system_form::form_field_name_in_formulas` uses the label `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of
-     `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
-   - `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula only to the
-     local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is found, so the verb is added
-     anyway (found by reading the code, confirm it with the negative test first).
+2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
+   by replacing the numbers with the consts.
 3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
    `verb_edit` (appended component position, no new component), with the workflow snapshots.
 4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
