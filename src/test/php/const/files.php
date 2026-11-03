@@ -71,6 +71,9 @@ class files
     // the data that api/phraseData returns at least for the example PV installation
     CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // the phrase data of the row phrase of the table editor sample; only the received json is written, as the seed of use_cases/table_editor_sample.html
+    CONST string PHRASE_DATA_TABLE_EDITOR_NAME = 'phrase_data_table_editor';
+    CONST string PHRASE_DATA_TABLE_EDITOR = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_TABLE_EDITOR_NAME . self::JSON;
     // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
     CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
     // the hand made sample of the calculator editor json, which uses every proposed calculator element
@@ -169,7 +172,7 @@ class files
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
-    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL];
+    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL, self::PHRASE_DATA_TABLE_EDITOR];
 
     // the static forward pages in the docroot by their url path, which the test run rewrites
     // from the view of api::FORWARD_VIEWS (see base_ui_tests)

@@ -329,10 +329,10 @@ const COLUMN_PHRASES = [
 
 /* ---------- default view definition ---------- */
 const DEFAULT_VIEW = {
-  columns: { column_level: 'major', columns_major: ['2024', '2025'], columns_main: ['2023', 'growth'], columns_minor: ['2022', 'share'], columns_all: ['source', 'confidence'], column_order_rule: 'defined', column_frozen: 1, header_rotate: false, header_show_unit: true, header_label: 'full', column_pivot_phrase: 'year' },
-  rows: { row_phrase: 'sector of revenue', row_verb: 'is a', row_direction: 'subject', row_filter_min: '', row_order_col: '', row_order_dir: 'asc', row_limit: 50, row_page_size: 6, row_show_all: false, row_empty: 'show', row_label_mode: 'name', row_pinned: '' },
+  columns: { column_level: 'mayor', column_mayor: ['2024', '2025'], column_main: ['2023', 'growth'], column_minor: ['2022', 'share'], column_marginal: ['source', 'confidence'], column_order_rule: 'listed', column_frozen: 1, header_rotate: false, header_show_unit: true, header_label: 'full', column_pivot_phrase: 'year' },
+  rows: { row_phrase: 'sector of revenue', row_verb: 'is a', row_direction: 'subject', row_filter: '', row_order: '', row_limit: 50, row_page_size: 6, row_show_all: false, row_empty: 'show', row_label_mode: 'name', row_pinned: '' },
   hierarchy: { hierarchy_verb: 'is part of', hierarchy_expand: 'expanded', hierarchy_max_depth: 2, hierarchy_indent: 'indent', hierarchy_parent_value: 'own', hierarchy_orphans: 'bottom', hierarchy_sort_scope: 'siblings' },
-  values: { value_decimals: 0, value_thousands: true, value_scale: '1', value_unit: 'million CHF', value_missing: 'dash', value_delta: 'none', value_show_source: 'tooltip', value_show_confidence: false, value_highlight_min: '', value_align: 'auto', value_time: 'latest', value_source_mode: 'preferred' },
+  values: { value_format: '#,##0', value_scale: '1', value_unit: 'million CHF', value_missing: 'dash', value_delta: 'none', value_show_source: 'tooltip', value_show_confidence: false, value_conditional_style: '', value_align: 'auto', value_time: 'latest', value_source_mode: 'preferred' },
   aggregation: { totals_row: 'sum', totals_column: false, subtotals: false, aggregation_scope: 'all' },
   layout: { title: 'Revenue by sector', caption: 'Example AG, fictional figures in million CHF. Click a sector to open its sub-sectors.', density: 'normal', striped: true, borders: 'horizontal', max_width: '100%', transpose: false, responsive_mode: 'scroll' },
   interaction: { sortable: true, searchable: true, selectable: false, drilldown: 'phrase', refresh_mode: 'static' },
@@ -344,12 +344,12 @@ const DEFAULT_VIEW = {
 /* ---------- parameter specification: what the rail shows ---------- */
 const SPEC = [
   { group: 'columns', title: 'Columns', fields: [
-    { key: 'column_level', label: 'Level shown', type: 'select', options: ['major', 'main', 'minor', 'all'] },
-    { key: 'columns_major', label: 'Major columns', type: 'tokens', wide: true, hint: 'always shown' },
-    { key: 'columns_main', label: 'Main columns', type: 'tokens', wide: true, hint: 'added at level main' },
-    { key: 'columns_minor', label: 'Minor columns', type: 'tokens', wide: true, hint: 'added at level minor' },
-    { key: 'columns_all', label: 'All columns', type: 'tokens', wide: true, hint: 'added at level all' },
-    { key: 'column_order_rule', label: 'Order rule', type: 'select', options: ['defined', 'alphabetical', 'by value count'] },
+    { key: 'column_level', label: 'Level shown', type: 'select', options: ['mayor', 'main', 'minor', 'all'] },
+    { key: 'column_mayor', label: 'Mayor columns', type: 'tokens', wide: true, hint: 'always shown' },
+    { key: 'column_main', label: 'Main columns', type: 'tokens', wide: true, hint: 'added at level main' },
+    { key: 'column_minor', label: 'Minor columns', type: 'tokens', wide: true, hint: 'added at level minor' },
+    { key: 'column_marginal', label: 'Marginal columns', type: 'tokens', wide: true, hint: 'added at level all' },
+    { key: 'column_order_rule', label: 'Order rule', type: 'select', options: ['listed', 'alphabetical', 'by value count'] },
     { key: 'column_frozen', label: 'Frozen columns', type: 'number', min: 0, max: 3 },
     { key: 'header_label', label: 'Header label', type: 'select', options: ['full', 'short'] },
     { key: 'header_show_unit', label: 'Unit in header', type: 'check' },
@@ -360,9 +360,8 @@ const SPEC = [
     { key: 'row_phrase', label: 'Row phrase', type: 'text', hint: 'phrase whose related phrases become rows' },
     { key: 'row_verb', label: 'Row verb', type: 'select', options: ['is a', 'is part of', 'has'] },
     { key: 'row_direction', label: 'Direction', type: 'select', options: ['subject', 'object'] },
-    { key: 'row_filter_min', label: 'Filter: min value', type: 'number', hint: 'on the first value column' },
-    { key: 'row_order_col', label: 'Sort column', type: 'text', hint: 'empty = defined order' },
-    { key: 'row_order_dir', label: 'Sort direction', type: 'select', options: ['asc', 'desc'] },
+    { key: 'row_filter', label: 'Filter: min value', type: 'number', hint: 'on the first value column' },
+    { key: 'row_order', label: 'Sort order', type: 'text', hint: 'column and asc or desc e.g. growth desc; empty = listed order' },
     { key: 'row_limit', label: 'Row limit', type: 'number', min: 1 },
     { key: 'row_show_all', label: 'Show all (paged)', type: 'check' },
     { key: 'row_page_size', label: 'Page size', type: 'number', min: 1 },
@@ -380,15 +379,14 @@ const SPEC = [
     { key: 'hierarchy_sort_scope', label: 'Sort scope', type: 'select', options: ['siblings', 'flat'] }
   ]},
   { group: 'values', title: 'Values', fields: [
-    { key: 'value_decimals', label: 'Decimals', type: 'number', min: 0, max: 4 },
-    { key: 'value_thousands', label: 'Thousands separator', type: 'check' },
+    { key: 'value_format', label: 'Number format', type: 'text', hint: 'e.g. #,##0.0: the digits after the point, a comma for the thousands separator' },
     { key: 'value_scale', label: 'Scale', type: 'select', options: [['1', 'as stored (million)'], ['0.001', 'billion'], ['1000', 'thousand']] },
     { key: 'value_unit', label: 'Unit', type: 'text' },
     { key: 'value_missing', label: 'Missing value', type: 'select', options: ['dash', 'blank', 'n/a', 'zero'] },
     { key: 'value_delta', label: 'Delta to previous year', type: 'select', options: ['none', 'absolute', 'percent'] },
     { key: 'value_show_source', label: 'Show source', type: 'select', options: ['none', 'tooltip', 'column'] },
     { key: 'value_show_confidence', label: 'Show confidence', type: 'check' },
-    { key: 'value_highlight_min', label: 'Highlight ≥', type: 'number' },
+    { key: 'value_conditional_style', label: 'Highlight ≥', type: 'number' },
     { key: 'value_align', label: 'Alignment', type: 'select', options: ['auto', 'left', 'right', 'center'] },
     { key: 'value_time', label: 'Time reference', type: 'select', options: ['latest', 'specific year', 'average'] },
     { key: 'value_source_mode', label: 'Source mode', type: 'select', options: ['preferred', 'latest', 'average', 'own'] }
@@ -985,9 +983,27 @@ function scaled(n) {
   return result;
 }
 
+/* the digits after the point and the thousands separator of the number format e.g. #,##0.0 */
+function numberFormat() {
+  const pattern = String(view.values.value_format || '0');
+  const point = pattern.indexOf('.');
+  const decimals = point < 0 ? 0 : pattern.slice(point + 1).replace(/[^0#]/g, '').length;
+  const result = { decimals: decimals, grouping: pattern.indexOf(',') >= 0 };
+  return result;
+}
+
+/* the column and the direction of the sort order e.g. growth desc */
+function rowOrder() {
+  const text = String(view.rows.row_order || '').trim();
+  const parts = text.match(/^(.*?)\s+(asc|desc)$/);
+  const result = parts ? { col: parts[1], dir: parts[2] } : { col: text, dir: 'asc' };
+  return result;
+}
+
 function fmtNumber(n, decimalsOverride) {
-  const dec = decimalsOverride !== undefined ? decimalsOverride : Number(view.values.value_decimals) || 0;
-  const opts = { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: !!view.values.value_thousands };
+  const format = numberFormat();
+  const dec = decimalsOverride !== undefined ? decimalsOverride : format.decimals;
+  const opts = { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: format.grouping };
   const result = new Intl.NumberFormat(localeFor(view.context.language), opts).format(n);
   return result;
 }
@@ -1018,15 +1034,15 @@ function escapeHtml(s) {
 /* ---------- column selection ---------- */
 function activeColumns() {
   const lv = view.columns.column_level;
-  let cols = parseList(view.columns.columns_major);
+  let cols = parseList(view.columns.column_mayor);
   if (lv === 'main' || lv === 'minor' || lv === 'all') {
-    cols = cols.concat(parseList(view.columns.columns_main));
+    cols = cols.concat(parseList(view.columns.column_main));
   }
   if (lv === 'minor' || lv === 'all') {
-    cols = cols.concat(parseList(view.columns.columns_minor));
+    cols = cols.concat(parseList(view.columns.column_minor));
   }
   if (lv === 'all') {
-    cols = cols.concat(parseList(view.columns.columns_all));
+    cols = cols.concat(parseList(view.columns.column_marginal));
   }
   if (view.values.value_show_source === 'column' && cols.indexOf('source') < 0) {
     cols.push('source');
@@ -1179,8 +1195,9 @@ function applyExpandRule() {
 }
 
 function sortRows(list, cols) {
-  const col = view.rows.row_order_col;
-  const dir = view.rows.row_order_dir === 'desc' ? -1 : 1;
+  const order = rowOrder();
+  const col = order.col;
+  const dir = order.dir === 'desc' ? -1 : 1;
   const pinned = parseList(view.rows.row_pinned);
   let result = list.slice();
   if (col && cols.indexOf(col) >= 0) {
@@ -1217,7 +1234,7 @@ function visibleRows(cols) {
   applyExpandRule();
   const maxDepth = Number(view.hierarchy.hierarchy_max_depth);
   const orphanMode = view.hierarchy.hierarchy_orphans;
-  const minVal = view.rows.row_filter_min;
+  const minVal = view.rows.row_filter;
   const firstValueCol = cols.filter(isYear)[0] || cols.filter(isNumeric)[0];
   const search = searchText.trim().toLowerCase();
   let result = [];
@@ -1323,7 +1340,7 @@ function deltaHtml(p, year) {
 
 function cellHtml(p, col) {
   const v = cellValue(p, col);
-  const hi = view.values.value_highlight_min;
+  const hi = view.values.value_conditional_style;
   let cls = alignClass(col);
   let title = '';
   let html = '';
@@ -1624,8 +1641,8 @@ function paintTable(m) {
       if (view.interaction.sortable && h.sortable && !m.transposed) {
         cls.push('sortable');
         attrs = ' data-sort="' + escapeHtml(h.col) + '"';
-        if (view.rows.row_order_col === h.col) {
-          arrow = '<span class="arrow">' + (view.rows.row_order_dir === 'desc' ? '▼' : '▲') + '</span>';
+        if (rowOrder().col === h.col) {
+          arrow = '<span class="arrow">' + (rowOrder().dir === 'desc' ? '▼' : '▲') + '</span>';
         }
       }
       if (rotate && i >= 1) {
@@ -1680,7 +1697,7 @@ function paintChrome(total, shown, pageCount) {
 
   const ctl = [];
   ctl.push('<div class="levels" role="group" aria-label="column level">');
-  ['major', 'main', 'minor', 'all'].forEach(function (lv) {
+  ['mayor', 'main', 'minor', 'all'].forEach(function (lv) {
     ctl.push('<button type="button" data-level="' + lv + '" aria-pressed="' + (view.columns.column_level === lv) + '">' + lv + '</button>');
   });
   ctl.push('</div>');
@@ -1758,12 +1775,9 @@ function wireEvents() {
     } else if (t && t.dataset.sort !== undefined) {
       const col = t.dataset.sort === '__label' ? '' : t.dataset.sort;
       pushHistory('');
-      if (view.rows.row_order_col === col) {
-        view.rows.row_order_dir = view.rows.row_order_dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        view.rows.row_order_col = col;
-        view.rows.row_order_dir = 'asc';
-      }
+      const order = rowOrder();
+      const dir = order.col === col && order.dir === 'asc' ? 'desc' : 'asc';
+      view.rows.row_order = col === '' ? '' : col + ' ' + dir;
       syncForm();
       render();
     } else if (t && t.dataset.sel !== undefined) {

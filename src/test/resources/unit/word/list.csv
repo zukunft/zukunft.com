@@ -708,60 +708,60 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 707,1,Price Earning ratio,,,21,,,,,,,,
 708,1,Target Price,,,21,,,,,,,,
 709,1,allowed,,,,,,,,allowed,,,3
-710,1,automatic,,,1,,,,,automatic,,,3
+710,1,automatic,,,,,,,,automatic,,,3
 711,1,backend,,,,,,,,backend,,,3
 712,1,block,,,,,,,,block,,,3
 713,1,cache,,,,,,,,cache,,,3
-714,1,calculation,,A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results,1,,,,,calculation,,,3
+714,1,calculation,,A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results,,,,,,calculation,,,3
 715,1,columns,,,,,,,,columns,,,3
 716,1,config,,,,,,,,config,,,3
-717,1,create,,Bloom level: produce new or original work,1,,,,,create,,,3
-718,1,data,,,1,,,,,data,,,3
+717,1,create,,Bloom level: produce new or original work,,,,,,create,,,3
+718,1,data,,,,,,,,data,,,3
 719,1,database,,An organized collection of data stored and accessed electronically.,,,,,,database,,,3
-720,1,delay,,,1,,,,,delay,,,3
+720,1,delay,,,,,,,,delay,,,3
 721,1,delete,,,,,,,,delete,,,3
 722,1,entry,,,,,,,,entry,,,3
-723,1,file,,,1,,,,,file,,,3
+723,1,file,,,,,,,,file,,,3
 724,1,formula,,,,,,,,formula,,,3
 725,1,freeze,,,,,,,,freeze,,,3
 726,1,frontend,,,,,,,,frontend,,,3
 727,1,future,,,,,,,,future,,,3
 728,1,html,,,,,,,,html,,,3
-729,1,import,,a good or service brought into one country from another.,1,,,,,import,,,3
+729,1,import,,a good or service brought into one country from another.,,,,,,import,,,3
 730,1,insert,,,,,,,,insert,,,3
 731,1,ip,,,,,,,,ip,,,3
-732,1,job,,,1,,,,,job,,,3
+732,1,job,,,,,,,,job,,,3
 733,1,min,,The minimal numeric value.,,,,,,min,,,3
-734,1,name,,,1,,,,,name,,,3
-735,1,page,,,1,,,,,page,,,3
-736,1,phrase,,"a word or a triple, which selects or stores a value",1,,,,,phrase,,,3
+734,1,name,,,,,,,,name,,,3
+735,1,page,,,,,,,,page,,,3
+736,1,phrase,,"a word or a triple, which selects or stores a value",,,,,,phrase,,,3
 737,1,preload,,,,,,,,preload,,,3
 738,1,preselect,,,,,,,,preselect,,,3
-739,1,read,,,1,,,,,read,,,3
+739,1,read,,,,,,,,read,,,3
 740,1,retry,,,,,,,,retry,,,3
 741,1,sec,,,,,,,,sec,,,3
 742,1,select,,,,,,,,select,,,3
-743,1,size,,,1,,,,,size,,,3
-744,1,start,,the first step of a process,1,,,,,start,,,3
+743,1,size,,,,,,,,size,,,3
+744,1,start,,the first step of a process,,,,,,start,,,3
 745,1,sys-conf-value,,keyword to read the numeric value from the config.yaml,,,,,,sys-conf-value,,,3
-746,1,table,,,1,,,,,table,,,3
+746,1,table,,,,,,,,table,,,3
 747,1,triple,,,,,,,,triple,,,3
 748,1,update,,,,,,,,update,,,3
-749,1,user,,"a person who uses a computer, network, or online service.",1,,,,,user,,,3
-750,1,value,,,1,,,,,value,,,3
-751,1,version,,,1,,,,,version,,,3
-752,1,view,,the page that is shown to the user e.g. the next page of a process catch,1,,,,,view,,,3
+749,1,user,,"a person who uses a computer, network, or online service.",,,,,,user,,,3
+750,1,value,,,,,,,,value,,,3
+751,1,version,,,,,,,,version,,,3
+752,1,view,,the page that is shown to the user e.g. the next page of a process catch,,,,,,view,,,3
 753,1,tooltip-comment,,keyword to read the word or triple description from the config.yaml,,,,,,tooltip-comment,,,3
 754,1,source-name,,source-description,,,,,,source-name,,,3
 755,1,pod-user-config,,keyword to read the user configuration for a specific user,,,,,,pod-user-config,,,3
 756,1,general parameters for lists e.g. the number of default entries,,lists,,,,,,general parameters for lists e.g. the number of default entries,,,3
 757,1,also used by the system to force selecting only one value,,most,,,,,,also used by the system to force selecting only one value,,,3
 758,1,also used by the system to select some highlighted entries,,relevant,,,,,,also used by the system to select some highlighted entries,,,3
-759,1,row,,,1,,,,,,,,
-760,1,limit,,,1,,,,,,,,
-761,1,access,,,1,,,,,,,,
+759,1,row,,,,,,,,,,,
+760,1,limit,,,,,,,,,,,
+761,1,access,,,,,,,,,,,
 762,1,log,,,,,,,,,,,
-763,1,storage,,,1,,,,,,,,
+763,1,storage,,,,,,,,,,,
 764,1,MB,,,,,,,,,,,
 765,1,days,,,,,,,,,,,
 766,1,validate,,,,,,,,,,,
@@ -775,7 +775,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 774,1,words,,,,,,,,,,,
 775,1,triples,,,,,,,,,,,
 776,1,references,,,,,,,,,,,
-777,1,sources,,,1,,,,,,,,
+777,1,sources,,,,,,,,,,,
 778,1,values,,,,,,,,,,,
 779,1,formulas,,,,,,,,,,,
 780,1,results,,,,,,,,,,,
@@ -787,76 +787,76 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 786,1,elements,,,,,,,,,,,
 787,1,tables,,,,,,,,,,,
 788,1,levels,,,,,,,,,,,
-789,1,startup,,newly created business seeking scalable growth,1,,,,,,,,
-790,1,pinned,,,1,,,,,,,,
+789,1,startup,,newly created business seeking scalable growth,,,,,,,,,
+790,1,pinned,,,,,,,,,,,
 791,1,problems,,,,,,,,,,,
-792,1,tooltip,,the text shown if the user moves the mouse over a control,1,,,,,,,,
+792,1,tooltip,,the text shown if the user moves the mouse over a control,,,,,,,,,
 793,1,pv,,,,,,,,,,,
 794,1,nnp,,,,,,,,,,,
 795,1,cbam,,,,,,,,,,,
 796,1,portfolio_split,,,,,,,,,,,
 797,1,company_sheet,,,,,,,,,,,
-798,1,panels,,,1,,,,,,,,
+798,1,panels,,,,,,,,,,,
 799,1,component,,,,,,,,,,,
-800,1,list,,phrases in a sorted order e.g. the columns of a table,1,,,,,,,,
+800,1,list,,phrases in a sorted order e.g. the columns of a table,,,,,,,,,
 801,1,entries,,,,,,,,,,,
-802,1,top,,the highest part or group,1,,,,,,,,
-803,1,bottom,,the lowest part or group,1,,,,,,,,
+802,1,top,,the highest part or group,,,,,,,,,
+803,1,bottom,,the lowest part or group,,,,,,,,,
 804,1,test,,,,,,,,,,,
-805,1,output,,,1,,,,,,,,
-806,1,format,,,1,,,,,,,,
-807,1,level,,,1,,,,,,,,
+805,1,output,,,,,,,,,,,
+806,1,format,,,,,,,,,,,
+807,1,level,,,,,,,,,,,
 808,1,tolerance,,,,,,,,,,,
-809,1,distribution,,the way something is shared across a population,1,,,,,,,,
+809,1,distribution,,the way something is shared across a population,,,,,,,,,
 810,1,pods,,,,,,,,,,,
 811,1,api,,,,,,,,,,,
 812,1,message,,,,,,,,,,,
 813,1,permissions,,,,,,,,,,,
-814,1,email,,the electronic mail service,1,,,,,,,,
+814,1,email,,the electronic mail service,,,,,,,,,
 815,1,server,,,,,,,,,,,
 816,1,not,,,,,,,,,,,
 817,1,trusted,,,,,,,,,,,
-818,1,limits,,,1,,,,,,,,
+818,1,limits,,,,,,,,,,,
 819,1,login,,,,,,,,,,,
 820,1,per,,,,,,,,,,,
 821,1,by,,,,,,,,,,,
 822,1,ip-address,,,,,,,,,,,
-823,1,location,,a place on the earth e.g. given by a postal code,1,,,,,,,,
+823,1,location,,a place on the earth e.g. given by a postal code,,,,,,,,,
 824,1,changes,,,,,,,,,,,
 825,1,verbs,,,,,,,,,,,
-826,1,lifetime,,the years a system is operated before it is dismantled,1,,,,,,,,
-827,1,check,,,1,,,,,,,,
-828,1,period,,a length of time with a defined start and end,1,,,,,,,,
-829,1,age,,length of time a person has lived,1,,,,,,,,
+826,1,lifetime,,the years a system is operated before it is dismantled,,,,,,,,,
+827,1,check,,,,,,,,,,,
+828,1,period,,a length of time with a defined start and end,,,,,,,,,
+829,1,age,,length of time a person has lived,,,,,,,,,
 830,1,archive,,,,,,,,,,,
 831,1,path,,,,,,,,,,,
 832,1,dashboard,,,,,,,,,,,
-833,1,threshold,,a level at which something begins or changes,1,,,,,,,,
+833,1,threshold,,a level at which something begins or changes,,,,,,,,,
 834,1,requests,,,,,,,,,,,
 835,1,updates,,,,,,,,,,,
 836,1,request,,,,,,,,,,,
-837,1,hardware,,"the physical parts of a computer system e.g. the processor, the memory and the storage of a desktop computer",1,,,,,,,,
+837,1,hardware,,"the physical parts of a computer system e.g. the processor, the memory and the storage of a desktop computer",,,,,,,,,
 838,1,CPU,,,,,,,,,,,
 839,1,info,,,,,,,,,,,
-840,1,warning,,,1,,,,,,,,
+840,1,warning,,,,,,,,,,,
 841,1,network,,,,,,,,,,,
-842,1,memory,,,1,,,,,,,,
+842,1,memory,,,,,,,,,,,
 843,1,response,,,,,,,,,,,
-844,1,rank,,position in an ordered list,1,,,,,,,,
+844,1,rank,,position in an ordered list,,,,,,,,,
 845,1,impact,,,,,,,,,,,
-846,1,risk,,,1,,,,,,,,
+846,1,risk,,,,,,,,,,,
 847,1,account,,,,,,,,,,,
 848,1,peers,,,,,,,,,,,
-849,1,prediction,,,1,,,,,,,,
+849,1,prediction,,,,,,,,,,,
 850,1,factors,,,,,,,,,,,
-851,1,contribution,,,1,,,,,,,,
+851,1,contribution,,,,,,,,,,,
 852,1,weights,,,,,,,,,,,
-853,1,combination,,"an expression built from a set of terms, e.g. by adding each term multiplied by a coefficient",1,,,,,,,,
-854,1,language,,system of communication,1,,,,,,,,
-855,1,use,,,1,,,,,,,,
+853,1,combination,,"an expression built from a set of terms, e.g. by adding each term multiplied by a coefficient",,,,,,,,,
+854,1,language,,system of communication,,,,,,,,,
+855,1,use,,,,,,,,,,,
 856,1,javascript,,,,,,,,,,,
 857,1,for,,,,,,,,,,,
-858,1,calculator,,a page that calculates results from the inputs of the user for one initial phrase e.g. a PV installation,1,,,,,,,,
+858,1,calculator,,a page that calculates results from the inputs of the user for one initial phrase e.g. a PV installation,,,,,,,,,
 859,1,selections,,,,,,,,,,,
 860,1,web,,,,,,,,,,,
 861,1,mobile,,,,,,,,,,,
@@ -864,37 +864,37 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 863,1,lists,,,,,,,,,,,
 864,1,names,,,,,,,,,,,
 865,1,numbers,,,,,,,,,,,
-866,1,link,,a connection e.g. a bridge or tunnel that connects two places,1,,,,,,,,
+866,1,link,,a connection e.g. a bridge or tunnel that connects two places,,,,,,,,,
 867,1,errors,,,,,,,,,,,
 868,1,related,,,,,,,,,,,
-869,1,verb,,,1,,,,,,,,
+869,1,verb,,,,,,,,,,,
 870,1,separator,,,,,,,,,,,
 871,1,category,,,,,,,,,,,
-872,1,title,,,1,,,,,,,,
-873,1,layout,,,1,,,,,,,,
+872,1,title,,,,,,,,,,,
+873,1,layout,,,,,,,,,,,
 874,1,side,,,,,,,,,,,
-875,1,width,,,1,,,,,,,,
+875,1,width,,,,,,,,,,,
 876,1,logo,,,,,,,,,,,
-877,1,design,,,1,,,,,,,,
+877,1,design,,,,,,,,,,,
 878,1,designs,,,,,,,,,,,
 879,1,plain,,,,,,,,,,,
-880,1,border,,,1,,,,,,,,
-881,1,background,,,1,,,,,,,,
+880,1,border,,,,,,,,,,,
+881,1,background,,,,,,,,,,,
 882,1,bordered,,,,,,,,,,,
 883,1,colours,,,,,,,,,,,
-884,1,grey,,,1,,,,,,,,
+884,1,grey,,,,,,,,,,,
 885,1,deep,,,,,,,,,,,
 886,1,white,,,,,,,,,,,
-887,1,rule,,,1,,,,,,,,
+887,1,rule,,,,,,,,,,,
 888,1,panel,,,,,,,,,,,
-889,1,input,,the data that the user enters for a calculation,1,,,,,,,,
+889,1,input,,the data that the user enters for a calculation,,,,,,,,,
 890,1,changed,,,,,,,,,,,
 891,1,tab,,,,,,,,,,,
-892,1,highlight,,a mark that makes an item stand out e.g. a key row of a result table,1,,,,,,,,
+892,1,highlight,,a mark that makes an item stand out e.g. a key row of a result table,,,,,,,,,
 893,1,shadow,,,,,,,,,,,
 894,1,menu,,,,,,,,,,,
 895,1,faint,,,,,,,,,,,
-896,1,label,,the text that names an input field for the user,1,,,,,,,,
+896,1,label,,the text that names an input field for the user,,,,,,,,,
 897,1,negative,,,,,,,,,,,
 898,1,success,,,,,,,,,,,
 899,1,hover,,,,,,,,,,,
@@ -905,23 +905,23 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 904,1,ink,,,,,,,,,,,
 905,1,subtext,,,,,,,,,,,
 906,1,muted,,,,,,,,,,,
-907,1,line,,a fixed level used as a boundary,1,,,,,,,,
+907,1,line,,a fixed level used as a boundary,,,,,,,,,
 908,1,accent,,,,,,,,,,,
 909,1,soft,,,,,,,,,,,
-910,1,shared,,,1,,,,,,,,
+910,1,shared,,,,,,,,,,,
 911,1,danger,,,,,,,,,,,
 912,1,preview,,,,,,,,,,,
 913,1,text,,,,,,,,,,,
 914,1,field,,,,,,,,,,,
-915,1,section,,a part of a page that can be opened and closed,1,,,,,,,,
-916,1,grid,,an interconnected network for electricity delivery from producers to consumers.,1,,,,,,,,
+915,1,section,,a part of a page that can be opened and closed,,,,,,,,,
+916,1,grid,,an interconnected network for electricity delivery from producers to consumers.,,,,,,,,,
 917,1,word,,,,,,,,,,,
 918,1,what,,,,,,,,,,,
 919,1,behaviour,,,,,,,,,,,
-920,1,detail,,the step of a process with the fine tuning of the assumptions,1,,,,,,,,
+920,1,detail,,the step of a process with the fine tuning of the assumptions,,,,,,,,,
 921,1,decimal,,,,,,,,,,,
 922,1,suggested,,,,,,,,,,,
-923,1,more,,,1,,,,,,,,
+923,1,more,,,,,,,,,,,
 924,1,include,,,,,,,,,,,
 925,1,alias,,,,,,,,,,,
 926,1,same,,,,,,,,,,,
@@ -2634,7 +2634,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 2633,1,preferred,,"chosen before the others, e.g. the value of the preferred source if several sources have a value",1,,,,,,,,
 2634,1,scroll,,"to move the visible part of a page or a table, e.g. a wide table on a small screen",1,,,,,,,,
 2635,1,static,,"not updated by itself, only when the page is read again",1,,,,,,,,
-2636,1,English,,,1,,,,,,,,
+2636,1,English,,"the language of England, the USA and many other countries, e.g. the language of the texts of a table",1,,,,,,,,
 2637,1,csv,,"comma-separated values, a text format with one line per table row",1,,,,,,,,
 2638,1,json,,"JavaScript Object Notation, a text format for structured data",1,,,,,,,,
 2639,1,visible,,"what the user sees at the moment, e.g. the rows of the current page of a table",1,,,,,,,,

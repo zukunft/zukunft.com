@@ -574,6 +574,8 @@ class triple_names
     const string EXAMPLE_TUBE_IMPORT = 'example tube import';
     // the worked example of the use case portfolio_split_calculator.json, selected by the name only
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
+    // a parent row of the table of the use case table_editor_sample.json, selected by the name only
+    const string EXAMPLE_AG_ENERGY = 'Example AG energy';
     // the page phrase of the use case npp_ch_vote.json, selected by the name only
     const string NEW_NPP_VOTE = 'new NPP vote 2027';
     // the beneficiary whose allocation the use case portfolio_split_calculator.json models

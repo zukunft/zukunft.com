@@ -25,6 +25,10 @@
       never walked, because every page phrase links to them; a phrase selector field follows its
       calculator rule instead and adds its options, the phrases that "is a" the field phrase,
       and a repeated input adds its instances, the phrases that "is a" the item phrase
+    - the table keywords (triples::TABLE_KEYWORDS) are never walked either and the choice of a table
+      parameter is a leaf e.g. normal of "sector of revenue density"; a phrase with own columns adds
+      the rows of its table, the phrases that "is a" or "is part of" it with their values and results
+      e.g. "Example AG energy" for "sector of revenue"
     - the values of the phrase resp. of the walked triples with all their phrases, the formulas of the phrases with
       the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
@@ -287,16 +291,17 @@ class phrase_data
      * (docs/llm/pending_prio_2.md "code id of a triple"), and mapped to their code id
      *
      * @param user_message $msg with the requesting user
-     * @return array the phrase ids of the calculator and the field keywords by their code id e.g.
+     * @return array the phrase ids of the calculator, the field and the table keywords by their code id e.g.
      *               system_calculator_label => -2727; these phrases are never walked
      */
     private function keyword_ids(user_message $msg): array
     {
+        $keywords = array_merge(triples::CALCULATOR_KEYWORDS, triples::TABLE_KEYWORDS);
         $trp_lst = new triple_list($msg->usr);
-        $trp_lst->load_by_names(array_keys(triples::CALCULATOR_KEYWORDS), $msg);
+        $trp_lst->load_by_names(array_keys($keywords), $msg);
         $result = [];
         foreach ($trp_lst->lst() as $kwd) {
-            $code_id = triples::CALCULATOR_KEYWORDS[$kwd->name()] ?? '';
+            $code_id = $keywords[$kwd->name()] ?? '';
             if ($code_id != '') {
                 $result[$code_id] = $kwd->phrase()->id();
             }
@@ -414,9 +419,20 @@ class phrase_data
         $src_phr_lst = new phrase_list($msg->usr);
         $lvl_lst = new phrase_list($msg->usr);
         $ind_lst = new phrase_list($msg->usr);
+        $own_tbl_lst = new phrase_list($msg->usr);
+        $tbl_kwd_ids = array_intersect_key($kwd_ids, array_flip(triples::TABLE_KEYWORDS));
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
         foreach ($trp_lst->lst() as $trp) {
+            // a parameter of a table definition e.g. sector of revenue density is a list, so that
+            // its choice e.g. normal is a leaf and the walk does not follow a shared option word
+            if (in_array($trp->to_id(), $tbl_kwd_ids)) {
+                $this->add_new($itm_lst, $walked, $kwd_ids, $trp->phrase(), $msg);
+            }
+            // a phrase with own columns e.g. sector of revenue has the rows of its table below it
+            if ($trp->to_id() == ($kwd_ids[triples::TABLE_COLUMN_CODE_ID] ?? 0)) {
+                $this->add_new($own_tbl_lst, new phrase_list($msg->usr), [], $trp->get_from(), $msg);
+            }
             if ($this->is_calculator_link($trp)) {
                 $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);
             }
@@ -444,6 +460,8 @@ class phrase_data
         $this->add_kinds($next, $walked, $kwd_ids, $src_phr_lst, $msg);
         $this->add_levels($next, $walked, $kwd_ids, $lvl_lst, $msg);
         $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $ind_lst, $msg));
+        // with the parent rows, because a parent row of an own table e.g. Example AG energy has its own values and results
+        $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $own_tbl_lst, $msg, true));
         return $next;
     }
 
@@ -466,12 +484,20 @@ class phrase_data
      * @param phrase_list $next the phrases to walk in the next step
      * @param phrase_list $walked all phrases walked so far
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
-     * @param phrase_list $lvl_lst the tables and the columns of the detail tables
+     * @param phrase_list $lvl_lst the tables and the columns of the detail tables or the phrases with own columns
      * @param user_message $msg with the requesting user
+     * @param bool $with_kinds true to include the phrases with phrases below them e.g. the parent rows of an own table
      * @return phrase_list the phrases at the end of the levels, which are the rows e.g. LISP, but not stock,
      *                     because a kind like stock has the values and results of every use case
      */
-    private function add_levels(phrase_list $next, phrase_list $walked, array $kwd_ids, phrase_list $lvl_lst, user_message $msg): phrase_list
+    private function add_levels(
+        phrase_list  $next,
+        phrase_list  $walked,
+        array        $kwd_ids,
+        phrase_list  $lvl_lst,
+        user_message $msg,
+        bool         $with_kinds = false
+    ): phrase_list
     {
         global $sys;
         $level = $lvl_lst;
@@ -495,7 +521,7 @@ class phrase_data
         }
         $result = new phrase_list($msg->usr);
         foreach ($seen->lst() as $phr) {
-            if (!in_array($phr->id(), $kind_ids)) {
+            if ($with_kinds or !in_array($phr->id(), $kind_ids)) {
                 $result->add($phr, false, $msg);
             }
         }

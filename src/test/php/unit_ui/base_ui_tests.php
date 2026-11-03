@@ -521,6 +521,16 @@ class base_ui_tests
         // the static start page has no php head, so the test run writes the font of every page into it
         $test_name = 'the start page has the font of every page';
         $t->assert_text_contains($test_name, $page_one, '--font-page: ' . def::FALLBACK_FONT . ';');
+        // the signup and the login of the start page open the views by their code id, because the
+        // start page is written by hand and a view id changes if the views are re-pinned
+        $start_page = file_get_contents(test_files::START_PAGE);
+        $test_name = 'the start page links to the signup view by its code id';
+        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::SIGNUP . '"');
+        $test_name = '... and to the login view';
+        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN . '"');
+        // negative: e.g. the outdated id 61 opened an empty result page with the notice that a change needs a login
+        $test_name = '... but not by the view id';
+        $t->assert_text_not_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN_ID . '"');
         foreach (test_files::STATIC_PAGES as $static_path) {
             $test_name = 'the static page ' . basename($static_path) . ' has the font and the colours of config.yaml';
             $static_page = file_get_contents($static_path);

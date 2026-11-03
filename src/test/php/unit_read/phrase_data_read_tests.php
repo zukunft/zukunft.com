@@ -213,6 +213,37 @@ class phrase_data_read_tests
         $other_row_vals = $this->values_by_phrase($vars[json_fields::VALUES] ?? [], word_names::LISP, true);
         $t->assert($test_name, $this->value_keys($other_row_vals), []);
 
+        // the import file is the expected minimum of the walk of a phrase with own columns: the
+        // definition of its table, its rows with their abbreviations, parents, values and sources
+        $t->subheader($ts . 'from walk of a phrase with own columns');
+        $test_name = 'the phrase data of an own table contains every word of its import file';
+        $tbl_sample = json_decode(file_get_contents(files::TABLE_EDITOR_SAMPLE_FILE), true);
+        $phr_tbl = new phrase($t->usr1);
+        $phr_tbl->load_by_name($tbl_sample[json_fields::SELECTION][0] ?? '', $msg);
+        $tbl_vars = $phd->export_json($phr_tbl->id(), phrase_data_walks::FROM, true, $msg);
+        $t->write_api_actual_file(test_files::PHRASE_DATA_TABLE_EDITOR, $tbl_vars);
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::WORDS] ?? []), $this->names($tbl_sample[json_fields::WORDS]), $t::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... every triple, also the rows below the phrase';
+        $tbl_trp_keys = $this->triple_keys($tbl_vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $tbl_trp_keys, $this->triple_keys($tbl_sample[json_fields::TRIPLES]));
+        $test_name = '... every formula';
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::FORMULAS] ?? []), $this->names($tbl_sample[json_fields::FORMULAS]));
+        $test_name = '... every source';
+        $t->assert_contains($test_name, $this->names($tbl_vars[json_fields::SOURCES] ?? []), $this->names($tbl_sample[json_fields::SOURCES]));
+        $test_name = '... every value, also of the parent rows';
+        $t->assert_contains($test_name, $this->value_keys($tbl_vars[json_fields::VALUES] ?? []), $this->value_keys($tbl_sample[json_fields::VALUES]));
+        // negative: the walk stops at the table keywords, which every table definition links to
+        $test_name = '... and not much more objects than the import file';
+        $t->assert_max($test_name, $this->max_object_count($tbl_sample), count($this->objects($tbl_vars)));
+        $test_name = '... with a parent row';
+        $tbl_trp_names = $this->names($tbl_vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $tbl_trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        // negative: the rows are added only for the phrase with own columns
+        $test_name = '... but a page without own columns has none of these rows';
+        $t->assert_contains_not($test_name, $trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
         $val_vars = $phd->export_json($phr->id(), phrase_data_walks::VALUE, false, $msg);
