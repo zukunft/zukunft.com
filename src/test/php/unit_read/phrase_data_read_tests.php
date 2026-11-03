@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\phrase_data_walks;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -243,6 +244,13 @@ class phrase_data_read_tests
         // negative: the rows are added only for the phrase with own columns
         $test_name = '... but a page without own columns has none of these rows';
         $t->assert_contains_not($test_name, $trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        // negative: the walk of a triple ends before its word, because e.g. sector is shared by every page
+        $test_name = '... and none of the triples of the word that the phrase is built from';
+        $t->assert_contains_not($test_name, $tbl_trp_names, [triple_names::PUBLIC_SECTOR]);
+        // negative: export is only a side of the keyword export (system), so the formula that the PV page assigns to it is not added
+        $test_name = '... and no formula of a word that only names a triple';
+        $tbl_frm_names = $this->names($tbl_vars[json_fields::FORMULAS] ?? []);
+        $t->assert_contains_not($test_name, $tbl_frm_names, [formula_names::DELIVERED_ELECTRICITY]);
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';

@@ -1861,8 +1861,8 @@ class test_base
      */
     function fix_volatile_phrase_data_time(string $html): string
     {
-        $seed_ids = system_page::CALC_EDITOR_SEED_ID . '|' . system_page::TABLE_EDITOR_SEED_ID;
-        $pattern = '/(id="(?:' . $seed_ids . ')">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
+        // the table editor embeds its seed with the id of the calculator editor seed
+        $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
         return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
     }
 

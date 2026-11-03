@@ -1,0 +1,35 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "from": "sector of revenue columns 2024",
+                "verb": "is follower of",
+                "to": "sector of revenue columns 2025"
+            },
+            {
+                "from": "sector of revenue columns 2023",
+                "verb": "is follower of",
+                "to": "sector of revenue columns 2024"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": [
+            {
+                "class": "triple",
+                "id": 5737
+            },
+            {
+                "class": "triple",
+                "id": 5738
+            }
+        ]
+    }
+}

@@ -141,6 +141,7 @@ class system_views_read_tests
         $this->run_pv_lifetime_balance_cases($t);
         $this->run_calculator_editor($t);
         $this->run_formula_editor($t);
+        $this->run_table_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t);
         $this->run_portfolio_split_calculator_diff($t);
@@ -590,9 +591,6 @@ class system_views_read_tests
         // the parked table editor of the server with its title and the phrase selector
         $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
             '', [url_var::JAVASCRIPT => url_var::FALSE]);
-        // by default the browser builds the table editor from its seed
-        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
-            test_paths::HTML . test_paths::USE_CASES . test_files::TABLE_EDITOR);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
@@ -654,6 +652,8 @@ class system_views_read_tests
      * @param string $diff_name the file name of the markdown report without the extension
      * @param string $cases_script the script with the CASES of a sample that fills its tables by its script,
      *                             so that the sample is compared as a browser shows it; empty for a sample with its tables in the html
+     * @param bool $page_by_script true if also the generated page is built by its script e.g. the table editor,
+     *                             so that the page is compared as a browser shows it with the same cases script
      * @return void
      */
     private function assert_sample_diff(
@@ -661,26 +661,32 @@ class system_views_read_tests
         string       $sample_name,
         string       $page_name,
         string       $diff_name,
-        string       $cases_script = ''
+        string       $cases_script = '',
+        bool         $page_by_script = false
     ): void
     {
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $sample_file = $sample_name . test_files::HTML;
         $sample_html = $t->path_file($dir . $sample_file);
+        $page_html = $t->path_file($dir . $page_name . test_files::HTML);
         if ($cases_script != '') {
             $sample_html = $this->sample_in_browser($sample_html, $cases_script);
+            if ($page_by_script) {
+                $page_html = $this->sample_in_browser($page_html, $cases_script);
+            }
         }
-        if ($sample_html === null) {
+        if ($sample_html === null or $page_html === null) {
             $t->dsp_warning('no headless browser found, so the differences of ' . $sample_file . ' are not reported');
         } else {
-            $this->assert_sample_items($t, $sample_html, $sample_file, $page_name, $diff_name);
+            $this->assert_sample_items($t, $sample_html, $page_html, $sample_file, $page_name, $diff_name);
         }
     }
 
     /**
      * @param string $sample_html the html code of the sample
-     * @param string $cases_script the script with the CASES of the sample
-     * @return string|null the html code of the sample as a browser shows it after its script has run, null without a browser
+     * @param string $sample_html the html code of the sample or of a generated page that its script builds
+     * @param string $cases_script the script with the CASES of the page
+     * @return string|null the html code of the page as a browser shows it after its script has run, null without a browser
      */
     private function sample_in_browser(string $sample_html, string $cases_script): ?string
     {
@@ -698,6 +704,7 @@ class system_views_read_tests
     /**
      * @param test_cleanup $t the test environment with the test users
      * @param string $sample_html the html code of the sample to compare
+     * @param string $page_html the html code of the generated page to compare
      * @param string $sample_file the file name of the sample
      * @param string $page_name the file name of the generated page without the extension
      * @param string $diff_name the file name of the markdown report without the extension
@@ -706,6 +713,7 @@ class system_views_read_tests
     private function assert_sample_items(
         test_cleanup $t,
         string       $sample_html,
+        string       $page_html,
         string       $sample_file,
         string       $page_name,
         string       $diff_name
@@ -715,7 +723,7 @@ class system_views_read_tests
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $page_file = $page_name . test_files::HTML;
         $sample = $hpd->page_items($sample_html);
-        $page = $hpd->page_items($t->path_file($dir . $page_file));
+        $page = $hpd->page_items($page_html);
 
         // a sub text is a separate part of a cell, also if the html has no white space in front of it
         $test_name = 'the compare reads the parts of a cell the same with and without white space';
@@ -906,15 +914,41 @@ class system_views_read_tests
     }
 
     /**
+     * the table editor of the imported use case table_editor_sample.json: the script builds the editor and
+     * the table from the phrase data of sector of revenue, which the page embeds as the seed; the page is
+     * written to the use case folder next to the hand made table_editor_sample.html and the differences of
+     * the two are reported as a browser shows them, because the html of both is only the host and the json;
+     * the global warming solutions of the start page are the case of a table with own columns, but without
+     * table parameters, so that the editor starts with its defaults, and with more rows than one page
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_table_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::TABLE_EDITOR_NAME, test_files::TABLE_EDITOR, triple_names::SECTOR_OF_REVENUE);
+        $this->assert_sample_diff($t, test_files::TABLE_EDITOR_SAMPLE, test_files::TABLE_EDITOR,
+            test_files::TABLE_EDITOR_DIFF, test_files::TABLE_EDITOR_CASES, true);
+        $this->assert_editor_view($t, views::TABLE_EDITOR_NAME, test_files::TABLE_EDITOR_GLOBAL_WARMING_SOLUTION,
+            triple_names::GLOBAL_WARMING_SOLUTION);
+    }
+
+    /**
      * @param test_cleanup $t the test environment with the test users
      * @param string $view_name the name of the editor view e.g. views::FORMULA_EDITOR_NAME
      * @param string $file_name the name of the snapshot in the use case folder e.g. test_files::FORMULA_EDITOR
+     * @param string $phr_name the name of the page phrase, by default the example PV installation of the calculator editors
      * @return void
      */
-    private function assert_editor_view(test_cleanup $t, string $view_name, string $file_name): void
+    private function assert_editor_view(
+        test_cleanup $t,
+        string       $view_name,
+        string       $file_name,
+        string       $phr_name = triple_names::EXAMPLE_PV_INSTALLATION
+    ): void
     {
         $t->assert_view_by_name($view_name, $t->usr1, new triple($t->usr1),
-            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            $phr_name, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . $file_name);
     }
 

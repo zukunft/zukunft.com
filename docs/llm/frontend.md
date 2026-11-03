@@ -135,15 +135,49 @@ database read test writes `use_cases/formula_editor.html` next to the hand made
 
 ### The table editor
 
-The table editor view (`views::TABLE_EDITOR`) is built by `script/table_editor.js` from a seed
-(`system_page::table_editor`): the phraseData answer with the saved triples and the header of a save, the
-columns to select, the names of the keywords and verbs, the urls and the texts with the prefix `table_editor_`.
-`url_var::JAVASCRIPT` = 0, or a config that allows no javascript for the calculator, shows the components of the
-view instead. The save sends `<phrase> columns` · `has a` · `table column` with one `has a` item per column and a
-`table sort` list of order triples `<condition> of <column>` to the updatePut api; a change of the order changes the
-follower triples of the items. `ui_list::table_with_related_columns` and `value_list::row_orders` use this
-definition of the page phrase itself, else the column tiers and the sort orders of all tables, and the url wins
-over both. The frame below the lists shows the saved table.
+The table editor of a phrase (`views::TABLE_EDITOR`) is, like the calculator editor, a page built in the
+browser by `src/main/resources/script/table_editor.js` with `style/table_editor.css`, whose rules are all nested
+in the host `#tableEditor`. The pod page (`system_page::table_editor`) renders only the stylesheet, the empty host
+`<div id="tableEditor">`, the session token and three json elements:
+
+- `seed`: the `/api/phraseData` answer of the phrase, with the same id as the seed of the calculator editor
+  (`system_page::CALC_EDITOR_SEED_ID`)
+- `tableEditorTexts`: every `table_editor_` message and the `calc_editor_` texts of the top line, by their full
+  message id
+- `tableEditorSettings`: `verbs`, `column`, `words`, `keywords` (the keyword triple per parameter key) and `urls`
+  (`put`, `table` and `no_js`), all from PHP consts
+
+The script renders the table from the seed without an api call. `url_var::JAVASCRIPT` = 0 (`sc=0`), or a config that
+allows no javascript for the calculator, shows the server page with the components of the view.
+
+The definition of a table is data: a triple from the phrase of the table to each table keyword of
+`editor_views.json`. A text parameter is the description of the triple, a number a value with the phrase and the
+keyword, a flag the triple itself and a choice the triples from the parameter triple to the selected phrases (several
+choices ordered by `is follower of`); a flag that is off and an empty parameter have no triple. The own columns are
+the items of the `table column` triple of the phrase, ordered by `is follower of`, each with its tier as a choice
+triple to `mayor`, `main`, `minor` or `marginal`. The rows are the phrases linked to the row phrase by the row verb
+(subject or object side) and the sub-rows those linked by the hierarchy verb; a top row without sub-rows is an orphan.
+The row of a triple of the owner (e.g. `Example AG energy`) shows its to side, the acronym of a row is its
+`is an acronym for` triple, and an `assumed` value with a `confidence` value gives the confidence of the row.
+`ui_list::table_with_related_columns` and `value_list::row_orders` read the same definition of the page phrase, else
+the column tiers and the sort orders of all tables, and the url wins over both.
+
+The phraseData walk of a phrase with own columns adds the rows of its table with their values and results; the walk
+of the built-from chain ends before a word, and the formulas are loaded only for the phrases of the data, not for the
+sides that only name a triple (header of `cfg/export/phrase_data.php`).
+
+Undo, redo, the change count and the save follow the calculator editor: the save posts one `updatePut` body to
+`/api/updatePut/` with the session token, every problem of a save is shown to the user, and a removed parameter is
+deleted with the logged `del()`.
+
+`system_views_read_tests::assert_editor_view` writes `use_cases/table_editor.html`, which `html_page_diff` compares
+with the hand made `use_cases/table_editor_sample.html` (the same script and style with the seed of the use case
+`table_editor_sample.json`) into `use_cases/table_editor_diff.md`; both pages are compared as a headless browser shows
+them after the script has built the editor (`src/test/js/table_editor_cases.js`). The global warming solutions of the
+start page are the second case, `use_cases/table_editor_global_warming_solution.html`: own columns without table
+parameters, so that the editor starts with its defaults, and more rows than one page. The scenarios in `src/test/js` cover each action
+of the editor with a positive and a negative case, and each resulting `updatePut` body is a fixture in
+`src/test/resources/web/table_editor/` with a write test that also reads the saved definition back.
 
 An own column can name its unit, e.g. `potential gain in EUR`. The table then shows only the own columns in their
 order and leaves out every other value, unless `url_var::DISPLAY_LIST_UNMATCHED` = 1 (an entry of the edit menu) adds

@@ -164,18 +164,29 @@ class system_page extends component
         msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
         msg_id::CALCULATOR_SAVE,
     ];
-    // the html ids and the keys of the seed that the table editor script reads (script/table_editor.js)
+    // the html ids and the keys of the settings that the table editor script reads (script/table_editor.js);
+    // the seed has the id of the calculator editor seed, because both are the phraseData answer of the phrase
     const string TABLE_EDITOR_HOST_ID = 'tableEditor';
-    const string TABLE_EDITOR_SEED_ID = 'tableEditorSeed';
-    const string TABLE_EDITOR_SEED_DOC = 'doc';
-    const string TABLE_EDITOR_SEED_COLUMNS = 'columns';
-    const string TABLE_EDITOR_SEED_CONDITIONS = 'conditions';
-    const string TABLE_EDITOR_SEED_NAMES = 'names';
-    const string TABLE_EDITOR_SEED_URLS = 'urls';
-    const string TABLE_EDITOR_SEED_TITLE = 'title';
-    const string TABLE_EDITOR_SEED_TEXTS = 'texts';
+    const string TABLE_EDITOR_TEXTS_ID = 'tableEditorTexts';
+    const string TABLE_EDITOR_SETTINGS_ID = 'tableEditorSettings';
+    const string TABLE_EDITOR_VERBS = 'verbs';
+    const string TABLE_EDITOR_COLUMN = 'column';
+    const string TABLE_EDITOR_WORDS = 'words';
+    const string TABLE_EDITOR_KEYWORDS = 'keywords';
+    const string TABLE_EDITOR_URLS = 'urls';
     const string TABLE_EDITOR_PUT_ROUTE = 'updatePut';
-    // the table editor script gets all messages with this prefix
+    // the names of the verbs that the table editor links the parameters with by the key that the script reads
+    const array TABLE_EDITOR_VERB_NAMES = [
+        'has' => verbs::HAS_NAME,
+        'follow' => verbs::FOLLOW_NAME,
+        'acronym' => verbs::ACRONYM_NAME,
+    ];
+    // the words of a value that the table editor shows as the quality of a number by the key that the script reads
+    const array TABLE_EDITOR_WORD_NAMES = [
+        'assumed' => words::ASSUMED,
+        'confidence' => words::CONFIDENCE,
+    ];
+    // the table editor script gets all messages with this prefix and the calculator editor texts of its top bar
     const string TABLE_EDITOR_TEXT_PREFIX = 'table_editor_';
     // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
     const string CALC_PAGE_HOST_ID = 'calcPage';
@@ -1447,7 +1458,7 @@ class system_page extends component
 
     /**
      * the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script builds
-     * the editor from the seed, so that the editor starts without an api call of the browser
+     * the editor and the table from the seed, so that the editor starts without an api call of the browser
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg with the requesting user and to report an api answer without the phrase data
@@ -1464,50 +1475,53 @@ class system_page extends component
         $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
         if ($is_phrase and $dbo->name() != '' and $cfg != null and $this->calculator_uses_javascript($msg)) {
             $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
             $result = $html->link_style(files::TABLE_EDITOR_STYLE)
-                . $html->div('', styles::TABLE_EDITOR, self::TABLE_EDITOR_HOST_ID)
+                . $html->div('', '', self::TABLE_EDITOR_HOST_ID)
                 . $html->form_session_token()
-                . $html->script_data(self::TABLE_EDITOR_SEED_ID, $this->table_editor_seed($dbo, $msg, $cfg))
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::TABLE_EDITOR_TEXTS_ID, $this->table_editor_texts())
+                . $html->script_data(self::TABLE_EDITOR_SETTINGS_ID, $this->table_editor_settings($dbo->phrase()))
                 . $html->script_src(files::TABLE_EDITOR_SCRIPT);
         }
         return $result;
     }
 
     /**
-     * @param word|triple $dbo the phrase of the page
-     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
-     * @param data_object $cfg the request cache, which says if the phrase data may be read from the api
-     * @return array the phraseData answer with the saved definition, the columns to select, the names and urls
-     *               that the script needs and the translated texts
+     * @param phrase $phr the phrase of the page
+     * @return array the names of the verbs, the own column keyword, the value words and the parameter
+     *               keywords that the script links with and the urls of the save, the table and this page without javascript
      */
-    private function table_editor_seed(word|triple $dbo, user_message $msg, data_object $cfg): array
+    private function table_editor_settings(phrase $phr): array
     {
         $html = new html_base();
-        $table_url = [url_var::MASK => views::TABLE_ID, url_var::ID => $dbo->phrase()->id()];
-        $editor_url = $html->page_url([url_var::MASK => views::TABLE_EDITOR_ID, url_var::ID => $dbo->phrase()->id()]);
+        $table_url = [url_var::MASK => views::TABLE_ID, url_var::ID => $phr->id()];
+        $editor_url = $html->page_url([url_var::MASK => views::TABLE_EDITOR_ID, url_var::ID => $phr->id()]);
         // added afterwards, because page_url keeps only the vars that identify the page
         $no_js_url = html_base::url_set_par($editor_url, url_var::JAVASCRIPT, url_var::FALSE);
         return [
-            self::TABLE_EDITOR_SEED_DOC => $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg),
-            self::TABLE_EDITOR_SEED_COLUMNS => new ui_list()->table_column_candidates($dbo, $msg, $cfg),
-            self::TABLE_EDITOR_SEED_CONDITIONS => triples::TABLE_SORT_CONDITIONS,
-            self::TABLE_EDITOR_SEED_NAMES => [
-                'phrase' => $dbo->name(),
-                'column' => triples::TABLE_COLUMN,
-                'sort' => triples::TABLE_SORT,
-                'has' => verbs::HAS_NAME,
-                'follow' => verbs::FOLLOW_NAME,
-                'of' => verbs::OF_NAME,
-            ],
-            self::TABLE_EDITOR_SEED_URLS => [
+            self::TABLE_EDITOR_VERBS => self::TABLE_EDITOR_VERB_NAMES,
+            self::TABLE_EDITOR_COLUMN => triples::TABLE_COLUMN,
+            self::TABLE_EDITOR_WORDS => self::TABLE_EDITOR_WORD_NAMES,
+            self::TABLE_EDITOR_KEYWORDS => triples::TABLE_EDITOR_KEYWORDS,
+            self::TABLE_EDITOR_URLS => [
                 'put' => $html->url_api(self::TABLE_EDITOR_PUT_ROUTE),
                 'table' => $html->url_with_user($html->page_url($table_url)),
                 'no_js' => $html->url_with_user($no_js_url),
             ],
-            self::TABLE_EDITOR_SEED_TITLE => $this->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR, $dbo),
-            self::TABLE_EDITOR_SEED_TEXTS => $this->message_texts([
-                msg_id::CALCULATOR_SAVE, ...$this->message_ids_by_prefix(self::TABLE_EDITOR_TEXT_PREFIX)]),
         ];
+    }
+
+    /**
+     * @return array the translated texts of the table editor by their message id: all messages with the
+     *               table editor prefix and the calculator editor texts of the top bar, which both editors share
+     */
+    private function table_editor_texts(): array
+    {
+        $table_ids = $this->message_ids_by_prefix(self::TABLE_EDITOR_TEXT_PREFIX);
+        $calc_ids = $this->message_ids_by_prefix(self::CALC_EDITOR_TEXT_PREFIX);
+        return $this->message_texts([msg_id::SYSTEM_TITLE_TABLE_EDITOR, msg_id::CALCULATOR_SAVE, ...$calc_ids, ...$table_ids]);
     }
 
     /**

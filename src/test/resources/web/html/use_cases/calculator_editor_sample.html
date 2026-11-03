@@ -1,16 +1,21 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Calculator Editor - zukunft.com</title>
     <!-- the same stylesheets as every page of the pod, so the navbar, the footer and the colors match -->
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/main/resources/style/style_html.css">
+    <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
     <style>body {
         margin: 0
     }</style>
+    <!-- the theme colours that the pod sets in the page head (html_base::theme_style), e.g. of the navbar -->
+    <style>
+        :root { --font-page: sans-serif; }
+        :root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-success: #198754; --page-warning: #ffc107; --page-hover: #7a9fbf; --page-black: black; color-scheme: light; }
+    </style>
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -123,14 +128,6 @@
         display: none !important;
     }
 
-    body {
-        background: var(--bg);
-        color: var(--ink);
-        font-family: var(--font-ui);
-        font-size: 14px;
-        line-height: 1.45;
-    }
-
     body::before {
         content: "";
         position: fixed;
@@ -190,7 +187,8 @@
         align-items: center;
     }
 
-    .btn {
+    /* only the buttons of the editor, so that the button of the navbar keeps the look of the pod */
+    .editor .btn {
         border: 1px solid var(--line);
         background: var(--surface);
         border-radius: var(--r);
@@ -199,11 +197,11 @@
         white-space: nowrap;
     }
 
-    .btn:hover {
+    .editor .btn:hover {
         border-color: var(--accent);
     }
 
-    a.btn {
+    .editor a.btn {
         text-decoration: none;
         color: inherit;
         display: inline-block;
@@ -215,35 +213,35 @@
         color: var(--ok);
     }
 
-    .btn:disabled {
+    .editor .btn:disabled {
         opacity: .45;
         cursor: default;
         border-color: var(--line);
     }
 
-    .btn.primary {
+    .editor .btn.primary {
         background: var(--accent);
         border-color: var(--accent);
         color: var(--accent-ink);
         font-weight: 500;
     }
 
-    .btn.small {
+    .editor .btn.small {
         padding: 2px 8px;
         font-size: 12px;
     }
 
-    .btn.ghost {
+    .editor .btn.ghost {
         border-color: transparent;
         background: transparent;
     }
 
-    .btn.ghost:hover {
+    .editor .btn.ghost:hover {
         background: var(--accent-soft);
         border-color: transparent;
     }
 
-    .btn.danger {
+    .editor .btn.danger {
         color: var(--danger);
     }
 
@@ -1244,10 +1242,15 @@
     }
 
     /* the editor inside the main container of the pod: full width and left aligned instead of the centred */
-    /* text of the pod body, and the phrase label in its row instead of above the input like a form label */
+    /* text of the pod body, and the phrase label in its row instead of above the input like a form label; */
+    /* only the editor has the editor colours, so that the white page around it is its border like on the pod */
     .editor {
         width: 100%;
         text-align: left;
+        background: var(--bg);
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.45;
     }
 
     .main-container .phrasebar label {
@@ -1271,7 +1274,7 @@
 <!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
 <nav class="navbar site-header fixed-top">
     <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
-        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+        <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
     </a>
     <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
         <input type="hidden" name="m" value="107">

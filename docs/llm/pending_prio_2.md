@@ -6,12 +6,42 @@
 - the formula `share of the total` divides by `"total","revenue"`, but no value or formula gives the total revenue of Example AG yet, because the formula language has no sum over the top-level rows of a table (the sample adds the sectors without a parent); until then the share has no result
 - `growth to the prior period` does the same as the system formula `increase`, only with `growth` as its result phrase
 - the file has no `calc-validation`, so the import does not check the growth and share results
+- the database has no result of `growth to the prior period` either, although every row has the values of two
+  following years; until the cause is found the phraseData answer has no results and the sample calculates the
+  growth and the share in the browser
 - a verb of a view parameter (`row_verb`, `hierarchy_verb`) is a text in the description of its triple, because a triple cannot point to a verb
 - the tier of an own column is a choice triple from the column item to `mayor`, `main`, `minor` or `marginal`, the to side of the tier keyword, because a triple to `mayor column (system)` itself would be listed by `ui_list::triples_of_types` with the tiers of every table; no code reads the tier of an own column yet
 - `order row (system)` and `table sort` both hold the default sorting of a table, and `order table column (system)` and `table column` both the order of the columns; the code reads `table sort` and `table column` only, so one of each pair should go; until then the sample sets `row_order` as `<column> asc|desc` and has no default sorting, so `row_order` has no triple
 - the phraseData walk of a phrase with own columns keeps every phrase below it as a row, also a kind with rows below it, because a parent row e.g. `Example AG energy` has its own values; a shared word below the table phrase would add its values and results of every other page, so the rows of an own table must be triples of its owner e.g. `Example AG` until the walk can limit the values of a row to the table
 - `row_filter` and `value_conditional_style` hold a minimum number only, although their keywords allow any condition and style rule
 - the options of the table keywords (`dash`, `tooltip`, `scroll`, ...) are defined in the use case file; as part of the keyword set they would belong to `editor_views.json`
+
+## table editor script
+
+`script/table_editor.js` builds the editor from the seed, the texts and the settings of the pod page:
+- Load of another phrase: the settings have no url to open the editor of another phrase, so Load only reads the seeded
+  phrase again and shows `calc_editor_offline_only`, whose "not connected to a pod" is wrong on the pod; a `urls.load`
+  of `system_page::table_editor_settings` would solve it
+- the texts, the undo and redo steps and the api call repeat the code of `calculator_editor.js`, because sharing them
+  needs a common script that both editors load
+- the save of a reordered column list sends the new `is follower of` triples before the deletes of the old ones, and
+  `update_put::put` saves all adds before the deletes and stops at the first problem: a delete id that another user has
+  removed already leaves the new follower saved and the old one in place, a follower loop; every delete id should be
+  checked before anything is saved
+- a new column phrase cannot be added in the editor, because the picker suggests only the own columns of the seed and
+  Enter adds only a suggestion (`onPickerKey`, `paintSuggest`); the typed text should be offered as a new column,
+  which the save already adds as a word (`usePhrase`); `update_put_add_column.json` is tested only by the write test
+- the csv export holds the shown texts (`"1,055"`, the dash of a missing value) instead of the numbers, so it depends
+  on the language, and the download is always csv, although `export_formats` also allows json
+- a parameter that has no triple yet and is a select with an option that is no phrase (e.g. `row_verb` "is a") is
+  saved as a choice and would add a word named like the verb; the seed saves `row_verb` and `hierarchy_verb` as
+  descriptions, so this affects only a new table
+- the column keys `growth`, `share`, `source` and `total` and the options of the select fields are names in the code,
+  shown untranslated; growth and share are calculated in the browser until the results exist (see above)
+- the tests of a save (`update_put_write_tests::run_table_editor`) check the follower triples, not the column order
+  of a phraseData walk, and `cleanup_change_log` finds the log of a deleted triple or word by its name, so the log
+  of the deleted seed rows stays; `test_base::delete_change_log_of_obj` callable by id would close this, also for the
+  calculator scenarios
 
 ## case name of a calculator page
 

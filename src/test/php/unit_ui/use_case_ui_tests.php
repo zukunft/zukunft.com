@@ -96,8 +96,10 @@ class use_case_ui_tests
 
     // a save button for the test of the buttons of the input list
     const string CALC_SAVE_HTML = '<form id="save"></form>';
-    // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js)
+    // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js and table_editor_scenarios.js)
     const string PUT_MESSAGE_ID = 'putMessage';
+    // the reason of the pod that refuses the save of the table editor (REFUSED_MESSAGE of table_editor_scenarios.js)
+    const string TABLE_REFUSED_MESSAGE = 'the user is not allowed to change this table';
     // the time of the save is replaced by this fixed time, so the message can be compared with the expected file
     const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
     // the result of a scenario that has not ended in the browser e.g. because a selector no longer matches
@@ -603,6 +605,27 @@ class use_case_ui_tests
         // negative: a component without a page phrase e.g. in a preview has no editor to show
         $test_name = '... but nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the table editor is built by its script into the host from the phrase data like the calculator editor
+        $test_name = 'the table editor of a phrase loads the editor script';
+        $tbl_editor_html = new system_page()->table_editor($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->script_src(files::TABLE_EDITOR_SCRIPT));
+        $test_name = '... into its host with the style of the editor';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->div('', '', system_page::TABLE_EDITOR_HOST_ID));
+        $test_name = '... with the phrase data as the seed of the script';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        $test_name = '... and the session token, which the save sends to the api in the csrf header';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->form_session_token());
+        $test_name = '... and the keyword of each parameter field in the settings';
+        $kwd_json = json_encode([system_page::TABLE_EDITOR_KEYWORDS => triples::TABLE_EDITOR_KEYWORDS]);
+        $t->assert_text_contains($test_name, $tbl_editor_html, substr($kwd_json, 1, -1));
+        $test_name = '... and the texts of the top bar that the table editor shares with the calculator editor';
+        $t->assert_text_contains($test_name, $tbl_editor_html, json_encode(msg_id::CALC_EDITOR_UNDO->value) . ':');
+        // negative: a page without a phrase shows the page of the server, so it has no settings
+        $test_name = '... but nothing for a page without a phrase';
+        $t->assert($test_name, new system_page()->table_editor(new word_ui(), $msg, $dto), '');
+        // negative: without the request cache the page of the server is shown
+        $test_name = '... and nothing without the request cache';
+        $t->assert($test_name, new system_page()->table_editor($wrd, $msg, null), '');
         // the formula editor is built by its script into the host like the calculator editor
         $test_name = 'the formula editor of a phrase loads the editor script';
         $frm_editor_html = $this->render($t_cmp->component_formula_editor(), $wrd, $msk, $dto, $msg);
@@ -635,10 +658,6 @@ class use_case_ui_tests
         $fixed = (new DateTime(test_const::DUMMY_DATETIME))->format(phrase_data::TIME_FORMAT);
         $seed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $later]);
         $fixed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $fixed]);
-        $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
-        $test_name = '... also of the seed of the table editor';
-        $seed_html = $html->script_data(system_page::TABLE_EDITOR_SEED_ID, [system_page::TABLE_EDITOR_SEED_DOC => [json_fields::TIME => $later]]);
-        $fixed_html = $html->script_data(system_page::TABLE_EDITOR_SEED_ID, [system_page::TABLE_EDITOR_SEED_DOC => [json_fields::TIME => $fixed]]);
         $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
         // negative: a time outside the seed is a real part of the page and stays
         $test_name = '... but not a time outside the seed';
@@ -1163,6 +1182,7 @@ class use_case_ui_tests
         $this->table_editor_tests($t, $ts);
         $this->calculator_save_tests($t, $ts);
         $this->calculator_editor_scenario_tests($t, $ts);
+        $this->table_editor_scenario_tests($t, $ts);
 
         $t->subheader($ts . 'calculation result');
         // the page phrase Zurich has the result column 2019, the signed row group city with the rows
@@ -2003,7 +2023,7 @@ class use_case_ui_tests
         if ($browser_name == '') {
             $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
         } else {
-            $page = $this->scenario_page($brw);
+            $page = $this->scenario_page($brw, test_files::CALCULATOR_EDITOR, test_files::CALCULATOR_EDITOR_SCENARIOS);
             // the scenarios that save a change by the description of the test
             $saved = [
                 test_files::SCENARIO_AUTARKY_FORMULA => 'the changed expression of a formula is sent as its user text',
@@ -2042,25 +2062,99 @@ class use_case_ui_tests
     }
 
     /**
-     * a copy of the calculator editor snapshot that loads the scripts of this checkout and the scenarios
+     * the user actions of a scenario in the table editor snapshot create the update put message of the save,
+     * the exported csv or the problem that the editor shows, which is compared with the expected text; the
+     * actions run in a headless browser, so without a browser the tests are skipped with a warning
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function table_editor_scenario_tests(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        $t->subheader($ts . 'table editor scenario in ' . $browser_name);
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the table editor scenario tests are skipped');
+        } else {
+            $page = $this->scenario_page($brw, test_files::TABLE_EDITOR, test_files::TABLE_EDITOR_SCENARIOS);
+            $res_path = test_paths::WEB_RES . test_files::TABLE_EDITOR . DIRECTORY_SEPARATOR;
+            // the scenarios that save a change by the description of the test
+            $saved = [
+                test_files::TABLE_SCENARIO_ADD_COLUMN_TO_TIER => 'a column added to another tier is sent as new follower and tier triples',
+                test_files::TABLE_SCENARIO_MOVE_COLUMN => 'a column moved to the left is sent as new and deleted follower triples',
+                test_files::TABLE_SCENARIO_REMOVE_COLUMN => 'a removed column is sent as its deleted triples',
+                test_files::TABLE_SCENARIO_SORT_COLUMN => 'a sort by a column header is sent as the description of the row order triple',
+                test_files::TABLE_SCENARIO_COLUMN_ORDER_RULE => 'a changed choice is sent as a new choice triple and the deleted old one',
+                test_files::TABLE_SCENARIO_HEADER_ROTATE => 'a flag that is turned on is sent as a new flag triple',
+                test_files::TABLE_SCENARIO_ROW_LIMIT => 'a changed row limit is sent as the number of its value',
+                test_files::TABLE_SCENARIO_UNDO => 'an undone change is not sent, but the change before it',
+                test_files::TABLE_SCENARIO_REDO => 'a redone change is sent',
+                test_files::TABLE_SCENARIO_DISCARD_UNDO => 'an undone discard sends the discarded changes',
+                test_files::TABLE_SCENARIO_TITLE => 'a changed title is sent as the description of its parameter triple',
+            ];
+            foreach ($saved as $scenario => $test_name) {
+                $put = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $put,
+                    $res_path . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON, test_files::JSON);
+            }
+            // the scenarios that export the table as csv
+            $exported = [
+                test_files::TABLE_SCENARIO_EXPORT => 'the export is the shown table as csv with its sources',
+                test_files::TABLE_SCENARIO_EXPORT_NO_ROWS => '... and has no row if the search matches no row',
+            ];
+            foreach ($exported as $scenario => $test_name) {
+                $csv = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $csv, $res_path . $scenario . test_files::CSV);
+            }
+            // negative: the scenarios that end without a change send nothing
+            $unchanged = [
+                test_files::TABLE_SCENARIO_ADD_COLUMN_USED => '... but nothing is sent for a column of another tier typed into the picker',
+                test_files::TABLE_SCENARIO_MOVE_COLUMN_FIRST => '... nor for the first column moved to the left',
+                test_files::TABLE_SCENARIO_REMOVE_COLUMN_ADDED_AGAIN => '... nor for a column removed and added again',
+                test_files::TABLE_SCENARIO_SORT_LABEL => '... nor for a sort by the label, which is the saved order',
+                test_files::TABLE_SCENARIO_ROW_LIMIT_BACK => '... nor for the saved row limit typed again',
+                test_files::TABLE_SCENARIO_UNDO_ALL => '... nor for a change that is undone',
+                test_files::TABLE_SCENARIO_REDO_AFTER_NEW_STEP => '... nor for a redo after a new step',
+                test_files::TABLE_SCENARIO_DISCARD => '... nor for discarded changes',
+                test_files::TABLE_SCENARIO_SAVE_UNCHANGED => '... nor for a save without a change',
+            ];
+            foreach ($unchanged as $scenario => $test_name) {
+                $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
+            }
+            // negative: a refused save shows the reason of the pod
+            $test_name = 'a refused save shows the reason of the pod to the user';
+            $refused = $this->scenario_message($brw, $page, test_files::TABLE_SCENARIO_SAVE_REFUSED);
+            $t->assert($test_name, $refused, $mtr->txt(msg_id::TABLE_EDITOR_REFUSED) . ' ' . self::TABLE_REFUSED_MESSAGE);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * a copy of an editor snapshot that loads the scripts of this checkout and the scenarios
      *
      * @param headless_browser $brw the started headless browser
+     * @param string $page the name of the snapshot in the use case folder e.g. test_files::CALCULATOR_EDITOR
+     * @param string $scenarios the path of the scenarios script e.g. test_files::CALCULATOR_EDITOR_SCENARIOS
      * @return string the path of the copy in the temp folder, which the caller removes
      */
-    private function scenario_page(headless_browser $brw): string
+    private function scenario_page(headless_browser $brw, string $page, string $scenarios): string
     {
         $html = file_get_contents(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
-            . test_files::CALCULATOR_EDITOR . test_files::HTML);
-        return $brw->page_copy($html, test_files::CALCULATOR_EDITOR_SCENARIOS);
+            . $page . test_files::HTML);
+        return $brw->page_copy($html, $scenarios);
     }
 
     /**
      * run the user actions of a scenario in the headless browser and read the message of the save
      *
      * @param headless_browser $brw the started headless browser
-     * @param string $page the path of the calculator editor page with the scenarios
+     * @param string $page the path of the editor page with the scenarios
      * @param string $scenario the name of the scenario e.g. test_files::SCENARIO_AUTARKY_FORMULA
-     * @return string the update put message as formatted json with a fixed time, an empty string if nothing is saved
+     * @return string the update put message as formatted json with a fixed time, an empty string if nothing is saved,
+     *                the text of a scenario that ends without a message e.g. the exported csv
      *                or SCENARIO_NOT_ENDED if the scenario has failed, so that a failure never passes as nothing saved
      */
     private function scenario_message(headless_browser $brw, string $page, string $scenario): string
@@ -2070,8 +2164,10 @@ class use_case_ui_tests
             $result = self::SCENARIO_NOT_ENDED;
         } elseif ($result != '') {
             $json = json_decode($result, true);
-            $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
-            $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            if (is_array($json)) {
+                $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
+                $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
         }
         return $result;
     }

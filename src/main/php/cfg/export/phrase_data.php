@@ -17,7 +17,8 @@
     - FROM: the walked phrases, e.g. the whole calculator tree of a calculator page
 
     the data of a phrase are
-    - for the from walk the walked phrases: the phrase, the phrases it is built from and every triple whose from
+    - for the from walk the walked phrases: the phrase, the triples it is built from (the chain ends before a word
+      e.g. sector of sector of revenue, because every page shares a word) and every triple whose from
       side is a walked phrase; the to side of a triple is walked too if it is an item ("has a")
       e.g. "PV capacity" of "PV installation input PV capacity", because the to side of another
       triple is a category e.g. "climate solution", which links to the data of other phrases
@@ -29,8 +30,8 @@
       parameter is a leaf e.g. normal of "sector of revenue density"; a phrase with own columns adds
       the rows of its table, the phrases that "is a" or "is part of" it with their values and results
       e.g. "Example AG energy" for "sector of revenue"
-    - the values of the phrase resp. of the walked triples with all their phrases, the formulas of the phrases with
-      the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
+    - the values of the phrase resp. of the walked triples with all their phrases, the formulas of these phrases
+      (not of the sides that only name a triple e.g. export of export (system)) with the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
       triple is built from and the sources of the values
     - on request the results of the phrase with their context, the phrases that select the
@@ -208,7 +209,10 @@ class phrase_data
             $this->value_phrase_ids($val_lst, $msg),
             $this->result_phrase_ids($res_lst));
         $phr_lst = $this->complete_phrases($ids, $msg);
-        $frm_lst = $phr_lst->frm_lst($msg);
+        // the formulas of the phrases of the data, but not of the sides that only name a triple, because a
+        // formula that a page assigns to a shared word e.g. export would be added to every page that names it
+        $data_phr_lst = $this->phrases_by_ids(array_values(array_unique($ids)), $msg);
+        $frm_lst = $data_phr_lst->frm_lst($msg);
         $frm_lst->filter_readable_by($usr);
         $this->debug_step('formulas loaded', $frm_lst->count());
         $frm_ids = array_merge($phr_lst->id_lst(), $this->formula_phrase_ids($frm_lst));
@@ -344,7 +348,7 @@ class phrase_data
     /**
      * @param phrase $phr the requested phrase e.g. example PV installation
      * @param user_message $msg with the requesting user
-     * @return phrase_list the phrase and the phrases it is built from e.g. PV installation and installation
+     * @return phrase_list the phrase and the triples it is built from e.g. PV installation, but not the word installation
      */
     private function built_from(phrase $phr, user_message $msg): phrase_list
     {
@@ -364,13 +368,17 @@ class phrase_data
     }
 
     /**
+     * a word ends the chain, because the triples of a shared word e.g. public sector of sector
+     * would add the values, formulas and sources of every page that uses the word
+     *
      * @param int $from_id the phrase id of the from side of the last phrase of the chain or zero for a word
      * @param phrase_list $chain the phrases of the chain so far
-     * @return bool true if the from side is a phrase that the chain does not yet contain
+     * @return bool true if the from side is a triple that the chain does not yet contain
      */
     private function is_new_from(int $from_id, phrase_list $chain): bool
     {
-        return ($from_id != 0 and !$chain->has_id($from_id));
+        $is_triple = $from_id < 0;
+        return ($is_triple and !$chain->has_id($from_id));
     }
 
     /**

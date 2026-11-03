@@ -1,0 +1,22 @@
+sector of revenue,2024,2025
+energy,520,590
+  solar,190,240
+  wind,210,220
+  hydro,120,130
+transport,320,335
+  rail,210,220
+  road,110,115
+services,200,230
+  consulting,120,140
+  maintenance,80,90
+licences,–,–
+other,15,16
+total,"1,055","1,171"
+
+# sources
+# Example AG annual report 2025, p. 12
+# Example AG annual report 2025, p. 14
+# Example AG annual report 2025, p. 16
+# Example AG segment note 7
+# Example AG annual report 2023, p. 11
+# Example AG own estimate

@@ -197,8 +197,6 @@ class triples
     const string TABLE_COLUMN_CODE_ID = 'system_table_column';
     const string TABLE_SORT = 'table sort';
     const string TABLE_SORT_CODE_ID = 'system_table_sort';
-    // the words of the sort conditions that the table editor offers, the name of the word is part of an order triple
-    const array TABLE_SORT_CONDITIONS = ['numeric descending', 'numeric ascending'];
     // the keywords of the parameters of a table (editor_views.json), which only the phraseData walk reads (TABLE_KEYWORDS); the column
     // parameters are not children of column (system), because triples_of_types shows those as column tiers;
     // each group is on the to side of the parent, because the phraseData walk follows the from side of a domain word e.g. export
@@ -834,6 +832,72 @@ class triples
         self::SYSTEM_PERSIST_USER_CHANGES => self::SYSTEM_PERSIST_USER_CHANGES_CODE_ID,
         self::SYSTEM_RESET_TO_DEFAULT => self::SYSTEM_RESET_TO_DEFAULT_CODE_ID,
         self::SYSTEM_VIEW_VERSION => self::SYSTEM_VIEW_VERSION_CODE_ID,
+    ];
+    // the keyword of each parameter field of the table editor by its field key (SPEC of script/table_editor.js)
+    const array TABLE_EDITOR_KEYWORDS = [
+        'column_level' => self::SYSTEM_COLUMN_LEVEL,
+        'column_order_rule' => self::SYSTEM_COLUMN_ORDER_RULE,
+        'column_frozen' => self::SYSTEM_COLUMN_FROZEN,
+        'header_label' => self::SYSTEM_HEADER_LABEL,
+        'header_show_unit' => self::SYSTEM_HEADER_SHOW_UNIT,
+        'header_rotate' => self::SYSTEM_HEADER_ROTATE,
+        'column_pivot_phrase' => self::SYSTEM_COLUMN_PIVOT_PHRASE,
+        'row_phrase' => self::SYSTEM_ROW_PHRASE,
+        'row_verb' => self::SYSTEM_ROW_VERB,
+        'row_direction' => self::SYSTEM_ROW_DIRECTION,
+        'row_filter' => self::SYSTEM_ROW_FILTER,
+        'row_order' => self::SYSTEM_ROW_ORDER,
+        'row_limit' => self::SYSTEM_ROW_LIMIT,
+        'row_show_all' => self::SYSTEM_ROW_SHOW_ALL,
+        'row_page_size' => self::SYSTEM_ROW_PAGE_SIZE,
+        'row_empty' => self::SYSTEM_ROW_EMPTY,
+        'row_label_mode' => self::SYSTEM_ROW_LABEL_MODE,
+        'row_pinned' => self::SYSTEM_ROW_PINNED,
+        'hierarchy_verb' => self::SYSTEM_HIERARCHY_VERB,
+        'hierarchy_expand' => self::SYSTEM_HIERARCHY_EXPAND,
+        'hierarchy_max_depth' => self::SYSTEM_HIERARCHY_MAX_DEPTH,
+        'hierarchy_indent' => self::SYSTEM_HIERARCHY_INDENT,
+        'hierarchy_parent_value' => self::SYSTEM_HIERARCHY_PARENT_VALUE,
+        'hierarchy_orphans' => self::SYSTEM_HIERARCHY_ORPHANS,
+        'hierarchy_sort_scope' => self::SYSTEM_HIERARCHY_SORT_SCOPE,
+        'value_format' => self::SYSTEM_VALUE_FORMAT,
+        'value_scale' => self::SYSTEM_VALUE_SCALE,
+        'value_unit' => self::SYSTEM_VALUE_UNIT,
+        'value_missing' => self::SYSTEM_VALUE_MISSING,
+        'value_delta' => self::SYSTEM_VALUE_DELTA,
+        'value_show_source' => self::SYSTEM_VALUE_SHOW_SOURCE,
+        'value_show_confidence' => self::SYSTEM_VALUE_SHOW_CONFIDENCE,
+        'value_conditional_style' => self::SYSTEM_VALUE_CONDITIONAL_STYLE,
+        'value_align' => self::SYSTEM_VALUE_ALIGN,
+        'value_time' => self::SYSTEM_VALUE_TIME,
+        'value_source_mode' => self::SYSTEM_VALUE_SOURCE_MODE,
+        'totals_row' => self::SYSTEM_TOTALS_ROW,
+        'totals_column' => self::SYSTEM_TOTALS_COLUMN,
+        'subtotals' => self::SYSTEM_SUBTOTALS,
+        'aggregation_scope' => self::SYSTEM_AGGREGATION_SCOPE,
+        'title' => self::SYSTEM_TITLE,
+        'caption' => self::SYSTEM_CAPTION,
+        'density' => self::SYSTEM_DENSITY,
+        'striped' => self::SYSTEM_STRIPED,
+        'borders' => self::SYSTEM_BORDERS,
+        'max_width' => self::SYSTEM_MAX_WIDTH,
+        'transpose' => self::SYSTEM_TRANSPOSE,
+        'responsive_mode' => self::SYSTEM_RESPONSIVE_MODE,
+        'sortable' => self::SYSTEM_SORTABLE,
+        'searchable' => self::SYSTEM_SEARCHABLE,
+        'selectable' => self::SYSTEM_SELECTABLE,
+        'drilldown' => self::SYSTEM_DRILLDOWN,
+        'refresh_mode' => self::SYSTEM_REFRESH_MODE,
+        'language' => self::SYSTEM_LANGUAGE,
+        'time_reference' => self::SYSTEM_TIME_REFERENCE,
+        'profile' => self::SYSTEM_PROFILE,
+        'view_owner' => self::SYSTEM_VIEW_OWNER,
+        'view_shared' => self::SYSTEM_VIEW_SHARED,
+        'export_formats' => self::SYSTEM_EXPORT_FORMATS,
+        'export_scope' => self::SYSTEM_EXPORT_SCOPE,
+        'export_include_sources' => self::SYSTEM_EXPORT_INCLUDE_SOURCES,
+        'persist_user_changes' => self::SYSTEM_PERSIST_USER_CHANGES,
+        'view_version' => self::SYSTEM_VIEW_VERSION,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
