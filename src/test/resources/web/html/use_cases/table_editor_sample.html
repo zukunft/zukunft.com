@@ -1,65 +1,64 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Table View Editor</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Table Editor - zukunft.com</title>
+    <!-- the same stylesheets as every page of the pod, so the navbar, the footer and the colors match -->
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/main/resources/style/style_html.css">
+    <style>body {
+        margin: 0
+    }</style>
+</head>
+<body>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: a parameter rail on the left, the live table and its definition on the right; stacks on narrow screens */
+/* the colours are the ones of calculator_editor_sample.html */
 :root{
-  --bg:#f3f5f7; --surface:#ffffff; --surface-2:#eaeef2; --fg:#1b222b; --muted:#5f6b79; --line:#d5dce4; --line-strong:#aeb8c4;
-  --accent:#0f7f8a; --accent-soft:#d8eff1; --accent-fg:#ffffff; --good:#2b7a3d; --warn:#9a6a00; --danger:#b4322c; --danger-soft:#f7e3e1;
-  --font-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  --radius:4px;
+  --bg:#eef2f8; --surface:#ffffff; --surface-2:#f6f8fc; --ink:#1b2f5c; --muted:#7b88a3; --line:#d2dbe9; --pv-border:#b9c6d6;
+  --accent:#385eb7; --accent-deep:#274b8f; --accent-soft:#dbe4f5; --accent-ink:#ffffff; --ok:#2f7d55; --shared:#8a5a07; --danger:#c23b30; --danger-soft:#fbe4e1;
+  --font-ui:"Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:6px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#13171c; --surface:#1b2128; --surface-2:#232b34; --fg:#e5eaf0; --muted:#98a4b2; --line:#2c3540; --line-strong:#485563;
-    --accent:#45bfc9; --accent-soft:#163a3f; --accent-fg:#0b1a1c; --good:#6fc784; --warn:#e2b64a; --danger:#ef7f78; --danger-soft:#3f2321;
+    --bg:#0e1524; --surface:#151f33; --surface-2:#1a263d; --ink:#e3eaf7; --muted:#8492ad; --line:#2a3a57; --pv-border:#33456a;
+    --accent:#7d9ef0; --accent-deep:#a9c0f7; --accent-soft:#233761; --accent-ink:#0e1524; --ok:#7fd1a3; --shared:#e9b45a; --danger:#f08a80; --danger-soft:#42221f;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#13171c; --surface:#1b2128; --surface-2:#232b34; --fg:#e5eaf0; --muted:#98a4b2; --line:#2c3540; --line-strong:#485563;
-  --accent:#45bfc9; --accent-soft:#163a3f; --accent-fg:#0b1a1c; --good:#6fc784; --warn:#e2b64a; --danger:#ef7f78; --danger-soft:#3f2321;
+  --bg:#0e1524; --surface:#151f33; --surface-2:#1a263d; --ink:#e3eaf7; --muted:#8492ad; --line:#2a3a57; --pv-border:#33456a;
+  --accent:#7d9ef0; --accent-deep:#a9c0f7; --accent-soft:#233761; --accent-ink:#0e1524; --ok:#7fd1a3; --shared:#e9b45a; --danger:#f08a80; --danger-soft:#42221f;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--font-ui);font-size:14px;line-height:1.45;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.45;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* zukunft.com navbar and footer; on the pod these rules come from bootstrap and style_html.css, here they are inlined */
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--surface)}
-.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.navbar-brand{display:inline-flex;align-items:center;text-decoration:none;color:var(--fg);font-weight:600;font-size:16px;letter-spacing:.01em}
-.logo-nav{height:30px;width:auto;display:block}
-.logo-text{color:var(--accent)}
-.site-header form{display:flex;align-items:center;gap:8px;flex:1 1 240px;min-width:0}
-.site-header .form-control{flex:1 1 auto;min-width:0;max-width:800px;padding:5px 10px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg)}
-.site-header .btn-outline-primary{border:1px solid var(--accent);color:var(--accent);background:none;border-radius:var(--radius);padding:5px 12px;cursor:pointer;white-space:nowrap}
-.site-header .btn-outline-primary:hover{background:var(--accent);color:var(--accent-fg)}
-.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.site-header .navbar-nav{list-style:none;margin:0;padding:0;display:flex;gap:6px;margin-left:auto}
-.site-header .navbar-nav>li{display:flex;gap:6px}
-.site-header details{position:relative}
-.site-header summary{list-style:none;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;color:var(--muted)}
-.site-header summary::-webkit-details-marker{display:none}
-.site-header summary:hover,.site-header details[open]>summary{background:var(--surface-2);color:var(--fg)}
-.site-header summary svg{width:20px;height:20px;fill:currentColor}
-.site-header details ul{position:absolute;right:0;top:100%;margin:4px 0 0;padding:4px 0;list-style:none;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,.12);min-width:150px;z-index:35}
-.site-header details ul a{display:block;padding:5px 12px;color:var(--fg);text-decoration:none;white-space:nowrap}
-.site-header details ul a:hover{background:var(--surface-2)}
-.site-footer{border-top:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:12.5px;padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));text-align:center}
-.site-footer p{margin:0;max-width:80ch;margin-inline:auto}
-.site-footer a{color:var(--accent);text-decoration:none}
-.site-footer a:hover{text-decoration:underline}
+/* the editor below the navbar of the pod: left aligned instead of the centred text of the pod body */
+.editor{flex:1;text-align:left}
+/* the pod forces white button text with !important, which is invisible on the light editor buttons */
+.editor .btn{color:var(--ink)!important}
+.editor .btn.primary{color:var(--accent-ink)!important}
 
-.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--surface)}
-.top h1{font-size:17px;font-weight:600;margin:0;letter-spacing:.01em}
-.top p{margin:0;color:var(--muted);max-width:60ch}
-.top .spacer{flex:1}
-.top .actions{display:flex;gap:6px;flex-wrap:wrap}
+/* the top line of the calculator editor: the title, the phrase of the table and the tools */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.brand b{font-size:15px;font-weight:600;letter-spacing:.01em}
+.tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.phrasebar{flex:1 1 auto;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;align-items:center;min-width:0;margin:0}
+.phrasebar label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.phrasebar .inp{flex:0 1 380px;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:6px 8px;font-family:var(--font-mono);font-size:13px}
+.chip.count{background:var(--accent-soft);border-color:transparent;color:var(--accent-deep);font-weight:500}
+.notice{margin:12px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));padding:9px 12px;border-radius:var(--r);background:var(--accent-soft);color:var(--accent-deep);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.notice.err{background:var(--danger-soft);color:var(--danger)}
 
 .wrap{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;min-height:calc(100vh - 160px)}
 @media (max-width:860px){.wrap{grid-template-columns:1fr}}
@@ -79,25 +78,25 @@ details.group>summary .count{margin-left:auto;font-weight:400;color:var(--muted)
 .field.wide{grid-template-columns:1fr}
 .field label{font-size:12.5px;min-width:0}
 .field label code{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);display:block;letter-spacing:0}
-.field input[type=text],.field input[type=number],.field select,.field textarea{width:100%;padding:4px 6px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);min-width:0}
+.field input[type=text],.field input[type=number],.field select,.field textarea{width:100%;padding:4px 6px;border:1px solid var(--pv-border);border-radius:var(--r);background:var(--bg);min-width:0}
 .field input[type=checkbox]{justify-self:end;width:16px;height:16px;accent-color:var(--accent)}
 .field textarea{font-family:var(--font-mono);font-size:12px;min-height:48px;resize:vertical}
 
 /* token field: ordered chips plus a phrase picker */
-.tokens{border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);padding:6px;display:grid;gap:6px}
+.tokens{border:1px solid var(--pv-border);border-radius:var(--r);background:var(--bg);padding:6px;display:grid;gap:6px}
 .tokens .chips{display:flex;flex-wrap:wrap;gap:4px;min-height:26px}
 .tokens .chips:empty::before{content:"no columns yet";color:var(--muted);font-size:12px;padding:3px 2px}
-.chip-tok{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line-strong);border-radius:3px;padding:2px 4px 2px 6px;font-size:12.5px;cursor:grab;user-select:none;font-variant-numeric:tabular-nums}
+.chip-tok{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--pv-border);border-radius:3px;padding:2px 4px 2px 6px;font-size:12.5px;cursor:grab;user-select:none;font-variant-numeric:tabular-nums}
 .chip-tok:focus-visible{outline:2px solid var(--accent);outline-offset:0}
 .chip-tok.dragging{opacity:.45}
 .chip-tok.drop-before{box-shadow:-3px 0 0 var(--accent)}
 .chip-tok.drop-after{box-shadow:3px 0 0 var(--accent)}
-.chip-tok .grip{color:var(--line-strong);font-family:var(--font-mono);font-size:11px;letter-spacing:-2px}
+.chip-tok .grip{color:var(--pv-border);font-family:var(--font-mono);font-size:11px;letter-spacing:-2px}
 .chip-tok .rm{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 2px;line-height:1;font-size:14px;border-radius:2px}
 .chip-tok .rm:hover{color:var(--danger);background:var(--danger-soft)}
 .picker{position:relative}
-.picker input{width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);font-size:12.5px}
-.picker .suggest{position:absolute;left:0;right:0;top:100%;margin-top:2px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,.12);z-index:20;max-height:220px;overflow:auto}
+.picker input{width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:12.5px}
+.picker .suggest{position:absolute;left:0;right:0;top:100%;margin-top:2px;background:var(--surface);border:1px solid var(--pv-border);border-radius:var(--r);box-shadow:0 6px 18px rgba(0,0,0,.12);z-index:20;max-height:220px;overflow:auto}
 .picker .suggest[hidden]{display:none}
 .picker .opt{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;cursor:pointer;font-size:12.5px}
 .picker .opt .desc{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -110,12 +109,12 @@ main{padding-block:14px;padding-left:16px;padding-right:max(16px,env(safe-area-i
 @media (max-width:860px){main{padding-left:max(16px,env(safe-area-inset-left,0px))}}
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:12px}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:6px 12px;color:var(--muted);cursor:pointer;margin-bottom:-1px}
-.tabs button[aria-selected=true]{color:var(--fg);border-bottom-color:var(--accent);font-weight:500}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
 .panel[hidden]{display:none}
 
-.btn{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:4px 10px;cursor:pointer;font-size:13px}
+.btn{background:var(--surface);border:1px solid var(--pv-border);border-radius:var(--r);padding:4px 10px;cursor:pointer;font-size:13px}
 .btn:hover{background:var(--surface-2)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.small{padding:2px 8px;font-size:12px}
 .btn:disabled{opacity:.5;cursor:default}
 
@@ -123,13 +122,13 @@ main{padding-block:14px;padding-left:16px;padding-right:max(16px,env(safe-area-i
 .view-head h2{font-size:16px;font-weight:600;margin:0;text-wrap:balance}
 .view-head .meta{color:var(--muted);font-size:12.5px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
-.controls input[type=search]{padding:4px 8px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--surface);min-width:0;width:220px;max-width:100%}
-.levels{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden}
+.controls input[type=search]{padding:4px 8px;border:1px solid var(--pv-border);border-radius:var(--r);background:var(--surface);min-width:0;width:220px;max-width:100%}
+.levels{display:inline-flex;border:1px solid var(--pv-border);border-radius:var(--r);overflow:hidden}
 .levels button{border:0;background:var(--surface);padding:3px 10px;cursor:pointer;font-size:12.5px;color:var(--muted)}
-.levels button+button{border-left:1px solid var(--line-strong)}
-.levels button[aria-pressed=true]{background:var(--accent-soft);color:var(--fg);font-weight:500}
+.levels button+button{border-left:1px solid var(--pv-border)}
+.levels button[aria-pressed=true]{background:var(--accent-soft);color:var(--ink);font-weight:500}
 
-.table-box{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.table-box{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
 table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums}
 th,td{padding:6px 10px;text-align:left;vertical-align:top;white-space:nowrap;border-bottom:1px solid var(--line)}
 .density-compact th,.density-compact td{padding:2px 8px}
@@ -152,25 +151,24 @@ thead th.frozen{z-index:3;background:var(--surface-2)}
 tbody.striped tr:nth-child(even) td.frozen{background:color-mix(in srgb,var(--surface-2) 45%,var(--surface))}
 td.label .toggle{display:inline-block;width:16px;color:var(--muted);cursor:pointer;font-family:var(--font-mono);font-size:11px;user-select:none}
 td.label .toggle.leaf{cursor:default;visibility:hidden}
-td.label .tree{color:var(--line-strong);font-family:var(--font-mono)}
+td.label .tree{color:var(--pv-border);font-family:var(--font-mono)}
 tr.parent td.label{font-weight:500}
-tr.total td{font-weight:600;border-top:2px solid var(--line-strong);background:var(--surface-2)}
+tr.total td{font-weight:600;border-top:2px solid var(--pv-border);background:var(--surface-2)}
 tr.subtotal td{color:var(--muted);font-style:italic}
 tr.selected td{background:var(--accent-soft)!important}
 td .delta{font-size:11px;color:var(--muted);margin-left:5px}
-td .delta.up{color:var(--good)} td .delta.down{color:var(--danger)}
+td .delta.up{color:var(--ok)} td .delta.down{color:var(--danger)}
 td.hi{color:var(--accent);font-weight:600}
 td.neg{color:var(--danger)}
 td.missing{color:var(--muted)}
-.chip{display:inline-block;font-size:11px;padding:0 6px;border-radius:9px;border:1px solid var(--line-strong);color:var(--muted)}
-.chip.measured{border-color:var(--good);color:var(--good)}
-.chip.assumed{border-color:var(--warn);color:var(--warn)}
+.chip{display:inline-block;font-size:11px;padding:0 6px;border-radius:9px;border:1px solid var(--pv-border);color:var(--muted)}
+.chip.measured{border-color:var(--ok);color:var(--ok)}
+.chip.assumed{border-color:var(--shared);color:var(--shared)}
 .pager{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
 .caption{color:var(--muted);font-size:12.5px;margin-top:8px}
 .empty{padding:24px;color:var(--muted);text-align:center}
 
-.json-box textarea{width:100%;min-height:420px;font-family:var(--font-mono);font-size:12px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--surface);padding:10px;resize:vertical}
-.json-box .bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.json-box textarea{width:100%;min-height:420px;font-family:var(--font-mono);font-size:12px;border:1px solid var(--pv-border);border-radius:var(--r);background:var(--surface);padding:10px;resize:vertical}
 .json-box .msg{font-size:12.5px;color:var(--muted)}
 .json-box .msg.err{color:var(--danger)}
 .note{font-size:12.5px;color:var(--muted);max-width:70ch;margin:0 0 10px}
@@ -179,20 +177,20 @@ td.missing{color:var(--muted)}
 <!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
 <nav class="navbar site-header fixed-top">
     <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
-        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
-        <span class="logo-text" hidden>zukunft.com</span>
+        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
     </a>
     <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
         <input type="hidden" name="m" value="107">
         <label for="kp" class="visually-hidden">Search</label>
-        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula">
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
+               style="min-width: 40vw; max-width: 800px;">
         <button class="btn btn-outline-primary" type="submit">Get numbers</button>
     </form>
     <div class="col-md-2">
         <ul class="nav navbar-nav">
             <li class="active">
                 <details class="lang-menu">
-                    <summary title="Language"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 9h-2.95a15.6 15.6 0 0 0-1.38-5.56A8.03 8.03 0 0 1 18.9 11zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14A7.9 7.9 0 0 1 4 12c0-.69.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.08 16zm2.95-8H5.08a7.99 7.99 0 0 1 4.33-3.56A15.6 15.6 0 0 0 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg></summary>
+                    <summary><i class="fas fa-globe"></i></summary>
                     <ul>
                         <li><a href="/http/view.php?q=en">English</a></li>
                         <li><a href="/http/view.php?q=en_us">US English</a></li>
@@ -205,7 +203,7 @@ td.missing{color:var(--muted)}
                     </ul>
                 </details>
                 <details class="user-menu">
-                    <summary title="User"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 3a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0 15.2a8.2 8.2 0 0 1-6.2-2.8c.03-2.07 4.13-3.2 6.2-3.2 2.06 0 6.17 1.13 6.2 3.2a8.2 8.2 0 0 1-6.2 2.8z"/></svg></summary>
+                    <summary><i class="fas fa-user-circle"></i></summary>
                     <ul>
                         <li><a href="/http/view.php?m=11">Log in</a></li>
                         <li><a href="/http/view.php?m=13">Signup</a></li>
@@ -217,15 +215,25 @@ td.missing{color:var(--muted)}
     </div>
 </nav>
 
-<header class="top">
-  <h1>Table view editor</h1>
-  <p>Every control on the left is one parameter of the view definition. The table and the JSON update as you change them.</p>
-  <span class="spacer"></span>
-  <div class="actions">
-    <button class="btn small" id="btnExpandAll" type="button">Open all groups</button>
-    <button class="btn small" id="btnReset" type="button">Reset to default</button>
+<div class="editor">
+<div class="bar">
+  <div class="brand"><b>Table editor</b></div>
+  <form class="phrasebar" id="phraseForm" autocomplete="off">
+    <label for="phraseIn">for</label>
+    <input class="inp" id="phraseIn" placeholder="word or triple, e.g. sector of revenue" spellcheck="false">
+    <button class="btn primary" type="submit" id="btnLoad">Load</button>
+  </form>
+  <div class="tools">
+    <span class="chip count" id="changeCount">no changes</span>
+    <button class="btn" id="btnUndo" type="button" title="Undo (Ctrl+Z)" disabled>Undo</button>
+    <button class="btn" id="btnRedo" type="button" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+    <button class="btn" id="btnReset" type="button" title="Throw away all edits since the last save">Discard changes</button>
+    <button class="btn" id="btnExport" type="button" title="Download the table as shown as csv">Export</button>
+    <!-- the sample has no pod to write to, so Save stays disabled here -->
+    <button class="btn primary" id="btnSave" type="button" title="Write the changes to the database" disabled>Save</button>
   </div>
-</header>
+</div>
+<div id="noticeHost"></div>
 
 <div class="wrap">
   <aside id="rail"></aside>
@@ -234,7 +242,6 @@ td.missing{color:var(--muted)}
       <button role="tab" aria-selected="true" data-tab="preview" type="button">Table</button>
       <button role="tab" aria-selected="false" data-tab="json" type="button">Definition (JSON)</button>
       <button role="tab" aria-selected="false" data-tab="csv" type="button">Export (CSV)</button>
-      <button role="tab" aria-selected="false" data-tab="data" type="button">Sample data</button>
     </div>
 
     <section class="panel" id="panel-preview">
@@ -250,7 +257,7 @@ td.missing{color:var(--muted)}
 
     <section class="panel json-box" id="panel-json" hidden>
       <p class="note">This is the full view definition. Edit it here and apply, or paste one that you saved earlier. Parameters the preview does not yet use are still kept, so the definition stays complete.</p>
-      <div class="bar">
+      <div class="controls">
         <button class="btn primary" id="btnApply" type="button">Apply JSON</button>
         <button class="btn" id="btnCopyJson" type="button">Copy</button>
         <span class="msg" id="jsonMsg"></span>
@@ -260,18 +267,14 @@ td.missing{color:var(--muted)}
 
     <section class="panel json-box" id="panel-csv" hidden>
       <p class="note">CSV of the table as currently shown. The parameters <code>export_scope</code> and <code>export_include_sources</code> decide whether hidden rows and the source list are included.</p>
-      <div class="bar">
+      <div class="controls">
         <button class="btn" id="btnCopyCsv" type="button">Copy</button>
         <span class="msg" id="csvMsg"></span>
       </div>
       <textarea id="csvText" spellcheck="false" readonly></textarea>
     </section>
-
-    <section class="panel json-box" id="panel-data" hidden>
-      <p class="note">Example phrases and values used by the preview. Revenue figures are invented for a fictional "Example AG", in million CHF. Each phrase is linked to its parent by the hierarchy verb; "Other" has no parent and shows what the <code>hierarchy_orphans</code> parameter does.</p>
-      <textarea id="dataText" spellcheck="false" readonly></textarea>
-    </section>
   </main>
+</div>
 </div>
 
 <!-- the zukunft.com footer as rendered by html_base::footer -->
@@ -426,13 +429,18 @@ const SPEC = [
     { key: 'export_include_sources', label: 'Include sources', type: 'check' }
   ]},
   { group: 'state', title: 'State', fields: [
-    { key: 'persist_user_changes', label: 'Remember changes', type: 'check', hint: 'in this browser only' },
+    { key: 'persist_user_changes', label: 'Remember changes', type: 'check' },
     { key: 'view_version', label: 'Version', type: 'number', min: 1 }
   ]}
 ];
 
 /* ---------- runtime state ---------- */
-let view = deepClone(DEFAULT_VIEW);
+/* the phrase of the table and its definition as saved in the database */
+const phraseName = DATA.row_phrase;
+const savedView = deepClone(DEFAULT_VIEW);
+let view = deepClone(savedView);
+/* the undo and redo snapshots of the view definition, a name apart from window.history */
+const steps = { undo: [], redo: [], lastKey: '', lastTime: 0 };
 let expanded = new Set();
 let expandRule = '';
 let selected = new Set();
@@ -465,32 +473,137 @@ function get(key) {
 
 function set(key, value) {
   const g = groupOf(key);
+  pushHistory(key);
   view[g][key] = value;
 }
 
-/* ---------- persistence (per browser, best effort) ---------- */
-function loadSaved() {
-  let result = null;
-  try {
-    const raw = localStorage.getItem('table-view-editor');
-    if (raw) {
-      result = JSON.parse(raw);
+/* ---------- undo, redo and the changes since the last save, like the calculator editor ---------- */
+function pushHistory(key) {
+  const now = Date.now();
+  /* typing into the same field within 1.5 seconds is one step */
+  const coalesce = key && key === steps.lastKey && now - steps.lastTime < 1500;
+  if (!coalesce) {
+    steps.undo.push(JSON.stringify(view));
+    steps.redo = [];
+  }
+  steps.lastKey = key || '';
+  steps.lastTime = now;
+}
+
+function restore(snap) {
+  view = JSON.parse(snap);
+  steps.lastKey = '';
+  expandRule = '';
+  syncForm();
+  render();
+}
+
+function undo() {
+  if (steps.undo.length > 0) {
+    steps.redo.push(JSON.stringify(view));
+    restore(steps.undo.pop());
+  }
+}
+
+function redo() {
+  if (steps.redo.length > 0) {
+    steps.undo.push(JSON.stringify(view));
+    restore(steps.redo.pop());
+  }
+}
+
+/* the number of parameters that differ from the saved definition */
+function changeCount() {
+  let result = 0;
+  for (const g of Object.keys(savedView)) {
+    for (const k of Object.keys(savedView[g])) {
+      if (JSON.stringify(view[g][k]) !== JSON.stringify(savedView[g][k])) {
+        result += 1;
+      }
     }
-  } catch (e) {
-    result = null;
   }
   return result;
 }
 
-function save() {
-  try {
-    if (view.state.persist_user_changes) {
-      localStorage.setItem('table-view-editor', JSON.stringify(view));
+function paintBar() {
+  const changed = changeCount();
+  let text = 'no changes';
+  if (changed > 0) {
+    text = changed + (changed === 1 ? ' change' : ' changes');
+  }
+  document.getElementById('changeCount').textContent = text;
+  document.getElementById('btnUndo').disabled = steps.undo.length === 0;
+  document.getElementById('btnRedo').disabled = steps.redo.length === 0;
+  const phraseIn = document.getElementById('phraseIn');
+  if (document.activeElement !== phraseIn) {
+    phraseIn.value = phraseName;
+  }
+}
+
+function notice(html, kind) {
+  let result = '';
+  if (html) {
+    result = '<div class="notice' + (kind === 'err' ? ' err' : '') + '">' + html + '</div>';
+  }
+  document.getElementById('noticeHost').innerHTML = result;
+}
+
+function discard() {
+  if (changeCount() > 0) {
+    pushHistory('');
+    view = deepClone(savedView);
+    expandRule = '';
+    syncForm();
+    render();
+    notice('Changes discarded. Undo brings them back.', '');
+  }
+}
+
+/* the sample holds the table of one phrase; on the pod Load reads the table of the typed phrase */
+function loadPhrase(force) {
+  const name = document.getElementById('phraseIn').value.trim();
+  const changed = changeCount();
+  if (!name) {
+    notice('Enter the name of a word or triple first.', 'err');
+  } else if (name !== phraseName) {
+    notice('This sample has only the table of “' + escapeHtml(phraseName) + '”.', 'err');
+  } else if (changed > 0 && !force) {
+    notice('The ' + changed + ' unsaved changes to “' + escapeHtml(phraseName) + '” will be lost. '
+      + '<button class="btn small" id="btnLoadAnyway" type="button">Load “' + escapeHtml(name) + '” anyway</button>', 'err');
+    document.getElementById('btnLoadAnyway').addEventListener('click', function () {
+      loadPhrase(true);
+    });
+  } else {
+    view = deepClone(savedView);
+    steps.undo = [];
+    steps.redo = [];
+    expandRule = '';
+    page = 1;
+    notice('', '');
+    syncForm();
+    render();
+  }
+}
+
+function exportCsv() {
+  const blob = new Blob([document.getElementById('csvText').value], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = phraseName + '.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function onKey(ev) {
+  const mod = ev.ctrlKey || ev.metaKey;
+  const inField = ev.target.matches && ev.target.matches('input, textarea, select');
+  if (mod && !inField && ev.key.toLowerCase() === 'z') {
+    ev.preventDefault();
+    if (ev.shiftKey) {
+      redo();
     } else {
-      localStorage.removeItem('table-view-editor');
+      undo();
     }
-  } catch (e) {
-    /* storage unavailable; the page works without it */
   }
 }
 
@@ -512,7 +625,7 @@ function mergeView(saved) {
 function buildRail() {
   const rail = document.getElementById('rail');
   const parts = [];
-  parts.push('<div class="toolbar"><span class="note" style="margin:0">Parameter name shown under each label; the JSON uses the same names.</span></div>');
+  parts.push('<div class="toolbar"><button class="btn small" id="btnExpandAll" type="button">Open all groups</button><span class="note" style="margin:0">Parameter name shown under each label; the JSON uses the same names.</span></div>');
   SPEC.forEach(function (g, idx) {
     const open = idx < 3 ? ' open' : '';
     parts.push('<details class="group" data-group="' + g.group + '"' + open + '><summary>' + g.title + '<span class="count">' + g.fields.length + '</span></summary><div class="fields">');
@@ -1419,7 +1532,7 @@ function render() {
   paintChrome(allRows.length, rows.length, pageCount);
   paintJson();
   paintCsv();
-  save();
+  paintBar();
 }
 
 function unitLabel() {
@@ -1644,6 +1757,7 @@ function wireEvents() {
       render();
     } else if (t && t.dataset.sort !== undefined) {
       const col = t.dataset.sort === '__label' ? '' : t.dataset.sort;
+      pushHistory('');
       if (view.rows.row_order_col === col) {
         view.rows.row_order_dir = view.rows.row_order_dir === 'asc' ? 'desc' : 'asc';
       } else {
@@ -1666,6 +1780,7 @@ function wireEvents() {
   document.getElementById('controls').addEventListener('click', function (ev) {
     const b = ev.target.closest('button');
     if (b && b.dataset.level) {
+      pushHistory('');
       view.columns.column_level = b.dataset.level;
       syncForm();
       render();
@@ -1715,6 +1830,7 @@ function wireEvents() {
     const msg = document.getElementById('jsonMsg');
     try {
       const parsed = JSON.parse(document.getElementById('jsonText').value);
+      pushHistory('');
       view = mergeView(parsed);
       expandRule = '';
       page = 1;
@@ -1735,15 +1851,15 @@ function wireEvents() {
     copyFrom('csvText', 'csvMsg');
   });
 
-  document.getElementById('btnReset').addEventListener('click', function () {
-    view = deepClone(DEFAULT_VIEW);
-    expandRule = '';
-    selected = new Set();
-    searchText = '';
-    page = 1;
-    syncForm();
-    render();
+  document.getElementById('btnUndo').addEventListener('click', undo);
+  document.getElementById('btnRedo').addEventListener('click', redo);
+  document.getElementById('btnReset').addEventListener('click', discard);
+  document.getElementById('btnExport').addEventListener('click', exportCsv);
+  document.getElementById('phraseForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    loadPhrase(false);
   });
+  document.addEventListener('keydown', onKey);
 
   document.getElementById('btnExpandAll').addEventListener('click', function () {
     const groups = document.querySelectorAll('details.group');
@@ -1776,11 +1892,6 @@ function copyFrom(taId, msgId) {
 /* ---------- start ---------- */
 function start() {
   buildRail();
-  const saved = loadSaved();
-  if (saved) {
-    view = mergeView(saved);
-  }
-  document.getElementById('dataText').value = JSON.stringify(DATA, null, 2);
   wireEvents();
   wireTokenFields();
   syncForm();

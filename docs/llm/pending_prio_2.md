@@ -1,5 +1,15 @@
 # pending prio 2
 
+## table editor sample data
+
+`use_cases/table_editor_sample.json` holds the example of the table editor as data:
+- the formula `share of the total` divides by `"total","revenue"`, but no value or formula gives the total revenue of Example AG yet, because the formula language has no sum over the top-level rows of a table (the sample adds the sectors without a parent); until then the share has no result
+- `growth to the prior period` does the same as the system formula `increase`, only with `growth` as its result phrase
+- the file has no `calc-validation`, so the import does not check the growth and share results
+- a verb of a view parameter (`row_verb`, `hierarchy_verb`) is a text in the description of its triple, because a triple cannot point to a verb
+- the column tiers (`columns_major` ...), `value_decimals`, `value_thousands` and `row_order_col`/`row_order_dir` have no keyword yet (pending.md step 4), so the columns are one ordered list without their tier and the number format is missing; the sample has no default sorting, so `row_order` needs no triple yet
+- the options of the table keywords (`dash`, `tooltip`, `scroll`, ...) are defined in the use case file; as part of the keyword set they would belong to `editor_views.json`
+
 ## case name of a calculator page
 
 `calculator_json.js` (`caseMessage`, `saveCase`) creates a case by the updatePut api:

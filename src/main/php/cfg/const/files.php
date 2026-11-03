@@ -183,6 +183,9 @@ class files
     const string AHV_VAT_VOTE_FILE = self::USE_CASE_PATH . 'ahv_vat_vote' . self::JSON;
     // the buy, sell or hold decision on the ABB share from a target price of several valuation methods
     const string SHARE_BUY_SELL_ABB_FILE = self::USE_CASE_PATH . 'share_buy_sell_abb' . self::JSON;
+    // the revenue by sector of a fictional company with the definition of its table, the example
+    // of the table editor (src/test/resources/web/html/use_cases/table_editor_sample.html)
+    const string TABLE_EDITOR_SAMPLE_FILE = self::USE_CASE_PATH . 'table_editor_sample' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -410,6 +413,7 @@ class files
         self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         self::AHV_VAT_VOTE_FILE,
         self::SHARE_BUY_SELL_ABB_FILE,
+        self::TABLE_EDITOR_SAMPLE_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

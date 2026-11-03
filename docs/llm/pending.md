@@ -1,21 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
-## table populism solution
+## start page
 
-The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
-solutions sorted by default by potential gain descending. 
-The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
-and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
-
-the border and grey background colours should be removed by default with an option to show them.
-The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
-
-### adjust the table data
-
-add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708 
-and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
-and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
-
+on the start page http://localhost/index.html the button to login and signup show the message 
+'This pod does not allow changes without a login. Please log in to add or change data.'
+which should not be the case. Instead to signup or login page should be show, so these two pages are an 
+exception to the no edit by user not logged in rules
 
 ## table editor
 
@@ -66,15 +56,85 @@ generated page fully replaces the current list editor of `script/table_editor.js
    - `coding_rule_tests::use_case_no_test_formula_tests` stays clean for the new use case.
 10. **Docs.** Update "The table editor" in `docs/llm/frontend.md` and the steps in `docs/table_creation.md`.
 
+### fine-tuning of table editor
+
+#### preview section
+
+in the table editor the preview has the tabs 'Table', 'Definition (JSON)' and 'Export (CSV)'
+remove the 'Export (CSV)' but add similar to the 'Calculator editor' 'All texts' amd 'Changes'
+with similar functionality than the 'Calculator editor'
+and rename the tab 'Table' to 'Table preview'
+
+#### collapse prio 2 settings
+
+in the table editor on the left side can this be collapsed and expanded:
+Columns
+Rows
+Hierarchy
+Values
+Aggregation
+Layout
+Interaction
+Context
+Export
+State
+
+add 'Column details' and 'Row details'
+
+and move all parts from 'Columns' to 'Column details' except:
+Level shown
+Major columns
+Main columns
+
+and move all parts from 'Rows' to 'Row details' except:
+Row phrase
+Sort column
+Sort direction
+
+'Columns' and 'Rows' are by default expanded and all others collapsed
+
+## view tabs
+
+for many views the alternative views like 'values (detail with range)' are shown in the edit icon menu of the navbar.
+for all these pages the views tab in the page is not needed so it can be removed
+
+
 ## result tooltip
 
 if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
 to show the formula used for the calculation of the result in the latex format with the values used for the result 
 and a 'click for more details' hint
 
+## table populism solution
+
+The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
+solutions sorted by default by potential gain descending.
+The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
+and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
+
+the border and grey background colours should be removed by default with an option to show them.
+The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
+
+### adjust the table data
+
+add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708
+and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
+and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
+
 ## Calculator editor
 
+### JSON tab
+
+similar to the table editor add right of the 'Page preview' tab a tab with 'Definition (JSON)'
+
 ### Swiss NPP
+
+in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=16&9id=-3321&u=11
+in 'Page preview' the same view should be shown as e.g. http://localhost/http/view.php?m=calculator&id=-3321
+For the 'new CH npp' case e.g. the 'Undecided on cost - decide on the other arguments' and the 
+'Arguments for lifting the ban (yes)' and 'Arguments for keeping the ban (no)' seems to be missing
+create a compare test that the inner part of the editor matches the page view and the differences
+are reported in a *_diff.md file based on the 'new CH npp' case
 
 add costs of CO2-eq reduction to the npp
 
@@ -547,6 +607,14 @@ write a script that recreates the open API yaml based on the code and create a t
 the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
 
 ## cleanup
+
+### server busy
+
+similar to the 'collecting data' waiting view if the response takes longer
+add to all pages a 'server busy' view if the server has not finished the page view
+
+is it possible that at least the check if a view is already in the cache is done in parallel 
+even if the server is collection data for another view?
 
 ### id usage
 
@@ -1430,7 +1498,8 @@ one range factor pair 0.4 / 2.5 per measure, 9 results per solution. what is sti
 - values and results use the qualified name `fact-checking (populism solution)` for every measure,
   because fact-checking, media literacy, prebunking etc. are measures of the disinformation problem
   too and the same user must not state two numbers for one phrase group; the climate solutions
-  qualify only the names that clashed at the time (`research (climate solution)`)
+  qualify the names that clash with `problem_global_warming_solutions.json`, which uses the plain
+  name for its own chain, e.g. `solar energy (climate solution)`
 - a measure with a space is a composition triple of single word atoms (`civic education` =
   education kind of civic, `campaign finance reform` = reform of `campaign finance`), the head noun
   as from, an adjective joined by `kind of`, a noun by `of`, a preposition of the name by its verb

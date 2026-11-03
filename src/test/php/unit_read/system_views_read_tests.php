@@ -1014,6 +1014,15 @@ class system_views_read_tests
             $test_name = 'the gain per effort of ' . $row . ' in htp uses the calculated gain';
             $t->assert($test_name, round((float)($export[$row][$htp_col] ?? 0), 2), $htp);
         }
+        // problem_global_warming.json states its numbers for "<solution> (climate solution)", so
+        // a row of this table has one number per fact and the effort of this table
+        $test_name = 'a solution of both files has one potential gain';
+        $t->assert($test_name, round((float)($export['circular economy']['potential gain in trillion EUR'] ?? 0), 6), 4.455275);
+        $test_name = '... and the initial effort of this table';
+        $t->assert($test_name, $export['circular economy']['initial effort in person year'] ?? '', '50');
+        // negative: the older gain of the same solution is no second number of the cell
+        $test_name = '... and no second number in the cell';
+        $t->assert($test_name, str_contains($export['solar energy']['potential gain in trillion EUR'] ?? '', value_list_ui::CSV_NUMBER_SEPARATOR), false);
         // negative: the assumed gain of problem_global_warming.json in the same row is not used
         $test_name = 'the gain per effort does not use the assumed gain of the same solution';
         $t->assert($test_name, round((float)($export['coal phase-out'][$htp_col] ?? 0), 2) != 533.19, true);

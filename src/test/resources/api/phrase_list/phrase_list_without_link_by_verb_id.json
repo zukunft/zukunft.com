@@ -410,6 +410,12 @@
         "class": "word"
     },
     {
+        "id": 4946,
+        "name": "sector of revenue",
+        "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case",
+        "class": "triple"
+    },
+    {
         "id": 82,
         "protection": 3,
         "name": "SI base unit",

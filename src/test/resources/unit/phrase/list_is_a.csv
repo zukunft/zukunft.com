@@ -1,4 +1,16 @@
 phrase_id,phrase_name
+-4970,Example AG other (sector of revenue)
+-4969,Example AG licences (sector of revenue)
+-4968,Example AG maintenance (sector of revenue)
+-4967,Example AG consulting (sector of revenue)
+-4966,Example AG services (sector of revenue)
+-4965,Example AG road (sector of revenue)
+-4964,Example AG rail (sector of revenue)
+-4963,Example AG transport (sector of revenue)
+-4962,Example AG hydro (sector of revenue)
+-4961,Example AG wind (sector of revenue)
+-4960,Example AG solar (sector of revenue)
+-4959,Example AG energy (sector of revenue)
 -3989,bond price kind
 -3956,second child portfolio instance
 -3955,first child portfolio instance
