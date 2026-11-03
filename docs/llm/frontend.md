@@ -876,11 +876,11 @@ therefore no number of the row; to count every linked phrase, the start page
 loads the children of all these list triples with one api call
 (`ui_list::start_page_children`) and adds them only to a copy of the request
 cache taken after the column and sort definitions are loaded, because the cache
-also fills the phrase selectors of later pages. Every start page problem except proprietary
-software has such a `<problem> reason` and `<problem> solution` triple
-(`problem_main_reasons.json`), each of which is a `global problem reason` or a
-`global problem solution`; proprietary software is the sample row with one
-reason and one solution and without any `, ...`. The value cells
+also fills the phrase selectors of later pages. Every start page problem has such a
+`<problem> reason` and `<problem> solution` triple (`problem_main_reasons.json`), each of
+which is a `global problem reason` or a `global problem solution`; a problem whose solution
+list has only the start page solution, e.g. proprietary software, shows no `, ...` in its
+solution cell. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
 hidden phrase stands beside the phrase shown. A cell keeps only its most

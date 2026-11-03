@@ -6,7 +6,7 @@
   "selection": [
     "education reasons that cause costs"
   ],
-  "description": "The most relevant reasons why a lack of education causes costs, each linked to the lack of education with 'can cause' and quantified by the studies that report it for the world and per country or region: the lifetime earnings lost by the current generation of students because of the learning losses of the COVID-19 school closures (World Bank, UNESCO, UNICEF 2021 and the World Bank 2022 update), the earnings lost because girls do not complete twelve years of education (World Bank 2018 Missed Opportunities) and the private return of about 9 percent per year of schooling (Psacharopoulos & Patrinos 2018); the GDP that the world loses until 2100 because two thirds of the youth do not reach basic skills (Gust, Hanushek & Woessmann 2024); the crime that a higher high school graduation rate would avoid (Lochner & Moretti 2004); the adult mortality (Balaj et al. 2024) and the child mortality (Balaj et al. 2021) that fall with every year of education; and the unemployment rate by educational attainment (Eurostat) and the number of out-of-school children (UNESCO UIS 2025). The learning poverty, the share of ten year olds who cannot read and understand a simple text, and the solution are stated in problem_education.json instead, because they are the row of the global problem ranking of the start page. The reasons start from the triple 'lack of education' and not from the word 'education' itself, because 'income loss due to education' would read as if education caused the loss, while the costs are caused by too little or too poor education; the names '<reason> due to lack of education' and 'lack of education' are not used by any other import file. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a reduction of a risk that the source reports as the gain of more education is stored positive as reported. Each study has its own definition of education, its own sample and its own metric, so numbers of different studies are not comparable without reading the source description; the unemployment rates and the out-of-school children are statistics that their source does not attribute to the lack of education as a cause, so they do not carry a '<reason> due to lack of education' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to lack of education' and not the word 'education' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why a lack of education causes costs, each linked to the lack of education with 'can cause' and quantified by the studies that report it for the world and per country or region: the lifetime earnings lost by the current generation of students because of the learning losses of the COVID-19 school closures (World Bank, UNESCO, UNICEF 2021 and the World Bank 2022 update), the earnings lost because girls do not complete twelve years of education (World Bank 2018 Missed Opportunities) and the private return of about 9 percent per year of schooling (Psacharopoulos & Patrinos 2018); the GDP that the world loses until 2100 because two thirds of the youth do not reach basic skills (Gust, Hanushek & Woessmann 2024); the crime that a higher high school graduation rate would avoid (Lochner & Moretti 2004); the adult mortality (Balaj et al. 2024) and the child mortality (Balaj et al. 2021) that fall with every year of education; and the unemployment rate by educational attainment (Eurostat) and the number of out-of-school children (UNESCO UIS 2025). The learning poverty, the share of ten year olds who cannot read and understand a simple text, and the solution are stated in problem_education.json instead, because they are the row of the global problem ranking of the start page. The reasons start from the triple 'lack of education' and not from the word 'education' itself, because 'income loss due to education' would read as if education caused the loss, while the costs are caused by too little or too poor education; the names '<reason> due to lack of education' and 'lack of education' are not used by any other import file. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a reduction of a risk that the source reports as the gain of more education is stored positive as reported. Each study has its own definition of education, its own sample and its own metric, so numbers of different studies are not comparable without reading the source description; the unemployment rates and the out-of-school children are statistics that their source does not attribute to the lack of education as a cause, so they do not carry a '<reason> due to lack of education' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to lack of education' and not the word 'education' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the education reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "education"
@@ -205,6 +205,30 @@
     },
     {
       "name": "2100"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -371,6 +395,126 @@
       "verb": "can cause",
       "to": "unemployment",
       "description": "a person with less education finds a job less easily; the unemployment rates by educational attainment in this file are statistics that their source does not attribute to the education as a cause"
+    },
+    {
+      "name": "education reason",
+      "description": "a reason of the potential loss of education; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "education"
+    },
+    {
+      "name": "income loss (education reason)",
+      "from": "income loss",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "GDP loss (education reason)",
+      "from": "GDP loss",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "crime (education reason)",
+      "from": "crime",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "mortality (education reason)",
+      "from": "mortality",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "child mortality (education reason)",
+      "from": "child mortality",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "unemployment (education reason)",
+      "from": "unemployment",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "education reason columns",
+      "description": "the own columns of the table of the education reasons",
+      "from": "education reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "education reason columns reason",
+      "from": "education reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "education reason columns potential loss in EUR",
+      "from": "education reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "education reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "education reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "education reason sort",
+      "description": "the own default sorting of the table of the education reasons, the biggest potential loss on top",
+      "from": "education reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "education reason sort numeric descending of potential loss in EUR",
+      "from": "education reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

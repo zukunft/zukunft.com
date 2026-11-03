@@ -6,7 +6,7 @@
   "selection": [
     "populism reasons that cause costs"
   ],
-  "description": "The most relevant reasons why populism causes costs, each linked to populism with 'can cause' and quantified by the studies that report it for the average populist episode and per country: the loss of GDP per capita and of consumption (Funke, Schularick & Trebesch 2023), the rise of the public debt and the drop of the financial integration (Funke et al.), the economic nationalism with the US tariffs of 2018 (Fajgelbaum et al. 2020) and the Brexit (Born et al. 2019, CER 2022, OBR), the institutional erosion with the democratic backsliding (Kyle & Mounk 2018) and the EU funds lost by Hungary under the rule of law conditionality, and the excess mortality of the COVID-19 pandemic (Bayerlein et al. 2021). The annual GDP decline of populism and its solution are stated in problem_populism.json instead, because they are the row of the global problem ranking of the start page. Venezuela under Chávez and Maduro, a populist episode of Funke et al., is added as the extreme case of the collapse of GDP, the hyperinflation and the emigration; these values are not attributed to populism by their sources, because the fall of the oil price and the sanctions are also causes, so they do not carry a '<reason> due to populism' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to populism' and not the word 'populism' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why populism causes costs, each linked to populism with 'can cause' and quantified by the studies that report it for the average populist episode and per country: the loss of GDP per capita and of consumption (Funke, Schularick & Trebesch 2023), the rise of the public debt and the drop of the financial integration (Funke et al.), the economic nationalism with the US tariffs of 2018 (Fajgelbaum et al. 2020) and the Brexit (Born et al. 2019, CER 2022, OBR), the institutional erosion with the democratic backsliding (Kyle & Mounk 2018) and the EU funds lost by Hungary under the rule of law conditionality, and the excess mortality of the COVID-19 pandemic (Bayerlein et al. 2021). The annual GDP decline of populism and its solution are stated in problem_populism.json instead, because they are the row of the global problem ranking of the start page. Venezuela under Chávez and Maduro, a populist episode of Funke et al., is added as the extreme case of the collapse of GDP, the hyperinflation and the emigration; these values are not attributed to populism by their sources, because the fall of the oil price and the sanctions are also causes, so they do not carry a '<reason> due to populism' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to populism' and not the word 'populism' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the populism reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top like the table of the populism solutions.",
   "words": [
     {
       "name": "populism"
@@ -213,6 +213,30 @@
     },
     {
       "name": "2024"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -435,6 +459,132 @@
       "verb": "can cause",
       "to": "excess mortality",
       "description": "populist governments enact weaker measures against a pandemic and lower the effort of the citizens to follow them, e.g. by downplaying the danger and spreading misinformation"
+    },
+    {
+      "name": "populism reason",
+      "description": "a reason of the potential loss of populism; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "populism"
+    },
+    {
+      "name": "GDP per capita change (populism reason)",
+      "from": "GDP per capita change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "consumption change (populism reason)",
+      "from": "consumption change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "debt to GDP ratio change (populism reason)",
+      "from": "debt to GDP ratio change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "financial globalization change (populism reason)",
+      "from": "financial globalization change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "economic nationalism (populism reason)",
+      "from": "economic nationalism",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "institutional erosion (populism reason)",
+      "from": "institutional erosion",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "excess mortality (populism reason)",
+      "from": "excess mortality",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "populism reason columns",
+      "description": "the own columns of the table of the populism reasons",
+      "from": "populism reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "populism reason columns reason",
+      "from": "populism reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "populism reason columns potential loss in EUR",
+      "from": "populism reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "populism reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "populism reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "populism reason sort",
+      "description": "the own default sorting of the table of the populism reasons, the biggest potential loss on top",
+      "from": "populism reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "populism reason sort numeric descending of potential loss in EUR",
+      "from": "populism reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

@@ -16,6 +16,22 @@ add a test that export the csv from the global warming solution table e.g. http:
 and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
 and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
 
+### test factory with percent htp
+
+The start page problem files now state the loss share of the happy time points with the one triple `percent htp`
+(percent *of* htp, type `percent`) instead of the two phrases `percent` and `htp`, because a value has only one number
+type (docs/llm/json_structure.md). The test factory still builds the old group, so it no longer matches the import:
+
+- `test_values::value_list_start_page()` (`src/test/php/create/test_values.php:1160`) builds
+  `[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()]`; use the new triple instead of `$pct` and the htp word.
+- add `test_triples::percent_htp()` like `percent_symbol()`, with `set_type(phrase_types::PERCENT, ...)`, the consts
+  `triple_names::PERCENT_HTP` / `PERCENT_HTP_ID` and the entry in `test_pinned_ids.php`; take the id from the
+  regenerated `src/test/resources/unit/triple/list.csv` after the re-pin run, never guess it.
+- check the start page snapshots: the loss column header should still read "loss in percent htp".
+- `value_list_two_units()` (`[..., "potential", "loss", "percent", "htp"]`) mirrors `values.json` and
+  `solution_prio.json`, which still have the two phrases (one finding in `docs/json_findings.md`); change it together
+  with those files, not alone.
+
 
 ## table editor
 

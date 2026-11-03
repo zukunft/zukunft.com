@@ -6,7 +6,7 @@
   "selection": [
     "biased information reasons that cause costs"
   ],
-  "description": "The most relevant reasons why biased information causes costs, each linked to biased information with 'can cause' and quantified by the studies that report it for the world and per country: the overstated efficacy of drugs caused by the selective publication of the antidepressant trials (Turner et al. 2008) and by the industry sponsorship of the drug and device studies (Lundh et al. 2017); the research waste caused by the trials that are never published (Turner et al. 2008, Glasziou & Chalmers); the cost overrun of the transport infrastructure projects caused by the strategic misrepresentation of the cost estimates (Flyvbjerg, Holm & Buhl 2002); the change of the vote share caused by the slanted news of Fox News (DellaVigna & Kaplan 2007, Martin & Yurukoglu 2017); the decline of the COVID-19 vaccination intent caused by misinformation (Loomba et al. 2021); the traffic deaths caused by the misjudged risk of flying after 11 September 2001 (Gigerenzer 2006); and the return loss of the retirement savers caused by conflicted investment advice (Council of Economic Advisers 2015). The assumed share of the decisions taken on biased information and its solution, the Delphi method, are stated in problem_biased_information.json instead, because they are the row of the global problem ranking of the start page. The total research waste and the cost of the Tamiflu stockpile of the United Kingdom are added as context; these values are not attributed to biased information by their sources, because the research waste also includes the design flaws and the stockpile was bought while the full trial data were not available but without a statement that the money was lost, so they do not carry a '<reason> due to biased information' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to biased information' and not the phrase 'biased information' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why biased information causes costs, each linked to biased information with 'can cause' and quantified by the studies that report it for the world and per country: the overstated efficacy of drugs caused by the selective publication of the antidepressant trials (Turner et al. 2008) and by the industry sponsorship of the drug and device studies (Lundh et al. 2017); the research waste caused by the trials that are never published (Turner et al. 2008, Glasziou & Chalmers); the cost overrun of the transport infrastructure projects caused by the strategic misrepresentation of the cost estimates (Flyvbjerg, Holm & Buhl 2002); the change of the vote share caused by the slanted news of Fox News (DellaVigna & Kaplan 2007, Martin & Yurukoglu 2017); the decline of the COVID-19 vaccination intent caused by misinformation (Loomba et al. 2021); the traffic deaths caused by the misjudged risk of flying after 11 September 2001 (Gigerenzer 2006); and the return loss of the retirement savers caused by conflicted investment advice (Council of Economic Advisers 2015). The assumed share of the decisions taken on biased information and its solution, the Delphi method, are stated in problem_biased_information.json instead, because they are the row of the global problem ranking of the start page. The total research waste and the cost of the Tamiflu stockpile of the United Kingdom are added as context; these values are not attributed to biased information by their sources, because the research waste also includes the design flaws and the stockpile was bought while the full trial data were not available but without a statement that the money was lost, so they do not carry a '<reason> due to biased information' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to biased information' and not the phrase 'biased information' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the biased information reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "information"
@@ -253,6 +253,30 @@
     },
     {
       "name": "2020"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -459,6 +483,132 @@
       "verb": "can cause",
       "to": "conflicted advice",
       "description": "an adviser who is paid by the product provider recommends the products with higher fees and lower returns"
+    },
+    {
+      "name": "biased information reason",
+      "description": "a reason of the potential loss of biased information; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "biased information"
+    },
+    {
+      "name": "cost overrun (biased information reason)",
+      "from": "cost overrun",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "overstated efficacy (biased information reason)",
+      "from": "overstated efficacy",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "research waste (biased information reason)",
+      "from": "research waste",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "vote share change (biased information reason)",
+      "from": "vote share change",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "vaccination intent change (biased information reason)",
+      "from": "vaccination intent change",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "misjudged risk (biased information reason)",
+      "from": "misjudged risk",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "conflicted advice (biased information reason)",
+      "from": "conflicted advice",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "biased information reason columns",
+      "description": "the own columns of the table of the biased information reasons",
+      "from": "biased information reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "biased information reason columns reason",
+      "from": "biased information reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "biased information reason columns potential loss in EUR",
+      "from": "biased information reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "biased information reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "biased information reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "biased information reason sort",
+      "description": "the own default sorting of the table of the biased information reasons, the biggest potential loss on top",
+      "from": "biased information reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "biased information reason sort numeric descending of potential loss in EUR",
+      "from": "biased information reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

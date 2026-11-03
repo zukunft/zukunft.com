@@ -1200,6 +1200,35 @@ the `description` instead. Only within one user is a phrase group one value, so 
 the **same** user that state the same group are the duplication that the *home file* rule
 avoids: the later import overwrites the earlier number silently.
 
+### A study that contradicts an assumed value is a second value with a reason phrase
+
+If a study finds a number that contradicts an `assumed` value of the same file, keep the
+assumed value unchanged and add the study number as a second value: the phrases of the
+assumed value without `assumed`, plus **one phrase that says why the numbers differ**,
+usually the scope, the method or the scenario of the study, e.g. `Germany` for a measurement
+of German companies or `safely managed` for a cost of a higher service level. The second
+value names the study as its `source`, and its `description` states what the study measured
+and ends with what it contradicts, e.g. `…; contradicts the assumed share, which expects
+part of the profit to move to wages (Jäger, Schoefer & Heining 2021)`.
+
+```json
+{ "words": ["codetermination (wealth concentration solution)", "reduction potential", "percent", "assumed"], "number": "0.06" },
+{ "words": ["codetermination (wealth concentration solution)", "reduction potential", "percent", "Germany"], "number": "0",
+  "source": "Jäger, Schoefer & Heining 2021" }
+```
+
+- The reason phrase keeps the two values apart: without it, both would be one phrase group,
+  and the import would overwrite the assumption with the study number.
+- A formula picks only a value whose phrases are all in its context. So the results and the
+  calc-validation of the assumed value stay unchanged, and a result for the context with the
+  reason phrase shows what the study number would mean.
+- Add the value only if the study number has the **same meaning and unit** as the assumed
+  value, e.g. "no effect" is 0 for a share and a yearly cost times the years is a total cost.
+  If the mapping needs your own judgement, e.g. a change of the Gini or a probability of a
+  vote, or the study only shows the opposite direction, add no value: write in the reply
+  which study contradicts which number, and leave the decision to the user.
+- Never change or remove the assumed value because of the study; the reader compares both.
+
 ### Qualify a value as specifically as the data allows — build from single words
 
 A value's `words` array is the phrase group the number belongs to. **Always

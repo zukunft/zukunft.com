@@ -6,7 +6,7 @@
   "selection": [
     "GDP mismeasurement reasons that cause costs"
   ],
-  "description": "The most relevant reasons why measuring the welfare by the GDP causes costs, i.e. what the GDP leaves out or measures wrongly so that the policy steers wrongly, each linked to the GDP mismeasurement with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the unpaid household and care work that is not counted (household production satellite accounts of the US BEA (Kanal & Kornegay 2019) and of the ONS 2018, ILO 2018); the informal economy that the official GDP captures only in part (Medina & Schneider 2018); the statistical revisions of the GDP level by a rebasing (Nigeria 2014, Ghana 2010); the depletion of the natural capital that is not deducted (World Bank adjusted savings, The Changing Wealth of Nations 2021); the air pollution damage that is not deducted from the value added (Muller, Mendelsohn & Nordhaus 2011); the consumer surplus of free digital goods (Brynjolfsson, Collis & Eggers 2019); and the gap between the welfare and the GDP measured by the genuine progress indicator (Kubiszewski et al. 2013). The framing follows the Stiglitz-Sen-Fitoussi Commission of 2009, which recommended to look at the income, the consumption and the wealth of the households, to broaden the income measures to the non-market activities and to measure the sustainability separately. The understatement of the growth by one single free service (Brynjolfsson et al. 2019, GDP-B) and the solution are stated in problem_gdp_mismeasurement.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition and its own metric, e.g. the household production is valued with the wages of the replacement work and the informal economy with a macro model, so numbers of different studies are not comparable without reading the source description. The physical decline of the marine fish stocks and of the forests is not attributed to the GDP mismeasurement by its source, so these values do not carry a '<reason> due to GDP mismeasurement' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value; for any other currency only the share is stored. A value of a reason carries the triple '<reason> due to GDP mismeasurement' and not the phrase 'GDP mismeasurement' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why measuring the welfare by the GDP causes costs, i.e. what the GDP leaves out or measures wrongly so that the policy steers wrongly, each linked to the GDP mismeasurement with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the unpaid household and care work that is not counted (household production satellite accounts of the US BEA (Kanal & Kornegay 2019) and of the ONS 2018, ILO 2018); the informal economy that the official GDP captures only in part (Medina & Schneider 2018); the statistical revisions of the GDP level by a rebasing (Nigeria 2014, Ghana 2010); the depletion of the natural capital that is not deducted (World Bank adjusted savings, The Changing Wealth of Nations 2021); the air pollution damage that is not deducted from the value added (Muller, Mendelsohn & Nordhaus 2011); the consumer surplus of free digital goods (Brynjolfsson, Collis & Eggers 2019); and the gap between the welfare and the GDP measured by the genuine progress indicator (Kubiszewski et al. 2013). The framing follows the Stiglitz-Sen-Fitoussi Commission of 2009, which recommended to look at the income, the consumption and the wealth of the households, to broaden the income measures to the non-market activities and to measure the sustainability separately. The understatement of the growth by one single free service (Brynjolfsson et al. 2019, GDP-B) and the solution are stated in problem_gdp_mismeasurement.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition and its own metric, e.g. the household production is valued with the wages of the replacement work and the informal economy with a macro model, so numbers of different studies are not comparable without reading the source description. The physical decline of the marine fish stocks and of the forests is not attributed to the GDP mismeasurement by its source, so these values do not carry a '<reason> due to GDP mismeasurement' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value; for any other currency only the share is stored. A value of a reason carries the triple '<reason> due to GDP mismeasurement' and not the phrase 'GDP mismeasurement' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the GDP mismeasurement reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "mismeasurement"
@@ -254,6 +254,33 @@
     },
     {
       "name": "2021"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -503,6 +530,132 @@
       "from": "GDP mismeasurement",
       "verb": "can cause",
       "to": "welfare gap"
+    },
+    {
+      "name": "GDP mismeasurement reason",
+      "description": "a reason of the potential loss of GDP mismeasurement; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "GDP mismeasurement"
+    },
+    {
+      "name": "GDP revision (GDP mismeasurement reason)",
+      "from": "GDP revision",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "unpaid work (GDP mismeasurement reason)",
+      "from": "unpaid work",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "informal economy (GDP mismeasurement reason)",
+      "from": "informal economy",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "natural capital depletion (GDP mismeasurement reason)",
+      "from": "natural capital depletion",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "air pollution damage (GDP mismeasurement reason)",
+      "from": "air pollution damage",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "consumer surplus (GDP mismeasurement reason)",
+      "from": "consumer surplus",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "welfare gap (GDP mismeasurement reason)",
+      "from": "welfare gap",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "GDP mismeasurement reason columns",
+      "description": "the own columns of the table of the GDP mismeasurement reasons",
+      "from": "GDP mismeasurement reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "GDP mismeasurement reason columns reason",
+      "from": "GDP mismeasurement reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "GDP mismeasurement reason columns potential loss in EUR",
+      "from": "GDP mismeasurement reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "GDP mismeasurement reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "GDP mismeasurement reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "GDP mismeasurement reason sort",
+      "description": "the own default sorting of the table of the GDP mismeasurement reasons, the biggest potential loss on top",
+      "from": "GDP mismeasurement reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "GDP mismeasurement reason sort numeric descending of potential loss in EUR",
+      "from": "GDP mismeasurement reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

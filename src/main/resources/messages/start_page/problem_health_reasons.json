@@ -6,7 +6,7 @@
   "selection": [
     "health reasons that cause costs"
   ],
-  "description": "The most relevant reasons why poor health causes costs, each linked to the triple 'ill health' with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the loss of GDP by poor health in general (McKinsey Global Institute 2020), by the non-communicable diseases including the mental disorders (Bloom et al. 2011, World Economic Forum and Harvard School of Public Health) and by the cancers (Chen et al. 2023); the health spending (WHO 2023); the total cost of the mental disorders in the European countries (OECD/European Union 2018); the sickness absence and the lost labour productivity in Germany (BAuA 2025) and of depression and anxiety in the world (WHO); the financial hardship caused by the out-of-pocket health payments (WHO and World Bank 2023); and the healthy life years lost (GBD 2021). The share of health among the happiness factors, the annual damage of the problem health and its solution are stated in problem_health.json instead, because they are the row of the global problem ranking of the start page. The problem is the word 'health', but a reason caused by 'health' reads wrongly, so the reasons are linked to the triple 'ill health' (health can be ill), which covers every disease, injury and mental disorder; no import file had a triple for poor health before, and the word 'illness' of health.json is kept for the subjective experience of being unwell. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of the diseases, its own costing method (output loss in a macroeconomic model, cost of illness or value of the lost working days) and its own period, so numbers of different studies are not comparable without reading the source description, and a cost of a single disease group is part of the total cost of ill health and must not be added to it. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; an amount in international dollars at purchasing power parity is not converted, but stored as the share the source reports, with the amount in the description. A value of a reason carries the triple '<reason> due to ill health' and not the word 'health' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why poor health causes costs, each linked to the triple 'ill health' with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the loss of GDP by poor health in general (McKinsey Global Institute 2020), by the non-communicable diseases including the mental disorders (Bloom et al. 2011, World Economic Forum and Harvard School of Public Health) and by the cancers (Chen et al. 2023); the health spending (WHO 2023); the total cost of the mental disorders in the European countries (OECD/European Union 2018); the sickness absence and the lost labour productivity in Germany (BAuA 2025) and of depression and anxiety in the world (WHO); the financial hardship caused by the out-of-pocket health payments (WHO and World Bank 2023); and the healthy life years lost (GBD 2021). The share of health among the happiness factors, the annual damage of the problem health and its solution are stated in problem_health.json instead, because they are the row of the global problem ranking of the start page. The problem is the word 'health', but a reason caused by 'health' reads wrongly, so the reasons are linked to the triple 'ill health' (health can be ill), which covers every disease, injury and mental disorder; no import file had a triple for poor health before, and the word 'illness' of health.json is kept for the subjective experience of being unwell. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of the diseases, its own costing method (output loss in a macroeconomic model, cost of illness or value of the lost working days) and its own period, so numbers of different studies are not comparable without reading the source description, and a cost of a single disease group is part of the total cost of ill health and must not be added to it. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; an amount in international dollars at purchasing power parity is not converted, but stored as the share the source reports, with the amount in the description. A value of a reason carries the triple '<reason> due to ill health' and not the word 'health' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the health reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "health"
@@ -173,6 +173,30 @@
     },
     {
       "name": "2050"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -331,6 +355,132 @@
       "verb": "can cause",
       "to": "DALY",
       "description": "the healthy life years lost by an early death or by living with a disease or a disability"
+    },
+    {
+      "name": "health reason",
+      "description": "a reason of the potential loss of health; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "GDP loss (health reason)",
+      "from": "GDP loss",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "health spending (health reason)",
+      "from": "health spending",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "social cost (health reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "sickness absence (health reason)",
+      "from": "sickness absence",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "labour productivity loss (health reason)",
+      "from": "labour productivity loss",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "financial hardship (health reason)",
+      "from": "financial hardship",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "DALY (health reason)",
+      "from": "DALY",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "health reason columns",
+      "description": "the own columns of the table of the health reasons",
+      "from": "health reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "health reason columns reason",
+      "from": "health reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "health reason columns potential loss in EUR",
+      "from": "health reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "health reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "health reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "health reason sort",
+      "description": "the own default sorting of the table of the health reasons, the biggest potential loss on top",
+      "from": "health reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "health reason sort numeric descending of potential loss in EUR",
+      "from": "health reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [
