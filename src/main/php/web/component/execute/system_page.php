@@ -572,13 +572,19 @@ class system_page extends component
         // embed the login mask and any BACK-prefixed params as hidden fields so they survive the POST
         // view.php dispatches on url_var::MASK in url_to_action; without LOGIN_ID the POST has no routing key and action_login is never called
         $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ID);
-        foreach (url_var::back_par($url_array) as $key => $val) {
+        $back_par = url_var::back_par($url_array);
+        foreach ($back_par as $key => $val) {
             $extra_hidden .= $html->form_hidden($key, $val);
+        }
+        // a signup instead of the login returns to the same page e.g. to the static start page
+        $signup_url = api::SIGNUP_SCRIPT;
+        if ($back_par != []) {
+            $signup_url .= url_var::ADD . http_build_query($back_par);
         }
 
         $web_usr = new user_dsp();
         $back_url = html_base::url_from_back($url_array);
-        $form_str = $web_usr->form_login($extra_hidden, $back_url);
+        $form_str = $web_usr->form_login($extra_hidden, $back_url, $signup_url);
 
         return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }

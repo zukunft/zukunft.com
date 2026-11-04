@@ -124,7 +124,6 @@ include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
@@ -202,7 +201,6 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
@@ -3705,11 +3703,13 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return bool true if the source is the placeholder that a user row without source is stored with
+     * @return bool true if the source is "my estimates", which a user row without external source is stored with
      */
     function has_placeholder_source(): bool
     {
-        return $this->source_id() == sources::TRUST_ME_BRO_ID;
+        global $sys;
+        // a value without source is never the placeholder, so the id is read only for a value with a source
+        return $this->has_source() and $this->source_id() == $sys->no_source_id();
     }
 
     /**
@@ -4055,7 +4055,7 @@ class sandbox_multi extends db_object_multi_user
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
         }
-        // the placeholder source of a user row (set_user_table_source) stands for no source,
+        // "my estimates" and no source both mean that the user is the source (set_user_table_source),
         // e.g. the undo of a change takes it over from the user row and matches the standard row again
         if ($chk_obj->has_placeholder_source() and !$db_obj->has_source()) {
             $chk_obj->set_source(null);

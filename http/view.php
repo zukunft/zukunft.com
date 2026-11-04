@@ -130,7 +130,8 @@ if ($db_con->is_open()) {
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($usr->api_json([], $msg), $msg_ui);
         $msg_ui->usr = $usr_ui;
-        frontend::url_user_matches($url_array, $msg_ui);
+        // a url of another user gets the notice once and is not repeated by the links of the page
+        $url_array = frontend::url_without_foreign_user($url_array, $msg_ui);
 
         $ui = new frontend('view');
 

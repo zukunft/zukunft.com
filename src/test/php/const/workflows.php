@@ -346,6 +346,13 @@ class workflows
     const string WF_VALIDATE_LATEX = 'validate_latex';
     const int WF_VALIDATE_LATEX_NBR = 40;
 
+    // the login_start_page workflow name used for the snapshot folder and the test subheader: the user
+    // opens the login of the static start page, whose signup link keeps the start page as back target,
+    // and logs in, which returns to the static start page
+    const string WF_LOGIN_START_PAGE = 'login_start_page';
+    // the id of the current login_start_page workflow; increase it to add the next snapshot set
+    const int WF_LOGIN_START_PAGE_NBR = 41;
+
     /**
      * the user process step that a user reaction action triggers
      *

@@ -40,6 +40,7 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
@@ -50,6 +51,7 @@ include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
@@ -65,9 +67,6 @@ class formula_calc
 
     // the decimals compared, the same as the import validation (data_object::CALC_VALIDATION_DECIMALS)
     const int DECIMALS = 2;
-
-    // the multiplication in the latex format, the same as the backend latex (formula::latex_product)
-    const string LATEX_MUL = '\cdot';
 
     // the kinds of the tokens of a calculation that the browser repeats (see tokens and calculator.js)
     const string TOKEN_NUM = 'n';
@@ -130,29 +129,27 @@ class formula_calc
     }
 
     /**
-     * the formula of a result in the latex format followed by its right side with the numbers
-     * of the page as they are shown in the table, e.g. "G = L \cdot r = 2.5 \cdot 30 %" for the
-     * tooltip of the result (see result::link_title); the symbols of a latex written by hand
-     * cannot be assigned to the operands, so the numbers follow the latex instead of replacing it
+     * the result number with the numbers of the page used as they are shown in the table and below
+     * it the formula expression with the term names, e.g. '"0.75" = 2.5 * 30 %' and
+     * '"gain" = "loss" * "rate"' for the tooltip of the result (see result::link_title); a title
+     * attribute shows plain text only, so a latex formula could not be shown formatted
      *
      * @param result $res the stored result with its formula and the phrases of the values used
      * @param value_list $val_lst the values and results of the page, the values first
-     * @param formula_list $frm_lst the formulas of the page with their user text and latex
+     * @param formula_list $frm_lst the formulas of the page with their user text
      * @param user_message $msg to report a problem while formatting a number
-     * @return string the latex with the numbers or an empty string if the formula, its latex or a value is missing
+     * @return string the two lines of the expression or an empty string if the formula or a value is missing
      */
-    function latex_with_numbers(result $res, value_list $val_lst, formula_list $frm_lst, user_message $msg): string
+    function expression_with_numbers(result $res, value_list $val_lst, formula_list $frm_lst, user_message $msg): string
     {
         $result = '';
         $exp = $this->page_expression($res, $frm_lst);
         if ($exp !== null) {
-            $frm = $frm_lst->get($res->frm->id());
+            $usr_txt = $frm_lst->get($res->frm->id())->get_usr_text();
             $txt = $this->with_numbers($exp, $res, $val_lst, fn($val) => $val->val_formatted($msg));
-            if ($txt !== null and $frm->get_latex() != '') {
-                // with blanks on both sides, so that "a*b" is no "\cdotb", and a blank once, so that "a * b" has no double blank
-                $num_latex = str_replace(chars::MUL, ' ' . self::LATEX_MUL . ' ', trim($txt));
-                $num_latex = preg_replace('/\s+/', ' ', $num_latex);
-                $result = $frm->get_latex() . ' ' . chars::CHAR_CALC . ' ' . $num_latex;
+            if ($txt !== null) {
+                $left = chars::TERM_DELIMITER . $res->val_formatted($msg) . chars::TERM_DELIMITER . ' ';
+                $result = $left . chars::CHAR_CALC . $txt . "\n" . $usr_txt;
             }
         }
         return $result;
@@ -381,6 +378,39 @@ class formula_calc
         $name = preg_quote(chars::TERM_DELIMITER, '/') . '[^' . preg_quote(chars::TERM_DELIMITER, '/') . ']+'
             . preg_quote(chars::TERM_DELIMITER, '/');
         return '/' . $name . '(?:\s*' . preg_quote(chars::SEPARATOR, '/') . '\s*' . $name . ')*/';
+    }
+
+    /**
+     * the context phrases of each operand of a result that has no number on the page, e.g. world,
+     * GDP, trillion and EUR for the world GDP of the potential loss of a problem, so that the page
+     * can load the missing values
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return phrase_list the phrases of the missing operands; empty if the formula or the context is missing
+     */
+    function missing_operand_phrases(result $res, value_list $val_lst, formula_list $frm_lst): phrase_list
+    {
+        $result = new phrase_list();
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
+            $ctx_lst = $res->src_grp->phr_lst();
+            $ctx = $ctx_lst->names();
+            preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
+            foreach ($found[0] as [$operand, $start]) {
+                $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
+                $vals = $this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start));
+                if ($vals == [] and !$this->pri->is_first($names, $ctx)) {
+                    foreach ($ctx_lst->lst() as $phr) {
+                        if (in_array($phr->name(), $names)) {
+                            $result->add_phrase($phr);
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**

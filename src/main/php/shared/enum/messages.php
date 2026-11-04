@@ -1182,6 +1182,12 @@ enum messages: string
         . '" has no code id of a known chart type, so the chart is not shown';
     case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    // the query of a list load has no order, so a list that fills the row limit misses a random part
+    case LIST_ROW_LIMIT_REACHED = 'the list of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' has reached the row limit of '
+        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
+        . ' rows, so some may be missing';
     case SORT_CONDITION_UNKNOWN = 'the sort condition "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known condition, so the default order is not used';
@@ -3100,6 +3106,8 @@ enum messages: string
     // added to the tooltip above with the name of the shown object
     case NAVBAR_ADD_VIEW_FOR_TIP = 'navbar_add_view_for_tip';
     case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
+    // the sub header of the im- and export entries at the end of the edit menu
+    case NAVBAR_IM_EXPORT = 'navbar_im_export';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     // the switch between the dark and the light mode of the user menu (see html_base::theme_switch)
@@ -3121,6 +3129,15 @@ enum messages: string
     case ABOUT_PORTFOLIO_MGMT = 'about_portfolio_mgmt';
     case ABOUT_TREAM_DEMO = 'about_tream_demo';
     case ABOUT_GITHUB_LINK = 'about_github_link';
+    // the links of the about page to the entry documents of /docs/ (see http/docs.php)
+    case ABOUT_DOCS = 'about_docs';
+    case ABOUT_DOC_INTRO = 'about_doc_intro';
+    case ABOUT_DOC_CONCEPT = 'about_doc_concept';
+    case ABOUT_DOC_FAQ = 'about_doc_faq';
+    // the text before the bank account for a donation on the about page
+    case ABOUT_DONATION = 'about_donation';
+    // the title and text of http/docs.php if the url names no document of /docs/
+    case DOC_NOT_FOUND = 'doc_not_found';
 
     case UNDO = 'undo';
     case FIND = 'find';

@@ -836,6 +836,35 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the start page whose first problem is shown from its results like in the
+     * database (see test_results::result_list_solution_prio_first_row_calc_ui): the other ranking
+     * rows and the two inputs of the formula "annual damage in money" of the first problem, the
+     * world GDP and the annual share of it that global warming costs: 105 * 30 % = 31.5
+     *
+     * @return value_list_ui the frontend values of the start page with the inputs of the first loss
+     */
+    function value_list_solution_prio_page_ui(): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_other_rows();
+        $lst->add($this->value_for_phrases([
+            $t_wrd->word_world()->phrase(),
+            $t_wrd->word_gdp()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 105));
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_gdp()->phrase(),
+            $t_wrd->word_annual()->phrase()
+        ], 0.3));
+        $tl = new test_lib();
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the frontend ranking values without the first problem
      */
     function value_list_solution_prio_other_rows_ui(): value_list_ui

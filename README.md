@@ -3,6 +3,8 @@
 ## Calculating with words
 
 > **New here?** Start with the plain-language intro: [The idea behind zukunft.com](docs/idea_and_intro.md) · [auf Deutsch](docs/idee_und_einstieg.md)
+>
+> **Questions?** See the [FAQ](docs/faq.md) · [auf Deutsch](docs/faq_de.md)
 
 This program should
 - be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser

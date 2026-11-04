@@ -192,6 +192,48 @@ body {
     margin-top: 0; /* remove any inherited top margin */
 }
 
+/* a markdown document of /docs/ (http/docs.php): a readable text column on the left */
+.doc-page {
+    width: 100%;
+    max-width: 50rem;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.doc-page h1,
+.doc-page h2,
+.doc-page h3 {
+    margin-top: 1.5rem;
+}
+
+.doc-page pre {
+    background: var(--page-panel);
+    border: 1px solid var(--page-rule);
+    padding: 0.75rem;
+    overflow-x: auto;
+}
+
+.doc-page table {
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.doc-page th,
+.doc-page td {
+    border: 1px solid var(--page-rule);
+    padding: 0.25rem 0.5rem;
+}
+
+.doc-page blockquote {
+    border-left: 3px solid var(--page-border);
+    padding-left: 1rem;
+    color: var(--page-label);
+}
+
+.doc-page img {
+    max-width: 100%;
+}
+
 .main-container > form {
     width: 90%; /* match the table's full-width behaviour */
 }

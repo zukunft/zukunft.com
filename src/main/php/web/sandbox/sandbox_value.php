@@ -553,8 +553,9 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * a value has no tooltip of its own on the link, so the tooltip of the table cell is shown;
-     * the result overwrites it with the formula that has calculated it
+     * the tooltip of the link to the number, so that each number of a table cell explains itself:
+     * the value overwrites it with its source and the result with the formula that has calculated it;
+     * a number without one shows the title of the table cell e.g. "assumed, confidence 20 %"
      *
      * @return string the tooltip of the link to the number, empty for no tooltip
      */

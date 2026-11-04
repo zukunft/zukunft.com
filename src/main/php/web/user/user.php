@@ -802,9 +802,10 @@ class user extends db_object
      *
      * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and 9-prefixed back params
      * @param string $back_url when non-empty an "or go back" link is appended after "or signup"
+     * @param string $signup_url the url of the "or signup" link e.g. with the back params of the login
      * @return string the complete login form HTML followed by an "or signup" link
      */
-    function form_login(string $extra_hidden = '', string $back_url = ''): string
+    function form_login(string $extra_hidden = '', string $back_url = '', string $signup_url = api::SIGNUP_SCRIPT): string
     {
         global $mtr;
 
@@ -818,7 +819,7 @@ class user extends db_object
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
-        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
+        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref($signup_url, $mtr->txt(msg_id::SIGNUP));
         $or_back = '';
         if ($back_url !== '') {
             $or_back = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::GO) . ' ' . $html->ref($back_url, $mtr->txt(msg_id::BACK_LINK));

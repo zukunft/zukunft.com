@@ -110,8 +110,8 @@ class result extends sandbox_value
     public ?result_list $results_used = null;
     // the right side of the formula as operator texts and the figures used, only for the result page
     public ?array $expression_parts = null;
-    // the latex of the formula with the numbers used, set by the table that has repeated the calculation (see ui_list::check_results)
-    public string $latex_numbers = '';
+    // the formula expression with the numbers used and with the term names, set by the table that has repeated the calculation (see ui_list::check_results)
+    public string $expression_numbers = '';
 
 
     /*
@@ -281,17 +281,16 @@ class result extends sandbox_value
     }
 
     /**
-     * the formula in the latex format with the numbers used e.g. "G = L \cdot r = 2.5 \cdot 30 %"
-     * and the hint that the link shows the details on the page of the result; the latex source
-     * text is shown, because a tooltip is plain text
+     * the formula expression with the numbers used, below it with the term names (see
+     * formula_calc::expression_with_numbers) and the hint that the link shows the details on the page of the result
      *
      * @return string the tooltip of the link to the result, empty if the calculation is not known
      */
     protected function link_title(): string
     {
         $result = '';
-        if ($this->latex_numbers != '') {
-            $result = $this->latex_numbers . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text();
+        if ($this->expression_numbers != '') {
+            $result = $this->expression_numbers . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text();
         }
         return $result;
     }

@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\table_chart;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
@@ -65,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -82,6 +85,7 @@ class value_list_ui_tests
         $t_trp = new test_triples($t);
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
+        $t_src = new test_sources($t);
         $lib = new library();
         $msg = new user_message();
         $msg_ui = new user_message_ui();
@@ -425,6 +429,21 @@ class value_list_ui_tests
         $test_name = '... nor a column of its own unit';
         $t->assert($test_name, substr_count(
             $lib->html_to_text($lib->str_left_of($tbl_variance, '</tr>')), word_names::LOSS . $unit_sep), 1);
+        // each number of a cell has its own tooltip, so the source of a value is the title of the link to its number
+        $test_name = 'the link of the number shows the source and below it the url of the source';
+        $src_lst = $t_val->value_list_variance_ui();
+        foreach ($src_lst->lst() as $val) {
+            $val->src = new source_ui($t_src->source_reserved()->api_json());
+        }
+        $tbl_src = $src_lst->table_by_related_columns($msg_ui);
+        $src_tip = htmlspecialchars(sources::SIB . "\n" . sources::SIB_URL, ENT_QUOTES);
+        $link_src_title = '/<' . html_base::A . ' [^>]*title="' . preg_quote($src_tip, '/') . '"/';
+        $t->assert_true($test_name, preg_match($link_src_title, $tbl_src) == 1);
+        // negative: the cell title keeps only the qualifiers and does not repeat the source
+        $test_name = '... and the cell title does not repeat the source';
+        $qualifier_start = preg_quote('title="' . word_names::ASSUMED . ', ' . word_names::CONFIDENCE . ' ', '/');
+        $cell_src_title = '/' . $qualifier_start . '[^"]*' . preg_quote(htmlspecialchars(sources::SIB, ENT_QUOTES), '/') . '/';
+        $t->assert_false($test_name, preg_match($cell_src_title, $tbl_src) == 1);
 
         // a confidence value often names less than the value it qualifies, e.g. the confidence of
         // the loss of a problem qualifies the loss of the solution of that problem, which names
@@ -1400,11 +1419,15 @@ class value_list_ui_tests
         $t->assert($test_name, $no_csv->table_csv, '');
 
         $test_name = 'the edit menu offers the csv';
-        $menu = $lst->columns_menu_items([url_var::MASK => views::TABLE_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value]);
+        $menu = $lst->export_menu_items([url_var::MASK => views::TABLE_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value]);
         $t->assert_text_contains($test_name, $menu, url_var::DISPLAY_LIST_CSV . '=' . url_var::TRUE);
+        // negative: the csv is offered below the im- and export sub header and not with the columns
+        $test_name = '... but not with the columns and the form of the table';
+        $menu = $lst->columns_menu_items([url_var::MASK => views::TABLE_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value]);
+        $t->assert_text_not_contains($test_name, $menu, url_var::DISPLAY_LIST_CSV);
         // negative: a page without a known url has no menu entries
-        $test_name = '... but not if the page is not known';
-        $t->assert($test_name, $lst->columns_menu_items([]), '');
+        $test_name = '... and not if the page is not known';
+        $t->assert($test_name, $lst->export_menu_items([]), '');
     }
 
     /**

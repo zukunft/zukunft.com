@@ -65,6 +65,7 @@ include_once paths::MODEL_HELPER . 'value_type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -116,6 +118,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -1150,6 +1153,53 @@ class value_list extends sandbox_value_list
     function load_names_related(user_message $msg): void
     {
         $this->load_phrases($msg);
+    }
+
+    /**
+     * set the source of each value that knows its source only by the id with one query for all
+     * sources, because a query per value makes the api message of a long list slow
+     *
+     * @param user_message $msg to collect any problem while loading the sources
+     * @return void
+     */
+    function load_sources(user_message $msg): void
+    {
+        $ids = [];
+        foreach ($this->lst() as $val) {
+            if ($val->get_source_id() > 0 and $val->get_source()->name() == '') {
+                $ids[$val->get_source_id()] = $val->get_source_id();
+            }
+        }
+        $src_lst = new source_list($this->get_user());
+        if ($ids != [] and $src_lst->load_by_ids(array_values($ids), $msg)) {
+            // a source the requesting user may not read keeps only its id (idor), like a value
+            $src_lst->filter_readable_by($this->get_user());
+            foreach ($this->lst() as $val) {
+                if ($src_lst->has_id($val->get_source_id())) {
+                    $val->set_source($src_lst->get($val->get_source_id()));
+                }
+            }
+        }
+    }
+
+    /**
+     * the api message of the list with the sources of all values loaded upfront with one query,
+     * so that the api message of a single value never loads its source on its own
+     *
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if the sources should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        if ($typ_lst->include_sources() and !$typ_lst->test_mode()) {
+            $this->load_sources($msg);
+        }
+        return parent::api_json_array($typ_lst, $msg, $usr);
     }
 
 

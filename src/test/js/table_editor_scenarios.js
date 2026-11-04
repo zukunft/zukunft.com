@@ -21,7 +21,7 @@ const TITLE = "title";
 /* the own columns of the seed: 2024 is the first mayor column, 2025 the second, confidence the last marginal one */
 const FIRST_MAYOR_COLUMN = "2024";
 const SECOND_MAYOR_COLUMN = "2025";
-const MAIN_COLUMN = "2023";
+const MAIN_COLUMN = "growth";
 const MARGINAL_COLUMN = "confidence";
 /* the changed parameters, which match the messages of the write test (files::UPDATE_PUT_TABLE_*),
    the saved row limit and the saved hierarchy expand */

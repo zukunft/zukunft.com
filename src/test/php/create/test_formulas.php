@@ -501,6 +501,21 @@ class test_formulas extends test_objects
         return $lst;
     }
 
+    /**
+     * @return formula_list_ui the web formula "annual damage in money", which calculates the
+     *         potential loss of a problem of the start page from its annual share of the world GDP
+     */
+    function formula_list_annual_damage_ui(): formula_list_ui
+    {
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::ANNUAL_DAMAGE_ID);
+        $frm->set_name(formula_names::ANNUAL_DAMAGE);
+        $frm->set_usr_text(formula_names::ANNUAL_DAMAGE_EXP);
+        $lst = new formula_list_ui();
+        $lst->add($frm, new user_message_ui()); // a test builder is an entry point, so it creates the message
+        return $lst;
+    }
+
     function formula_list_ui(): formula_list_ui
     {
         $tl = new test_lib();

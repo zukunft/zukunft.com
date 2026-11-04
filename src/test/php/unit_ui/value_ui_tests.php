@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -706,6 +707,19 @@ class value_ui_tests
         $src_lst = new source_list_ui();
         $src_lst->load_for_selector('', $msg_ui, true);
         $t->assert_true($test_name, $src_lst->is_empty());
+
+        // the source of a value without external source is the user, which the user can also select
+        $test_name = 'the source selector offers "my estimates"';
+        $src_lst = $t_src->source_list_ui();
+        $src_usr = new source_ui();
+        $src_usr->set_id(sources::TRUST_ME_BRO_ID);
+        $src_usr->set_name(sources::TRUST_ME_BRO);
+        $src_usr->code_id = sources::TRUST_ME_BRO_CODE;
+        $src_lst->add($src_usr, $msg_ui);
+        $sel_usr = $src_lst->selector(views::VALUE_EDIT, 0, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        $t->assert_text_contains($test_name, $sel_usr, sources::TRUST_ME_BRO);
+        $test_name = '... next to the external sources';
+        $t->assert_text_contains($test_name, $sel_usr, sources::BFS);
 
         $test_name = 'the source selector links to the add source view';
         $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);

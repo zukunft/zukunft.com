@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // more specific includes are switched off to avoid circular includes
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -52,11 +53,13 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -64,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
@@ -112,6 +116,9 @@ class system_object
 
     // the number of internal errors logged during the request (read e.g. by the test runner)
     public int $errors = 0;
+
+    // the id of the source "my estimates" of a value without external source, read once by its code id
+    private ?int $no_src_id = null;
 
 
     /*
@@ -263,6 +270,35 @@ class system_object
     function verb_by_id(int $id): ?verb
     {
         return $this->typ_lst->vrb->get_verb_by_id($id);
+    }
+
+    /**
+     * the id of the source "my estimates" of a value without external source, which a user value row
+     * without own source is stored with, because the source is part of the key of the user row;
+     * read once per request by its code id, because the id differs per pod
+     *
+     * @param user_message $msg to report a missing source
+     * @return int the id of the source "my estimates" or 0 if the pod does not have it
+     */
+    function no_source_id(user_message $msg = new user_message()): int
+    {
+        if ($this->no_src_id === null) {
+            $src = new source($this->system_user() ?? new user());
+            $this->no_src_id = $src->load_by_code_id(sources::TRUST_ME_BRO_CODE, $msg);
+            if ($this->no_src_id <= 0) {
+                log_err('the source "' . sources::TRUST_ME_BRO_CODE . '" of a value without external source is missing');
+            }
+        }
+        return $this->no_src_id;
+    }
+
+    /**
+     * set the id of the source "my estimates" e.g. for a unit test without database
+     * @param int $id the id of the source "my estimates"
+     */
+    function set_no_source_id(int $id): void
+    {
+        $this->no_src_id = $id;
     }
 
     /**

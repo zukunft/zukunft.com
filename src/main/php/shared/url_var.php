@@ -138,6 +138,7 @@ class url_var
     const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
+    const string DOC = 'doc'; // the name of a markdown document of /docs/ shown by http/docs.php e.g. faq
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
     const string VIEW_RELATION_TYPE = 'dr'; // the type of the view to view link
@@ -186,6 +187,7 @@ class url_var
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
     const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
     const string INCL_RESULTS = 'is'; // 1 to include the results of the phrases in the phrase data api response
+    const string START_PAGE = 'ix'; // 1 for the static start page index.html e.g. as back target 9ix=1 of its login link
     const string PHRASE_DATA_WALK = 'pw'; // how the phrase data api collects the data of a phrase, one of the PHRASE_DATA_WALK_* values
     const string PHRASE_DATA_WALK_VALUE = 'pwv'; // the values of the phrase with their phrases (the default)
     const string PHRASE_DATA_WALK_FROM = 'pwf'; // the triples on the from side of the phrase e.g. the calculator tree

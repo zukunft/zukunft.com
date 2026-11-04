@@ -145,7 +145,6 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -193,7 +192,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
-use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -667,16 +665,17 @@ class value_base extends sandbox_value
     }
 
     /**
-     * use the placeholder source for a value without source, because one user can link a value
-     * to more than one source, so the source id is part of the user value prime key and cannot
-     * be null; the insert, the update and the delete of a user row use it alike, or the update compares the
-     * missing source with the placeholder of the stored row and finds a change of a key field only
+     * a value without external source has the user as source, so its user row is stored with the
+     * source "my estimates" (see docs/llm/constants.md), because one user can link a value to more
+     * than one source, so the source id is part of the user value prime key and cannot be null;
+     * the insert, the update and the delete of a user row use it alike
      */
     protected function set_user_table_source(): void
     {
+        global $sys;
         if (!$this->has_source()) {
             $src = new source($this->get_user());
-            $src->id = sources::TRUST_ME_BRO_ID;
+            $src->id = $sys->no_source_id();
             $this->set_source($src);
         }
     }

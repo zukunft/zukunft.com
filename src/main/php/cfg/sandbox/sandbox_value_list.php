@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 
+include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_list.php';
@@ -70,6 +71,7 @@ include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
@@ -209,7 +211,6 @@ class sandbox_value_list extends sandbox_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
      *  TODO Prio 2 replace return bool with user message e.g. to be able to return to the user
      *       "no values found, click here to search for values linked to any word of the list"
      *       or "... click here for related words"
@@ -219,7 +220,7 @@ class sandbox_value_list extends sandbox_list
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      * @param int $limit the number of values that should be loaded at once
      * @param int $page the offset for the limit
-     * @return bool true if at least one result have been loaded
+     * @return bool true if at least one result have been loaded; a list that fills the limit is reported to the user
      */
     function load_by_phr_lst_multi(
         phrase_list $phr_lst,
@@ -238,13 +239,21 @@ class sandbox_value_list extends sandbox_list
         }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst_multi($sc, $phr_lst, $class, false, $or, $limit, $page);
-        return $this->load($qp, $msg);
+        $result = $this->load($qp, $msg);
+        // the query has no order, so a list that fills the limit misses a random part of the rows
+        if ($limit > 0 and $this->count() >= $limit) {
+            $msg->add_warning_with_vars(msg_id::LIST_ROW_LIMIT_REACHED, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($class),
+                msg_id::VAR_COUNTER => $limit
+            ]);
+        }
+        return $result;
     }
 
     /**
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
-     * return all values that match at least one phrase of the list
-     * TODO Prio 2 add ORDER BY (relevance of value)
+     * return all values that match at least one phrase of the list, sorted by the key of the row
+     * TODO Prio 2 sort by the relevance of the value
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -334,6 +343,8 @@ class sandbox_value_list extends sandbox_list
                 $pos_phr_lst, $pos_grp_lst, $pos_usr);
             $qp->merge($qp_tbl);
         }
+        // the union is sorted by its key, so that a list that fills the limit is cut the same in every run
+        $qp->sql .= ' ' . sql::ORDER_BY . ' ' . implode(', ', $this->union_order_fields($class));
         // the limit belongs to the union and not to one of its branches, so it is added after the
         // loop and its two parameters are the last ones, which is what get_page() assumes
         $sc->set_page($limit, $page);
@@ -350,6 +361,28 @@ class sandbox_value_list extends sandbox_list
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
+    }
+
+    /**
+     * the key of a row of the union of all value or result tables: the group id of a row of a
+     * group table, the phrase ids of a row of a prime or main table and for a result the formula
+     *
+     * @param string $class the value or result class name
+     * @return array the field names that sort the union in a unique order
+     */
+    private function union_order_fields(string $class): array
+    {
+        $max_phr = group_id::PRIME_PHRASES_STD;
+        $frm_flds = [];
+        if ($class !== value::class) {
+            $max_phr = result_id::MAIN_PHRASES_ALL;
+            $frm_flds = [formula_fields::FLD_ID];
+        }
+        $result = [group_fields::FLD_ID];
+        for ($i = 1; $i <= $max_phr; $i++) {
+            $result[] = phrase::FLD_ID . '_' . $i;
+        }
+        return [...$result, ...$frm_flds];
     }
 
     /**

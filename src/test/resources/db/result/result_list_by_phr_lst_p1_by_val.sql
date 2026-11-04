@@ -187,4 +187,16 @@ PREPARE result_list_by_phr_lst_p1 (bigint, text, bigint, bigint, bigint) AS
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
                                  AND u.user_id = $3
-         WHERE s.group_id ~ $2 LIMIT $4 OFFSET $5;
+         WHERE s.group_id ~ $2
+      ORDER BY group_id,
+               phrase_id_1,
+               phrase_id_2,
+               phrase_id_3,
+               phrase_id_4,
+               phrase_id_5,
+               phrase_id_6,
+               phrase_id_7,
+               phrase_id_8,
+               formula_id
+         LIMIT $4
+        OFFSET $5;

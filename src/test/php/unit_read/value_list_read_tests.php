@@ -37,10 +37,17 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -50,6 +57,11 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_read_tests
 {
+
+    // a part of the text of msg_id::LIST_ROW_LIMIT_REACHED that does not depend on its vars
+    const string ROW_LIMIT_TEXT = 'has reached the row limit';
+    // the page size of the sorted result list test, smaller than the number of results of the test phrase
+    const int RESULT_PAGE_SIZE = 5;
 
     function run(test_cleanup $t): void
     {
@@ -144,6 +156,56 @@ class value_list_read_tests
             $named[] = (!$phr_lst->is_empty() and $phr_lst->loaded());
         }
         $t->assert($test_name, $named, [true, true]);
+        // a list that fills the row limit may miss rows, so the user is told
+        $test_name = 'a list load that reaches the row limit is reported to the user';
+        $lim_msg = new user_message();
+        $lim_lst = new value_list($t->usr1);
+        $lim_lst->load_by_phr_lst($t_phr->phrase_list_math_const_db(), $lim_msg, true, 2);
+        $t->assert_text_contains($test_name, $lim_msg->text(), self::ROW_LIMIT_TEXT);
+        // negative: a list below the limit is complete and not reported
+        $test_name = '... but not a list below the row limit';
+        $all_msg = new user_message();
+        $all_lst = new value_list($t->usr1);
+        $all_lst->load_by_phr_lst($t_phr->phrase_list_math_const_db(), $all_msg, true);
+        $t->assert_text_not_contains($test_name, $all_msg->text(), self::ROW_LIMIT_TEXT);
+
+        // the query is sorted by the key of the rows, so the pages of a list neither repeat nor miss a row
+        $test_name = 'the pages of a sorted list load give each value of the list once';
+        // a page of one row reaches the row limit, so its warning gets a message of its own
+        $page_msg = new user_message();
+        $page_ids = $this->page_ids(new value_list($t->usr1), $t_phr->phrase_list_math_const_db(), true, 1, 2, $page_msg);
+        $all_ids = $this->sorted_ids($all_lst);
+        $sorted_page_ids = $page_ids;
+        sort($sorted_page_ids);
+        $t->assert($test_name, $sorted_page_ids, $all_ids);
+        // negative: an unsorted query may return the same row on both pages
+        $test_name = '... and not the same value on two pages';
+        $unique_count = count(array_unique($page_ids));
+        $t->assert($test_name, $unique_count, count($all_ids));
+        $test_name = '... and the same value on the first page in every load';
+        $first_ids = $this->page_ids(new value_list($t->usr1), $t_phr->phrase_list_math_const_db(), true, 1, 1, $page_msg);
+        $first_page_id = $page_ids[0] ?? '';
+        $t->assert($test_name, $first_ids, [$first_page_id]);
+
+        // the results are sorted by the phrase ids and the formula too, so their pages are complete as well
+        $test_name = 'the result list of a sorted load has more results than one page';
+        $res_phr_lst = new phrase_list($t->usr1);
+        $res_phr_lst->add_name(triple_names::ONE_CLICK_HIDE_POPULISM, $msg);
+        $res_all_lst = new result_list($t->usr1);
+        $res_all_lst->load_by_phrase_list($res_phr_lst, $msg);
+        $res_all_ids = $this->sorted_ids($res_all_lst);
+        $res_count = count($res_all_ids);
+        $t->assert_greater($test_name, self::RESULT_PAGE_SIZE, $res_count);
+        $test_name = '... and its pages give each result of the list once';
+        $res_pages = (int)ceil($res_count / self::RESULT_PAGE_SIZE);
+        $res_page_ids = $this->page_ids(new result_list($t->usr1), $res_phr_lst, false, self::RESULT_PAGE_SIZE, $res_pages, $page_msg);
+        $sorted_res_page_ids = $res_page_ids;
+        sort($sorted_res_page_ids);
+        $t->assert($test_name, $sorted_res_page_ids, $res_all_ids);
+        // negative: an unsorted query may repeat a result on two pages and miss another
+        $test_name = '... without a result on two pages';
+        $res_unique_count = count(array_unique($res_page_ids));
+        $t->assert($test_name, $res_unique_count, $res_count);
 
         // load by phrase list
         $phr = new phrase($t->usr1);
@@ -169,6 +231,61 @@ class value_list_read_tests
         $result = $val_lst->dsp_id();
         $t->assert_text_contains($test_name, $result, (string)values::PI);
 
+    }
+
+    /**
+     * @param sandbox_value_list $lst an empty value or result list of the user whose rows are loaded
+     * @param phrase_list $phr_lst the phrases of the list load
+     * @param bool $or true to load the rows of any phrase, false the rows of all phrases
+     * @param int $size the number of rows per page
+     * @param int $pages the number of pages loaded from the first page on
+     * @param user_message $msg to collect the warning of each page that fills the row limit
+     * @return array the ids of the rows of all pages in the order of the pages
+     */
+    private function page_ids(
+        sandbox_value_list $lst,
+        phrase_list        $phr_lst,
+        bool               $or,
+        int                $size,
+        int                $pages,
+        user_message       $msg
+    ): array
+    {
+        $class = value::class;
+        if ($lst instanceof result_list) {
+            $class = result::class;
+        }
+        $result = [];
+        for ($page = 0; $page < $pages; $page++) {
+            $page_lst = clone $lst;
+            $page_lst->load_by_phr_lst_multi($phr_lst, $msg, $class, $or, $size, $page);
+            $result = [...$result, ...$this->ids($page_lst)];
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value_list $lst a loaded value or result list
+     * @return array the ids of the rows sorted, so that two lists with the same rows give the same array
+     */
+    private function sorted_ids(sandbox_value_list $lst): array
+    {
+        $result = $this->ids($lst);
+        sort($result);
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value_list $lst a loaded value or result list
+     * @return array the ids of the rows as text in the order of the list
+     */
+    private function ids(sandbox_value_list $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            $result[] = (string)$val->id();
+        }
+        return $result;
     }
 
 }

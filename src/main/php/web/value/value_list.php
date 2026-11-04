@@ -2037,6 +2037,8 @@ class value_list extends ListBase
         $txt_lst = [];
         $conf_used = [];
         foreach ($centre_lst as $val) {
+            // each number has its own tooltip e.g. a bound its calculation, so that the reader
+            // sees which number the tooltip explains; the cell title keeps only the qualifiers
             $txt = $val->value_edit($msg, $url_arr);
             $key = $this->variance_key($val);
             if (array_key_exists($key, $bound)) {
@@ -3185,7 +3187,22 @@ class value_list extends ListBase
                     $result .= $this->form_menu_item($url_array, $form);
                 }
             }
-            $result .= $this->csv_menu_item($url_array);
+        }
+        return $result;
+    }
+
+    /**
+     * the im- and export entries of the edit menu of the navbar for the value tables of the page,
+     * shown at the end of the menu below their own sub header (html_base::view_change_list)
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @return string the html list items of the menu entries or an empty text if the page is not known
+     */
+    function export_menu_items(array $url_array): string
+    {
+        $result = '';
+        if ($url_array != []) {
+            $result = $this->csv_menu_item($url_array);
         }
         return $result;
     }

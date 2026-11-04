@@ -29,7 +29,7 @@
     - the table keywords (triples::TABLE_KEYWORDS) are never walked either and the choice of a table
       parameter is a leaf e.g. normal of "sector of revenue density"; a phrase with own columns adds
       the rows of its table, the phrases that "is a" or "is part of" it with their values and results
-      e.g. "Example AG energy" for "sector of revenue"
+      e.g. "ABB Electrification" for "sector of revenue"
     - the values of the phrase resp. of the walked triples with all their phrases, the formulas of these phrases
       (not of the sides that only name a triple e.g. export of export (system)) with the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
@@ -469,7 +469,7 @@ class phrase_data
         $this->add_kinds($next, $walked, $kwd_ids, $src_phr_lst, $msg);
         $this->add_levels($next, $walked, $kwd_ids, $lvl_lst, $msg);
         $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $ind_lst, $msg));
-        // with the parent rows, because a parent row of an own table e.g. Example AG energy has its own values and results
+        // with the parent rows, because a parent row of an own table e.g. ABB Electrification has its own values and results
         $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $own_tbl_lst, $msg, true));
         return $next;
     }

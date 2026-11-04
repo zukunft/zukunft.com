@@ -79,6 +79,8 @@ include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
@@ -132,6 +134,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
@@ -1575,6 +1579,7 @@ class ui_list extends ui_base
      *                                  that ", ..." counts; null if the cached phrases are enough
      * @param array $col_names the own column phrase names of the table, e.g. lifetime and annual
      *                         of a use case page; empty for the system column tiers
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the missing operands are loaded with one call
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1589,7 +1594,8 @@ class ui_list extends ui_base
         bool                                   $with_variance = true,
         bool                                   $value_rows_only = false,
         ?phrase_list                           $add_lst = null,
-        array                                  $col_names = []
+        array                                  $col_names = [],
+        api_type_list                          $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
     ): string
     {
         $result = '';
@@ -1621,7 +1627,11 @@ class ui_list extends ui_base
                 $tbl_lst = clone $val_lst;
                 $tbl_lst->add_results(
                     $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
-                $this->check_results($tbl_lst, $dto, $msg);
+                $this->check_results($tbl_lst, $dto, $msg, $typ_lst);
+                // the source of a value with its url or doi is the tooltip of the number
+                if ($dto != null) {
+                    $this->add_sources($tbl_lst->lst(), $dto, $msg);
+                }
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
@@ -1927,21 +1937,37 @@ class ui_list extends ui_base
      * calculated number in place of a stored number that differs, with a warning to the user, so
      * that a stale stored result is never shown silently (docs/llm/frontend.md "The frontend
      * calculates, a save job verifies"); a result whose formula or values the page does not have
-     * keeps its stored number; the same calculation fills the latex with the numbers used for the
-     * tooltip of the result
+     * keeps its stored number; the same calculation fills the expression with the numbers used
+     * for the tooltip of the result; a result that uses a number that no row of the table shows,
+     * e.g. the world GDP of the potential loss of a problem, is calculated with all values of the page
      *
      * @param value_list $tbl_lst the values and results of the table
      * @param data_object|null $dto the data cache of the page with the formulas of the results
      * @param user_message $msg to report a stored result that differs from the calculation
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the missing operands are loaded with one call
      * @return void
      */
-    private function check_results(value_list $tbl_lst, ?data_object $dto, user_message $msg): void
+    private function check_results(
+        value_list    $tbl_lst,
+        ?data_object  $dto,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
+    ): void
     {
         $calc = new formula_calc($this->prior_names($dto));
         $frm_lst = $dto?->formula_list() ?? new formula_list();
+        $page_lst = null;
+        if ($dto != null) {
+            $this->add_missing_operand_values($tbl_lst, $dto, $calc, $frm_lst, $msg, $typ_lst);
+            $page_lst = $this->values_and_results($dto, $msg);
+        }
         foreach ($tbl_lst->lst() as $res) {
             if ($res instanceof result) {
-                $num = $calc->result($res, $tbl_lst, $frm_lst);
+                $ops = $tbl_lst;
+                if ($page_lst != null and $calc->result($res, $tbl_lst, $frm_lst) === null) {
+                    $ops = $page_lst;
+                }
+                $num = $calc->result($res, $ops, $frm_lst);
                 if ($num !== null and formula_calc::differs($res->number(), $num)) {
                     $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_PAGE, [
                         msg_id::VAR_NAME => $res->name(),
@@ -1950,8 +1976,74 @@ class ui_list extends ui_base
                     ]);
                     $res->number = $num;
                 }
-                $res->latex_numbers = $calc->latex_with_numbers($res, $tbl_lst, $frm_lst, $msg);
+                $res->expression_numbers = $calc->expression_with_numbers($res, $ops, $frm_lst, $msg);
             }
+        }
+    }
+
+    /**
+     * load the values that a result of a table uses but the page lacks, e.g. the world GDP of the
+     * potential loss of a problem, for all results of the table and without the units, the times
+     * and the quality words (see is_marker), whose values are too many to load; by default the
+     * values of each missing phrase are loaded with a call of their own, because the values of all
+     * missing phrases together can exceed the row limit of the backend
+     *
+     * @param value_list $tbl_lst the values and results of the table
+     * @param data_object $dto the request cache to fill
+     * @param formula_calc $calc the calculation that finds the operands of a result
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the missing phrases are loaded with one call
+     * @return void
+     */
+    private function add_missing_operand_values(
+        value_list    $tbl_lst,
+        data_object   $dto,
+        formula_calc  $calc,
+        formula_list  $frm_lst,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
+    ): void
+    {
+        $page_lst = $this->values_and_results($dto, $msg);
+        $phr_lst = new phrase_list();
+        foreach ($tbl_lst->lst() as $res) {
+            if ($res instanceof result) {
+                foreach ($calc->missing_operand_phrases($res, $page_lst, $frm_lst)->lst() as $phr) {
+                    if (!$this->is_marker($phr, $msg)) {
+                        $phr_lst->add_phrase($phr);
+                    }
+                }
+            }
+        }
+        $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
+    }
+
+    /**
+     * add the values of the given phrases to the request cache, by default with one api call per
+     * phrase, because the values of several phrases together can exceed the row limit of the backend
+     *
+     * @param phrase_list $phr_lst the phrases whose values should be loaded
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the phrases are loaded with one call
+     * @return void
+     */
+    private function load_values_of_phrases(
+        phrase_list   $phr_lst,
+        data_object   $dto,
+        user_message  $msg,
+        api_type_list $typ_lst
+    ): void
+    {
+        if ($typ_lst->load_per_phrase()) {
+            foreach ($phr_lst->lst() as $phr) {
+                $one_lst = new phrase_list();
+                $one_lst->add_phrase($phr);
+                $dto->load_values_of($one_lst, $msg);
+            }
+        } elseif (!$phr_lst->is_empty()) {
+            $dto->load_values_of($phr_lst, $msg);
         }
     }
 
@@ -2325,12 +2417,14 @@ class ui_list extends ui_base
      * @param word|triple|db_object|type_object $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load
      * @param data_object $dto the data cache of the page with the values, the results and the formulas
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the context of a result is loaded with one call
      * @return array the values and results that the results of the page use, each once
      */
     private function operand_values(
         word|triple|db_object|type_object $dbo,
         user_message                      $msg,
-        data_object                       $dto
+        data_object                       $dto,
+        api_type_list                     $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
     ): array
     {
         $result = [];
@@ -2338,7 +2432,7 @@ class ui_list extends ui_base
         $calc = new formula_calc($this->prior_names($dto));
         // in a fixed order, because the order of the operands is the order of their sources on the page
         foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
-            $this->add_context_values($res, $dto, $msg);
+            $this->add_context_values($res, $dto, $msg, $typ_lst);
             $operands = $calc->operands($res, $this->values_and_results($dto, $msg), $dto->formula_list());
             foreach ($operands as $val) {
                 $result[$val->id()] = $val;
@@ -2441,6 +2535,7 @@ class ui_list extends ui_base
      * @param array $url_arr the url parameters of the page with the entered numbers
      * @param array $skip the names of the phrases whose values are shown already e.g. the
      *                    assumptions that the calculator lists
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the context of a result is loaded with one call
      * @return string the html code of the fields sorted by label or an empty string if the page has no assumption
      */
     function assumption_fields(
@@ -2449,12 +2544,13 @@ class ui_list extends ui_base
         ?data_object                           $dto,
         string                                 $form_name,
         array                                  $url_arr,
-        array                                  $skip = []
+        array                                  $skip = [],
+        api_type_list                          $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
     ): string
     {
         $fields = [];
         if ($dto != null and $dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
-            $vals = $this->operand_values($dbo, $msg, $dto);
+            $vals = $this->operand_values($dbo, $msg, $dto, $typ_lst);
             $this->add_sources($vals, $dto, $msg);
             foreach ($vals as $val) {
                 $names = $val->phr_lst()->names();
@@ -2472,14 +2568,22 @@ class ui_list extends ui_base
     /**
      * add the values that a result may use to the request cache: the values of the phrases of
      * the context of the result, without the units, the times and the quality words, whose values
-     * are too many to load and never an operand on their own; each context is loaded once
+     * are too many to load and never an operand on their own; by default the values of each
+     * phrase are loaded with a call of their own, because the values of all phrases of the context
+     * together can exceed the row limit of the backend; each phrase or context is loaded once
      *
      * @param result $res a result of the page with the phrases of the values used
      * @param data_object $dto the request cache to fill
      * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst without api_types::LOAD_PER_PHRASE the context is loaded with one call
      * @return void
      */
-    private function add_context_values(result $res, data_object $dto, user_message $msg): void
+    private function add_context_values(
+        result        $res,
+        data_object   $dto,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list([api_types::LOAD_PER_PHRASE])
+    ): void
     {
         $ctx = $res->src_grp?->phr_lst();
         if ($ctx != null) {
@@ -2489,9 +2593,7 @@ class ui_list extends ui_base
                     $phr_lst->add_phrase($phr);
                 }
             }
-            if (!$phr_lst->is_empty()) {
-                $dto->load_values_of($phr_lst, $msg);
-            }
+            $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
         }
     }
 

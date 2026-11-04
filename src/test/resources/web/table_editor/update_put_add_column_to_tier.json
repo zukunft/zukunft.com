@@ -14,7 +14,7 @@
                 "to": "sector of revenue columns 2025"
             },
             {
-                "from": "sector of revenue columns 2023",
+                "from": "sector of revenue columns growth",
                 "verb": "is follower of",
                 "to": "sector of revenue columns confidence"
             },
@@ -30,15 +30,15 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 5744
+                "id": 5745
             },
             {
                 "class": "triple",
-                "id": 5739
+                "id": 5742
             },
             {
                 "class": "triple",
-                "id": 5752
+                "id": 5751
             }
         ]
     }

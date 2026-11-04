@@ -504,7 +504,7 @@
         return result;
     }
 
-    /* a row of a triple of the owner e.g. Example AG energy is shown by its to side energy */
+    /* a row of a triple of the owner e.g. ABB Electrification is shown by its to side electrification */
     function seedRow(name, def) {
         const trp = tripleByName(name);
         const acr = TRIPLES.find(function (t) {

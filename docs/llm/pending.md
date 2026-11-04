@@ -1,5 +1,27 @@
 # pending - list of planned llm prompts with prio 1
 
+## language
+
+add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
+
+creat a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
+the src/main/resources/translations/de.yaml file exists and is complete
+and that the docs linked from about have a translation file and at least the number of ## header marks match
+
+## wikipedia link
+
+if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
+the refresh icon right of wikipedia is pressed the corresponding page from wikipedia should be 
+received and the first part of the description should be taken from wikipedia without pronouciation and links
+and used as the description . so the result should be that the change confirm page is shown with the adjusted 
+description.
+Additional to the description the wikidata link should be taken from the wikipedia page and if needed included in the update
+
+create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
+that will not be changed any more and from this extract the description and the wikidata link as a unit test.
+
+## this document
+
 **How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
 prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
 - see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
@@ -27,18 +49,6 @@ gets the CO2-eq costs). One phase, four agents in parallel:
   missing argument sections and the CO2-eq reduction costs in the NPP use case json
 - agent share: the "Share assumptions and vote" button of the calculator page
 - agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
-
-## start page 
-
-if on this page http://localhost/ login is clicked and the login has been succesful return to http://localhost/
-
-## result tooltip in tables
-
-is it possible to show the formatted latex formula in a tooltip? 
-if not use the formula expression once with the values used for the result and 
-below with the term names
-
-for values in tables show the source name with url or doi as the tooltip
 
 ## Calculator editor
 

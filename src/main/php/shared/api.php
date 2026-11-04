@@ -42,6 +42,8 @@ class api
      */
 
     const string HOST_SAME = '/';
+    // the static start page index.html in the docroot
+    const string START_PAGE = self::HOST_SAME;
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string CONFIG_ALL = 'all';
@@ -59,6 +61,8 @@ class api
     const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
     const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
+    // shows a markdown document of /docs/ as html (see http/docs.php)
+    const string DOCS_SCRIPT = self::SCRIPT_PATH . 'docs.php';
     // the server admin page has its own authentication (see http/server_admin.php)
     const string SERVER_ADMIN_SCRIPT = self::SCRIPT_PATH . 'server_admin.php';
     const string FIND_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID;

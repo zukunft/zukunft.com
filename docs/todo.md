@@ -314,6 +314,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO end all function that might create a message to the user with return $urs_msg->is_ok(); if there is not a good reason
     TODO use message seq number error detection also for pod to pod messages to detect man in the middle issues
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
+    TODO replicate the estimates and the calculations e.g. of KOF ETH and SNB to check how good the estimates are
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database

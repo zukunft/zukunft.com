@@ -939,10 +939,9 @@ class triple extends sandbox_link_named
                     // emitted as an empty json list, which says the list has been asked
                     $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // INCL_PHRASES so each value carries its group phrases, which the
-                        // frontend needs for the value name and to sort the list by impact
+                        // with the group phrases and the source of each value (api_type_list::VALUES_RELATED)
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                            $typ_lst->values_related(), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);

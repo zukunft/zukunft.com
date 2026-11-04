@@ -10,8 +10,59 @@
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
         <style>
-            :root { --font-page: sans-serif; }
-:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-success: #198754; --page-warning: #ffc107; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
         </style>
     </head>
     <body>
@@ -103,11 +154,6 @@
                                         table + chart
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="http://localhost/http/view.php?m=1&amp;dlx=1&amp;u=99">
-                                        export as csv
-                                    </a>
-                                </li>
                                 <li class="menu-header">
                                     alternative views
                                 </li>
@@ -163,6 +209,14 @@
                                 <li>
                                     <a href="http://localhost/http/view.php?m=84&amp;9m=1&amp;u=99" title="create a new named view editor">
                                         add view
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    im- and export
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;dlx=1&amp;u=99">
+                                        export as csv
                                     </a>
                                 </li>
                             </ul>
@@ -324,7 +378,9 @@
                         </a>
                     </td>
                     <td title="assumed, confidence 20 %">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-2I_2e_2i_3G_&amp;9m=1&amp;u=99">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-2I_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;5.5&quot; = 110.05 * 5 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
                             5.5
                         </a>
                         <sup>
@@ -343,7 +399,8 @@
                         </a>
                     </td>
                     <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0r-2I_2L_2e_2i_3G_&amp;9m=1&amp;u=99" title="G_{EUR} = L_{pot} \cdot r = 5.5 \cdot 10 %
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0r-2I_2L_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;0.55&quot; = 5.5 * 10 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
 click for more details">
                             0.55
                         </a>
@@ -361,7 +418,9 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed, confidence 30 %">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-22_2e_2i_3G_&amp;9m=1&amp;u=99">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-22_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;4&quot; = 110.05 * 3.63 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
                             4
                         </a>
                         <sup>
@@ -380,7 +439,8 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-22_2e_2i_3G_&amp;9m=1&amp;u=99" title="G_{EUR} = L_{pot} \cdot r = 4 \cdot 100 %
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-22_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;4&quot; = 4 * 100 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
 click for more details">
                             4
                         </a>
@@ -398,7 +458,9 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed, confidence 20 %">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-0b-2e_2i_3G_&amp;9m=1&amp;u=99">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-0b-2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;2.2&quot; = 110.05 * 2 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
                             2.2
                         </a>
                         <sup>
@@ -417,7 +479,8 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=Gg-0r-0b-2e_2i_3G_&amp;9m=1&amp;u=99" title="G_{EUR} = L_{pot} \cdot r = 2.2 \cdot 72.73 %
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Gg-0r-0b-2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;1.6&quot; = 2.2 * 72.73 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
 click for more details">
                             1.6
                         </a>
@@ -435,7 +498,9 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed, confidence 25 %">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-2K_2e_2i_3G_&amp;9m=1&amp;u=99">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0q-2K_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;2&quot; = 110.05 * 1.82 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
                             2
                         </a>
                         <sup>
@@ -454,7 +519,8 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0r-2J_2K_2e_2i_3G_&amp;9m=1&amp;u=99" title="G_{EUR} = L_{pot} \cdot r = 2 \cdot 1 %
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0r-2J_2K_2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;0.02&quot; = 2 * 1 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
 click for more details">
                             0.02
                         </a>
@@ -472,7 +538,9 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed, confidence 15 %">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=0w-0q-2e_2i_3G_&amp;9m=1&amp;u=99">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0w-0q-2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;1.6&quot; = 110.05 * 1.45 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
                             1.6
                         </a>
                         <sup>
@@ -491,7 +559,8 @@ click for more details">
                         </a>
                     </td>
                     <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=9&amp;id=1u-0w-0r-2e_2i_3G_&amp;9m=1&amp;u=99" title="G_{EUR} = L_{pot} \cdot r = 1.6 \cdot 30 %
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1u-0w-0r-2e_2i_3G_&amp;9m=1&amp;u=99" title="&quot;0.48&quot; = 1.6 * 30 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
 click for more details">
                             0.48
                         </a>

@@ -183,14 +183,19 @@ class word_names
     const string CONFIDENCE = 'confidence';
     const int CONFIDENCE_ID = 341;
     // the problems and solutions of solution_prio.json that are a word, not a triple
+    // with the description of the import, which the start page shows as the tooltip
     const string DISINFORMATION = 'disinformation';
     const int DISINFORMATION_ID = 307;
+    const string DISINFORMATION_COM = 'false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.';
     const string RESEARCH = 'research';
     const int RESEARCH_ID = 277;
+    const string RESEARCH_COM = 'systematic investigation to discover new knowledge';
     const string TAXES = 'taxes';
     const int TAXES_ID = 279;
+    const string TAXES_COM = 'A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.';
     const string SPENDING = 'spending';
     const int SPENDING_ID = 281;
+    const string SPENDING_COM = 'an outlay of money for goods or services';
     const string HTP = 'htp';
     const int HTP_ID = 297;
     const string TRILLION = 'trillion';
@@ -365,6 +370,9 @@ class word_names
     // what is measured, typed "measure non unit", so that it heads no row of a value table
     const string GDP = 'GDP';
     const int GDP_ID = 304;
+    // the time span of a share of the GDP e.g. the annual loss that a problem causes
+    const string ANNUAL = 'annual';
+    const int ANNUAL_ID = 303;
     const string EURO = 'Euro';
     const int EURO_ID = 458;
     const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';

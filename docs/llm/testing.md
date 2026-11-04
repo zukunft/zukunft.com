@@ -854,16 +854,21 @@ If a word, triple or other object is added to the database, e.g. by adding data 
 json file, the developer does these steps; an LLM runs none of the scripts and sets none of the
 flags (see *An LLM never runs the `/test/*` scripts*):
 
+Both flags are in `src/test/php/const/files.php`.
+
 0. A human reviews the code.
-1. Run `test/reset_db.php` once to update the database and fix the ids.
-2. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` again, which updates the
-   test files with an id directly, the `list.csv` files and the re-pin report
-   `docs/pinned_id_findings.md`.
-3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run the complete `test/test.php`, which re-pins the
-   id consts in the code.
-4. Set `AUTO_RE_PIN_OBJECT_ID` to `false` and run the complete `test/test.php` again, which
-   updates the test files with the updated id consts and the re-pin report, which should now be empty.
-5. Run the full `test/test.php` again and fix any errors, if needed step by step in a debug run
+1. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` once, which recreates the
+   database with the new ids and updates the `list.csv` files, the api files with a not yet fixed
+   id and the re-pin report `docs/pinned_id_findings.md`.
+2. If `docs/pinned_id_findings.md` shows "all ids are fine" for every class, continue with step 5.
+3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run `test/test_re_pin.php` once, which rewrites the
+   number of each shifted `*_ID` const in its php file; this run still reads the old values, so its
+   pinned id asserts fail and the report is not written. Review the diff of the const files.
+4. Set `AUTO_RE_PIN_OBJECT_ID` to `false`, keep `AUTO_UPDATE_TEST_FILES` at `true` and run
+   `test/test_re_pin.php` again, which checks the re-pinned consts and writes the re-pin report
+   again. If the report does not show "all ids are fine" for every class, repeat from step 2;
+   a const that the report names as "re-pin by hand" is fixed in the code before the next run.
+5. Run the full `test/test.php` and fix any errors, if needed step by step in a debug run
    with a break on the error.
 6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
    double-check that no test case is volatile. If it is fine, do a final code review, which an

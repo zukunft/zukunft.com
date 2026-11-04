@@ -27,4 +27,4 @@ SELECT source_delete_log
         3::smallint,
         195::smallint,
         'Federal Statistical Office'::text,
-        9::bigint);
+        10::bigint);
