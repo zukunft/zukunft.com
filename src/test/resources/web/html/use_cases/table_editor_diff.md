@@ -6,9 +6,6 @@ Change the generated page table_editor.html so that it shows what the hand made 
 
 ## Different (0)
 
-## Only in the generated page (2)
-
-- button: Show the table
-- button: Editor without javascript
+## Only in the generated page (0)
 
 ## Different order (0)

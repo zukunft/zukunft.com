@@ -274,14 +274,16 @@ class formula_ui_tests
         $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $tab_html = $list->view_tab_box($frm_tab, $msg, true);
 
-        $test_name = 'the formula page shows the views tab';
-        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
-        $test_name = '... with the name of a view that can show the formula';
-        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the views of the formula are offered by the edit menu of the navbar, so the page has no views tab
+        $test_name = 'the formula page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... but the edit menu offers a view that can show the formula';
+        $menu_html = $frm_tab->menu_view_items_ui($frm_tab->view_lst);
+        $t->assert_text_contains($test_name, $menu_html, views::SCIENCE);
         // the switch button must open the edit view of the shown object, so on a formula page the
         // formula edit view and never the word edit view (see view::switch_link)
-        $test_name = '... and a switch button that opens the formula edit view';
-        $t->assert_text_contains($test_name, $tab_html,
+        $test_name = '... with a switch button that opens the formula edit view';
+        $t->assert_text_contains($test_name, $menu_html,
             url_var::MASK . '=' . views::FORMULA_EDIT_ID
             . '&amp;' . url_var::ID . '=' . formula_names::INCREASE_ID);
 
@@ -296,11 +298,9 @@ class formula_ui_tests
         $t->assert_text_contains($test_name, $tab_html, 'my formula description');
         $t->assert_text_contains($test_name, $tab_html, 'the standard formula description');
 
-        // a formula loaded without the related data has neither a views nor a my tab
+        // a formula loaded without the related data has no my tab
         $frm_plain = new formula($t_frm->formula_increase()->api_json());
         $plain_html = $list->view_tab_box($frm_plain, $msg, true);
-        $test_name = 'a formula without views shows no views tab';
-        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
         $test_name = 'a formula without overwrites shows no my tab';
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
 

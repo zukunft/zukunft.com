@@ -1876,6 +1876,8 @@ enum messages: string
     case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
     case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
     case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
+    // the last line of the tooltip of a result, because the link leads to the page of the result
+    case RESULT_TOOLTIP_DETAILS = 'result_tooltip_details';
     // the tag behind the label of an assumption field: a number with a source or an estimate
     case FIELD_TAG_MEASURED = 'field_tag_measured';
     case FIELD_TAG_ASSUMED = 'field_tag_assumed';
@@ -2262,6 +2264,7 @@ enum messages: string
     case TABLE_EDITOR_COLUMN_MAYOR_HINT = 'table_editor_column_mayor_hint';
     case TABLE_EDITOR_COLUMN_MAIN = 'table_editor_column_main';
     case TABLE_EDITOR_COLUMN_MAIN_HINT = 'table_editor_column_main_hint';
+    case TABLE_EDITOR_GROUP_COLUMN_DETAILS = 'table_editor_group_column_details';
     case TABLE_EDITOR_COLUMN_MINOR = 'table_editor_column_minor';
     case TABLE_EDITOR_COLUMN_MINOR_HINT = 'table_editor_column_minor_hint';
     case TABLE_EDITOR_COLUMN_MARGINAL = 'table_editor_column_marginal';
@@ -2276,6 +2279,7 @@ enum messages: string
     case TABLE_EDITOR_GROUP_ROWS = 'table_editor_group_rows';
     case TABLE_EDITOR_ROW_PHRASE = 'table_editor_row_phrase';
     case TABLE_EDITOR_ROW_PHRASE_HINT = 'table_editor_row_phrase_hint';
+    case TABLE_EDITOR_GROUP_ROW_DETAILS = 'table_editor_group_row_details';
     case TABLE_EDITOR_ROW_VERB = 'table_editor_row_verb';
     case TABLE_EDITOR_ROW_DIRECTION = 'table_editor_row_direction';
     case TABLE_EDITOR_ROW_FILTER = 'table_editor_row_filter';
@@ -2360,7 +2364,12 @@ enum messages: string
     case TABLE_EDITOR_NO_MATCH = 'table_editor_no_match';
     case TABLE_EDITOR_TAB_TABLE = 'table_editor_tab_table';
     case TABLE_EDITOR_TAB_JSON = 'table_editor_tab_json';
-    case TABLE_EDITOR_TAB_CSV = 'table_editor_tab_csv';
+    case TABLE_EDITOR_TEXTS_INTRO = 'table_editor_texts_intro';
+    case TABLE_EDITOR_COL_PART = 'table_editor_col_part';
+    case TABLE_EDITOR_TEXTS_COLUMN = 'table_editor_texts_column';
+    case TABLE_EDITOR_TEXTS_ROW = 'table_editor_texts_row';
+    case TABLE_EDITOR_CHANGED_PARAMS = 'table_editor_changed_params';
+    case TABLE_EDITOR_REMOVED = 'table_editor_removed';
     case TABLE_EDITOR_JSON_NOTE = 'table_editor_json_note';
     case TABLE_EDITOR_APPLY_JSON = 'table_editor_apply_json';
     case TABLE_EDITOR_COPY = 'table_editor_copy';
@@ -2368,7 +2377,6 @@ enum messages: string
     case TABLE_EDITOR_JSON_INVALID = 'table_editor_json_invalid';
     case TABLE_EDITOR_COPIED = 'table_editor_copied';
     case TABLE_EDITOR_COPY_MANUAL = 'table_editor_copy_manual';
-    case TABLE_EDITOR_CSV_NOTE = 'table_editor_csv_note';
     case TABLE_EDITOR_CSV_ALL_ROWS = 'table_editor_csv_all_rows';
     case TABLE_EDITOR_CSV_SOURCES = 'table_editor_csv_sources';
     case TABLE_EDITOR_NO_ROWS = 'table_editor_no_rows';
@@ -3029,13 +3037,12 @@ enum messages: string
     // the button beside the expression and the latex field of the formula form that asks the
     // backend to read the entered text and to name the terms that it selects
     case FORM_BUTTON_VALIDATE = 'form_button_validate';
-    // the tooltips of the views tab of an object page: show the object with the view, set the view
-    // as the default view of the object and change the view itself (see view::open_link)
+    // the tooltips of the views in the edit menu of the navbar: show the object with the view and
+    // set the view as the default view of the object (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
     case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
     // the tooltip of the grey entry in the edit menu of the navbar of the view that shows the page
     case BUTTON_VIEW_USED_TIP = 'button_view_used_tip';
-    case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     // the button that links the selected object to the shown object e.g. a formula to a phrase

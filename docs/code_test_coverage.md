@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1581 of 6393 public functions have at least 2 unit test calls; the 4607 functions below do not; the 205 functions of the last section are called nowhere
+1583 of 6395 public functions have at least 2 unit test calls; the 4607 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 1955 functions of main backend have no test at all
 
@@ -2405,7 +2405,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- direct_assigned_phrases - 0 unit test calls
     \-- dsp_type_selector - 0 unit test calls shared by 2 classes
     \-- dsp_unlink_phr - 0 unit test calls
-    \-- edit_link - 0 unit test calls shared by 3 classes
+    \-- edit_link - 0 unit test calls shared by 2 classes
     \-- impact - 0 unit test calls shared by 9 classes
     \-- need_all - 0 unit test calls shared by 2 classes
     \-- ref_text - 0 unit test calls shared by 2 classes
@@ -2646,6 +2646,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- btn_add_value - 0 unit test calls shared by 2 classes
     \-- cached_phrase - 0 unit test calls
     \-- category_subtitle - 0 unit test calls
+    \-- child_links - 0 unit test calls
     \-- children - 0 unit test calls shared by 6 classes
     \-- column_and_unit - 0 unit test calls
     \-- common - 0 unit test calls shared by 2 classes
@@ -2915,7 +2916,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_selector - 0 unit test calls
     \-- dsp_tbl_cell - 0 unit test calls shared by 2 classes
     \-- dsp_unlink - 0 unit test calls shared by 2 classes
-    \-- edit_link - 0 unit test calls shared by 3 classes
+    \-- edit_link - 0 unit test calls shared by 2 classes
     \-- get_formula - 0 unit test calls shared by 3 classes
     \-- get_triple - 0 unit test calls shared by 2 classes
     \-- get_word - 0 unit test calls shared by 2 classes
@@ -3163,7 +3164,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_navbar - 0 unit test calls shared by 2 classes
     \-- dsp_navbar_html_no_view - 0 unit test calls
     \-- dsp_navbar_simple - 0 unit test calls
-    \-- edit_link - 0 unit test calls shared by 3 classes
     \-- log_err - 0 unit test calls shared by 5 classes
     \-- name_linked - 0 unit test calls shared by 10 classes
     \-- open_link - 0 unit test calls

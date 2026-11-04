@@ -195,6 +195,8 @@
         padding: 6px 11px;
         cursor: pointer;
         white-space: nowrap;
+        /* the pod forces white button text with !important, which is invisible on the light editor buttons */
+        color: var(--ink) !important;
     }
 
     .editor .btn:hover {
@@ -222,7 +224,7 @@
     .editor .btn.primary {
         background: var(--accent);
         border-color: var(--accent);
-        color: var(--accent-ink);
+        color: var(--accent-ink) !important;
         font-weight: 500;
     }
 
@@ -242,7 +244,7 @@
     }
 
     .editor .btn.danger {
-        color: var(--danger);
+        color: var(--danger) !important;
     }
 
     .chip {
@@ -1255,19 +1257,6 @@
 
     .main-container .phrasebar label {
         display: inline;
-    }
-
-    /* the pod forces white button text with !important, which is invisible on the light editor buttons */
-    .editor .btn {
-        color: var(--ink) !important;
-    }
-
-    .editor .btn.primary {
-        color: var(--accent-ink) !important;
-    }
-
-    .editor .btn.danger {
-        color: var(--danger) !important;
     }
 </style>
 

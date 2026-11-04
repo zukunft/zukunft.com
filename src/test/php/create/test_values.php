@@ -1157,7 +1157,7 @@ class test_values extends test_objects
             $effort = round($gain_nbr * 10);
             $rows = [
                 [[$problem, $loss, $pct, $t_wrd->word_gdp()->phrase()], round($loss_nbr / 105, 3)],
-                [[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()], round($loss_nbr / 210, 3)],
+                [[$problem, $loss, $t_trp->percent_htp()->phrase()], round($loss_nbr / 210, 3)],
                 [[$problem, $t_trp->loss_reduction()->phrase(), $pct], $reduction],
                 [[$problem, $t_trp->initial_effort()->phrase(), $t_trp->person_year()->phrase()], $effort],
                 [[$problem, $t_trp->reward_ratio()->phrase(), $t_wrd->word_trillion()->phrase(),
@@ -1373,7 +1373,7 @@ class test_values extends test_objects
     }
 
     /**
-     * the potential loss of global warming in two units, with the numbers of solution_prio.json:
+     * the potential loss of global warming in two units, with the numbers of solution_prio.json and values.json:
      * the absolute loss in trillion EUR and the loss as a share of the global happy time points,
      * so that a table with one column per unit can be tested
      *
@@ -1388,8 +1388,7 @@ class test_values extends test_objects
         $loss = $t_wrd->word_loss()->phrase();
         $eur_phr = [$problem, $potential, $loss, $t_wrd->word_trillion()->phrase(),
             $t_wrd->word_eur()->phrase(), $t_wrd->word_assumed()->phrase()];
-        $htp_phr = [$problem, $potential, $loss, $t_wrd->word_percent()->phrase(),
-            $t_wrd->word_htp()->phrase()];
+        $htp_phr = [$problem, $potential, $loss, $t_trp->percent_htp()->phrase()];
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases($eur_phr, 2.2));
         $lst->add($this->value_for_phrases($htp_phr, -0.37));

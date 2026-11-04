@@ -332,7 +332,7 @@ class value_list extends ListBase
             // a value of a child phrase belongs to the page phrase too, e.g. a "global warming"
             // value is shown on the "global problem" page, because the context list contains
             // the triple "global warming (global problem)"
-            $child_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
+            $child_names = $ctx_lst?->row_names($dbo->phrase()) ?? [];
             foreach ($this->lst() as $val) {
                 if ($val->has_phrase($dbo->phrase(), $msg)) {
                     $val_lst->add($val, $msg);

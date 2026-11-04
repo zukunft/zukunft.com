@@ -117,7 +117,7 @@ class value extends value_base
     private ?float $number = null;
 
     // the views that can show a value; populated lazily by load_views_related() and only emitted
-    // via api_json_array() under the INCL_RELATED flag, so the views tab of the default value
+    // via api_json_array() under the INCL_RELATED flag, so the edit menu of the default value
     // view can offer the views to switch to
     public ?view_list $views_related = null;
 
@@ -296,7 +296,7 @@ class value extends value_base
      * load the views that can show this value into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; unlike a word a value has no
      * view of its own, so the related views are all views of the value view type, which is
-     * what the views tab offers the user to switch to
+     * what the edit menu offers the user to switch to
      *
      * @param user_message $msg to collect any problem while loading the views
      * @return void

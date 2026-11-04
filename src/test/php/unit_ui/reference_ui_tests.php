@@ -194,9 +194,8 @@ class reference_ui_tests
         $test_name = 'the reference page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
 
-        // an empty tab is dropped, so a reference whose api message carries no related
-        // views shows no views tab instead of an empty one
-        $test_name = 'a reference without related views shows no views tab';
+        // the views of an object are offered by the edit menu of the navbar only
+        $test_name = 'the reference page shows no views tab';
         $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
     }
 

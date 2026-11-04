@@ -5620,7 +5620,7 @@
     \-- load_changed_objects
         \-- change_log_list - TODO Prio 2 instead of using an array for $other_values create a helper class with vars
     \-- views_array
-        \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
+        \-- sandbox_related - the views that can show the object for the edit menu of the object page; the list is
     \-- views_assigned_array
         \-- sandbox_related - the views assigned to the object by the import for the edit menu of the navbar
     \-- views_assigned
@@ -7212,6 +7212,7 @@
 \-- formula_calc
     \-- __construct - section for function __construct is expected to be construct and map in /formula/formula_calc.php
     \-- result - section for function result missing in /formula/formula_calc.php
+    \-- latex_with_numbers - section for function latex_with_numbers missing in /formula/formula_calc.php
     \-- calculates_phrase - section for function calculates_phrase missing in /formula/formula_calc.php
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
     \-- arithmetic_tokens - section for function arithmetic_tokens missing in /formula/formula_calc.php
@@ -7947,6 +7948,9 @@
             se_list.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- child_links - section for function child_links not yet defined that it should be related in /phrase/phrase_list.
+            php
+    \-- row_names - section for function row_names not yet defined that it should be related in /phrase/phrase_list.php
     \-- parents_all - section for function parents_all not yet defined that it should be related in /phrase/phrase_list.
             php
     \-- sub_types - section for function sub_types not yet defined that it should be related in /phrase/phrase_list.php
@@ -8802,7 +8806,6 @@
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
-    \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
     \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
@@ -9831,7 +9834,7 @@
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
-        \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
+        \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Changes" tab with the change log
     \-- view_terms
         \-- ui_list - the terms that use the given view as links, used by the used by column of the view add and
     \-- link_list_word
@@ -10044,6 +10047,8 @@
         \-- expression - get a list of all formula elements
     \-- result
         \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- latex_with_numbers
+        \-- formula_calc - the formula of a result in the latex format followed by its right side with the numbers
     \-- calculates_phrase
         \-- formula_calc - @param result $res a result of the page
     \-- tokens
@@ -10767,6 +10772,10 @@
         \-- phrase_list - a copy of this list that answers child_names and parent_names from an index of the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- child_links
+        \-- phrase_list - the triples of this list that link a phrase to the given phrase, because a number of a row
+    \-- row_names
+        \-- phrase_list - @param phrase $phr the phrase of a table e.g. "populism solution"
     \-- parents_all
         \-- phrase_list - the given phrase and every phrase above it in this list: the sides that a triple is built
     \-- sub_types

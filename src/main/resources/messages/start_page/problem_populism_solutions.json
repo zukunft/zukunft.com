@@ -9,7 +9,7 @@
     "potential gain",
     "initial effort"
   ],
-  "description": "The 44 compared solutions of populism, each a part of the solution avoid wrong decisions. Chain per solution: the share of the loss of populism that the solution avoids if it is fully in place (reduction potential) times the probability that it is fully in place (fulfillment probability) gives the loss reduction; the loss reduction times the welfare loss share of populism, the world htp and the populism gain factor gives the potential gain in billion htp; the cost to set up the solution worldwide in billion USD times the person years per billion USD gives the initial effort in person years. Every reduction potential, probability and cost is assumed and has its own 80 percent probability range. The inputs of the welfare loss share of populism are repeated from problem_populism.json, so that the gain can be calculated within this file. The table of the populism solutions has its own columns, the solution, the loss reduction in percent, the potential gain in htp and the initial effort in person years, sorted by the biggest potential gain on top.",
+  "description": "The 44 compared solutions of populism, each a part of the solution avoid wrong decisions. Chain per solution: the share of the loss of populism that the solution avoids if it is fully in place (reduction potential) times the probability that it is fully in place (fulfillment probability) gives the loss reduction; the loss reduction times the annual damage of populism in money gives the potential gain in trillion EUR, and times the welfare loss share of populism, the world htp and the populism gain factor the potential gain in billion htp; the cost to set up the solution worldwide in billion USD times the person years per billion USD gives the initial effort in person years. Every reduction potential, probability and cost is assumed and has its own 80 percent probability range. The inputs of the annual damage and the welfare loss share of populism are repeated from problem_populism.json, so that the gain can be calculated within this file. The table of the populism solutions has its own columns, the solution, the potential gain in EUR, the potential gain in htp and the initial effort in person years, sorted by the biggest potential gain in EUR on top.",
   "words": [
     {
       "name": "populism"
@@ -63,7 +63,13 @@
       "name": "htp"
     },
     {
+      "name": "EUR"
+    },
+    {
       "name": "billion"
+    },
+    {
+      "name": "trillion"
     },
     {
       "name": "low"
@@ -85,6 +91,9 @@
     },
     {
       "name": "world"
+    },
+    {
+      "name": "2024"
     },
     {
       "name": "solution"
@@ -1238,9 +1247,9 @@
       "to": "sort order"
     },
     {
-      "from": "loss reduction",
+      "from": "potential gain",
       "verb": "in",
-      "to": "percent"
+      "to": "EUR"
     },
     {
       "from": "potential gain",
@@ -1266,10 +1275,10 @@
       "to": "solution"
     },
     {
-      "name": "populism solution columns loss reduction",
+      "name": "populism solution columns potential gain in EUR",
       "from": "populism solution columns",
       "verb": "has a",
-      "to": "loss reduction in percent"
+      "to": "potential gain in EUR"
     },
     {
       "name": "populism solution columns potential gain in htp",
@@ -1284,14 +1293,14 @@
       "to": "initial effort in person year"
     },
     {
-      "from": "populism solution columns loss reduction",
+      "from": "populism solution columns potential gain in EUR",
       "verb": "is follower of",
       "to": "populism solution columns solution"
     },
     {
       "from": "populism solution columns potential gain in htp",
       "verb": "is follower of",
-      "to": "populism solution columns loss reduction"
+      "to": "populism solution columns potential gain in EUR"
     },
     {
       "from": "populism solution columns initial effort",
@@ -1301,7 +1310,7 @@
     {
       "from": "numeric descending",
       "verb": "of",
-      "to": "potential gain in htp"
+      "to": "potential gain in EUR"
     },
     {
       "name": "populism solution sort",
@@ -1311,10 +1320,10 @@
       "to": "table sort"
     },
     {
-      "name": "populism solution sort numeric descending of potential gain in htp",
+      "name": "populism solution sort numeric descending of potential gain in EUR",
       "from": "populism solution sort",
       "verb": "has a",
-      "to": "numeric descending of potential gain in htp"
+      "to": "numeric descending of potential gain in EUR"
     },
     {
       "name": "percent htp",
@@ -1364,6 +1373,13 @@
       "assigned_word": "probability range factor"
     },
     {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "\\text{potential loss} = \\text{GDP}_{\\text{world}} \\cdot \\text{percent}_{\\text{annual}}",
+      "assigned_word": "GDP"
+    },
+    {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
       "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"loss\",\"long run growth\",\"percent\"",
@@ -1382,6 +1398,13 @@
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
       "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"gain share\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
+    },
+    {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
       "assigned_word": "loss reduction"
     },
     {
@@ -1510,9 +1533,24 @@
       "name": "Colantone & Stanig 2018",
       "description": "Colantone, I., Stanig, P. (2018) The Trade Origins of Economic Nationalism: Import Competition and Voting Behavior in Western Europe. American Journal of Political Science 62(4)",
       "doi": "10.1111/ajps.12358"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
     {
       "words": [
         "populism",
@@ -3715,6 +3753,29 @@
     {
       "context": [
         "populism",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "populism",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "4",
+      "note": "110.047109 trillion EUR world GDP * 3.6348 percent; the comparison rounds to two decimals, so 4"
+    },
+    {
+      "context": [
+        "populism",
         "percent",
         "GDP",
         "annual",
@@ -3881,6 +3942,72 @@
       ],
       "number": "8.184",
       "note": "3.2736 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "one-click hide (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "one-click hide (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.384",
+      "note": "4 trillion EUR potential loss * 9.6 percent loss reduction"
+    },
+    {
+      "context": [
+        "one-click hide (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "one-click hide (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.1536",
+      "note": "0.384 * 0.4"
+    },
+    {
+      "context": [
+        "one-click hide (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "one-click hide (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.96",
+      "note": "0.384 * 2.5"
     },
     {
       "context": [
@@ -4071,6 +4198,72 @@
       ],
       "number": "5.115",
       "note": "2.046 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "civic education (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "civic education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.24",
+      "note": "4 trillion EUR potential loss * 6 percent loss reduction"
+    },
+    {
+      "context": [
+        "civic education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "civic education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.096",
+      "note": "0.24 * 0.4"
+    },
+    {
+      "context": [
+        "civic education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "civic education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.6",
+      "note": "0.24 * 2.5"
     },
     {
       "context": [
@@ -4266,6 +4459,72 @@
       "context": [
         "populism",
         "media literacy (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "media literacy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.192",
+      "note": "4 trillion EUR potential loss * 4.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "media literacy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "media literacy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0768",
+      "note": "0.192 * 0.4"
+    },
+    {
+      "context": [
+        "media literacy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "media literacy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.48",
+      "note": "0.192 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "media literacy (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -4451,6 +4710,72 @@
       ],
       "number": "1.7902",
       "note": "0.7161 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "fact-checking (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "fact-checking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.084",
+      "note": "4 trillion EUR potential loss * 2.1 percent loss reduction"
+    },
+    {
+      "context": [
+        "fact-checking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "fact-checking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0336",
+      "note": "0.084 * 0.4"
+    },
+    {
+      "context": [
+        "fact-checking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "fact-checking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.21",
+      "note": "0.084 * 2.5"
     },
     {
       "context": [
@@ -4646,6 +4971,72 @@
       "context": [
         "populism",
         "independent public broadcasting (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "independent public broadcasting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "independent public broadcasting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "independent public broadcasting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "independent public broadcasting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "independent public broadcasting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "independent public broadcasting (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -4831,6 +5222,72 @@
       ],
       "number": "2.5575",
       "note": "1.023 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "platform algorithm transparency (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "platform algorithm transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.12",
+      "note": "4 trillion EUR potential loss * 3 percent loss reduction"
+    },
+    {
+      "context": [
+        "platform algorithm transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "platform algorithm transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.048",
+      "note": "0.12 * 0.4"
+    },
+    {
+      "context": [
+        "platform algorithm transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "platform algorithm transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.3",
+      "note": "0.12 * 2.5"
     },
     {
       "context": [
@@ -5026,6 +5483,72 @@
       "context": [
         "populism",
         "reducing economic inequality (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "reducing economic inequality (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.24",
+      "note": "4 trillion EUR potential loss * 6 percent loss reduction"
+    },
+    {
+      "context": [
+        "reducing economic inequality (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "reducing economic inequality (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.096",
+      "note": "0.24 * 0.4"
+    },
+    {
+      "context": [
+        "reducing economic inequality (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "reducing economic inequality (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.6",
+      "note": "0.24 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "reducing economic inequality (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -5211,6 +5734,72 @@
       ],
       "number": "4.2625",
       "note": "1.705 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "regional development (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "regional development (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.2",
+      "note": "4 trillion EUR potential loss * 5 percent loss reduction"
+    },
+    {
+      "context": [
+        "regional development (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "regional development (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.08",
+      "note": "0.2 * 0.4"
+    },
+    {
+      "context": [
+        "regional development (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "regional development (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.5",
+      "note": "0.2 * 2.5"
     },
     {
       "context": [
@@ -5406,6 +5995,72 @@
       "context": [
         "populism",
         "social safety nets (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "social safety nets (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.288",
+      "note": "4 trillion EUR potential loss * 7.2 percent loss reduction"
+    },
+    {
+      "context": [
+        "social safety nets (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "social safety nets (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.1152",
+      "note": "0.288 * 0.4"
+    },
+    {
+      "context": [
+        "social safety nets (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "social safety nets (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.72",
+      "note": "0.288 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "social safety nets (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -5596,6 +6251,72 @@
       "context": [
         "populism",
         "job retraining (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "job retraining (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.144",
+      "note": "4 trillion EUR potential loss * 3.6 percent loss reduction"
+    },
+    {
+      "context": [
+        "job retraining (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "job retraining (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0576",
+      "note": "0.144 * 0.4"
+    },
+    {
+      "context": [
+        "job retraining (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "job retraining (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.36",
+      "note": "0.144 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "job retraining (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -5781,6 +6502,72 @@
       ],
       "number": "2.728",
       "note": "1.0912 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "affordable housing (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "affordable housing (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.128",
+      "note": "4 trillion EUR potential loss * 3.2 percent loss reduction"
+    },
+    {
+      "context": [
+        "affordable housing (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "affordable housing (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0512",
+      "note": "0.128 * 0.4"
+    },
+    {
+      "context": [
+        "affordable housing (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "affordable housing (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.32",
+      "note": "0.128 * 2.5"
     },
     {
       "context": [
@@ -5976,6 +6763,72 @@
       "context": [
         "populism",
         "anti-corruption measures (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "anti-corruption measures (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.24",
+      "note": "4 trillion EUR potential loss * 6 percent loss reduction"
+    },
+    {
+      "context": [
+        "anti-corruption measures (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "anti-corruption measures (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.096",
+      "note": "0.24 * 0.4"
+    },
+    {
+      "context": [
+        "anti-corruption measures (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "anti-corruption measures (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.6",
+      "note": "0.24 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "anti-corruption measures (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -6161,6 +7014,72 @@
       ],
       "number": "2.387",
       "note": "0.9548 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "lobbying transparency (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "lobbying transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.112",
+      "note": "4 trillion EUR potential loss * 2.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "lobbying transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "lobbying transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0448",
+      "note": "0.112 * 0.4"
+    },
+    {
+      "context": [
+        "lobbying transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "lobbying transparency (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.28",
+      "note": "0.112 * 2.5"
     },
     {
       "context": [
@@ -6356,6 +7275,72 @@
       "context": [
         "populism",
         "campaign finance reform (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "campaign finance reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "campaign finance reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "campaign finance reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "campaign finance reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "campaign finance reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "campaign finance reform (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -6541,6 +7526,72 @@
       ],
       "number": "3.41",
       "note": "1.364 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "strong independent judiciary (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "strong independent judiciary (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "strong independent judiciary (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "strong independent judiciary (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "strong independent judiciary (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "strong independent judiciary (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
     },
     {
       "context": [
@@ -6736,6 +7787,72 @@
       "context": [
         "populism",
         "press freedom (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "press freedom (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "press freedom (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "press freedom (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "press freedom (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "press freedom (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "press freedom (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -6926,6 +8043,72 @@
       "context": [
         "populism",
         "direct democracy (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "direct democracy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.072",
+      "note": "4 trillion EUR potential loss * 1.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "direct democracy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "direct democracy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0288",
+      "note": "0.072 * 0.4"
+    },
+    {
+      "context": [
+        "direct democracy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "direct democracy (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.18",
+      "note": "0.072 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "direct democracy (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -7111,6 +8294,72 @@
       ],
       "number": "1.705",
       "note": "0.682 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "citizens' assemblies (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "citizens' assemblies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.08",
+      "note": "4 trillion EUR potential loss * 2 percent loss reduction"
+    },
+    {
+      "context": [
+        "citizens' assemblies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "citizens' assemblies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.032",
+      "note": "0.08 * 0.4"
+    },
+    {
+      "context": [
+        "citizens' assemblies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "citizens' assemblies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.2",
+      "note": "0.08 * 2.5"
     },
     {
       "context": [
@@ -7306,6 +8555,72 @@
       "context": [
         "populism",
         "deliberative polling (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "deliberative polling (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.048",
+      "note": "4 trillion EUR potential loss * 1.2 percent loss reduction"
+    },
+    {
+      "context": [
+        "deliberative polling (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "deliberative polling (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0192",
+      "note": "0.048 * 0.4"
+    },
+    {
+      "context": [
+        "deliberative polling (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "deliberative polling (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.12",
+      "note": "0.048 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "deliberative polling (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -7496,6 +8811,72 @@
       "context": [
         "populism",
         "participatory budgeting (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "participatory budgeting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "participatory budgeting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "participatory budgeting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "participatory budgeting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "participatory budgeting (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "participatory budgeting (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -7686,6 +9067,72 @@
       "context": [
         "populism",
         "electoral system reform (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "electoral system reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.072",
+      "note": "4 trillion EUR potential loss * 1.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "electoral system reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "electoral system reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0288",
+      "note": "0.072 * 0.4"
+    },
+    {
+      "context": [
+        "electoral system reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "electoral system reform (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.18",
+      "note": "0.072 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "electoral system reform (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -7871,6 +9318,72 @@
       ],
       "number": "1.5345",
       "note": "0.6138 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "proportional representation (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "proportional representation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.072",
+      "note": "4 trillion EUR potential loss * 1.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "proportional representation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "proportional representation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0288",
+      "note": "0.072 * 0.4"
+    },
+    {
+      "context": [
+        "proportional representation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "proportional representation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.18",
+      "note": "0.072 * 2.5"
     },
     {
       "context": [
@@ -8061,6 +9574,72 @@
       ],
       "number": "2.5575",
       "note": "1.023 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "decentralization (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "decentralization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.12",
+      "note": "4 trillion EUR potential loss * 3 percent loss reduction"
+    },
+    {
+      "context": [
+        "decentralization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "decentralization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.048",
+      "note": "0.12 * 0.4"
+    },
+    {
+      "context": [
+        "decentralization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "decentralization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.3",
+      "note": "0.12 * 2.5"
     },
     {
       "context": [
@@ -8256,6 +9835,72 @@
       "context": [
         "populism",
         "responsive mainstream parties (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "responsive mainstream parties (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.192",
+      "note": "4 trillion EUR potential loss * 4.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "responsive mainstream parties (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "responsive mainstream parties (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0768",
+      "note": "0.192 * 0.4"
+    },
+    {
+      "context": [
+        "responsive mainstream parties (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "responsive mainstream parties (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.48",
+      "note": "0.192 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "responsive mainstream parties (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -8441,6 +10086,72 @@
       ],
       "number": "5.115",
       "note": "2.046 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "addressing migration concerns (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "addressing migration concerns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.24",
+      "note": "4 trillion EUR potential loss * 6 percent loss reduction"
+    },
+    {
+      "context": [
+        "addressing migration concerns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "addressing migration concerns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.096",
+      "note": "0.24 * 0.4"
+    },
+    {
+      "context": [
+        "addressing migration concerns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "addressing migration concerns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.6",
+      "note": "0.24 * 2.5"
     },
     {
       "context": [
@@ -8636,6 +10347,72 @@
       "context": [
         "populism",
         "integration policies (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "integration policies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.192",
+      "note": "4 trillion EUR potential loss * 4.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "integration policies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "integration policies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0768",
+      "note": "0.192 * 0.4"
+    },
+    {
+      "context": [
+        "integration policies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "integration policies (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.48",
+      "note": "0.192 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "integration policies (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -8821,6 +10598,72 @@
       ],
       "number": "3.41",
       "note": "1.364 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "evidence-based policymaking (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "evidence-based policymaking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "evidence-based policymaking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "evidence-based policymaking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "evidence-based policymaking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "evidence-based policymaking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
     },
     {
       "context": [
@@ -9016,6 +10859,72 @@
       "context": [
         "populism",
         "transparent government data (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "transparent government data (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.112",
+      "note": "4 trillion EUR potential loss * 2.8 percent loss reduction"
+    },
+    {
+      "context": [
+        "transparent government data (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "transparent government data (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0448",
+      "note": "0.112 * 0.4"
+    },
+    {
+      "context": [
+        "transparent government data (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "transparent government data (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.28",
+      "note": "0.112 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "transparent government data (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -9206,6 +11115,72 @@
       "context": [
         "populism",
         "trust-building institutions (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "trust-building institutions (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "trust-building institutions (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "trust-building institutions (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "trust-building institutions (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "trust-building institutions (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "trust-building institutions (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -9391,6 +11366,72 @@
       ],
       "number": "2.5575",
       "note": "1.023 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "reducing polarization (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "reducing polarization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.12",
+      "note": "4 trillion EUR potential loss * 3 percent loss reduction"
+    },
+    {
+      "context": [
+        "reducing polarization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "reducing polarization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.048",
+      "note": "0.12 * 0.4"
+    },
+    {
+      "context": [
+        "reducing polarization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "reducing polarization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.3",
+      "note": "0.12 * 2.5"
     },
     {
       "context": [
@@ -9586,6 +11627,72 @@
       "context": [
         "populism",
         "cross-partisan dialogue (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "cross-partisan dialogue (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.08",
+      "note": "4 trillion EUR potential loss * 2 percent loss reduction"
+    },
+    {
+      "context": [
+        "cross-partisan dialogue (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "cross-partisan dialogue (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.032",
+      "note": "0.08 * 0.4"
+    },
+    {
+      "context": [
+        "cross-partisan dialogue (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "cross-partisan dialogue (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.2",
+      "note": "0.08 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "cross-partisan dialogue (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -9776,6 +11883,72 @@
       "context": [
         "populism",
         "community building (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "community building (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.12",
+      "note": "4 trillion EUR potential loss * 3 percent loss reduction"
+    },
+    {
+      "context": [
+        "community building (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "community building (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.048",
+      "note": "0.12 * 0.4"
+    },
+    {
+      "context": [
+        "community building (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "community building (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.3",
+      "note": "0.12 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "community building (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -9966,6 +12139,72 @@
       "context": [
         "populism",
         "civil society support (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "civil society support (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.144",
+      "note": "4 trillion EUR potential loss * 3.6 percent loss reduction"
+    },
+    {
+      "context": [
+        "civil society support (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "civil society support (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0576",
+      "note": "0.144 * 0.4"
+    },
+    {
+      "context": [
+        "civil society support (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "civil society support (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.36",
+      "note": "0.144 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "civil society support (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -10151,6 +12390,72 @@
       ],
       "number": "3.069",
       "note": "1.2276 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "lifelong learning (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "lifelong learning (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.144",
+      "note": "4 trillion EUR potential loss * 3.6 percent loss reduction"
+    },
+    {
+      "context": [
+        "lifelong learning (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "lifelong learning (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0576",
+      "note": "0.144 * 0.4"
+    },
+    {
+      "context": [
+        "lifelong learning (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "lifelong learning (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.36",
+      "note": "0.144 * 2.5"
     },
     {
       "context": [
@@ -10346,6 +12651,72 @@
       "context": [
         "populism",
         "critical thinking education (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "critical thinking education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "critical thinking education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "critical thinking education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "critical thinking education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "critical thinking education (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "critical thinking education (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -10531,6 +12902,72 @@
       ],
       "number": "2.046",
       "note": "0.8184 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "counter-disinformation campaigns (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "counter-disinformation campaigns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "counter-disinformation campaigns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "counter-disinformation campaigns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "counter-disinformation campaigns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "counter-disinformation campaigns (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
     },
     {
       "context": [
@@ -10726,6 +13163,72 @@
       "context": [
         "populism",
         "prebunking (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "prebunking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "prebunking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "prebunking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "prebunking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "prebunking (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "prebunking (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -10911,6 +13414,72 @@
       ],
       "number": "3.41",
       "note": "1.364 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "crisis preparedness (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "crisis preparedness (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "crisis preparedness (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "crisis preparedness (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "crisis preparedness (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "crisis preparedness (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
     },
     {
       "context": [
@@ -11106,6 +13675,72 @@
       "context": [
         "populism",
         "fair globalization (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "fair globalization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.12",
+      "note": "4 trillion EUR potential loss * 3 percent loss reduction"
+    },
+    {
+      "context": [
+        "fair globalization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "fair globalization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.048",
+      "note": "0.12 * 0.4"
+    },
+    {
+      "context": [
+        "fair globalization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "fair globalization (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.3",
+      "note": "0.12 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "fair globalization (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -11291,6 +13926,72 @@
       ],
       "number": "2.046",
       "note": "0.8184 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "trade adjustment assistance (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "trade adjustment assistance (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "trade adjustment assistance (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "trade adjustment assistance (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "trade adjustment assistance (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "trade adjustment assistance (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
     },
     {
       "context": [
@@ -11486,6 +14187,72 @@
       "context": [
         "populism",
         "cordon sanitaire (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "cordon sanitaire (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "cordon sanitaire (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "cordon sanitaire (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "cordon sanitaire (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "cordon sanitaire (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "cordon sanitaire (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -11671,6 +14438,72 @@
       ],
       "number": "2.046",
       "note": "0.8184 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "inclusive national identity (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "inclusive national identity (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.096",
+      "note": "4 trillion EUR potential loss * 2.4 percent loss reduction"
+    },
+    {
+      "context": [
+        "inclusive national identity (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "inclusive national identity (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
+    },
+    {
+      "context": [
+        "inclusive national identity (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "inclusive national identity (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.24",
+      "note": "0.096 * 2.5"
     },
     {
       "context": [
@@ -11866,6 +14699,72 @@
       "context": [
         "populism",
         "accountable elites (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "accountable elites (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.128",
+      "note": "4 trillion EUR potential loss * 3.2 percent loss reduction"
+    },
+    {
+      "context": [
+        "accountable elites (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "accountable elites (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.0512",
+      "note": "0.128 * 0.4"
+    },
+    {
+      "context": [
+        "accountable elites (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "accountable elites (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.32",
+      "note": "0.128 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "accountable elites (populism solution)",
         "initial effort",
         "billion",
         "USD",
@@ -12051,6 +14950,72 @@
       ],
       "number": "3.41",
       "note": "1.364 * 2.5"
+    },
+    {
+      "context": [
+        "populism",
+        "digital public sphere regulation (populism solution)",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "digital public sphere regulation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.16",
+      "note": "4 trillion EUR potential loss * 4 percent loss reduction"
+    },
+    {
+      "context": [
+        "digital public sphere regulation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance low (system)"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "digital public sphere regulation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance low (system)"
+      ],
+      "number": "0.064",
+      "note": "0.16 * 0.4"
+    },
+    {
+      "context": [
+        "digital public sphere regulation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "variance high (system)"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "digital public sphere regulation (populism solution)",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed",
+        "variance high (system)"
+      ],
+      "number": "0.4",
+      "note": "0.16 * 2.5"
     },
     {
       "context": [

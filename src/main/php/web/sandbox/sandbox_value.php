@@ -549,7 +549,18 @@ class sandbox_value extends sandbox
         $url = $html->url_back($this->default_view_id(), $this->id(), $url_arr);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
-        return $html->ref($url, $txt, '', '', true);
+        return $html->ref($url, $txt, $this->link_title(), '', true);
+    }
+
+    /**
+     * a value has no tooltip of its own on the link, so the tooltip of the table cell is shown;
+     * the result overwrites it with the formula that has calculated it
+     *
+     * @return string the tooltip of the link to the number, empty for no tooltip
+     */
+    protected function link_title(): string
+    {
+        return '';
     }
 
     /**

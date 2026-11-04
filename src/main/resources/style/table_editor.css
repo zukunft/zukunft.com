@@ -1,6 +1,6 @@
 /* the table editor (script/table_editor.js, system_page::table_editor) */
 /* layout: the top line of the calculator editor, then like its columns two white cards: the settings */
-/* on the left and the live table with its definition and its csv export as tabs on the right; */
+/* on the left and the live table, its texts, its changes and its definition as tabs on the right; */
 /* stacks on narrow screens */
 /* the colours e.g. --bg, --ink or --accent in the light and in the dark mode are the css variables */
 /* that the page head sets from config.yaml frontend.layout.colours.editor (html_base::theme_style), */
@@ -280,7 +280,7 @@
         min-width: 0;
     }
 
-    .field label code {
+    .field label code, .texts code {
         font-family: var(--font-mono);
         font-size: 11.5px;
         color: var(--muted);
@@ -288,7 +288,7 @@
         letter-spacing: 0;
     }
 
-    .field input[type=text], .field input[type=number], .field select, .field textarea {
+    .field input[type=text], .field input[type=number], .field select, .field textarea, .texts input, .texts textarea {
         width: 100%;
         padding: 4px 6px;
         border: 1px solid var(--pv-border);
@@ -832,5 +832,64 @@
 
     aside .toolbar .note {
         margin: 0;
+    }
+
+    /* the All texts tab like in the calculator editor: the part of the table and its text, which wraps */
+    .texts td {
+        white-space: normal;
+    }
+
+    .texts td:first-child {
+        width: 34%;
+    }
+
+    /* the Changes tab like in the calculator editor */
+    .chg {
+        display: grid;
+        gap: 14px;
+    }
+
+    .chg h3 {
+        margin: 0 0 6px;
+        font-size: 13px;
+    }
+
+    .chg ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 3px;
+    }
+
+    .chg li {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        overflow-wrap: anywhere;
+    }
+
+    .chg li.add {
+        background: var(--ok-soft);
+        color: var(--ok);
+    }
+
+    .chg li.del {
+        background: var(--danger-soft);
+        color: var(--danger);
+        text-decoration: line-through;
+        text-decoration-thickness: 1px;
+    }
+
+    .chg li.mod {
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+    }
+
+    .chg li.wrn {
+        background: var(--shared-soft);
+        color: var(--shared);
+        font-family: var(--font-page);
     }
 }

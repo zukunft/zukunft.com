@@ -148,6 +148,7 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
         $this->run_global_warming_solutions_csv($t);
+        $this->run_populism_solutions_table($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -1063,6 +1064,40 @@ class system_views_read_tests
         $test_name = 'the differences of the export of the global warming solutions are reported';
         $report = $ctd->report($target, $export, basename(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), triple_names::GLOBAL_WARMING_SOLUTION);
         $t->assert_file($test_name, $report, test_files::GLOBAL_WARMING_SOLUTIONS_DIFF, test_files::MD);
+    }
+
+    /**
+     * the own columns and the own sorting of the table of the populism solutions, read from its csv export
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_populism_solutions_table(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $eur_col = 'potential gain in trillion EUR';
+        $own_cols = [$eur_col, 'potential gain in billion htp', 'initial effort in person year'];
+
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::POPULISM_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $export = $ctd->table_cells($export_csv, word_names::SOLUTION);
+        $first_row = reset($export) ?: [];
+        $test_name = 'the table of the populism solutions shows its own columns only';
+        $t->assert($test_name, array_keys($first_row), $own_cols);
+        // negative: the loss reduction fits no own column, so it is hidden without the url asking for it
+        $test_name = '... and not the loss reduction';
+        $t->assert_text_not_contains($test_name, $export_csv, triple_names::LOSS_REDUCTION);
+        $gains = array_map('floatval', array_column($export, $eur_col));
+        $sorted = $gains;
+        rsort($sorted);
+        $test_name = 'the rows are sorted by the biggest potential gain';
+        $t->assert($test_name, $gains, $sorted);
+        // negative: a table with one row or without numbers would pass the sort check
+        $test_name = '... of every solution';
+        $row_count = count($gains);
+        $t->assert_greater($test_name, 1, $row_count);
     }
 
     /**

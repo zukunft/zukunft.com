@@ -765,7 +765,7 @@ class word extends sandbox_code_id
             }
         }
         // a word without an own default view and without parent views is shown with the system
-        // default word view, so the views tab of the word page offers at least this view
+        // default word view, so the edit menu of the word page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::WORD, $msg);

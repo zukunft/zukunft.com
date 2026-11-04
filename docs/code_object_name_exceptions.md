@@ -58,7 +58,7 @@ view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_calc, $msk_cols, $msk_db, $msk_empty
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_map, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $no_desc, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $no_desc, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_views, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -142,7 +142,7 @@ formula_dsp: $frm_html
 formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_raw, $lnk_row, $lnk_tab, $lnk_ui, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lnk_lst_ui, $lst
 formula_link_type: $frm_lnk_typ
-formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_fn_lst, $frm_inh_lst, $frm_list_lst, $frm_lst, $frm_max_lst, $frm_min_lst, $frm_other_lst, $frm_to_calc, $lst, $result, $trp_lst
+formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_fn_lst, $frm_inh_lst, $frm_list_lst, $frm_lst, $frm_max_lst, $frm_min_lst, $frm_other_lst, $frm_plain_lst, $frm_to_calc, $lst, $result, $trp_lst
 formula_type: $frm_typ
 formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj

@@ -909,37 +909,37 @@ class value_ui_tests
         $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $tab_html = $list->view_tab_box($val_tab, $msg_ui, true);
 
-        $test_name = 'the value page shows the views tab';
-        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
-        $test_name = '... with the name of a view that can show the value';
-        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the views of the value are offered by the edit menu of the navbar, so the page has no views tab
+        $test_name = 'the value page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... but the edit menu offers a view that can show the value';
+        $menu_html = $val_tab->menu_view_items_ui($val_tab->view_lst);
+        $t->assert_text_contains($test_name, $menu_html, views::SCIENCE);
         // the switch button must open the edit view of the shown object, so on a value page the
         // value edit view and never the word edit view (see view::switch_link)
-        $test_name = '... and a switch button that opens the value edit view';
-        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
+        $test_name = '... with a switch button that opens the value edit view';
+        $t->assert_text_contains($test_name, $menu_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
         // the switch preselects the view as the default view of the value in the edit form, so the
         // switch is a one-click action, and it is an icon with the view and the value in the tooltip
         // the escaped url separator in front keeps 'd=' apart from the 'id=' of the object
         $test_name = '... which preselects the view as the default view of the value';
-        $t->assert_text_contains($test_name, $tab_html, '&amp;' . url_var::VIEW . url_var::EQ);
+        $t->assert_text_contains($test_name, $menu_html, '&amp;' . url_var::VIEW . url_var::EQ);
         $test_name = '... shown as a switch icon';
-        $t->assert_text_contains($test_name, $tab_html, icons::VIEW_SWITCH);
+        $t->assert_text_contains($test_name, $menu_html, icons::VIEW_SWITCH);
         // the tooltips name the value and the view; the link builder escapes the tooltip, so the
         // expected text is escaped the same way (the quotes around the names become entities)
-        $test_name = 'the value of the tab box carries its name for the tooltips';
+        $test_name = 'the value of the edit menu carries its name for the tooltips';
         $t->assert_true($test_name, $val_tab->name() != '');
         $test_name = '... with the value and the view name in the switch tooltip';
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+        $t->assert_text_contains($test_name, $menu_html, htmlspecialchars(
             "adjust '" . $val_tab->name() . "' so that it is always shown with the '" . views::SCIENCE . "' view", ENT_QUOTES));
         // the view name itself links to the value shown with that view
         $test_name = '... and the view name links to the value shown with the view';
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+        $t->assert_text_contains($test_name, $menu_html, htmlspecialchars(
             "show '" . $val_tab->name() . "' with the '" . views::SCIENCE . "' view", ENT_QUOTES) . '">' . views::SCIENCE . '</a>');
-        // the edit icon opens the view edit form for the view, not for the value
-        $test_name = '... and an edit icon that opens the edit form of the view';
-        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
-            "change the '" . views::SCIENCE . "' view", ENT_QUOTES));
+        // negative: the view itself is changed by the "change this view" entry of the navbar
+        $test_name = '... but no edit icon that opens the edit form of the view';
+        $t->assert_text_not_contains($test_name, $menu_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
 
         $test_name = 'the value page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
@@ -964,11 +964,9 @@ class value_ui_tests
             url_var::PRE . url_var::NUMERIC_VALUE . '=' . values::SAMPLE_INT);
         $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
-        // a value loaded without the related data has neither a views nor a my tab
+        // a value loaded without the related data has no my tab
         $val_plain = new value($t_val->value($msg)->api_json());
         $plain_html = $list->view_tab_box($val_plain, $msg_ui, true);
-        $test_name = 'a value without views shows no views tab';
-        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
         $test_name = 'a value without overwrites shows no my tab';
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
 

@@ -413,6 +413,7 @@ class test_pinned_ids
         [triple_names::M_SYMBOL, triple_names::M_SYMBOL_ID],
         [triple_names::FACTOR_SYMBOL, triple_names::FACTOR_SYMBOL_ID],
         [triple_names::PERCENT_SYMBOL, triple_names::PERCENT_SYMBOL_ID],
+        [triple_names::PERCENT_HTP, triple_names::PERCENT_HTP_ID],
         [triple_names::CHF_SYMBOL, triple_names::CHF_SYMBOL_ID],
         [triple_names::SWISS_FRANC, triple_names::SWISS_FRANC_ID],
         [triple_names::SWISS_FRANC_CURRENCY, triple_names::SWISS_FRANC_CURRENCY_ID],

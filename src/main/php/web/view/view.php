@@ -734,7 +734,7 @@ class view extends view_exe
 
     /**
      * the view name as a link that opens the given object rendered with this view, used by the
-     * views tab of an object page (see ui_list::view_previews)
+     * edit menu of the navbar (see sandbox::menu_view_items_ui)
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
      * @param int|string $dbo_id the id of the object to open in this view, a string for a value
@@ -797,21 +797,7 @@ class view extends view_exe
     }
 
     /**
-     * the edit icon that opens the edit form of this view itself, used beside the switch icon
-     * in the views tab of an object page
-     *
-     * @return string the html link with the edit icon and the tooltip
-     */
-    function edit_link(): string
-    {
-        $html = new html_base();
-        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::VIEW_EDIT_ID
-            . url_var::ADD . url_var::ID . url_var::EQ . $this->id();
-        return $html->change_icon($url, icons::EDIT, $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '');
-    }
-
-    /**
-     * the tooltip of a views tab link with the object and the view name filled in; ref() escapes
+     * the tooltip of a view link of the edit menu with the object and the view name filled in; ref() escapes
      * the tooltip, so the user given names are handed over raw
      *
      * @param msg_id $msg_id the tooltip message with the name placeholders

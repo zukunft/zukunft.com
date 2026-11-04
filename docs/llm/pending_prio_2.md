@@ -1,5 +1,24 @@
 # pending prio 2
 
+## own sorting of a further unit column
+
+`table_model::col_id_of_name` returns no id for the further column of the same phrase in another unit
+(e.g. `potential gain` in htp next to `potential gain` in EUR), because the url names a column by its phrase
+id; so an own sorting `numeric descending of potential gain in htp` of a table that also shows the gain in EUR
+is ignored with `TABLE_ORDER_UNKNOWN`. The populism solutions sort by the gain in EUR, which is the first unit,
+but the other `problem_*_solutions.json` sort by the gain in htp and fail once their table shows the gain in EUR
+too. A defined order needs the column id (int or string) in `row_orders`, `has_column`, `sort_key` and
+`order_url`, which builds a url only for an int id.
+
+The table of the populism solutions also shows the row "one-click hide, populism" of `problem_populism.json`; check
+whether it is a solution of populism or belongs to another table. The gain in EUR of a populism solution uses the
+annual damage of `problem_populism.json`, the gain in htp the long run share, so the two columns have a different
+time horizon.
+
+A solution whose numbers name its link, e.g. "civic education (populism solution)", is a row of the table by
+`phrase_list::row_names`; the row column then shows the name of the link and not "civic education". Show the
+"from" side of a link whose "to" side is the page phrase, like `value_list::column_head` does for a column.
+
 ## table editor sample data
 
 `use_cases/table_editor_sample.json` holds the example of the table editor as data:
@@ -42,6 +61,22 @@
   of a phraseData walk, and `cleanup_change_log` finds the log of a deleted triple or word by its name, so the log
   of the deleted seed rows stays; `test_base::delete_change_log_of_obj` callable by id would close this, also for the
   calculator scenarios
+- the definition json groups the fields of the column and the row details as `column_details` and `row_details`; an
+  older definition pasted into "Apply JSON" with these fields still under `columns` or `rows` loses them, because
+  `mergeView` matches by group
+- the column and row labels in the tab "All texts" are only listed, because they are phrase names and the save has no
+  rename of a phrase
+
+## result tooltip
+
+`formula_calc::latex_with_numbers` gives the tooltip of a result: the latex of its formula, the right side with the
+numbers of the page and the hint `result_tooltip_details`:
+- only the results of a table with own columns get it, because only `ui_list::check_results` repeats the calculation
+  with the page values; the grouped value lists, the result list of the formula page and the result page don't
+- the title of the result link hides the title of its cell (e.g. "assumed, confidence 20 %"); both should be one
+  title of the cell in `value_list::cell`
+- the numbers follow the latex instead of replacing its symbols, because a latex written by hand has no link from a
+  symbol to an operand
 
 ## case name of a calculator page
 
@@ -1398,11 +1433,15 @@ show the phrases of the value in the value del view (m=20): the old controller l
 
 ### view select page (missing parts of the retired http_old/view_select.php)
 
-the legacy controller http_old/view_select.php ('Select the display format for "<word>"') has no mask of its own in the new frontend. Its replacement is the 'Views' tab of the word and triple page (component_types::VIEW_TAB_BOX -> web/component/execute/ui_list.php::view_tab_box), which lists the views of the object with the 'view' and the 'switch' button, and its second tab shows the change log that the old page appended via word::log_view. The old page had no caller left in the program code (only in a commented out navbar block of web/view/view.php). Two things of the old page are missing in the tab box.
+the legacy controller http_old/view_select.php ('Select the display format for "<word>"') has no mask of its own in the new frontend. Its replacement is the list of the alternative views in the edit icon menu of the navbar (sandbox::menu_view_items_ui), which offers each view of the object to open and to switch to; the change log that the old page appended via word::log_view is a tab of the view tab box (web/component/execute/ui_list.php::view_tab_box). Two things of the old page are missing in the edit menu.
 
-add the 'design the view' and the 'delete the view' button to each view of the views tab box: the old page offered them per view (view::selector_page), so a view could be edited or deleted directly from the object page. The new tab box has only 'view' and 'switch'. Use the standard urls /http/view.php?m=31 and m=32 (views::VIEW_EDIT_ID and VIEW_DEL_ID) and remember that a delete must only be offered if the user may delete the view
+add the 'design the view' and the 'delete the view' entry to each alternative view of the edit menu: the old page offered them per view (view::selector_page), so a view could be edited or deleted directly from the object page. Use the standard urls /http/view.php?m=31 and m=32 (views::VIEW_EDIT_ID and VIEW_DEL_ID) and remember that a delete must only be offered if the user may delete the view
 
-the 'switch' button of the views tab box does not save the selected view as the default view of the word, see the word edit view section above; this was the main purpose of the old view select page, so without it the page has no full replacement yet
+switching to another view in the edit menu does not save the selected view as the default view of the word, see the word edit view section above; this was the main purpose of the old view select page, so without it the page has no full replacement yet
+
+the 25 snapshots of `views_by_object/` show the alternative views nowhere, because the test render (`test_base::assert_view_html`) does not pass the type cache and the page object to the edit menu; the menu of these snapshots has only the "customize" entries
+
+the description of the component type "view tab box" still says "tab box with the related views (preview plus open and switch buttons) and the change log" (`component_types::VIEW_TAB_BOX_COM`, `db_code_links/component_types.csv`, `base_views.json`, `system_views.json`); the tab box now has only the change log, so the description and its seed rows should say so
 
 check the 'alternative view' link of the navbar (web/html/html_base.php::view_change_list): it points to the hard coded string '?m=view_change&id=2', but there is no view_change const in shared/const/views.php, so the link probably does not resolve to a view. Either add the missing view and its const or let the link open the views tab of the object
 

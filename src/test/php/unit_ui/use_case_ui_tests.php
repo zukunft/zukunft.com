@@ -299,6 +299,42 @@ class use_case_ui_tests
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
 
+        $t->subheader($ts . 'result tooltip');
+        // the tooltip of a result shows its formula in the latex format with the numbers of the page
+        $test_name = 'the latex of the formula of a result is followed by the numbers used';
+        $latex = '\text{total} = \text{' . triple_names::CITY_ZH_NAME . '} + \text{' . triple_names::COMPANY_ZURICH . '}';
+        $num_txt = (string)round(values::SAMPLE_FLOAT, 2);
+        $latex_num = $latex . ' = ' . $num_txt . ' + ' . $num_txt;
+        $frm->set_latex($latex);
+        $tip = new formula_calc()->latex_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst, $msg);
+        $t->assert($test_name, $tip, $latex_num);
+        $test_name = '... and is the tooltip of the result link in a table with the hint to click';
+        $res_tip = $t_res->result_zh_sum_ui($sum);
+        $res_lst = new result_list_ui();
+        $res_lst->add($res_tip, $msg);
+        $dto->set_result_list($res_lst);
+        $this->render($t_cmp->component_table(), $wrd, $msk, $dto, $msg);
+        $title = htmlspecialchars($latex_num . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text(), ENT_QUOTES);
+        $res_html = $res_tip->value_edit($msg);
+        $t->assert_text_contains($test_name, $res_html, 'title="' . $title . '"');
+        // negative: a formula without latex has nothing to fill in
+        $test_name = 'no latex tooltip for a formula without latex';
+        $frm_plain = new formula_ui();
+        $frm_plain->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_plain->set_usr_text($frm->get_usr_text());
+        $frm_plain_lst = new formula_list_ui();
+        $frm_plain_lst->add($frm_plain, $msg);
+        $tip_plain = new formula_calc()->latex_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_plain_lst, $msg);
+        $t->assert($test_name, $tip_plain, '');
+        // negative: a result that no table has calculated keeps the link without a tooltip
+        $test_name = '... and no tooltip for a result without its calculation';
+        $res_plain_html = $t_res->result_zh_sum_ui($sum)->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $res_plain_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+        // negative: a value is not calculated, so its link keeps the tooltip of the table cell
+        $test_name = '... and no formula tooltip for a value';
+        $val_html = $dto->val_lst->lst()[0]->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $val_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+
         $t->subheader($ts . 'input fields');
         // a phrase of the values of the page that is assigned a field type is an input of the page:
         // the inhabitants are a number field with the limit and the step of the field values and the

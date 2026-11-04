@@ -815,7 +815,7 @@ class triple extends sandbox_link_named
         // the own default view on top
         $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
-        // so the views tab of the triple page offers at least this view
+        // so the edit menu of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::TRIPLE, $msg);

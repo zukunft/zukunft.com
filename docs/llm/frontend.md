@@ -150,6 +150,12 @@ in the host `#tableEditor`. The pod page (`system_page::table_editor`) renders o
 The script renders the table from the seed without an api call. `url_var::JAVASCRIPT` = 0 (`sc=0`), or a config that
 allows no javascript for the calculator, shows the server page with the components of the view.
 
+Like the calculator editor the page has the top line with the tools and two white cards: the settings on the left,
+in collapsible groups of which only "Columns" and "Rows" are open at the start ("Column details" and "Row details"
+hold their further fields), and on the right the tabs "Table preview", "All texts" (the text parameters to edit and
+the column and row labels), "Changes" (the changed parameters and what the save sends) and "Definition (JSON)". The
+Export button of the top line downloads the table as csv.
+
 The definition of a table is data: a triple from the phrase of the table to each table keyword of
 `editor_views.json`. A text parameter is the description of the triple, a number a value with the phrase and the
 keyword, a flag the triple itself and a choice the triples from the parameter triple to the selected phrases (several
@@ -1069,10 +1075,12 @@ detail, range and detail with range, `views::default_versions`). Each view has
 the switch icon behind its name except the own view of the object, which already
 shows it always; the view that shows the page is grey with the tooltip "this view
 has been used to show …" (`view::used_link`). An object without an edit view of its
-own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
-the edit menu nor in the views tab, because the edit view it inherits from
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon in the
+edit menu, because the edit view it inherits from
 `db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
-reports a page class that forgets it. The tooltip
+reports a page class that forgets it. The edit menu is the only place that offers
+the views of the shown object, so the tab box of the page (`ui_list::view_tab_box`)
+has no views tab. The tooltip
 of "... more" names some cached views that the menu does not offer
 (`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
 "change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is

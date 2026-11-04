@@ -1080,6 +1080,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "percent htp" (percent of htp) of the start page problem files, the one
+     *                percent phrase of a loss share of the happy time points
+     */
+    function percent_htp(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERCENT_HTP_ID, triple_names::PERCENT_HTP);
+        $trp->set_from($t_wrd->word_percent()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->word_htp()->phrase());
+        $trp->set_type(phrase_types::PERCENT, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
      * @return triple "share (ratio)" of pv_lifetime_balance.json, a percent unit that a field
      *                shows by its symbol "share" (see ui_list::unit_name)
      */
