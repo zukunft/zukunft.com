@@ -1,5 +1,4 @@
-TODO notes
-----------
+# TODO notes
 
 A proper issue ticket should be created for these TODOs notes:
 

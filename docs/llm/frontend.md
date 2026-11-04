@@ -534,7 +534,11 @@ therefore split in two, and each side uses only its own:
   `http/about.php`, `http/docs.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
   `http/docs.php?doc=faq` shows a markdown file of `/docs/` as html (`web/html/markdown.php`,
   `html_base::docs_page`); only a file name of `/docs/` without a path is accepted and a link
-  to another document of `/docs/` opens it with `http/docs.php` again.
+  to another document of `/docs/` opens it with `http/docs.php` again; an image of `/docs/`
+  without a path e.g. `server_structure.svg` is shown from `/docs/` of the own server
+  (`markdown::DOC_IMAGE`). The page has the standard
+  navbar; for a user who is no admin its edit icon is grey, opens no menu and has the tooltip
+  `msg_id::DOC_CHANGE_ADMIN_ONLY` (`html_base::navbar` with `$edit_lock_tip`).
 - `cfg/application.php` — the **backend**, i.e. the api calls: the `api/**`
   scripts call `application::start_api()` / `start_api_core()` / `end_api()`.
 

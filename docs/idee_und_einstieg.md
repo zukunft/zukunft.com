@@ -1,4 +1,5 @@
-# Die Idee von zukunft.com: Rechnen mit Worten
+# Die Idee von zukunft.com: 
+# Rechnen mit Worten
 
 ## Wie alles anfing
 

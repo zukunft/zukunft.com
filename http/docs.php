@@ -36,23 +36,51 @@ $start_time = microtime(true);
 
 include_once 'const.php';
 
-use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\markdown;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+
+global $ui_sys;
 
 // the requested document, read once here and passed on as a parameter
 $doc = (string)($_GET[url_var::DOC] ?? markdown::DOC_DEFAULT);
 
 // open database
 $app = new frontend();
-// TODO Prio 0 use message in all frontend calls
-$msg = new Message();
-$db_con = $app->start("docs", $msg);
+$msg_ui = new user_message_ui();
+$db_con = $app->start("docs", $msg_ui);
+
+// the session user for the user menu of the navbar and to decide if the edit icon is active
+$usr_name = null;
+$usr_role = null;
+$is_admin = false;
+if ($db_con->is_open()) {
+    $usr = new user;
+    $msg = new user_message();
+    $usr->get($msg);
+    if ($usr->id() > 0) {
+        $usr_ui = new user_ui();
+        $usr_ui->set_from_json($usr->api_json([], $msg), $msg_ui);
+        $msg_ui->usr = $usr_ui;
+        // the profile types for the role and the admin check of the user and the languages of the navbar
+        $ui = new frontend('docs');
+        $ui->load_cache($msg_ui);
+        $ui_sys = $ui->dto;
+        if (!$usr_ui->is_ip_only()) {
+            $usr_name = $usr_ui->name();
+            $usr_role = $usr_ui->navbar_role();
+            $is_admin = $usr_ui->is_admin();
+        }
+    }
+}
 
 // a name that is no document of /docs/ is answered as not found
 if (new markdown()->doc_path($doc) == '') {
@@ -61,7 +89,7 @@ if (new markdown()->doc_path($doc) == '') {
 
 // display the document
 $html = new html_base();
-echo $html->docs_page($doc, $msg);
+echo $html->docs_page($doc, $msg_ui, $usr_name, $usr_role, $is_admin);
 
 // close the database and measure the script loading time
 $app->end($db_con, $start_time);

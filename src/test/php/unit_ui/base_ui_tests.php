@@ -714,6 +714,24 @@ class base_ui_tests
         $test_name = 'a link to another document of /docs/ opens it with http/docs.php';
         $t->assert_text_contains($test_name, $md->to_html('see the [FAQ](faq.md#how-can-i-help)'),
             'href="' . api::DOCS_SCRIPT . url_var::PAR . url_var::DOC . url_var::EQ . markdown::DOC_FAQ . '#how-can-i-help"');
+        $doc_file_html = $md->to_html('as JSON ([exchange_json.md](exchange_json.md)) and');
+        $doc_file_text = '>exchange json</a>';
+        $doc_file_href = url_var::DOC . url_var::EQ . 'exchange_json"';
+        $doc_name_html = $md->to_html('[idea_and_intro](idea_and_intro.md)');
+        $doc_name_text = '>idea_and_intro</a>';
+        $test_name = 'a link text that is a file name of /docs/ is shown without the extension and the underscore';
+        $t->assert_text_contains($test_name, $doc_file_html, $doc_file_text);
+        $test_name = '... but the link still opens the file';
+        $t->assert_text_contains($test_name, $doc_file_html, $doc_file_href);
+        $test_name = '... and a link text that is no file name keeps its underscore';
+        $t->assert_text_contains($test_name, $doc_name_html, $doc_name_text);
+        $doc_img_html = $md->to_html('![zukunft.com server structure](server_structure.svg)');
+        $doc_img_src = 'src="' . markdown::DOCS_URL . 'server_structure.svg"';
+        $doc_img_path_html = $md->to_html('![x](../server_structure.svg)');
+        $test_name = 'an image of /docs/ is shown from the own server and not from the github page of the image';
+        $t->assert_text_contains($test_name, $doc_img_html, $doc_img_src);
+        $test_name = '... but an image with a path is not taken from /docs/';
+        $t->assert_text_not_contains($test_name, $doc_img_path_html, $doc_img_src);
         $test_name = 'a markdown table is a html table';
         $t->assert_text_contains($test_name, $md->to_html("| a | b |\n|---|---|\n| 1 | 2 |"), '<td>1</td><td>2</td>');
         $test_name = 'a nested list is a list inside the item';
@@ -727,9 +745,15 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $md->to_html('[x](javascript:alert(1))'), 'href');
         $test_name = 'the docs page has the title of the document';
         $docs_html = $html->docs_page(markdown::DOC_FAQ, $msg_ui);
-        $t->assert_text_contains($test_name, $docs_html, '<h1 id="zukunftcom--frequently-asked-questions">');
+        $t->assert_text_contains($test_name, $docs_html, '<h1 id="frequently-asked-questions">');
         $test_name = '... and the page frame with the footer';
         $t->assert_text_contains($test_name, $docs_html, '</' . html_base::BODY . '>');
+        $doc_lock_tip = $mtr->txt(msg_id::DOC_CHANGE_ADMIN_ONLY);
+        $test_name = '... and the navbar with a grey edit icon for a user who is no admin';
+        $t->assert_text_contains($test_name, $docs_html, $doc_lock_tip);
+        $test_name = '... but the edit menu without the hint for an admin';
+        $docs_admin_html = $html->docs_page(markdown::DOC_FAQ, $msg_ui, users::SYSTEM_ADMIN_NAME, null, true);
+        $t->assert_text_not_contains($test_name, $docs_admin_html, $doc_lock_tip);
         $test_name = 'an unknown document shows that it does not exist';
         $t->assert_text_contains($test_name, $html->docs_page('not_a_doc', $msg_ui), $mtr->txt(msg_id::DOC_NOT_FOUND));
 

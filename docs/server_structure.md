@@ -1,6 +1,6 @@
 # Server structure of zukunft.com
 
-The pod zukunft.com runs on five layers of servers, so that each layer can grow by adding servers and a change is
+The pod zukunft.com should run on five layers of servers, so that each layer can grow by adding servers and a change is
 never kept by one server only.
 
 ![zukunft.com server structure](server_structure.svg)

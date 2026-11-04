@@ -1136,6 +1136,7 @@ messages:
   about_doc_faq: "FAQ"
   about_donation: "Support the project with a donation to"
   doc_not_found: "This document does not exist"
+  doc_change_admin_only: "only admin can change these pages"
   link: "link"
   to: "to"
   from: "from"

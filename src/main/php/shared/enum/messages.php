@@ -3138,6 +3138,8 @@ enum messages: string
     case ABOUT_DONATION = 'about_donation';
     // the title and text of http/docs.php if the url names no document of /docs/
     case DOC_NOT_FOUND = 'doc_not_found';
+    // the tooltip of the grey edit icon of http/docs.php for a user who is no admin
+    case DOC_CHANGE_ADMIN_ONLY = 'doc_change_admin_only';
 
     case UNDO = 'undo';
     case FIND = 'find';

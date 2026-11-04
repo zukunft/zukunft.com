@@ -1,4 +1,5 @@
-# The Idea Behind zukunft.com: Calculating with Words
+# The idea of zukunft.com:
+# Calculating with Words
 
 ## How it started
 

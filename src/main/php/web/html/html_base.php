@@ -651,6 +651,8 @@ class html_base
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
      * @param bool $is_admin true to offer the admin dashboard in the user menu
      * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
+     * @param string $edit_lock_tip if not empty the edit icon is grey, opens no menu and shows this tooltip
+     *                              e.g. for the documents of /docs/, which only an admin can change
      */
     function navbar(
         int       $msk_id = 0,
@@ -658,7 +660,8 @@ class html_base
         ?string   $usr_name = null,
         ?string   $usr_role = null,
         bool      $is_admin = false,
-        view_menu $mnu = new view_menu()
+        view_menu $mnu = new view_menu(),
+        string    $edit_lock_tip = ''
     ): string
     {
         global $ui_sys;
@@ -682,10 +685,17 @@ class html_base
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="col-md-2">' . "\n";
         $result .= '<' . self::UL . ' ' . self::CLASS_HTML . '="nav navbar-nav">' . "\n";
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
-        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
-        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
-        $result .= '</' . self::DETAILS . '>' . "\n";
+        if ($edit_lock_tip != '') {
+            // the same place as the edit menu, but without a menu that could be opened
+            $result .= '<' . html_names::SPAN . ' ' . self::CLASS_HTML . '="view-menu">'
+                . $this->icon_with_title(icons::EDIT, styles::STYLE_GREY, $edit_lock_tip)
+                . '</' . html_names::SPAN . '>' . "\n";
+        } else {
+            $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
+            $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
+            $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
+            $result .= '</' . self::DETAILS . '>' . "\n";
+        }
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= $lan_txt . "\n";
@@ -2581,9 +2591,18 @@ class html_base
      *
      * @param string $doc the name of the document without the extension e.g. "faq"
      * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @param string|null $usr_name the name of the logged-in user for the user menu; null if not logged in
+     * @param string|null $usr_role the profile name shown next to the user name; null for a regular user
+     * @param bool $is_admin true if the user is an admin, who gets the edit menu; for the others the edit icon is grey
      * @return string the html page of the document or a page that says that the document does not exist
      */
-    function docs_page(string $doc, user_message|Message $msg): string
+    function docs_page(
+        string               $doc,
+        user_message|Message $msg,
+        ?string              $usr_name = null,
+        ?string              $usr_role = null,
+        bool                 $is_admin = false
+    ): string
     {
         global $mtr;
         $md = new markdown();
@@ -2597,6 +2616,9 @@ class html_base
             $body = $md->to_html($text);
         }
         $result = $this->header($title, $msg);
+        // the standard navbar; the documents of /docs/ are changed only by an admin
+        $lock_tip = $is_admin ? '' : $mtr->txt(msg_id::DOC_CHANGE_ADMIN_ONLY);
+        $result .= $this->navbar(0, [], $usr_name, $usr_role, $is_admin, new view_menu(), $lock_tip);
         $result .= $this->main('<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_DOC . '">'
             . $body . '</' . self::DIV . '>');
         $result .= $this->footer();

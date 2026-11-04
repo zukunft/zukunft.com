@@ -676,6 +676,7 @@ messages:
   about_doc_faq: "Häufige Fragen"
   about_donation: "Unterstützen Sie das Projekt mit einer Spende an"
   doc_not_found: "Dieses Dokument existiert nicht"
+  doc_change_admin_only: "nur ein Admin kann diese Seiten ändern"
   link: "Verknüpfung"
   to: "zu"
   from: "von"

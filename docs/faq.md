@@ -1,4 +1,4 @@
-# zukunft.com – frequently asked questions
+# frequently asked questions
 
 [auf Deutsch](faq_de.md)
 

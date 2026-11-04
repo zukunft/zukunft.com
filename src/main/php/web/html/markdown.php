@@ -61,6 +61,12 @@ class markdown
     const string DOC_FAQ = 'faq';
     // a link to a document of /docs/ e.g. "faq.md" or "faq.md#an-anchor"
     const string DOC_LINK = '/^([a-z0-9_]+)\.md(#[A-Za-z0-9_-]*)?$/';
+    // an image of /docs/ without a path e.g. "server_structure.svg", which the web server shows itself
+    const string DOC_IMAGE = '/^[a-z0-9_]+\.(svg|png|jpe?g|gif|webp)$/D';
+    // the url of the folder /docs/ on the web server
+    const string DOCS_URL = '/docs/';
+    // a link text that is the file name of a markdown document e.g. "exchange_json.md", which the user sees as "exchange json"
+    const string DOC_FILE_TEXT = '/^([a-z0-9_]+)\.md$/';
     // the folder of /docs/ on github, to which a link to a file outside /docs/ points e.g. "../README.md"
     const string GITHUB_DOCS = def::LINK_GITHUB . '/blob/master/docs/';
     // the start of the placeholder of a code span, so that its text is not changed to bold or italic
@@ -320,6 +326,10 @@ class markdown
     private function link(string $name, string $url): string
     {
         $href = $this->href(html_entity_decode($url, ENT_QUOTES));
+        // the file name of a document is shown as a name e.g. "exchange_json.md" as "exchange json"
+        if (preg_match(self::DOC_FILE_TEXT, $name, $match)) {
+            $name = str_replace('_', ' ', $match[1]);
+        }
         $result = $name;
         if ($href != '') {
             $result = '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '">' . $name . '</a>';
@@ -334,7 +344,13 @@ class markdown
      */
     private function image(string $alt, string $url): string
     {
-        $href = $this->href(html_entity_decode($url, ENT_QUOTES));
+        $src = html_entity_decode($url, ENT_QUOTES);
+        // the page of an image on github is no image, so an image of /docs/ is taken from the own server
+        if (preg_match(self::DOC_IMAGE, $src)) {
+            $href = self::DOCS_URL . $src;
+        } else {
+            $href = $this->href($src);
+        }
         $result = $alt;
         if ($href != '') {
             $result = '<img src="' . htmlspecialchars($href, ENT_QUOTES) . '" alt="' . $alt . '">';

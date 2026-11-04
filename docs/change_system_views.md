@@ -1,5 +1,4 @@
-Change a system view
---------------------
+# Change a system view
 
 to change the system views these steps are needed at the moment:
 
@@ -13,8 +12,7 @@ to change the system views these steps are needed at the moment:
 8) repeat the deployment of the changes to your local test host and step 8 until the test runs without error
 9) git commit & git push
 
-add component type
-------------------
+## add component type
 
 if a component type needs to be added the steps are
 
@@ -25,13 +23,11 @@ if a component type needs to be added the steps are
 5) add the call of the corresponding function in src/main/php/web/component/component_exe.php
 6) continue with step 3) from the steps above to change a system view
 
-add database field
------------------
+## add database field
 
 if a database fields is added busied fixing the tests remember to add the new field to src/main/resources/db_code_links/change_fields.csv
 
-add a translatable frontend text
---------------------------------
+## add a translatable frontend text
 
 if the new component used an ui_msg_code_id perform these steps
 
