@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?username=zukunft.com+system+test&password=%2A%2A%2A&9ix=1&m=11&z=1&submit=
+/http/view.php?username=zukunft.com+system+test&password=%2A%2A%2A&9ix=1&m=11&z=1&submit=
+/http/view.php?mask_id=login&step=confirm&
+{
+    "mask_id": "login",
+    "step": "confirm",
+    "url_part_back": []
+}

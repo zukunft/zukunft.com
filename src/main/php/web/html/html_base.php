@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'view_menu.php';
+include_once html_paths::HTML . 'markdown.php';
 include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
@@ -246,6 +247,8 @@ class html_base
 
     // to sort
     const string CLASS_MAIN = 'main-container';
+    // a markdown document of /docs/ (see docs_page)
+    const string CLASS_DOC = 'doc-page';
     const string CLASS_FOOTER = 'site-footer';
     // the start of a page shown while the page is created (see loading_start)
     const string CLASS_LOADING = 'page-loading';
@@ -648,6 +651,8 @@ class html_base
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
      * @param bool $is_admin true to offer the admin dashboard in the user menu
      * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
+     * @param string $edit_lock_tip if not empty the edit icon is grey, opens no menu and shows this tooltip
+     *                              e.g. for the documents of /docs/, which only an admin can change
      */
     function navbar(
         int       $msk_id = 0,
@@ -655,7 +660,8 @@ class html_base
         ?string   $usr_name = null,
         ?string   $usr_role = null,
         bool      $is_admin = false,
-        view_menu $mnu = new view_menu()
+        view_menu $mnu = new view_menu(),
+        string    $edit_lock_tip = ''
     ): string
     {
         global $ui_sys;
@@ -679,10 +685,17 @@ class html_base
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="col-md-2">' . "\n";
         $result .= '<' . self::UL . ' ' . self::CLASS_HTML . '="nav navbar-nav">' . "\n";
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
-        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
-        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
-        $result .= '</' . self::DETAILS . '>' . "\n";
+        if ($edit_lock_tip != '') {
+            // the same place as the edit menu, but without a menu that could be opened
+            $result .= '<' . html_names::SPAN . ' ' . self::CLASS_HTML . '="view-menu">'
+                . $this->icon_with_title(icons::EDIT, styles::STYLE_GREY, $edit_lock_tip)
+                . '</' . html_names::SPAN . '>' . "\n";
+        } else {
+            $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
+            $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
+            $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
+            $result .= '</' . self::DETAILS . '>' . "\n";
+        }
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= $lan_txt . "\n";
@@ -750,6 +763,11 @@ class html_base
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
         $add_tip = $this->tip_with_names(msg_id::NAVBAR_ADD_VIEW_TIP, msg_id::NAVBAR_ADD_VIEW_FOR_TIP, $mnu->obj_name);
         $result .= $this->list_item($this->ref($url_msk_add, msg_id::NAVBAR_ADD_VIEW->text(), $add_tip)) . "\n";
+        // the im- and export of the page e.g. the csv download of its table below its own sub header
+        if ($mnu->export_items != '') {
+            $result .= $this->list_item(msg_id::NAVBAR_IM_EXPORT->text(), styles::MENU_HEADER) . "\n";
+            $result .= $mnu->export_items . "\n";
+        }
         // the server admin page checks the access itself, the link is just not offered to the others
         if ($is_admin) {
             $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, msg_id::NAVBAR_SERVER_ADMIN->text())) . "\n";
@@ -1890,12 +1908,18 @@ class html_base
      *                         '9script' (BACK . 'script'): the calling script for non-default pages e.g. /http/about.php
      *                          other BACK-prefixed params: the original query params with prefix stripped on return
      * @param string $script script to be called which should be api::MAIN_SCRIPT
-     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123'
+     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123' or '/' for the static start page
      */
     static function url_from_back(array $url_array, string $script = api::MAIN_SCRIPT): string
     {
         $back_array = html_base::url_par_from_back_part($url_array);
-        return empty($back_array) ? '' : $script . '?' . http_build_query($back_array);
+        $result = '';
+        if (array_key_exists(url_var::START_PAGE, $back_array)) {
+            $result = api::START_PAGE;
+        } elseif (!empty($back_array)) {
+            $result = $script . '?' . http_build_query($back_array);
+        }
+        return $result;
     }
 
     /**
@@ -2541,14 +2565,63 @@ class html_base
         $result .= 'Switzerland<' . self::BR . '><' . self::BR . '>';
         $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_MAIN_IDEA) . ' ';
-        $result .= $this->ref(def::LINK_PAPER_DELPHI, $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
+        $result .= $this->ref(def::LINK_PAPER_DELPHI, $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '.<' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_ONCE_IMPLEMENTED) . ' ';
         $result .= $this->ref(def::LINK_PAPER_IMPERATIVE, $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
+        // the entry documents of /docs/ shown by http/docs.php
+        $md = new markdown();
+        $result .= $mtr->txt(msg_id::ABOUT_DOCS) . ' ';
+        $result .= $this->ref($md->doc_url(markdown::DOC_INTRO), $mtr->txt(msg_id::ABOUT_DOC_INTRO), '', '', false, false);
+        $result .= ' &middot; ' . $this->ref($md->doc_url(markdown::DOC_CONCEPT), $mtr->txt(msg_id::ABOUT_DOC_CONCEPT), '', '', false, false);
+        $result .= ' &middot; ' . $this->ref($md->doc_url(markdown::DOC_FAQ), $mtr->txt(msg_id::ABOUT_DOC_FAQ), '', '', false, false);
+        $result .= '<' . self::BR . '><' . self::BR . '>';
+        // the bank account for a donation to the project
+        $result .= $mtr->txt(msg_id::ABOUT_DONATION) . ' ' . def::DONATION_RECEIVER . ', IBAN ' . def::DONATION_IBAN;
+        $result .= '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
+        return $result;
+    }
+
+    /**
+     * a markdown document of /docs/ as a html page with the css of zukunft.com
+     *
+     * @param string $doc the name of the document without the extension e.g. "faq"
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @param string|null $usr_name the name of the logged-in user for the user menu; null if not logged in
+     * @param string|null $usr_role the profile name shown next to the user name; null for a regular user
+     * @param bool $is_admin true if the user is an admin, who gets the edit menu; for the others the edit icon is grey
+     * @return string the html page of the document or a page that says that the document does not exist
+     */
+    function docs_page(
+        string               $doc,
+        user_message|Message $msg,
+        ?string              $usr_name = null,
+        ?string              $usr_role = null,
+        bool                 $is_admin = false
+    ): string
+    {
+        global $mtr;
+        $md = new markdown();
+        $path = $md->doc_path($doc);
+        $text = $path == '' ? false : file_get_contents($path);
+        if ($text === false) {
+            $title = $mtr->txt(msg_id::DOC_NOT_FOUND);
+            $body = $this->p($title);
+        } else {
+            $title = $md->title($text);
+            $body = $md->to_html($text);
+        }
+        $result = $this->header($title, $msg);
+        // the standard navbar; the documents of /docs/ are changed only by an admin
+        $lock_tip = $is_admin ? '' : $mtr->txt(msg_id::DOC_CHANGE_ADMIN_ONLY);
+        $result .= $this->navbar(0, [], $usr_name, $usr_role, $is_admin, new view_menu(), $lock_tip);
+        $result .= $this->main('<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_DOC . '">'
+            . $body . '</' . self::DIV . '>');
+        $result .= $this->footer();
         return $result;
     }
 

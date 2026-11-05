@@ -44,6 +44,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::UTILS . 'headless_browser.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -483,6 +485,28 @@ class lib_tests
         // negative: a text without a tag has nothing to indent, so it is kept as it is
         $test_name = 'format_html keeps a text without a tag';
         $t->assert($test_name, $lib->format_html('two words'), 'two words');
+        // the css of a style is text, so a "<" in it is no tag, and each rule part gets its own line
+        $test_name = 'format_html writes the css of a style one rule part per line';
+        $text = "<head><style>.a {x: 1; y: 2;} @property --n {syntax: '<integer>'; inherits: false;}</style></head>";
+        $target = "<head>\n    <style>\n        .a {x: 1;\n            y: 2;}\n"
+            . "        @property --n {syntax: '<integer>';\n            inherits: false;}\n    </style>\n</head>";
+        $t->assert($test_name, $lib->format_html($text), $target);
+        $test_name = '... which trims to the same text as the compact css';
+        $t->assert($test_name, $lib->trim_html($lib->format_html($text)), $lib->trim_html($text));
+        // negative: a "<" in a script is no tag either, so the tags after it keep their indentation
+        $test_name = '... and a script is kept as it is';
+        $text = '<body><script>if (a <b) {c();}</script><p>x</p></body>';
+        $target = "<body>\n    <script>\n        if (a <b) {c();}\n    </script>\n    <p>\n        x\n    </p>\n</body>";
+        $t->assert($test_name, $lib->format_html($text), $target);
+        // the json of a data script e.g. the seed of an editor gets one key or value per line,
+        // but a long id and an escape inside a string stay as they are
+        $test_name = 'format_html writes the json of a data script one key per line';
+        $text = '<script type="application/json" id="seed">{"id":12345678901234567890,"a":[],"b":["x, y","<\/p>"]}</script>';
+        $target = "<script type=\"application/json\" id=\"seed\">\n    {\n        \"id\": 12345678901234567890,\n"
+            . "        \"a\": [],\n        \"b\": [\n            \"x, y\",\n            \"<\\/p>\"\n        ]\n    }\n</script>";
+        $t->assert($test_name, $lib->format_html($text), $target);
+        $test_name = '... which trims to the same text as the compact json';
+        $t->assert($test_name, $lib->trim_html($lib->format_html($text)), $lib->trim_html($text));
 
         // the sql fixtures of a class are in the folder of the class, a link class shares the folder of its main class
         $test_name = 'the resource path of a class names the class';
@@ -537,6 +561,30 @@ class lib_tests
         $target = 'no tags here';
         $result = $lib->html_to_markdown($text);
         $t->assert($test_name, $result, $target);
+
+        // the text of an element read from the dom dump of the headless browser
+        $brw = new headless_browser();
+        $id = 'putMessage';
+        $test_name = 'element_text of the element with the id';
+        $dom = '<div><pre id="' . $id . '">{"a": "x &amp; y"}</pre></div>';
+        $t->assert($test_name, $brw->element_text($dom, $id), '{"a": "x &amp; y"}');
+        $test_name = 'element_text skips an id only in another attribute';
+        $dom = '<p data-id="' . $id . '">no</p><span id="' . $id . '">yes</span>';
+        $t->assert($test_name, $brw->element_text($dom, $id), 'yes');
+        $test_name = 'element_text keeps the line breaks';
+        $dom = '<pre id="' . $id . '">' . "a\nb" . '</pre>';
+        $t->assert($test_name, $brw->element_text($dom, $id), "a\nb");
+        $test_name = 'element_text of an empty element';
+        $dom = '<pre id="' . $id . '"></pre>';
+        $t->assert($test_name, $brw->element_text($dom, $id), '');
+        $test_name = 'element_text without the element';
+        $dom = '<pre id="other">x</pre><div class="a" id="' . $id . '">no</div>';
+        $t->assert($test_name, $brw->element_text($dom, $id) === null, true);
+        // a large element that exceeds the pcre backtrack limit of a lazy regex
+        $test_name = 'element_text of a large element';
+        $text = str_repeat('{"a": "x"}', 200000);
+        $dom = '<pre id="' . $id . '">' . $text . '</pre>';
+        $t->assert($test_name, $brw->element_text($dom, $id) === $text, true);
 
         // replace volatile CSRF token with a fixed dummy value for snapshot tests
         $token = test_const::DUMMY_SESSION_TOKEN;

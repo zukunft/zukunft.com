@@ -506,15 +506,31 @@ class coding_rule_tests
     /**
      * the html without the code inside its script elements, because a script e.g. of a raw sample page
      * writes elements as text like '<input id="' + id + '">', which are no elements of the page;
-     * the script tags stay, so that the id of a script element e.g. of its json data still counts
+     * the script tags stay, so that the id of a script element e.g. of its json data still counts;
+     * a string search and not a regex, because a lazy regex over a large json seed hits the pcre backtrack limit
      *
      * @param string $html the html code of a page or a part of it
      * @return string the html code with empty script elements
      */
     private function without_script_code(string $html): string
     {
-        $tag = html_base::SCRIPT;
-        return preg_replace('/(<' . $tag . '\b[^>]*>).*?(<\/' . $tag . '>)/s', '$1$2', $html);
+        $open = '<' . html_base::SCRIPT;
+        $close = '</' . html_base::SCRIPT . '>';
+        $result = '';
+        $pos = 0;
+        while (($start = stripos($html, $open, $pos)) !== false) {
+            $tag_end = strpos($html, '>', $start);
+            if ($tag_end === false) {
+                break;
+            }
+            $end = stripos($html, $close, $tag_end + 1);
+            if ($end === false) {
+                break;
+            }
+            $result .= substr($html, $pos, $tag_end + 1 - $pos) . $close;
+            $pos = $end + strlen($close);
+        }
+        return $result . substr($html, $pos);
     }
 
     /**

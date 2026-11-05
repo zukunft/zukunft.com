@@ -1080,6 +1080,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "percent htp" (percent of htp) of the start page problem files, the one
+     *                percent phrase of a loss share of the happy time points
+     */
+    function percent_htp(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERCENT_HTP_ID, triple_names::PERCENT_HTP);
+        $trp->set_from($t_wrd->word_percent()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->word_htp()->phrase());
+        $trp->set_type(phrase_types::PERCENT, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
      * @return triple "share (ratio)" of pv_lifetime_balance.json, a percent unit that a field
      *                shows by its symbol "share" (see ui_list::unit_name)
      */
@@ -1388,6 +1405,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::GLOBAL_WARMING_ID, triple_names::GLOBAL_WARMING);
+        $trp->description = triple_names::GLOBAL_WARMING_COM;
         $trp->set_from($t_wrd->word_climate()->phrase());
         $trp->set_verb($t_vrb->verb_can_get());
         $trp->set_to($t_wrd->word_warmer()->phrase());
@@ -3170,6 +3188,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::REDUCE_EMISSIONS_ID, triple_names::REDUCE_EMISSIONS);
+        $trp->description = triple_names::REDUCE_EMISSIONS_COM;
         return $trp;
     }
 
@@ -3180,6 +3199,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::AVOID_WRONG_DECISIONS_ID, triple_names::AVOID_WRONG_DECISIONS);
+        $trp->description = triple_names::AVOID_WRONG_DECISIONS_COM;
         return $trp;
     }
 
@@ -3357,6 +3377,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::WEALTH_CONCENTRATION_ID, triple_names::WEALTH_CONCENTRATION);
+        $trp->description = triple_names::WEALTH_CONCENTRATION_COM;
         return $trp;
     }
 
@@ -3364,6 +3385,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::BASIC_INCOME_ID, triple_names::BASIC_INCOME);
+        $trp->description = triple_names::BASIC_INCOME_COM;
         return $trp;
     }
 
@@ -3371,6 +3393,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::PLATFORM_REGULATION_ID, triple_names::PLATFORM_REGULATION);
+        $trp->description = triple_names::PLATFORM_REGULATION_COM;
         return $trp;
     }
 
@@ -3378,6 +3401,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::MARKET_POWER_ID, triple_names::MARKET_POWER);
+        $trp->description = triple_names::MARKET_POWER_COM;
         return $trp;
     }
 
@@ -3385,6 +3409,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::MARKET_SHARE_TAX_ID, triple_names::MARKET_SHARE_TAX);
+        $trp->description = triple_names::MARKET_SHARE_TAX_COM;
         return $trp;
     }
 
@@ -3392,6 +3417,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::BIASED_INFORMATION_ID, triple_names::BIASED_INFORMATION);
+        $trp->description = triple_names::BIASED_INFORMATION_COM;
         return $trp;
     }
 
@@ -3399,6 +3425,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::DELPHI_METHOD_ID, triple_names::DELPHI_METHOD);
+        $trp->description = triple_names::DELPHI_METHOD_COM;
         return $trp;
     }
 
@@ -3406,6 +3433,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::BLACK_BOX_AI_ID, triple_names::BLACK_BOX_AI);
+        $trp->description = triple_names::BLACK_BOX_AI_COM;
         return $trp;
     }
 
@@ -3413,6 +3441,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::PUBLIC_AI_ID, triple_names::PUBLIC_AI);
+        $trp->description = triple_names::PUBLIC_AI_COM;
         return $trp;
     }
 
@@ -3420,6 +3449,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::CITIZEN_PARTICIPATION_ID, triple_names::CITIZEN_PARTICIPATION);
+        $trp->description = triple_names::CITIZEN_PARTICIPATION_COM;
         return $trp;
     }
 
@@ -3427,6 +3457,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::FLUID_DEMOCRACY_ID, triple_names::FLUID_DEMOCRACY);
+        $trp->description = triple_names::FLUID_DEMOCRACY_COM;
         return $trp;
     }
 
@@ -3434,6 +3465,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::GDP_MISMEASUREMENT_ID, triple_names::GDP_MISMEASUREMENT);
+        $trp->description = triple_names::GDP_MISMEASUREMENT_COM;
         return $trp;
     }
 
@@ -3441,6 +3473,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::GROSS_DOMESTIC_USAGE_ID, triple_names::GROSS_DOMESTIC_USAGE);
+        $trp->description = triple_names::GROSS_DOMESTIC_USAGE_COM;
         return $trp;
     }
 
@@ -3448,6 +3481,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::PROPRIETARY_SOFTWARE_ID, triple_names::PROPRIETARY_SOFTWARE);
+        $trp->description = triple_names::PROPRIETARY_SOFTWARE_COM;
         return $trp;
     }
 
@@ -3455,6 +3489,7 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::FREE_SOFTWARE_ID, triple_names::FREE_SOFTWARE);
+        $trp->description = triple_names::FREE_SOFTWARE_COM;
         return $trp;
     }
 

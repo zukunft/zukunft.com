@@ -402,6 +402,16 @@ class phrase_list_tests
         $test_name = 'a triple with the verb "of" names no child';
         $t->assert($test_name, $phr_lst_ui->child_names($t_wrd->word_reason_ui()->phrase()),
             [triple_names::CLIMATE_GAS_EMISSIONS]);
+        // a number of a row can name the link instead of the linked phrase, e.g. the numbers of
+        // "civic education (populism solution)" are the numbers of a row of "populism solution"
+        $test_name = 'the rows of a phrase are the linked phrases and the linking triples';
+        $phr_lst_ui = $t_phr->list_global_problems_ui();
+        $row_names = $phr_lst_ui->row_names($phr);
+        $t->assert_contains($test_name, $row_names, [triple_names::GLOBAL_WARMING, triple_names::GLOBAL_WARMING_PROBLEM]);
+        // negative: the link with the verb "of" names no row, like it names no child
+        $test_name = '... but not a triple with the verb "of"';
+        $reason_rows = $phr_lst_ui->row_names($t_wrd->word_reason_ui()->phrase());
+        $t->assert_text_not_contains($test_name, implode(', ', $reason_rows), triple_names::POTENTIAL_LOSS_OF_REASON);
         // negative: a list without a triple that links to the given phrase has no child of it
         $test_name = 'a list with no link to the given phrase returns no child';
         $phr_lst_ui = $t_phr->list_columns_loss_ui();

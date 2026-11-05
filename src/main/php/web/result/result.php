@@ -110,6 +110,8 @@ class result extends sandbox_value
     public ?result_list $results_used = null;
     // the right side of the formula as operator texts and the figures used, only for the result page
     public ?array $expression_parts = null;
+    // the formula expression with the numbers used and with the term names, set by the table that has repeated the calculation (see ui_list::check_results)
+    public string $expression_numbers = '';
 
 
     /*
@@ -276,6 +278,21 @@ class result extends sandbox_value
     protected function default_view_id(): int
     {
         return views::RESULT_ID;
+    }
+
+    /**
+     * the formula expression with the numbers used, below it with the term names (see
+     * formula_calc::expression_with_numbers) and the hint that the link shows the details on the page of the result
+     *
+     * @return string the tooltip of the link to the result, empty if the calculation is not known
+     */
+    protected function link_title(): string
+    {
+        $result = '';
+        if ($this->expression_numbers != '') {
+            $result = $this->expression_numbers . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text();
+        }
+        return $result;
     }
 
     /**

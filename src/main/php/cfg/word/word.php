@@ -571,10 +571,9 @@ class word extends sandbox_code_id
                     // word (idor); see sandbox_multi::is_readable_by, same gate as api/valueList
                     $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // INCL_PHRASES so each value carries its group phrases, which the
-                        // frontend needs for the value name and to sort the list by impact
+                        // with the group phrases and the source of each value (api_type_list::VALUES_RELATED)
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                            $typ_lst->values_related(), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);
@@ -765,7 +764,7 @@ class word extends sandbox_code_id
             }
         }
         // a word without an own default view and without parent views is shown with the system
-        // default word view, so the views tab of the word page offers at least this view
+        // default word view, so the edit menu of the word page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::WORD, $msg);

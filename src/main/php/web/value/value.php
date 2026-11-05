@@ -274,6 +274,21 @@ class value extends sandbox_value
     }
 
     /**
+     * the name of the source of the number and below it the url or else the doi of the source,
+     * e.g. as the tooltip of the number in a table cell
+     *
+     * @return string the tooltip of the link to the number, empty if the source name is not known
+     */
+    protected function link_title(): string
+    {
+        $result = $this->src?->name() ?? '';
+        if ($result != '' and $this->src->url_or_doi() != '') {
+            $result .= "\n" . $this->src->url_or_doi();
+        }
+        return $result;
+    }
+
+    /**
      * @param group $grp
      * @return float
      */

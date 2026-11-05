@@ -2,9 +2,9 @@
 
 /* the table editor (system_page::table_editor): the view renders the empty host, the phraseData answer of
    the table phrase as the seed, the translated texts and the settings, and this script builds the whole
-   editor into the host: the top line of the calculator editor, the parameter rail, the live table, the
-   definition as json and the table as csv; the save sends the changed parameters as triples and values
-   to the updatePut api */
+   editor into the host: the top line of the calculator editor, the parameter rail and the tabs of the
+   live table, all its texts, the unsaved changes and the definition as json; Export downloads the table
+   as csv and the save sends the changed parameters as triples and values to the updatePut api */
 (function () {
     /* the html ids of the host and of the json elements that the view renders (system_page::TABLE_EDITOR_*) */
     const ELEMENT = {
@@ -69,8 +69,23 @@
         tokenRemove: "table_editor_token_remove",
         noMatch: "table_editor_no_match",
         tabTable: "table_editor_tab_table",
+        tabTexts: "calc_editor_tab_texts",
+        tabChanges: "calc_editor_tab_changes",
         tabJson: "table_editor_tab_json",
-        tabCsv: "table_editor_tab_csv",
+        textsIntro: "table_editor_texts_intro",
+        colPart: "table_editor_col_part",
+        colText: "calc_editor_col_text",
+        textsColumn: "table_editor_texts_column",
+        textsRow: "table_editor_texts_row",
+        changedParams: "table_editor_changed_params",
+        checkBeforeSaving: "calc_editor_check_before_saving",
+        noChangesSince: "calc_editor_no_changes_since",
+        saveSends: "calc_editor_save_sends",
+        addedTriples: "calc_editor_added_triples",
+        changedTriples: "calc_editor_changed_triples",
+        values: "calc_editor_values",
+        newWords: "calc_editor_new_words",
+        removed: "table_editor_removed",
         jsonNote: "table_editor_json_note",
         applyJson: "table_editor_apply_json",
         copy: "table_editor_copy",
@@ -78,7 +93,6 @@
         jsonInvalid: "table_editor_json_invalid",
         copied: "table_editor_copied",
         copyManual: "table_editor_copy_manual",
-        csvNote: "table_editor_csv_note",
         csvAllRows: "table_editor_csv_all_rows",
         csvSources: "table_editor_csv_sources",
         noRows: "table_editor_no_rows",
@@ -183,13 +197,18 @@
        itself and a choice as the triples from the parameter triple to the selected phrases; an own column is
        an item of the column keyword ordered by "is follower of" with its tier as a choice; the save keeps the
        form in which a parameter is saved, so e.g. a select saved as a description stays a description;
-       the label of a field is the text table_editor_<key> and its hint table_editor_<key>_hint */
+       the label of a field is the text table_editor_<key> and its hint table_editor_<key>_hint;
+       the groups that the rail shows open and the fields that the All texts tab lists are marked */
     const SPEC = [
         {
-            group: "columns", fields: [
+            group: "columns", open: true, fields: [
                 {key: "column_level", type: "select", options: ["mayor", "main", "minor", "all"]},
                 {key: "column_mayor", tier: "mayor", type: "tokens", wide: true},
-                {key: "column_main", tier: "main", type: "tokens", wide: true},
+                {key: "column_main", tier: "main", type: "tokens", wide: true}
+            ]
+        },
+        {
+            group: "column_details", fields: [
                 {key: "column_minor", tier: "minor", type: "tokens", wide: true},
                 {key: "column_marginal", tier: "marginal", type: "tokens", wide: true},
                 {key: "column_order_rule", type: "select", options: ["listed", "alphabetical", "by value count"]},
@@ -201,12 +220,16 @@
             ]
         },
         {
-            group: "rows", fields: [
-                {key: "row_phrase", type: "text"},
+            group: "rows", open: true, fields: [
+                {key: "row_phrase", type: "text", text: true},
+                {key: "row_order", type: "text"}
+            ]
+        },
+        {
+            group: "row_details", fields: [
                 {key: "row_verb", type: "select", options: ["is a", "is part of", "has"]},
                 {key: "row_direction", type: "select", options: ["subject", "object"]},
                 {key: "row_filter", type: "number"},
-                {key: "row_order", type: "text"},
                 {key: "row_limit", type: "number", min: 1},
                 {key: "row_show_all", type: "check"},
                 {key: "row_page_size", type: "number", min: 1},
@@ -230,7 +253,7 @@
             group: "values", fields: [
                 {key: "value_format", type: "text"},
                 {key: "value_scale", type: "select", options: [["1", "table_editor_value_scale_one"], ["0.001", "table_editor_value_scale_billion"], ["1000", "table_editor_value_scale_thousand"]]},
-                {key: "value_unit", type: "text", join: " "},
+                {key: "value_unit", type: "text", join: " ", text: true},
                 {key: "value_missing", type: "select", options: ["dash", "blank", "n/a", "zero"]},
                 {key: "value_delta", type: "select", options: ["none", "absolute", "percent"]},
                 {key: "value_show_source", type: "select", options: ["none", "tooltip", "column"]},
@@ -251,8 +274,8 @@
         },
         {
             group: "layout", fields: [
-                {key: "title", type: "text", wide: true},
-                {key: "caption", type: "textarea", wide: true},
+                {key: "title", type: "text", wide: true, text: true},
+                {key: "caption", type: "textarea", wide: true, text: true},
                 {key: "density", type: "select", options: ["compact", "normal", "comfortable"]},
                 {key: "striped", type: "check"},
                 {key: "borders", type: "select", options: ["none", "horizontal", "grid"]},
@@ -481,7 +504,7 @@
         return result;
     }
 
-    /* a row of a triple of the owner e.g. Example AG energy is shown by its to side energy */
+    /* a row of a triple of the owner e.g. ABB Electrification is shown by its to side electrification */
     function seedRow(name, def) {
         const trp = tripleByName(name);
         const acr = TRIPLES.find(function (t) {
@@ -525,10 +548,11 @@
     /* the rows are the phrases linked to the row phrase by the row verb, the subject or the object side;
        a top row without sub-rows has no place in the hierarchy, so it is an orphan e.g. other */
     function seedData(def) {
-        const rows = def.rows;
+        const rows = def.row_details;
+        const rowPhrase = def.rows.row_phrase;
         const isSubject = rows.row_direction === "subject";
         const names = TRIPLES.filter(function (t) {
-            return t.verb === rows.row_verb && (isSubject ? t.to === rows.row_phrase : t.from === rows.row_phrase);
+            return t.verb === rows.row_verb && (isSubject ? t.to === rowPhrase : t.from === rowPhrase);
         }).map(function (t) {
             return isSubject ? t.from : t.to;
         });
@@ -654,7 +678,10 @@
 
     function panelsHtml() {
         const result = '<div class="tabs" role="tablist">'
-            + tabHtml("preview", TXT.tabTable, true) + tabHtml("json", TXT.tabJson, false) + tabHtml("csv", TXT.tabCsv, false)
+            + tabHtml("preview", TXT.tabTable, true)
+            + tabHtml("texts", TXT.tabTexts, false)
+            + tabHtml("changes", TXT.tabChanges, false)
+            + tabHtml("json", TXT.tabJson, false)
             + "</div>"
             + '<section class="panel" id="panel-preview">'
             + '<div class="view-head"><h2 id="viewTitle"></h2><span class="meta" id="viewMeta"></span></div>'
@@ -663,16 +690,13 @@
             + '<div class="pager" id="pager"></div>'
             + '<p class="caption" id="viewCaption"></p>'
             + "</section>"
+            + '<section class="panel" id="panel-texts" hidden></section>'
+            + '<section class="panel chg" id="panel-changes" hidden></section>'
             + '<section class="panel json-box" id="panel-json" hidden>'
             + '<p class="note">' + txtHtml(TXT.jsonNote) + "</p>"
             + '<div class="controls">' + buttonHtml("btnApply", TXT.applyJson, "", "primary") + buttonHtml("btnCopyJson", TXT.copy, "")
             + '<span class="msg" id="jsonMsg"></span></div>'
             + '<textarea id="jsonText" spellcheck="false"></textarea>'
-            + "</section>"
-            + '<section class="panel json-box" id="panel-csv" hidden>'
-            + '<p class="note">' + txtHtml(TXT.csvNote) + "</p>"
-            + '<div class="controls">' + buttonHtml("btnCopyCsv", TXT.copy, "") + '<span class="msg" id="csvMsg"></span></div>'
-            + '<textarea id="csvText" spellcheck="false" readonly></textarea>'
             + "</section>";
         return result;
     }
@@ -728,16 +752,29 @@
         return result;
     }
 
-    /* the number of parameters that differ from the saved definition */
-    function changeCount() {
-        let result = 0;
+    /* the parameter fields of every group that pass the check e.g. the text fields */
+    function fieldsWith(check) {
+        const result = [];
         SPEC.forEach(function (g) {
             g.fields.forEach(function (f) {
-                if (isChanged(g.group, f.key)) {
-                    result += 1;
+                if (check(f)) {
+                    result.push(f);
                 }
             });
         });
+        return result;
+    }
+
+    /* the parameters that differ from the saved definition */
+    function changedFields() {
+        const result = fieldsWith(function (f) {
+            return isChanged(groupOf(f.key), f.key);
+        });
+        return result;
+    }
+
+    function changeCount() {
+        const result = changedFields().length;
         return result;
     }
 
@@ -802,7 +839,7 @@
     }
 
     function exportCsv() {
-        const blob = new Blob([document.getElementById("csvText").value], {type: "text/csv"});
+        const blob = new Blob([tableCsv()], {type: "text/csv"});
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = phraseName + ".csv";
@@ -992,13 +1029,8 @@
     }
 
     function tierFields() {
-        const result = [];
-        SPEC.forEach(function (g) {
-            g.fields.forEach(function (f) {
-                if (f.tier) {
-                    result.push(f);
-                }
-            });
+        const result = fieldsWith(function (f) {
+            return f.tier;
         });
         return result;
     }
@@ -1263,8 +1295,8 @@
         const parts = [];
         parts.push('<div class="toolbar">' + buttonHtml("btnExpandAll", TXT.openGroups, "", "small")
             + '<span class="note">' + txtHtml(TXT.railNote) + "</span></div>");
-        SPEC.forEach(function (g, idx) {
-            const open = idx < 3 ? " open" : "";
+        SPEC.forEach(function (g) {
+            const open = g.open ? " open" : "";
             parts.push('<details class="group" data-group="' + g.group + '"' + open + "><summary>" + escapeHtml(groupTitle(g))
                 + '<span class="count">' + g.fields.length + '</span></summary><div class="fields">');
             g.fields.forEach(function (f) {
@@ -1726,10 +1758,10 @@
             cols = cols.concat(parseList(view.columns.column_main));
         }
         if (lv === "minor" || lv === "all") {
-            cols = cols.concat(parseList(view.columns.column_minor));
+            cols = cols.concat(parseList(view.column_details.column_minor));
         }
         if (lv === "all") {
-            cols = cols.concat(parseList(view.columns.column_marginal));
+            cols = cols.concat(parseList(view.column_details.column_marginal));
         }
         if (view.values.value_show_source === "column" && cols.indexOf("source") < 0) {
             cols.push("source");
@@ -1740,7 +1772,7 @@
         cols = cols.filter(function (c, i) {
             return cols.indexOf(c) === i;
         });
-        const rule = view.columns.column_order_rule;
+        const rule = view.column_details.column_order_rule;
         if (rule === "alphabetical") {
             cols.sort();
         } else if (rule === "by value count") {
@@ -1914,7 +1946,7 @@
     function sortRows(list, cols) {
         const order = rowOrder();
         const dir = order.dir === "desc" ? -1 : 1;
-        const pinned = parseList(view.rows.row_pinned);
+        const pinned = parseList(view.row_details.row_pinned);
         const result = list.slice();
         if (order.col && cols.indexOf(order.col) >= 0) {
             result.sort(function (a, b) {
@@ -1934,7 +1966,7 @@
         applyExpandRule();
         const maxDepth = Number(view.hierarchy.hierarchy_max_depth);
         const orphanMode = view.hierarchy.hierarchy_orphans;
-        const minVal = view.rows.row_filter;
+        const minVal = view.row_details.row_filter;
         const firstValueCol = cols.filter(isYear)[0] || cols.filter(isNumeric)[0];
         const search = searchText.trim().toLowerCase();
         let result = [];
@@ -1950,7 +1982,7 @@
             if (search && (p.name + " " + p.description).toLowerCase().indexOf(search) < 0) {
                 ok = false;
             }
-            if (view.rows.row_empty === "hide" && rowIsEmpty(p, cols)) {
+            if (view.row_details.row_empty === "hide" && rowIsEmpty(p, cols)) {
                 ok = false;
             }
             return ok;
@@ -1998,7 +2030,7 @@
 
     /* ---------- cell rendering ---------- */
     function rowLabel(p) {
-        const mode = view.rows.row_label_mode;
+        const mode = view.row_details.row_label_mode;
         let result = escapeHtml(p.name);
         if (mode === "abbreviation") {
             result = escapeHtml(p.abbr);
@@ -2108,7 +2140,7 @@
     }
 
     function headerText(col) {
-        const short = view.columns.header_label === "short";
+        const short = view.column_details.header_label === "short";
         let result = col;
         if (short && isYear(col)) {
             result = "'" + col.slice(2);
@@ -2172,10 +2204,10 @@
     /* ---------- build matrix and render ---------- */
     /* the rows of the current page or up to the row limit, and the number of pages */
     function pageRows(allRows) {
-        const limit = Number(view.rows.row_limit) || 50;
-        const pageSize = Number(view.rows.row_page_size) || 10;
+        const limit = Number(view.row_details.row_limit) || 50;
+        const pageSize = Number(view.row_details.row_page_size) || 10;
         let result = {rows: allRows.slice(0, limit), pageCount: 1};
-        if (view.rows.row_show_all) {
+        if (view.row_details.row_show_all) {
             const pageCount = Math.max(1, Math.ceil(allRows.length / pageSize));
             page = Math.min(page, pageCount);
             result = {rows: allRows.slice((page - 1) * pageSize, page * pageSize), pageCount: pageCount};
@@ -2200,7 +2232,7 @@
         }
         cols.forEach(function (c) {
             let h = escapeHtml(headerText(c));
-            if (view.columns.header_show_unit && (isYear(c) || c === "total")) {
+            if (view.column_details.header_show_unit && (isYear(c) || c === "total")) {
                 h += '<span class="unit">' + escapeHtml(unitLabel()) + "</span>";
             }
             head.push({html: h, text: headerText(c), cls: alignClass(c), col: c, sortable: isNumeric(c) || c === "source"});
@@ -2217,7 +2249,7 @@
         if (selected.has(r.p.id)) {
             rowCls.push("selected");
         }
-        if (view.rows.row_empty === "grey" && rowIsEmpty(r.p, cols)) {
+        if (view.row_details.row_empty === "grey" && rowIsEmpty(r.p, cols)) {
             rowCls.push("subtotal");
         }
         if (view.interaction.selectable) {
@@ -2246,7 +2278,7 @@
         const closesGroup = r.depth > 0 && (!nextRow || nextRow.depth < r.depth);
         const parentRow = closesGroup ? findParentRow(rows, i) : null;
         let result = null;
-        if (view.aggregation.subtotals && !view.rows.row_show_all && parentRow) {
+        if (view.aggregation.subtotals && !view.row_details.row_show_all && parentRow) {
             const kids = rows.filter(function (x) {
                 return x.p.parent === parentRow.p.id;
             });
@@ -2310,7 +2342,8 @@
         paintTable(matrix);
         paintChrome(allRows.length, rows.length, paged.pageCount);
         paintJson();
-        paintCsv();
+        paintTexts();
+        paintChanges();
         paintBar();
     }
 
@@ -2383,7 +2416,7 @@
     }
 
     function headCellHtml(h, i, m, frozen) {
-        const rotate = view.columns.header_rotate && !m.transposed;
+        const rotate = view.column_details.header_rotate && !m.transposed;
         const cls = [h.cls];
         let arrow = "";
         let attrs = "";
@@ -2420,7 +2453,7 @@
 
     function paintTable(m) {
         const box = document.getElementById("tableBox");
-        const frozen = Number(view.columns.column_frozen) || 0;
+        const frozen = Number(view.column_details.column_frozen) || 0;
         const classes = ["density-" + view.layout.density, "borders-" + view.layout.borders];
         box.style.maxWidth = view.layout.max_width || "100%";
         if (m.body.length === 0) {
@@ -2474,11 +2507,11 @@
 
     function pagerHtml(total, shown, pageCount) {
         let result = "";
-        if (view.rows.row_show_all && pageCount > 1) {
+        if (view.row_details.row_show_all && pageCount > 1) {
             result = '<button class="btn small" type="button" data-page="prev"' + (page <= 1 ? " disabled" : "") + ">" + txtHtml(TXT.previous) + "</button>"
                 + "<span>" + txtHtml(TXT.page, {[VAR.count]: page, [VAR.value]: pageCount}) + "</span>"
                 + '<button class="btn small" type="button" data-page="next"' + (page >= pageCount ? " disabled" : "") + ">" + txtHtml(TXT.next) + "</button>";
-        } else if (!view.rows.row_show_all && total > shown) {
+        } else if (!view.row_details.row_show_all && total > shown) {
             result = "<span>" + txtHtml(TXT.rowsHidden, {[VAR.count]: total - shown}) + "</span>";
         }
         return result;
@@ -2499,6 +2532,126 @@
         }
     }
 
+    /* ---------- the All texts and the Changes tab, like in the calculator editor ---------- */
+    function textRow(partHtml, textHtml) {
+        const result = "<tr><td>" + partHtml + "</td><td>" + textHtml + "</td></tr>";
+        return result;
+    }
+
+    /* a text parameter with its field, which changes the same parameter as the field of the rail */
+    function textFieldRow(f) {
+        const val = escapeHtml(String(get(f.key) || ""));
+        const attr = ' data-key="' + f.key + '" aria-label="' + escapeHtml(fieldLabel(f)) + '"';
+        let control = '<input type="text"' + attr + ' value="' + val + '">';
+        if (f.type === "textarea") {
+            control = "<textarea" + attr + ">" + val + "</textarea>";
+        }
+        const result = textRow(escapeHtml(fieldLabel(f)) + "<code>" + f.key + "</code>", control);
+        return result;
+    }
+
+    /* every text of the table: the text parameters and the labels of the columns and rows, which are the
+       names of their phrases; the tab is not painted while the user types in it, so the field keeps the focus */
+    function paintTexts() {
+        const box = document.getElementById("panel-texts");
+        if (!box.contains(document.activeElement)) {
+            const rows = fieldsWith(function (f) {
+                return f.text;
+            }).map(textFieldRow);
+            usedColumns().forEach(function (col) {
+                rows.push(textRow(txtHtml(TXT.textsColumn), escapeHtml(headerText(col))));
+            });
+            DATA.phrases.forEach(function (p) {
+                rows.push(textRow(txtHtml(TXT.textsRow), rowLabel(p)));
+            });
+            box.innerHTML = '<p class="note">' + txtHtml(TXT.textsIntro) + "</p>"
+                + '<div class="table-box"><table class="texts"><thead><tr><th>' + txtHtml(TXT.colPart) + "</th><th>"
+                + txtHtml(TXT.colText) + "</th></tr></thead><tbody>" + rows.join("") + "</tbody></table></div>";
+        }
+    }
+
+    function onTextInput(ev) {
+        onFieldChange(ev);
+        syncForm();
+    }
+
+    function seedById(list, id) {
+        const result = list.find(function (o) {
+            return o.id === id;
+        }) || {};
+        return result;
+    }
+
+    /* a triple of the save e.g. sector of revenue title = sector of revenue · has a · title → “Revenue” */
+    function tripleLine(t) {
+        const name = t.name ? t.name + " = " : "";
+        const description = t.description ? " → “" + t.description + "”" : "";
+        const result = name + t.from + " · " + t.verb + " · " + t.to + description;
+        return result;
+    }
+
+    /* a value of the save by its phrases, which a saved value has in the seed */
+    function valueLine(v) {
+        const phrases = valuePhrases(v.id ? seedById(VALUES, v.id) : v);
+        const result = phrases.join(" · ") + " = " + v.number;
+        return result;
+    }
+
+    function deleteLine(d) {
+        let result = valueLine(seedById(VALUES, d.id));
+        if (d.class === "triple") {
+            result = tripleLine(seedById(TRIPLES, d.id));
+        }
+        return result;
+    }
+
+    /* a parameter before and after the change e.g. Row limit: 50 → 20 */
+    function paramLine(f) {
+        const before = JSON.stringify(savedView[groupOf(f.key)][f.key]);
+        const result = fieldLabel(f) + ": " + before + " → " + JSON.stringify(get(f.key));
+        return result;
+    }
+
+    /* the list of the Changes tab with its title and number, empty if it has no line */
+    function changeListHtml(titleId, lines, cls) {
+        let result = "";
+        if (lines.length > 0) {
+            const items = lines.map(function (line) {
+                return '<li class="' + cls + '">' + escapeHtml(line) + "</li>";
+            });
+            result = "<div><h3>" + txtHtml(titleId, {[VAR.count]: lines.length}) + "</h3><ul>" + items.join("") + "</ul></div>";
+        }
+        return result;
+    }
+
+    /* the changed parameters and the triples, values and removals that the save sends */
+    function paintChanges() {
+        const out = putBody();
+        const changed = changedFields();
+        const added = out.body.triples.filter(function (t) {
+            return !t.id;
+        });
+        const updated = out.body.triples.filter(function (t) {
+            return t.id;
+        });
+        const words = out.body.words.map(function (w) {
+            return w.name;
+        });
+        let note = '<p class="note">' + txtHtml(TXT.noChangesSince) + "</p>";
+        if (changed.length > 0) {
+            // without the put url of the pod e.g. in the sample there is no save to describe
+            note = URLS.put ? '<p class="note">' + txtHtml(TXT.saveSends) + "</p>" : "";
+        }
+        document.getElementById("panel-changes").innerHTML = changeListHtml(TXT.checkBeforeSaving, out.problems, "wrn")
+            + note
+            + changeListHtml(TXT.changedParams, changed.map(paramLine), "mod")
+            + changeListHtml(TXT.addedTriples, added.map(tripleLine), "add")
+            + changeListHtml(TXT.changedTriples, updated.map(tripleLine), "mod")
+            + changeListHtml(TXT.values, out.body.values.map(valueLine), "mod")
+            + changeListHtml(TXT.newWords, words, "add")
+            + changeListHtml(TXT.removed, out.body.delete.map(deleteLine), "del");
+    }
+
     function csvField(s) {
         const t = String(s === undefined || s === null ? "" : s);
         const result = /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
@@ -2515,7 +2668,8 @@
     /* a comment line of the csv */
     const CSV_COMMENT = "# ";
 
-    function paintCsv() {
+    /* the csv of the table as shown, which Export downloads */
+    function tableCsv() {
         const m = lastMatrix;
         const lines = [csvLine(m.head)];
         m.body.forEach(function (row) {
@@ -2524,18 +2678,13 @@
         if (m.foot) {
             lines.push(csvLine(m.foot));
         }
-        if (view.export.export_scope === "all rows" && view.rows.row_show_all) {
+        if (view.export.export_scope === "all rows" && view.row_details.row_show_all) {
             lines.push("");
             lines.push(CSV_COMMENT + txt(TXT.csvAllRows));
         }
         if (view.export.export_include_sources) {
             const seen = new Set();
-            // only the sources of the exported rows, which a transposed table has as its columns
-            const rowIds = new Set(m.transposed ? m.head.map(function (h) {
-                return h.col;
-            }) : m.body.map(function (row) {
-                return row.id;
-            }));
+            const rowIds = exportedRowIds(m);
             lines.push("");
             lines.push(CSV_COMMENT + txt(TXT.csvSources));
             DATA.phrases.filter(function (p) {
@@ -2547,7 +2696,21 @@
                 }
             });
         }
-        document.getElementById("csvText").value = lines.join("\n");
+        const result = lines.join("\n");
+        return result;
+    }
+
+    /* the phrase ids of the exported rows, which a transposed table has as its columns */
+    function exportedRowIds(m) {
+        let ids = m.body.map(function (row) {
+            return row.id;
+        });
+        if (m.transposed) {
+            ids = m.head.map(function (h) {
+                return h.col;
+            });
+        }
+        return new Set(ids);
     }
 
     /* ---------- events on the table and chrome ---------- */
@@ -2675,9 +2838,7 @@
         document.getElementById("btnCopyJson").addEventListener("click", function () {
             copyFrom("jsonText", "jsonMsg");
         });
-        document.getElementById("btnCopyCsv").addEventListener("click", function () {
-            copyFrom("csvText", "csvMsg");
-        });
+        document.getElementById("panel-texts").addEventListener("input", onTextInput);
         document.getElementById("btnUndo").addEventListener("click", undo);
         document.getElementById("btnRedo").addEventListener("click", redo);
         document.getElementById("btnReset").addEventListener("click", discard);

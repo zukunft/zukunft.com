@@ -1,5 +1,4 @@
-Phrases
--------
+# Phrases
 
 A phrase is either a word or a triple
 

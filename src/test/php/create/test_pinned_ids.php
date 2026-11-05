@@ -218,6 +218,7 @@ class test_pinned_ids
         [word_names::PRIOR_NAME, word_names::PRIOR_ID],
         [word_names::EUR, word_names::EUR_ID],
         [word_names::GDP, word_names::GDP_ID],
+        [word_names::ANNUAL, word_names::ANNUAL_ID],
         [word_names::EURO, word_names::EURO_ID],
         [word_names::DOLLAR, word_names::DOLLAR_ID],
         [word_names::EURO_SIGN, word_names::EURO_SIGN_ID],
@@ -413,6 +414,7 @@ class test_pinned_ids
         [triple_names::M_SYMBOL, triple_names::M_SYMBOL_ID],
         [triple_names::FACTOR_SYMBOL, triple_names::FACTOR_SYMBOL_ID],
         [triple_names::PERCENT_SYMBOL, triple_names::PERCENT_SYMBOL_ID],
+        [triple_names::PERCENT_HTP, triple_names::PERCENT_HTP_ID],
         [triple_names::CHF_SYMBOL, triple_names::CHF_SYMBOL_ID],
         [triple_names::SWISS_FRANC, triple_names::SWISS_FRANC_ID],
         [triple_names::SWISS_FRANC_CURRENCY, triple_names::SWISS_FRANC_CURRENCY_ID],
@@ -447,6 +449,7 @@ class test_pinned_ids
         [formula_names::GLOBAL_HTP, formula_names::GLOBAL_HTP_ID],
         [formula_names::JOULE_DEF, formula_names::JOULE_DEF_ID],
         [formula_names::CITY_POPULATION, formula_names::CITY_POPULATION_ID],
+        [formula_names::ANNUAL_DAMAGE, formula_names::ANNUAL_DAMAGE_ID],
         [formulas::INCREASE, formulas::INCREASE_ID],
     ];
 
@@ -719,8 +722,8 @@ class test_pinned_ids
     const array SOURCES = [
         [sources::SIB, sources::SIB_ID],
         [sources::WIKIDATA, sources::WIKIDATA_ID],
-        [sources::BFS, sources::BFS_ID],
         [sources::TRUST_ME_BRO, sources::TRUST_ME_BRO_ID],
+        [sources::BFS, sources::BFS_ID],
     ];
 
     // a reference is pinned by its external key

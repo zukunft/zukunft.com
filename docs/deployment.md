@@ -1,5 +1,4 @@
-Deployment
-----------
+# Deployment
 
 To fix a bug or add a feature to this project follow these steps
 

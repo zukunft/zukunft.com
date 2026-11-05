@@ -1,5 +1,4 @@
-System views
-------------
+# System views
 
 System views are the frontend pages used by the system used for be the [CRUD](https://de.wikipedia.org/wiki/CRUD) functions, which implies that the users cannot remove or add components to any system view and the system view cannot be assigned by the user to an object.  
 The pages of this system is configured by json file src/main/resources/messages/system_views.json.

@@ -369,6 +369,13 @@
       "to": "happy time points"
     },
     {
+      "name": "percent htp",
+      "from": "percent",
+      "verb": "of",
+      "to": "htp",
+      "type": "percent"
+    },
+    {
       "from": "m",
       "verb": "is symbol for",
       "to": "million"
@@ -435,8 +442,7 @@
         "global warming",
         "potential",
         "loss",
-        "percent",
-        "htp"
+        "percent htp"
       ],
       "number": "-0.37"
     },

@@ -240,10 +240,10 @@ class phrase_data_read_tests
         $t->assert_max($test_name, $this->max_object_count($tbl_sample), count($this->objects($tbl_vars)));
         $test_name = '... with a parent row';
         $tbl_trp_names = $this->names($tbl_vars[json_fields::TRIPLES] ?? []);
-        $t->assert_contains($test_name, $tbl_trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        $t->assert_contains($test_name, $tbl_trp_names, [triple_names::ABB_ELECTRIFICATION]);
         // negative: the rows are added only for the phrase with own columns
         $test_name = '... but a page without own columns has none of these rows';
-        $t->assert_contains_not($test_name, $trp_names, [triple_names::EXAMPLE_AG_ENERGY]);
+        $t->assert_contains_not($test_name, $trp_names, [triple_names::ABB_ELECTRIFICATION]);
         // negative: the walk of a triple ends before its word, because e.g. sector is shared by every page
         $test_name = '... and none of the triples of the word that the phrase is built from';
         $t->assert_contains_not($test_name, $tbl_trp_names, [triple_names::PUBLIC_SECTOR]);

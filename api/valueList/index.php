@@ -40,7 +40,7 @@ include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
-include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -101,9 +101,10 @@ if ($db_con->is_open()) {
             // drop the values the requesting user may not read (idor); see value::is_readable_by
             $lst->filter_readable_by($usr);
             // the frontend names the rows and the columns of a value table by the phrases of each
-            // value, so the group phrases are loaded and emitted with the values
+            // value, so the group phrases are loaded and emitted with the values, and the source
+            // of each value is the tooltip of its number (api_type_list::VALUES_RELATED)
             $lst->load_phrases($msg);
-            $result = $lst->api_json([api_types::INCL_PHRASES], $msg);
+            $result = $lst->api_json(api_type_list::VALUES_RELATED, $msg);
         } elseif ($id_lst != '') {
             $lst = new value_list($usr);
             $lst->load_by_ids(explode(",", $id_lst), $msg);

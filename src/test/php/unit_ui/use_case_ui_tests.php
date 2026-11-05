@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -298,6 +299,67 @@ class use_case_ui_tests
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+
+        $t->subheader($ts . 'result tooltip');
+        // the tooltip of a result shows the result number with the numbers of the page used and below the formula with the term names
+        $test_name = 'the result number with the numbers used and the formula expression with the term names';
+        $num_txt = (string)round(values::SAMPLE_FLOAT, 2);
+        $res_txt = $t_res->result_zh_sum_ui($sum)->val_formatted($msg);
+        $exp_num = '"' . $res_txt . '" = ' . $num_txt . ' + ' . $num_txt . "\n" . $frm->get_usr_text();
+        $tip = new formula_calc()->expression_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst, $msg);
+        $t->assert($test_name, $tip, $exp_num);
+        $test_name = '... and is the tooltip of the result link in a table with the hint to click';
+        $res_tip = $t_res->result_zh_sum_ui($sum);
+        $res_lst = new result_list_ui();
+        $res_lst->add($res_tip, $msg);
+        $dto->set_result_list($res_lst);
+        $tbl_html = $this->render($t_cmp->component_table(), $wrd, $msk, $dto, $msg);
+        $title = htmlspecialchars($exp_num . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text(), ENT_QUOTES);
+        $res_html = $res_tip->value_edit($msg);
+        $t->assert_text_contains($test_name, $res_html, 'title="' . $title . '"');
+        // in a table each number keeps its own tooltip, so the cell title does not repeat it
+        $test_name = '... which in a table is the title of the link and not of the cell';
+        $t->assert_text_contains($test_name, $tbl_html, 'title="' . $title . '"');
+        $t->assert_text_not_contains($test_name, $tbl_html, 'title="' . $title . '"><a href=');
+        // the latex is not needed, because the tooltip shows the expression
+        $test_name = '... also for a formula with latex';
+        $frm->set_latex('\text{total} = \text{' . triple_names::CITY_ZH_NAME . '} + \text{' . triple_names::COMPANY_ZURICH . '}');
+        $tip_latex = new formula_calc()->expression_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst, $msg);
+        $t->assert($test_name, $tip_latex, $exp_num);
+        // a number that no row of the table shows, e.g. the world GDP of a potential loss, is loaded by its phrases
+        $test_name = 'the phrases of the operands without a number are loaded for the tooltip';
+        $missing = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), new value_list_ui(), $frm_lst);
+        $t->assert_contains($test_name, $missing->names(), [triple_names::CITY_ZH_NAME, triple_names::COMPANY_ZURICH]);
+        // negative: the operands with a number on the page need no load
+        $test_name = '... but not the phrases of the operands with a number on the page';
+        $missing_none = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $missing_none->is_empty(), true);
+        // negative: a result that no table has calculated keeps the link without a tooltip
+        $test_name = '... and no tooltip for a result without its calculation';
+        $res_plain_html = $t_res->result_zh_sum_ui($sum)->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $res_plain_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+        // negative: a value is not calculated, so its link keeps the tooltip of the table cell
+        $test_name = '... and no formula tooltip for a value';
+        $val_html = $dto->val_lst->lst()[0]->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $val_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+        // the tooltip of a value is its source with the url or else the doi
+        $test_name = 'the tooltip of a value is the name and the url of its source';
+        $val_tip = $dto->val_lst->lst()[0];
+        $val_tip->src = new source_ui($t_src->source_reserved()->api_json());
+        $src_title = htmlspecialchars(sources::SIB . "\n" . sources::SIB_URL, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $val_tip->value_edit($msg), 'title="' . $src_title . '"');
+        $test_name = '... or the doi of a source without url';
+        $doi_json = json_decode($t_src->source_filled_included()->api_json(), true);
+        unset($doi_json[json_fields::URL]);
+        $val_tip->src = new source_ui(json_encode($doi_json));
+        $doi_title = htmlspecialchars($val_tip->src->name() . "\n" . def::LINK_DOI . sources::TEST_DOI, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $val_tip->value_edit($msg), 'title="' . $doi_title . '"');
+        // negative: a source known only by its id has no name to show, so the tooltip of the table cell stays
+        $test_name = '... but no tooltip for a source without name';
+        $val_tip->src = new source_ui();
+        $val_tip->src->set_id(sources::SIB_ID);
+        $t->assert_text_not_contains($test_name, $val_tip->value_edit_link($msg), 'title=');
+        $val_tip->src = new source_ui($t_src->source_reserved()->api_json());
 
         $t->subheader($ts . 'input fields');
         // a phrase of the values of the page that is assigned a field type is an input of the page:

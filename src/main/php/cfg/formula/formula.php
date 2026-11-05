@@ -170,7 +170,7 @@ class formula extends formula_map
 
     // the views that can show this formula: its own default view or, if none is set, the system
     // default formula view; populated lazily by load_views_related() and only emitted via
-    // api_json_array() under the INCL_RELATED flag, so the views tab of the default formula
+    // api_json_array() under the INCL_RELATED flag, so the edit menu of the default formula
     // view can offer at least one view
     public ?view_list $views_related = null;
     // the views assigned to this formula by the import, which the edit menu of the navbar offers
@@ -804,7 +804,7 @@ class formula extends formula_map
             }
         }
         // a formula without an own default view is shown with the system default formula view,
-        // so the views tab of the formula page offers at least this view
+        // so the edit menu of the formula page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::FORMULA, $msg);

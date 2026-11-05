@@ -1375,6 +1375,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::DISINFORMATION_ID, word_names::DISINFORMATION);
+        $wrd->description = word_names::DISINFORMATION_COM;
         return $wrd;
     }
 
@@ -1382,6 +1383,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::RESEARCH_ID, word_names::RESEARCH);
+        $wrd->description = word_names::RESEARCH_COM;
         return $wrd;
     }
 
@@ -1389,6 +1391,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::TAXES_ID, word_names::TAXES);
+        $wrd->description = word_names::TAXES_COM;
         return $wrd;
     }
 
@@ -1396,6 +1399,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::SPENDING_ID, word_names::SPENDING);
+        $wrd->description = word_names::SPENDING_COM;
         return $wrd;
     }
 
@@ -1417,6 +1421,26 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::POINTS_ID, words::POINTS);
+        return $wrd;
+    }
+
+    /**
+     * @return word "world", e.g. of the world GDP that the potential loss of a problem is calculated from
+     */
+    function word_world(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::WORLD_ID, word_names::WORLD);
+        return $wrd;
+    }
+
+    /**
+     * @return word "annual", e.g. of the annual share of the GDP that a problem costs
+     */
+    function word_annual(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ANNUAL_ID, word_names::ANNUAL);
         return $wrd;
     }
 

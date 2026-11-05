@@ -87,6 +87,8 @@ class paths
     // path of the html frontend entry scripts and the deprecated predecessor scripts
     const string HTTP = ROOT_PATH . 'http' . DIRECTORY_SEPARATOR;
     const string HTTP_OLD = ROOT_PATH . 'http_old' . DIRECTORY_SEPARATOR;
+    // the markdown documents that http/docs.php shows
+    const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;
 
     const string COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
     const string SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;

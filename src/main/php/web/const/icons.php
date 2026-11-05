@@ -44,7 +44,7 @@ class icons
 
     // Font Awesome solid (fas) — the full css class string ready to drop into class="..."
     const string EDIT = 'fas fa-edit';
-    // shown in the views tab of an object page to set the view as the default view of the object
+    // shown in the edit menu of the navbar to set the view as the default view of the object
     const string VIEW_SWITCH = 'fas fa-shuffle';
     // shown to add a new object e.g. a source of a value or a formula of a word; the regular (outlined)
     // square plus is the Font Awesome 6 name of fa-plus-square-o, so no v4 shim css is needed

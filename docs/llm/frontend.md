@@ -150,6 +150,12 @@ in the host `#tableEditor`. The pod page (`system_page::table_editor`) renders o
 The script renders the table from the seed without an api call. `url_var::JAVASCRIPT` = 0 (`sc=0`), or a config that
 allows no javascript for the calculator, shows the server page with the components of the view.
 
+Like the calculator editor the page has the top line with the tools and two white cards: the settings on the left,
+in collapsible groups of which only "Columns" and "Rows" are open at the start ("Column details" and "Row details"
+hold their further fields), and on the right the tabs "Table preview", "All texts" (the text parameters to edit and
+the column and row labels), "Changes" (the changed parameters and what the save sends) and "Definition (JSON)". The
+Export button of the top line downloads the table as csv.
+
 The definition of a table is data: a triple from the phrase of the table to each table keyword of
 `editor_views.json`. A text parameter is the description of the triple, a number a value with the phrase and the
 keyword, a flag the triple itself and a choice the triples from the parameter triple to the selected phrases (several
@@ -157,7 +163,7 @@ choices ordered by `is follower of`); a flag that is off and an empty parameter 
 the items of the `table column` triple of the phrase, ordered by `is follower of`, each with its tier as a choice
 triple to `mayor`, `main`, `minor` or `marginal`. The rows are the phrases linked to the row phrase by the row verb
 (subject or object side) and the sub-rows those linked by the hierarchy verb; a top row without sub-rows is an orphan.
-The row of a triple of the owner (e.g. `Example AG energy`) shows its to side, the acronym of a row is its
+The row of a triple of the owner (e.g. `ABB Electrification`) shows its to side, the acronym of a row is its
 `is an acronym for` triple, and an `assumed` value with a `confidence` value gives the confidence of the row.
 `ui_list::table_with_related_columns` and `value_list::row_orders` read the same definition of the page phrase, else
 the column tiers and the sort orders of all tables, and the url wins over both.
@@ -243,6 +249,21 @@ source of the page, and `phrase_data_ui_tests` renders the complete page from th
 sample answer alone and checks its parts; the snapshots of the page,
 `use_cases/pv_lifetime_balance_js.html` and `use_cases/pv_lifetime_balance_no_js.html`, are
 written by the database read test (`system_views_read_tests::run_pv_lifetime_balance`).
+
+A page without a complete phraseData answer loads the values that its results use
+per phrase (`api_types::LOAD_PER_PHRASE`): the missing operands of a table
+(`ui_list::add_missing_operand_values`) and the context of a result for the
+assumptions (`ui_list::add_context_values`) ask the value list api once for each
+phrase, because the values of several phrases together can exceed the row limit
+of the backend (`sql_db::ROW_MAX`), which cuts the answer sorted by the key of
+the rows and reports it (`msg_id::LIST_ROW_LIMIT_REACHED`), so a part of the
+operands would be missing. The request cache and the api
+cache keep each answer by its phrase, so other tables and results of the page
+reuse it. The switch is the last parameter `api_type_list $typ_lst` of
+`ui_list::table_with_related_columns` and `ui_list::assumption_fields`, on by
+default; without `api_types::LOAD_PER_PHRASE` the phrases are loaded with one
+call (`system_views_read_tests::run_populism_solutions_table` and
+`run_context_values_per_phrase` test both).
 
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`
@@ -484,6 +505,11 @@ values before results, within the context phrases that the result carries
 `arithmetic`. A stored number that differs from the page calculation is
 replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
 result whose formula or values the page does not have keeps its stored number.
+An operand that no row of the table shows, e.g. the world GDP of the potential
+loss of a problem, is loaded once for all results of the table by its context
+phrases without the markers (`ui_list::add_missing_operand_values`,
+`formula_calc::missing_operand_phrases`), and such a result is calculated with
+all values of the page, so that its tooltip shows the numbers used.
 The save with the backend job and its compare is the next step
 (`docs/llm/pending.md` "PV lifetime balance page").
 
@@ -505,7 +531,14 @@ other and talk only over the API (see `architecture.md`). The request bootstrap 
 therefore split in two, and each side uses only its own:
 
 - `web/frontend.php` — the **pure html php frontend**: `http/view.php`,
-  `http/about.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+  `http/about.php`, `http/docs.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+  `http/docs.php?doc=faq` shows a markdown file of `/docs/` as html (`web/html/markdown.php`,
+  `html_base::docs_page`); only a file name of `/docs/` without a path is accepted and a link
+  to another document of `/docs/` opens it with `http/docs.php` again; an image of `/docs/`
+  without a path e.g. `server_structure.svg` is shown from `/docs/` of the own server
+  (`markdown::DOC_IMAGE`). The page has the standard
+  navbar; for a user who is no admin its edit icon is grey, opens no menu and has the tooltip
+  `msg_id::DOC_CHANGE_ADMIN_ONLY` (`html_base::navbar` with `$edit_lock_tip`).
 - `cfg/application.php` — the **backend**, i.e. the api calls: the `api/**`
   scripts call `application::start_api()` / `start_api_core()` / `end_api()`.
 
@@ -1069,13 +1102,17 @@ detail, range and detail with range, `views::default_versions`). Each view has
 the switch icon behind its name except the own view of the object, which already
 shows it always; the view that shows the page is grey with the tooltip "this view
 has been used to show …" (`view::used_link`). An object without an edit view of its
-own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
-the edit menu nor in the views tab, because the edit view it inherits from
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon in the
+edit menu, because the edit view it inherits from
 `db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
-reports a page class that forgets it. The tooltip
+reports a page class that forgets it. The edit menu is the only place that offers
+the views of the shown object, so the tab box of the page (`ui_list::view_tab_box`)
+has no views tab. The tooltip
 of "... more" names some cached views that the menu does not offer
 (`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
-"change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is
+"change this view" and "add view", whose tooltip names the shown object. The sub header
+"im- and export" (`msg_id::NAVBAR_IM_EXPORT`) above "export as csv" (`value_list::export_menu_items`,
+`view_menu::export_items`) follows, and for an admin "server admin" is the last entry. Shown as a chart only, the table is
 replaced by its charts below a `styles::CHART_HEAD` line that keeps the header
 of the table centred; the way back to the table is the edit menu.
 

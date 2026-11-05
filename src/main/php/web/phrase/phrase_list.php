@@ -704,6 +704,39 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the triples of this list that link a phrase to the given phrase, because a number of a row
+     * can name the link instead of the linked phrase, e.g. "civic education (populism solution)"
+     * of "populism solution" names the numbers that the solution has only for populism; like
+     * child_names without the verb "of", because "potential loss of reason" is no reason
+     *
+     * @param phrase $phr the phrase whose links should be returned
+     * @return phrase_list the triples whose "to" side is the given phrase
+     */
+    function child_links(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $lst_phr) {
+            $is_link = ($lst_phr->is_triple() and $lst_phr->obj()->get_to()?->name() == $phr->name());
+            $is_child = ($is_link and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME);
+            if ($is_child and !$result->has_id($lst_phr->id())) {
+                $result->add_phrase($lst_phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of a table e.g. "populism solution"
+     * @return array the names that a number of a row of the table names, the linked phrases and
+     *               the linking triples, e.g. "civic education" and "civic education (populism solution)"
+     */
+    function row_names(phrase $phr): array
+    {
+        $link_names = $this->child_links($phr)->names();
+        return array_values(array_unique(array_merge($this->child_names($phr), $link_names)));
+    }
+
+    /**
      * the given phrase and every phrase above it in this list: the sides that a triple is built
      * from and the "to" side of each triple that links a phrase up, followed to the top, e.g. for
      * "populism solution" its sides "solution" and "populism" and, via "populism is a global

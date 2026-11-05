@@ -1,5 +1,27 @@
 # pending - list of planned llm prompts with prio 1
 
+## language
+
+add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
+
+creat a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
+the src/main/resources/translations/de.yaml file exists and is complete
+and that the docs linked from about have a translation file and at least the number of ## header marks match
+
+## wikipedia link
+
+if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
+the refresh icon right of wikipedia is pressed the corresponding page from wikipedia should be 
+received and the first part of the description should be taken from wikipedia without pronouciation and links
+and used as the description . so the result should be that the change confirm page is shown with the adjusted 
+description.
+Additional to the description the wikidata link should be taken from the wikipedia page and if needed included in the update
+
+create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
+that will not be changed any more and from this extract the description and the wikidata link as a unit test.
+
+## this document
+
 **How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
 prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
 - see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
@@ -19,108 +41,6 @@ prompt together with the sections it names, which follow the block. Every prompt
   - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
     seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
     `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
-
-**Prompt:** table fine-tuning, view tabs, result tooltip, populism table and percent htp (size L, after the table
-editor prompt; re-pin, because the populism data changes). One phase, five agents in parallel:
-- agent for table_editor_diff.md is not empty. It lists two buttons as "only in the generated page": "Show the table" and "Editor without javascript". The sample hides them because its settings have empty urls.table and urls.no_js. Either give the sample both urls so it shows the buttons, or leave the two entries as known.
-- agent for Rule 2, one element per line: in table_editor.js paintCsv, rowIds packs a ternary with two inline map callbacks into one statement. That is my change. A helper such as exportedRowIds(m) would read better.
-- agent for Size of the second case: table_editor_global_warming_solution.html is 456 KB, because its seed has 1069 values and 528 results. I checked that it holds only solution data and nothing from PV, LiMux, Example AG, the portfolio or NPP. So it is correct, just a large snapshot to review in diffs.
-- agent for The sample has two .editor .btn rules. calculator_editor_sample.html has the old color rule further down and the new scoped rule. It is a hand-made sample, so this is minor; the two could be merged.
-- agent table editor: "fine-tuning of table editor" (the preview tabs and the collapsible groups) in
-  `script/table_editor.js`, `style/table_editor.css` and the `table_editor_` messages
-- agent views tab: "view tabs", the views tab of every page whose alternative views are in the edit icon menu
-- agent tooltip: "result tooltip", the result renderer with the latex formula, the used values and the hint
-- agent populism: "table populism solution" and "adjust the table data": the rows, the default sorting, the columns,
-  the hidden values, the named table designs in `config.yaml` and the csv export test with its diff file
-- agent percent htp: "test factory with percent htp", with the id of `unit/triple/list.csv` of this tree, which the
-  re-pin run corrects
-
-### fine-tuning of table editor
-
-#### preview section
-
-in the table editor the preview has the tabs 'Table', 'Definition (JSON)' and 'Export (CSV)'
-remove the 'Export (CSV)' but add similar to the 'Calculator editor' 'All texts' amd 'Changes'
-with similar functionality than the 'Calculator editor'
-and rename the tab 'Table' to 'Table preview'
-
-#### collapse prio 2 settings
-
-in the table editor on the left side can this be collapsed and expanded:
-Columns
-Rows
-Hierarchy
-Values
-Aggregation
-Layout
-Interaction
-Context
-Export
-State
-
-add 'Column details' and 'Row details'
-
-and move all parts from 'Columns' to 'Column details' except:
-Level shown
-Major columns
-Main columns
-
-and move all parts from 'Rows' to 'Row details' except:
-Row phrase
-Sort column
-Sort direction
-
-'Columns' and 'Rows' are by default expanded and all others collapsed
-
-## view tabs
-
-for many views the alternative views like 'values (detail with range)' are shown in the edit icon menu of the navbar.
-for all these pages the views tab in the page is not needed so it can be removed
-
-
-## result tooltip
-
-if e.g. in http://localhost/http/view.php?m=1&dlc=1&dlv=1&dla=table_chart&u=11 a result ist shown change the tooltip 
-to show the formula used for the calculation of the result in the latex format with the values used for the result 
-and a 'click for more details' hint
-
-## table populism solution
-
-The table for populism solution ( e.g. http://localhost/http/view.php?m=2&id=-1257 ) should show as rows the possible
-solutions sorted by default by potential gain descending.
-The columns should be 'potential gain in trillion EUR', 'potential gain in billion htp', 'initial effort in person year'
-and values that does not fit to the columns and rows should not be shown be default (with an option to shown them)
-
-the border and grey background colours should be removed by default with an option to show them.
-The colour, border and background settings should be taken from config.yaml and the config.yaml should contain a named list of table designs
-
-### adjust the table data
-
-add a test that export the csv from the global warming solution table e.g. http://localhost/http/view.php?m=2&id=-1708
-and compare the result with src/test/resources/export/start_page/global_warming_solutions.csv
-and writes the differences to src/test/resources/export/start_page/global_warming_solutions_diff.md
-
-### test factory with percent htp
-
-The start page problem files now state the loss share of the happy time points with the one triple `percent htp`
-(percent *of* htp, type `percent`) instead of the two phrases `percent` and `htp`, because a value has only one number
-type (docs/llm/json_structure.md). The test factory still builds the old group, so it no longer matches the import:
-
-- `test_values::value_list_start_page()` (`src/test/php/create/test_values.php:1160`) builds
-  `[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()]`; use the new triple instead of `$pct` and the htp word.
-- add `test_triples::percent_htp()` like `percent_symbol()`, with `set_type(phrase_types::PERCENT, ...)`, the consts
-  `triple_names::PERCENT_HTP` / `PERCENT_HTP_ID` and the entry in `test_pinned_ids.php`; take the id from the
-  regenerated `src/test/resources/unit/triple/list.csv` after the re-pin run, never guess it.
-- check the start page snapshots: the loss column header should still read "loss in percent htp".
-- `value_list_two_units()` (`[..., "potential", "loss", "percent", "htp"]`) mirrors `values.json` and
-  `solution_prio.json`, which still have the two phrases (one finding in `docs/json_findings.md`); change it together
-  with those files, not alone.
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 **Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
 gets the CO2-eq costs). One phase, four agents in parallel:
@@ -2059,7 +1979,8 @@ if done remove this prompt from pending.md
 - agent scripts: the check scripts of "cleanup" (default page of each main class, the shown fields, the queries
   without a limit) and the open API check in `/test/test.php`
 - agent docs speed: why the diff of `docs/code_functions_all.md` takes long
-- agent views tab: the edit link of the views tab and the view selector link of the word default page
+- agent views menu: the edit link of each alternative view in the edit icon menu and the view selector link of the
+  word default page
 - agent value: `value_base` abstract and the undo and apply icons of a text, time and geo value
 - agent counts: the count query of "verb default view" and "user page", and whether the triple name fields are needed
 - agent change log: the empty field name of `change_log_list::table_field_to_query_name` for all branches, with the
@@ -2079,8 +2000,8 @@ have a unique db id in the where condition.
 
 add the check of the open_api specification to /test/test.php
 
-if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default
-page
+in the edit icon menu add after the name of each alternative view a link to edit the view and make the view name a
+link to the view default page
 
 fix the view selector link in the word_default page
 
@@ -2533,7 +2454,7 @@ http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
 | `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
 | `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
 | `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
-| `view_select.php` | views tab of the word and triple page | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
+| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
 
 ### bugs found while checking http_old
 

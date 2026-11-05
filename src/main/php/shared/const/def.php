@@ -222,6 +222,9 @@ class def
     const string LINK_GITHUB = 'https://github.com/zukunft/zukunft.com';
     const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
     const string LINK_GITHUB_TREAM = 'https://github.com/zukunft/tream';
+    // the bank account for donations to the project, shown on the about page
+    const string DONATION_IBAN = 'CH20 0900 0000 8927 4297 2';
+    const string DONATION_RECEIVER = 'zukunft.com AG';
     const string LINK_TREAM_DEMO = 'https://tream.biz/p4a/applications/tream/';
     const string LINK_DOI = 'https://doi.org/'; // the base url to create the link of a doi e.g. of a source
     const string LINK_PAPER_DELPHI = 'https://dx.doi.org/10.2139/ssrn.6497759';

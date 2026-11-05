@@ -43,6 +43,10 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UTILS . 'csv_table_diff.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
@@ -75,6 +79,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -148,6 +156,8 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
         $this->run_global_warming_solutions_csv($t);
+        $this->run_populism_solutions_table($t);
+        $this->run_context_values_per_phrase($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -1063,6 +1073,123 @@ class system_views_read_tests
         $test_name = 'the differences of the export of the global warming solutions are reported';
         $report = $ctd->report($target, $export, basename(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), triple_names::GLOBAL_WARMING_SOLUTION);
         $t->assert_file($test_name, $report, test_files::GLOBAL_WARMING_SOLUTIONS_DIFF, test_files::MD);
+    }
+
+    /**
+     * the own columns and the own sorting of the table of the populism solutions, read from its csv export
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_populism_solutions_table(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $eur_col = 'potential gain in trillion EUR';
+        $own_cols = [$eur_col, 'potential gain in billion htp', 'initial effort in person year'];
+
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::POPULISM_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $export = $ctd->table_cells($export_csv, word_names::SOLUTION);
+        $first_row = reset($export) ?: [];
+        $test_name = 'the table of the populism solutions shows its own columns only';
+        $t->assert($test_name, array_keys($first_row), $own_cols);
+        // negative: the loss reduction fits no own column, so it is hidden without the url asking for it
+        $test_name = '... and not the loss reduction';
+        $t->assert_text_not_contains($test_name, $export_csv, triple_names::LOSS_REDUCTION);
+        $gains = array_map('floatval', array_column($export, $eur_col));
+        $sorted = $gains;
+        rsort($sorted);
+        $test_name = 'the rows are sorted by the biggest potential gain';
+        $t->assert($test_name, $gains, $sorted);
+        // negative: a table with one row or without numbers would pass the sort check
+        $test_name = '... of every solution';
+        $row_count = count($gains);
+        $t->assert_greater($test_name, 1, $row_count);
+
+        // the missing operands of the initial effort are loaded per phrase, because the values of
+        // all missing phrases together exceed the row limit of the backend (api_types::LOAD_PER_PHRASE)
+        $msg = new user_message();
+        $effort_lst = new phrase_list_ui();
+        $both_lst = new phrase_list_ui();
+        foreach ($cfg->res_lst->lst() as $res) {
+            $ctx_lst = $res->src_grp?->phr_lst();
+            $effort = $ctx_lst?->get_by_name(triple_names::INITIAL_EFFORT, $msg);
+            $factor = $ctx_lst?->get_by_name(triple_names::PERSON_YEAR_PER_BILLION_USD, $msg);
+            if ($effort != null and $factor != null and $effort_lst->is_empty()) {
+                $effort_lst->add_phrase($effort);
+                $both_lst->add_phrase($effort);
+                $both_lst->add_phrase($factor);
+            }
+        }
+        $test_name = 'the values of the initial effort are loaded with a call of their own';
+        $t->assert_true($test_name, $cfg->has_values_of($effort_lst));
+        // negative: one call for all missing phrases would miss a part of the values
+        $test_name = '... and not together with the person year per billion USD';
+        $t->assert_false($test_name, $cfg->has_values_of($both_lst));
+
+        // switched off, the missing operands of the table are loaded with one call
+        $off_cfg = $t->view_context();
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::POPULISM_SOLUTION, $msg);
+        new ui_list()->table_with_related_columns($tbl_phr, $msg, $off_cfg, typ_lst: new api_type_list());
+        $test_name = 'without the per phrase switch the missing operands of the table are loaded too';
+        $off_count = $off_cfg->val_lst->count();
+        $t->assert_greater($test_name, 0, $off_count);
+        // negative: no missing phrase is loaded with a call of its own
+        $test_name = '... but not with a call per phrase';
+        $t->assert_false($test_name, $off_cfg->has_values_of($effort_lst));
+    }
+
+    /**
+     * the assumption fields of a populism solution load the values of the context of each result
+     * per phrase, because the values of all phrases of a context together can exceed the row limit
+     * of the backend (api_types::LOAD_PER_PHRASE)
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_context_values_per_phrase(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $sol = new triple_ui();
+        $sol->load_by_name(triple_names::ONE_CLICK_HIDE_POPULISM, $msg);
+        new ui_list()->assumption_fields($sol, $msg, $cfg, '', []);
+        $effort_lst = new phrase_list_ui();
+        $both_lst = new phrase_list_ui();
+        foreach ($cfg->res_lst->lst() as $res) {
+            $ctx_lst = $res->src_grp?->phr_lst();
+            $effort = $ctx_lst?->get_by_name(triple_names::INITIAL_EFFORT, $msg);
+            $sol_phr = $ctx_lst?->get_by_name(triple_names::ONE_CLICK_HIDE_POPULISM, $msg);
+            if ($effort != null and $sol_phr != null and $effort_lst->is_empty()) {
+                $effort_lst->add_phrase($effort);
+                $both_lst->add_phrase($effort);
+                $both_lst->add_phrase($sol_phr);
+            }
+        }
+        $test_name = 'the context values of a result are loaded with a call per phrase';
+        $t->assert_true($test_name, $cfg->has_values_of($effort_lst));
+        // negative: one call for the whole context could miss a part of the values
+        $test_name = '... and not with one call for the phrases of the context';
+        $t->assert_false($test_name, $cfg->has_values_of($both_lst));
+
+        // switched off, the context of a result is loaded with one call
+        $off_cfg = $t->view_context();
+        new ui_list()->assumption_fields($sol, $msg, $off_cfg, '', [], [], new api_type_list());
+        $has_effort = false;
+        foreach ($off_cfg->val_lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if (in_array(triple_names::INITIAL_EFFORT, $names) and in_array(triple_names::ONE_CLICK_HIDE_POPULISM, $names)) {
+                $has_effort = true;
+            }
+        }
+        $test_name = 'without the per phrase switch the context values are loaded too';
+        $t->assert_true($test_name, $has_effort);
+        // negative: no phrase of the context is loaded with a call of its own
+        $test_name = '... but not with a call per phrase';
+        $t->assert_false($test_name, $off_cfg->has_values_of($effort_lst));
     }
 
     /**

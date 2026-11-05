@@ -44,6 +44,7 @@ include_once paths::WEB . 'frontend.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -72,6 +73,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
@@ -83,6 +85,7 @@ use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\phrase_data_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\system_views_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -93,7 +96,7 @@ class a_selected_test extends all_unit_tests
     // the system data files with code ids to load again before SELECTED_IMPORT_FILES, imported
     // as the system user like the db setup does, e.g. the calculator keywords of a use case page
     const array SELECTED_SYSTEM_IMPORT_FILES = [
-        cfg_files::CALCULATOR_KEYWORDS_FILE,
+        //cfg_files::CALCULATOR_KEYWORDS_FILE,
     ];
 
     // the import json files to load for a fast single-file debugging cycle
@@ -101,7 +104,7 @@ class a_selected_test extends all_unit_tests
     const array SELECTED_IMPORT_FILES = [
         // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
         //cfg_files::PV_LIFETIME_BALANCE_FILE,
-        cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
+        //cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
         //test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
@@ -122,6 +125,29 @@ class a_selected_test extends all_unit_tests
         //files::IMPORT_COUNTRY_ISO,
         //files::IMPORT_WIND_INVESTMENT,
     ];
+
+    // true to import the data of the start page again and to rebuild its snapshot
+    // views_by_id/start_page/1_start_page_details.html, which localhost_ui_tests fetches from the pod
+    const bool SELECTED_START_PAGE = true;
+
+    /**
+     * the data files of the start page in the import order of the db setup (sql_db):
+     * the problem and solution keywords, the problem files of the ranking rows with their reasons and
+     * solutions, the main reasons and the charts; all imported as the system user like the db setup does
+     * @return array the json file names with the full path
+     */
+    private function start_page_import_files(): array
+    {
+        $result = [cfg_files::MESSAGE_PATH . cfg_files::START_PAGE_DATA_FILE];
+        foreach (cfg_files::SAMPLE_VIEW_DATA_FILES as $filename) {
+            if (str_starts_with($filename, cfg_files::DATA_START_PAGE_PATH)) {
+                $result[] = $filename;
+            }
+        }
+        $result[] = cfg_files::PROBLEM_MAIN_REASONS_FILE;
+        $result[] = cfg_files::START_PAGE_CHARTS_FILE;
+        return $result;
+    }
 
     /**
      * run some manual selected tests for faster debugging
@@ -260,14 +286,14 @@ class a_selected_test extends all_unit_tests
             // changed config value e.g. the test tolerance and the changed import e.g. of the value
             // descriptions reach the database without a new setup; the global config is reloaded,
             // because the tests read it e.g. phrase_data_read_tests
-            $test_name = 'the config.yaml is imported again';
             $imf = new import_file();
-            $imf->import_config_yaml(user::system(), $sys_msg);
-            $this->assert_msg($test_name, $sys_msg, $this::TIMEOUT_LIMIT_IMPORT);
-            $sys_msg->reset();
-            global $cfg;
-            $cfg = new config_numbers($usr);
-            $cfg->load_cfg($sys_msg, null, $usr);
+            //$test_name = 'the config.yaml is imported again';
+            //$imf->import_config_yaml(user::system(), $sys_msg);
+            //$this->assert_msg($test_name, $sys_msg, $this::TIMEOUT_LIMIT_IMPORT);
+            //$sys_msg->reset();
+            //global $cfg;
+            //$cfg = new config_numbers($usr);
+            //$cfg->load_cfg($sys_msg, null, $usr);
             foreach (self::SELECTED_SYSTEM_IMPORT_FILES as $import_file) {
                 $test_name = 'the selected system file ' . basename($import_file) . ' is imported again';
                 $imp_msg = $imf->json_file($import_file, user::system(), false);
@@ -278,6 +304,16 @@ class a_selected_test extends all_unit_tests
                 $imp_msg = $imf->json_file($import_file, $usr, false);
                 $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
+            if (self::SELECTED_START_PAGE) {
+                foreach ($this->start_page_import_files() as $import_file) {
+                    $test_name = 'the start page file ' . basename($import_file) . ' is imported again';
+                    $imp_msg = $imf->json_file($import_file, user::system(), false);
+                    $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
+                }
+            }
+            // a types api call during the imports may have cached the system phrases without the
+            // phrases imported after it, so the pod reads the types again like after the db setup
+            new db_cache(user::system())->del_types($sys_msg);
 
 
             /*
@@ -297,6 +333,10 @@ class a_selected_test extends all_unit_tests
             //$api_test->run($this);
 
             //new localhost_ui_tests()->run($this);
+            // the start page with its main columns and variance fetched from the pod
+            if (self::SELECTED_START_PAGE) {
+                new localhost_ui_tests()->run_start_page($this);
+            }
 
 
             /*
@@ -311,7 +351,7 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             // the data of a phrase for api/phraseData, checked against the hand made sample
-            new phrase_data_read_tests()->run($this);
+            //new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
             //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);
@@ -335,9 +375,9 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_pv_lifetime_balance_cases($this);
             // the portfolio split pages without and with javascript next to the hand made
             // portfolio_split_calculator_sample.html, their differences and the input cases standard, high and low
-            $msk_tests->run_portfolio_split_calculator($this);
-            $msk_tests->run_portfolio_split_calculator_diff($this);
-            $msk_tests->run_portfolio_split_calculator_cases($this);
+            //$msk_tests->run_portfolio_split_calculator($this);
+            //$msk_tests->run_portfolio_split_calculator_diff($this);
+            //$msk_tests->run_portfolio_split_calculator_cases($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);

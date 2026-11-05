@@ -107,7 +107,6 @@ if ($start_usr->id() > 0) {
             // login after the recreate, because a login before would point to a dropped session user
             $t->api_login();
             $t_db = new test_db_load($t);
-            $t_db->create_unit_test_db_entries($t);
 
             // the frontend and workflow tests of test.php are not needed to re-pin the ids
             //new all_ui_tests()->run($t, $ui);
@@ -116,6 +115,9 @@ if ($start_usr->id() > 0) {
             // refresh the list.csv fixtures, the api files with not yet fixed ids and the type
             // list api message, so that the shifted ids show up as a diff of the fixtures
             $t_db->csv_recreate($msg);
+            // the test dataset after the csv check like in reset_db.php, because e.g. the term view
+            // of the test user is no row of the reset and the list.csv files would differ
+            $t_db->create_unit_test_db_entries($t);
             $msg->usr = $t->usr1;
             $t_db->update_files_with_not_yet_fixed_db_id($t, $msg);
             $t_db->type_list_check($t, $msg);

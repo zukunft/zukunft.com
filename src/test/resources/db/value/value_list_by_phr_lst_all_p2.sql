@@ -108,4 +108,11 @@ PREPARE value_list_by_phr_lst_all_p2 (bigint, bigint, text, text, bigint, bigint
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = $5
          WHERE ( s.group_id ~ $3
-            OR   s.group_id ~ $4 )  LIMIT $6 OFFSET $7;
+            OR   s.group_id ~ $4 )
+      ORDER BY group_id,
+               phrase_id_1,
+               phrase_id_2,
+               phrase_id_3,
+               phrase_id_4
+         LIMIT $6
+        OFFSET $7;

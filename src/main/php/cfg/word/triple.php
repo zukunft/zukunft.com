@@ -815,7 +815,7 @@ class triple extends sandbox_link_named
         // the own default view on top
         $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
-        // so the views tab of the triple page offers at least this view
+        // so the edit menu of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::TRIPLE, $msg);
@@ -939,10 +939,9 @@ class triple extends sandbox_link_named
                     // emitted as an empty json list, which says the list has been asked
                     $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // INCL_PHRASES so each value carries its group phrases, which the
-                        // frontend needs for the value name and to sort the list by impact
+                        // with the group phrases and the source of each value (api_type_list::VALUES_RELATED)
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                            $typ_lst->values_related(), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);

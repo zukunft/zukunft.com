@@ -62,6 +62,7 @@ include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
 class unit_env
@@ -363,6 +365,8 @@ class unit_env
 
         $sys->typ_lst->src_typ = new source_type_list();
         $sys->typ_lst->src_typ->load_dummy();
+        // without database the source "my estimates" cannot be read by its code id
+        $sys->set_no_source_id(sources::TRUST_ME_BRO_ID);
 
     }
 

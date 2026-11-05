@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            populism solution - Table - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                <div class="heading-line">
+                    <h4 class="heading-inline">
+                        populism solution
+                    </h4>
+                    <a href="http://localhost/http/view.php?m=51&amp;id=1592" title="rename word" class="heading-icon-inline">
+                        <i class="fas fa-edit">
+                        </i>
+                    </a>
+                </div>
+                <div class="subtitle">
+                    (
+                    <a href="http://localhost/http/view.php?m=3&amp;id=241" title="a homogeneous mixture of a solute dissolved in a solvent">
+                        solution
+                    </a>
+                    <a href="http://localhost/http/view.php?m=10&amp;id=10" title="to narrow a selection e.g. the world population is usually the population of all humans">
+                        of
+                    </a>
+                    <a href="http://localhost/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                        populism
+                    </a>
+                    )
+                </div>
+            </div>
+            <div>
+                <table class="table table-borderless" style="--bs-table-color: var(--page-grey);">
+                    <tr>
+                        <th>
+                            <a href="http://localhost/http/view.php?m=3&amp;id=241" title="a homogeneous mixture of a solute dissolved in a solvent">
+                                solution
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=241.alpha_asc&amp;dlo2=-183.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                                <i class="fas fa-sort-up">
+                                </i>
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=241.alpha_desc&amp;dlo2=-183.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                                <i class="fas fa-sort-down">
+                                </i>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=183" title="the gain that a solution can reach if it is implemented">
+                                potential gain
+                            </a>
+                            in
+                            <a href="http://localhost/http/view.php?m=3&amp;id=298" title="the scaling factor of 10^12">
+                                trillion
+                            </a>
+                            <a href="http://localhost/http/view.php?m=3&amp;id=302" title="ISO 4217 alphabetic code for the euro.">
+                                EUR
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=-183.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                                <i class="fas fa-sort-up">
+                                </i>
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=-183.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon sort-active">
+                                <i class="fas fa-sort-down">
+                                </i>
+                            </a>
+                        </th>
+                        <th class="d-none d-xl-table-cell">
+                            <a href="http://localhost/http/view.php?m=4&amp;id=183" title="the gain that a solution can reach if it is implemented">
+                                potential gain
+                            </a>
+                            in
+                            <a href="http://localhost/http/view.php?m=3&amp;id=159" title="to specify numbers in billions - 10⁹">
+                                billion
+                            </a>
+                            <a href="http://localhost/http/view.php?m=3&amp;id=297" title="the symbol used in formulas for happy time points">
+                                htp
+                            </a>
+                        </th>
+                        <th class="d-none d-xl-table-cell">
+                            <a href="http://localhost/http/view.php?m=4&amp;id=206" title="the work needed to implement a solution the first time, without the recurring operation">
+                                initial effort
+                            </a>
+                            in
+                            <a href="http://localhost/http/view.php?m=4&amp;id=208" title="the work of one person during one year, the unit of the initial effort">
+                                person year
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=-206.numeric_asc&amp;dlo2=-183.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                                <i class="fas fa-sort-up">
+                                </i>
+                            </a>
+                            <a href="http://localhost/http/view.php?dlo=-206.numeric_desc&amp;dlo2=-183.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                                <i class="fas fa-sort-down">
+                                </i>
+                            </a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=1267" title="a button that lets a reader hide a post or an account with one click, so that emotional content spreads less far (see fermi_internet_pro_contra.json)">
+                                one-click hide
+                            </a>
+                            ,
+                            <a href="http://localhost/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                                populism
+                            </a>
+                        </td>
+                        <td title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-22_2e_2i_3G_">
+                                4
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-0T_22_2d_3G_">
+                                34.1
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-0J-0T_22_2d_3G_" title="&quot;22.73&quot; = 34.1 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                22.73
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-0r-0I-0T_22_2d_3G_" title="&quot;51.15&quot; = 34.1 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                51.15
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-1E-1C-22_3G_">
+                                8
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-1E-1C-0J-22_3G_" title="&quot;3.2&quot; = 8 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                3.2
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Hn-1E-1C-0I-22_3G_" title="&quot;20&quot; = 8 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                20
+                            </a>
+                            )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=1635" title="&#039;one-click hide&#039; is one of the compared populism solutions.">
+                                one-click hide (populism solution)
+                            </a>
+                        </td>
+                        <td title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-2e_2i_3G_">
+                                0.38
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-0J-2e_2i_3G_" title="&quot;0.15&quot; = 0.38 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.15
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-0I-2e_2i_3G_" title="&quot;0.96&quot; = 0.38 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.96
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-0T_2d_3G_">
+                                3.27
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-0J-0T_2d_3G_" title="&quot;1.31&quot; = 3.27 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                1.31
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-0r-0I-0T_2d_3G_" title="&quot;8.18&quot; = 3.27 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                8.18
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=95280166540969571" title="&quot;0.11&quot; = 2 * 0.05
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;initial effort&quot;,&quot;billion&quot;,&quot;USD&quot; * &quot;person year per billion USD&quot;,&quot;factor&quot;
+click for more details">
+                                0.11
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-1E-1C-0J-3G_" title="&quot;0.04&quot; = 0.11 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.04
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=NX-1E-1C-0I-3G_" title="&quot;0.27&quot; = 0.11 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.27
+                            </a>
+                            )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=1684" title="&#039;social safety nets&#039; is one of the compared populism solutions.">
+                                social safety nets (populism solution)
+                            </a>
+                        </td>
+                        <td title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-2e_2i_3G_">
+                                0.29
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-0J-2e_2i_3G_" title="&quot;0.12&quot; = 0.29 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.12
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-0I-2e_2i_3G_" title="&quot;0.72&quot; = 0.29 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.72
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-0T_2d_3G_">
+                                2.46
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-0J-0T_2d_3G_" title="&quot;0.98&quot; = 2.46 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.98
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-0r-0I-0T_2d_3G_" title="&quot;6.14&quot; = 2.46 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                6.14
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=95280166540969620" title="&quot;27.27&quot; = 500 * 0.05
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;initial effort&quot;,&quot;billion&quot;,&quot;USD&quot; * &quot;person year per billion USD&quot;,&quot;factor&quot;
+click for more details">
+                                27.27
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-1E-1C-0J-3G_" title="&quot;10.91&quot; = 27.27 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                10.91
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=OI-1E-1C-0I-3G_" title="&quot;68.18&quot; = 27.27 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                68.18
+                            </a>
+                            )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=1689" title="&#039;addressing migration concerns&#039; is one of the compared populism solutions.">
+                                addressing migration concerns (populism solution)
+                            </a>
+                        </td>
+                        <td title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-2e_2i_3G_">
+                                0.24
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-0J-2e_2i_3G_" title="&quot;0.1&quot; = 0.24 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.1
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-0I-2e_2i_3G_" title="&quot;0.6&quot; = 0.24 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.6
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-0T_2d_3G_">
+                                2.05
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-0J-0T_2d_3G_" title="&quot;0.82&quot; = 2.05 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.82
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-0r-0I-0T_2d_3G_" title="&quot;5.12&quot; = 2.05 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                5.12
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=95280166540969625" title="&quot;5.45&quot; = 100 * 0.05
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;initial effort&quot;,&quot;billion&quot;,&quot;USD&quot; * &quot;person year per billion USD&quot;,&quot;factor&quot;
+click for more details">
+                                5.45
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-1E-1C-0J-3G_" title="&quot;2.18&quot; = 5.45 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                2.18
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=ON-1E-1C-0I-3G_" title="&quot;13.64&quot; = 5.45 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                13.64
+                            </a>
+                            )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?m=4&amp;id=1646" title="&#039;anti-corruption measures&#039; is one of the compared populism solutions.">
+                                anti-corruption measures (populism solution)
+                            </a>
+                        </td>
+                        <td title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-2e_2i_3G_">
+                                0.24
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-0J-2e_2i_3G_" title="&quot;0.1&quot; = 0.24 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.1
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-0I-2e_2i_3G_" title="&quot;0.6&quot; = 0.24 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.6
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-0T_2d_3G_">
+                                2.05
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-0J-0T_2d_3G_" title="&quot;0.82&quot; = 2.05 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.82
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-0r-0I-0T_2d_3G_" title="&quot;5.12&quot; = 2.05 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                5.12
+                            </a>
+                            )
+                        </td>
+                        <td class="d-none d-xl-table-cell" title="assumed">
+                            <a href="http://localhost/http/view.php?m=9&amp;id=95280166540969582" title="&quot;1.09&quot; = 20 * 0.05
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;initial effort&quot;,&quot;billion&quot;,&quot;USD&quot; * &quot;person year per billion USD&quot;,&quot;factor&quot;
+click for more details">
+                                1.09
+                            </a>
+                            <sup>
+                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                    a
+                                </span>
+                            </sup>
+                            (
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-1E-1C-0J-3G_" title="&quot;0.44&quot; = 1.09 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                0.44
+                            </a>
+                            –
+                            <a href="http://localhost/http/view.php?m=9&amp;id=Ni-1E-1C-0I-3G_" title="&quot;2.73&quot; = 1.09 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                                2.73
+                            </a>
+                            )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="http://localhost/http/view.php?dls=20">
+                                ... and 40 more
+                            </a>
+                        </td>
+                        <td>
+                        </td>
+                        <td class="d-none d-xl-table-cell">
+                        </td>
+                        <td class="d-none d-xl-table-cell">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

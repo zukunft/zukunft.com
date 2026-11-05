@@ -83,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\markdown;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -345,6 +346,13 @@ class base_ui_tests
         $test_name = 'the signup form with a back part is not cached';
         $url_array = [url_var::MASK => views::SIGNUP_ID, url_var::BACK . url_var::MASK => views::WORD_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        // the login link of the static start page names the view by its code id, which the checks by id would miss
+        $test_name = 'the login form of the static start page is not cached, so it keeps the return to the start page';
+        $url_array = [url_var::MASK => views::LOGIN, url_var::BACK . url_var::START_PAGE => 1];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = '... and a view named by its code id is rendered live, because the checks know the views by id';
+        $url_array = [url_var::MASK => views::LOGIN];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
         $test_name = 'a word view with a back part is still cached';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::BACK . url_var::MASK => views::START_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
@@ -524,10 +532,12 @@ class base_ui_tests
         // the signup and the login of the start page open the views by their code id, because the
         // start page is written by hand and a view id changes if the views are re-pinned
         $start_page = file_get_contents(test_files::START_PAGE);
-        $test_name = 'the start page links to the signup view by its code id';
-        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::SIGNUP . '"');
+        // the signup and the login return to the static start page, because it is the back target of their links
+        $start_back_par = '&amp;' . url_var::BACK . url_var::START_PAGE . url_var::EQ . '1"';
+        $test_name = 'the start page links to the signup view by its code id that returns to the start page';
+        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::SIGNUP . $start_back_par);
         $test_name = '... and to the login view';
-        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN . '"');
+        $t->assert_text_contains($test_name, $start_page, url_var::MASK . '=' . views::LOGIN . $start_back_par);
         // negative: e.g. the outdated id 61 opened an empty result page with the notice that a change needs a login
         $test_name = '... but not by a view id';
         $has_view_id = preg_match('/' . url_var::MASK . '=[0-9]+"/', $start_page) == 1;
@@ -687,6 +697,65 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->about_body(), '</' . html_base::BODY . '>');
         $test_name = '... but the about page does';
         $t->assert_text_contains($test_name, $created_html, '</' . html_base::BODY . '>');
+        $test_name = 'the about page links the faq of /docs/';
+        $md = new markdown();
+        $t->assert_text_contains($test_name, $created_html, $md->doc_url(markdown::DOC_FAQ));
+
+
+        $t->subheader($ts . 'docs');
+
+        // a markdown document of /docs/ is shown by http/docs.php with the page frame of zukunft.com
+        $test_name = 'a document of /docs/ is found by its name';
+        $t->assert_true($test_name, $md->doc_path(markdown::DOC_FAQ) != '');
+        $test_name = '... but no file outside /docs/';
+        $t->assert($test_name, $md->doc_path('../README'), '');
+        $test_name = '... and no name with the extension or a trailing new line';
+        $t->assert($test_name, $md->doc_path(markdown::DOC_FAQ . markdown::DOC_EXT) . $md->doc_path(markdown::DOC_FAQ . "\n"), '');
+        $test_name = 'a link to another document of /docs/ opens it with http/docs.php';
+        $t->assert_text_contains($test_name, $md->to_html('see the [FAQ](faq.md#how-can-i-help)'),
+            'href="' . api::DOCS_SCRIPT . url_var::PAR . url_var::DOC . url_var::EQ . markdown::DOC_FAQ . '#how-can-i-help"');
+        $doc_file_html = $md->to_html('as JSON ([exchange_json.md](exchange_json.md)) and');
+        $doc_file_text = '>exchange json</a>';
+        $doc_file_href = url_var::DOC . url_var::EQ . 'exchange_json"';
+        $doc_name_html = $md->to_html('[idea_and_intro](idea_and_intro.md)');
+        $doc_name_text = '>idea_and_intro</a>';
+        $test_name = 'a link text that is a file name of /docs/ is shown without the extension and the underscore';
+        $t->assert_text_contains($test_name, $doc_file_html, $doc_file_text);
+        $test_name = '... but the link still opens the file';
+        $t->assert_text_contains($test_name, $doc_file_html, $doc_file_href);
+        $test_name = '... and a link text that is no file name keeps its underscore';
+        $t->assert_text_contains($test_name, $doc_name_html, $doc_name_text);
+        $doc_img_html = $md->to_html('![zukunft.com server structure](server_structure.svg)');
+        $doc_img_src = 'src="' . markdown::DOCS_URL . 'server_structure.svg"';
+        $doc_img_path_html = $md->to_html('![x](../server_structure.svg)');
+        $test_name = 'an image of /docs/ is shown from the own server and not from the github page of the image';
+        $t->assert_text_contains($test_name, $doc_img_html, $doc_img_src);
+        $test_name = '... but an image with a path is not taken from /docs/';
+        $t->assert_text_not_contains($test_name, $doc_img_path_html, $doc_img_src);
+        $test_name = 'a markdown table is a html table';
+        $t->assert_text_contains($test_name, $md->to_html("| a | b |\n|---|---|\n| 1 | 2 |"), '<td>1</td><td>2</td>');
+        $test_name = 'a nested list is a list inside the item';
+        $t->assert_text_contains($test_name, $md->to_html("- a\n  - b"), "<li>a\n<ul>\n<li>b</li>");
+        $test_name = 'an underscore of a name is no italic';
+        $t->assert_text_not_contains($test_name, $md->to_html('idea_and_intro_page'), '<em>');
+        // negative: html and a script link of the markdown are shown as text
+        $test_name = 'the html of a markdown document is escaped';
+        $t->assert_text_not_contains($test_name, $md->to_html('<script>x</script>'), '<script>');
+        $test_name = '... and a javascript link is no link';
+        $t->assert_text_not_contains($test_name, $md->to_html('[x](javascript:alert(1))'), 'href');
+        $test_name = 'the docs page has the title of the document';
+        $docs_html = $html->docs_page(markdown::DOC_FAQ, $msg_ui);
+        $t->assert_text_contains($test_name, $docs_html, '<h1 id="frequently-asked-questions">');
+        $test_name = '... and the page frame with the footer';
+        $t->assert_text_contains($test_name, $docs_html, '</' . html_base::BODY . '>');
+        $doc_lock_tip = $mtr->txt(msg_id::DOC_CHANGE_ADMIN_ONLY);
+        $test_name = '... and the navbar with a grey edit icon for a user who is no admin';
+        $t->assert_text_contains($test_name, $docs_html, $doc_lock_tip);
+        $test_name = '... but the edit menu without the hint for an admin';
+        $docs_admin_html = $html->docs_page(markdown::DOC_FAQ, $msg_ui, users::SYSTEM_ADMIN_NAME, null, true);
+        $t->assert_text_not_contains($test_name, $docs_admin_html, $doc_lock_tip);
+        $test_name = 'an unknown document shows that it does not exist';
+        $t->assert_text_contains($test_name, $html->docs_page('not_a_doc', $msg_ui), $mtr->txt(msg_id::DOC_NOT_FOUND));
 
 
         $t->subheader($ts . 'page font and colours');
@@ -1899,6 +1968,26 @@ class base_ui_tests
         // a get action mask (e.g. logout) would need the token again, so its page is not redirected
         $test_name = 'a next page that is itself an action is not redirected';
         $t->assert($test_name, frontend::redirect_url([url_var::MASK => views::LOGOUT_ID], $msg), '');
+        // the login of the static start page returns to it
+        $start_back = [url_var::MASK => views::LOGIN_ID, url_var::BACK . url_var::START_PAGE => 1];
+        $test_name = 'the redirect after a signup from the start page opens the start page';
+        $signup_back = [url_var::MASK => views::SIGNUP_ID, url_var::BACK . url_var::START_PAGE => 1];
+        $t->assert($test_name, frontend::redirect_url(html_base::url_par_from_back_part($signup_back), $msg), api::START_PAGE);
+        $test_name = 'the back link of the login from the start page opens the start page';
+        $t->assert($test_name, html_base::url_from_back($start_back), api::START_PAGE);
+        $test_name = 'the redirect after a login from the start page opens the start page';
+        $t->assert($test_name, frontend::redirect_url(html_base::url_par_from_back_part($start_back), $msg), api::START_PAGE);
+        // a signup instead of the login from the start page returns to the start page too
+        $test_name = 'the signup link of the login from the start page keeps the back target';
+        $login_page = new system_page()->login_body($start_back);
+        $signup_href = htmlspecialchars(api::SIGNUP_SCRIPT . url_var::ADD . url_var::BACK . url_var::START_PAGE . url_var::EQ . '1', ENT_QUOTES) . '"';
+        $t->assert_text_contains($test_name, $login_page, $signup_href);
+        $test_name = '... and without a back target it opens the plain signup';
+        $t->assert_text_contains($test_name, new system_page()->login_body(), htmlspecialchars(api::SIGNUP_SCRIPT, ENT_QUOTES) . '"');
+        // negative: another back target still opens its view
+        $test_name = '... but another back target opens its view';
+        $word_back = [url_var::MASK => views::LOGIN_ID, url_var::BACK . url_var::MASK => views::WORD_ID];
+        $t->assert($test_name, html_base::url_from_back($word_back), api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_ID);
 
         $test_name = 'a valid token needs no session recovery';
         $t->assert_true($test_name, frontend::session_recovery_url(true, true, $req_url) === null);

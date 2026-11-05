@@ -143,6 +143,7 @@ class triple_names
     const int GLOBAL_PROBLEM_ID = 139;
     const string GLOBAL_WARMING = 'global warming';
     const int GLOBAL_WARMING_ID = 167;
+    const string GLOBAL_WARMING_COM = "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.";
     const string GWP = 'global warming potential';
     const int GWP_ID = 168;
     const string TIME_POINTS = 'time points';
@@ -177,10 +178,13 @@ class triple_names
     const string BLACK_BOX_AI_PROBLEM = 'black-box AI (global problem)';
     const int BLACK_BOX_AI_PROBLEM_ID = 303;
     // the solution triples and the table column definitions of solution_prio.json
+    // with the description of the import, which the start page shows as the tooltip
     const string REDUCE_EMISSIONS = 'reduce climate gas emissions';
     const int REDUCE_EMISSIONS_ID = 296;
+    const string REDUCE_EMISSIONS_COM = 'a transparent, publicly calculated climate tariff that prices the emissions of imports and exports and thereby stops carbon leakage (concept paper section 3)';
     const string AVOID_WRONG_DECISIONS = 'avoid wrong decisions';
     const int AVOID_WRONG_DECISIONS_ID = 248;
+    const string AVOID_WRONG_DECISIONS_COM = 'decisions based on precise and neutral knowledge instead of the emotional impulse of the group (concept paper section 4)';
     // the triples that link a solution to "solution", so that the table can name the solution
     // of a problem row in a column of its own (like the problem links for the rows)
     const string REDUCE_EMISSIONS_SOLUTION = 'reduce climate gas emissions (solution)';
@@ -209,38 +213,54 @@ class triple_names
     const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 306;
     const string FREE_SOFTWARE_SOLUTION = 'free software (solution)';
     const int FREE_SOFTWARE_SOLUTION_ID = 263;
-    // the problems of solution_prio.json that are a triple, ordered like the start page ranking
+    // the problems of solution_prio.json that are a triple, ordered like the start page ranking,
+    // with the description of the import, which the start page shows as the tooltip
     const string WEALTH_CONCENTRATION = 'wealth concentration';
     const int WEALTH_CONCENTRATION_ID = 187;
+    const string WEALTH_CONCENTRATION_COM = 'concentration of money and power that destroys democratic participation (concept paper section 5)';
     const string MARKET_POWER = 'market power';
     const int MARKET_POWER_ID = 188;
+    const string MARKET_POWER_COM = 'the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)';
     const string BIASED_INFORMATION = 'biased information';
     const int BIASED_INFORMATION_ID = 189;
+    const string BIASED_INFORMATION_COM = 'incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)';
     const string BLACK_BOX_AI = 'black-box AI';
     const int BLACK_BOX_AI_ID = 246;
+    const string BLACK_BOX_AI_COM = 'proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)';
     const string CITIZEN_PARTICIPATION = 'citizen participation';
     const int CITIZEN_PARTICIPATION_ID = 191;
+    const string CITIZEN_PARTICIPATION_COM = 'the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)';
     const string GDP_MISMEASUREMENT = 'GDP mismeasurement';
     const int GDP_MISMEASUREMENT_ID = 192;
+    const string GDP_MISMEASUREMENT_COM = 'gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)';
     const string PROPRIETARY_SOFTWARE = 'proprietary software';
     const int PROPRIETARY_SOFTWARE_ID = 193;
+    const string PROPRIETARY_SOFTWARE_COM = 'closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)';
     // the solutions that solution_prio.json assigns to these problems
     const string BASIC_INCOME = 'basic income';
     const int BASIC_INCOME_ID = 200;
+    const string BASIC_INCOME_COM = 'a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)';
     const string PLATFORM_REGULATION = 'platform regulation';
     const int PLATFORM_REGULATION_ID = 198;
+    const string PLATFORM_REGULATION_COM = 'democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)';
     const string MARKET_SHARE_TAX = 'market share tax';
     const int MARKET_SHARE_TAX_ID = 250;
+    const string MARKET_SHARE_TAX_COM = 'supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)';
     const string DELPHI_METHOD = 'Delphi method';
     const int DELPHI_METHOD_ID = 199;
+    const string DELPHI_METHOD_COM = 'structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)';
     const string PUBLIC_AI = 'public AI';
     const int PUBLIC_AI_ID = 249;
+    const string PUBLIC_AI_COM = 'AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)';
     const string FLUID_DEMOCRACY = 'fluid democracy';
     const int FLUID_DEMOCRACY_ID = 203;
+    const string FLUID_DEMOCRACY_COM = 'a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)';
     const string GROSS_DOMESTIC_USAGE = 'gross domestic usage';
     const int GROSS_DOMESTIC_USAGE_ID = 251;
+    const string GROSS_DOMESTIC_USAGE_COM = 'a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)';
     const string FREE_SOFTWARE = 'free software';
     const int FREE_SOFTWARE_ID = 202;
+    const string FREE_SOFTWARE_COM = 'free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)';
     const string SYSTEM_COLUMN = shared_triples::SYSTEM_COLUMN;
     const int SYSTEM_COLUMN_ID = 184;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
@@ -251,6 +271,9 @@ class triple_names
     const string PLACE_OF_USER = 'place of user';
     // the base phrase of the table editor example (problem_main_reasons.json)
     const string POPULISM_SOLUTION = 'populism solution';
+    // a populism solution with only a few results, so that the load of its context values is fast
+    const string ONE_CLICK_HIDE_POPULISM = 'one-click hide (populism solution)';
+    const int ONE_CLICK_HIDE_POPULISM_ID = 1635;
     const int POPULISM_SOLUTION_ID = 1592;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 240;
@@ -271,23 +294,23 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 3487;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 3488;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 3488;
+    const int GAIN_AND_LOSS_ID = 3489;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 3489;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 3490;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 3490;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 3491;
     // the field types and properties of process_catch_fields.json, appended like the chart
     // triples above, so they move with them; check them in the triple list.csv
     const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
-    const int FIELD_NUMBER_WITH_LIMITS_ID = 3621;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 3622;
     const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
-    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 3623;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 3624;
     const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
-    const int FIELD_LIMIT_DOWN_ID = 3607;
+    const int FIELD_LIMIT_DOWN_ID = 3608;
     const string FIELD_STEP = shared_triples::FIELD_STEP;
-    const int FIELD_STEP_ID = 3608;
+    const int FIELD_STEP_ID = 3609;
     // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
     // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
     const string FIELD_INHABITANTS = 'field inhabitants';
@@ -401,6 +424,9 @@ class triple_names
     const int REWARD_RATIO_ID = 207;
     const string PERSON_YEAR = 'person year';
     const int PERSON_YEAR_ID = 208;
+    // the factor that converts the initial effort in billion USD to person years
+    const string PERSON_YEAR_PER_BILLION_USD = 'person year per billion USD';
+    const int PERSON_YEAR_PER_BILLION_USD_ID = 1250;
     const string SYSTEM_COLUMN_MARGINAL = shared_triples::SYSTEM_COLUMN_MARGINAL;
     const int SYSTEM_COLUMN_MARGINAL_ID = 242;
     const string COLUMN_LOSS_REDUCTION = 'column loss reduction';
@@ -415,7 +441,7 @@ class triple_names
     const string SCATTER_PLOT = 'scatter plot';
     const int SCATTER_PLOT_ID = 162;
     const string LEVERAGE_PLOT = 'leverage plot';
-    const int LEVERAGE_PLOT_ID = 3486;
+    const int LEVERAGE_PLOT_ID = 3487;
     const string NUMERIC_DESCENDING = 'numeric descending';
     const int NUMERIC_DESCENDING_ID = 164;
     const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
@@ -535,7 +561,7 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 2972;
+    const int GRAM_PER_KWH_ID = 2973;
     // TODO Prio 2 use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
@@ -577,7 +603,7 @@ class triple_names
     // the page phrase of the use case table_editor_sample.json, selected by the name only
     const string SECTOR_OF_REVENUE = 'sector of revenue';
     // a parent row of the table of the use case table_editor_sample.json, selected by the name only
-    const string EXAMPLE_AG_ENERGY = 'Example AG energy';
+    const string ABB_ELECTRIFICATION = 'ABB Electrification';
     // a triple of the shared word sector (sector can be public), which the walk of sector of revenue must not add
     const string PUBLIC_SECTOR = 'public sector';
     // the page phrase of the use case npp_ch_vote.json, selected by the name only
@@ -636,6 +662,9 @@ class triple_names
     // the triple of scaling.json that defines "%" as the symbol shown behind a percent number
     const string PERCENT_SYMBOL = '% is symbol for percent';
     const int PERCENT_SYMBOL_ID = 104;
+    // the share of the happy time points of the start page problem files, one number type per value
+    const string PERCENT_HTP = 'percent htp';
+    const int PERCENT_HTP_ID = 1193;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
     const int CHF_SYMBOL_ID = 500;
     // the currency names are built in currencies.json from the genus word and the issuing
@@ -668,9 +697,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 451;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 3731;
+    const int SHARE_RATIO_ID = 3733;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 3783;
+    const int SHARE_SYMBOL_ID = 3785;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 461;
     const string IN_EUR = "in EUR";

@@ -1,5 +1,4 @@
-Terms to SPARQL translator (concept)
--------------
+# Terms to SPARQL translator (concept)
 
 Target of the term-to-sparql translator is to use the zukunft.com frontend for the QLever Server. 
 

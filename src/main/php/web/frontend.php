@@ -483,6 +483,23 @@ class frontend
     }
 
     /**
+     * the url of the request without the user of the url if it is not the requesting user, after the
+     * notice of url_user_matches, so that no link of the page repeats the url user and the notice is
+     * shown only once e.g. after an expired session (see docs/llm/state-and-messages.md)
+     *
+     * @param array $url_array the url of the request e.g. [url_var::USER => 11]
+     * @param user_message_ui $msg_ui with the requesting user, which gets the notice
+     * @return array the url without url_var::USER if it names another user, else unchanged
+     */
+    static function url_without_foreign_user(array $url_array, user_message_ui $msg_ui): array
+    {
+        if (!self::url_user_matches($url_array, $msg_ui)) {
+            unset($url_array[url_var::USER]);
+        }
+        return $url_array;
+    }
+
+    /**
      * the url of the page after an action as a plain get (POST-Redirect-GET), so the address bar
      * shows the next page and a reload does not repeat the action; the submit marker, the session
      * token and a typed password are left out, because a url is visible and stored in the history
@@ -501,7 +518,10 @@ class frontend
             $next_url[url_var::USER] = $usr_id;
         }
         $result = '';
-        if (!self::request_triggers_action($next_url)) {
+        if (array_key_exists(url_var::START_PAGE, $next_url)) {
+            // e.g. the login from the static start page returns to it, which is the same for every user
+            $result = api::START_PAGE;
+        } elseif (!self::request_triggers_action($next_url)) {
             $next_page = api::MAIN_SCRIPT . url_var::PAR . http_build_query($next_url);
             $result = new html_base()->url_with_id_var($next_page);
         }
@@ -1792,6 +1812,11 @@ class frontend
             if ((!$is_key_param and !$is_show_step) or !is_scalar($url_val)) {
                 $is_view_only = false;
             }
+        }
+        // the checks below know the views by their id, so a view named by its code id e.g. the login
+        // link m=login of the static start page is rendered live, because its back part would be lost
+        if (!is_numeric($mask_id)) {
+            $is_view_only = false;
         }
         // 'nc=1' (or 'nocache=1' in the human-readable url) switches the cache off for this request:
         // an empty cache key makes the caller render the page live and skip the cache write, so an
@@ -3474,7 +3499,9 @@ class frontend
         $typ_lst = $this->dto?->typ_lst_cache;
         if ($typ_lst != null) {
             if ($msk_ui->shows_value_table($typ_lst, $msg_ui)) {
-                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names, $dto->table_own_columns);
+                $val_lst_ui = new value_list_ui();
+                $mnu->page_items = $val_lst_ui->columns_menu_items($url_array, $dto->tier_names, $dto->table_own_columns);
+                $mnu->export_items = $val_lst_ui->export_menu_items($url_array);
             }
             // the editor of the view as defined by a view relation e.g. the table editor
             if ($msk_ui->editor_id != null) {

@@ -438,6 +438,7 @@ the object structure is:
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
 ├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
+├── markdownUi - show a markdown document of /docs/ as html
 ├── pdf_writerUi - a minimal writer for a pdf with text, tables and one jpeg image
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend

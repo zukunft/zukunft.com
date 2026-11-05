@@ -29500,7 +29500,7 @@
                 "class": "triple"
             },
             {
-                "id": 2991,
+                "id": 2992,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
                 "from_id": 2045,
                 "from_phrase": {
@@ -29524,9 +29524,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2987,
+                "to_id": -2988,
                 "to_phrase": {
-                    "id": 2987,
+                    "id": 2988,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -29537,7 +29537,7 @@
                 "class": "triple"
             },
             {
-                "id": 2990,
+                "id": 2991,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
                 "from_id": 2044,
                 "from_phrase": {
@@ -29561,9 +29561,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2987,
+                "to_id": -2988,
                 "to_phrase": {
-                    "id": 2987,
+                    "id": 2988,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -29574,7 +29574,7 @@
                 "class": "triple"
             },
             {
-                "id": 2980,
+                "id": 2981,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
                 "from_id": 2042,
                 "from_phrase": {
@@ -29611,7 +29611,7 @@
                 "class": "triple"
             },
             {
-                "id": 2982,
+                "id": 2983,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
                 "from_id": 2043,
                 "from_phrase": {
@@ -29685,12 +29685,12 @@
                 "class": "triple"
             },
             {
-                "id": 5198,
+                "id": 5208,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2577,
+                "from_id": 2578,
                 "from_phrase": {
-                    "id": 2577,
+                    "id": 2578,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -29898,7 +29898,7 @@
                 "class": "word"
             },
             {
-                "id": 2987,
+                "id": 2988,
                 "name": "A Theory of Justice, revised edition",
                 "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                 "class": "triple"
@@ -29949,7 +29949,7 @@
                 "class": "triple"
             },
             {
-                "id": 2577,
+                "id": 2578,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30037,7 +30037,7 @@
                 "class": "triple"
             },
             {
-                "id": 3824,
+                "id": 3827,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1186,
                 "from_phrase": {
@@ -30061,9 +30061,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3782,
+                "to_id": -3784,
                 "to_phrase": {
-                    "id": 3782,
+                    "id": 3784,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -30524,7 +30524,7 @@
                 "class": "triple"
             },
             {
-                "id": 2992,
+                "id": 2993,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
                 "from_id": 2047,
                 "from_phrase": {
@@ -30548,9 +30548,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2988,
+                "to_id": -2989,
                 "to_phrase": {
-                    "id": 2988,
+                    "id": 2989,
                     "name": "Nestl\u00e9 registered share",
                     "description": "the registered share of Nestl\u00e9 S.A.",
                     "type_id": null,
@@ -30741,7 +30741,7 @@
                 "class": "word"
             },
             {
-                "id": 3782,
+                "id": 3784,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -30894,7 +30894,7 @@
                 "class": "word"
             },
             {
-                "id": 2988,
+                "id": 2989,
                 "name": "Nestl\u00e9 registered share",
                 "description": "the registered share of Nestl\u00e9 S.A.",
                 "class": "triple"
@@ -31051,7 +31051,7 @@
                 "class": "triple"
             },
             {
-                "id": 2989,
+                "id": 2990,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
                 "from_id": 2046,
                 "from_phrase": {
@@ -31075,9 +31075,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2977,
+                "to_id": -2978,
                 "to_phrase": {
-                    "id": 2977,
+                    "id": 2978,
                     "name": "Mercedes-Benz Group share",
                     "description": "the registered share of Mercedes-Benz Group AG",
                     "type_id": null,
@@ -31314,7 +31314,7 @@
                 "class": "triple"
             },
             {
-                "id": 3732,
+                "id": 3734,
                 "name": "g\/kWh is symbol for gram per kWh",
                 "from_id": 2395,
                 "from_phrase": {
@@ -31338,9 +31338,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2972,
+                "to_id": -2973,
                 "to_phrase": {
-                    "id": 2972,
+                    "id": 2973,
                     "name": "gram per kWh",
                     "description": "the unit of the emission intensity of electricity",
                     "type_id": 2,
@@ -31725,7 +31725,7 @@
                 "class": "word"
             },
             {
-                "id": 2977,
+                "id": 2978,
                 "name": "Mercedes-Benz Group share",
                 "description": "the registered share of Mercedes-Benz Group AG",
                 "class": "triple"
@@ -31806,7 +31806,7 @@
                 "class": "word"
             },
             {
-                "id": 2972,
+                "id": 2973,
                 "name": "gram per kWh",
                 "description": "the unit of the emission intensity of electricity",
                 "type_id": 2,
@@ -31982,7 +31982,7 @@
                 "class": "triple"
             },
             {
-                "id": 3784,
+                "id": 3786,
                 "name": "kg\/kWh is symbol for kg per kWh",
                 "from_id": 2396,
                 "from_phrase": {
@@ -32006,9 +32006,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3697,
+                "to_id": -3699,
                 "to_phrase": {
-                    "id": 3697,
+                    "id": 3699,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -32284,7 +32284,7 @@
                 "class": "triple"
             },
             {
-                "id": 3780,
+                "id": 3782,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 2393,
                 "from_phrase": {
@@ -32308,9 +32308,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3728,
+                "to_id": -3730,
                 "to_phrase": {
-                    "id": 3728,
+                    "id": 3730,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -32321,7 +32321,7 @@
                 "class": "triple"
             },
             {
-                "id": 3781,
+                "id": 3783,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
                 "from_id": 2394,
                 "from_phrase": {
@@ -32345,9 +32345,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3729,
+                "to_id": -3731,
                 "to_phrase": {
-                    "id": 3729,
+                    "id": 3731,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -32676,7 +32676,7 @@
                 "class": "word"
             },
             {
-                "id": 3697,
+                "id": 3699,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -32761,7 +32761,7 @@
                 "class": "word"
             },
             {
-                "id": 3728,
+                "id": 3730,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
@@ -32774,7 +32774,7 @@
                 "class": "word"
             },
             {
-                "id": 3729,
+                "id": 3731,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33852,7 +33852,7 @@
                 "class": "triple"
             },
             {
-                "id": 3783,
+                "id": 3785,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -33876,9 +33876,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3731,
+                "to_id": -3733,
                 "to_phrase": {
-                    "id": 3731,
+                    "id": 3733,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34578,7 +34578,7 @@
                 "class": "word"
             },
             {
-                "id": 3731,
+                "id": 3733,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,

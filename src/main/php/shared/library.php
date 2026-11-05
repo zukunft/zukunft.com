@@ -182,6 +182,11 @@ class library
 
     const int DIFF_NUM_PRECISION = 7;
 
+    // the opening tag of a data script e.g. the seed of an editor (html_base::script_data)
+    const string JSON_SCRIPT_TAG = '/^<script\b[^>]*\btype="application\/json"[^>]*>$/i';
+    // the same tag inside a page, behind which the json of the script follows (compact_json_scripts)
+    const string JSON_SCRIPT_OPEN = '/<script\b[^>]*\btype="application\/json"[^>]*>/i';
+
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
 
@@ -431,7 +436,8 @@ class library
      */
     function trim_html(string $html_string): string
     {
-        $result = $this->trim_lines($html_string);
+        // the json of a data script without the whitespace that format_html has added
+        $result = $this->trim_lines($this->compact_json_scripts($html_string));
 
         // special case: replace system test winter time with daylight saving time
         $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
@@ -462,7 +468,9 @@ class library
     /**
      * @param string $html_string raw or compact HTML
      * @return string HTML with each tag on its own line and child content indented by four spaces;
-     *                opening and closing tags of the same element share the same indentation level
+     *                opening and closing tags of the same element share the same indentation level;
+     *                the content of a style or script tag is text and never split at a "<",
+     *                e.g. the css syntax '<integer>', and a style is written one css rule part per line
      */
     function format_html(string $html_string): string
     {
@@ -477,10 +485,24 @@ class library
         $one_line_depth = 0;
         $one_line_buf = '';
 
-        $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-
-        foreach ($tokens as $token) {
+        foreach ($this->html_tokens(trim($html_string)) as $token) {
+            if (is_array($token)) {
+                // a style or script: the opening tag, the tag name, the content and the closing tag
+                [$open, $tag, $content, $close] = $token;
+                $result .= str_repeat($tab, $indent) . $open . "\n";
+                $raw_txt = trim($content);
+                if ($raw_txt != '') {
+                    if ($tag == 'style') {
+                        $result .= $this->format_css($raw_txt, str_repeat($tab, $indent + 1), $tab);
+                    } elseif (preg_match(self::JSON_SCRIPT_TAG, $open)) {
+                        $result .= $this->format_json_text($raw_txt, str_repeat($tab, $indent + 1), $tab);
+                    } else {
+                        $result .= str_repeat($tab, $indent + 1) . $raw_txt . "\n";
+                    }
+                }
+                $result .= str_repeat($tab, $indent) . $close . "\n";
+                continue;
+            }
             if ($one_line_depth > 0) {
                 // keep the original spacing of the subtree by collecting the untrimmed tokens
                 $one_line_buf .= $token;
@@ -523,6 +545,213 @@ class library
         }
 
         return rtrim($result);
+    }
+
+    /**
+     * the html split into tags and texts, with each style and script as one array token, because
+     * its content is text that may contain a "<"; the end of a style or script is found by a string
+     * search, so that a large seed does not exceed the backtrack limit of a regex
+     *
+     * @param string $html the trimmed html
+     * @return array the tag and text strings and for a style or script
+     *               an array of the opening tag, the lower case tag name, the content and the closing tag
+     */
+    private function html_tokens(string $html): array
+    {
+        $result = [];
+        $pos = 0;
+        while (preg_match('/<(style|script)\b[^>]*>/i', $html, $m, PREG_OFFSET_CAPTURE, $pos)) {
+            $tag = strtolower($m[1][0]);
+            $start = $m[0][1] + strlen($m[0][0]);
+            $end = stripos($html, '</' . $tag, $start);
+            $close_end = $end === false ? false : strpos($html, '>', $end);
+            if ($close_end === false) {
+                break;
+            }
+            $before = substr($html, $pos, $m[0][1] - $pos);
+            $result = array_merge($result, $this->html_tag_tokens($before));
+            $result[] = [$m[0][0], $tag, substr($html, $start, $end - $start),
+                substr($html, $end, $close_end + 1 - $end)];
+            $pos = $close_end + 1;
+        }
+        return array_merge($result, $this->html_tag_tokens(substr($html, $pos)));
+    }
+
+    /**
+     * @param string $html a part of a html without a style or script
+     * @return array the tag and text strings in their order
+     */
+    private function html_tag_tokens(string $html): array
+    {
+        $result = preg_split('/(<[^>]+>)/', $html, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        return $result === false ? [$html] : $result;
+    }
+
+    /**
+     * the css of a style tag with each rule and declaration on its own line, indented by the depth
+     * of its braces; a line ends only at a space after a "{", ";" or "}" outside a quote, so that
+     * trim_html of the formatted css is the same as of the compact css
+     * e.g. ".a {x: 1; y: 2;} .b {z: 3;}" is written as ".a {x: 1;", "y: 2;}" and ".b {z: 3;}"
+     *
+     * @param string $css the trimmed content of a style tag
+     * @param string $start the indentation of the style tag content
+     * @param string $tab the indentation of one brace level
+     * @return string the css lines each ended by a new line
+     */
+    private function format_css(string $css, string $start, string $tab): string
+    {
+        $lines = [];
+        $line = '';
+        $depth = 0;
+        // the brace depth at the start of the current line
+        $line_depth = 0;
+        $quote = '';
+        $last = '';
+        $len = strlen($css);
+        for ($i = 0; $i < $len; $i++) {
+            $char = $css[$i];
+            if ($quote != '') {
+                if ($char == $quote) {
+                    $quote = '';
+                }
+            } elseif (ctype_space($char) and in_array($last, ['{', ';', '}'])) {
+                // the space ends the line and is replaced by the new line
+                $lines[] = [$line_depth, $line];
+                $line = '';
+                $line_depth = $depth;
+                while ($i + 1 < $len and ctype_space($css[$i + 1])) {
+                    $i++;
+                }
+                $last = '';
+                continue;
+            } elseif ($char == '"' or $char == "'") {
+                $quote = $char;
+            } elseif ($char == '{') {
+                $depth++;
+            } elseif ($char == '}') {
+                $depth = max(0, $depth - 1);
+            }
+            $line .= $char;
+            if (!ctype_space($char)) {
+                $last = $quote == '' ? $char : '';
+            }
+        }
+        $lines[] = [$line_depth, $line];
+        $result = '';
+        foreach ($lines as [$level, $txt]) {
+            // a line that closes a block aligns with the line that has opened it
+            if (str_starts_with($txt, '}')) {
+                $level = max(0, $level - 1);
+            }
+            $result .= $start . str_repeat($tab, $level) . trim($txt) . "\n";
+        }
+        return $result;
+    }
+
+    /**
+     * the json of a data script e.g. the seed of an editor with one key or value per line, indented
+     * by the depth of its brackets; only whitespace outside a string is added, so that each number
+     * e.g. a long id and each escape e.g. "<\/" stays as it is, and compact_json_text removes it again
+     *
+     * @param string $json the trimmed content of a script of type application/json
+     * @param string $start the indentation of the script content
+     * @param string $tab the indentation of one bracket level
+     * @return string the json lines each ended by a new line
+     */
+    private function format_json_text(string $json, string $start, string $tab): string
+    {
+        $json = $this->compact_json_text($json);
+        $result = $start;
+        $depth = 0;
+        $in_string = false;
+        $len = strlen($json);
+        for ($i = 0; $i < $len; $i++) {
+            $char = $json[$i];
+            if ($in_string) {
+                $result .= $char;
+                if ($char == '\\' and $i + 1 < $len) {
+                    $i++;
+                    $result .= $json[$i];
+                } elseif ($char == '"') {
+                    $in_string = false;
+                }
+            } elseif ($char == '"') {
+                $in_string = true;
+                $result .= $char;
+            } elseif ($char == '{' or $char == '[') {
+                $next = $json[$i + 1] ?? '';
+                if (($char == '{' and $next == '}') or ($char == '[' and $next == ']')) {
+                    // an empty object or list stays on one line
+                    $result .= $char . $next;
+                    $i++;
+                } else {
+                    $depth++;
+                    $result .= $char . "\n" . $start . str_repeat($tab, $depth);
+                }
+            } elseif ($char == '}' or $char == ']') {
+                $depth = max(0, $depth - 1);
+                $result .= "\n" . $start . str_repeat($tab, $depth) . $char;
+            } elseif ($char == ',') {
+                $result .= $char . "\n" . $start . str_repeat($tab, $depth);
+            } elseif ($char == ':') {
+                $result .= ': ';
+            } else {
+                $result .= $char;
+            }
+        }
+        return $result . "\n";
+    }
+
+    /**
+     * the html with the json of each data script compacted by compact_json_text; found by a
+     * string search and not by a regex over the content, which a large seed would exceed
+     *
+     * @param string $html a html page e.g. a snapshot formatted by format_html
+     * @return string the html with each data script json without whitespace outside a string
+     */
+    private function compact_json_scripts(string $html): string
+    {
+        $result = '';
+        $pos = 0;
+        while (preg_match(self::JSON_SCRIPT_OPEN, $html, $m, PREG_OFFSET_CAPTURE, $pos)) {
+            $start = $m[0][1] + strlen($m[0][0]);
+            $end = stripos($html, '</script', $start);
+            if ($end === false) {
+                break;
+            }
+            $result .= substr($html, $pos, $start - $pos) . $this->compact_json_text(substr($html, $start, $end - $start));
+            $pos = $end;
+        }
+        return $result . substr($html, $pos);
+    }
+
+    /**
+     * @param string $json a json text e.g. formatted by format_json_text
+     * @return string the json without any whitespace outside a string
+     */
+    function compact_json_text(string $json): string
+    {
+        $result = '';
+        $in_string = false;
+        $len = strlen($json);
+        for ($i = 0; $i < $len; $i++) {
+            $char = $json[$i];
+            if ($in_string) {
+                $result .= $char;
+                if ($char == '\\' and $i + 1 < $len) {
+                    $i++;
+                    $result .= $json[$i];
+                } elseif ($char == '"') {
+                    $in_string = false;
+                }
+            } elseif ($char == '"') {
+                $in_string = true;
+                $result .= $char;
+            } elseif (!ctype_space($char)) {
+                $result .= $char;
+            }
+        }
+        return $result;
     }
 
     /**

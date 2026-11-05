@@ -2384,6 +2384,10 @@
     \-- verb - section for function verb not yet defined that it should be interface in /helper/system_object.php
     \-- verb_by_id - section for function verb_by_id not yet defined that it should be interface in /helper/system_objec
             t.php
+    \-- no_source_id - section for function no_source_id not yet defined that it should be interface in /helper/system_o
+            bject.php
+    \-- set_no_source_id - section for function set_no_source_id is expected to be set and get in /helper/system_object.
+            php
     \-- system_user - section for function system_user not yet defined that it should be interface in /helper/system_obj
             ect.php
     \-- admin_user - section for function admin_user not yet defined that it should be interface in /helper/system_objec
@@ -4127,6 +4131,8 @@
     \-- load_sql_by_phr_single - section for function load_sql_by_phr_single is expected to be load sql in /value/value_
             list.php
     \-- load_names_related - section for function load_names_related is expected to be load in /value/value_list.php
+    \-- load_sources - section for function load_sources is expected to be load in /value/value_list.php
+    \-- api_json_array - section for function api_json_array is expected to be api in /value/value_list.php
     \-- add_value_direct - section for function add_value_direct not yet defined that it should be modify in /value/valu
             e_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /value/value_list.php
@@ -5620,7 +5626,7 @@
     \-- load_changed_objects
         \-- change_log_list - TODO Prio 2 instead of using an array for $other_values create a helper class with vars
     \-- views_array
-        \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
+        \-- sandbox_related - the views that can show the object for the edit menu of the object page; the list is
     \-- views_assigned_array
         \-- sandbox_related - the views assigned to the object by the import for the edit menu of the navbar
     \-- views_assigned
@@ -6147,6 +6153,11 @@
         \-- system_object - get a verb
     \-- verb_by_id
         \-- system_object - get a preloaded verb by its database id e.g. the verb that an api request names by id
+    \-- no_source_id
+        \-- system_object - the id of the source "my estimates" of a value without external source,
+                 which a user value row
+    \-- set_no_source_id
+        \-- system_object - set the id of the source "my estimates" e.g. for a unit test without database
     \-- system_user
         \-- system_object - get a preloaded system user
     \-- admin_user
@@ -7212,9 +7223,11 @@
 \-- formula_calc
     \-- __construct - section for function __construct is expected to be construct and map in /formula/formula_calc.php
     \-- result - section for function result missing in /formula/formula_calc.php
+    \-- expression_with_numbers - section for function expression_with_numbers missing in /formula/formula_calc.php
     \-- calculates_phrase - section for function calculates_phrase missing in /formula/formula_calc.php
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
     \-- arithmetic_tokens - section for function arithmetic_tokens missing in /formula/formula_calc.php
+    \-- missing_operand_phrases - section for function missing_operand_phrases missing in /formula/formula_calc.php
     \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
@@ -7648,6 +7661,8 @@
             kunft.com in /html/html_base.php
     \-- about_body - section for function about_body not yet defined that it should be the form HTML elements used in zu
             kunft.com in /html/html_base.php
+    \-- docs_page - section for function docs_page not yet defined that it should be the form HTML elements used in zuku
+            nft.com in /html/html_base.php
     \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functi
             ons for the pure HTML version in /html/html_base.php
     \-- list_sort - section for function list_sort not yet defined that it should be output device specific support func
@@ -7803,6 +7818,11 @@
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
+\-- markdown
+    \-- doc_path - section for function doc_path missing in /html/markdown.php
+    \-- doc_url - section for function doc_url missing in /html/markdown.php
+    \-- title - section for function title missing in /html/markdown.php
+    \-- to_html - section for function to_html missing in /html/markdown.php
 \-- pdf_writer
     \-- image - section for function image not yet defined that it should be add in /html/pdf_writer.php
     \-- title - section for function title not yet defined that it should be add in /html/pdf_writer.php
@@ -7947,6 +7967,9 @@
             se_list.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- child_links - section for function child_links not yet defined that it should be related in /phrase/phrase_list.
+            php
+    \-- row_names - section for function row_names not yet defined that it should be related in /phrase/phrase_list.php
     \-- parents_all - section for function parents_all not yet defined that it should be related in /phrase/phrase_list.
             php
     \-- sub_types - section for function sub_types not yet defined that it should be related in /phrase/phrase_list.php
@@ -8118,6 +8141,7 @@
     \-- url - section for function url not yet defined that it should be set and get in /ref/source.php
     \-- doi - section for function doi not yet defined that it should be set and get in /ref/source.php
     \-- doi_url - section for function doi_url not yet defined that it should be set and get in /ref/source.php
+    \-- url_or_doi - section for function url_or_doi not yet defined that it should be set and get in /ref/source.php
     \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be set and get in /ref
             /source.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be set and get in /ref/source.
@@ -8734,6 +8758,8 @@
             p
     \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
             /value_list.php
+    \-- export_menu_items - section for function export_menu_items not yet defined that it should be display in /value/v
+            alue_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -8802,7 +8828,6 @@
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
-    \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
     \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
@@ -9831,7 +9856,7 @@
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
-        \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
+        \-- ui_list - HTML for the col-4 tab box of a sandbox object page: a "Changes" tab with the change log
     \-- view_terms
         \-- ui_list - the terms that use the given view as links, used by the used by column of the view add and
     \-- link_list_word
@@ -10044,12 +10069,16 @@
         \-- expression - get a list of all formula elements
     \-- result
         \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- expression_with_numbers
+        \-- formula_calc - the result number with the numbers of the page used as they are shown in the table and below
     \-- calculates_phrase
         \-- formula_calc - @param result $res a result of the page
     \-- tokens
         \-- formula_calc - the calculation of a result as tokens for the browser, which repeats it when an input of a
     \-- arithmetic_tokens
         \-- formula_calc - @param string $txt a part of an expression between two operands e.g. " * 1000 / "
+    \-- missing_operand_phrases
+        \-- formula_calc - the context phrases of each operand of a result that has no number on the page, e.g. world,
     \-- operands
         \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send
@@ -10082,6 +10111,14 @@
         \-- html_selector - 
     \-- end_selector
         \-- html_selector - @returns string the HTML code to end a selector field
+    \-- doc_path
+        \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- doc_url
+        \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- title
+        \-- markdown - @param string $md the markdown text e.g. of a file of /docs/
+    \-- to_html
+        \-- markdown - @param string $md the markdown text e.g. of a file of /docs/
     \-- class_to_api_name
         \-- rest_call - create the class name as used for the api
     \-- api_call_id
@@ -10767,6 +10804,10 @@
         \-- phrase_list - a copy of this list that answers child_names and parent_names from an index of the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- child_links
+        \-- phrase_list - the triples of this list that link a phrase to the given phrase, because a number of a row
+    \-- row_names
+        \-- phrase_list - @param phrase $phr the phrase of a table e.g. "populism solution"
     \-- parents_all
         \-- phrase_list - the given phrase and every phrase above it in this list: the sides that a triple is built
     \-- sub_types
@@ -11096,6 +11137,8 @@
         \-- html_base - @param user_message|Message $msg to colle
     \-- about_body
         \-- html_base - @return string the html code of the about text without the page footer, because the about view
+    \-- docs_page
+        \-- html_base - a markdown document of /docs/ as a html page with the css of zukunft.com
 \-- output device specific support functions for the pure HTML version
     \-- edit_url
         \-- html_base - converts object class name to an edit php script name

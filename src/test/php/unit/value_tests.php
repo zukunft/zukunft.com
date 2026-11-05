@@ -78,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -202,6 +204,32 @@ class value_tests
         $val_filled = $val->clone_reset();
         $val_filled->fill($val, $t->usr1);
         $t->assert($test_name, $val_filled->grp()->name_given(), '');
+
+        // a table shows the source of a value as the tooltip of the number, so the api message that
+        // brings the values brings their sources too and the frontend needs no extra call
+        $t->subheader($ts . 'source');
+        $test_name = 'the api json of a value nests its source if the sources are asked';
+        $val_src = $t_val->value_pi_math();
+        $val_src->set_source(new test_sources($t)->source_reserved());
+        $src_json = $val_src->api_json_array([api_types::INCL_SOURCES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $src_json[json_fields::SOURCE][json_fields::URL] ?? '', sources::SIB_URL);
+        $test_name = '... so the frontend has the source name without a load';
+        $src_ui = new value_ui();
+        $src_ui->api_mapper($src_json, new user_message_ui());
+        $t->assert($test_name, $src_ui->src?->name() ?? '', sources::SIB);
+        // negative: the plain api message stays small
+        $test_name = '... but not if the sources are not asked';
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $val_src->api_json_array([api_types::TEST_MODE], $msg));
+        $test_name = 'the values related to a word ask for the sources and keep the test mode';
+        $rel_typ = new api_type_list([api_types::TEST_MODE])->values_related();
+        $t->assert_true($test_name, $rel_typ->include_sources() and $rel_typ->test_mode());
+        $test_name = 'the values of each phrase are loaded with a call of their own if asked';
+        $per_phr_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        $t->assert_true($test_name, $per_phr_typ->load_per_phrase());
+        // negative: without the flag the phrases are loaded with one call
+        $test_name = '... but not without the flag';
+        $one_call_typ = new api_type_list([api_types::TEST_MODE]);
+        $t->assert_false($test_name, $one_call_typ->load_per_phrase());
 
         // the description that the user types in the change value view is the description of the group
         $t->subheader($ts . 'description');
@@ -573,6 +601,17 @@ class value_tests
         $db_row[sandbox::FLD_CHANGE_USER] = null;
         $val->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert_false($test_name, $val->has_usr_cfg());
+
+        // a value without external source has the user as source, which the user row is stored and shown with
+        $test_name = 'a loaded user value without external source shows "my estimates"';
+        $val = new value($t->usr1);
+        $db_row[sandbox::FLD_CHANGE_USER] = $t->usr1->id();
+        $db_row[source_fields::FLD_ID] = sources::TRUST_ME_BRO_ID;
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert($test_name, $val->source_id(), sources::TRUST_ME_BRO_ID);
+        $test_name = '... because the load never replaces it by the source of the standard row';
+        $qp_load = $t_val->value_16()->load_sql_by_grp($sc, $t_val->value_16()->grp());
+        $t->assert_text_not_contains($test_name, $qp_load->sql, fields::FLD_CODE_ID);
 
         // step 6: each reload of the delete must keep the key of the value, but the group id of a
         // main or big row is a text, which a cast to int would turn into 0

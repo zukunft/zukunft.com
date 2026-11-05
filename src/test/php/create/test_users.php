@@ -332,6 +332,17 @@ class test_users
     }
 
     /**
+     * @return array the fields that the login form posts for the system test user of the login_start_page workflow
+     */
+    static function login_url_array(): array
+    {
+        return [
+            url_var::USERNAME_HUMAN => users::SYSTEM_TEST_NAME,
+            url_var::USER_PASSWORD_HUMAN => users::TEST_USER_PASSWORD,
+        ];
+    }
+
+    /**
      * the fields of the activation link of the signup mail (see frontend::activation_url)
      * @param int $usr_id the id of the signed up user
      * @return array the url fields with the known test key, which the test sets instead of the mailed key

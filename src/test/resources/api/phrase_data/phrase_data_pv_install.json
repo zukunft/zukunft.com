@@ -362,6 +362,11 @@
       "description": "people living together in one dwelling"
     },
     {
+      "id": 1242,
+      "name": "hydropower",
+      "description": "Expansion and modernization of hydroelectric generation, limited by sites, ecology and drought risk. Translation of the German keyword 'Wasserkraft'."
+    },
+    {
       "id": 725,
       "name": "import",
       "description": "a good or service brought into one country from another."
@@ -1105,6 +1110,44 @@
       "to": "PV installation assumption PV in Switzerland"
     },
     {
+      "id": 3691,
+      "name": "hydropower mix",
+      "description": "the electricity of the Swiss storage hydropower plants as a reference: the cleanest Swiss source, so the saving of PV against it is the lower bound",
+      "from": "mix",
+      "verb": "of",
+      "to": "hydropower"
+    },
+    {
+      "id": 3813,
+      "name": "PV installation assumption hydropower mix",
+      "from": "PV installation assumptions",
+      "verb": "has a",
+      "to": "hydropower mix"
+    },
+    {
+      "id": 3878,
+      "name": "PV installation assumption hydropower mix hint",
+      "description": "storage hydropower, whole production chain; run-of-river 3.8 g/kWh",
+      "from": "PV installation assumption hydropower mix",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "id": 3838,
+      "name": "PV installation assumption hydropower mix label",
+      "description": "Swiss hydropower",
+      "from": "PV installation assumption hydropower mix",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "id": 3839,
+      "name": "PV installation assumption hydropower mix order",
+      "from": "PV installation assumption hydropower mix",
+      "verb": "is follower of",
+      "to": "PV installation assumption consumption mix"
+    },
+    {
       "id": 2829,
       "name": "PV installation assumption day share",
       "from": "PV installation assumptions",
@@ -1160,7 +1203,7 @@
       "name": "PV installation assumption replacement mix order",
       "from": "PV installation assumption replacement mix",
       "verb": "is follower of",
-      "to": "PV installation assumption consumption mix"
+      "to": "PV installation assumption hydropower mix"
     },
     {
       "id": 2830,

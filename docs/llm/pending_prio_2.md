@@ -1,9 +1,28 @@
 # pending prio 2
 
+## own sorting of a further unit column
+
+`table_model::col_id_of_name` returns no id for the further column of the same phrase in another unit
+(e.g. `potential gain` in htp next to `potential gain` in EUR), because the url names a column by its phrase
+id; so an own sorting `numeric descending of potential gain in htp` of a table that also shows the gain in EUR
+is ignored with `TABLE_ORDER_UNKNOWN`. The populism solutions sort by the gain in EUR, which is the first unit,
+but the other `problem_*_solutions.json` sort by the gain in htp and fail once their table shows the gain in EUR
+too. A defined order needs the column id (int or string) in `row_orders`, `has_column`, `sort_key` and
+`order_url`, which builds a url only for an int id.
+
+The table of the populism solutions also shows the row "one-click hide, populism" of `problem_populism.json`; check
+whether it is a solution of populism or belongs to another table. The gain in EUR of a populism solution uses the
+annual damage of `problem_populism.json`, the gain in htp the long run share, so the two columns have a different
+time horizon.
+
+A solution whose numbers name its link, e.g. "civic education (populism solution)", is a row of the table by
+`phrase_list::row_names`; the row column then shows the name of the link and not "civic education". Show the
+"from" side of a link whose "to" side is the page phrase, like `value_list::column_head` does for a column.
+
 ## table editor sample data
 
 `use_cases/table_editor_sample.json` holds the example of the table editor as data:
-- the formula `share of the total` divides by `"total","revenue"`, but no value or formula gives the total revenue of Example AG yet, because the formula language has no sum over the top-level rows of a table (the sample adds the sectors without a parent); until then the share has no result
+- the formula `share of the total` divides by `"total","revenue"`, but no value or formula gives the total revenue of ABB yet, because the formula language has no sum over the top-level rows of a table (the sample adds the business areas without a parent); until then the share has no result
 - `growth to the prior period` does the same as the system formula `increase`, only with `growth` as its result phrase
 - the file has no `calc-validation`, so the import does not check the growth and share results
 - the database has no result of `growth to the prior period` either, although every row has the values of two
@@ -12,7 +31,7 @@
 - a verb of a view parameter (`row_verb`, `hierarchy_verb`) is a text in the description of its triple, because a triple cannot point to a verb
 - the tier of an own column is a choice triple from the column item to `mayor`, `main`, `minor` or `marginal`, the to side of the tier keyword, because a triple to `mayor column (system)` itself would be listed by `ui_list::triples_of_types` with the tiers of every table; no code reads the tier of an own column yet
 - `order row (system)` and `table sort` both hold the default sorting of a table, and `order table column (system)` and `table column` both the order of the columns; the code reads `table sort` and `table column` only, so one of each pair should go; until then the sample sets `row_order` as `<column> asc|desc` and has no default sorting, so `row_order` has no triple
-- the phraseData walk of a phrase with own columns keeps every phrase below it as a row, also a kind with rows below it, because a parent row e.g. `Example AG energy` has its own values; a shared word below the table phrase would add its values and results of every other page, so the rows of an own table must be triples of its owner e.g. `Example AG` until the walk can limit the values of a row to the table
+- the phraseData walk of a phrase with own columns keeps every phrase below it as a row, also a kind with rows below it, because a parent row e.g. `ABB Electrification` has its own values; a shared word below the table phrase would add its values and results of every other page, so the rows of an own table must be triples of its owner e.g. `ABB` until the walk can limit the values of a row to the table
 - `row_filter` and `value_conditional_style` hold a minimum number only, although their keywords allow any condition and style rule
 - the options of the table keywords (`dash`, `tooltip`, `scroll`, ...) are defined in the use case file; as part of the keyword set they would belong to `editor_views.json`
 
@@ -42,6 +61,20 @@
   of a phraseData walk, and `cleanup_change_log` finds the log of a deleted triple or word by its name, so the log
   of the deleted seed rows stays; `test_base::delete_change_log_of_obj` callable by id would close this, also for the
   calculator scenarios
+- the definition json groups the fields of the column and the row details as `column_details` and `row_details`; an
+  older definition pasted into "Apply JSON" with these fields still under `columns` or `rows` loses them, because
+  `mergeView` matches by group
+- the column and row labels in the tab "All texts" are only listed, because they are phrase names and the save has no
+  rename of a phrase
+
+## result tooltip
+
+`formula_calc::expression_with_numbers` gives the tooltip of a result: its formula expression with the numbers of the
+page, below the same expression with the term names and the hint `result_tooltip_details`:
+- only the results of a table with own columns get it, because only `ui_list::check_results` repeats the calculation
+  with the page values; the grouped value lists, the result list of the formula page and the result page don't
+- a title attribute is plain text, so the latex of the formula is not shown; a formatted latex tooltip needs a css
+  hover box with the latex converted to MathML by the backend
 
 ## case name of a calculator page
 
@@ -266,6 +299,22 @@ phrase of the component (`place of user`), and the next and back links drop it, 
 refresh button submits the inputs; the refresh button shows the ui message of the component and not
 yet the `button refresh label` / `button refresh tooltip` of the question phrase
 
+### unit snapshots of the start page
+
+`views_by_id/start_page/1_start_page.html` and `1_start_page_more.html` are rendered from the factories
+(`test_values::solution_prio_rows`, `system_view_ui_tests::assert_views_by_id`) and not from the database like
+`1_start_page_details.html`. The factory phrases carry the descriptions of the import and the potential loss of
+the first row is a result with the formula "annual damage in money" as tooltip; still missing compared to the
+database:
+- the ranking numbers are not assumed and have no confidence value, so the cells show "-" with "the source of
+  this number is missing" instead of the "a" mark and the cell tooltip e.g. "assumed, confidence 30"
+  (`value_list` confidence and quality marks); marking them changes the expected marks of `start_ui_tests` and
+  `value_list_ui_tests` too
+- the potential gain of the first row is a result without a formula, because the gain of the factories is in
+  billion htp while the formula "avoided potential loss" of the database calculates it in trillion EUR from the
+  potential loss and the loss reduction; the gain of the factories needs the unit of the database first
+- only the first row is calculated; the other rows are values
+
 ### leftovers
 
 1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,
@@ -397,6 +446,10 @@ if the value if updated use the frontend cache to update the results within the 
 the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
 
 the resultList, the valueList, the phraseList and the phraseData api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
+
+review the cache refresh also for the source nested in each value (api_type_list::VALUES_RELATED, value_list::load_sources) of the valueList answer and of the word and triple api message: a source written in the frontend drops the cached valueList answers (frontend::API_LISTS_OUTDATED_BY), but a source changed via the api of another client or an import drops nothing, so the name, url or doi in the tooltip of a number is renewed only after CACHE_MAX_AGE; also check whether a changed share type of a source, which decides if the user may read it, drops the answers of the other users
+
+the source "my estimates" of a value without external source is read by its code id user_value (system_object::no_source_id), so a pod whose sources table existed before needs an upgrade that sets this code id on its existing "my estimates" row, or adds the row if the pod has none; the sources table has no unique index on the code id
 
 the url form of a group id (shared/group_id_url.php) has known limits:
 - the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
@@ -1398,11 +1451,15 @@ show the phrases of the value in the value del view (m=20): the old controller l
 
 ### view select page (missing parts of the retired http_old/view_select.php)
 
-the legacy controller http_old/view_select.php ('Select the display format for "<word>"') has no mask of its own in the new frontend. Its replacement is the 'Views' tab of the word and triple page (component_types::VIEW_TAB_BOX -> web/component/execute/ui_list.php::view_tab_box), which lists the views of the object with the 'view' and the 'switch' button, and its second tab shows the change log that the old page appended via word::log_view. The old page had no caller left in the program code (only in a commented out navbar block of web/view/view.php). Two things of the old page are missing in the tab box.
+the legacy controller http_old/view_select.php ('Select the display format for "<word>"') has no mask of its own in the new frontend. Its replacement is the list of the alternative views in the edit icon menu of the navbar (sandbox::menu_view_items_ui), which offers each view of the object to open and to switch to; the change log that the old page appended via word::log_view is a tab of the view tab box (web/component/execute/ui_list.php::view_tab_box). Two things of the old page are missing in the edit menu.
 
-add the 'design the view' and the 'delete the view' button to each view of the views tab box: the old page offered them per view (view::selector_page), so a view could be edited or deleted directly from the object page. The new tab box has only 'view' and 'switch'. Use the standard urls /http/view.php?m=31 and m=32 (views::VIEW_EDIT_ID and VIEW_DEL_ID) and remember that a delete must only be offered if the user may delete the view
+add the 'design the view' and the 'delete the view' entry to each alternative view of the edit menu: the old page offered them per view (view::selector_page), so a view could be edited or deleted directly from the object page. Use the standard urls /http/view.php?m=31 and m=32 (views::VIEW_EDIT_ID and VIEW_DEL_ID) and remember that a delete must only be offered if the user may delete the view
 
-the 'switch' button of the views tab box does not save the selected view as the default view of the word, see the word edit view section above; this was the main purpose of the old view select page, so without it the page has no full replacement yet
+switching to another view in the edit menu does not save the selected view as the default view of the word, see the word edit view section above; this was the main purpose of the old view select page, so without it the page has no full replacement yet
+
+the 25 snapshots of `views_by_object/` show the alternative views nowhere, because the test render (`test_base::assert_view_html`) does not pass the type cache and the page object to the edit menu; the menu of these snapshots has only the "customize" entries
+
+the description of the component type "view tab box" still says "tab box with the related views (preview plus open and switch buttons) and the change log" (`component_types::VIEW_TAB_BOX_COM`, `db_code_links/component_types.csv`, `base_views.json`, `system_views.json`); the tab box now has only the change log, so the description and its seed rows should say so
 
 check the 'alternative view' link of the navbar (web/html/html_base.php::view_change_list): it points to the hard coded string '?m=view_change&id=2', but there is no view_change const in shared/const/views.php, so the link probably does not resolve to a view. Either add the missing view and its const or let the link open the views tab of the object
 
@@ -2314,3 +2371,13 @@ and `"person","km2"` (2) in `zurich.json`. Each pair needs one triple with the o
 the operands and results of the formulas of these files, e.g. `"potential loss","percent","htp"`, and of the test
 fixtures in `test_values.php`, so all of them change together in one step with a test run, and the column and unit
 logic of `value_list` has to show the new triple like the two phrases before.
+
+## size of the json seeds
+
+The `<script type="application/json">` seeds of the use case pages reach about 1.2 MB each, e.g. in
+`table_editor_global_warming_solution.html` and `portfolio_split_calculator_no_js.html`. A lazy pcre regex over
+a seed hits `pcre.backtrack_limit` (1,000,000) and returns null, so `library::format_html`,
+`coding_rule_tests::without_script_code` and `headless_browser::element_text` use a string search. Review
+which parts of a seed the page really needs, drop the rest and split the seed into smaller parts, e.g. one
+script element per phrase list, value list and formula list, so that a seed stays well below the limit, the
+page loads faster and a snapshot diff shows only the part that has changed.

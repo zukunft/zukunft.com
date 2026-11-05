@@ -114,6 +114,19 @@ class localhost_ui_tests
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
 
+        $this->run_start_page($t);
+    }
+
+    /**
+     * the start page snapshot views_by_id/start_page/1_start_page_details.html fetched from the pod
+     * separate from run(), so that test/test_part.php can rebuild it without the other localhost views
+     */
+    function run_start_page(test_cleanup $t): void
+    {
+        global $sys;
+
+        $t->subheader('unit ui localhost start page');
+
         // the start page with the main columns and the variance of its table shows the real
         // ranking data imported before this test, which the unit fixtures of the start page do
         // not carry, so this snapshot is the only one of views_by_id that is fetched from the pod

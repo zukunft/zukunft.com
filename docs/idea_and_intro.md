@@ -1,4 +1,5 @@
-# The Idea Behind zukunft.com: Calculating with Words
+# The idea of zukunft.com:
+# Calculating with Words
 
 ## How it started
 
@@ -79,12 +80,15 @@ This is the bridge to the project's decision idea (see the wiki page "Decisions"
 
 A present-day chatbot gives an answer, but you cannot check how it came about. Here it is the other way around: the system outputs nothing it could not disclose. Every value is traceable to its words, its sources, and its formula. The machine should make human thinking easier, not replace it.
 
+Why a chatbot by concept cannot guarantee the same result for a complex question, and other common questions, are answered in the [FAQ](faq.md).
+
 ## Where to start
 
 **Conceptual overview:**
 
 - **The whole idea:** The [concept paper](concept_paper_en.md) connects Rawls' Veil of Ignorance, the Real-Time Delphi method, and the Giant Global Graph into a procedure for fair, evidence-based decisions. (Also available [in German](konzeptpapier_de.md).)
 - **The idea in short:** [concept.md](concept.md) – why numbers without words are useless, and why pure RDF is not used.
+- **Common questions:** the [FAQ](faq.md), e.g. why this cannot simply be done by an AI chatbot.
 
 **The data format in detail:**
 

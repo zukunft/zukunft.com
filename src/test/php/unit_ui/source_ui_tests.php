@@ -252,14 +252,16 @@ class source_ui_tests
         $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $tab_html = $list->view_tab_box($src_tab, $msg, true);
 
-        $test_name = 'the source page shows the views tab';
-        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
-        $test_name = '... with the name of a view that can show the source';
-        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the views of the source are offered by the edit menu of the navbar, so the page has no views tab
+        $test_name = 'the source page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... but the edit menu offers a view that can show the source';
+        $menu_html = $src_tab->menu_view_items_ui($src_tab->view_lst);
+        $t->assert_text_contains($test_name, $menu_html, views::SCIENCE);
         // the switch button must open the edit view of the shown object, so on a source page the
         // source edit view and never the word edit view (see view::switch_link)
-        $test_name = '... and a switch button that opens the source edit view';
-        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::SOURCE_EDIT_ID);
+        $test_name = '... with a switch button that opens the source edit view';
+        $t->assert_text_contains($test_name, $menu_html, url_var::MASK . '=' . views::SOURCE_EDIT_ID);
 
         $test_name = 'the source page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
@@ -278,10 +280,9 @@ class source_ui_tests
         $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
         $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
-        $test_name = 'a source without the related data shows no views and no my tab';
+        $test_name = 'a source without the related data shows no my tab';
         $src_plain = new source($t_src->source_filled_included()->api_json());
         $plain_html = $list->view_tab_box($src_plain, $msg, true);
-        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
 
         $test_name = 'without a logged in user the source page shows no my tab';

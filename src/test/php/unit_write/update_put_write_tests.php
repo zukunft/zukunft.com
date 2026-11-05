@@ -122,7 +122,7 @@ class update_put_write_tests
     // the triples of the table definition of sector of revenue (table_editor_sample.json) that the table editor actions remove, in the order of the delete list
     const array TABLE_MOVE_COLUMN_FOLLOWERS = [
         'sector of revenue columns 2025 is follower of sector of revenue columns 2024',
-        'sector of revenue columns 2023 is follower of sector of revenue columns 2025'
+        'sector of revenue columns growth is follower of sector of revenue columns 2025'
     ];
     const array TABLE_REMOVE_COLUMN_TRIPLES = [
         'sector of revenue columns confidence is follower of sector of revenue columns source',
