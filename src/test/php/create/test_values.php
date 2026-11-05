@@ -811,6 +811,25 @@ class test_values extends test_objects
     }
 
     /**
+     * the inhabitants of the city of Zurich as a measured value with the phrases of the result of
+     * test_results::result_list_zh_city_ui, so that both have the same phrase group and id
+     *
+     * @param float $number the measured number, which may differ from the result on purpose
+     * @return value_list_ui the frontend list with the one value
+     */
+    function value_list_zh_city_ui(float $number): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([
+            $t_trp->zh_city()->phrase(),
+            $t_wrd->word_inhabitant()->phrase()
+        ], $number));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss and the potential gain of every global problem of solution_prio.json,
      * so that the start page table of the global issues can be tested with the data that the
      * import creates: per problem the loss in trillion EUR and the gain of its solution in

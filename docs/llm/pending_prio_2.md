@@ -1,5 +1,42 @@
 # pending prio 2
 
+## speed up
+
+### group id index
+
+to select the group id via database index instead of pattern match create a 
+group_select table with the fields phrase_id and the group_id where the phrase_id isan index
+
+to select values or results use the group_select table to get a list on group id via database index
+this list can be used to select the values or results also via database index
+and a time consuming pattern match can be avoided
+
+### user overwrite
+
+instead of using join sql statements to get the standard and the user values with one database query
+use seperate queries for the standard data and in a second step overwrite the values with the user value 
+received from the database with a second sql call
+
+### compact messages
+
+check that the json messages are as compact as possible, so one rule is that within one message data should not be repeated
+this implies e.g. that for values that have a group id and where the phrase with name is already included in the message
+the phrase names and also the phrase id should not be repeated in the values because the group id contains already this information
+
+## phrases of a list answer in the request cache
+
+The value and result list answer names each phrase once (`api_types::PHRASES_ONCE`), but the frontend does not add
+these phrases to the request cache (`data_object::add_phrases`), because `ListBase::api_mapper_with_phrases` has
+no `data_object`; a page that needs such a phrase by name later loads it again.
+
+## triple sides in the api json of a value or result list
+
+`sandbox_value_list::api_json_array` loads the from and to of the triples only for the phrases that
+`set_phrases` reads; a list whose load has set the group names already gets triples without their
+sides, so a caller must call `load_phrases` first, as `api/valueList` and `api/resultList` do. Calling
+`load_phrases` inside `api_json_array` would close the gap, but the unit tests map their lists with
+`test_lib::list_to_ui` without `api_types::TEST_MODE`, so it would query the triple sides there too.
+
 ## own sorting of a further unit column
 
 `table_model::col_id_of_name` returns no id for the further column of the same phrase in another unit
@@ -91,7 +128,8 @@ page, below the same expression with the term names and the hint `result_tooltip
 `web/component/execute/calculator_report.php` shows what the backend has saved:
 - numbers that a user has changed in the browser and not saved are not part of the pdf
 - the diagrams are not drawn, because `pdf_writer` has no vector graphics; their numbers are in the walk table
-- `pdf_writer` uses the standard fonts of Windows-1252, so a char outside of it is shown as a question mark
+- `pdf_writer` shows a char that DejaVu Sans does not have as the missing glyph of the font, and writes the page content uncompressed, so that the tests can find the glyph ids of a text
+- the reports use DejaVu Sans, because no user setting selects Noto Sans (`pdf_writer::FAMILY_NOTO`) yet; a config value `report font` next to `report logo` would add a seed triple and shift the ids of the triples imported after it
 - the setting `report logo` needs a jpeg in the images folder of the server, so a user without server access needs an upload
 - the isin column stays empty until the portfolio import adds a triple from a holding to a phrase that is an `ISIN`
 - `user_logo` has no unit test, because the test has no config value with a logo; the fallback to the zukunft.com logo is tested

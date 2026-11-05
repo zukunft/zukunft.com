@@ -102,6 +102,32 @@ function pressSave() {
     click("#btnSave");
 }
 
+/* open the Definition tab and write its json into the page as the message of the scenario */
+function showJsonTab() {
+    click("#tab-json");
+    messageElement.textContent = document.getElementById("jsonText").value;
+}
+
+/* open the PDF tab as on a pod and press Create PDF: the fetch of the pdf writes the route, whether the token of the
+   page is sent and the posted data into the page as the message of the scenario and never answers */
+function pressCreatePdf() {
+    SOURCE.mode = "api";
+    SOURCE.online = true;
+    SOURCE.root = "/";
+    window.fetch = function (url, opts) {
+        const token = document.querySelector('input[name="' + SESSION_TOKEN_NAME + '"]');
+        messageElement.textContent = JSON.stringify({
+            route: url,
+            token_sent: token !== null && opts.headers[CSRF_HEADER] === token.value,
+            body: JSON.parse(opts.body)
+        });
+        return new Promise(function () {
+        });
+    };
+    click("#tab-pdf");
+    click('[data-act="createPdf"]');
+}
+
 const SCENARIOS = {
     /* the user changes the expression of the autarky formula and saves it */
     autarky_formula: function () {
@@ -123,6 +149,27 @@ const SCENARIOS = {
         selectItem(PV_CAPACITY);
         typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
         pressSave();
+    },
+    /* the user changes the general label and opens the Definition tab, whose json is the message */
+    json_tab_label: function () {
+        selectItem(PV_CAPACITY);
+        typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
+        showJsonTab();
+    },
+    /* the user opens the Definition tab without a change */
+    json_tab: function () {
+        showJsonTab();
+    },
+    /* the user changes the general label and creates the pdf on a pod, which posts the data with the change */
+    pdf_tab_label: function () {
+        selectItem(PV_CAPACITY);
+        typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
+        pressCreatePdf();
+    },
+    /* the user opens the PDF tab of a page that is not on a pod, where only a pod can create the pdf */
+    pdf_tab_offline: function () {
+        click("#tab-pdf");
+        messageElement.textContent = JSON.stringify({disabled: document.querySelector('[data-act="createPdf"]').disabled});
     },
     /* the user changes the general label and the general hint and undoes the hint */
     pv_capacity_label_undo: function () {

@@ -126,7 +126,10 @@ class a_selected_test extends all_unit_tests
         //files::IMPORT_WIND_INVESTMENT,
     ];
 
-    // true to import the data of the start page again and to rebuild its snapshot
+    // true to import the data of the start page again before its snapshot is checked
+    const bool SELECTED_START_PAGE_IMPORT = false;
+
+    // true to check and rebuild the start page snapshot
     // views_by_id/start_page/1_start_page_details.html, which localhost_ui_tests fetches from the pod
     const bool SELECTED_START_PAGE = true;
 
@@ -181,6 +184,7 @@ class a_selected_test extends all_unit_tests
         // because e.g. the delete sql creation tests are done with the system user
         $this->usr_system = $this->user_system();
         $u_env->init_unit_tests($this->usr1);
+        $this->step('unit test env prepared');
 
         /*
          * unit testing - without users
@@ -205,10 +209,12 @@ class a_selected_test extends all_unit_tests
         $db_con->close();
         $app = new application();
         $db_con = $app->start("reload cache after unit testing", false, true);
+        $this->step('db reopened and cache reloaded');
 
         // create the testing users
         $this->set_users();
         $usr = $this->usr1;
+        $this->step('test users set');
 
         if ($usr->id > 0) {
 
@@ -218,7 +224,9 @@ class a_selected_test extends all_unit_tests
             global $sys;
             $sys_msg = new user_message_cfg(user::system());
             $db_con->db_fill_code_links($sys_msg);
+            $this->step('code links filled');
             $sys->load_type_lists($db_con, $sys_msg);
+            $this->step('type lists loaded');
 
             /*
              * db read
@@ -247,6 +255,7 @@ class a_selected_test extends all_unit_tests
 
             $ui = new frontend('api based ui tests');
             $ui->load_cache($msg_ui);
+            $this->step('frontend cache loaded');
             // the html renderers read the type cache from the global $ui_sys; point it at the just
             // loaded frontend cache so the render does not depend on a stale cache of the unit tests
             // (same pattern as url_test_base and /http/view.php)
@@ -304,7 +313,7 @@ class a_selected_test extends all_unit_tests
                 $imp_msg = $imf->json_file($import_file, $usr, false);
                 $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
-            if (self::SELECTED_START_PAGE) {
+            if (self::SELECTED_START_PAGE_IMPORT) {
                 foreach ($this->start_page_import_files() as $import_file) {
                     $test_name = 'the start page file ' . basename($import_file) . ' is imported again';
                     $imp_msg = $imf->json_file($import_file, user::system(), false);
@@ -314,6 +323,7 @@ class a_selected_test extends all_unit_tests
             // a types api call during the imports may have cached the system phrases without the
             // phrases imported after it, so the pod reads the types again like after the db setup
             new db_cache(user::system())->del_types($sys_msg);
+            $this->step('pod type cache cleared');
 
 
             /*
@@ -353,6 +363,8 @@ class a_selected_test extends all_unit_tests
             // the data of a phrase for api/phraseData, checked against the hand made sample
             //new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
+            // the start page steps up to the results of the initial effort, after which the page stops
+            $msk_tests->run_start_page_steps($this);
             //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);
             //$msk_tests->run_words($this, $cfg);

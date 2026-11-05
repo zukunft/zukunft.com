@@ -83,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -92,6 +93,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -125,6 +127,14 @@ class api_tests
     const string PHP_DEFAULT_FILENAME = 'index.php';
     // a walk value of the phrase data api that names no walk, built from the field name like the real values
     const string UNKNOWN_PHRASE_DATA_WALK = 'pwx';
+    // the answer of the pdf of the calculator editor: the http status codes, the start of a pdf file,
+    // a token that is not the token of the session and a body that is no json
+    const string HTTP_OK = '200';
+    const string HTTP_BAD_REQUEST = '400';
+    const string HTTP_FORBIDDEN = '403';
+    const string PDF_START = '%PDF-';
+    const string WRONG_TOKEN = 'system_test_wrong_token';
+    const string NO_JSON = 'system test no json';
 
 
     /*
@@ -254,6 +264,7 @@ class api_tests
         $err_txt = $phd_json[json_fields::MSG] ?? '';
         $t->assert_text_contains($test_name, $err_txt, self::UNKNOWN_PHRASE_DATA_WALK);
         $msg->reset();
+        $this->run_calculator_pdf($t, $ts);
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO Prio 2 add value_list tests for prime, normal and big value tables
         // TODO Prio 2 add a test case for empty list, no key found, and more  values than the page size
@@ -328,6 +339,42 @@ class api_tests
         $phr_zh->load_by_id($phr_zh->id(), $msg_ui);
         $t->assert($test_name, $phr_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
+    }
+
+    /**
+     * the pdf of the calculator editor is created only for a logged-in user with the token of the session
+     * and only from json, because the entry point creates a pdf for any posted page data
+     *
+     * @param test_cleanup $t the test environment with the admin session of api_login
+     * @param string $ts the name of the test section
+     */
+    private function run_calculator_pdf(test_cleanup $t, string $ts): void
+    {
+        $t->subheader($ts . 'calculator pdf');
+        $token = $t->api_session_token();
+        if ($token == '') {
+            // the admin login may time out during a full run (see test_base::login_admin_cookie)
+            $t->dsp_warning('the calculator pdf tests are skipped, because the admin login has not been possible');
+        } else {
+            $url = THIS_URL . api::CALCULATOR_PDF_SCRIPT;
+            $pv_json = file_get_contents(test_files::PHRASE_DATA_PV_INSTALL);
+            $test_name = 'the pdf of the calculator editor is created from the posted data of the page';
+            [$status, $answer] = $t->post_with_session($url, $pv_json, $token);
+            $t->assert($test_name, $status, self::HTTP_OK, $t::TIMEOUT_LIMIT_IMPORT);
+            $t->assert_true($test_name, str_starts_with($answer, self::PDF_START));
+            // negative: a request without the token of the session could come from another site
+            $test_name = '... but not without the token of the session';
+            [$status, $answer] = $t->post_with_session($url, $pv_json, '');
+            $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
+            $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_LOGIN->text());
+            $test_name = '... and not with another token';
+            [$status, $answer] = $t->post_with_session($url, $pv_json, self::WRONG_TOKEN);
+            $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
+            $test_name = '... and not from a body that is no json';
+            [$status, $answer] = $t->post_with_session($url, self::NO_JSON, $token);
+            $t->assert($test_name, $status, self::HTTP_BAD_REQUEST);
+            $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_JSON->text());
+        }
     }
 
     /**

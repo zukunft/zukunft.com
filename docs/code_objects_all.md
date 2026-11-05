@@ -408,6 +408,7 @@ the object structure is:
 ├── view_typesShared - db based ENUM of the view types
 ├── url_varShared - all names used for the url and the form field names
 ├── calculatorUi - read the calculator triples of a page phrase
+├── calculator_definition_reportUi - the pdf of the definition of a calculator
 ├── calculator_reportUi - the pdf report of a calculator page
 ├── ui_baseUi
 │   ├── ui_im_exportUi - html user interface components for im- and export
@@ -439,6 +440,7 @@ the object structure is:
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
 ├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
 ├── markdownUi - show a markdown document of /docs/ as html
+├── pdf_fontUi - a TrueType font that a pdf embeds as a subset with the Identity-H encoding
 ├── pdf_writerUi - a minimal writer for a pdf with text, tables and one jpeg image
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend

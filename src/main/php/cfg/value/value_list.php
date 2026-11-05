@@ -286,16 +286,18 @@ class value_list extends sandbox_value_list
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      * @param int $limit the number of values that should be loaded at once
      * @param int $page the offset for the limit
+     * @param bool $paged true if the caller loads the next page while has_next_page is set (see load_by_phr_lst_multi)
      * @return bool true if at least one value found
      */
     function load_by_phr_lst(
         phrase_list  $phr_lst,
         user_message $msg, bool $or = false,
         int          $limit = sql_db::ROW_MAX,
-        int          $page = 0
+        int          $page = 0,
+        bool         $paged = false
     ): bool
     {
-        return parent::load_by_phr_lst_multi($phr_lst, $msg, value::class, $or, $limit, $page);
+        return parent::load_by_phr_lst_multi($phr_lst, $msg, value::class, $or, $limit, $page, $paged);
     }
 
     /**

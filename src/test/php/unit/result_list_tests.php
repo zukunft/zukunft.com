@@ -43,7 +43,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -137,6 +139,24 @@ class result_list_tests
         $res_lst = $t_res->result_list();
         $added = $res_lst->add($t_res->result_simple_1());
         $t->assert_false($test_name, $added);
+
+        // the results of a missing operand are only sent if the calculation can use them
+        $test_name = 'filter within keeps the results with only phrases of the context';
+        $res_lst = $t_res->result_list();
+        $res_lst->filter_within_phrases([word_names::MATH_ID]);
+        $within_count = $res_lst->count();
+        $t->assert($test_name, $within_count, 1);
+        $test_name = '... and all results if the context has all their phrases';
+        $res_lst = $t_res->result_list();
+        $res_lst->filter_within_phrases([word_names::MATH_ID, words::PCT_ID]);
+        $all_count = $res_lst->count();
+        $t->assert($test_name, $all_count, 2);
+        // negative: a result with a phrase outside the context is not used by the calculation
+        $test_name = '... but none if the context has none of their phrases';
+        $res_lst = $t_res->result_list();
+        $res_lst->filter_within_phrases([word_names::TRILLION_ID]);
+        $none_count = $res_lst->count();
+        $t->assert($test_name, $none_count, 0);
 
 
         $t->subheader($ts . 'im- and export');

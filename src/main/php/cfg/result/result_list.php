@@ -69,6 +69,7 @@ include_once paths::MODEL_WORD . 'word_db.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
@@ -108,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -138,16 +140,18 @@ class result_list extends sandbox_value_list
      * @param bool $or if true all results are returned that are linked to any phrase of the list
      * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
+     * @param bool $paged true if the caller loads the next page while has_next_page is set (see load_by_phr_lst_multi)
      * @return bool true if at least one value found
      */
     function load_by_phrase_list(
         phrase_list $phr_lst,
         user_message $msg, bool        $or = false,
         int         $limit = sql_db::ROW_MAX,
-        int         $page = 0
+        int         $page = 0,
+        bool        $paged = false
     ): bool
     {
-        return parent::load_by_phr_lst_multi( $phr_lst, $msg, result::class, $or, $limit, $page );
+        return parent::load_by_phr_lst_multi( $phr_lst, $msg, result::class, $or, $limit, $page, $paged );
     }
 
     /**
@@ -826,6 +830,19 @@ class result_list extends sandbox_value_list
 
 
     /*
+     * api
+     */
+
+    /**
+     * @return string the field of the results in the list answer with each phrase once
+     */
+    protected function api_items_key(): string
+    {
+        return json_fields::RESULTS;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -851,6 +868,30 @@ class result_list extends sandbox_value_list
         }
 
         return $msg->is_ok();
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * keep only the results whose phrases are all part of the given context, because the calculation
+     * of a result uses only a number whose phrases are all part of its context, so that a page
+     * gets the results of a missing operand without the results of every other phrase of the operand
+     *
+     * @param array $ctx_ids the phrase ids that a kept result may have e.g. the context of the results of a table
+     * @return void
+     */
+    function filter_within_phrases(array $ctx_ids): void
+    {
+        $result = [];
+        foreach ($this->lst() as $res) {
+            if (array_diff($res->id_lst(), $ctx_ids) == []) {
+                $result[] = $res;
+            }
+        }
+        $this->set_lst($result);
     }
 
 

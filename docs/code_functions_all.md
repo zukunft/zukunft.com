@@ -1983,6 +1983,7 @@
     \-- order error - order of section load has difference at load_by_ids should be before load_sql_by_names
 \-- group_id
     \-- get_id - section for function get_id is expected to be set and get in /group/group_id.php
+    \-- get_id_by_ids - section for function get_id_by_ids is expected to be set and get in /group/group_id.php
     \-- max_number_of_phrase - section for function max_number_of_phrase not yet defined that it should be database link
              in /group/group_id.php
     \-- get_array - section for function get_array is expected to be set and get in /group/group_id.php
@@ -3100,6 +3101,8 @@
             .php
     \-- load_by_grp - section for function load_by_grp is expected to be load in /result/result_list.php
     \-- load_by_obj - section for function load_by_obj is expected to be load in /result/result_list.php
+    \-- filter_within_phrases - section for function filter_within_phrases not yet defined that it should be modify in /
+            result/result_list.php
     \-- name - section for function name is expected to be debug in /result/result_list.php
     \-- names - section for function names is expected to be info in /result/result_list.php
     \-- add_frm_val - section for function add_frm_val not yet defined that it should be TODO Prio 2 check in /result/re
@@ -6000,6 +6003,8 @@
     \-- get_id
         \-- group_id - @param phrase_list $phr_lst the list of phrases that define the value
         \-- result_id - @param phrase_list $phr_lst the list of phrases that define the result
+    \-- get_id_by_ids
+        \-- group_id - the group id of the given phrase ids, without the phrase objects, so that a list load can
     \-- max_number_of_phrase
         \-- group_id - get the max number if phrases for type of the given id
     \-- get_array
@@ -6624,8 +6629,13 @@
             ator.php
     \-- property - section for function property not yet defined that it should be internal in /component/execute/calcul
             ator.php
+\-- calculator_definition_report
+    \-- pdf - section for function pdf missing in /component/execute/calculator_definition_report.php
+    \-- page_name - section for function page_name missing in /component/execute/calculator_definition_report.php
+    \-- page_cache - section for function page_cache missing in /component/execute/calculator_definition_report.php
 \-- calculator_report
     \-- pdf - section for function pdf missing in /component/execute/calculator_report.php
+    \-- add_logo - section for function add_logo missing in /component/execute/calculator_report.php
     \-- add_html - section for function add_html missing in /component/execute/calculator_report.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
@@ -7044,8 +7054,11 @@
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
     \-- calculator_text - section for function calculator_text missing in /component/execute/ui_list.php
     \-- calculator_arguments - section for function calculator_arguments missing in /component/execute/ui_list.php
+    \-- calculator_more - section for function calculator_more missing in /component/execute/ui_list.php
     \-- calculator_verdict - section for function calculator_verdict missing in /component/execute/ui_list.php
     \-- calculator_sensitivity - section for function calculator_sensitivity missing in /component/execute/ui_list.php
+    \-- calculator_sensitivity_filled - section for function calculator_sensitivity_filled missing in /component/execute
+            /ui_list.php
     \-- calculator_remove_button - section for function calculator_remove_button missing in /component/execute/ui_list.p
             hp
     \-- calculator_imports - section for function calculator_imports missing in /component/execute/ui_list.php
@@ -7228,6 +7241,7 @@
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
     \-- arithmetic_tokens - section for function arithmetic_tokens missing in /formula/formula_calc.php
     \-- missing_operand_phrases - section for function missing_operand_phrases missing in /formula/formula_calc.php
+    \-- missing_operands - section for function missing_operands missing in /formula/formula_calc.php
     \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
@@ -7404,6 +7418,10 @@
             ta_object.php
     \-- add_results_of - section for function add_results_of not yet defined that it should be set and get in /helper/da
             ta_object.php
+    \-- has_results_within - section for function has_results_within not yet defined that it should be set and get in /h
+            elper/data_object.php
+    \-- add_results_within - section for function add_results_within not yet defined that it should be set and get in /h
+            elper/data_object.php
     \-- result_list - section for function result_list not yet defined that it should be set and get in /helper/data_obj
             ect.php
     \-- formula_list - section for function formula_list not yet defined that it should be set and get in /helper/data_o
@@ -7547,6 +7565,8 @@
     \-- ref_to_frame - section for function ref_to_frame not yet defined that it should be header & footer in /html/html
             _base.php
     \-- refresh - section for function refresh not yet defined that it should be header & footer in /html/html_base.php
+    \-- loading_step - section for function loading_step not yet defined that it should be header & footer in /html/html
+            _base.php
     \-- loading_end - section for function loading_end not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -7823,14 +7843,25 @@
     \-- doc_url - section for function doc_url missing in /html/markdown.php
     \-- title - section for function title missing in /html/markdown.php
     \-- to_html - section for function to_html missing in /html/markdown.php
+\-- pdf_font
+    \-- __construct - section for function __construct is expected to be construct and map in /html/pdf_font.php
+    \-- glyph_id - section for function glyph_id not yet defined that it should be get in /html/pdf_font.php
+    \-- has_glyph - section for function has_glyph not yet defined that it should be get in /html/pdf_font.php
+    \-- width - section for function width not yet defined that it should be get in /html/pdf_font.php
+    \-- objects - section for function objects not yet defined that it should be output in /html/pdf_font.php
 \-- pdf_writer
+    \-- __construct - section for function __construct is expected to be construct and map in /html/pdf_writer.php
+    \-- set_footer - section for function set_footer is expected to be set and get in /html/pdf_writer.php
     \-- image - section for function image not yet defined that it should be add in /html/pdf_writer.php
     \-- title - section for function title not yet defined that it should be add in /html/pdf_writer.php
     \-- heading - section for function heading not yet defined that it should be add in /html/pdf_writer.php
     \-- text - section for function text not yet defined that it should be add in /html/pdf_writer.php
+    \-- page_break - section for function page_break not yet defined that it should be add in /html/pdf_writer.php
+    \-- space - section for function space not yet defined that it should be add in /html/pdf_writer.php
     \-- table - section for function table not yet defined that it should be add in /html/pdf_writer.php
     \-- output - section for function output not yet defined that it should be output in /html/pdf_writer.php
     \-- text_width - section for function text_width not yet defined that it should be internal in /html/pdf_writer.php
+    \-- text_code - section for function text_code not yet defined that it should be internal in /html/pdf_writer.php
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
@@ -8051,6 +8082,8 @@
     \-- mainly - section for function mainly not yet defined that it should be modify in /phrase/phrase_list.php
     \-- add_phrase - section for function add_phrase not yet defined that it should be modify in /phrase/phrase_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /phrase/phrase_list.php
+    \-- short_names - section for function short_names not yet defined that it should be modify in /phrase/phrase_list.p
+            hp
     \-- dsp_name - section for function dsp_name not yet defined that it should be modify in /phrase/phrase_list.php
     \-- common - section for function common not yet defined that it should be modify in /phrase/phrase_list.php
     \-- get_grp_id - section for function get_grp_id is expected to be set and get in /phrase/phrase_list.php
@@ -9517,6 +9550,10 @@
         \-- data_object - @param int $phr_id the id of the phrase of a page
     \-- add_results_of
         \-- data_object - add the loaded results of a phrase to the result list, which can hold the results of
+    \-- has_results_within
+        \-- data_object - @param int $phr_id the id of the phrase of a missing operand
+    \-- add_results_within
+        \-- data_object - add the loaded results of phrases within a context, e.g. of the missing operands of a table
     \-- result_list
         \-- data_object - @return result_list with the results of this data object
     \-- set_formula_list
@@ -9666,12 +9703,23 @@
                 chain
         \-- number_format - @param formula_list|null $frm_lst the formulas that convert the units; null for the preloade
                 d ones
+        \-- pdf_font - @param string $file the path of the TrueType font file e.g. files::PDF_FONT_DEJAVU
+        \-- pdf_writer - @param bool $portrait true for A4 portrait pages e.g. for a document to read,
+                 else A4 landscape e.g. for wide tables
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
         \-- table_model - 
     \-- pdf
+        \-- calculator_definition_report - @param array $doc the data of the page as the calculator editor exports it (t
+                he format of the phraseData api)
         \-- calculator_report - @param word|triple|null $dbo the phrase of the page
+    \-- page_name
+        \-- calculator_definition_report - @param array $doc the data of the page
+    \-- page_cache
+        \-- calculator_definition_report - @param array $doc the data of the page as the editor exports it
+    \-- add_logo
+        \-- calculator_report - add the logo that the user has set in the config, else the logo of zukunft.com,
     \-- add_html
         \-- calculator_report - add a part of the page: its headings, tables and texts in their order
     \-- form_tile
@@ -9895,10 +9943,15 @@
         \-- ui_list - a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
     \-- calculator_arguments
         \-- ui_list - the collapsed lead text and the arguments of both sides below the title of the page
+    \-- calculator_more
+        \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculator_verdict
         \-- ui_list - the verdict box: the state that the number of the first phrase has compared with the
     \-- calculator_sensitivity
-        \-- ui_list - the sensitivity table with its rows and columns; the numbers need a calculation per cell, so
+        \-- ui_list - the sensitivity table with its rows and columns; the numbers need a calculation of the page per ce
+                ll,
+    \-- calculator_sensitivity_filled
+        \-- ui_list - the sensitivity table with the numbers of each cell, e.g. for a pdf, which has no script:
     \-- calculator_remove_button
         \-- ui_list - the button to remove an instance of a repeated field at its place,
                  without a function so far (docs/llm/pending.md)
@@ -10079,6 +10132,8 @@
         \-- formula_calc - @param string $txt a part of an expression between two operands e.g. " * 1000 / "
     \-- missing_operand_phrases
         \-- formula_calc - the context phrases of each operand of a result that has no number on the page, e.g. world,
+    \-- missing_operands
+        \-- formula_calc - the context phrases of each operand of a result that has no number on the page, one list per
     \-- operands
         \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send
@@ -10362,6 +10417,8 @@
     \-- link_style
         \-- html_base - @param string $stylesheet path to the stylesheet file
     \-- text_width
+        \-- pdf_writer - @param string $text the text in utf-8
+    \-- text_code
         \-- pdf_writer - @param string $text the text in utf-8
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
@@ -10747,6 +10804,8 @@
         \-- phrase_list - add a phrase to the list
     \-- remove
         \-- phrase_list - remove all phrases of the given list from this list
+    \-- short_names
+        \-- phrase_list - the names of the first phrases as plain text in the order of the list, e.g. for the loading
     \-- dsp_name
         \-- phrase_list - @return string one string with all names of the list and reduced in size mainly for debugging
     \-- common
@@ -10917,6 +10976,9 @@
 \-- set
     \-- set
         \-- button - set the button user test
+    \-- set_footer
+        \-- pdf_writer - add a footer line to each page, which is written with the file,
+                 because only then the number of pages is known
 \-- HTML code
     \-- add
         \-- button - html code for a icon to create a new entry
@@ -11008,8 +11070,10 @@
     \-- refresh
         \-- html_base - @param string $url the url that the browser loads next,
                  which starts a download without a script if it is a file
+    \-- loading_step
+        \-- html_base - @param string $text the step that the slow page is doing now
     \-- loading_end
-        \-- html_base - @return string the html code that hides the start of the page sent by loading_start
+        \-- html_base - @return string the html code that closes the start of the page sent by loading_start
 \-- wrapper for the basic html elements used
     \-- ref
         \-- html_base - create the html code for a link
@@ -11272,6 +11336,19 @@
         \-- html_base - display a message immediately to the user
     \-- ui_progress
         \-- html_base - 
+\-- get
+    \-- glyph_id
+        \-- pdf_font - @param int $code the unicode code point of a char
+    \-- has_glyph
+        \-- pdf_font - @param int $code the unicode code point of a char
+    \-- width
+        \-- pdf_font - @param int $gid the id of a glyph of the font
+\-- output
+    \-- objects
+        \-- pdf_font - @param int $first_id the id of the first of the pdf objects of the font,
+                 which is the font that a page uses
+    \-- output
+        \-- pdf_writer - @return string the complete pdf file with at least one page
 \-- add
     \-- image
         \-- pdf_writer - add a jpeg image at the current position, of which a pdf can use the data as it is
@@ -11281,11 +11358,12 @@
         \-- pdf_writer - @param string $text the heading of the next section
     \-- text
         \-- pdf_writer - add a text that is wrapped at the page width
+    \-- page_break
+        \-- pdf_writer - continue on a new page e.g. for an appendix, unless the current page is still empty
+    \-- space
+        \-- pdf_writer - add half a line of space e.g. between two entries of a list of texts
     \-- table
         \-- pdf_writer - add a table that is as wide as its texts and scaled down if it is wider than the page
-\-- output
-    \-- output
-        \-- pdf_writer - @return string the complete pdf file with at least one page
 \-- table
     \-- tr
         \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto

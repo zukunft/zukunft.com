@@ -6,9 +6,10 @@
     -----------------------
 
     the suggested var name is $pdf
-    uses the standard fonts of each pdf reader, so no font is embedded and only the characters
-    of the Windows-1252 encoding can be shown; a table is scaled down to the page width, so that
-    no text of a cell is ever cut
+    embeds the glyphs that the pdf uses of a TrueType font with the Identity-H encoding (pdf_font),
+    so that any char of the font can be shown e.g. the CO₂ of a page; DejaVu Sans by default or Noto Sans,
+    whose missing chars e.g. the ≈ are shown in DejaVu Sans; a table is scaled down to the page width,
+    so that no text of a cell is ever cut
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -36,15 +37,28 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::HTML . 'pdf_font.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+
+use Closure;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+
 class pdf_writer
 {
 
     const string MIME_TYPE = 'application/pdf';
     const string FILE_EXTENSION = '.pdf';
-    // the size of a landscape A4 page in points
-    const int PAGE_WIDTH = 842;
-    const int PAGE_HEIGHT = 595;
+    // the long and the short side of an A4 page in points, which is landscape by default and portrait on request
+    const int PAGE_LONG = 842;
+    const int PAGE_SHORT = 595;
     const int MARGIN = 36;
+    // the footer line of each page, below the content within the bottom margin
+    const float FOOTER_SIZE = 7;
+    const float FOOTER_Y = 18;
+    const float FOOTER_GAP = 12;
+    const string FOOTER_CUT = '...';
     const float TEXT_SIZE = 9;
     const float TITLE_SIZE = 16;
     const float HEADING_SIZE = 12;
@@ -53,34 +67,104 @@ class pdf_writer
     const int IMAGE_WIDTH = 60;
     // the space a heading needs below itself, so that it is never the last line of a page
     const float HEADING_KEEP = 40;
+    // the font families that a pdf can use with the files of their normal and bold font
+    const string FAMILY_DEJAVU = 'DejaVu Sans';
+    const string FAMILY_NOTO = 'Noto Sans';
+    const array FAMILIES = [
+        self::FAMILY_DEJAVU => [files::PDF_FONT_DEJAVU, files::PDF_FONT_DEJAVU_BOLD],
+        self::FAMILY_NOTO => [files::PDF_FONT_NOTO, files::PDF_FONT_NOTO_BOLD]
+    ];
+    // the family with the most chars, which shows a char that the chosen family does not have e.g. the ≈ for Noto Sans
+    const string FAMILY_FALLBACK = self::FAMILY_DEJAVU;
+    // the names of the fonts on a page: the chosen family and its fallback
     const string FONT_NORMAL = 'F1';
     const string FONT_BOLD = 'F2';
+    const string FONT_FALLBACK_NORMAL = 'F3';
+    const string FONT_FALLBACK_BOLD = 'F4';
+    // the ids of the pdf objects: the catalog, the page list, the image, then the objects of each font and then the pages
+    const int OBJECT_IMAGE = 3;
+    const int OBJECT_FIRST_FONT = 4;
     const string IMAGE_NAME = 'Im1';
     const string JPEG_START = "\xFF\xD8\xFF";
-    const string ENCODING = 'Windows-1252';
-    // the width of the printable ascii chars from the space on in 1/1000 of the font size of the standard font Helvetica
-    const array CHAR_WIDTHS = [
-        278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
-        556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556,
-        1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
-        667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
-        333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
-        556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584
-    ];
-    const int CHAR_WIDTH_FIRST = 32;
-    const int CHAR_WIDTH_OTHER = 556;
-    // the bold font is wider than the normal font for which the widths are given
-    const float BOLD_FACTOR = 1.1;
 
+    // the size of the pages in points
+    private int $width = self::PAGE_LONG;
+    private int $height = self::PAGE_SHORT;
     // the content stream of each finished page
     private array $pages = [];
     // the content stream of the current page
     private string $content = '';
-    private float $y = self::PAGE_HEIGHT - self::MARGIN;
+    private float $y;
+    // the text on the left of the footer of each page and the function that gives the text on the right
+    // of a page from its number and the number of all pages, null for pages without a footer
+    private string $footer_text = '';
+    private ?Closure $footer_page = null;
+    // the fonts by their name on a page and per font the unicode code point of each glyph that the pdf shows by the glyph id
+    private array $fonts = [];
+    private array $used = [];
+    // per weight (0 normal, 1 bold) the names of the fonts in the order in which a char is looked up
+    private array $lookup = [[], []];
     private string $img_data = '';
     private int $img_width = 0;
     private int $img_height = 0;
     private int $img_channels = 0;
+
+
+    /**
+     * @param bool $portrait true for A4 portrait pages e.g. for a document to read, else A4 landscape e.g. for wide tables
+     * @param string $family the font family of the texts e.g. self::FAMILY_NOTO, DejaVu Sans if the family is unknown;
+     *                       a char that the family does not have is shown in the fallback family
+     */
+    function __construct(bool $portrait = false, string $family = self::FAMILY_DEJAVU)
+    {
+        if ($portrait) {
+            $this->width = self::PAGE_SHORT;
+            $this->height = self::PAGE_LONG;
+        }
+        $this->y = $this->height - self::MARGIN;
+        if (!array_key_exists($family, self::FAMILIES)) {
+            log_warning('the pdf font family ' . $family . ' is unknown, so the pdf uses ' . self::FAMILY_DEJAVU);
+            $family = self::FAMILY_DEJAVU;
+        }
+        [$normal, $bold] = self::FAMILIES[$family];
+        $this->add_font(self::FONT_NORMAL, $normal, false);
+        $this->add_font(self::FONT_BOLD, $bold, true);
+        if ($family != self::FAMILY_FALLBACK) {
+            [$normal, $bold] = self::FAMILIES[self::FAMILY_FALLBACK];
+            $this->add_font(self::FONT_FALLBACK_NORMAL, $normal, false);
+            $this->add_font(self::FONT_FALLBACK_BOLD, $bold, true);
+        }
+    }
+
+    /**
+     * @param string $font the name of the font on a page e.g. self::FONT_NORMAL
+     * @param string $file the path of the font file
+     * @param bool $bold true for a bold font, which is looked up for a bold text
+     */
+    private function add_font(string $font, string $file, bool $bold): void
+    {
+        $this->fonts[$font] = new pdf_font($file);
+        $this->used[$font] = [];
+        $this->lookup[(int)$bold][] = $font;
+    }
+
+
+    /*
+     * set
+     */
+
+    /**
+     * add a footer line to each page, which is written with the file, because only then the number of pages is known
+     *
+     * @param string $text the text on the left e.g. a short description of the document, shortened if the line is too long
+     * @param Closure $page_text gives the text on the right from the number of the page and the number of all pages
+     *                           e.g. "page 2 of 5, 05.11.2026 15:30"
+     */
+    function set_footer(string $text, Closure $page_text): void
+    {
+        $this->footer_text = $text;
+        $this->footer_page = $page_text;
+    }
 
 
     /*
@@ -139,7 +223,7 @@ class pdf_writer
      */
     function text(string $text, float $size = self::TEXT_SIZE, bool $bold = false): void
     {
-        $width = self::PAGE_WIDTH - 2 * self::MARGIN;
+        $width = $this->width - 2 * self::MARGIN;
         $line = '';
         foreach (preg_split('/\s+/u', trim($text)) as $word) {
             $next = $line == '' ? $word : $line . ' ' . $word;
@@ -155,6 +239,24 @@ class pdf_writer
     }
 
     /**
+     * continue on a new page e.g. for an appendix, unless the current page is still empty
+     */
+    function page_break(): void
+    {
+        if ($this->content != '') {
+            $this->new_page();
+        }
+    }
+
+    /**
+     * add half a line of space e.g. between two entries of a list of texts
+     */
+    function space(): void
+    {
+        $this->y -= self::TEXT_SIZE * self::LINE_FACTOR / 2;
+    }
+
+    /**
      * add a table that is as wide as its texts and scaled down if it is wider than the page
      *
      * @param array $head the text of each header cell, empty for a table without a header
@@ -165,7 +267,7 @@ class pdf_writer
     {
         $widths = $this->column_widths($head, $rows);
         $padding = count($widths) * self::CELL_PADDING;
-        $size = min(self::TEXT_SIZE, (self::PAGE_WIDTH - 2 * self::MARGIN - $padding) / max(1, array_sum($widths)));
+        $size = min(self::TEXT_SIZE, ($this->width - 2 * self::MARGIN - $padding) / max(1, array_sum($widths)));
         $height = $size * self::LINE_FACTOR;
         $this->keep_space(2 * $height);
         $this->table_row($head, $widths, $right, $size, true);
@@ -189,20 +291,32 @@ class pdf_writer
      */
     function output(): string
     {
-        $this->new_page();
-        $fonts = '<< /F1 3 0 R /F2 4 0 R >>';
+        // the last page only if it has content, so that a document never ends with an empty page
+        if ($this->content != '' or $this->pages == []) {
+            $this->new_page();
+        }
+        $this->add_footers();
         $objects = [
             1 => '<< /Type /Catalog /Pages 2 0 R >>',
-            3 => $this->font_object('Helvetica'),
-            4 => $this->font_object('Helvetica-Bold'),
-            5 => $this->image_object()
+            self::OBJECT_IMAGE => $this->image_object()
         ];
-        $image = $this->img_data == '' ? '' : ' /XObject << /' . self::IMAGE_NAME . ' 5 0 R >>';
+        $fonts = [];
+        $font_id = self::OBJECT_FIRST_FONT;
+        // only the fonts that a page uses e.g. not the fallback font of a text that the chosen font can show
+        foreach ($this->fonts as $font => $fnt) {
+            if ($this->used[$font] != []) {
+                $fonts[] = '/' . $font . ' ' . $font_id . ' 0 R';
+                $objects += $fnt->objects($font_id, $this->used[$font]);
+                $font_id += pdf_font::OBJECT_COUNT;
+            }
+        }
+        $fonts = '<< ' . implode(' ', $fonts) . ' >>';
+        $image = $this->img_data == '' ? '' : ' /XObject << /' . self::IMAGE_NAME . ' ' . self::OBJECT_IMAGE . ' 0 R >>';
         $kids = [];
         foreach ($this->pages as $pos => $stream) {
-            $page_id = 6 + 2 * $pos;
+            $page_id = $font_id + 2 * $pos;
             $kids[] = $page_id . ' 0 R';
-            $objects[$page_id] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::PAGE_WIDTH . ' ' . self::PAGE_HEIGHT . ']'
+            $objects[$page_id] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . $this->width . ' ' . $this->height . ']'
                 . ' /Resources << /Font ' . $fonts . $image . ' >> /Contents ' . ($page_id + 1) . ' 0 R >>';
             $objects[$page_id + 1] = '<< /Length ' . strlen($stream) . " >>\nstream\n" . $stream . "\nendstream";
         }
@@ -215,6 +329,52 @@ class pdf_writer
     /*
      * internal
      */
+
+    /**
+     * add the footer line to each finished page: the text on the left, shortened so that it never reaches
+     * the text of the page on the right
+     */
+    private function add_footers(): void
+    {
+        if ($this->footer_page !== null) {
+            $count = count($this->pages);
+            foreach ($this->pages as $pos => $stream) {
+                $right = ($this->footer_page)($pos + 1, $count);
+                $right_width = $this->text_width($right, self::FOOTER_SIZE, false);
+                $left_width = $this->width - 2 * self::MARGIN - $right_width - self::FOOTER_GAP;
+                $left = $this->shortened($this->footer_text, $left_width, self::FOOTER_SIZE);
+                $this->content = '';
+                $this->draw_text($left, self::MARGIN, self::FOOTER_Y, self::FOOTER_SIZE, false);
+                $this->draw_text($right, $this->width - self::MARGIN - $right_width, self::FOOTER_Y, self::FOOTER_SIZE, false);
+                $this->pages[$pos] = $stream . $this->content;
+            }
+            $this->content = '';
+        }
+    }
+
+    /**
+     * @param string $text the text in utf-8
+     * @param float $width the space for the text in points
+     * @param float $size the font size
+     * @return string the text, or its words up to the first that does not fit with the cut sign if it is wider than the space
+     */
+    private function shortened(string $text, float $width, float $size): string
+    {
+        $result = $text;
+        if ($this->text_width($text, $size, false) > $width) {
+            $result = '';
+            $fits = true;
+            foreach (preg_split('/\s+/u', trim($text)) as $word) {
+                $next = $result == '' ? $word : $result . ' ' . $word;
+                $fits = ($fits and $this->text_width($next . self::FOOTER_CUT, $size, false) <= $width);
+                if ($fits) {
+                    $result = $next;
+                }
+            }
+            $result .= self::FOOTER_CUT;
+        }
+        return $result;
+    }
 
     /**
      * @param array $head the text of each header cell
@@ -285,14 +445,22 @@ class pdf_writer
     {
         $this->pages[] = $this->content;
         $this->content = '';
-        $this->y = self::PAGE_HEIGHT - self::MARGIN;
+        $this->y = $this->height - self::MARGIN;
     }
 
+    /**
+     * write the text in runs of the same font, so that a char that the chosen font does not have is shown in the fallback font
+     */
     private function draw_text(string $text, float $x, float $y, float $size, bool $bold): void
     {
-        $font = $bold ? self::FONT_BOLD : self::FONT_NORMAL;
-        $this->content .= 'BT /' . $font . ' ' . $this->num($size) . ' Tf ' . $this->num($x) . ' ' . $this->num($y) . ' Td ('
-            . $this->escaped($text) . ") Tj ET\n";
+        $this->content .= 'BT ' . $this->num($x) . ' ' . $this->num($y) . ' Td';
+        foreach ($this->runs($text, $bold) as [$font, $codes]) {
+            foreach ($codes as $code) {
+                $this->used[$font][$this->fonts[$font]->glyph_id($code)] ??= $code;
+            }
+            $this->content .= ' /' . $font . ' ' . $this->num($size) . ' Tf ' . $this->glyph_string($font, $codes) . ' Tj';
+        }
+        $this->content .= " ET\n";
     }
 
     /**
@@ -304,38 +472,87 @@ class pdf_writer
     function text_width(string $text, float $size, bool $bold): float
     {
         $sum = 0;
-        foreach (unpack('C*', $this->encoded($text)) ?: [] as $code) {
-            $sum += self::CHAR_WIDTHS[$code - self::CHAR_WIDTH_FIRST] ?? self::CHAR_WIDTH_OTHER;
+        foreach ($this->codes($text) as $code) {
+            $fnt = $this->fonts[$this->font_of($code, $bold)];
+            $sum += $fnt->width($fnt->glyph_id($code));
         }
-        return $sum * $size / 1000 * ($bold ? self::BOLD_FACTOR : 1);
+        return $sum * $size / pdf_font::PDF_UNITS;
     }
 
     /**
      * @param string $text the text in utf-8
-     * @return string the text in the encoding of the fonts, with a question mark for a char that the encoding does not have
+     * @param bool $bold true for the bold font
+     * @return string the text as a pdf string of the glyph ids of the chosen font e.g. "<00260052>",
+     *                as a page shows a text of which the chosen font has every char
      */
-    private function encoded(string $text): string
+    function text_code(string $text, bool $bold = false): string
     {
-        return mb_convert_encoding($text, self::ENCODING, 'UTF-8');
+        return $this->glyph_string($this->lookup[(int)$bold][0], $this->codes($text));
     }
 
     /**
      * @param string $text the text in utf-8
-     * @return string the text as the content of a pdf string
+     * @param bool $bold true for the bold font
+     * @return array the parts of the text that one font shows, each as the name of the font and the code points of the chars
      */
-    private function escaped(string $text): string
+    private function runs(string $text, bool $bold): array
     {
-        return strtr($this->encoded($text), ['\\' => '\\\\', '(' => '\\(', ')' => '\\)']);
+        $result = [];
+        $font = '';
+        foreach ($this->codes($text) as $code) {
+            $code_font = $this->font_of($code, $bold);
+            if ($code_font != $font) {
+                $result[] = [$code_font, []];
+                $font = $code_font;
+            }
+            $result[count($result) - 1][1][] = $code;
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $code the unicode code point of a char
+     * @param bool $bold true for the bold font
+     * @return string the name of the first font that has the char, the chosen font if no font has it
+     */
+    private function font_of(int $code, bool $bold): string
+    {
+        $fonts = $this->lookup[(int)$bold];
+        $result = '';
+        foreach ($fonts as $font) {
+            if ($result == '' and $this->fonts[$font]->has_glyph($code)) {
+                $result = $font;
+            }
+        }
+        return $result == '' ? $fonts[0] : $result;
+    }
+
+    /**
+     * @param string $font the name of a font on a page
+     * @param array $codes the unicode code points of the chars
+     * @return string the chars as a pdf string of the glyph ids of the font e.g. "<00260052>"
+     */
+    private function glyph_string(string $font, array $codes): string
+    {
+        $result = '';
+        foreach ($codes as $code) {
+            $result .= sprintf('%04X', $this->fonts[$font]->glyph_id($code));
+        }
+        return '<' . $result . '>';
+    }
+
+    /**
+     * @param string $text the text in utf-8
+     * @return array the unicode code point of each char, an invalid byte replaced by a question mark
+     */
+    private function codes(string $text): array
+    {
+        return array_map(fn(string $chr): int => mb_ord($chr, 'UTF-8'), mb_str_split(mb_scrub($text, 'UTF-8'), 1, 'UTF-8'));
     }
 
     private function num(float $num): string
     {
         return number_format($num, 2, '.', '');
-    }
-
-    private function font_object(string $name): string
-    {
-        return '<< /Type /Font /Subtype /Type1 /BaseFont /' . $name . ' /Encoding /WinAnsiEncoding >>';
     }
 
     /**

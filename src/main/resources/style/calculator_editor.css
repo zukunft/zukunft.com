@@ -808,6 +808,30 @@ textarea.inp {
     gap: 14px;
 }
 
+/* the Definition tab with the data of the page as json, like the json tab of the table editor */
+.json-box .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    max-width: 70ch;
+    margin: 0 0 10px;
+}
+
+.json-box .controls {
+    margin-bottom: 10px;
+}
+
+.json-box textarea {
+    width: 100%;
+    min-height: 420px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+    padding: 10px;
+    resize: vertical;
+}
+
 .chg h3 {
     margin: 0 0 6px;
     font-size: 13px;

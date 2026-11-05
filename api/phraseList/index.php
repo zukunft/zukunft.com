@@ -86,7 +86,8 @@ if ($db_con->is_open()) {
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     $cac_key = '';
-    $cac_page = '';
+    // an object also without a user, so that the cache header can read why nothing has been cached
+    $cac_page = new db_cache_page();
     if ($usr->id > 0) {
         $cac_par = [
             url_var::ID_LST => $phr_ids,
@@ -174,7 +175,7 @@ if ($db_con->is_open()) {
     }
 
     $ctrl = new controller();
-    $ctrl->cache_header($cac_hit);
+    $ctrl->cache_header($cac_hit, $cac_page->not_saved);
     $ctrl->get_json($result, $msg);
 
 

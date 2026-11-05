@@ -308,6 +308,20 @@ class group extends sandbox_multi
     }
 
     /**
+     * set the phrases and the id that has already been computed from their ids, e.g. by a list load
+     * for many groups at once (sandbox_value_list::set_phrases), which saves the sort of the phrase objects
+     *
+     * @param phrase_list $phr_lst the phrases of this group
+     * @param int|string $id the group id of these phrases from group_id::get_id_by_ids
+     * @return void
+     */
+    function set_phrase_list_with_id(phrase_list $phr_lst, int|string $id): void
+    {
+        $this->phr_lst = $phr_lst;
+        $this->set_id($id);
+    }
+
+    /**
      * set the phrase list based in the group id
      * @param int|string $id the group id that should be used to set the phrase list
      * @param phrase_list|null $phr_lst_in list of the phrases already loaded to reduce traffic

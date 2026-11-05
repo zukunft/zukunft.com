@@ -808,6 +808,8 @@ enum messages: string
         . ' differs from the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated with the values of this page, which is shown instead';
+    // a measured value and its formula result of the same phrases, e.g. a GDP and the sum of its expenditure parts
+    case RESULT_DIFFERS_FROM_VALUE = 'result_differs_from_value';
     case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" for the context "'
@@ -1927,6 +1929,20 @@ enum messages: string
     case CALC_EDITOR_TAB_PAGE = 'calc_editor_tab_page';
     case CALC_EDITOR_TAB_TEXTS = 'calc_editor_tab_texts';
     case CALC_EDITOR_TAB_CHANGES = 'calc_editor_tab_changes';
+    // the json tab of the calculator editor and its copy
+    case CALC_EDITOR_TAB_JSON = 'calc_editor_tab_json';
+    case CALC_EDITOR_JSON_NOTE = 'calc_editor_json_note';
+    case CALC_EDITOR_COPY = 'calc_editor_copy';
+    case CALC_EDITOR_COPIED = 'calc_editor_copied';
+    case CALC_EDITOR_COPY_MANUAL = 'calc_editor_copy_manual';
+    // the PDF tab of the calculator editor, which the pod creates from the data of the editor
+    case CALC_EDITOR_TAB_PDF = 'calc_editor_tab_pdf';
+    case CALC_EDITOR_PDF_NOTE = 'calc_editor_pdf_note';
+    case CALC_EDITOR_PDF_CREATE = 'calc_editor_pdf_create';
+    case CALC_EDITOR_PDF_OFFLINE = 'calc_editor_pdf_offline';
+    case CALC_EDITOR_PDF_CREATING = 'calc_editor_pdf_creating';
+    case CALC_EDITOR_PDF_CREATED = 'calc_editor_pdf_created';
+    case CALC_EDITOR_PDF_FAILED = 'calc_editor_pdf_failed';
     // the lists of a calculator page, the kinds of their items and the links to add an item
     case CALC_EDITOR_LIST_COLUMNS = 'calc_editor_list_columns';
     case CALC_EDITOR_LIST_ROWGROUPS = 'calc_editor_list_rowgroups';
@@ -2095,6 +2111,8 @@ enum messages: string
     case CALC_EDITOR_SAVE_NOT_CONFIRMED = 'calc_editor_save_not_confirmed';
     case CALC_EDITOR_NO_LISTS = 'calc_editor_no_lists';
     case CALC_EDITOR_PHRASE_NOT_FOUND = 'calc_editor_phrase_not_found';
+    // a list answer with each phrase once names a phrase id that its phrase list does not contain
+    case API_PHRASE_ID_MISSING = 'api_phrase_id_missing';
     case CALC_EDITOR_VERB_UNKNOWN = 'calc_editor_verb_unknown';
     case CALC_EDITOR_READ_FAILED = 'calc_editor_read_failed';
     case CALC_EDITOR_ENTER_NAME = 'calc_editor_enter_name';
@@ -2248,6 +2266,25 @@ enum messages: string
     case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
     case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
+    // the pdf of the definition of a calculator, which the PDF tab of the calculator editor creates (calculator_definition_report)
+    case CALCULATOR_DEFINITION_FOOTER = 'calculator_definition_footer';
+    case CALCULATOR_DEFINITION_PAGE = 'calculator_definition_page';
+    case CALCULATOR_DEFINITION_CREATED = 'calculator_definition_created';
+    case CALCULATOR_DEFINITION_NO_CALCULATOR = 'calculator_definition_no_calculator';
+    // the technical setup after the page: every object of the data that defines the page
+    case CALCULATOR_DEFINITION_SETUP = 'calculator_definition_setup';
+    case CALCULATOR_DEFINITION_VALUES_FROM = 'calculator_definition_values_from';
+    case CALCULATOR_DEFINITION_VALUES_NO_SOURCE = 'calculator_definition_values_no_source';
+    case CALCULATOR_DEFINITION_RESULTS_OF = 'calculator_definition_results_of';
+    case CALCULATOR_DEFINITION_RESULTS_NO_FORMULA = 'calculator_definition_results_no_formula';
+    case CALCULATOR_DEFINITION_SOURCES = 'calculator_definition_sources';
+    case CALCULATOR_DEFINITION_WORDS = 'calculator_definition_words';
+    case CALCULATOR_DEFINITION_TRIPLES = 'calculator_definition_triples';
+    // the limits of an input field in a pdf report e.g. "from 3000 to 20000, step 100"
+    case CALCULATOR_REPORT_LIMITS = 'calculator_report_limits';
+    // the answer of the pdf of the definition if the request has no pdf
+    case CALCULATOR_DEFINITION_NO_LOGIN = 'calculator_definition_no_login';
+    case CALCULATOR_DEFINITION_NO_JSON = 'calculator_definition_no_json';
     // the steps that the page shows while the pdf report is created, its result and its failure
     case CALCULATOR_REPORT_STEP_LOAD = 'calculator_report_step_load';
     case CALCULATOR_REPORT_STEP_NUMBERS = 'calculator_report_step_numbers';
@@ -3085,6 +3122,20 @@ enum messages: string
     // around the counted seconds of the loading text e.g. "since 3 sec"
     case PAGE_LOADING_SINCE = 'page_loading_since';
     case PAGE_LOADING_SECONDS = 'page_loading_seconds';
+    // the step that a slow page is doing now, shown below the loading text (see rest_call::send_loading_step)
+    case PAGE_LOADING_STEP_DATA = 'page_loading_step_data';
+    case PAGE_LOADING_STEP_VALUES = 'page_loading_step_values';
+    case PAGE_LOADING_STEP_RESULTS = 'page_loading_step_results';
+    case PAGE_LOADING_STEP_PHRASES = 'page_loading_step_phrases';
+    case PAGE_LOADING_STEP_PHRASE_DATA = 'page_loading_step_phrase_data';
+    case PAGE_LOADING_STEP_VIEW = 'page_loading_step_view';
+    case PAGE_LOADING_STEP_FORMULAS = 'page_loading_step_formulas';
+    // the step of a call for one named object e.g. the phrase data of a calculator page
+    case PAGE_LOADING_STEP_DATA_OF = 'page_loading_step_data_of';
+    case PAGE_LOADING_STEP_VALUES_OF = 'page_loading_step_values_of';
+    case PAGE_LOADING_STEP_RESULTS_OF = 'page_loading_step_results_of';
+    case PAGE_LOADING_STEP_FORMULAS_OF = 'page_loading_step_formulas_of';
+    case PAGE_LOADING_STEP_PHRASES_OF = 'page_loading_step_phrases_of';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';

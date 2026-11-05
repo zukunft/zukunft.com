@@ -214,6 +214,8 @@ if ($db_con->is_open()) {
             // publish the loaded ui cache to the allowed global so renderers
             // (e.g. phrase_list::category_subtitle) can read the verb type cache
             $ui_sys = $ui->dto;
+            // the frontend reads the debug level of the url only from its cache, because web/ uses no other global
+            $ui_sys->debug = (int)$debug;
 
             // load the user-specific frontend configuration onto the ui cache
             // TODO Prio 1 load the config from cache if nothing has been changed
@@ -249,6 +251,8 @@ if ($db_con->is_open()) {
                 // show the result to the user
                 // and use the cached html pages for view-only requests to reduce the response time
                 $sys->times->switch(system_time_type::URL_TO_HTML);
+                // the loading end closes the html elements of the loading start, so it is added only after it
+                $loading_sent = false;
                 if ($is_report) {
                     $ui->report_watch();
                     // the other pages of the user do not wait for the session while the report is created
@@ -272,6 +276,7 @@ if ($db_con->is_open()) {
                     // a download sends no page, so the header of the file must be the first output
                     if (!$is_csv) {
                         $ui->send_loading_start($msg_ui, $start_time);
+                        $loading_sent = true;
                     }
                     $is_live = ($is_action or $redirect_msg !== null);
                     $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
@@ -283,7 +288,7 @@ if ($db_con->is_open()) {
                         }
                     }
                 }
-                $web_txt .= $is_report ? '' : new html_base()->loading_end();
+                $web_txt .= $loading_sent ? new html_base()->loading_end() : '';
                 $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
             }
             $sys->times->switch(system_time_type::CLOSE);

@@ -82,12 +82,13 @@ class formula_list extends ListBase
      *
      * @param array $ids the database ids of the formulas
      * @param user_message $msg to report a problem of the api message to the user
+     * @param string $step_name what the formulas are loaded for e.g. the phrase of the page, shown below the loading text of a slow page
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_ids(array $ids, user_message $msg): bool
+    function load_by_ids(array $ids, user_message $msg, string $step_name = ''): bool
     {
         $rest = new rest_call();
-        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg);
+        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg, $step_name);
         $this->api_mapper($json_body);
         return !$this->is_empty();
     }

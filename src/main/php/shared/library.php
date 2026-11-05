@@ -4957,6 +4957,17 @@ class library
     }
 
     /**
+     * @param array $phr_json the api json of a word or a triple e.g. of the phrase list of a list answer
+     * @return int the phrase id, which is negative for a triple like the phrase ids of a value or result
+     */
+    static function phrase_id_of_json(array $phr_json): int
+    {
+        $id = (int)($phr_json[json_fields::ID] ?? 0);
+        $is_triple = (($phr_json[json_fields::OBJECT_CLASS] ?? '') == json_fields::CLASS_TRIPLE);
+        return $is_triple ? $id * -1 : $id;
+    }
+
+    /**
      * get the fixed api name of an object class
      * to allow changing the internal object name without changing the api
      *

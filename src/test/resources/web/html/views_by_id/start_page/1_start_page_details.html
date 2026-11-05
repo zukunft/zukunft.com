@@ -71,6 +71,7 @@
                 counter-reset: page-loading-sec var(--page-loading-sec);}
             .page-loading-seconds::after {content: counter(page-loading-sec);}
             @keyframes page-loading-count {to {--page-loading-sec: 3600;}}
+            .page-loading-step:has(~ .page-loading-step) {display: none;}
         </style>
     </head>
     <body>

@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+// only a const of the frontend config is used, so not included, because config extends value_list (like sandbox_list_named)
+//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -93,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -207,7 +210,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::PHRASE] = $phr->id();
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = 1;
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $phr->name());
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -238,7 +241,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::NAME] = $name;
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = $levels;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $name);
     }
 
     /**
@@ -261,7 +264,7 @@ class phrase_list extends sandbox_list_named
         $data = array();
         $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
         $data[url_var::DIRECTION] = $direction->value;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $phr_lst->short_names());
     }
 
     /**
@@ -278,7 +281,7 @@ class phrase_list extends sandbox_list_named
         $data = array();
         $data[url_var::VERB] = $vrb->id();
         $data[url_var::DIRECTION] = $direction->value;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $vrb->name());
     }
 
     /**
@@ -320,13 +323,14 @@ class phrase_list extends sandbox_list_named
      *
      * @param array $data the url vars of the api request e.g. the verb and the direction
      * @param user_message $msg to report a problem of the api message to the user
+     * @param string $step_name what the phrases are loaded for e.g. the name of the phrase, shown below the loading text of a slow page
      * @return bool true if at least one phrase has been added to this list
      */
-    private function add_by_api(array $data, user_message $msg): bool
+    private function add_by_api(array $data, user_message $msg, string $step_name = ''): bool
     {
         $count = $this->count();
         $api = new rest_call();
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $step_name);
         $msg->merge($this->api_mapper($json_body));
         return $this->count() > $count;
     }
@@ -531,7 +535,7 @@ class phrase_list extends sandbox_list_named
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $frm->name());
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -2184,6 +2188,24 @@ class phrase_list extends sandbox_list_named
             $this->set_lst($remain_lst->lst());
         }
         return $this;
+    }
+
+    /**
+     * the names of the first phrases as plain text in the order of the list, e.g. for the loading
+     * step of a slow page; the list itself is neither sorted nor changed
+     *
+     * @return string e.g. "world, GDP, EUR, 2023... and 18 more"
+     */
+    function short_names(): string
+    {
+        $names = $this->names();
+        $shown = array_slice($names, 0, config::LIMIT_NAME_LIST);
+        $result = implode(', ', $shown);
+        $rest = count($names) - count($shown);
+        if ($rest > 0) {
+            $result .= $this->more_text($rest);
+        }
+        return $result;
     }
 
     /**

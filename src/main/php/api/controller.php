@@ -299,13 +299,18 @@ class controller
      * (see rest_call::api_call); only if def::DEBUG_API_CACHE is switched on
      *
      * @param bool $is_cached true if the answer has been read from the cache, false if it has been created
+     * @param string $not_saved why a created answer has not been cached (db_cache_page::not_saved); empty if it has been
      * @return void
      */
-    function cache_header(bool $is_cached): void
+    function cache_header(bool $is_cached, string $not_saved = ''): void
     {
         if (def::DEBUG_API_CACHE and !headers_sent()) {
             $state = $is_cached ? api::CACHE_HIT : api::CACHE_MISS;
-            header(api::CACHE_HEADER . ': ' . $state);
+            if ($not_saved != '') {
+                $state .= ', ' . $not_saved;
+            }
+            // a line break in a message text would end the header
+            header(api::CACHE_HEADER . ': ' . str_replace(["\r", "\n"], ' ', $state));
         }
     }
 

@@ -156,13 +156,21 @@ class sandbox_list_named extends sandbox_list
         }
         $msg = '';
         if ($i < $this->count()) {
-            $additional_diff = $this->count() - $i;
-            $dots = msg_id::THREE_POINTS->text();
-            $and_txt = msg_id::AND_MORE_BEFORE->text();
-            $more_txt = msg_id::MORE->text();
-            $msg .= $dots . ' ' . $and_txt . ' ' . $additional_diff . ' ' . $more_txt;
+            $msg .= $this->more_text($this->count() - $i);
         }
         return implode(', ', $arr) . $msg;
+    }
+
+    /**
+     * @param int $rest the number of entries that are not named
+     * @return string the tail of a shortened name list e.g. "... and 18 more"
+     */
+    protected function more_text(int $rest): string
+    {
+        $dots = msg_id::THREE_POINTS->text();
+        $and_txt = msg_id::AND_MORE_BEFORE->text();
+        $more_txt = msg_id::MORE->text();
+        return $dots . ' ' . $and_txt . ' ' . $rest . ' ' . $more_txt;
     }
 
     /**

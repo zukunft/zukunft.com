@@ -72,6 +72,18 @@ const TXT = {
     tabPage: "calc_editor_tab_page",
     tabTexts: "calc_editor_tab_texts",
     tabChanges: "calc_editor_tab_changes",
+    tabJson: "calc_editor_tab_json",
+    jsonNote: "calc_editor_json_note",
+    copy: "calc_editor_copy",
+    copied: "calc_editor_copied",
+    copyManual: "calc_editor_copy_manual",
+    tabPdf: "calc_editor_tab_pdf",
+    pdfNote: "calc_editor_pdf_note",
+    pdfCreate: "calc_editor_pdf_create",
+    pdfOffline: "calc_editor_pdf_offline",
+    pdfCreating: "calc_editor_pdf_creating",
+    pdfCreated: "calc_editor_pdf_created",
+    pdfFailed: "calc_editor_pdf_failed",
     listColumns: "calc_editor_list_columns",
     listRowgroups: "calc_editor_list_rowgroups",
     listDetails: "calc_editor_list_details",
@@ -314,6 +326,8 @@ document.getElementById(EDITOR_HOST_ID).innerHTML = [
     '<button class="tab" role="tab" id="tab-page" aria-selected="true" data-tab="page">' + txtHtml(TXT.tabPage) + '</button>',
     '<button class="tab" role="tab" id="tab-texts" aria-selected="false" data-tab="texts">' + txtHtml(TXT.tabTexts) + '</button>',
     '<button class="tab" role="tab" id="tab-changes" aria-selected="false" data-tab="changes">' + txtHtml(TXT.tabChanges) + '</button>',
+    '<button class="tab" role="tab" id="tab-json" aria-selected="false" data-tab="json">' + txtHtml(TXT.tabJson) + '</button>',
+    '<button class="tab" role="tab" id="tab-pdf" aria-selected="false" data-tab="pdf">' + txtHtml(TXT.tabPdf) + '</button>',
     '</div>',
     '<div class="pane" id="pane"></div>',
     '<div class="formula-editor" id="calcFormulaCompare" hidden></div>',
@@ -2634,6 +2648,99 @@ function changesPane() {
     return html;
 }
 
+/* the html id of the json of the Definition tab, which the copy reads */
+const JSON_TEXT_ID = "jsonText";
+
+/* the Definition tab: the data of the page with the unsaved changes as the export saves it, read only,
+   because a json loaded as the data would start the editor again without the unsaved changes */
+function jsonPane() {
+    const text = DOC && state.page ? exportJson(editedDoc()) : "";
+    const html = '<div class="json-box">'
+        + '<p class="note">' + txtHtml(TXT.jsonNote) + "</p>"
+        + '<div class="controls"><button type="button" class="btn" data-act="copyJson">' + txtHtml(TXT.copy) + "</button></div>"
+        + '<textarea id="' + JSON_TEXT_ID + '" readonly spellcheck="false">' + esc(text) + "</textarea>"
+        + "</div>";
+    return html;
+}
+
+/* copy the json of the Definition tab, or select it for the copy by the keyboard if the browser refuses */
+function copyJson() {
+    const ta = document.getElementById(JSON_TEXT_ID);
+    const manual = function () {
+        ta.focus();
+        ta.select();
+        toast(txt(TXT.copyManual));
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(function () {
+            toast(txt(TXT.copied));
+        }).catch(manual);
+    } else {
+        manual();
+    }
+}
+
+/* the entry point of the pod that creates the pdf of the posted data (http/calculator_pdf.php), below the root of the pod */
+const PDF_ROUTE = "http/calculator_pdf.php";
+const PDF_TYPE = "application/pdf";
+const PDF_EXT = ".pdf";
+let pdfCreating = false;
+
+/* the PDF tab: what the pdf contains and the button that creates it, which only a pod can do */
+function pdfPane() {
+    const blocked = !SOURCE.online || !DOC || !state.page || pdfCreating;
+    const html = '<div class="json-box">'
+        + '<p class="note">' + txtHtml(TXT.pdfNote) + "</p>"
+        + (SOURCE.online ? "" : '<p class="note">' + txtHtml(TXT.pdfOffline) + "</p>")
+        + '<div class="controls"><button type="button" class="btn primary" data-act="createPdf"' + (blocked ? " disabled" : "") + ">"
+        + txtHtml(TXT.pdfCreate) + "</button></div>"
+        + "</div>";
+    return html;
+}
+
+/* post the data of the page with the unsaved changes, i.e. the json of the export, to the pod and
+   save the pdf of the answer as a file by the download of the browser */
+async function createPdf() {
+    if (SOURCE.online && DOC && state.page && !pdfCreating) {
+        pdfCreating = true;
+        renderPane();
+        notice(txtHtml(TXT.pdfCreating), "");
+        const headers = {"Content-Type": "application/json", Accept: PDF_TYPE};
+        const token = document.querySelector('input[name="' + SESSION_TOKEN_NAME + '"]');
+        if (token) {
+            headers[CSRF_HEADER] = token.value;
+        }
+        let problem = "";
+        try {
+            const resp = await fetch(SOURCE.root + PDF_ROUTE, {
+                method: "POST", credentials: "same-origin", headers: headers, body: exportJson(editedDoc())
+            });
+            if (resp.ok) {
+                const name = selectionName(DOC).replace(EXPORT_NAME_CHAR, EXPORT_NAME_REPLACE) + PDF_EXT;
+                const url = URL.createObjectURL(await resp.blob());
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+                notice("", "");
+                toast(txt(TXT.pdfCreated, {[VAR.name]: name}));
+            } else {
+                problem = (await resp.text()) || String(resp.status);
+            }
+        } catch (e) {
+            problem = e.message || txt(TXT.noAnswer);
+        }
+        if (problem) {
+            notice(txtHtml(TXT.pdfFailed, {[VAR.value]: problem}), "err");
+        }
+        pdfCreating = false;
+        renderPane();
+    }
+}
+
 function renderPane() {
     const host = document.getElementById("pane");
     let html = "";
@@ -2641,6 +2748,10 @@ function renderPane() {
         html = previewPage();
     } else if (activeTab === "texts") {
         html = textsPane();
+    } else if (activeTab === "json") {
+        html = jsonPane();
+    } else if (activeTab === "pdf") {
+        html = pdfPane();
     } else {
         html = changesPane();
     }
@@ -3420,6 +3531,10 @@ function onClick(e) {
             moveNode(btn.dataset.uid, -1);
         } else if (act === "down") {
             moveNode(btn.dataset.uid, 1);
+        } else if (act === "copyJson") {
+            copyJson();
+        } else if (act === "createPdf") {
+            createPdf();
         } else {
             phraseListAction(act, btn.dataset.p, btn.dataset.uid);
         }

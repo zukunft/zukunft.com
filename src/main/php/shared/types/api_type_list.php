@@ -265,5 +265,13 @@ class api_type_list
         return in_array(api_types::LOAD_PER_PHRASE, $this->lst);
     }
 
+    /**
+     * @return bool true if a list answer should name each phrase once and the items only by the phrase ids
+     */
+    public function phrases_once(): bool
+    {
+        return in_array(api_types::PHRASES_ONCE, $this->lst);
+    }
+
 }
 

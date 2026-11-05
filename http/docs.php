@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
 global $ui_sys;
+global $debug;
 
 // the requested document, read once here and passed on as a parameter
 $doc = (string)($_GET[url_var::DOC] ?? markdown::DOC_DEFAULT);
@@ -74,6 +75,8 @@ if ($db_con->is_open()) {
         $ui = new frontend('docs');
         $ui->load_cache($msg_ui);
         $ui_sys = $ui->dto;
+        // the frontend reads the debug level of the url only from its cache, because web/ uses no other global
+        $ui_sys->debug = (int)$debug;
         if (!$usr_ui->is_ip_only()) {
             $usr_name = $usr_ui->name();
             $usr_role = $usr_ui->navbar_role();

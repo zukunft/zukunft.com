@@ -85,6 +85,8 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\markdown;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -1032,8 +1034,12 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $loading, '--font-page: ' . def::FALLBACK_FONT . ';');
         $test_name = '... with the loading text';
         $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
-        $test_name = '... and the footer';
-        $t->assert_text_contains($test_name, $loading, html_base::CLASS_FOOTER);
+        // negative: the steps follow the loading text, so the footer is added by the loading end
+        $test_name = '... without the footer';
+        $t->assert_text_not_contains($test_name, $loading, html_base::CLASS_FOOTER);
+        $test_name = '... and shows only the last loading step';
+        $step = '.' . html_base::CLASS_LOADING_STEP;
+        $t->assert_text_contains($test_name, $loading, $step . ':has(~ ' . $step . ') {display: none;}');
         // negative: the page that follows names the document and closes it
         $test_name = 'the loading start has no title';
         $t->assert_text_not_contains($test_name, $loading, '<' . html_base::TITLE);
@@ -1055,6 +1061,54 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
         $test_name = 'the loading end hides the loading start';
         $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
+        $test_name = '... and closes it with the footer';
+        $t->assert_text_contains($test_name, $html->loading_end(), '</' . html_base::MAIN . '><' . html_base::FOOTER);
+        // the step of a slow page is shown as text, so a name with html is escaped
+        $test_name = 'the loading step escapes its text';
+        $t->assert_text_contains($test_name, $html->loading_step('a <b>'), 'a &lt;b&gt;');
+        $test_name = 'the loading step of a value list call names the values';
+        $url = THIS_URL . rest_ctrl::PATH . new library()->class_to_api_route(value_list_ui::class) . '/?' . url_var::ID . '=1';
+        $t->assert($test_name, rest_call::loading_step_of($url)->value, msg_id::PAGE_LOADING_STEP_VALUES->value);
+        // negative: an api call without an own step text shows the general step
+        $test_name = 'the loading step of another api call names the data';
+        $url = THIS_URL . rest_ctrl::PATH . new library()->class_to_api_route(type_lists::class) . '/';
+        $t->assert($test_name, rest_call::loading_step_of($url)->value, msg_id::PAGE_LOADING_STEP_DATA->value);
+        // the call for one named object e.g. the phrase data of a calculator page names the object
+        $test_name = 'the loading step of a named object names the object';
+        $named_step = rest_call::loading_step_text($url, triple_names::GLOBAL_WARMING_SOLUTION, $mtr);
+        $t->assert_text_contains($test_name, $named_step, triple_names::GLOBAL_WARMING_SOLUTION);
+        // negative: without a name the step of the api is shown
+        $test_name = '... but without a name the step of the api';
+        $api_step = rest_call::loading_step_text($url, '', $mtr);
+        $t->assert($test_name, $api_step, $mtr->txt(msg_id::PAGE_LOADING_STEP_DATA));
+        // the value list load names its phrases with the values step, not the general data step
+        $test_name = 'the loading step of a value list names its phrases with the values step';
+        $val_url = THIS_URL . rest_ctrl::PATH . new library()->class_to_api_route(value_list_ui::class) . '/';
+        $val_step = rest_call::loading_step_text($val_url, triple_names::GLOBAL_WARMING_SOLUTION, $mtr);
+        $data_step = rest_call::loading_step_text($url, triple_names::GLOBAL_WARMING_SOLUTION, $mtr);
+        $t->assert_text_contains($test_name, $val_step, triple_names::GLOBAL_WARMING_SOLUTION);
+        // negative: the named values step is not the named data step
+        $test_name = '... and not with the data step';
+        $t->assert_not($test_name, $val_step, $data_step);
+        // the formulas of the results of a page name the phrase of the page
+        $test_name = 'the loading step of a formula list names the phrase with the formulas step';
+        $frm_url = THIS_URL . rest_ctrl::PATH . new library()->class_to_api_route(formula_list_ui::class) . '/';
+        $frm_step = rest_call::loading_step_text($frm_url, triple_names::GLOBAL_WARMING_SOLUTION, $mtr);
+        $t->assert_text_contains($test_name, $frm_step, triple_names::GLOBAL_WARMING_SOLUTION);
+        // negative: the named formulas step is neither the named values nor the named data step
+        $test_name = '... and not with the values step';
+        $t->assert_not($test_name, $frm_step, $val_step);
+        $test_name = '... and not with the data step';
+        $t->assert_not($test_name, $frm_step, $data_step);
+        // the related phrases of a page phrase name the phrase, e.g. the children of "global problem"
+        $test_name = 'the loading step of a phrase list names the phrase with the words step';
+        $phr_url = THIS_URL . rest_ctrl::PATH . new library()->class_to_api_route(phrase_list_ui::class) . '/';
+        $phr_step = rest_call::loading_step_text($phr_url, triple_names::GLOBAL_PROBLEM, $mtr);
+        $t->assert_text_contains($test_name, $phr_step, triple_names::GLOBAL_PROBLEM);
+        // negative: the named words step is not the named data step
+        $test_name = '... and not with the data step';
+        $phr_data_step = rest_call::loading_step_text($url, triple_names::GLOBAL_PROBLEM, $mtr);
+        $t->assert_not($test_name, $phr_step, $phr_data_step);
         // the snapshot of a slow page replaces the volatile seconds since the request start
         $test_name = 'the loading seconds of a page are replaced by the fixed test seconds';
         $slow = $html->loading_start(1.5, 7, $msg_ui);

@@ -87,6 +87,13 @@ class files
     // the images on the server e.g. the logo of a report, which is a jpeg because a pdf can embed it as it is
     const string IMAGE_PATH = self::RESOURCE_PATH . 'images' . DIRECTORY_SEPARATOR;
     const string REPORT_LOGO_DEFAULT = self::IMAGE_PATH . 'logo_xs.jpg';
+    // the fonts that a pdf report embeds as a subset, so that it can show any char of a page e.g. the CO₂;
+    // DejaVu Sans by default and Noto Sans as an alternative (see the LICENSE files in the fonts folder)
+    const string FONT_PATH = self::RESOURCE_PATH . 'fonts' . DIRECTORY_SEPARATOR;
+    const string PDF_FONT_DEJAVU = self::FONT_PATH . 'DejaVuSans.ttf';
+    const string PDF_FONT_DEJAVU_BOLD = self::FONT_PATH . 'DejaVuSans-Bold.ttf';
+    const string PDF_FONT_NOTO = self::FONT_PATH . 'NotoSans-Regular.ttf';
+    const string PDF_FONT_NOTO_BOLD = self::FONT_PATH . 'NotoSans-Bold.ttf';
     // the only scripts of the html frontend: the calculator pages repeat their calculation in the
     // browser, the calculator and the formula editor build the editor and the json calculator page the
     // page from the phrase data, if config.yaml allows javascript for the calculator (see docs/llm/frontend.md)

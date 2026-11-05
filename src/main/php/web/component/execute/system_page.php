@@ -1672,12 +1672,14 @@ class system_page extends component
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load or a stored result that differs
      * @param data_object|null $cfg the request cache with the calculator triples, the values and the results of the page
+     * @param bool $filled true to calculate the cells of the sensitivity table e.g. for a pdf, which has no script to fill them
      * @return string the html code of the results or an empty string if the calculator has no result
      */
     function calculation_result(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         user_message                                          $msg,
-        ?data_object                                          $cfg
+        ?data_object                                          $cfg,
+        bool                                                  $filled = false
     ): string
     {
         global $mtr;
@@ -1696,7 +1698,13 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
             }
-            $result = $list->calculator_verdict($calc, $dbo, $cfg, $lst, $msg) . $result . $list->calculator_sensitivity($calc);
+            // the numbers of the sensitivity table only if no script fills them, because each cell calculates the page again
+            if ($filled) {
+                $sensitivity = $list->calculator_sensitivity_filled($calc, $dbo, $cfg, $lst, $msg);
+            } else {
+                $sensitivity = $list->calculator_sensitivity($calc);
+            }
+            $result = $list->calculator_verdict($calc, $dbo, $cfg, $lst, $msg) . $result . $sensitivity;
             $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
                 . $list->calculator_diagrams($calc, $lst, $msg)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)

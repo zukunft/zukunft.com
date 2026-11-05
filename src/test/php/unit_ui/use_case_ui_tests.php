@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -105,6 +106,11 @@ class use_case_ui_tests
     const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
     // the result of a scenario that has not ended in the browser e.g. because a selector no longer matches
     const string SCENARIO_NOT_ENDED = 'the scenario has not ended in the headless browser';
+    // the fields of the message of the PDF tab scenarios (pressCreatePdf and pdf_tab_offline of calculator_editor_scenarios.js)
+    const string PDF_POST_ROUTE = 'route';
+    const string PDF_POST_TOKEN_SENT = 'token_sent';
+    const string PDF_POST_BODY = 'body';
+    const string PDF_BUTTON_DISABLED = 'disabled';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -334,6 +340,15 @@ class use_case_ui_tests
         $test_name = '... but not the phrases of the operands with a number on the page';
         $missing_none = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
         $t->assert($test_name, $missing_none->is_empty(), true);
+        // each missing operand with its own phrases, so that a page can keep an operand that names only a unit
+        $test_name = 'the missing phrases are listed per operand';
+        $opr_lsts = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), new value_list_ui(), $frm_lst);
+        $opr_names = array_map(fn($opr_lst) => $opr_lst->names(), $opr_lsts);
+        $t->assert($test_name, $opr_names, [[triple_names::CITY_ZH_NAME], [triple_names::COMPANY_ZURICH]]);
+        // negative: no operand list for the operands with a number on the page
+        $test_name = '... but no list for the operands with a number on the page';
+        $opr_none = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $opr_none, []);
         // negative: a result that no table has calculated keeps the link without a tooltip
         $test_name = '... and no tooltip for a result without its calculation';
         $res_plain_html = $t_res->result_zh_sum_ui($sum)->value_edit($msg);
@@ -1534,6 +1549,24 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // the results of a missing operand are loaded only within the context of the results that need them
+        $dto_ctx = new data_object();
+        $wide_ctx = [$zh_city_id, word_names::INHABITANT_ID];
+        $narrow_ctx = [$zh_city_id];
+        $test_name = 'the results within a context are not loaded before their load';
+        $has_before = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_false($test_name, $has_before);
+        $dto_ctx->add_results_within([$zh_city_id], $wide_ctx, $zh_res_lst);
+        $test_name = '... but after the load within a context that includes it';
+        $has_narrow = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_true($test_name, $has_narrow);
+        // negative: a wider context can need results that the load has left out
+        $test_name = '... and not for a wider context';
+        $has_wider = $dto_ctx->has_results_within($zh_city_id, [...$wide_ctx, word_names::YEAR_2019_ID]);
+        $t->assert_false($test_name, $has_wider);
+        $test_name = '... and not as all results of the phrase';
+        $has_all = $dto_ctx->has_results_of($zh_city_id);
+        $t->assert_false($test_name, $has_all);
         // many cells and results of a calculator page ask the values of the same phrases, so the
         // request cache loads the values of the same phrases once
         $test_name = 'the values of phrases are not loaded if the cache has not asked them yet';
@@ -2118,6 +2151,30 @@ class use_case_ui_tests
             foreach ($unchanged as $scenario => $test_name) {
                 $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
             }
+            // the Definition tab shows the data of the page with the unsaved changes, like the export
+            $test_name = 'the Definition tab shows the data of the page as json';
+            $json_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB_LABEL);
+            $json = json_decode($json_txt, true);
+            $t->assert_true($test_name, is_array($json) and array_key_exists(json_fields::TRIPLES, $json));
+            $test_name = '... with the unsaved changes';
+            $t->assert_text_contains($test_name, $json_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: without a change the json has the label of the database
+            $test_name = '... but not a change that has not been made';
+            $plain_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB);
+            $t->assert_text_not_contains($test_name, $plain_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // the PDF tab posts the data of the page with the unsaved changes and the token of the session to the pod
+            $test_name = 'the PDF tab posts the data of the page to the pdf entry point of the pod';
+            $pdf_post = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_LABEL), true) ?? [];
+            $t->assert($test_name, $pdf_post[self::PDF_POST_ROUTE] ?? '', api::CALCULATOR_PDF_SCRIPT);
+            $test_name = '... with the token of the session';
+            $t->assert_true($test_name, $pdf_post[self::PDF_POST_TOKEN_SENT] ?? false);
+            $test_name = '... and the unsaved changes';
+            $pdf_body = json_encode($pdf_post[self::PDF_POST_BODY] ?? [], JSON_UNESCAPED_UNICODE);
+            $t->assert_text_contains($test_name, $pdf_body, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: a page that is not on a pod cannot create the pdf
+            $test_name = '... but a page that is not on a pod offers no pdf';
+            $offline = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_OFFLINE), true) ?? [];
+            $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
             unlink($page);
         }
         $brw->stop();

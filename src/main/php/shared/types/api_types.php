@@ -81,8 +81,10 @@ enum api_types: string
     // include the message header
     case HEADER = 'header';
 
-    // load the values of each phrase with its own api call, because the values of several
-    // phrases together can exceed the row limit of the backend
+    // load the values of each phrase with its own api call instead of one paged call for all phrases
     case LOAD_PER_PHRASE = 'load_per_phrase';
+    // a value or result list answer names each phrase once with its details and the items and the
+    // triples only by the phrase ids, so that the answer does not repeat the same phrases and verbs
+    case PHRASES_ONCE = 'phrases_once';
 
 }

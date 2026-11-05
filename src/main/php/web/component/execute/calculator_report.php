@@ -57,6 +57,7 @@ include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Closure;
 use DOMDocument;
@@ -65,6 +66,7 @@ use DOMNode;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\number_format;
@@ -103,6 +105,23 @@ class calculator_report
     // the html tags of the page that are a heading, a text or that the report does not show
     const array HEADING_TAGS = ['h1', 'h2', 'h3', 'summary'];
     const array SKIPPED_TAGS = ['svg', 'button', 'input', 'script', 'style', 'form'];
+    // the parts of the page that only a screen can show e.g. the meter of the verdict and its scale
+    const array SKIPPED_CLASSES = [styles::CALC_METER, styles::CALC_NEEDLE, styles::CALC_SCALE];
+    // the toggle of a collapsed part, which the report skips if it is the "... more" of the hidden rest
+    const string SUMMARY_TAG = 'summary';
+    // the attributes of an input field of the page that the report shows
+    const string INPUT_TYPE_NUMBER = 'number';
+    const string ATTR_MIN = 'min';
+    const string ATTR_MAX = 'max';
+    const string ATTR_STEP = 'step';
+    const string ATTR_CHECKED = 'checked';
+    const string ATTR_SELECTED = 'selected';
+    // a link to another site is followed by its url, because a paper cannot be clicked
+    const string URL_START = 'http';
+    const string URL_SEPARATOR = ': ';
+    // the number of an item of a numbered list like the references of the page e.g. "[2] "
+    const string NUMBER_START = '[';
+    const string NUMBER_END = '] ';
     // the columns of a positions table and which of them are aligned to the right
     const array POSITION_COLUMNS = [
         msg_id::CALCULATOR_REPORT_QUANTITY,
@@ -115,6 +134,8 @@ class calculator_report
         msg_id::CALCULATOR_REPORT_VALUE_EUR
     ];
     const array POSITION_RIGHT = [true, false, false, false, true, true, true, true];
+    // true while a part of the page is added whose main parts each start on a new page (see add_html)
+    private bool $main_on_new_page = false;
     // the html wrapper to read a part of a page as utf-8
     const string DOM_PREFIX = '<?xml encoding="UTF-8"><div>';
     const string DOM_SUFFIX = '</div>';
@@ -168,11 +189,12 @@ class calculator_report
     }
 
     /**
-     * add the logo that the user has set in the config, else the logo of zukunft.com
+     * add the logo that the user has set in the config, else the logo of zukunft.com,
+     * also used by the definition report of the calculator editor (calculator_definition_report)
      *
      * @param pdf_writer $pdf the report
      */
-    private function add_logo(pdf_writer $pdf): void
+    function add_logo(pdf_writer $pdf): void
     {
         if (!$pdf->image($this->user_logo())) {
             $pdf->image(file_get_contents(files::REPORT_LOGO_DEFAULT));
@@ -366,8 +388,9 @@ class calculator_report
      *
      * @param pdf_writer $pdf the report
      * @param string $html the html code of the part of the page
+     * @param bool $main_on_new_page true to start each main part of the page on a new page (see is_main_heading)
      */
-    function add_html(pdf_writer $pdf, string $html): void
+    function add_html(pdf_writer $pdf, string $html, bool $main_on_new_page = false): void
     {
         $doc = new DOMDocument();
         // the html of a page is valid for a browser, but e.g. a section tag is unknown to the parser
@@ -375,7 +398,29 @@ class calculator_report
         $doc->loadHTML(self::DOM_PREFIX . $html . self::DOM_SUFFIX);
         libxml_clear_errors();
         libxml_use_internal_errors($libxml_errors);
+        $this->main_on_new_page = $main_on_new_page;
         $this->add_node($pdf, $doc->documentElement);
+        $this->main_on_new_page = false;
+    }
+
+    /**
+     * @param DOMElement $node a heading of the page or the summary of a collapsed part
+     * @return bool true if the heading starts a main part of the page e.g. "Your assumptions" or "Main results",
+     *              i.e. it is not within a collapsed part or a section such as "Sources" in "Formulas and sources"
+     *              or the heading of the arguments of one side
+     */
+    private function is_main_heading(DOMElement $node): bool
+    {
+        $result = true;
+        // the summary heads its own collapsed part, which therefore does not count
+        $parent = $node->tagName == self::SUMMARY_TAG ? $node->parentNode?->parentNode : $node->parentNode;
+        while ($parent instanceof DOMElement) {
+            if (in_array($parent->tagName, [html_base::DETAILS, html_base::SECTION])) {
+                $result = false;
+            }
+            $parent = $parent->parentNode;
+        }
+        return $result;
     }
 
     /**
@@ -384,19 +429,133 @@ class calculator_report
      */
     private function add_node(pdf_writer $pdf, DOMNode $parent): void
     {
+        global $mtr;
+        $is_numbered = ($parent instanceof DOMElement and $parent->tagName == html_base::OL);
+        $number = 0;
         foreach ($parent->childNodes as $node) {
-            if ($node instanceof DOMElement and !in_array($node->tagName, self::SKIPPED_TAGS)) {
-                if (in_array($node->tagName, self::HEADING_TAGS)) {
+            if ($node instanceof DOMElement and !in_array($node->tagName, self::SKIPPED_TAGS)
+                and !$this->has_class($node, self::SKIPPED_CLASSES)) {
+                if ($node->tagName == self::SUMMARY_TAG and trim($node->textContent) == $mtr->txt(msg_id::AND_MORE)) {
+                    // the toggle of the collapsed part, of which the report shows the content
+                } elseif ($is_numbered and $node->tagName == html_base::LI) {
+                    // the number that a browser shows, which the texts of the page cite e.g. the [2] of a source
+                    $number++;
+                    $pdf->text(self::NUMBER_START . $number . self::NUMBER_END . $this->text_with_links($node));
+                } elseif (in_array($node->tagName, self::HEADING_TAGS)) {
+                    if ($this->main_on_new_page and $this->is_main_heading($node)) {
+                        $pdf->page_break();
+                    }
                     $pdf->heading($node->textContent);
                 } elseif ($node->tagName == html_base::TABLE) {
                     $this->add_table($pdf, $node);
+                } elseif ($this->has_class($node, [styles::INPUT_FIELD])) {
+                    $this->add_field($pdf, $node);
                 } elseif ($this->has_element($node)) {
                     $this->add_block($pdf, $node);
                 } else {
-                    $pdf->text($node->textContent);
+                    $pdf->text($this->text_with_links($node));
                 }
             }
         }
+    }
+
+    /**
+     * an input field of the page as its label, the number with its unit and its limits, and its hint,
+     * because the report shows the number that the page uses and not a field to change it
+     *
+     * @param pdf_writer $pdf the report
+     * @param DOMElement $field the html element of the field with its label, its input and its hint
+     */
+    private function add_field(pdf_writer $pdf, DOMElement $field): void
+    {
+        global $mtr;
+        $label = '';
+        $number = '';
+        $limits = '';
+        $parts = [];
+        foreach ($field->getElementsByTagName(html_base::LABEL) as $lbl) {
+            $label = $label == '' ? $this->plain($lbl->textContent) : $label;
+        }
+        foreach ($field->getElementsByTagName(html_base::INPUT) as $input) {
+            $type = $input->getAttribute(html_base::TYPE);
+            if ($type == self::INPUT_TYPE_NUMBER or $type == html_base::INPUT_TEXT) {
+                $number = $input->getAttribute(html_base::VALUE);
+                if ($input->hasAttribute(self::ATTR_MIN) and $input->hasAttribute(self::ATTR_MAX)) {
+                    $limits = new library()->msg_var_text([[msg_id::CALCULATOR_REPORT_LIMITS, [
+                        msg_id::VAR_NAME_FROM => $input->getAttribute(self::ATTR_MIN),
+                        msg_id::VAR_NAME_TO => $input->getAttribute(self::ATTR_MAX),
+                        msg_id::VAR_VALUE => $input->getAttribute(self::ATTR_STEP)
+                    ]]], $mtr);
+                }
+            } elseif ($type == html_base::INPUT_CHECKBOX) {
+                $number = $mtr->txt($input->hasAttribute(self::ATTR_CHECKED) ? msg_id::YES : msg_id::NO);
+            }
+        }
+        foreach ($field->getElementsByTagName(html_base::OPTION) as $opt) {
+            if ($opt->hasAttribute(self::ATTR_SELECTED)) {
+                $number = $this->plain($opt->textContent);
+            }
+        }
+        foreach ($field->getElementsByTagName(html_names::SPAN) as $span) {
+            if ($this->has_class($span, [styles::INPUT_UNIT])) {
+                $number .= ' ' . $this->plain($span->textContent);
+            }
+        }
+        $parts[] = trim($number . ($limits == '' ? '' : ' (' . $limits . ')'));
+        foreach ($field->getElementsByTagName(html_names::SPAN) as $span) {
+            if ($this->has_class($span, [styles::INPUT_HINT])) {
+                $parts[] = $this->text_with_links($span);
+            }
+        }
+        $pdf->text($label, pdf_writer::TEXT_SIZE, true);
+        foreach ($parts as $part) {
+            if ($part != '') {
+                $pdf->text($part);
+            }
+        }
+        $pdf->space();
+    }
+
+    /**
+     * @param DOMElement $node a html element
+     * @param array $classes the css classes of which one is searched e.g. styles::CALC_METER
+     * @return bool true if the element has at least one of the classes
+     */
+    private function has_class(DOMElement $node, array $classes): bool
+    {
+        $own = explode(' ', $node->getAttribute(html_base::CLASS_HTML));
+        return array_intersect($own, $classes) != [];
+    }
+
+    /**
+     * @param DOMNode $node a html element with its text and links
+     * @return string its text, in which each link to another site is followed by its url, because a paper cannot be clicked
+     */
+    private function text_with_links(DOMNode $node): string
+    {
+        $result = '';
+        foreach ($node->childNodes as $child) {
+            if ($child instanceof DOMElement and $child->tagName == html_base::A) {
+                $url = $child->getAttribute(html_base::HREF);
+                $text = $this->plain($child->textContent);
+                $is_external = (str_starts_with($url, self::URL_START) and $url != $text);
+                $result .= $is_external ? $text . self::URL_SEPARATOR . $url : $text;
+            } elseif ($child instanceof DOMElement) {
+                $result .= $this->text_with_links($child);
+            } else {
+                $result .= $child->textContent;
+            }
+        }
+        return $this->plain($result);
+    }
+
+    /**
+     * @param string $text a text of the page
+     * @return string the text with one space between its words
+     */
+    private function plain(string $text): string
+    {
+        return trim(preg_replace('/\s+/u', ' ', $text));
     }
 
     /**
@@ -406,7 +565,7 @@ class calculator_report
     private function add_block(pdf_writer $pdf, DOMElement $node): void
     {
         if (in_array($node->tagName, [html_base::P, html_base::LI])) {
-            $pdf->text($node->textContent);
+            $pdf->text($this->text_with_links($node));
         } else {
             $this->add_node($pdf, $node);
         }

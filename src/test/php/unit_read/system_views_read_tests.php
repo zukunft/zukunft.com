@@ -44,8 +44,12 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::EXECUTE . 'calculator_definition_report.php';
+include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UTILS . 'csv_table_diff.php';
@@ -80,9 +84,14 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_definition_report;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data as phrase_data_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -101,6 +110,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class system_views_read_tests
 {
 
+    // two cells of the sensitivity table of the Swiss NPP vote: the levelised cost and the verdict number of the
+    // construction cost and the cost of capital of the inputs (8'826 CHF/kW, 5 %) and of 5'000 CHF/kW at 3 %
+    const string NPP_SENSITIVITY_INPUT_CELL = '114 (-0.01)';
+    const string NPP_SENSITIVITY_OTHER_CELL = '66 (-0.77)';
     // the element of use_case_cases.js with the result of a case as json and its two fields
     const string CASE_RESULT_ID = 'caseResult';
     const string CASE_MISSING = 'missing';
@@ -155,9 +168,12 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
+        $this->run_npp_sensitivity($t);
         $this->run_global_warming_solutions_csv($t);
         $this->run_populism_solutions_table($t);
         $this->run_context_values_per_phrase($t);
+        $this->run_result_operands($t);
+        $this->run_start_page_steps($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -202,7 +218,10 @@ class system_views_read_tests
         // the variants differ only by the display parameters of the url, so they share one
         // request cache and only the first loads the data of the table
         $cfg = $t->view_context();
+        // the first variant loads the data of the table, so its steps and api calls are logged with their seconds
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID, $cfg);
+        $t->set_debug($debug_before);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
@@ -1108,8 +1127,8 @@ class system_views_read_tests
         $row_count = count($gains);
         $t->assert_greater($test_name, 1, $row_count);
 
-        // the missing operands of the initial effort are loaded per phrase, because the values of
-        // all missing phrases together exceed the row limit of the backend (api_types::LOAD_PER_PHRASE)
+        // the missing operands are loaded with one paged call, which stays complete also if the
+        // values of all missing phrases together exceed the row limit of the backend
         $msg = new user_message();
         $effort_lst = new phrase_list_ui();
         $both_lst = new phrase_list_ui();
@@ -1123,29 +1142,48 @@ class system_views_read_tests
                 $both_lst->add_phrase($factor);
             }
         }
-        $test_name = 'the values of the initial effort are loaded with a call of their own';
-        $t->assert_true($test_name, $cfg->has_values_of($effort_lst));
-        // negative: one call for all missing phrases would miss a part of the values
-        $test_name = '... and not together with the person year per billion USD';
-        $t->assert_false($test_name, $cfg->has_values_of($both_lst));
+        $test_name = 'the values of the initial effort are loaded with the other missing operands';
+        $effort_count = $this->values_with_names($cfg, [triple_names::INITIAL_EFFORT]);
+        $t->assert_greater($test_name, 0, $effort_count);
+        // negative: no missing phrase gets a call of its own
+        $test_name = '... and not with a call of their own';
+        $has_own_call = $cfg->has_values_of($effort_lst);
+        $t->assert_false($test_name, $has_own_call);
 
-        // switched off, the missing operands of the table are loaded with one call
-        $off_cfg = $t->view_context();
+        // with the per phrase switch each missing operand of the table is loaded with a call of its own
+        $per_cfg = $t->view_context();
         $tbl_phr = new triple_ui();
         $tbl_phr->load_by_name(triple_names::POPULISM_SOLUTION, $msg);
-        new ui_list()->table_with_related_columns($tbl_phr, $msg, $off_cfg, typ_lst: new api_type_list());
-        $test_name = 'without the per phrase switch the missing operands of the table are loaded too';
-        $off_count = $off_cfg->val_lst->count();
-        $t->assert_greater($test_name, 0, $off_count);
-        // negative: no missing phrase is loaded with a call of its own
-        $test_name = '... but not with a call per phrase';
-        $t->assert_false($test_name, $off_cfg->has_values_of($effort_lst));
+        $per_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        new ui_list()->table_with_related_columns($tbl_phr, $msg, $per_cfg, typ_lst: $per_typ);
+        $test_name = 'with the per phrase switch the initial effort is loaded with a call of its own';
+        $has_per_call = $per_cfg->has_values_of($effort_lst);
+        $t->assert_true($test_name, $has_per_call);
+        // negative: the switch never combines two missing phrases
+        $test_name = '... and not together with the person year per billion USD';
+        $has_both_call = $per_cfg->has_values_of($both_lst);
+        $t->assert_false($test_name, $has_both_call);
+    }
+
+    /**
+     * @param data_object_ui $cfg the request cache of a page
+     * @param array $names the phrase names that a counted value has all
+     * @return int the number of values in the cache that have all given phrases
+     */
+    private function values_with_names(data_object_ui $cfg, array $names): int
+    {
+        $result = 0;
+        foreach ($cfg->val_lst->lst() as $val) {
+            if (array_diff($names, $val->phr_lst()->names()) == []) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     /**
      * the assumption fields of a populism solution load the values of the context of each result
-     * per phrase, because the values of all phrases of a context together can exceed the row limit
-     * of the backend (api_types::LOAD_PER_PHRASE)
+     * with one paged call, and with api_types::LOAD_PER_PHRASE with a call per phrase
      *
      * @param test_cleanup $t the test environment with the test users
      * @return void
@@ -1169,27 +1207,148 @@ class system_views_read_tests
                 $both_lst->add_phrase($sol_phr);
             }
         }
-        $test_name = 'the context values of a result are loaded with a call per phrase';
-        $t->assert_true($test_name, $cfg->has_values_of($effort_lst));
-        // negative: one call for the whole context could miss a part of the values
-        $test_name = '... and not with one call for the phrases of the context';
-        $t->assert_false($test_name, $cfg->has_values_of($both_lst));
+        $test_name = 'the context values of a result are loaded with one call';
+        $effort_count = $this->values_with_names($cfg, [triple_names::INITIAL_EFFORT, triple_names::ONE_CLICK_HIDE_POPULISM]);
+        $t->assert_greater($test_name, 0, $effort_count);
+        // negative: no phrase of the context gets a call of its own
+        $test_name = '... and not with a call per phrase';
+        $has_own_call = $cfg->has_values_of($effort_lst);
+        $t->assert_false($test_name, $has_own_call);
 
-        // switched off, the context of a result is loaded with one call
-        $off_cfg = $t->view_context();
-        new ui_list()->assumption_fields($sol, $msg, $off_cfg, '', [], [], new api_type_list());
-        $has_effort = false;
-        foreach ($off_cfg->val_lst->lst() as $val) {
-            $names = $val->phr_lst()->names();
-            if (in_array(triple_names::INITIAL_EFFORT, $names) and in_array(triple_names::ONE_CLICK_HIDE_POPULISM, $names)) {
-                $has_effort = true;
+        // with the per phrase switch each phrase of the context is loaded with a call of its own
+        $per_cfg = $t->view_context();
+        $per_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        new ui_list()->assumption_fields($sol, $msg, $per_cfg, '', [], [], $per_typ);
+        $test_name = 'with the per phrase switch the context values are loaded with a call per phrase';
+        $has_per_call = $per_cfg->has_values_of($effort_lst);
+        $t->assert_true($test_name, $has_per_call);
+        // negative: the switch never combines two phrases of the context
+        $test_name = '... and not with one call for the phrases of the context';
+        $has_both_call = $per_cfg->has_values_of($both_lst);
+        $t->assert_false($test_name, $has_both_call);
+    }
+
+    /**
+     * the potential gain of a global warming solution is calculated from the results of the avoided
+     * emission, which the table data has already, and the social cost of carbon in EUR per tonne,
+     * which the table lacks, so the table loads the results of this missing operand for the formula
+     * tooltip, although the operand names only a unit
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_result_operands(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::GLOBAL_WARMING_SOLUTION, $msg);
+        // the steps of the table and each api call are logged with their seconds, so that the
+        // load of the results of the missing operands can be followed in the test log
+        $t->step('result operands step: create the table of ' . triple_names::GLOBAL_WARMING_SOLUTION);
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        $tbl_html = new ui_list()->table_with_related_columns($tbl_phr, $msg, $cfg);
+        $t->set_debug($debug_before);
+        $t->step('result operands step: table created with ' . $cfg->res_lst->count() . ' results in the cache');
+        $operand = new triple_ui();
+        $operand->load_by_name(triple_names::EUR_PER_TONNE, $msg);
+        $operand_id = $operand->phrase()->id();
+        // the formula names its terms in quotes, which the tooltip escapes
+        $operand_tip = htmlspecialchars('"' . triple_names::AVOIDED_EMISSION . '"');
+        $test_name = 'the results of an operand that is a unit and a result are loaded for the table';
+        $has_operand = $cfg->has_results_within($operand_id, []);
+        $t->assert_true($test_name, $has_operand);
+        $test_name = '... so the potential gain has the formula with its numbers as tooltip';
+        $t->assert_text_contains($test_name, $tbl_html, $operand_tip);
+        // negative: a unit says how a number is stated, so its results are not loaded
+        $test_name = '... but not the results of a unit';
+        $has_unit = $cfg->has_results_within(word_names::TRILLION_ID, []);
+        $t->assert_false($test_name, $has_unit);
+    }
+
+    /**
+     * the steps of the start page with the more list, the columns without the minor tiers and the
+     * variance, which loads the values and the results of each missing operand with a call per
+     * phrase; the pod ends a page without a message above its memory limit, so each step is also
+     * checked against that limit and not only for its result
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_start_page_steps(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $url_array = [
+            url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR,
+            url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        $effort = new triple_ui();
+        $effort->load_by_name(triple_names::INITIAL_EFFORT, $msg);
+        $effort_id = $effort->phrase()->id();
+        $effort_lst = new phrase_list_ui();
+        $effort_lst->add_phrase($effort->phrase());
+
+        // the biggest answer of the page and the last one before the page stops
+        $test_name = 'the results of the initial effort are loaded';
+        $t->step('start page step: load the results of ' . triple_names::INITIAL_EFFORT);
+        $start_mem = memory_get_usage();
+        memory_reset_peak_usage();
+        $res_lst = new result_list_ui();
+        $res_lst->load_by_phrase_list($effort_lst, $msg);
+        $res_mem = memory_get_peak_usage() - $start_mem;
+        $res_count = $res_lst->count();
+        $t->step('start page step: ' . $res_count . ' results loaded with ' . $res_mem . ' bytes');
+        $t->assert_greater($test_name, 0, $res_count, $t::TIMEOUT_LIMIT_REST);
+        $test_name = '... within the memory limit of the pod';
+        $t->assert_below($test_name, $t::POD_MEMORY_LIMIT, $res_mem);
+
+        // the table loads the values and then the results of each missing operand one by one
+        $test_name = 'the start page table loads the results of the initial effort';
+        $t->step('start page step: create the table of ' . triple_names::GLOBAL_PROBLEM);
+        $start_mem = memory_get_usage();
+        memory_reset_peak_usage();
+        // the steps of the table and each api call are logged with their seconds, so that a slow step is visible
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        new ui_list()->table_with_related_columns($tbl_phr, $msg, $cfg, false, true, $url_array);
+        $t->set_debug($debug_before);
+        $tbl_mem = memory_get_peak_usage() - $start_mem;
+        $t->step('start page step: table created with ' . $tbl_mem . ' bytes');
+        $has_effort = $cfg->has_results_within($effort_id, []);
+        $t->assert_true($test_name, $has_effort, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... within the memory limit of the pod';
+        $t->assert_below($test_name, $t::POD_MEMORY_LIMIT, $tbl_mem);
+        // only the results that the calculation of the table can use, not all results of the phrase
+        $test_name = '... but only the results within the context of the table';
+        $tbl_effort_count = $this->results_with_phrase($cfg, $effort_id);
+        $t->step('start page step: ' . $tbl_effort_count . ' results of ' . triple_names::INITIAL_EFFORT . ' kept');
+        $t->assert_below($test_name, $res_count, $tbl_effort_count);
+        // negative: not all results of the phrase are loaded
+        $test_name = '... and not all results of the initial effort';
+        $has_all_effort = $cfg->has_results_of($effort_id);
+        $t->assert_false($test_name, $has_all_effort);
+        // negative: a unit says how a number is stated, so its results are not loaded
+        $test_name = '... but not the results of a unit';
+        $has_unit = $cfg->has_results_within(word_names::TRILLION_ID, []);
+        $t->assert_false($test_name, $has_unit);
+    }
+
+    /**
+     * @param data_object_ui $cfg the request cache of a page
+     * @param int $phr_id the id of a phrase
+     * @return int the number of results in the cache that have the phrase
+     */
+    private function results_with_phrase(data_object_ui $cfg, int $phr_id): int
+    {
+        $result = 0;
+        foreach ($cfg->res_lst->lst() as $res) {
+            if (in_array($phr_id, $res->phr_lst()->ids())) {
+                $result++;
             }
         }
-        $test_name = 'without the per phrase switch the context values are loaded too';
-        $t->assert_true($test_name, $has_effort);
-        // negative: no phrase of the context is loaded with a call of its own
-        $test_name = '... but not with a call per phrase';
-        $t->assert_false($test_name, $off_cfg->has_values_of($effort_lst));
+        return $result;
     }
 
     /**
@@ -1212,6 +1371,38 @@ class system_views_read_tests
             test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
         $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
             test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
+    }
+
+    /**
+     * the pdf of the calculator editor fills the cells of the sensitivity table of the Swiss NPP vote page,
+     * which the page leaves to its script: per cell the page is calculated again with the numbers of the
+     * row and of the column, and afterward each number of the page is set back
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_sensitivity(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $trp = new triple_ui();
+        $trp->load_by_name(triple_names::NEW_NPP_VOTE, $msg);
+        $json = new phrase_data_ui()->load_from_walk($trp->phrase(), $msg);
+        $def_rpt = new calculator_definition_report();
+        $dto = $def_rpt->page_cache($json, $msg);
+        $dbo = $dto->phr_lst->get_by_name(triple_names::NEW_NPP_VOTE, $msg)?->obj();
+        $page = new system_page();
+        $plain_before = $page->calculation_result($dbo, $msg, $dto);
+        $filled = $page->calculation_result($dbo, $msg, $dto, true);
+        $plain_after = $page->calculation_result($dbo, $msg, $dto);
+        $test_name = 'the pdf fills the sensitivity cell of the numbers of the inputs like the main results';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_INPUT_CELL, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and a cell of other numbers by calculating the page again';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_OTHER_CELL);
+        // negative: the page leaves the cells to its script, because each cell calculates the page again
+        $test_name = '... but the page leaves the cells empty';
+        $t->assert_text_not_contains($test_name, $plain_before, self::NPP_SENSITIVITY_INPUT_CELL);
+        $test_name = '... and each number of the page is set back after the cells';
+        $t->assert($test_name, $plain_after, $plain_before);
     }
 
     /**

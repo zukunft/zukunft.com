@@ -50,6 +50,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -187,6 +189,30 @@ class value_list_read_tests
         $first_page_id = $page_ids[0] ?? '';
         $t->assert($test_name, $first_ids, [$first_page_id]);
 
+        // a paged load tells the caller that a next page exists, so that the frontend loads it
+        $test_name = 'a paged load that fills its page has a next page';
+        $nxt_msg = new user_message();
+        $nxt_lst = new value_list($t->usr1);
+        $nxt_lst->load_by_phr_lst($t_phr->phrase_list_math_const_db(), $nxt_msg, true, 1, 0, true);
+        $has_next = $nxt_lst->has_next_page;
+        $t->assert_true($test_name, $has_next);
+        $test_name = '... without the row limit warning, because the caller loads the next page';
+        $t->assert_text_not_contains($test_name, $nxt_msg->text(), self::ROW_LIMIT_TEXT);
+        $test_name = '... and names the next page in the api answer';
+        $nxt_json = $nxt_lst->api_json_array([api_types::INCL_PHRASES, api_types::PHRASES_ONCE], $nxt_msg);
+        $json_next = $nxt_json[json_fields::NEXT_PAGE] ?? false;
+        $t->assert_true($test_name, $json_next);
+        // negative: a paged load of all rows on one page has no next page
+        $test_name = '... but a paged load of all rows has none';
+        $one_lst = new value_list($t->usr1);
+        $one_lst->load_by_phr_lst($t_phr->phrase_list_math_const_db(), $nxt_msg, true, page: 0, paged: true);
+        $one_next = $one_lst->has_next_page;
+        $t->assert_false($test_name, $one_next);
+        $test_name = '... and no next page in its api answer';
+        $one_json = $one_lst->api_json_array([api_types::INCL_PHRASES, api_types::PHRASES_ONCE], $nxt_msg);
+        $has_next_key = array_key_exists(json_fields::NEXT_PAGE, $one_json);
+        $t->assert_false($test_name, $has_next_key);
+
         // the results are sorted by the phrase ids and the formula too, so their pages are complete as well
         $test_name = 'the result list of a sorted load has more results than one page';
         $res_phr_lst = new phrase_list($t->usr1);
@@ -206,6 +232,31 @@ class value_list_read_tests
         $test_name = '... without a result on two pages';
         $res_unique_count = count(array_unique($res_page_ids));
         $t->assert($test_name, $res_unique_count, $res_count);
+
+        // the result list answer names each phrase once, so that the same phrases and verbs are not repeated;
+        // the phrases with the sides of the triples are loaded first like api/resultList does
+        $res_all_lst->load_phrases($msg);
+        $once_json = $res_all_lst->api_json_array([api_types::INCL_PHRASES, api_types::PHRASES_ONCE], $msg);
+        $full_json = $res_all_lst->api_json_array([api_types::INCL_PHRASES], $msg);
+        $once_phr_count = count($once_json[json_fields::PHRASES] ?? []);
+        $once_results = json_encode($once_json[json_fields::RESULTS] ?? []);
+        $once_phrases = json_encode($once_json[json_fields::PHRASES] ?? []);
+        $once_size = strlen(json_encode($once_json));
+        $full_text = json_encode($full_json);
+        $full_size = strlen($full_text);
+        $from_field = '"' . json_fields::FROM_PHRASE . '"';
+        $verb_object = '"' . json_fields::VERB . '":{';
+        $test_name = 'the result list answer with each phrase once names the phrases';
+        $t->assert_greater($test_name, 0, $once_phr_count);
+        $test_name = '... and the results name their phrases only by id';
+        $t->assert_text_not_contains($test_name, $once_results, $from_field);
+        $test_name = '... and the triples name their verb only by id';
+        $t->assert_text_not_contains($test_name, $once_phrases, $verb_object);
+        $test_name = '... so the answer is smaller';
+        $t->assert_greater($test_name, $once_size, $full_size);
+        // negative: without the switch each result carries the details of its phrases
+        $test_name = '... but without the switch each result has the details of its triples';
+        $t->assert_text_contains($test_name, $full_text, $from_field);
 
         // load by phrase list
         $phr = new phrase($t->usr1);

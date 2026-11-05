@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
@@ -45,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
@@ -86,10 +88,10 @@ class view_write_tests
         $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME, $msg);
 
 
-        // the system views are system data, so they are imported by their owner: an import by the
-        // test user would write every field that the seed has set, e.g. the protection of the
-        // start view, into the user sandbox of the test user and change the page of a seed view
-        $db_con->import_system_views($t->usr_system, $msg_ui);
+        // the system views are part of the seed database, so a new import would only repeat them;
+        // the cache of the system views is reloaded, so that it contains the views added above
+        $sys->msk_cac = new view_sys_list($t->usr_system);
+        $sys->msk_cac->load($db_con, $msg_ui);
 
         $this->create_test_views($t);
 
