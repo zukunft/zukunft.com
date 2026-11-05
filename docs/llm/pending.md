@@ -52,10 +52,6 @@ gets the CO2-eq costs). One phase, four agents in parallel:
 
 ## Calculator editor
 
-### JSON tab
-
-similar to the table editor add right of the 'Page preview' tab a tab with 'Definition (JSON)'
-
 ### Swiss NPP
 
 in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=16&9id=-3321&u=11
@@ -272,6 +268,10 @@ possibility to set the weight of the targets and combine them with the personal 
 #### config yaml
 
 add these to the config.yaml at 'pinned views'
+
+#### selection calculator and editor
+
+create a selection calculator with editor for the Swiss National Science Fund (snsf) to select projects to fund
 
 #### more sample
 

@@ -167,6 +167,12 @@ class files
     CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
     CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
     CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the scenarios that end with the json of the Definition tab as their message
+    CONST string SCENARIO_JSON_TAB_LABEL = 'json_tab_label';
+    CONST string SCENARIO_JSON_TAB = 'json_tab';
+    // the scenarios that end with the posted request of the PDF tab or the state of its button as their message
+    CONST string SCENARIO_PDF_TAB_LABEL = 'pdf_tab_label';
+    CONST string SCENARIO_PDF_TAB_OFFLINE = 'pdf_tab_offline';
     // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;

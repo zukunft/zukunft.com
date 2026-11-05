@@ -6244,6 +6244,50 @@ class test_base
     }
 
     /**
+     * @return string the anti csrf token of the admin session of api_login, empty if the login has not been possible
+     */
+    function api_session_token(): string
+    {
+        return $this->api_login_token;
+    }
+
+    /**
+     * post a body to an entry point of this pod with the session cookie of api_login,
+     * like the script of a page that posts e.g. the json of the calculator editor for its pdf
+     *
+     * @param string $url the complete url of the entry point
+     * @param string $body the posted body
+     * @param string $token the anti csrf token sent in its header, empty to send none
+     * @return array the http status code as text e.g. "403", which an assert compares, and the answer
+     */
+    function post_with_session(string $url, string $body, string $token): array
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $headers = ['Content-Type: application/json'];
+        if ($token != '') {
+            $headers[] = api::CSRF_TOKEN_HEADER . ': ' . $token;
+        }
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $this->api_login_cookie_file);
+        curl_setopt($curl, CURLOPT_TIMEOUT, self::TIMEOUT_LIMIT_LONG);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $answer = curl_exec($curl);
+        if ($answer === false) {
+            $this->dsp_warning('posting to ' . $url . ' failed due to ' . curl_error($curl));
+            $answer = '';
+        }
+        $status = (string)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        curl_close($curl);
+        $sys->times->switch();
+        return [$status, $answer];
+    }
+
+    /**
      * request one page of this pod and keep the session cookie for the next request
      *
      * @param string $url the complete url of the requested page

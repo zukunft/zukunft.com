@@ -47,6 +47,9 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::EXECUTE . 'calculator_definition_report.php';
+include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UTILS . 'csv_table_diff.php';
@@ -84,6 +87,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_definition_report;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data as phrase_data_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -104,6 +110,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class system_views_read_tests
 {
 
+    // two cells of the sensitivity table of the Swiss NPP vote: the levelised cost and the verdict number of the
+    // construction cost and the cost of capital of the inputs (8'826 CHF/kW, 5 %) and of 5'000 CHF/kW at 3 %
+    const string NPP_SENSITIVITY_INPUT_CELL = '114 (-0.01)';
+    const string NPP_SENSITIVITY_OTHER_CELL = '66 (-0.77)';
     // the element of use_case_cases.js with the result of a case as json and its two fields
     const string CASE_RESULT_ID = 'caseResult';
     const string CASE_MISSING = 'missing';
@@ -158,6 +168,7 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
+        $this->run_npp_sensitivity($t);
         $this->run_global_warming_solutions_csv($t);
         $this->run_populism_solutions_table($t);
         $this->run_context_values_per_phrase($t);
@@ -1360,6 +1371,38 @@ class system_views_read_tests
             test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
         $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
             test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
+    }
+
+    /**
+     * the pdf of the calculator editor fills the cells of the sensitivity table of the Swiss NPP vote page,
+     * which the page leaves to its script: per cell the page is calculated again with the numbers of the
+     * row and of the column, and afterward each number of the page is set back
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_sensitivity(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $trp = new triple_ui();
+        $trp->load_by_name(triple_names::NEW_NPP_VOTE, $msg);
+        $json = new phrase_data_ui()->load_from_walk($trp->phrase(), $msg);
+        $def_rpt = new calculator_definition_report();
+        $dto = $def_rpt->page_cache($json, $msg);
+        $dbo = $dto->phr_lst->get_by_name(triple_names::NEW_NPP_VOTE, $msg)?->obj();
+        $page = new system_page();
+        $plain_before = $page->calculation_result($dbo, $msg, $dto);
+        $filled = $page->calculation_result($dbo, $msg, $dto, true);
+        $plain_after = $page->calculation_result($dbo, $msg, $dto);
+        $test_name = 'the pdf fills the sensitivity cell of the numbers of the inputs like the main results';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_INPUT_CELL, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and a cell of other numbers by calculating the page again';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_OTHER_CELL);
+        // negative: the page leaves the cells to its script, because each cell calculates the page again
+        $test_name = '... but the page leaves the cells empty';
+        $t->assert_text_not_contains($test_name, $plain_before, self::NPP_SENSITIVITY_INPUT_CELL);
+        $test_name = '... and each number of the page is set back after the cells';
+        $t->assert($test_name, $plain_after, $plain_before);
     }
 
     /**

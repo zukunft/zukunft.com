@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -105,6 +106,11 @@ class use_case_ui_tests
     const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
     // the result of a scenario that has not ended in the browser e.g. because a selector no longer matches
     const string SCENARIO_NOT_ENDED = 'the scenario has not ended in the headless browser';
+    // the fields of the message of the PDF tab scenarios (pressCreatePdf and pdf_tab_offline of calculator_editor_scenarios.js)
+    const string PDF_POST_ROUTE = 'route';
+    const string PDF_POST_TOKEN_SENT = 'token_sent';
+    const string PDF_POST_BODY = 'body';
+    const string PDF_BUTTON_DISABLED = 'disabled';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -2145,6 +2151,30 @@ class use_case_ui_tests
             foreach ($unchanged as $scenario => $test_name) {
                 $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
             }
+            // the Definition tab shows the data of the page with the unsaved changes, like the export
+            $test_name = 'the Definition tab shows the data of the page as json';
+            $json_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB_LABEL);
+            $json = json_decode($json_txt, true);
+            $t->assert_true($test_name, is_array($json) and array_key_exists(json_fields::TRIPLES, $json));
+            $test_name = '... with the unsaved changes';
+            $t->assert_text_contains($test_name, $json_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: without a change the json has the label of the database
+            $test_name = '... but not a change that has not been made';
+            $plain_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB);
+            $t->assert_text_not_contains($test_name, $plain_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // the PDF tab posts the data of the page with the unsaved changes and the token of the session to the pod
+            $test_name = 'the PDF tab posts the data of the page to the pdf entry point of the pod';
+            $pdf_post = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_LABEL), true) ?? [];
+            $t->assert($test_name, $pdf_post[self::PDF_POST_ROUTE] ?? '', api::CALCULATOR_PDF_SCRIPT);
+            $test_name = '... with the token of the session';
+            $t->assert_true($test_name, $pdf_post[self::PDF_POST_TOKEN_SENT] ?? false);
+            $test_name = '... and the unsaved changes';
+            $pdf_body = json_encode($pdf_post[self::PDF_POST_BODY] ?? [], JSON_UNESCAPED_UNICODE);
+            $t->assert_text_contains($test_name, $pdf_body, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: a page that is not on a pod cannot create the pdf
+            $test_name = '... but a page that is not on a pod offers no pdf';
+            $offline = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_OFFLINE), true) ?? [];
+            $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
             unlink($page);
         }
         $brw->stop();

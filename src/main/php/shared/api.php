@@ -65,6 +65,8 @@ class api
     const string DOCS_SCRIPT = self::SCRIPT_PATH . 'docs.php';
     // the server admin page has its own authentication (see http/server_admin.php)
     const string SERVER_ADMIN_SCRIPT = self::SCRIPT_PATH . 'server_admin.php';
+    // creates the pdf of the posted data of the calculator editor (see http/calculator_pdf.php)
+    const string CALCULATOR_PDF_SCRIPT = self::SCRIPT_PATH . 'calculator_pdf.php';
     const string FIND_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID;
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;

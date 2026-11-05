@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1605 of 6425 public functions have at least 2 unit test calls; the 4612 functions below do not; the 208 functions of the last section are called nowhere
+1608 of 6439 public functions have at least 2 unit test calls; the 4622 functions below do not; the 209 functions of the last section are called nowhere
 
 ## 1953 functions of main backend have no test at all
 
@@ -2219,7 +2219,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 910 functions of frontend have no test at all
+## 919 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2259,8 +2259,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- text_sources - 0 unit test calls
     \-- used - 0 unit test calls shared by 2 classes
     \-- warnings - 0 unit test calls
+\-- calculator_definition_report
+    \-- page_cache - 0 unit test calls
+    \-- page_name - 0 unit test calls
 \-- calculator_report
-    \-- add_html - 0 unit test calls
+    \-- add_logo - 0 unit test calls
 \-- change_log
     \-- field_code_id - 0 unit test calls
     \-- field_name - 0 unit test calls shared by 2 classes
@@ -2605,8 +2608,14 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- number_format
     \-- unit_conversions - 0 unit test calls
     \-- unit_text - 0 unit test calls shared by 2 classes
+\-- pdf_font
+    \-- glyph_id - 0 unit test calls
+    \-- objects - 0 unit test calls
+    \-- width - 0 unit test calls
 \-- pdf_writer
     \-- heading - 0 unit test calls
+    \-- page_break - 0 unit test calls
+    \-- space - 0 unit test calls
     \-- text_width - 0 unit test calls
 \-- phrase
     \-- children - 0 unit test calls shared by 6 classes
@@ -3049,9 +3058,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- calculation_detail_tables - 0 unit test calls
     \-- calculator_fields - 0 unit test calls
     \-- calculator_general_value - 0 unit test calls
+    \-- calculator_more - 0 unit test calls
     \-- calculator_number_format - 0 unit test calls
     \-- calculator_phrase_cells - 0 unit test calls
     \-- calculator_report_url - 0 unit test calls
+    \-- calculator_sensitivity_filled - 0 unit test calls
     \-- calculator_source_ids - 0 unit test calls
     \-- calculator_warnings - 0 unit test calls
     \-- formula_notes - 0 unit test calls
@@ -3253,7 +3264,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- change_log
     \-- dsp_last - 3 unit test calls shared by 2 classes
     \-- field - 1 unit test calls shared by 2 classes
-    \-- table - 1 unit test calls shared by 5 classes
+    \-- table - 2 unit test calls shared by 5 classes
 \-- change_log_list
     \-- load_sql_by_user_value - 1 unit test calls
 \-- change_table_list
@@ -4555,7 +4566,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 542 functions of frontend have incomplete tests
+## 543 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4792,7 +4803,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- doc_url - 1 unit test calls
     \-- title - 4 unit test calls shared by 4 classes
 \-- pdf_writer
-    \-- table - 1 unit test calls shared by 5 classes
+    \-- table - 2 unit test calls shared by 5 classes
+    \-- text_code - 1 unit test calls
     \-- title - 4 unit test calls shared by 4 classes
 \-- phrase
     \-- api_array - 13 unit test calls shared by 37 classes
@@ -4875,7 +4887,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- list - 8 unit test calls shared by 7 classes
     \-- load_by_phrase_list - 2 unit test calls shared by 2 classes
     \-- sort_by_impact - 2 unit test calls shared by 7 classes
-    \-- table - 1 unit test calls shared by 5 classes
+    \-- table - 2 unit test calls shared by 5 classes
 \-- sandbox
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- is_excluded - 3 unit test calls shared by 7 classes
@@ -5058,7 +5070,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- expression_latex_link - 4 unit test calls shared by 3 classes
     \-- expression_link - 2 unit test calls shared by 2 classes
     \-- phrase_name - 2 unit test calls shared by 4 classes
-    \-- table - 1 unit test calls shared by 5 classes
+    \-- table - 2 unit test calls shared by 5 classes
 \-- ui_list
     \-- calculation_row_context - 1 unit test calls
     \-- calculation_side_context - 1 unit test calls
@@ -5125,7 +5137,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- list - 8 unit test calls shared by 7 classes
     \-- load_by_phr_lst - 7 unit test calls shared by 6 classes
     \-- sort_by_impact - 2 unit test calls shared by 7 classes
-    \-- table - 1 unit test calls shared by 5 classes
+    \-- table - 2 unit test calls shared by 5 classes
 \-- verb
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
@@ -5454,6 +5466,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- tbl_start_select
     \-- tbody - maybe called by name
     \-- ui_progress
+\-- pdf_font
+    \-- has_glyph
 \-- phrase
     \-- button_add_triple
     \-- dsp_link_style

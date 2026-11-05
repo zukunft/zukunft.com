@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'calculator_definition_report.php';
 include_once html_paths::EXECUTE . 'calculator_report.php';
 include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
@@ -61,6 +62,8 @@ include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
+use DateTime;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_definition_report;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -99,9 +102,64 @@ class phrase_data_ui_tests
     const string NO_CALC_NAME = 'System Test Word Without Calculator';
     // the texts of the pdf writer test and the number of rows that do not fit on one page
     const string PDF_BRACKET_TEXT = 'a (b)';
-    const string PDF_BRACKET_ESCAPED = '(a \\(b\\))';
     const string PDF_HEAD = 'head';
+    // the text operator of a page and the font objects that a pdf needs to show the glyph ids of a text
+    const string PDF_SHOW_TEXT = ' Tj';
+    const string PDF_FONT_ENCODING = '/Encoding /Identity-H';
+    const string PDF_FONT_FILE = '/FontFile2';
     const int PDF_LONG_ROWS = 60;
+    // the footer of the pdf writer test: the text on the left, a text that does not fit the line and the start of the page text
+    const string PDF_FOOTER_TEXT = 'System Test Footer';
+    const string PDF_FOOTER_PAGE = 'System Test Page ';
+    const int PDF_FOOTER_LONG_REPEAT = 40;
+    // a footer of a short word, a word that does not fit the line and a short word that would fit after the first
+    const string PDF_GAP_FIRST = 'System';
+    const string PDF_GAP_LONG = 'W';
+    const int PDF_GAP_REPEAT = 200;
+    const string PDF_GAP_LAST = 'Gap';
+    // the size of an A4 portrait page and the position of the footer on the left of a page as the pdf writes them
+    const string PDF_PORTRAIT_BOX = '/MediaBox [0 0 595 842]';
+    const string PDF_LANDSCAPE_BOX = '/MediaBox [0 0 842 595]';
+    const string PDF_FOOTER_POS = '36.00 18.00 Td';
+    // a page with three main parts: two headings and a collapsed part, whose heading and the heading of a section are within it
+    const string PDF_MAIN_PARTS_HTML = '<h2>System Test Main A</h2><p>System Test Text</p><h2>System Test Main B</h2>'
+        . '<details><summary>System Test Main C</summary><h2>System Test Sub D</h2></details>'
+        . '<section><h2>System Test Sub E</h2></section>';
+    // a char beyond the latin chars, the same text with a latin char and the char in the ToUnicode map of the font
+    const string PDF_SUB_TEXT = 'CO₂';
+    const string PDF_SUB_LATIN = 'CO2';
+    const string PDF_SUB_UNICODE = '<2082>';
+    // a char that the font does not have, which the pdf shows as the missing glyph of the font
+    const string PDF_MISSING_CHAR = "\u{E000}";
+    const string PDF_MISSING_CODE = '<0000>';
+    // the subset names of the two font families in a pdf and a text with a char that Noto Sans does not have
+    const string PDF_FONT_NOTO = '+NotoSans-Regular';
+    const string PDF_FONT_DEJAVU = '+DejaVuSans ';
+    const string PDF_NOTO_MISSING_START = 'a ';
+    const string PDF_NOTO_MISSING_CHAR = '≈';
+    const string PDF_NOTO_MISSING_END = ' b';
+    // texts of the pv installation page that its definition pdf contains: the page title with the CO₂,
+    // the number of an assumption with its unit and the start of the first source
+    const string PV_PAGE_TITLE = 'PV lifetime CO₂ balance';
+    const string PV_FIELD_NUMBER = '976 kilowatthours per kilowatt peak and year';
+    const string PV_SOURCE_START = 'Stucki';
+    // a value and a formula of the pv installation data as the technical setup of its definition pdf lists them
+    const string PV_SETUP_VALUE = 'example PV installation, PV capacity, kWp, assumed = 10';
+    const string PV_SETUP_EXPRESSION = '"PV embodied emission" = "PV embodied intensity" * "PV capacity"';
+    // a page with three values, of which the first has a source that is sorted after the source of the last,
+    // the source of the last has a lower case start, and the middle one has no source
+    const string SORT_PAGE = 'System Test Sorted Values';
+    const string SORT_SOURCE_A = 'a System Test Source';
+    const string SORT_SOURCE_B = 'B System Test Source';
+    const string SORT_NUM_A = '1';
+    const string SORT_NUM_B = '2';
+    const string SORT_NUM_NONE = '3';
+    // three results of the page in the same order: by a formula sorted later, without a formula and by a formula with a lower case start
+    const string SORT_FORMULA_A = 'a System Test Formula';
+    const string SORT_FORMULA_B = 'B System Test Formula';
+    const string SORT_RES_A = '4';
+    const string SORT_RES_B = '5';
+    const string SORT_RES_NONE = '6';
     // the json fields of the objects of the answer without the results
     const array OBJECT_FIELDS = [
         json_fields::WORDS,
@@ -277,10 +335,14 @@ class phrase_data_ui_tests
         $t->assert_text_contains($test_name, $empty_pdf, '%PDF-');
         $t->assert_text_contains($test_name, $empty_pdf, '/Count 1');
         $t->assert_text_contains($test_name, $empty_pdf, '%%EOF');
-        $test_name = 'a text escapes the brackets of a pdf string';
+        $test_name = 'a text is written as the glyph ids of the font, so that a bracket needs no escape';
         $pdf = new pdf_writer();
         $pdf->text(self::PDF_BRACKET_TEXT);
-        $t->assert_text_contains($test_name, $pdf->output(), self::PDF_BRACKET_ESCAPED);
+        $bracket_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $bracket_pdf, $this->pdf_string(self::PDF_BRACKET_TEXT) . self::PDF_SHOW_TEXT);
+        $test_name = '... with the subset of the font embedded';
+        $t->assert_text_contains($test_name, $bracket_pdf, self::PDF_FONT_ENCODING);
+        $t->assert_text_contains($test_name, $bracket_pdf, self::PDF_FONT_FILE);
         $test_name = 'a long table continues on the next page';
         $pdf = new pdf_writer();
         $pdf->table([self::PDF_HEAD], array_fill(0, self::PDF_LONG_ROWS, ['1']), [true]);
@@ -296,6 +358,154 @@ class phrase_data_ui_tests
         $t->assert_false($test_name, $pdf->image(''));
         $test_name = '... and no incomplete jpeg';
         $t->assert_false($test_name, $pdf->image(pdf_writer::JPEG_START));
+        $test_name = 'a pdf can have portrait pages';
+        $t->assert_text_contains($test_name, new pdf_writer(true)->output(), self::PDF_PORTRAIT_BOX);
+        // negative: landscape stays the default, e.g. for the wide tables of the calculator report
+        $test_name = '... but has landscape pages by default';
+        $t->assert_text_contains($test_name, new pdf_writer()->output(), self::PDF_LANDSCAPE_BOX);
+        // the footer is written with the file, because only then the number of pages is known
+        $test_name = 'each page has the footer with its number and the number of all pages';
+        $pdf = new pdf_writer(true);
+        $pdf->set_footer(self::PDF_FOOTER_TEXT, fn(int $page, int $count): string => self::PDF_FOOTER_PAGE . $page . '/' . $count);
+        $pdf->table([self::PDF_HEAD], array_fill(0, 2 * self::PDF_LONG_ROWS, ['1']), [true]);
+        $footer_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $footer_pdf, $this->pdf_string(self::PDF_FOOTER_TEXT));
+        $t->assert_text_contains($test_name, $footer_pdf, $this->pdf_string(self::PDF_FOOTER_PAGE . '1/2'));
+        $t->assert_text_contains($test_name, $footer_pdf, $this->pdf_string(self::PDF_FOOTER_PAGE . '2/2'));
+        // negative: a pdf without a footer has no footer line
+        $test_name = '... but a pdf without a footer has none';
+        $t->assert_text_not_contains($test_name, new pdf_writer(true)->output(), self::PDF_FOOTER_POS);
+        $test_name = 'a footer text that does not fit the line is shortened';
+        $pdf = new pdf_writer(true);
+        $pdf->set_footer(str_repeat(self::PDF_FOOTER_TEXT . ' ', self::PDF_FOOTER_LONG_REPEAT),
+            fn(int $page, int $count): string => self::PDF_FOOTER_PAGE . $page);
+        $short_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $short_pdf, $this->pdf_string_end(pdf_writer::FOOTER_CUT) . self::PDF_SHOW_TEXT);
+        // negative: the words up to the first that does not fit, never a later shorter word after a gap
+        $test_name = '... after its words up to the first that does not fit';
+        $pdf = new pdf_writer(true);
+        $pdf->set_footer(self::PDF_GAP_FIRST . ' ' . str_repeat(self::PDF_GAP_LONG, self::PDF_GAP_REPEAT) . ' ' . self::PDF_GAP_LAST,
+            fn(int $page, int $count): string => self::PDF_FOOTER_PAGE . $page);
+        $gap_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $gap_pdf, $this->pdf_string(self::PDF_GAP_FIRST . pdf_writer::FOOTER_CUT));
+        $test_name = '... and not a shorter word after the first that does not fit';
+        $t->assert_text_not_contains($test_name, $gap_pdf, $this->pdf_string_start(self::PDF_GAP_FIRST . ' ' . self::PDF_GAP_LAST));
+
+        // the font has the chars beyond the latin chars of the old pdf encodings, e.g. the CO₂ of a page
+        $test_name = 'a char beyond the latin chars is shown with its own glyph';
+        $pdf = new pdf_writer();
+        $pdf->text(self::PDF_SUB_TEXT);
+        $sub_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $sub_pdf, $this->pdf_string(self::PDF_SUB_TEXT));
+        $t->assert_text_not_contains($test_name, $sub_pdf, $this->pdf_string(self::PDF_SUB_LATIN));
+        $test_name = '... that a reader can copy as the char';
+        $t->assert_text_contains($test_name, $sub_pdf, self::PDF_SUB_UNICODE);
+        // negative: a char that the font does not have is the missing glyph and no other char
+        $test_name = '... but a char that the font does not have is shown as the missing glyph';
+        $t->assert($test_name, new pdf_writer()->text_code(self::PDF_MISSING_CHAR), self::PDF_MISSING_CODE);
+
+        // Noto Sans is the alternative font family, which lacks e.g. the ≈ that DejaVu Sans shows instead
+        $test_name = 'a pdf can use Noto Sans';
+        $pdf = new pdf_writer(false, pdf_writer::FAMILY_NOTO);
+        $pdf->text(self::PDF_SUB_TEXT);
+        $noto_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $noto_pdf, self::PDF_FONT_NOTO);
+        // negative: a text that Noto Sans can show completely embeds no other font
+        $test_name = '... without the fallback font if Noto Sans has every char';
+        $t->assert_text_not_contains($test_name, $noto_pdf, self::PDF_FONT_DEJAVU);
+        $test_name = '... and a char that Noto Sans does not have in the fallback font DejaVu Sans';
+        $pdf = new pdf_writer(false, pdf_writer::FAMILY_NOTO);
+        $pdf->text(self::PDF_NOTO_MISSING_START . self::PDF_NOTO_MISSING_CHAR . self::PDF_NOTO_MISSING_END);
+        $mixed_pdf = $pdf->output();
+        $t->assert_text_contains($test_name, $mixed_pdf, self::PDF_FONT_NOTO);
+        $t->assert_text_contains($test_name, $mixed_pdf, self::PDF_FONT_DEJAVU);
+        $test_name = '... with the glyph of DejaVu Sans and not the missing glyph';
+        $t->assert_text_contains($test_name, $mixed_pdf, $this->pdf_string(self::PDF_NOTO_MISSING_CHAR) . self::PDF_SHOW_TEXT);
+
+        // each main part of a page starts on a new page, but not a part within it
+        $test_name = 'each main part of the page starts on a new page of the pdf';
+        $pdf = new pdf_writer();
+        new calculator_report()->add_html($pdf, self::PDF_MAIN_PARTS_HTML, true);
+        $t->assert_text_contains($test_name, $pdf->output(), '/Count 3 ');
+        // negative: without the option the parts follow each other, e.g. in the portfolio report
+        $test_name = '... but not without the option';
+        $pdf = new pdf_writer();
+        new calculator_report()->add_html($pdf, self::PDF_MAIN_PARTS_HTML);
+        $t->assert_text_contains($test_name, $pdf->output(), '/Count 1 ');
+
+        // the pdf of the calculator editor repeats the calculator page with the names of the editor fields
+        $t->subheader($ts . 'calculator definition report');
+        $msg = new user_message();
+        $pv_json = json_decode(file_get_contents(test_files::PHRASE_DATA_PV_INSTALL), true);
+        $def_pdf = new calculator_definition_report()->pdf($pv_json, new DateTime(), $msg);
+        $test_name = 'the definition pdf of the calculator editor has portrait pages';
+        $t->assert_text_contains($test_name, $def_pdf, self::PDF_PORTRAIT_BOX);
+        $test_name = '... the logo';
+        $t->assert_text_contains($test_name, $def_pdf, '/DCTDecode');
+        $test_name = '... the page title of the editor field';
+        $field_name = msg_id::CALC_EDITOR_PAGE_TITLE->text() . calculator_definition_report::FIELD_END;
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string($field_name));
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_PAGE_TITLE));
+        $test_name = '... the number of an input field with its unit';
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_FIELD_NUMBER));
+        $test_name = '... the sources numbered like the references of the page';
+        $source_start = calculator_report::NUMBER_START . '1' . calculator_report::NUMBER_END . self::PV_SOURCE_START;
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string_start($source_start));
+        $test_name = '... and the footer on each page';
+        preg_match('~/Count (\d+)~', $def_pdf, $count_match);
+        $def_pages = (int)($count_match[1] ?? 0);
+        $t->assert_greater($test_name, 1, $def_pages);
+        $t->assert($test_name, substr_count($def_pdf, self::PDF_FOOTER_POS), $def_pages);
+        // after the page every object of the data that defines it, also the ones that the page does not show
+        $test_name = 'the definition pdf ends with the technical setup';
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(msg_id::CALCULATOR_DEFINITION_SETUP->text()));
+        $test_name = '... with each value by its phrases and its number';
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_SETUP_VALUE));
+        $test_name = '... and each formula with its expression';
+        $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_SETUP_EXPRESSION));
+        // the values of one source are together under a heading with the name of the source, sorted without the case
+        $test_name = '... with the values grouped by their source';
+        $src_doc = [json_fields::SELECTION => [self::SORT_PAGE], json_fields::VALUES => [
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_NUM_B, json_fields::SOURCE => self::SORT_SOURCE_B],
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_NUM_NONE],
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_NUM_A, json_fields::SOURCE => self::SORT_SOURCE_A]
+        ], json_fields::RESULTS => [
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_RES_B, json_fields::FORMULA => self::SORT_FORMULA_B],
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_RES_NONE],
+            [json_fields::WORDS => [self::SORT_PAGE], json_fields::NUMBER => self::SORT_RES_A, json_fields::FORMULA => self::SORT_FORMULA_A]
+        ]];
+        $src_pdf = new calculator_definition_report()->pdf($src_doc, new DateTime(), $msg);
+        $pos_a = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_NUM_A));
+        $pos_b = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_NUM_B));
+        $pos_none = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_NUM_NONE));
+        $t->assert_true($test_name, $pos_a !== false and $pos_b !== false and $pos_a < $pos_b);
+        $test_name = '... under a heading that names the source';
+        $head_a = strpos($src_pdf, $this->pdf_string_end(' ' . self::SORT_SOURCE_A));
+        $t->assert_true($test_name, $head_a !== false and $head_a < $pos_a);
+        // negative: a value without a source is not sorted before the values of a source
+        $test_name = '... and the values without a source last under their own heading';
+        $head_none = strpos($src_pdf, $this->pdf_string(msg_id::CALCULATOR_DEFINITION_VALUES_NO_SOURCE->text()));
+        $t->assert_true($test_name, $pos_none !== false and $head_none !== false and $pos_b < $head_none and $head_none < $pos_none);
+        // the results of one formula are together under a heading with the name of the formula
+        $test_name = '... and the results grouped by their formula under a heading that names it';
+        $res_a = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_RES_A));
+        $res_b = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_RES_B));
+        $res_none = strpos($src_pdf, $this->pdf_string_end(calculator_definition_report::NUMBER_SEPARATOR . self::SORT_RES_NONE));
+        $frm_head_a = strpos($src_pdf, $this->pdf_string_end(' ' . self::SORT_FORMULA_A));
+        $t->assert_true($test_name, $res_a !== false and $res_b !== false and $frm_head_a !== false
+            and $frm_head_a < $res_a and $res_a < $res_b);
+        // negative: a result without a formula is not sorted before the results of a formula
+        $test_name = '... and the results without a formula last under their own heading';
+        $frm_head_none = strpos($src_pdf, $this->pdf_string(msg_id::CALCULATOR_DEFINITION_RESULTS_NO_FORMULA->text()));
+        $t->assert_true($test_name, $res_none !== false and $frm_head_none !== false
+            and $res_b < $frm_head_none and $frm_head_none < $res_none);
+        // negative: data without the calculator triples e.g. the hand made sample of the editor defines no page
+        $test_name = 'the definition pdf of data without a calculator has only the technical setup';
+        $sample = json_decode(file_get_contents(test_files::CALCULATOR_EDITOR_SAMPLE), true);
+        $no_calc_pdf = new calculator_definition_report()->pdf($sample, new DateTime(), $msg);
+        $t->assert_text_contains($test_name, $no_calc_pdf, $this->pdf_string(msg_id::CALCULATOR_DEFINITION_SETUP->text()));
+        $test_name = '... and no editor field';
+        $t->assert_text_not_contains($test_name, $no_calc_pdf, $this->pdf_string($field_name));
 
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
@@ -310,22 +520,22 @@ class phrase_data_ui_tests
         $report = new calculator_report()->pdf($trp, $msg, $dto, $collect);
         $report_steps = implode(',', $steps);
         $test_name = 'the report has a positions table per portfolio';
-        $t->assert_text_contains($test_name, $report, '(First child portfolio)');
-        $t->assert_text_contains($test_name, $report, '(Second child portfolio)');
-        $t->assert_text_contains($test_name, $report, '(Parent portfolio)');
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('First child portfolio'));
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('Second child portfolio'));
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('Parent portfolio'));
         $test_name = '... with the name of the security';
-        $t->assert_text_contains($test_name, $report, '(Givaudan SA)');
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('Givaudan SA'));
         // the rate that the calculation uses, not a dated rate of another source
         $test_name = '... the exchange rate of the calculation';
-        $t->assert_text_contains($test_name, $report, '(0.9000)');
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('0.9000'));
         $test_name = '... but not the dated exchange rate';
-        $t->assert_text_not_contains($test_name, $report, '(0.8300)');
+        $t->assert_text_not_contains($test_name, $report, $this->pdf_string('0.8300'));
         $test_name = '... the logo';
         $t->assert_text_contains($test_name, $report, '/DCTDecode');
         $test_name = '... the other results of the page';
-        $t->assert_text_contains($test_name, $report, '(Splitting walk)');
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('Splitting walk'));
         $test_name = '... and the formulas used';
-        $t->assert_text_contains($test_name, $report, '(walk target of a child)');
+        $t->assert_text_contains($test_name, $report, $this->pdf_string('walk target of a child'));
         // negative: a phrase without calculator triples has no report, so the page is shown
         $test_name = 'a phrase without calculator triples has no report';
         $no_calc_dto = $this->complete_page_cache([
@@ -471,6 +681,33 @@ class phrase_data_ui_tests
         $t->assert_msg($test_name, $msg);
         $test_name = '... and keeps its formulas';
         $t->assert($test_name, $dto->frm_lst->count(), $frm_count);
+    }
+
+    /**
+     * @param string $text a text that a pdf shows
+     * @return string the text as a complete pdf string of its glyph ids, which the normal and the bold font share e.g. "<0026>"
+     */
+    private function pdf_string(string $text): string
+    {
+        return new pdf_writer()->text_code($text);
+    }
+
+    /**
+     * @param string $text the start of a text that a pdf shows
+     * @return string the glyph ids of the text at the start of a pdf string
+     */
+    private function pdf_string_start(string $text): string
+    {
+        return substr($this->pdf_string($text), 0, -1);
+    }
+
+    /**
+     * @param string $text the end of a text that a pdf shows
+     * @return string the glyph ids of the text at the end of a pdf string
+     */
+    private function pdf_string_end(string $text): string
+    {
+        return substr($this->pdf_string($text), 1);
     }
 
     /**

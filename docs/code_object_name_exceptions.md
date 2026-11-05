@@ -85,6 +85,8 @@ arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
 calculator: $btn_calc, $calc, $calc_base, $calc_be, $calc_empty, $calc_in, $calc_no, $calc_word, $chk_calc, $fld_calc, $in_calc, $ins_calc, $js_calc, $no_btn_calc, $no_chk_calc, $one_calc, $wrn_calc
+calculator_definition_report: $def_rpt
+calculator_report: $rpt
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
