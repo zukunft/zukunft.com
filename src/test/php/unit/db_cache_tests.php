@@ -107,6 +107,8 @@ class db_cache_tests
     // the related phrases of a system phrase selected by its name e.g. by the frontend for the sort order
     const string TV_LEVELS = '2';
     const string TV_API_KEY_PHRASE = 'phraseList?k=sort+order+%28system%29&pd=both&px=2&u=';
+    // the problem of a failed request that the cache header names as the reason
+    const string TV_NOT_SAVED_REASON = 'the phrase of the request is unknown';
     // a types api message and the time when its types have started to be read
     const string TV_TYPES_JSON = '{"pod":"zukunft.com","body":{"cache_test":[1]}}';
     const string TV_TYPES_SNAP_TIME = '2023-01-03T20:59:59+01:00';
@@ -363,6 +365,18 @@ class db_cache_tests
         $par[url_var::VERB] = '0';
         $cac_key_zero = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
         $t->assert_not($test_name, $cac_key_zero, $cac_key);
+
+        // the answer of a failed request is not cached, and the cache header names the message as the reason
+        $test_name = 'the answer of a failed request is not saved and the reason names the message';
+        $err_msg = new user_message();
+        $err_msg->add_message_text(self::TV_NOT_SAVED_REASON);
+        $cac_page = new db_cache_page();
+        $cac_page->save_json($cac_key, '{}', new DateTime(), $err_msg);
+        $t->assert($test_name, $cac_page->not_saved, db_cache_page::NOT_SAVED_MSG . self::TV_NOT_SAVED_REASON);
+        // negative: before any save there is no reason
+        $test_name = '... but a new cache object names no reason';
+        $new_reason = new db_cache_page()->not_saved;
+        $t->assert($test_name, $new_reason, '');
 
 
         $t->subheader($ts . 'drop by api object type');

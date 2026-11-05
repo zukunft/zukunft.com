@@ -36,28 +36,65 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 
 //include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED_TYPES . 'system_time_type.php';
 include_once html_paths::USER . 'user_message.php';
+// only the class names of the api routes are used (LOADING_STEPS), so these lists are not included, because
+// they include rest_call themselves and config, which extends value_list, would be loaded before value_list
+//include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::PHRASE . 'phrase_data.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::VALUE . 'value_list.php';
+//include_once html_paths::VIEW . 'view.php';
 
 class rest_call
 {
 
     // the start of a slow answer that names the seconds of its backend steps (see controller::json_with_time)
     const string TIME_START = '{"' . json_fields::API_TIME . '":{';
+
+    // the step shown below the loading text of a slow page per frontend class of the api call;
+    // only the class name is used to get its api route, so the classes are not included here
+    // any other api call shows msg_id::PAGE_LOADING_STEP_DATA
+    const array LOADING_STEPS = [
+        value_list::class => msg_id::PAGE_LOADING_STEP_VALUES,
+        result_list::class => msg_id::PAGE_LOADING_STEP_RESULTS,
+        phrase_list::class => msg_id::PAGE_LOADING_STEP_PHRASES,
+        phrase_data::class => msg_id::PAGE_LOADING_STEP_PHRASE_DATA,
+        view::class => msg_id::PAGE_LOADING_STEP_VIEW,
+        formula_list::class => msg_id::PAGE_LOADING_STEP_FORMULAS,
+    ];
+
+    // per step of the api the step that names the loaded object, e.g. "Loading the values of initial effort";
+    // any other step with a name shows msg_id::PAGE_LOADING_STEP_DATA_OF
+    const array LOADING_STEPS_OF = [
+        msg_id::PAGE_LOADING_STEP_VALUES->value => msg_id::PAGE_LOADING_STEP_VALUES_OF,
+        msg_id::PAGE_LOADING_STEP_RESULTS->value => msg_id::PAGE_LOADING_STEP_RESULTS_OF,
+        msg_id::PAGE_LOADING_STEP_FORMULAS->value => msg_id::PAGE_LOADING_STEP_FORMULAS_OF,
+        msg_id::PAGE_LOADING_STEP_PHRASES->value => msg_id::PAGE_LOADING_STEP_PHRASES_OF,
+    ];
 
     // the session cookie file used for all api calls of this process:
     // set by the test bootstrap after the admin login (test_base::api_login) so that the
@@ -151,11 +188,12 @@ class rest_call
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the get call
      * @param user_message $msg with the requesting user whose id is added to the url if logged in
+     * @param string $step_name the name of the loaded object shown below the loading text of a slow page; empty for the step of the api
      * @return array with the body json message from the backend
      */
-    function api_get(string $class, array $data, user_message $msg): array
+    function api_get(string $class, array $data, user_message $msg, string $step_name = ''): array
     {
-        return $this->api_curl_call($class, $this->data_with_user($data, $msg), rest_ctrl::GET);
+        return $this->api_curl_call($class, $this->data_with_user($data, $msg), rest_ctrl::GET, $step_name);
     }
 
     /**
@@ -218,17 +256,78 @@ class rest_call
      *
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @param string $step_name the name of the loaded object shown below the loading text of a slow page; empty for the step of the api
      * @return array with the body json message from the backend
      */
-    function api_curl_call(string $class, array $data, string $method): array
+    function api_curl_call(string $class, array $data, string $method, string $step_name = ''): array
     {
         $html = new html_base();
         $ctrl = new controller();
         $api_name = $this->class_to_api_name($class);
         $url = $html->url_api($api_name, []);
-        $json_str = $this->api_call($method, $url, $data);
+        $json_str = $this->api_call($method, $url, $data, [], $step_name);
         $json_msg = json_decode($json_str, true);
         return $ctrl->check_api_msg($json_msg);
+    }
+
+    /**
+     * show the step of the api call below the loading text of a slow page with the seconds since
+     * the request start, so that the user sees what the page is waiting for; a step that is the same
+     * as the step before is not sent again, because only the last step is shown anyway
+     *
+     * @param string $url the url of the api call e.g. ".../api/valueList/"
+     * @param string $step_name the name of the object that the call loads e.g. the phrase of a calculator page; empty for the step of the api
+     * @return void
+     */
+    private static function send_loading_step(string $url, string $step_name): void
+    {
+        global $ui_sys;
+        global $mtr;
+        if ($ui_sys == null or $ui_sys->loading_since <= 0) {
+            return;
+        }
+        $step = self::loading_step_text($url, $step_name, $mtr);
+        if ($step != $ui_sys->loading_step) {
+            $ui_sys->loading_step = $step;
+            $sec = (int)round(microtime(true) - $ui_sys->loading_since);
+            echo new html_base()->loading_step($step . ' (' . $sec . ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS) . ')');
+            flush();
+        }
+    }
+
+    /**
+     * @param string $url the url of the api call e.g. ".../api/phraseData/"
+     * @param string $step_name the name of the object that the call loads e.g. "Portfolio Split Calculator"; empty for the step of the api
+     * @param object $mtr the translator of the frontend
+     * @return string the step shown below the loading text e.g. "Loading the data of Portfolio Split Calculator"
+     */
+    static function loading_step_text(string $url, string $step_name, object $mtr): string
+    {
+        $step_id = self::loading_step_of($url);
+        $result = $mtr->txt($step_id);
+        if ($step_name != '') {
+            $named_id = self::LOADING_STEPS_OF[$step_id->value] ?? msg_id::PAGE_LOADING_STEP_DATA_OF;
+            $step_var = [$named_id, [msg_id::VAR_NAME => $step_name]];
+            $result = new library()->msg_var_text([$step_var], $mtr);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $url the url of the api call e.g. ".../api/valueList/"
+     * @return msg_id the step that the api call does for the loading text
+     */
+    static function loading_step_of(string $url): msg_id
+    {
+        $lib = new library();
+        // the route ends with the slash of the api folder or with the url vars of a get call
+        $route = preg_split('/[\/?]/', library::str_right_of_or_all($url, rest_ctrl::PATH), 2)[0];
+        foreach (self::LOADING_STEPS as $class => $step) {
+            if ($lib->class_to_api_route($class) == $route) {
+                return $step;
+            }
+        }
+        return msg_id::PAGE_LOADING_STEP_DATA;
     }
 
     /**
@@ -366,9 +465,11 @@ class rest_call
      * @param array $data the data as a json array that should be included in the call
      * @param array $extra_headers additional http headers e.g. a forward header so that
      *                             a test can simulate an external caller (see server_guard::from_own_pod)
+     * @param string $step_name the name of the object that the call loads, shown below the loading text of a slow page;
+     *                          empty to show the step of the api e.g. "Loading the values"
      * @return string the result from the backend
      */
-    function api_call(string $method, string $url, array $data, array $extra_headers = []): string
+    function api_call(string $method, string $url, array $data, array $extra_headers = [], string $step_name = ''): string
     {
         global $ui_sys;
 
@@ -433,6 +534,8 @@ class rest_call
             return strlen($line);
         });
 
+        self::send_loading_step($url, $step_name);
+
         // the wait is counted on the frontend cache, because web/ must not use the backend $sys
         $wait_start = microtime(true);
         $result = curl_exec($curl);
@@ -459,9 +562,13 @@ class rest_call
         // message is the work of the frontend after the answer and not the api call
         log_debug('answer of ' . $method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
 
-        // the header is only sent if the debug switch of the backend is on, so the message is shown at every level
-        if ($cache_state != '') {
-            log_debug('api cache ' . $cache_state . ' for ' . $url, url_var::DEBUG_LEVEL_SWITCHED);
+        // the header is only sent if the debug switch of the backend is on, and the line is only shown if
+        // the url asks for any debug output, e.g. &debug=1 or the time report of &debug=-1, so that a
+        // normal page stays without it; the lowest level, so that every debug value except 0 shows it
+        // the frontend reads the debug level of the url from its request cache (data_object::debug)
+        $ui_debug = $ui_sys?->debug ?? 0;
+        if ($cache_state != '' and $ui_debug != 0) {
+            log_debug('api cache ' . $cache_state . ' for ' . $url, url_var::DEBUG_EXE_TIME_REPORT);
         }
 
         if ($result === false) {

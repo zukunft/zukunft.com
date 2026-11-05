@@ -319,6 +319,18 @@ class sandbox_value extends sandbox
 
 
     /**
+     * set the phrases of this value that a list answer names only once (see ListBase::api_mapper_with_phrases)
+     * @param array $phr_of_fld the phrase objects by json field e.g. json_fields::PHRASES, which are shared with other values
+     * @return void
+     */
+    function set_phrases_of_fields(array $phr_of_fld): void
+    {
+        if (array_key_exists(json_fields::PHRASES, $phr_of_fld)) {
+            $this->grp->set_lst($phr_of_fld[json_fields::PHRASES]);
+        }
+    }
+
+    /**
      * set the vars of this base object on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg OK or a warning e.g. if the server version does not match

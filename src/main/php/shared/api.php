@@ -161,6 +161,10 @@ class api
     const string JSON_LIST_SYSTEM_PHRASES = 'system_phrases';
     const string JSON_LIST_SYSTEM_FORMULAS = 'system_formulas';
     const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
+    // the phrases that a result of the phrase_ids may have at most, e.g. the context of the results of a table
+    const string JSON_LIST_CONTEXT_IDS = 'context_ids';
+    // the page of a value or result list answer, starting with 0, which the answer fills up to the row limit of the backend
+    const string JSON_LIST_PAGE = 'page';
 
 
     /*

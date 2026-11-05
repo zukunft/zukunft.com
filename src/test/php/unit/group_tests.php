@@ -184,6 +184,26 @@ class group_tests
             '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_17_plus()),
             '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+uraWl+');
+        // a list load computes the id of each group from its plain phrase ids (sandbox_value_list::set_phrases),
+        // which gives the same id as the phrase list for each kind of key
+        $test_name = 'the group id by the phrase ids is the id of the phrase list';
+        $t->assert($test_name, $grp_id->get_id_by_ids($t_phr->phrase_list()->ids()), $grp_id->get_id($t_phr->phrase_list()));
+        $test_name = '... also with 16 phrases';
+        $t->assert($test_name, $grp_id->get_id_by_ids($t_phr->phrase_list_16()->ids()), $grp_id->get_id($t_phr->phrase_list_16()));
+        $test_name = '... and with more than 16 phrases';
+        $t->assert($test_name, $grp_id->get_id_by_ids($t_phr->phrase_list_17_plus()->ids()),
+            $grp_id->get_id($t_phr->phrase_list_17_plus()));
+        $test_name = '... and in any order of the ids';
+        $t->assert($test_name, $grp_id->get_id_by_ids(array_reverse($t_phr->phrase_list()->ids())), $grp_id->get_id($t_phr->phrase_list()));
+        // a prime group stored with the text key in the standard table, e.g. because its source group does
+        // not fit the prime table, gets its prime id again, so that it is the same group as on its own
+        $test_name = 'a prime group stored with a text key gets the prime id';
+        $prime_id = $grp_id->get_id($t_wrd->word_list()->phrase_list());
+        $t->assert($test_name, $grp_id->get_id_by_ids($grp_id->get_array($grp_id->int2key($prime_id))), $prime_id);
+        // negative: the text key of a group that is not prime stays the text key
+        $test_name = '... but a group that is not prime keeps its text key';
+        $txt_id = $grp_id->get_id($t_phr->phrase_list());
+        $t->assert($test_name, $grp_id->get_id_by_ids($grp_id->get_array($txt_id)), $txt_id);
         // the key uses upper and lower case letters for different ids, so a phrase is searched within
         // a group id with a case-sensitive pattern (sql_par_type::LIKE_KEY); a case-insensitive match
         // would e.g. find the values of "position" (1122) when deleting the phrase 1148
@@ -656,6 +676,8 @@ class group_tests
             }
         }
         $t->assert('64 bit group_id ' . $id, $grp_id->get_id($phr_lst), $id);
+        // the same id from the plain phrase ids, which a list load uses without sorting phrase objects
+        $t->assert('64 bit group_id by ids ' . $id, $grp_id->get_id_by_ids($ids), $id);
         $a = $grp_id->get_array($id);
         $t->assert('phrase ids 64 bit group_id ' . $id, $grp_id->get_array($id), $ids);
     }

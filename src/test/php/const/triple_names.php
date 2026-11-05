@@ -548,6 +548,10 @@ class triple_names
     const int CLIMATE_ADAPTATION_SOLUTION_ID = 1351;
     const string GLOBAL_WARMING_SOLUTION = 'global warming solution';
     const int GLOBAL_WARMING_SOLUTION_ID = 1321;
+    // a result that the potential gain of a global warming solution is calculated from
+    const string AVOIDED_EMISSION = 'avoided emission';
+    // the unit of the social cost of carbon, which the potential gain names as an operand of its own
+    const string EUR_PER_TONNE = 'EUR per tonne';
     const string REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION = 'reduce climate gas emissions (global warming solution)';
     const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1352;
     const string CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION = 'climate adaptation (global warming solution)';

@@ -334,6 +334,15 @@ class use_case_ui_tests
         $test_name = '... but not the phrases of the operands with a number on the page';
         $missing_none = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
         $t->assert($test_name, $missing_none->is_empty(), true);
+        // each missing operand with its own phrases, so that a page can keep an operand that names only a unit
+        $test_name = 'the missing phrases are listed per operand';
+        $opr_lsts = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), new value_list_ui(), $frm_lst);
+        $opr_names = array_map(fn($opr_lst) => $opr_lst->names(), $opr_lsts);
+        $t->assert($test_name, $opr_names, [[triple_names::CITY_ZH_NAME], [triple_names::COMPANY_ZURICH]]);
+        // negative: no operand list for the operands with a number on the page
+        $test_name = '... but no list for the operands with a number on the page';
+        $opr_none = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $opr_none, []);
         // negative: a result that no table has calculated keeps the link without a tooltip
         $test_name = '... and no tooltip for a result without its calculation';
         $res_plain_html = $t_res->result_zh_sum_ui($sum)->value_edit($msg);
@@ -1534,6 +1543,24 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // the results of a missing operand are loaded only within the context of the results that need them
+        $dto_ctx = new data_object();
+        $wide_ctx = [$zh_city_id, word_names::INHABITANT_ID];
+        $narrow_ctx = [$zh_city_id];
+        $test_name = 'the results within a context are not loaded before their load';
+        $has_before = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_false($test_name, $has_before);
+        $dto_ctx->add_results_within([$zh_city_id], $wide_ctx, $zh_res_lst);
+        $test_name = '... but after the load within a context that includes it';
+        $has_narrow = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_true($test_name, $has_narrow);
+        // negative: a wider context can need results that the load has left out
+        $test_name = '... and not for a wider context';
+        $has_wider = $dto_ctx->has_results_within($zh_city_id, [...$wide_ctx, word_names::YEAR_2019_ID]);
+        $t->assert_false($test_name, $has_wider);
+        $test_name = '... and not as all results of the phrase';
+        $has_all = $dto_ctx->has_results_of($zh_city_id);
+        $t->assert_false($test_name, $has_all);
         // many cells and results of a calculator page ask the values of the same phrases, so the
         // request cache loads the values of the same phrases once
         $test_name = 'the values of phrases are not loaded if the cache has not asked them yet';

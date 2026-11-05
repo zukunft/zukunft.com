@@ -188,6 +188,19 @@ class result extends sandbox_value
     }
 
     /**
+     * set the phrases and the context of this result that a list answer names only once
+     * @param array $phr_of_fld the phrase objects by json field e.g. json_fields::CONTEXT, which are shared with other results
+     * @return void
+     */
+    function set_phrases_of_fields(array $phr_of_fld): void
+    {
+        parent::set_phrases_of_fields($phr_of_fld);
+        if (array_key_exists(json_fields::CONTEXT, $phr_of_fld) and $this->src_grp != null) {
+            $this->src_grp->set_lst($phr_of_fld[json_fields::CONTEXT]);
+        }
+    }
+
+    /**
      * @param array $parts_json the api json of the formula parts: a text or a figure each
      * @param user_message $msg to report a figure that cannot be mapped
      * @return array the operator texts as string and the numbers used as figure in the formula order

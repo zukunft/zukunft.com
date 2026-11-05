@@ -251,19 +251,37 @@ sample answer alone and checks its parts; the snapshots of the page,
 written by the database read test (`system_views_read_tests::run_pv_lifetime_balance`).
 
 A page without a complete phraseData answer loads the values that its results use
-per phrase (`api_types::LOAD_PER_PHRASE`): the missing operands of a table
+with one paged call: the missing operands of a table
 (`ui_list::add_missing_operand_values`) and the context of a result for the
-assumptions (`ui_list::add_context_values`) ask the value list api once for each
-phrase, because the values of several phrases together can exceed the row limit
-of the backend (`sql_db::ROW_MAX`), which cuts the answer sorted by the key of
-the rows and reports it (`msg_id::LIST_ROW_LIMIT_REACHED`), so a part of the
-operands would be missing. The request cache and the api
-cache keep each answer by its phrase, so other tables and results of the page
-reuse it. The switch is the last parameter `api_type_list $typ_lst` of
-`ui_list::table_with_related_columns` and `ui_list::assumption_fields`, on by
-default; without `api_types::LOAD_PER_PHRASE` the phrases are loaded with one
-call (`system_views_read_tests::run_populism_solutions_table` and
-`run_context_values_per_phrase` test both).
+assumptions (`ui_list::add_context_values`) ask the value list api once for all
+phrases. A page of the answer holds at most the row limit of the backend
+(`sql_db::ROW_MAX`) sorted by the key of the rows, so the answer names a next page
+(`json_fields::NEXT_PAGE`) if its page is full, counted before the filters of the api,
+and the frontend asks for it (`api::JSON_LIST_PAGE`, `ListBase::load_pages`) until no
+next page is named; so no operand is missing however many phrases are asked. A load
+that is not paged still reports a full page (`msg_id::LIST_ROW_LIMIT_REACHED`). The
+switch `api_types::LOAD_PER_PHRASE` in the last parameter `api_type_list $typ_lst` of
+`ui_list::table_with_related_columns` and `ui_list::assumption_fields` loads each phrase
+with a call of its own instead (`system_views_read_tests::run_populism_solutions_table`
+and `run_context_values_per_phrase` test both). A missing operand of a table can be a
+result too, e.g. the avoided emission of the potential gain, so the results of all missing
+phrases are loaded with one paged call as well (`ui_list::load_results_of_phrases`), which
+the formula tooltip of the result needs (`run_result_operands`). Only the results within the
+contexts of the results that need the phrases are loaded (`api::JSON_LIST_CONTEXT_IDS`,
+backend `result_list::filter_within_phrases`), because a result uses only a number
+whose phrases are all part of its context (`formula_calc::value_of`); e.g. of the
+results of the initial effort only the ones of the rows of the start page table
+(`run_start_page_steps`). The request cache keeps such an answer by each phrase and
+the union of the contexts (`data_object::has_results_within`).
+
+The value and result list api answer names each phrase once (`api_types::PHRASES_ONCE`, set by `api/valueList`
+and `api/resultList`): an object with the phrases sorted by id and the values resp. results, which name their
+phrases and the context of a result only by the phrase ids; a triple names its from, its to and its verb only by
+id, because the frontend has the verbs preloaded. The frontend reads this object and the plain list of items
+with the phrases in each item to the same values resp. results (`ListBase::api_mapper_with_phrases`) and reports
+an id that the phrase list of the answer does not contain (`msg_id::API_PHRASE_ID_MISSING`). Each phrase of the
+object is mapped to one phrase object that every value resp. result of the answer uses, because a copy per item
+does not fit in the memory of the pod for a large answer, e.g. the results of the initial effort.
 
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`

@@ -1410,6 +1410,10 @@ class frontend
     function send_loading_start(user_message_ui $msg_ui, float $start_time): void
     {
         $this->send_at_once($this->loading_start($msg_ui, $start_time));
+        // from now on each api call shows its step below the loading text (see rest_call::send_loading_step)
+        if ($this->dto != null) {
+            $this->dto->loading_since = $start_time;
+        }
     }
 
     /**

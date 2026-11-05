@@ -505,6 +505,8 @@ class json_fields
     const string FORMULAS = 'formulas';
     const string PARENT_FORMULAS = 'parent_formulas'; // formulas of the ancestor phrases, grouped per ancestor
     const string RESULTS = 'results';
+    // true if a value or result list answer has filled its page, so that the next page has to be asked for
+    const string NEXT_PAGE = 'next_page';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
     //             use phrase_type (without id) for im- and export where the name is used

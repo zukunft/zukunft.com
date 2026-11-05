@@ -52,6 +52,9 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
 //include_once html_paths::RESULT . 'result_list.php';
+// not included, because formula_calc and result include formula_list, which includes config, which extends this value_list
+//include_once html_paths::FORMULA . 'formula_calc.php';
+//include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -79,11 +82,13 @@ include_once html_paths::SHARED_ENUM . 'table_forms.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -93,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
@@ -101,6 +107,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
@@ -199,7 +206,9 @@ class value_list extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new value());
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
+        $this->api_mapper_with_phrases($json_array, json_fields::VALUES, new value(), $msg);
+        return $msg;
     }
 
 
@@ -217,13 +226,10 @@ class value_list extends ListBase
     function load_by_phr_lst(phrase_list $phr_lst, user_message $msg): bool
     {
         $result = false;
-        $rest = new rest_call();
-
         $data = array();
         // comma separated like every other id list of the api e.g. url_var::ID_LST
         $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
-        $json_body = $rest->api_get(self::class, $data, $msg);
-        $msg->merge($this->api_mapper($json_body));
+        $this->load_pages(self::class, $data, $msg, $phr_lst->short_names());
         if (!$this->is_empty()) {
             $result = true;
         }
@@ -301,17 +307,60 @@ class value_list extends ListBase
      * add the given results to this list, so that a table shows the calculated numbers of a row
      * next to the measured ones, e.g. the reward ratio next to the potential loss of a problem
      *
-     * a result that repeats the phrase group of a value of this list is refused and reported,
-     * because the same group says the same thing twice, once measured and once calculated
+     * a result of the phrases of a value of this list has the same id, e.g. a measured GDP and the
+     * sum of its expenditure parts, so the measured value is kept like the calculation takes the
+     * values first (formula_calc::value_of), and the result is only reported if its number differs
      *
      * @param result_list $res_lst the results to show with the values of this list
-     * @param user_message $msg to report a result that repeats the group of a value
+     * @param user_message $msg to report a result that differs from the value of its phrases or a double result
      * @return void
      */
     function add_results(result_list $res_lst, user_message $msg): void
     {
         foreach ($res_lst->lst() as $res) {
-            $this->add_obj($res, false, $msg);
+            $val = $this->value_of_id($res->id());
+            if ($val != null) {
+                $this->report_differing_result($val, $res, $msg);
+            } else {
+                $this->add_obj($res, false, $msg);
+            }
+        }
+    }
+
+    /**
+     * @param int|string $id the id of a result, which is the id of its phrase group
+     * @return value|null the measured value of this list with the same id or null if the list has none
+     */
+    private function value_of_id(int|string $id): ?value
+    {
+        $result = null;
+        if ($this->has_id($id)) {
+            $held = $this->get($id);
+            if ($held instanceof value) {
+                $result = $held;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the double calculation check of a measured value and the result of the same phrases
+     *
+     * @param value $val the measured value that is shown
+     * @param result $res the result that its formula calculates for the same phrases
+     * @param user_message $msg to report a difference of the two numbers
+     * @return void
+     */
+    private function report_differing_result(value $val, result $res, user_message $msg): void
+    {
+        $val_num = $val->number();
+        $res_num = $res->number();
+        if ($val_num !== null and $res_num !== null and formula_calc::differs($val_num, $res_num)) {
+            $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_VALUE, [
+                msg_id::VAR_NAME => $res->name(),
+                msg_id::VAR_VALUE => $val_num,
+                msg_id::VAR_VALUE_CHK => $res_num
+            ]);
         }
     }
 

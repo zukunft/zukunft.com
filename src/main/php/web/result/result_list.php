@@ -62,6 +62,7 @@ include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -106,7 +108,9 @@ class result_list extends sandbox_list_value
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new result());
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
+        $this->api_mapper_with_phrases($json_array, json_fields::RESULTS, new result(), $msg);
+        return $msg;
     }
 
 
@@ -148,14 +152,19 @@ class result_list extends sandbox_list_value
      *
      * @param phrase_list $phr_lst the phrases whose results should be loaded
      * @param user_message $msg to report a problem of the api message to the user
+     * @param array $ctx_ids the phrase ids that a loaded result may have at most, e.g. the context of the results of a table; empty for all results
      * @return bool true if at least one result has been loaded
      */
-    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg): bool
+    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg, array $ctx_ids = []): bool
     {
         $data = array();
         // comma separated like every other id list of the api e.g. url_var::ID_LST
         $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
-        return $this->load_by($data, $msg);
+        if ($ctx_ids != []) {
+            $data[api::JSON_LIST_CONTEXT_IDS] = implode(',', $ctx_ids);
+        }
+        $this->load_pages(self::class, $data, $msg, $phr_lst->short_names());
+        return !$this->is_empty();
     }
 
     /**

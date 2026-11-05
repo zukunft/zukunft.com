@@ -393,6 +393,27 @@ class formula_calc
     function missing_operand_phrases(result $res, value_list $val_lst, formula_list $frm_lst): phrase_list
     {
         $result = new phrase_list();
+        foreach ($this->missing_operands($res, $val_lst, $frm_lst) as $opr_lst) {
+            foreach ($opr_lst->lst() as $phr) {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the context phrases of each operand of a result that has no number on the page, one list per
+     * operand, so that a page can see which phrases an operand names together, e.g. "potential gain"
+     * and the quality word "calculated", or only the unit "EUR per tonne"
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return phrase_list[] per missing operand its phrases; empty if the formula or the context is missing
+     */
+    function missing_operands(result $res, value_list $val_lst, formula_list $frm_lst): array
+    {
+        $result = [];
         $exp = $this->page_expression($res, $frm_lst);
         if ($exp !== null) {
             $ctx_lst = $res->src_grp->phr_lst();
@@ -402,10 +423,14 @@ class formula_calc
                 $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
                 $vals = $this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start));
                 if ($vals == [] and !$this->pri->is_first($names, $ctx)) {
+                    $opr_lst = new phrase_list();
                     foreach ($ctx_lst->lst() as $phr) {
                         if (in_array($phr->name(), $names)) {
-                            $result->add_phrase($phr);
+                            $opr_lst->add_phrase($phr);
                         }
+                    }
+                    if (!$opr_lst->is_empty()) {
+                        $result[] = $opr_lst;
                     }
                 }
             }

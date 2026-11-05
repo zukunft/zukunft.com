@@ -115,6 +115,8 @@ class sandbox_value_list extends sandbox_list
     // speed versus memory var for fast getting a value of the list
     private array $name_hash = [];
     private bool $name_hash_dirty = true;
+    // true if a paged load has filled its page, so that the caller asks for the next page (see load_by_phr_lst_multi)
+    public bool $has_next_page = false;
 
 
     /*
@@ -220,14 +222,17 @@ class sandbox_value_list extends sandbox_list
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      * @param int $limit the number of values that should be loaded at once
      * @param int $page the offset for the limit
-     * @return bool true if at least one result have been loaded; a list that fills the limit is reported to the user
+     * @param bool $paged true if the caller loads the next page while has_next_page is set, e.g. the api of a list
+     *                    answer; false to report a list that fills the limit to the user, because it misses rows
+     * @return bool true if at least one result have been loaded
      */
     function load_by_phr_lst_multi(
         phrase_list $phr_lst,
         user_message $msg, string      $class = value::class,
         bool        $or = false,
         int         $limit = sql_db::ROW_MAX,
-        int         $page = 0
+        int         $page = 0,
+        bool        $paged = false
     ): bool
     {
         global $db_con;
@@ -240,8 +245,11 @@ class sandbox_value_list extends sandbox_list
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst_multi($sc, $phr_lst, $class, false, $or, $limit, $page);
         $result = $this->load($qp, $msg);
-        // the query has no order, so a list that fills the limit misses a random part of the rows
-        if ($limit > 0 and $this->count() >= $limit) {
+        // counted before any filter of the caller, because a filtered page can be short although a next page exists
+        $is_full = ($limit > 0 and $this->count() >= $limit);
+        $this->has_next_page = ($paged and $is_full);
+        // the rows after the limit are only missing if nobody loads the next page
+        if ($is_full and !$paged) {
             $msg->add_warning_with_vars(msg_id::LIST_ROW_LIMIT_REACHED, [
                 msg_id::VAR_CLASS_NAME => library::class_to_name_translated($class),
                 msg_id::VAR_COUNTER => $limit
@@ -677,7 +685,72 @@ class sandbox_value_list extends sandbox_list
             $all_phr = $this->set_phrases($this->lst(), $msg, false);
             $all_phr->load_triple_sides($msg);
         }
-        return parent::api_json_array($typ_lst, $msg, $usr);
+        $result = parent::api_json_array($typ_lst, $msg, $usr);
+        if ($typ_lst->phrases_once()) {
+            $result = $this->with_phrases_once($result);
+            // only the object of the answer with each phrase once has a field beside its items
+            if ($this->has_next_page) {
+                $result[json_fields::NEXT_PAGE] = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the field of the items in the list answer with each phrase once e.g. json_fields::VALUES
+     */
+    protected function api_items_key(): string
+    {
+        return json_fields::VALUES;
+    }
+
+    /**
+     * the list answer with each phrase once: the phrases of the items, of the context of a result and
+     * of the from and to of each triple are named once in the phrase list, the items and the triples
+     * name them only by the phrase id and the verb only by its id, which the frontend has preloaded
+     *
+     * @param array $items the json of the items with the phrases in each item
+     * @return array the json object with the phrase list sorted by id and the items
+     */
+    private function with_phrases_once(array $items): array
+    {
+        $phr_by_id = [];
+        $once_items = [];
+        foreach ($items as $item) {
+            foreach ([json_fields::PHRASES, json_fields::CONTEXT] as $fld) {
+                if (is_array($item[$fld] ?? null)) {
+                    $ids = [];
+                    foreach ($item[$fld] as $phr_json) {
+                        $ids[] = $this->add_phrase_once($phr_json, $phr_by_id);
+                    }
+                    $item[$fld] = $ids;
+                }
+            }
+            $once_items[] = $item;
+        }
+        ksort($phr_by_id);
+        return [json_fields::PHRASES => array_values($phr_by_id), $this->api_items_key() => $once_items];
+    }
+
+    /**
+     * @param array $phr_json the json of a word or a triple with the details of its from, verb and to
+     * @param array $phr_by_id the phrases of the answer so far by phrase id
+     * @return int the phrase id of the phrase that has been added
+     */
+    private function add_phrase_once(array $phr_json, array &$phr_by_id): int
+    {
+        foreach ([json_fields::FROM_PHRASE, json_fields::TO_PHRASE] as $side) {
+            if (is_array($phr_json[$side] ?? null)) {
+                $this->add_phrase_once($phr_json[$side], $phr_by_id);
+                unset($phr_json[$side]);
+            }
+        }
+        if (is_array($phr_json[json_fields::VERB] ?? null)) {
+            $phr_json[json_fields::VERB] = $phr_json[json_fields::VERB][json_fields::ID] ?? 0;
+        }
+        $phr_id = library::phrase_id_of_json($phr_json);
+        $phr_by_id[$phr_id] = $phr_json;
+        return $phr_id;
     }
 
     /**
@@ -700,23 +773,47 @@ class sandbox_value_list extends sandbox_list
                     if ($reload or !$grp->phrase_list()->loaded()) {
                         $grp_ids = $grp_id->get_array($grp->id());
                         $grp_lst[] = [$grp, $grp_ids];
-                        $ids = array_merge($ids, $grp_ids);
+                        // keyed by the id, so that each id is added once without copying the list per group
+                        foreach ($grp_ids as $id) {
+                            $ids[$id] = $id;
+                        }
                     }
                 }
             }
         }
         $all_phr = new phrase_list($this->get_user());
-        $ids = array_values(array_unique($ids));
+        $ids = array_values($ids);
         if ($ids != []) {
             $all_phr->load_names_by_ids(new phr_ids($ids), $msg);
         }
+        // each phrase looked up once by its id and its position, so that a group takes its phrases
+        // without a walk through all phrases of the list, which costs most of a list with many results;
+        // the position keeps the order of the loaded list like a filter of it
+        $phr_by_id = [];
+        $pos_by_id = [];
+        foreach ($all_phr->lst() as $pos => $phr) {
+            $phr_by_id[$phr->id()] = $phr;
+            $pos_by_id[$phr->id()] = $pos;
+        }
         foreach ($grp_lst as [$grp, $grp_ids]) {
-            $phr_lst = $all_phr->filter_by_ids(new phr_ids($grp_ids));
+            $grp_phr = [];
+            $found_ids = [];
+            foreach ($grp_ids as $id) {
+                if (isset($phr_by_id[$id])) {
+                    $grp_phr[$pos_by_id[$id]] = $phr_by_id[$id];
+                    $found_ids[$pos_by_id[$id]] = $id;
+                }
+            }
+            ksort($grp_phr);
+            $phr_lst = new phrase_list($this->get_user());
+            $phr_lst->set_lst(array_values($grp_phr));
             if ($phr_lst->is_empty()) {
                 // a number without phrases can never be shown, so report it like the single load
                 log_warning('Missing phrases for the group id ' . $grp->dsp_id(), $this::class . '->set_phrases');
             } else {
-                $grp->set_phrase_list($phr_lst);
+                // the id again from the ids of the phrases found, because e.g. a prime group stored with
+                // the text key gets its prime id; computed from the plain ids without sorting the phrase objects
+                $grp->set_phrase_list_with_id($phr_lst, $grp_id->get_id_by_ids(array_values($found_ids)));
             }
         }
         return $all_phr;

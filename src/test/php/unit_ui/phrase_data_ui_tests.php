@@ -302,7 +302,13 @@ class phrase_data_ui_tests
         $json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
         $dto = $this->complete_page_cache($json, $msg);
         $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
-        $report = new calculator_report()->pdf($trp, $msg, $dto);
+        // the steps are collected by the same run, because a report takes long to create
+        $steps = [];
+        $collect = function (msg_id $id) use (&$steps) {
+            $steps[] = $id->value;
+        };
+        $report = new calculator_report()->pdf($trp, $msg, $dto, $collect);
+        $report_steps = implode(',', $steps);
         $test_name = 'the report has a positions table per portfolio';
         $t->assert_text_contains($test_name, $report, '(First child portfolio)');
         $t->assert_text_contains($test_name, $report, '(Second child portfolio)');
@@ -330,13 +336,8 @@ class phrase_data_ui_tests
         $t->assert($test_name, new calculator_report()->pdf($no_calc_wrd, $msg, $no_calc_dto), '');
         $test_name = '... and no phrase too';
         $t->assert($test_name, new calculator_report()->pdf(null, $msg, $no_calc_dto), '');
-        $steps = [];
-        $collect = function (msg_id $id) use (&$steps) {
-            $steps[] = $id->value;
-        };
-        new calculator_report()->pdf($trp, $msg, $dto, $collect);
         $test_name = 'the report names its steps in their order';
-        $t->assert($test_name, implode(',', $steps), implode(',', [
+        $t->assert($test_name, $report_steps, implode(',', [
             msg_id::CALCULATOR_REPORT_STEP_NUMBERS->value,
             msg_id::CALCULATOR_REPORT_STEP_POSITIONS->value,
             msg_id::CALCULATOR_REPORT_STEP_TABLES->value,

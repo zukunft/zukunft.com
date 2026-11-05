@@ -104,6 +104,10 @@ class system_time_type extends type_object
     const string IMPORT = "import";
     // the load of the data of a page from the backend before its html is created
     const string LOAD_PAGE = "load page";
+    // the filters of a list answer after its load e.g. by the context of the results and by the read permission
+    const string API_FILTER = "api_filter";
+    // the read and the write of the cached answer of an api request
+    const string API_CACHE = "api_cache";
 
 
     /*

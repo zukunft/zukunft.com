@@ -129,6 +129,18 @@ class phrase_list_ui_tests
         $t->assert_false($test_name, $added);
         $msg->reset();
 
+        // the loading step of a slow page names the first phrases of a load as plain text
+        $t->subheader($ts . 'short names');
+        $test_name = 'the short names of a long list end with the number of the other phrases';
+        $long_names = $t_phr->list_zh_ui()->short_names();
+        $t->assert_text_contains($test_name, $long_names, msg_id::MORE->text());
+        $test_name = '... and leave out the phrases after the name list limit';
+        $t->assert_text_not_contains($test_name, $long_names, word_names::COMPANY);
+        // negative: a list within the limit names all phrases without the tail
+        $test_name = 'the short names of a short list have no tail';
+        $short_names = $lst->short_names();
+        $t->assert_text_not_contains($test_name, $short_names, msg_id::MORE->text());
+
         // the related words and triples of a page split a phrase list by the class of the phrase
         $t->subheader($ts . 'filter');
         $test_name = 'the words of the currency list include the word Euro';

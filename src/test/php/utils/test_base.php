@@ -455,6 +455,9 @@ class test_base
     // TODO Prio 1 reduce!
     const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
     const int TIMEOUT_LIMIT_REST = 5;  // max seconds for a REST api call over http including the connection warmup of the first call and the config loading
+    // the memory_limit of the php.ini of the served pod, above which a page ends without a message
+    // because the pod does not display errors; the test run itself has no memory limit
+    const int POD_MEMORY_LIMIT = 128 * 1024 * 1024;
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
     const int TEST_LOADING_SECONDS = 3; // fixed seconds since the request start of a loading page snapshot
@@ -714,6 +717,39 @@ class test_base
         global $log_txt;
         $this->check_time_section($header_text);
         $log_txt->header($header_text);
+    }
+
+    /**
+     * switch the debug level e.g. on for one slow test step, so that the steps of the frontend and
+     * each api call are logged with their seconds, and back to the level before after the step
+     *
+     * @param int $level the new debug level e.g. url_var::DEBUG_LEVEL_COMPLEX_FUNCTION
+     * @return int the debug level before, to switch back to it
+     */
+    function set_debug(int $level): int
+    {
+        global $debug;
+        global $ui_sys;
+        $before = (int)$debug;
+        $debug = $level;
+        // the frontend reads the level from its request cache, like http/view.php sets it
+        if ($ui_sys != null) {
+            $ui_sys->debug = $level;
+        }
+        return $before;
+    }
+
+    /**
+     * write a progress line of a long test step to the test log
+     * with the seconds since the previous log line, so that a slow step is visible
+     *
+     * @param string $step_text the description of the step that has just been done
+     * @return void
+     */
+    function step(string $step_text): void
+    {
+        global $log_txt;
+        $log_txt->echo_text_log($step_text . ' (' . $log_txt->since_last() . ')');
     }
 
     /**
@@ -1203,6 +1239,25 @@ class test_base
     }
 
     /**
+     * check if the actual number is smaller than the given max and show both numbers if not
+     *
+     * @param string $msg (unique) description of the test
+     * @param int $max the number that the actual number must stay below
+     * @param int $actual the actual number e.g. the bytes that a step has used
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true is the result is fine
+     */
+    function assert_below(string $msg, int $max, int $actual, float $exe_max_time = self::TIMEOUT_LIMIT): bool
+    {
+        $target = '< ' . $max;
+        $received = (string)$actual;
+        if ($actual < $max) {
+            $received = $target;
+        }
+        return $this->assert($msg, $received, $target, $exe_max_time);
+    }
+
+    /**
      * check if the test results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
@@ -1431,13 +1486,13 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view_by_name(
-        string          $view_name,
-        user            $usr,
+        string           $view_name,
+        user             $usr,
         db_object_seq_id $dbo,
-        string          $obj_name,
-        ?data_object_ui $cfg = null,
-        string          $file_path = '',
-        array           $url_array = []
+        string           $obj_name,
+        ?data_object_ui  $cfg = null,
+        string           $file_path = '',
+        array            $url_array = []
     ): bool
     {
         $msg = new user_message();
@@ -1572,6 +1627,7 @@ class test_base
             $sys->times->switch(system_time_type::LOAD_VIEW);
             $msk->load_components($msg);
             $sys->times->switch();
+            log_debug('components of the view ' . $view_key . ' loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         }
 
         // build the api message and the ui objects the frontend would receive;
@@ -1595,6 +1651,7 @@ class test_base
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $msg_ui);
         $sys->times->switch();
+        log_debug('api message of the view ' . $view_key . ' mapped', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
 
         // a new context for each view, because the rendering fills e.g. the phrases of the page into it
         if ($cfg == null) {
@@ -1614,6 +1671,7 @@ class test_base
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
         frontend::book_times();
+        log_debug('html of the view ' . $view_key . ' created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         // continue with the section of the caller for the following tests
         $sys->times->switch();
 
@@ -1872,12 +1930,16 @@ class test_base
      * so the count is replaced by the fixed test seconds for both the actual page and the snapshot
      * before an html page is compared and when a snapshot is written (see assert_typed and
      * file_content); only for the test compare, the real page keeps the seconds of the request
+     * the steps below the loading text (html_base::loading_step) depend on the speed of the api
+     * calls and name their seconds, so they are removed
      *
      * @param string $html the html page as received from the pod
-     * @return string the html page with the loading count of self::TEST_LOADING_SECONDS
+     * @return string the html page with the loading count of self::TEST_LOADING_SECONDS and without loading steps
      */
     function fix_volatile_loading_seconds(string $html): string
     {
+        $step_pattern = '/<' . html_base::P . ' ' . html_base::CLASS_HTML . '="' . html_base::CLASS_LOADING_STEP . '">[^<]*<\/' . html_base::P . '>/';
+        $html = preg_replace($step_pattern, '', $html);
         $steps = html_base::LOADING_COUNT_LIMIT - self::TEST_LOADING_SECONDS;
         $start_pattern = '/(' . preg_quote('@property --' . html_base::LOADING_COUNTER, '/') . ' \{[^}]*initial-value: )\d+/';
         $html = preg_replace($start_pattern, '${1}' . self::TEST_LOADING_SECONDS, $html, 1);
@@ -1959,7 +2021,7 @@ class test_base
     {
         $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
         $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
-            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
+        [words::STARTUP][triples::PINNED_VIEWS] ?? [];
         unset($pin_lst[words::TOOLTIP_COMMENT]);
         return $pin_lst;
     }
@@ -2025,6 +2087,7 @@ class test_base
         $result = $this->assert_typed($test_name, $actual, $expected, $file_type, $exe_max_time);
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_path_file($file_path, $this->file_content($actual, $file_type));
+            $this->step('updated ' . $file_path);
         }
         return $result;
     }

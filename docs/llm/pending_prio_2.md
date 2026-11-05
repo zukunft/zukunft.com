@@ -1,5 +1,19 @@
 # pending prio 2
 
+## phrases of a list answer in the request cache
+
+The value and result list answer names each phrase once (`api_types::PHRASES_ONCE`), but the frontend does not add
+these phrases to the request cache (`data_object::add_phrases`), because `ListBase::api_mapper_with_phrases` has
+no `data_object`; a page that needs such a phrase by name later loads it again.
+
+## triple sides in the api json of a value or result list
+
+`sandbox_value_list::api_json_array` loads the from and to of the triples only for the phrases that
+`set_phrases` reads; a list whose load has set the group names already gets triples without their
+sides, so a caller must call `load_phrases` first, as `api/valueList` and `api/resultList` do. Calling
+`load_phrases` inside `api_json_array` would close the gap, but the unit tests map their lists with
+`test_lib::list_to_ui` without `api_types::TEST_MODE`, so it would query the triple sides there too.
+
 ## own sorting of a further unit column
 
 `table_model::col_id_of_name` returns no id for the further column of the same phrase in another unit

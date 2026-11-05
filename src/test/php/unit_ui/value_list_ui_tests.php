@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -160,6 +162,26 @@ class value_list_ui_tests
         $val_lst_ui = new value_list_ui();
         $api_json = [[json_fields::NUMBER => values::PI]];
         $t->assert_false($test_name, $val_lst_ui->api_mapper($api_json)->is_ok());
+        // the answer with each phrase once gives the same values as the answer with the phrases in each value
+        $old_json = $t_val->value_list_math()->api_json_array([api_types::INCL_PHRASES], $msg);
+        $once_json = $t_val->value_list_math()->api_json_array([api_types::INCL_PHRASES, api_types::PHRASES_ONCE], $msg);
+        $old_lst = new value_list_ui();
+        $old_lst->api_mapper($old_json);
+        $once_lst = new value_list_ui();
+        $once_msg = $once_lst->api_mapper($once_json);
+        $old_values = $this->numbers_with_names($old_lst);
+        $once_values = $this->numbers_with_names($once_lst);
+        $test_name = 'the answer with each phrase once gives the same values and phrases';
+        $t->assert($test_name, $once_values, $old_values);
+        $test_name = '... without a message';
+        $once_ok = $once_msg->is_ok();
+        $t->assert_true($test_name, $once_ok);
+        // negative: a phrase id that the phrase list of the answer does not contain is reported
+        $unknown_json = $once_json;
+        $unknown_json[json_fields::PHRASES] = [];
+        $unknown_ok = new value_list_ui()->api_mapper($unknown_json)->is_ok();
+        $test_name = 'a phrase id that the answer does not name is reported';
+        $t->assert_false($test_name, $unknown_ok);
 
         $t->subheader($ts . 'user config');
 
@@ -242,6 +264,33 @@ class value_list_ui_tests
         $add_lst->add($t_val->value_add_ui(), $msg_ui);
         $added = $add_lst->add($t_val->value_add_ui(), $msg_ui);
         $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // a value and a result of the same phrases have the same id, e.g. a measured total and its
+        // formula, so the value is kept and the result is only reported if its number differs
+        $t_res = new test_results($t);
+        $test_name = 'a result of the phrases of a value is not added';
+        $add_lst = $t_val->value_list_zh_city_ui(results::TV_PRIO_LOSS_HTP);
+        $add_lst->add_results($t_res->result_list_zh_city_ui(), $msg_ui);
+        $cnt = $add_lst->count();
+        $t->assert($test_name, $cnt, 1);
+        $test_name = '... and not reported if its number is the same';
+        $same_ok = $msg_ui->is_ok();
+        $t->assert_true($test_name, $same_ok);
+        $msg_ui->reset();
+        $test_name = '... but reported if its number differs from the value';
+        $add_lst = $t_val->value_list_zh_city_ui(values::SAMPLE_FLOAT);
+        $add_lst->add_results($t_res->result_list_zh_city_ui(), $msg_ui);
+        $has_diff = $msg_ui->has_msg_id(msg_id::RESULT_DIFFERS_FROM_VALUE);
+        $t->assert_true($test_name, $has_diff);
+        $msg_ui->reset();
+        // negative: a result that is really added twice is still a double
+        $test_name = 'a result that is already in the list is reported as double';
+        $add_lst = new value_list_ui();
+        $add_lst->add_results($t_res->result_list_zh_city_ui(), $msg_ui);
+        $add_lst->add_results($t_res->result_list_zh_city_ui(), $msg_ui);
+        $has_double = $msg_ui->has_msg_id(msg_id::LIST_DOUBLE_ENTRY);
+        $t->assert_true($test_name, $has_double);
         $msg_ui->reset();
 
         $t->subheader($ts . 'most relevant');
@@ -1482,6 +1531,21 @@ class value_list_ui_tests
         $test_name = 'the menu of the design with lines offers the default design';
         $menu_bordered = $t_val->value_list_variance_ui()->columns_menu_items([...$url_page, ...$url_design]);
         $t->assert_text_contains($test_name, $menu_bordered, url_var::DISPLAY_LIST_DESIGN . '=' . words::PLAIN);
+    }
+
+    /**
+     * @param value_list_ui $lst the mapped values
+     * @return array per value the number and the names of its phrases, to compare two mappings
+     */
+    private function numbers_with_names(value_list_ui $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            sort($names);
+            $result[] = $val->number() . ': ' . implode(', ', $names);
+        }
+        return $result;
     }
 
 }

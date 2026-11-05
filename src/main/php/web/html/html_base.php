@@ -256,6 +256,8 @@ class html_base
     const string CLASS_LOADING_SECONDS = 'page-loading-seconds';
     const string LOADING_COUNTER = 'page-loading-sec';
     const string LOADING_COUNT_ANIMATION = 'page-loading-count';
+    // the step that a slow page is doing now, below the loading text (see loading_step)
+    const string CLASS_LOADING_STEP = 'page-loading-step';
     // the seconds up to which the loading text counts; not the php max_execution_time, because php
     // counts only its own cpu time, so a request that waits for the database runs much longer
     const int LOADING_COUNT_LIMIT = 3600;
@@ -971,7 +973,7 @@ class html_base
      * @param float $delay the seconds after which the loading text is shown
      * @param int $since the seconds since the request start shown when the text appears; counted up each second
      * @param user_message|Message $msg to report a configured font or colour that css could misread
-     * @return string the html code from the doctype to the loading text and the footer
+     * @return string the html code from the doctype to the loading text, below which the steps follow
      */
     function loading_start(float $delay, int $since, user_message|Message $msg): string
     {
@@ -986,13 +988,17 @@ class html_base
             $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
             $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
         }
+        // only the last step sent by loading_step is shown
+        $step = '.' . self::CLASS_LOADING_STEP;
+        $css .= ' ' . $step . ':has(~ ' . $step . ') {display: none;}';
         // with the font and the colours like every page
         $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
-        $txt = $this->nav($this->logo(), self::CLASS_NAV);
-        $txt .= $this->main($this->p($loading));
-        $txt .= $this->site_footer();
-        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
-        return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_LOADING . '">';
+        $result .= $this->nav($this->logo(), self::CLASS_NAV);
+        // the main element stays open for the steps; loading_end closes it with the footer
+        $result .= '<' . self::MAIN . ' ' . self::CLASS_HTML . '="' . self::CLASS_MAIN . '">';
+        return $result . $this->p($loading);
     }
 
     /**
@@ -1072,11 +1078,22 @@ class html_base
     }
 
     /**
-     * @return string the html code that hides the start of the page sent by loading_start
+     * @param string $text the step that the slow page is doing now
+     * @return string the html code of the step below the loading text, which hides the step before
+     */
+    function loading_step(string $text): string
+    {
+        return $this->block(self::P, $this->esc($text), self::CLASS_LOADING_STEP);
+    }
+
+    /**
+     * @return string the html code that closes the start of the page sent by loading_start
+     *                with the footer below the steps and hides it
      */
     function loading_end(): string
     {
-        return $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
+        $result = '</' . self::MAIN . '>' . $this->site_footer() . '</' . self::DIV . '>';
+        return $result . $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
     }
 
     /**

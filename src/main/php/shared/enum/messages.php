@@ -808,6 +808,8 @@ enum messages: string
         . ' differs from the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated with the values of this page, which is shown instead';
+    // a measured value and its formula result of the same phrases, e.g. a GDP and the sum of its expenditure parts
+    case RESULT_DIFFERS_FROM_VALUE = 'result_differs_from_value';
     case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" for the context "'
@@ -2095,6 +2097,8 @@ enum messages: string
     case CALC_EDITOR_SAVE_NOT_CONFIRMED = 'calc_editor_save_not_confirmed';
     case CALC_EDITOR_NO_LISTS = 'calc_editor_no_lists';
     case CALC_EDITOR_PHRASE_NOT_FOUND = 'calc_editor_phrase_not_found';
+    // a list answer with each phrase once names a phrase id that its phrase list does not contain
+    case API_PHRASE_ID_MISSING = 'api_phrase_id_missing';
     case CALC_EDITOR_VERB_UNKNOWN = 'calc_editor_verb_unknown';
     case CALC_EDITOR_READ_FAILED = 'calc_editor_read_failed';
     case CALC_EDITOR_ENTER_NAME = 'calc_editor_enter_name';
@@ -3085,6 +3089,20 @@ enum messages: string
     // around the counted seconds of the loading text e.g. "since 3 sec"
     case PAGE_LOADING_SINCE = 'page_loading_since';
     case PAGE_LOADING_SECONDS = 'page_loading_seconds';
+    // the step that a slow page is doing now, shown below the loading text (see rest_call::send_loading_step)
+    case PAGE_LOADING_STEP_DATA = 'page_loading_step_data';
+    case PAGE_LOADING_STEP_VALUES = 'page_loading_step_values';
+    case PAGE_LOADING_STEP_RESULTS = 'page_loading_step_results';
+    case PAGE_LOADING_STEP_PHRASES = 'page_loading_step_phrases';
+    case PAGE_LOADING_STEP_PHRASE_DATA = 'page_loading_step_phrase_data';
+    case PAGE_LOADING_STEP_VIEW = 'page_loading_step_view';
+    case PAGE_LOADING_STEP_FORMULAS = 'page_loading_step_formulas';
+    // the step of a call for one named object e.g. the phrase data of a calculator page
+    case PAGE_LOADING_STEP_DATA_OF = 'page_loading_step_data_of';
+    case PAGE_LOADING_STEP_VALUES_OF = 'page_loading_step_values_of';
+    case PAGE_LOADING_STEP_RESULTS_OF = 'page_loading_step_results_of';
+    case PAGE_LOADING_STEP_FORMULAS_OF = 'page_loading_step_formulas_of';
+    case PAGE_LOADING_STEP_PHRASES_OF = 'page_loading_step_phrases_of';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';

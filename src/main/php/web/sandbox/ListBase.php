@@ -50,6 +50,7 @@ include_once html_paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
@@ -66,6 +67,7 @@ include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
@@ -74,11 +76,13 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -151,6 +155,163 @@ class ListBase extends ListOfIdObjects
             }
         }
         return $msg;
+    }
+
+    /**
+     * map a value or result list answer, also if the answer names each phrase only once: then it is
+     * an object with the phrases once and the items with only the phrase ids, and a triple in it with
+     * only the ids of its from and to phrases; each of these phrases is mapped to one object that
+     * every item of the answer uses, because a copy per item would not fit in the memory of the pod
+     * for an answer with many items, e.g. the results of the initial effort
+     *
+     * @param array $json_array the json array of the answer, the list of items or the object with each phrase once
+     * @param string $items_key the field of the items in the object e.g. json_fields::RESULTS
+     * @param db_object|IdObject|TextIdObject|CombineObject $dbo the empty item that is cloned for each item e.g. a result
+     * @param user_message $msg to report a phrase id that the phrase list of the answer does not contain
+     * @return void
+     */
+    protected function api_mapper_with_phrases(
+        array                                         $json_array,
+        string                                        $items_key,
+        db_object|IdObject|TextIdObject|CombineObject $dbo,
+        user_message                                  $msg
+    ): void
+    {
+        if (array_key_exists(json_fields::PHRASES, $json_array) and array_key_exists($items_key, $json_array)) {
+            $phr_by_id = $this->phrases_by_id($json_array[json_fields::PHRASES], $msg);
+            foreach ($json_array[$items_key] as $item) {
+                $this->add_item_with_phrases($item, $phr_by_id, $dbo, $msg);
+            }
+        } else {
+            $msg->merge($this->api_mapper_list($json_array, $dbo));
+        }
+    }
+
+    /**
+     * load a value or result list answer page by page while the backend names a next page, because a
+     * page holds at most the row limit of the backend, so that the list of many phrases is complete;
+     * the backend counts a page before it filters its rows, so a short page can still have a next one
+     *
+     * @param string $class the frontend list class of the api e.g. value_list::class
+     * @param array $data the url vars of the api call without the page e.g. the phrase ids
+     * @param user_message $msg with the requesting user and to report a problem of the api message
+     * @param string $step_name the names of the phrases of the load shown below the loading text of a slow page
+     * @return void
+     */
+    protected function load_pages(string $class, array $data, user_message $msg, string $step_name = ''): void
+    {
+        $rest = new rest_call();
+        $page = 0;
+        $has_next = true;
+        while ($has_next) {
+            $data[api::JSON_LIST_PAGE] = $page;
+            $json_body = $rest->api_get($class, $data, $msg, $step_name);
+            $msg->merge($this->api_mapper($json_body));
+            $has_next = $json_body[json_fields::NEXT_PAGE] ?? false;
+            $page++;
+        }
+    }
+
+    /**
+     * @param array $phr_json_lst the phrases of the answer, each once
+     * @param user_message $msg to report a from or to phrase id that the answer does not contain
+     * @return array the phrase object by phrase id with the from and to phrase of a triple
+     */
+    private function phrases_by_id(array $phr_json_lst, user_message $msg): array
+    {
+        $json_by_id = [];
+        foreach ($phr_json_lst as $phr_json) {
+            $json_by_id[library::phrase_id_of_json($phr_json)] = $phr_json;
+        }
+        $result = [];
+        foreach (array_keys($json_by_id) as $phr_id) {
+            $phr = new phrase();
+            $phr->api_mapper($this->phrase_json_by_id($phr_id, $json_by_id, [], $msg) ?? [], $msg);
+            $result[$phr_id] = $phr;
+        }
+        return $result;
+    }
+
+    /**
+     * add one item of an answer with each phrase once and give it the shared phrase objects
+     *
+     * @param mixed $item the json array of the item with the phrase ids e.g. of a result
+     * @param array $phr_by_id the phrase object by phrase id of the answer
+     * @param db_object|IdObject|TextIdObject|CombineObject $dbo the empty item that is cloned
+     * @param user_message $msg to report a phrase id that the answer does not contain
+     * @return void
+     */
+    private function add_item_with_phrases(
+        mixed                                         $item,
+        array                                         $phr_by_id,
+        db_object|IdObject|TextIdObject|CombineObject $dbo,
+        user_message                                  $msg
+    ): void
+    {
+        if (is_array($item)) {
+            // the phrases of a value or result and the phrases a result is calculated from
+            $phr_of_fld = [];
+            foreach ([json_fields::PHRASES, json_fields::CONTEXT] as $fld) {
+                if (array_key_exists($fld, $item)) {
+                    $phr_of_fld[$fld] = $this->phrases_of_ids($item[$fld], $phr_by_id, $msg);
+                    $item[$fld] = [];
+                }
+            }
+            $new = clone $dbo;
+            $new->api_mapper($item, $msg);
+            $new->set_phrases_of_fields($phr_of_fld);
+            $this->add_obj($new, true);
+        } else {
+            // e.g. an api error message should not stop the rendering of the other components
+            log_warning('unexpected api message part "' . $item . '" for a ' . $dbo::class . ' list');
+        }
+    }
+
+    /**
+     * @param array $ids the phrase ids of an item
+     * @param array $phr_by_id the phrase object by phrase id of the answer
+     * @param user_message $msg to report a phrase id that the answer does not contain
+     * @return array the phrase objects of the ids in the order of the ids
+     */
+    private function phrases_of_ids(array $ids, array $phr_by_id, user_message $msg): array
+    {
+        $result = [];
+        foreach ($ids as $phr_id) {
+            if (array_key_exists((int)$phr_id, $phr_by_id)) {
+                $result[] = $phr_by_id[(int)$phr_id];
+            } else {
+                $msg->add(msg_id::API_PHRASE_ID_MISSING, [msg_id::VAR_ID => $phr_id]);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $phr_id the phrase id of an item or of the from or to of a triple
+     * @param array $phr_by_id the phrase json of the answer by phrase id
+     * @param array $path the phrase ids of the triples above, so that a triple linked to itself does not loop
+     * @param user_message $msg to report a phrase id that the answer does not contain
+     * @return array|null the phrase json with the from and to phrase of a triple or null if the id is unknown
+     */
+    private function phrase_json_by_id(int $phr_id, array $phr_by_id, array $path, user_message $msg): ?array
+    {
+        $result = null;
+        if (!array_key_exists($phr_id, $phr_by_id)) {
+            $msg->add(msg_id::API_PHRASE_ID_MISSING, [msg_id::VAR_ID => $phr_id]);
+        } elseif (!in_array($phr_id, $path)) {
+            $result = $phr_by_id[$phr_id];
+            $sides = [json_fields::FROM => json_fields::FROM_PHRASE, json_fields::TO => json_fields::TO_PHRASE];
+            foreach ($sides as $id_fld => $phr_fld) {
+                $side_id = $result[$id_fld] ?? 0;
+                if (!array_key_exists($phr_fld, $result) and is_numeric($side_id) and $side_id != 0) {
+                    $side_json = $this->phrase_json_by_id((int)$side_id, $phr_by_id, [...$path, $phr_id], $msg);
+                    if ($side_json != null) {
+                        $result[$phr_fld] = $side_json;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 
