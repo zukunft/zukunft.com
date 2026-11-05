@@ -2154,8 +2154,8 @@ class use_case_ui_tests
             // the Definition tab shows the data of the page with the unsaved changes, like the export
             $test_name = 'the Definition tab shows the data of the page as json';
             $json_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB_LABEL);
-            $json = json_decode($json_txt, true);
-            $t->assert_true($test_name, is_array($json) and array_key_exists(json_fields::TRIPLES, $json));
+            $json = json_decode($json_txt, true) ?? [];
+            $t->assert_key_exists($test_name, json_fields::TRIPLES, $json);
             $test_name = '... with the unsaved changes';
             $t->assert_text_contains($test_name, $json_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
             // negative: without a change the json has the label of the database
@@ -2165,16 +2165,20 @@ class use_case_ui_tests
             // the PDF tab posts the data of the page with the unsaved changes and the token of the session to the pod
             $test_name = 'the PDF tab posts the data of the page to the pdf entry point of the pod';
             $pdf_post = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_LABEL), true) ?? [];
-            $t->assert($test_name, $pdf_post[self::PDF_POST_ROUTE] ?? '', api::CALCULATOR_PDF_SCRIPT);
+            $pdf_route = $pdf_post[self::PDF_POST_ROUTE] ?? '';
+            $t->assert($test_name, $pdf_route, api::CALCULATOR_PDF_SCRIPT);
             $test_name = '... with the token of the session';
-            $t->assert_true($test_name, $pdf_post[self::PDF_POST_TOKEN_SENT] ?? false);
+            $token_sent = $pdf_post[self::PDF_POST_TOKEN_SENT] ?? false;
+            $t->assert_true($test_name, $token_sent);
             $test_name = '... and the unsaved changes';
-            $pdf_body = json_encode($pdf_post[self::PDF_POST_BODY] ?? [], JSON_UNESCAPED_UNICODE);
+            $pdf_data = $pdf_post[self::PDF_POST_BODY] ?? [];
+            $pdf_body = json_encode($pdf_data, JSON_UNESCAPED_UNICODE);
             $t->assert_text_contains($test_name, $pdf_body, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
             // negative: a page that is not on a pod cannot create the pdf
             $test_name = '... but a page that is not on a pod offers no pdf';
             $offline = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_OFFLINE), true) ?? [];
-            $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
+            $disabled = $offline[self::PDF_BUTTON_DISABLED] ?? false;
+            $t->assert_true($test_name, $disabled);
             unlink($page);
         }
         $brw->stop();

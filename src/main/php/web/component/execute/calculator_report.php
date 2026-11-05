@@ -8,7 +8,10 @@
     the suggested var name is $rpt
     the top of the report are the target positions per portfolio, read from the columns of a
     detail table that are filtered by the split count; everything below comes from the html
-    tables of the page, so that the report shows the same numbers as the page
+    tables of the page, so that the report shows the same numbers as the page; each portfolio, each
+    main part of the page and the formulas start on a new portrait page, except a main part with a table
+    that is too wide for a portrait page with the normal text size e.g. the splitting walk, which is on
+    landscape pages
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -60,6 +63,7 @@ include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Closure;
+use DateTime;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -88,6 +92,9 @@ class calculator_report
     // the report reads and calculates the complete page, which can take longer than the php limit of a page
     const int MAX_TIME_SEC = 600;
     const string FILE_NAME_UNSAFE = '/[^A-Za-z0-9 ._-]/';
+    // the time when a report is created and the separator from the name of the report in the middle of the footer
+    const string TIME_FORMAT = 'Y-m-d H:i';
+    const string FOOTER_TIME_SEPARATOR = ' - ';
     // the phrases of the use case that the positions are read from, selected by their name
     const string SPLIT_COUNT = 'split count';
     const string UNIT_VALUE = 'unit value';
@@ -135,7 +142,9 @@ class calculator_report
     ];
     const array POSITION_RIGHT = [true, false, false, false, true, true, true, true];
     // true while a part of the page is added whose main parts each start on a new page (see add_html)
+    // and whose main parts with a wide table are on landscape pages
     private bool $main_on_new_page = false;
+    private bool $wide_on_landscape = false;
     // the html wrapper to read a part of a page as utf-8
     const string DOM_PREFIX = '<?xml encoding="UTF-8"><div>';
     const string DOM_SUFFIX = '</div>';
@@ -144,10 +153,11 @@ class calculator_report
      * @param word|triple|null $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load
      * @param data_object $dto the request cache filled with the data of the page
+     * @param DateTime $time when the report is created, which the footer of each page names
      * @param Closure|null $step called with the msg_id of each step before it starts, to show the progress
      * @return string the pdf file or an empty string if the phrase is no calculator
      */
-    function pdf(word|triple|null $dbo, user_message $msg, data_object $dto, ?Closure $step = null): string
+    function pdf(word|triple|null $dbo, user_message $msg, data_object $dto, DateTime $time, ?Closure $step = null): string
     {
         $result = '';
         $calc = $dbo == null ? null : new calculator($dbo->phrase(), $dto->phr_lst);
@@ -155,7 +165,8 @@ class calculator_report
             $list = new ui_list();
             $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_NUMBERS);
             $lst = $list->calculator_numbers($dbo, $dto, $msg);
-            $pdf = new pdf_writer();
+            $pdf = new pdf_writer(true);
+            $this->add_footer($pdf, $calc->title(), $time->format(self::TIME_FORMAT));
             $this->add_logo($pdf);
             $pdf->title($calc->title());
             $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_POSITIONS);
@@ -168,7 +179,7 @@ class calculator_report
                 . $list->calculator_notes($calc)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . $list->formula_notes($dbo, $msg, $dto)
-                . $list->calculator_sources($calc, $dbo, $msg, $dto));
+                . $list->calculator_sources($calc, $dbo, $msg, $dto), true, true);
             $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_FORMULAS);
             $this->add_formulas($pdf, $lst, $dto);
             $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_FILE);
@@ -186,6 +197,25 @@ class calculator_report
     {
         $file = preg_replace(self::FILE_NAME_UNSAFE, '_', $name) . $extension;
         return 'Content-Disposition: attachment; filename="' . $file . '"';
+    }
+
+    /**
+     * add the footer to each page: the pod that creates the pdf on the left, the name of the report with its time
+     * in the middle and the page number on the right, also used by the definition report of the calculator editor
+     *
+     * @param pdf_writer $pdf the report
+     * @param string $name the name of the report e.g. the title of the page
+     * @param string $time_txt when the report is created in the format self::TIME_FORMAT
+     */
+    function add_footer(pdf_writer $pdf, string $name, string $time_txt): void
+    {
+        global $mtr;
+        $lib = new library();
+        $pdf->set_footer(POD_NAME, $name . self::FOOTER_TIME_SEPARATOR . $time_txt,
+            fn(int $page, int $count): string => $lib->msg_var_text([[msg_id::CALCULATOR_REPORT_PAGE, [
+                msg_id::VAR_VALUE => (string)$page,
+                msg_id::VAR_VALUE_COUNT => (string)$count
+            ]]], $mtr));
     }
 
     /**
@@ -246,8 +276,10 @@ class calculator_report
                     foreach ($list->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg) as $row) {
                         $rows[] = $this->position_row($calc, $row, [$col_phr, $flt], $unit_cols, $lst, $dto, $msg);
                     }
-                    $pdf->heading(mb_ucfirst($col_phr->name()));
                     $head = array_map(fn(msg_id $id) => $mtr->txt($id), self::POSITION_COLUMNS);
+                    // portrait like a bank statement, with a table scaled down if a security has a long name
+                    $pdf->page_break(true);
+                    $pdf->heading(mb_ucfirst($col_phr->name()));
                     $pdf->table($head, array_values(array_filter($rows)), self::POSITION_RIGHT);
                 }
             }
@@ -378,6 +410,7 @@ class calculator_report
         }
         ksort($rows);
         if ($rows != []) {
+            $pdf->page_break(true);
             $pdf->heading($mtr->txt(msg_id::CALCULATOR_REPORT_FORMULAS));
             $pdf->table([], array_values($rows), []);
         }
@@ -389,8 +422,10 @@ class calculator_report
      * @param pdf_writer $pdf the report
      * @param string $html the html code of the part of the page
      * @param bool $main_on_new_page true to start each main part of the page on a new page (see is_main_heading)
+     * @param bool $wide_on_landscape true to write a main part on landscape pages if one of its tables does not fit
+     *                                a portrait page with the normal text size and else on portrait pages
      */
-    function add_html(pdf_writer $pdf, string $html, bool $main_on_new_page = false): void
+    function add_html(pdf_writer $pdf, string $html, bool $main_on_new_page = false, bool $wide_on_landscape = false): void
     {
         $doc = new DOMDocument();
         // the html of a page is valid for a browser, but e.g. a section tag is unknown to the parser
@@ -399,8 +434,76 @@ class calculator_report
         libxml_clear_errors();
         libxml_use_internal_errors($libxml_errors);
         $this->main_on_new_page = $main_on_new_page;
+        $this->wide_on_landscape = $wide_on_landscape;
         $this->add_node($pdf, $doc->documentElement);
         $this->main_on_new_page = false;
+        $this->wide_on_landscape = false;
+    }
+
+    /**
+     * @param pdf_writer $pdf the report
+     * @param DOMElement $heading a main heading of the page
+     * @return bool|null true for portrait pages, false for landscape pages if a table of the part does not fit a portrait page,
+     *                   null to keep the format of the pages if the report has only one format
+     */
+    private function part_format(pdf_writer $pdf, DOMElement $heading): ?bool
+    {
+        $result = null;
+        if ($this->wide_on_landscape) {
+            $result = true;
+            foreach ($this->part_tables($heading) as $table) {
+                [$head, $rows] = $this->table_parts($table);
+                if (!$pdf->fits_portrait($head, $rows)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param DOMElement $heading a main heading of the page
+     * @return array the tables of the part of the heading: of the collapsed part of a summary,
+     *               else the tables up to the next heading or collapsed part
+     */
+    private function part_tables(DOMElement $heading): array
+    {
+        $result = [];
+        if ($heading->tagName == self::SUMMARY_TAG) {
+            $result = $this->tables_of($heading->parentNode);
+        } else {
+            $node = $heading->nextSibling;
+            while ($node != null and !$this->starts_part($node)) {
+                $result = [...$result, ...$this->tables_of($node)];
+                $node = $node->nextSibling;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param DOMNode $node a html element of the page
+     * @return bool true if the element is a heading or a collapsed part, with which the next part of the page starts
+     */
+    private function starts_part(DOMNode $node): bool
+    {
+        $is_element = $node instanceof DOMElement;
+        return ($is_element and in_array($node->tagName, [...self::HEADING_TAGS, html_base::DETAILS]));
+    }
+
+    /**
+     * @param DOMNode $node a html element of the page
+     * @return array the element if it is a table, else the tables within it
+     */
+    private function tables_of(DOMNode $node): array
+    {
+        $result = [];
+        if ($node instanceof DOMElement and $node->tagName == html_base::TABLE) {
+            $result = [$node];
+        } elseif ($node instanceof DOMElement) {
+            $result = iterator_to_array($node->getElementsByTagName(html_base::TABLE), false);
+        }
+        return $result;
     }
 
     /**
@@ -443,7 +546,7 @@ class calculator_report
                     $pdf->text(self::NUMBER_START . $number . self::NUMBER_END . $this->text_with_links($node));
                 } elseif (in_array($node->tagName, self::HEADING_TAGS)) {
                     if ($this->main_on_new_page and $this->is_main_heading($node)) {
-                        $pdf->page_break();
+                        $pdf->page_break($this->part_format($pdf, $node));
                     }
                     $pdf->heading($node->textContent);
                 } elseif ($node->tagName == html_base::TABLE) {
@@ -592,6 +695,16 @@ class calculator_report
      */
     private function add_table(pdf_writer $pdf, DOMElement $table): void
     {
+        [$head, $rows, $right] = $this->table_parts($table);
+        $pdf->table($head, $rows, $right);
+    }
+
+    /**
+     * @param DOMElement $table the html table of the page
+     * @return array the texts of the header cells, the texts of the cells per row and per column true if it is a number
+     */
+    private function table_parts(DOMElement $table): array
+    {
         $head = [];
         $rows = [];
         $right = [];
@@ -612,7 +725,7 @@ class calculator_report
                 $rows[] = $cells;
             }
         }
-        $pdf->table($head, $rows, $right);
+        return [$head, $rows, $right];
     }
 
     /**

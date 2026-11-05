@@ -1,13 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## language
-
-add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
-
-creat a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
-the src/main/resources/translations/de.yaml file exists and is complete
-and that the docs linked from about have a translation file and at least the number of ## header marks match
-
 ## wikipedia link
 
 if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
@@ -19,6 +11,30 @@ Additional to the description the wikidata link should be taken from the wikiped
 
 create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
 that will not be changed any more and from this extract the description and the wikidata link as a unit test.
+
+## language
+
+add italien to the navbar languages selection
+
+add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
+
+create a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
+the src/main/resources/translations/de.yaml file exists and is complete
+and that the docs linked from about have a translation file and at least the number of ## header marks match
+
+### import sample
+
+`"words": [
+    {
+        "name": "problem",
+        "language-de": [
+            {
+                "name": "Problem",
+                "description": "Ein Problem ist ..."
+            }
+        ]
+    },
+`
 
 ## this document
 
@@ -257,6 +273,11 @@ because the ahv vat use case gets new data). One phase, four agents in parallel:
 include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
 
 ## Calculator editor
+
+### pdf creation parameter
+
+which section should start a new page in the pdf report and which section should be printed in 
+portrait or landscape format should be a parameter that the user can select in the editor
 
 ### use cases
 

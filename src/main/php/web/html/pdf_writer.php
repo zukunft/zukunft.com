@@ -87,17 +87,19 @@ class pdf_writer
     const string IMAGE_NAME = 'Im1';
     const string JPEG_START = "\xFF\xD8\xFF";
 
-    // the size of the pages in points
+    // the size of the current page in points
     private int $width = self::PAGE_LONG;
     private int $height = self::PAGE_SHORT;
-    // the content stream of each finished page
+    // the content stream and the size of each finished page, which can be portrait or landscape
     private array $pages = [];
+    private array $sizes = [];
     // the content stream of the current page
     private string $content = '';
     private float $y;
-    // the text on the left of the footer of each page and the function that gives the text on the right
-    // of a page from its number and the number of all pages, null for pages without a footer
-    private string $footer_text = '';
+    // the texts on the left and in the middle of the footer of each page and the function that gives the text
+    // on the right of a page from its number and the number of all pages, null for pages without a footer
+    private string $footer_left = '';
+    private string $footer_center = '';
     private ?Closure $footer_page = null;
     // the fonts by their name on a page and per font the unicode code point of each glyph that the pdf shows by the glyph id
     private array $fonts = [];
@@ -111,17 +113,14 @@ class pdf_writer
 
 
     /**
-     * @param bool $portrait true for A4 portrait pages e.g. for a document to read, else A4 landscape e.g. for wide tables
+     * @param bool $portrait true for A4 portrait pages e.g. for a document to read, else A4 landscape e.g. for wide tables;
+     *                       a page break can change the format of the next pages
      * @param string $family the font family of the texts e.g. self::FAMILY_NOTO, DejaVu Sans if the family is unknown;
      *                       a char that the family does not have is shown in the fallback family
      */
     function __construct(bool $portrait = false, string $family = self::FAMILY_DEJAVU)
     {
-        if ($portrait) {
-            $this->width = self::PAGE_SHORT;
-            $this->height = self::PAGE_LONG;
-        }
-        $this->y = $this->height - self::MARGIN;
+        $this->set_format($portrait);
         if (!array_key_exists($family, self::FAMILIES)) {
             log_warning('the pdf font family ' . $family . ' is unknown, so the pdf uses ' . self::FAMILY_DEJAVU);
             $family = self::FAMILY_DEJAVU;
@@ -156,13 +155,16 @@ class pdf_writer
     /**
      * add a footer line to each page, which is written with the file, because only then the number of pages is known
      *
-     * @param string $text the text on the left e.g. a short description of the document, shortened if the line is too long
+     * @param string $left the text on the left e.g. the name of the pod that creates the document
+     * @param string $center the text in the middle of the page e.g. the name of the document and its time,
+     *                       shortened so that it reaches neither the left nor the right text
      * @param Closure $page_text gives the text on the right from the number of the page and the number of all pages
-     *                           e.g. "page 2 of 5, 05.11.2026 15:30"
+     *                           e.g. "Page 2 of 5"
      */
-    function set_footer(string $text, Closure $page_text): void
+    function set_footer(string $left, string $center, Closure $page_text): void
     {
-        $this->footer_text = $text;
+        $this->footer_left = $left;
+        $this->footer_center = $center;
         $this->footer_page = $page_text;
     }
 
@@ -240,12 +242,30 @@ class pdf_writer
 
     /**
      * continue on a new page e.g. for an appendix, unless the current page is still empty
+     *
+     * @param bool|null $portrait true for a portrait page e.g. for a text, false for a landscape page e.g. for a wide table,
+     *                            null to keep the format of the current page
      */
-    function page_break(): void
+    function page_break(?bool $portrait = null): void
     {
         if ($this->content != '') {
             $this->new_page();
         }
+        if ($portrait !== null) {
+            $this->set_format($portrait);
+        }
+    }
+
+    /**
+     * @param array $head the text of each header cell, empty for a table without a header
+     * @param array $rows per row the text of each cell
+     * @return bool true if the table fits a portrait page with the normal text size, false if it would be scaled down
+     */
+    function fits_portrait(array $head, array $rows): bool
+    {
+        $widths = $this->column_widths($head, $rows);
+        $table_width = array_sum($widths) * self::TEXT_SIZE + count($widths) * self::CELL_PADDING;
+        return $table_width <= self::PAGE_SHORT - 2 * self::MARGIN;
     }
 
     /**
@@ -316,7 +336,8 @@ class pdf_writer
         foreach ($this->pages as $pos => $stream) {
             $page_id = $font_id + 2 * $pos;
             $kids[] = $page_id . ' 0 R';
-            $objects[$page_id] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . $this->width . ' ' . $this->height . ']'
+            [$width, $height] = $this->sizes[$pos];
+            $objects[$page_id] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . $width . ' ' . $height . ']'
                 . ' /Resources << /Font ' . $fonts . $image . ' >> /Contents ' . ($page_id + 1) . ' 0 R >>';
             $objects[$page_id + 1] = '<< /Length ' . strlen($stream) . " >>\nstream\n" . $stream . "\nendstream";
         }
@@ -331,8 +352,7 @@ class pdf_writer
      */
 
     /**
-     * add the footer line to each finished page: the text on the left, shortened so that it never reaches
-     * the text of the page on the right
+     * add the footer line to each finished page
      */
     private function add_footers(): void
     {
@@ -340,15 +360,47 @@ class pdf_writer
             $count = count($this->pages);
             foreach ($this->pages as $pos => $stream) {
                 $right = ($this->footer_page)($pos + 1, $count);
-                $right_width = $this->text_width($right, self::FOOTER_SIZE, false);
-                $left_width = $this->width - 2 * self::MARGIN - $right_width - self::FOOTER_GAP;
-                $left = $this->shortened($this->footer_text, $left_width, self::FOOTER_SIZE);
                 $this->content = '';
-                $this->draw_text($left, self::MARGIN, self::FOOTER_Y, self::FOOTER_SIZE, false);
-                $this->draw_text($right, $this->width - self::MARGIN - $right_width, self::FOOTER_Y, self::FOOTER_SIZE, false);
+                $this->add_footer($right, $this->sizes[$pos][0]);
                 $this->pages[$pos] = $stream . $this->content;
             }
             $this->content = '';
+        }
+    }
+
+    /**
+     * write the footer line of one page: the text of the page on the right, the text on the left shortened so that
+     * it never reaches the right text, and the text in the middle of the page shortened so that it reaches neither
+     *
+     * @param string $right the text of the page on the right e.g. "Page 2 of 5"
+     * @param int $page_width the width of the page in points, which differs for a portrait and a landscape page
+     */
+    private function add_footer(string $right, int $page_width): void
+    {
+        $line = $page_width - 2 * self::MARGIN;
+        $right_width = $this->text_width($right, self::FOOTER_SIZE, false);
+        $left_space = $line - $right_width - self::FOOTER_GAP;
+        $left = $this->shortened($this->footer_left, $left_space, self::FOOTER_SIZE);
+        $left_width = $this->text_width($left, self::FOOTER_SIZE, false);
+        // the middle text is centered on the page, so it has the space between the wider side text and the middle twice
+        $side = max($left_width, $right_width) + self::FOOTER_GAP;
+        $center_space = $line - 2 * $side;
+        $center = $this->shortened($this->footer_center, $center_space, self::FOOTER_SIZE);
+        $center_width = $this->text_width($center, self::FOOTER_SIZE, false);
+        $this->footer_text($left, self::MARGIN, $left_width <= $left_space);
+        $this->footer_text($center, ($page_width - $center_width) / 2, $center_width <= $center_space);
+        $this->footer_text($right, $page_width - self::MARGIN - $right_width, true);
+    }
+
+    /**
+     * @param string $text a text of the footer line
+     * @param float $x the left side of the text in points from the left side of the page
+     * @param bool $fits false if not even the cut sign fits the space of the text, which then is left out
+     */
+    private function footer_text(string $text, float $x, bool $fits): void
+    {
+        if ($text != '' and $fits) {
+            $this->draw_text($text, $x, self::FOOTER_Y, self::FOOTER_SIZE, false);
         }
     }
 
@@ -441,24 +493,54 @@ class pdf_writer
         }
     }
 
+    /**
+     * finish the current page and continue on a page of the same format
+     */
     private function new_page(): void
     {
         $this->pages[] = $this->content;
+        $this->sizes[] = [$this->width, $this->height];
         $this->content = '';
         $this->y = $this->height - self::MARGIN;
     }
 
     /**
-     * write the text in runs of the same font, so that a char that the chosen font does not have is shown in the fallback font
+     * set the format of the current page, which is still empty, and of the next pages
+     *
+     * @param bool $portrait true for A4 portrait, false for A4 landscape
+     */
+    private function set_format(bool $portrait): void
+    {
+        $this->width = self::PAGE_LONG;
+        $this->height = self::PAGE_SHORT;
+        if ($portrait) {
+            $this->width = self::PAGE_SHORT;
+            $this->height = self::PAGE_LONG;
+        }
+        $this->y = $this->height - self::MARGIN;
+    }
+
+    /**
+     * write the text in runs of the same font, so that a char that the chosen font does not have is shown in the fallback font;
+     * a run of a font whose file cannot be read is left out, because the pdf would else name a font that it does not have
+     *
+     * @param string $text the text in utf-8
+     * @param float $x the left side of the text in points from the left side of the page
+     * @param float $y the base line of the text in points from the bottom of the page
+     * @param float $size the font size
+     * @param bool $bold true for the bold font
      */
     private function draw_text(string $text, float $x, float $y, float $size, bool $bold): void
     {
         $this->content .= 'BT ' . $this->num($x) . ' ' . $this->num($y) . ' Td';
         foreach ($this->runs($text, $bold) as [$font, $codes]) {
-            foreach ($codes as $code) {
-                $this->used[$font][$this->fonts[$font]->glyph_id($code)] ??= $code;
+            $fnt = $this->fonts[$font];
+            if ($fnt->has_glyphs()) {
+                foreach ($codes as $code) {
+                    $this->used[$font][$fnt->glyph_id($code)] ??= $code;
+                }
+                $this->content .= ' /' . $font . ' ' . $this->num($size) . ' Tf ' . $this->glyph_string($font, $codes) . ' Tj';
             }
-            $this->content .= ' /' . $font . ' ' . $this->num($size) . ' Tf ' . $this->glyph_string($font, $codes) . ' Tj';
         }
         $this->content .= " ET\n";
     }
@@ -524,7 +606,10 @@ class pdf_writer
                 $result = $font;
             }
         }
-        return $result == '' ? $fonts[0] : $result;
+        if ($result == '') {
+            $result = $fonts[0];
+        }
+        return $result;
     }
 
     /**
@@ -547,9 +632,15 @@ class pdf_writer
      */
     private function codes(string $text): array
     {
-        return array_map(fn(string $chr): int => mb_ord($chr, 'UTF-8'), mb_str_split(mb_scrub($text, 'UTF-8'), 1, 'UTF-8'));
+        $valid = mb_scrub($text, pdf_font::TEXT_ENCODING);
+        $chars = mb_str_split($valid, 1, pdf_font::TEXT_ENCODING);
+        return array_map(fn(string $chr): int => mb_ord($chr, pdf_font::TEXT_ENCODING), $chars);
     }
 
+    /**
+     * @param float $num a position or a size in points
+     * @return string the number with two decimals and a dot, as a pdf expects it e.g. "36.00"
+     */
     private function num(float $num): string
     {
         return number_format($num, 2, '.', '');
