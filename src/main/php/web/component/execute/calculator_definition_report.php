@@ -11,7 +11,7 @@
     of the editor: the page title and the lead text, then the arguments, the input fields with their
     numbers, units, limits and hints, the assumptions, the verdict, the results and the details until
     the sources with their links; on A4 portrait pages with the logo on the first page and a footer
-    with the name of the page, the page number and the time on each page
+    on each page with the pod that has created the pdf, the name of the page with the time and the page number
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -69,8 +69,8 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 class calculator_definition_report
 {
 
-    // the time in the footer of each page and below the title
-    const string TIME_FORMAT = 'Y-m-d H:i';
+    // the largest data of a page that the pod turns into a pdf, so that a request cannot use the memory of the pod
+    const int MAX_BYTES = 10 * 1024 * 1024;
     // the end of the name of an editor field before its text e.g. "Page title:"
     const string FIELD_END = ':';
     // between the phrases of a value or a result and between the words without a description
@@ -98,15 +98,11 @@ class calculator_definition_report
     function pdf(array $doc, DateTime $time, user_message $msg): string
     {
         $name = $this->page_name($doc);
-        $time_txt = $time->format(self::TIME_FORMAT);
+        $time_txt = $time->format(calculator_report::TIME_FORMAT);
         $title = $this->txt(msg_id::CALCULATOR_DEFINITION_FOOTER, [msg_id::VAR_NAME => $name]);
-        $pdf = new pdf_writer(true);
-        $pdf->set_footer($title, fn(int $page, int $count): string => $this->txt(msg_id::CALCULATOR_DEFINITION_PAGE, [
-            msg_id::VAR_VALUE => (string)$page,
-            msg_id::VAR_VALUE_COUNT => (string)$count,
-            msg_id::VAR_TIME => $time_txt
-        ]));
+        $pdf = new pdf_writer($msg, true);
         $rpt = new calculator_report();
+        $rpt->add_footer($pdf, $title, $time_txt);
         $rpt->add_logo($pdf);
         $pdf->title($title);
         $pdf->text($this->txt(msg_id::CALCULATOR_DEFINITION_CREATED, [msg_id::VAR_TIME => $time_txt]));

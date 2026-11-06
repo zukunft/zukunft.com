@@ -1393,7 +1393,7 @@ class frontend
         $result = '';
         if ($is_report and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
             $this->report_name = $dbo->name();
-            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto, $this->report_step(...));
+            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto, new DateTime(), $this->report_step(...));
         }
         return $result;
     }

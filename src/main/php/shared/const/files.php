@@ -43,6 +43,7 @@ class files
 
     const string JSON = '.json';
     const string YAML = '.yaml';
+    const string CSV = '.csv';
     const string CSS = '.css';
     const string SVG = '.svg';
     const string JS = '.js';
@@ -77,6 +78,8 @@ class files
     const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
     const string BASE_VIEWS = self::MESSAGE_PATH . self::BASE_VIEWS_FILE;
     const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
+    // the translation of a document of /docs/ per language e.g. concept to konzept_de (see markdown::doc_translations)
+    const string DOC_TRANSLATIONS = self::TRANSLATION_PATH . 'docs' . self::CSV;
 
     // for html
     const string STYLE_HTML = self::STYLE_PATH . 'style_html' . self::CSS;

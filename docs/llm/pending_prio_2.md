@@ -129,6 +129,8 @@ page, below the same expression with the term names and the hint `result_tooltip
 - numbers that a user has changed in the browser and not saved are not part of the pdf
 - the diagrams are not drawn, because `pdf_writer` has no vector graphics; their numbers are in the walk table
 - `pdf_writer` shows a char that DejaVu Sans does not have as the missing glyph of the font, and writes the page content uncompressed, so that the tests can find the glyph ids of a text
+- `pdf_font` uses the glyph id as the code of a char, so a font that shows two chars with the same glyph would let a reader copy only the first of them; DejaVu Sans and Noto Sans have no such glyph, but another font would need a code per char and a CIDToGIDMap stream
+- the case of a font file that cannot be read (`pdf_font::has_glyphs`) and of an unknown font family have no unit test, because `log_err` and `log_warning` write a sys_log row
 - the reports use DejaVu Sans, because no user setting selects Noto Sans (`pdf_writer::FAMILY_NOTO`) yet; a config value `report font` next to `report logo` would add a seed triple and shift the ids of the triples imported after it
 - the setting `report logo` needs a jpeg in the images folder of the server, so a user without server access needs an upload
 - the isin column stays empty until the portfolio import adds a triple from a holding to a phrase that is an `ISIN`

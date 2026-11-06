@@ -477,11 +477,11 @@ class system_page extends component
                 $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
             }
             if ($ui_msg_code_id_vars != null) {
-                $msg_id = $mtr->txt($ui_msg_code_id_vars);
                 $msg_txt = '';
 
                 // TODO Prio 1 move to a general function
-                if ($msg_id == msg_id::FORM_SUB_TITLE_VAR_USAGE->value) {
+                // by the message id, because the text of the id differs per language
+                if ($ui_msg_code_id_vars == msg_id::FORM_SUB_TITLE_VAR_USAGE) {
                     // a single usage needs the singular, because "Used 1 times" is wrong
                     if ($value_numeric === 1) {
                         $msg_txt = msg_id::SYS_MSG_USAGE_ONE;
@@ -489,7 +489,7 @@ class system_page extends component
                         $msg_txt = msg_id::SYS_MSG_USAGE;
                     }
                     $msg_txt = $lib->msg_var_replace(
-                        $msg_txt->value,
+                        $mtr->txt($msg_txt),
                         msg_id::VAR_USAGE,
                         $value_numeric);
                 }

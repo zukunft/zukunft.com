@@ -2268,6 +2268,7 @@ enum messages: string
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
     // the pdf of the definition of a calculator, which the PDF tab of the calculator editor creates (calculator_definition_report)
     case CALCULATOR_DEFINITION_FOOTER = 'calculator_definition_footer';
+    // the page number on the right of the footer, also of the portfolio split report (calculator_report::add_footer)
     case CALCULATOR_DEFINITION_PAGE = 'calculator_definition_page';
     case CALCULATOR_DEFINITION_CREATED = 'calculator_definition_created';
     case CALCULATOR_DEFINITION_NO_CALCULATOR = 'calculator_definition_no_calculator';

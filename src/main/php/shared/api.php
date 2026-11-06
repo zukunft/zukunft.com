@@ -77,6 +77,8 @@ class api
     // the http header name of the per session anti csrf token that must be sent with every
     // api write call of a session (see server_guard::csrf_token_valid)
     const string CSRF_TOKEN_HEADER = 'X-CSRF-Token';
+    // the key of the anti csrf header in the server vars of php, which is the header name in upper case with HTTP_
+    const string CSRF_TOKEN_SERVER_KEY = 'HTTP_X_CSRF_TOKEN';
     // the http header that names if an api answer comes from the cache, sent only if def::DEBUG_API_CACHE is true
     const string CACHE_HEADER = 'X-Zukunft-Cache';
     const string CACHE_HIT = 'hit';

@@ -6635,6 +6635,7 @@
     \-- page_cache - section for function page_cache missing in /component/execute/calculator_definition_report.php
 \-- calculator_report
     \-- pdf - section for function pdf missing in /component/execute/calculator_report.php
+    \-- add_footer - section for function add_footer missing in /component/execute/calculator_report.php
     \-- add_logo - section for function add_logo missing in /component/execute/calculator_report.php
     \-- add_html - section for function add_html missing in /component/execute/calculator_report.php
 \-- system_form
@@ -7840,11 +7841,14 @@
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
 \-- markdown
     \-- doc_path - section for function doc_path missing in /html/markdown.php
+    \-- is_doc_file - section for function is_doc_file is expected to be info in /html/markdown.php
     \-- doc_url - section for function doc_url missing in /html/markdown.php
+    \-- doc_translations - section for function doc_translations missing in /html/markdown.php
     \-- title - section for function title missing in /html/markdown.php
     \-- to_html - section for function to_html missing in /html/markdown.php
 \-- pdf_font
     \-- __construct - section for function __construct is expected to be construct and map in /html/pdf_font.php
+    \-- has_glyphs - section for function has_glyphs not yet defined that it should be get in /html/pdf_font.php
     \-- glyph_id - section for function glyph_id not yet defined that it should be get in /html/pdf_font.php
     \-- has_glyph - section for function has_glyph not yet defined that it should be get in /html/pdf_font.php
     \-- width - section for function width not yet defined that it should be get in /html/pdf_font.php
@@ -7857,6 +7861,7 @@
     \-- heading - section for function heading not yet defined that it should be add in /html/pdf_writer.php
     \-- text - section for function text not yet defined that it should be add in /html/pdf_writer.php
     \-- page_break - section for function page_break not yet defined that it should be add in /html/pdf_writer.php
+    \-- fits_portrait - section for function fits_portrait not yet defined that it should be add in /html/pdf_writer.php
     \-- space - section for function space not yet defined that it should be add in /html/pdf_writer.php
     \-- table - section for function table not yet defined that it should be add in /html/pdf_writer.php
     \-- output - section for function output not yet defined that it should be output in /html/pdf_writer.php
@@ -9704,8 +9709,7 @@
         \-- number_format - @param formula_list|null $frm_lst the formulas that convert the units; null for the preloade
                 d ones
         \-- pdf_font - @param string $file the path of the TrueType font file e.g. files::PDF_FONT_DEJAVU
-        \-- pdf_writer - @param bool $portrait true for A4 portrait pages e.g. for a document to read,
-                 else A4 landscape e.g. for wide tables
+        \-- pdf_writer - @param user_message $msg to tell the user that a font is unknown or cannot be used
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
@@ -9718,6 +9722,9 @@
         \-- calculator_definition_report - @param array $doc the data of the page
     \-- page_cache
         \-- calculator_definition_report - @param array $doc the data of the page as the editor exports it
+    \-- add_footer
+        \-- calculator_report - add the footer to each page: the pod that creates the pdf on the left,
+                 the name of the report with its time
     \-- add_logo
         \-- calculator_report - add the logo that the user has set in the config, else the logo of zukunft.com,
     \-- add_html
@@ -10168,8 +10175,12 @@
         \-- html_selector - @returns string the HTML code to end a selector field
     \-- doc_path
         \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- is_doc_file
+        \-- markdown - @param string $path the path of a file e.g. of a markdown document
     \-- doc_url
         \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- doc_translations
+        \-- markdown - the translations of the documents of /docs/, which must have the same headings as the document
     \-- title
         \-- markdown - @param string $md the markdown text e.g. of a file of /docs/
     \-- to_html
@@ -11337,6 +11348,9 @@
     \-- ui_progress
         \-- html_base - 
 \-- get
+    \-- has_glyphs
+        \-- pdf_font - @return bool true if the font file has been read with the glyphs of its chars,
+                 false e.g. if the file is missing
     \-- glyph_id
         \-- pdf_font - @param int $code the unicode code point of a char
     \-- has_glyph
@@ -11360,6 +11374,8 @@
         \-- pdf_writer - add a text that is wrapped at the page width
     \-- page_break
         \-- pdf_writer - continue on a new page e.g. for an appendix, unless the current page is still empty
+    \-- fits_portrait
+        \-- pdf_writer - @param array $head the text of each header cell, empty for a table without a header
     \-- space
         \-- pdf_writer - add half a line of space e.g. between two entries of a list of texts
     \-- table

@@ -52,8 +52,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -329,7 +331,7 @@ class server_guard
      */
     public static function csrf_token_valid(): bool
     {
-        $sent_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        $sent_token = $_SERVER[api::CSRF_TOKEN_SERVER_KEY] ?? '';
         $session_token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
         return $session_token !== '' && hash_equals($session_token, $sent_token);
     }

@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1608 of 6439 public functions have at least 2 unit test calls; the 4622 functions below do not; the 209 functions of the last section are called nowhere
+1612 of 6444 public functions have at least 2 unit test calls; the 4623 functions below do not; the 209 functions of the last section are called nowhere
 
 ## 1953 functions of main backend have no test at all
 
@@ -2219,7 +2219,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 919 functions of frontend have no test at all
+## 920 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2263,6 +2263,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- page_cache - 0 unit test calls
     \-- page_name - 0 unit test calls
 \-- calculator_report
+    \-- add_footer - 0 unit test calls
     \-- add_logo - 0 unit test calls
 \-- change_log
     \-- field_code_id - 0 unit test calls
@@ -2610,11 +2611,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- unit_text - 0 unit test calls shared by 2 classes
 \-- pdf_font
     \-- glyph_id - 0 unit test calls
+    \-- has_glyphs - 0 unit test calls
     \-- objects - 0 unit test calls
     \-- width - 0 unit test calls
 \-- pdf_writer
     \-- heading - 0 unit test calls
-    \-- page_break - 0 unit test calls
     \-- space - 0 unit test calls
     \-- text_width - 0 unit test calls
 \-- phrase

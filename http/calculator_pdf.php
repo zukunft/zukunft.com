@@ -48,6 +48,7 @@ include_once WEB . 'html/pdf_writer.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_definition_report;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
@@ -60,13 +61,10 @@ global $mtr;
 global $sys;
 global $ui_sys;
 
-// the largest data of a page that the pod turns into a pdf, so that a request cannot use the memory of the pod
-const CALCULATOR_PDF_MAX_BYTES = 10 * 1024 * 1024;
-
 // the request is read once here and passed on as parameters: the session token that the editor sends in the
 // csrf header (api::CSRF_TOKEN_HEADER) and the posted json, of which at most one byte more than allowed is read
-$url_arr = [url_var::SESSION_TOKEN => (string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '')];
-$body = (string)file_get_contents('php://input', false, null, 0, CALCULATOR_PDF_MAX_BYTES + 1);
+$url_arr = [url_var::SESSION_TOKEN => (string)($_SERVER[api::CSRF_TOKEN_SERVER_KEY] ?? '')];
+$body = (string)file_get_contents('php://input', false, null, 0, calculator_definition_report::MAX_BYTES + 1);
 
 // open the session and the database for the user and the translations
 $app = new frontend();
@@ -80,7 +78,10 @@ if ($db_con->is_open()) {
     $usr->get($msg);
     $usr_id = $usr->id();
 }
-$doc = strlen($body) > CALCULATOR_PDF_MAX_BYTES ? null : json_decode($body, true);
+$doc = null;
+if (strlen($body) <= calculator_definition_report::MAX_BYTES) {
+    $doc = json_decode($body, true);
+}
 if ($usr_id <= 0 or $url_arr[url_var::SESSION_TOKEN] == '' or !$app->session_token_valid) {
     http_response_code(403);
     header('Content-Type: text/plain; charset=utf-8');

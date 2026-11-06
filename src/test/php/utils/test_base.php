@@ -1078,6 +1078,29 @@ class test_base
     }
 
     /**
+     * check that the result text starts with the target text
+     * e.g. that an answer is a pdf file and not an error page
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result
+     * @param string $needle the text that is expected at the start of the haystack
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true if the haystack starts with the needle
+     */
+    function assert_text_starts(
+        string $msg,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT): bool
+    {
+        $result = $haystack;
+        if (str_starts_with($haystack, $needle)) {
+            $result = $needle;
+        }
+        return $this->assert($msg, $result, $needle, $exe_max_time);
+    }
+
+    /**
      * a read only field value as system_form::show_field_labeled creates it e.g. 'Plural: are',
      * so that the expected text of a test does not repeat the label text and stays independent
      * of the translation

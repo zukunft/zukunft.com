@@ -9,7 +9,8 @@
     reads the glyph of each char and its width from the font file and writes the pdf objects of the
     font with only the glyphs that the pdf uses; the code of a char in the pdf is its glyph id in the
     font (Identity-H), so any char of the font can be shown, and the ToUnicode map lets a reader copy
-    and search the text
+    and search the text; this needs a font that shows each char with its own glyph, which DejaVu Sans
+    and Noto Sans do, and the missing glyph is copied as the replacement char
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -37,37 +38,84 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+
 class pdf_font
 {
 
     // the number of pdf objects of a font: the font, its glyphs, its descriptor, its file and its ToUnicode map
     const int OBJECT_COUNT = 5;
-    // the glyph that a font shows for a char that it does not have
+    // the glyph that a font shows for a char that it does not have and the char that a reader copies for it
     const int MISSING_GLYPH = 0;
+    const int REPLACEMENT_CHAR = 0xFFFD;
+    // the encoding of the texts and the encoding of the chars in the ToUnicode map
+    const string TEXT_ENCODING = 'UTF-8';
+    const string UNICODE_ENCODING = 'UTF-16BE';
     // the widths of a pdf font are in 1/1000 of the font size
     const int PDF_UNITS = 1000;
-    // the tables of the font file that a pdf needs to show the glyphs (ISO 32000-1, 9.9)
+    // the tables of the font file that the font reader needs and the ones that a pdf needs to show the glyphs (ISO 32000-1, 9.9)
+    const array REQUIRED_TABLES = ['cmap', 'glyf', 'head', 'hhea', 'hmtx', 'loca', 'maxp'];
     const array SUBSET_TABLES = ['cvt ', 'fpgm', 'glyf', 'head', 'hhea', 'hmtx', 'loca', 'maxp', 'prep'];
-    // the position of the values in the tables of the font file (see the OpenType specification)
+    // the position and the size of the values in the font file and in its tables (see the OpenType specification)
+    const int FILE_VERSION = 0x00010000;
+    const int FILE_TABLE_COUNT = 4;
+    const int FILE_HEADER = 12;
+    const int TABLE_TAG_LENGTH = 4;
+    const int TABLE_RECORD = 16;
+    const int TABLE_RECORD_POS = 8;
+    const int TABLE_RECORD_LENGTH = 12;
+    const int SIZE_U16 = 2;
+    const int SIZE_U32 = 4;
+    const int U16_RANGE = 0x10000;
+    const int I16_NEGATIVE = 0x8000;
+    const int U32_MASK = 0xFFFFFFFF;
     const int HEAD_CHECKSUM_ADJUSTMENT = 8;
     const int HEAD_UNITS_PER_EM = 18;
     const int HEAD_X_MIN = 36;
+    const int HEAD_BOX_VALUES = 4;
     const int HEAD_LOCA_FORMAT = 50;
+    // the loca table has the long glyph positions or the short ones, which are the half of the position
+    const int LOCA_LONG = 1;
+    const int LOCA_SHORT_FACTOR = 2;
     const int HHEA_ASCENDER = 4;
     const int HHEA_DESCENDER = 6;
     const int HHEA_METRICS = 34;
+    const int HMTX_METRIC = 4;
     const int MAXP_GLYPHS = 4;
     const int OS2_CAP_HEIGHT = 88;
     const int OS2_CAP_HEIGHT_VERSION = 2;
-    // the flags of a part of a composed glyph that say how many bytes follow its glyph id
+    // a glyph starts with the number of its outlines, which is negative for a glyph composed of other glyphs
+    const int GLYPH_HEADER = 10;
+    // a part of a composed glyph starts with its flags and its glyph id; the flags say how many bytes follow
+    const int PART_HEADER = 4;
     const int PART_WORDS = 0x0001;
     const int PART_SCALE = 0x0008;
     const int PART_MORE = 0x0020;
     const int PART_XY_SCALE = 0x0040;
     const int PART_MATRIX = 0x0080;
+    const int PART_ARGS_WORDS = 4;
+    const int PART_ARGS_BYTES = 2;
+    const int PART_SCALE_SIZE = 2;
+    const int PART_XY_SCALE_SIZE = 4;
+    const int PART_MATRIX_SIZE = 8;
     // the char maps that the font reader can use: the full unicode map first and the map of the basic plane
+    const int CMAP_COUNT = 2;
+    const int CMAP_RECORDS = 4;
+    const int CMAP_RECORD = 8;
+    const int CMAP_RECORD_OFFSET = 4;
     const int CMAP_FULL_FORMAT = 12;
+    const int CMAP_FULL_COUNT = 12;
+    const int CMAP_FULL_GROUPS = 16;
+    const int CMAP_FULL_GROUP = 12;
+    const int CMAP_FULL_END = 4;
+    const int CMAP_FULL_GLYPH = 8;
     const int CMAP_BASIC_FORMAT = 4;
+    const int CMAP_BASIC_SEGMENTS = 6;
+    const int CMAP_BASIC_ENDS = 14;
     const int CMAP_BASIC_END = 0xFFFF;
     // the descriptor of a font with latin chars that is not a symbol font (ISO 32000-1, 9.8.2)
     const int DESCRIPTOR_FLAGS = 32;
@@ -90,19 +138,30 @@ class pdf_font
 
     /**
      * @param string $file the path of the TrueType font file e.g. files::PDF_FONT_DEJAVU
+     * @param user_message $msg to tell the user that the pdf shows no text in this font, because the file cannot be used
      */
-    function __construct(string $file)
+    function __construct(string $file, user_message $msg)
     {
         $this->name = pathinfo($file, PATHINFO_FILENAME);
-        $data = is_readable($file) ? file_get_contents($file) : false;
+        $data = false;
+        if (is_readable($file)) {
+            $data = file_get_contents($file);
+        }
         if ($data === false) {
-            log_err('the pdf font ' . $file . ' cannot be read, so the pdf shows no text');
+            log_err_msg_ui('the pdf font ' . $file . ' cannot be read, so the pdf shows no text in this font', $msg);
         } else {
             $this->data = $data;
             $this->read_tables();
-            $this->units_per_em = max(1, $this->u16('head', self::HEAD_UNITS_PER_EM));
-            $this->read_widths();
-            $this->read_glyphs();
+            $missing = array_diff(self::REQUIRED_TABLES, array_keys($this->tables));
+            if ($missing != []) {
+                log_err_msg_ui('the pdf font ' . $file . ' has no ' . implode(', ', $missing) . ' table, so the pdf shows no text in this font', $msg);
+                $this->data = '';
+                $this->tables = [];
+            } else {
+                $this->units_per_em = max(1, $this->u16('head', self::HEAD_UNITS_PER_EM));
+                $this->read_widths();
+                $this->read_glyphs($msg);
+            }
         }
     }
 
@@ -110,6 +169,14 @@ class pdf_font
     /*
      * get
      */
+
+    /**
+     * @return bool true if the font file has been read with the glyphs of its chars, false e.g. if the file is missing
+     */
+    function has_glyphs(): bool
+    {
+        return $this->glyphs != [];
+    }
 
     /**
      * @param int $code the unicode code point of a char
@@ -179,10 +246,11 @@ class pdf_font
      */
     private function read_tables(): void
     {
-        $count = $this->u16_at(4);
+        $count = $this->u16_at(self::FILE_TABLE_COUNT);
         for ($i = 0; $i < $count; $i++) {
-            $pos = 12 + 16 * $i;
-            $this->tables[substr($this->data, $pos, 4)] = [$this->u32_at($pos + 8), $this->u32_at($pos + 12)];
+            $pos = self::FILE_HEADER + self::TABLE_RECORD * $i;
+            $tag = substr($this->data, $pos, self::TABLE_TAG_LENGTH);
+            $this->tables[$tag] = [$this->u32_at($pos + self::TABLE_RECORD_POS), $this->u32_at($pos + self::TABLE_RECORD_LENGTH)];
         }
     }
 
@@ -193,21 +261,24 @@ class pdf_font
     {
         $count = $this->u16('hhea', self::HHEA_METRICS);
         for ($gid = 0; $gid < $count; $gid++) {
-            $this->widths[$gid] = $this->u16('hmtx', 4 * $gid);
+            $this->widths[$gid] = $this->u16('hmtx', self::HMTX_METRIC * $gid);
         }
     }
 
     /**
      * read the glyph of each char from the full unicode map of the font or else from the map of the basic plane
+     *
+     * @param user_message $msg to tell the user that the pdf shows no text in this font, because it has no unicode map
      */
-    private function read_glyphs(): void
+    private function read_glyphs(user_message $msg): void
     {
         $basic = null;
         $full = null;
-        [$cmap_pos] = $this->tables['cmap'] ?? [0];
-        $count = $this->u16('cmap', 2);
+        [$cmap_pos] = $this->tables['cmap'];
+        $count = $this->u16('cmap', self::CMAP_COUNT);
         for ($i = 0; $i < $count; $i++) {
-            $pos = $cmap_pos + $this->u32_at($cmap_pos + 8 + 8 * $i);
+            $record = $cmap_pos + self::CMAP_RECORDS + self::CMAP_RECORD * $i;
+            $pos = $cmap_pos + $this->u32_at($record + self::CMAP_RECORD_OFFSET);
             $format = $this->u16_at($pos);
             if ($format == self::CMAP_FULL_FORMAT) {
                 $full = $pos;
@@ -220,7 +291,7 @@ class pdf_font
         } elseif ($basic !== null) {
             $this->read_basic_map($basic);
         } else {
-            log_err('the pdf font ' . $this->name . ' has no unicode map, so the pdf shows no text');
+            log_err_msg_ui('the pdf font ' . $this->name . ' has no unicode map, so the pdf shows no text in this font', $msg);
         }
     }
 
@@ -229,12 +300,12 @@ class pdf_font
      */
     private function read_full_map(int $pos): void
     {
-        $count = $this->u32_at($pos + 12);
+        $count = $this->u32_at($pos + self::CMAP_FULL_COUNT);
         for ($i = 0; $i < $count; $i++) {
-            $group = $pos + 16 + 12 * $i;
+            $group = $pos + self::CMAP_FULL_GROUPS + self::CMAP_FULL_GROUP * $i;
             $start = $this->u32_at($group);
-            $end = $this->u32_at($group + 4);
-            $gid = $this->u32_at($group + 8);
+            $end = $this->u32_at($group + self::CMAP_FULL_END);
+            $gid = $this->u32_at($group + self::CMAP_FULL_GLYPH);
             for ($code = $start; $code <= $end; $code++) {
                 $this->glyphs[$code] = $gid + $code - $start;
             }
@@ -246,27 +317,46 @@ class pdf_font
      */
     private function read_basic_map(int $pos): void
     {
-        $segments = $this->u16_at($pos + 6) / 2;
-        $ends = $pos + 14;
-        $starts = $ends + 2 * $segments + 2;
-        $deltas = $starts + 2 * $segments;
-        $offsets = $deltas + 2 * $segments;
+        $segments = intdiv($this->u16_at($pos + self::CMAP_BASIC_SEGMENTS), self::SIZE_U16);
+        $list_size = self::SIZE_U16 * $segments;
+        $ends = $pos + self::CMAP_BASIC_ENDS;
+        // the list of the ends is followed by a reserved number
+        $starts = $ends + $list_size + self::SIZE_U16;
+        $deltas = $starts + $list_size;
+        $offsets = $deltas + $list_size;
         for ($i = 0; $i < $segments; $i++) {
-            $start = $this->u16_at($starts + 2 * $i);
-            $end = min($this->u16_at($ends + 2 * $i), self::CMAP_BASIC_END - 1);
-            $delta = $this->u16_at($deltas + 2 * $i);
-            $offset = $this->u16_at($offsets + 2 * $i);
+            $seg = self::SIZE_U16 * $i;
+            $start = $this->u16_at($starts + $seg);
+            $end = min($this->u16_at($ends + $seg), self::CMAP_BASIC_END - 1);
+            $delta = $this->u16_at($deltas + $seg);
             for ($code = $start; $code <= $end; $code++) {
-                $gid = $code;
-                if ($offset != 0) {
-                    $gid = $this->u16_at($offsets + 2 * $i + $offset + 2 * ($code - $start));
-                }
-                $gid = $gid == 0 ? 0 : ($gid + $delta) & self::CMAP_BASIC_END;
+                $gid = $this->basic_glyph_id($code, $start, $delta, $offsets + $seg);
                 if ($gid != self::MISSING_GLYPH) {
                     $this->glyphs[$code] = $gid;
                 }
             }
         }
+    }
+
+    /**
+     * @param int $code the unicode code point of a char of the segment
+     * @param int $start the first code point of the segment
+     * @param int $delta the number that the segment adds to the glyph id
+     * @param int $offset_pos the position of the offset of the segment, which points to its glyph ids if it is not zero
+     * @return int the glyph id of the char, the missing glyph if the font does not have it
+     */
+    private function basic_glyph_id(int $code, int $start, int $delta, int $offset_pos): int
+    {
+        $offset = $this->u16_at($offset_pos);
+        if ($offset == 0) {
+            $result = ($code + $delta) & self::CMAP_BASIC_END;
+        } else {
+            $result = $this->u16_at($offset_pos + $offset + self::SIZE_U16 * ($code - $start));
+            if ($result != self::MISSING_GLYPH) {
+                $result = ($result + $delta) & self::CMAP_BASIC_END;
+            }
+        }
+        return $result;
     }
 
 
@@ -301,8 +391,8 @@ class pdf_font
         $tables['glyf'] = $glyf;
         $tables['loca'] = pack('N*', ...$loca);
         // the long glyph positions of the new loca table and no checksum of the whole file, which a pdf does not need
-        $tables['head'] = substr_replace($tables['head'], pack('n', 1), self::HEAD_LOCA_FORMAT, 2);
-        $tables['head'] = substr_replace($tables['head'], pack('N', 0), self::HEAD_CHECKSUM_ADJUSTMENT, 4);
+        $tables['head'] = substr_replace($tables['head'], pack('n', self::LOCA_LONG), self::HEAD_LOCA_FORMAT, self::SIZE_U16);
+        $tables['head'] = substr_replace($tables['head'], pack('N', 0), self::HEAD_CHECKSUM_ADJUSTMENT, self::SIZE_U32);
         return $this->font_file($tables);
     }
 
@@ -332,16 +422,25 @@ class pdf_font
     {
         $data = $this->glyph_data($gid);
         $result = [];
-        $is_composed = (strlen($data) >= 10 and unpack('n', $data)[1] >= 0x8000);
-        $pos = 10;
-        $more = $is_composed;
-        while ($more and $pos + 4 <= strlen($data)) {
+        $pos = self::GLYPH_HEADER;
+        $more = $this->is_composed($data);
+        while ($more and $pos + self::PART_HEADER <= strlen($data)) {
             [, $flags, $part] = unpack('n2', $data, $pos);
             $result[] = $part;
-            $pos += 4 + $this->part_size($flags);
+            $pos += self::PART_HEADER + $this->part_size($flags);
             $more = ($flags & self::PART_MORE) != 0;
         }
         return $result;
+    }
+
+    /**
+     * @param string $data the outline of a glyph in the font file
+     * @return bool true if the glyph is composed of other glyphs, which its negative number of outlines says
+     */
+    private function is_composed(string $data): bool
+    {
+        $has_header = strlen($data) >= self::GLYPH_HEADER;
+        return ($has_header and unpack('n', $data)[1] >= self::I16_NEGATIVE);
     }
 
     /**
@@ -350,13 +449,16 @@ class pdf_font
      */
     private function part_size(int $flags): int
     {
-        $result = ($flags & self::PART_WORDS) != 0 ? 4 : 2;
+        $result = self::PART_ARGS_BYTES;
+        if (($flags & self::PART_WORDS) != 0) {
+            $result = self::PART_ARGS_WORDS;
+        }
         if (($flags & self::PART_SCALE) != 0) {
-            $result += 2;
+            $result += self::PART_SCALE_SIZE;
         } elseif (($flags & self::PART_XY_SCALE) != 0) {
-            $result += 4;
+            $result += self::PART_XY_SCALE_SIZE;
         } elseif (($flags & self::PART_MATRIX) != 0) {
-            $result += 8;
+            $result += self::PART_MATRIX_SIZE;
         }
         return $result;
     }
@@ -367,11 +469,19 @@ class pdf_font
      */
     private function glyph_data(int $gid): string
     {
-        $is_long = $this->u16('head', self::HEAD_LOCA_FORMAT) == 1;
-        $start = $is_long ? $this->u32('loca', 4 * $gid) : 2 * $this->u16('loca', 2 * $gid);
-        $end = $is_long ? $this->u32('loca', 4 * $gid + 4) : 2 * $this->u16('loca', 2 * $gid + 2);
-        [$glyf_pos] = $this->tables['glyf'] ?? [0];
-        return $end > $start ? substr($this->data, $glyf_pos + $start, $end - $start) : '';
+        if ($this->u16('head', self::HEAD_LOCA_FORMAT) == self::LOCA_LONG) {
+            $start = $this->u32('loca', self::SIZE_U32 * $gid);
+            $end = $this->u32('loca', self::SIZE_U32 * ($gid + 1));
+        } else {
+            $start = self::LOCA_SHORT_FACTOR * $this->u16('loca', self::SIZE_U16 * $gid);
+            $end = self::LOCA_SHORT_FACTOR * $this->u16('loca', self::SIZE_U16 * ($gid + 1));
+        }
+        [$glyf_pos] = $this->tables['glyf'];
+        $result = '';
+        if ($end > $start) {
+            $result = substr($this->data, $glyf_pos + $start, $end - $start);
+        }
+        return $result;
     }
 
     /**
@@ -383,9 +493,9 @@ class pdf_font
         ksort($tables, SORT_STRING);
         $count = count($tables);
         $selector = (int)floor(log($count, 2));
-        $range = 16 * (2 ** $selector);
-        $head = pack('Nn4', 0x00010000, $count, $range, $selector, 16 * $count - $range);
-        $pos = 12 + 16 * $count;
+        $range = self::TABLE_RECORD * (2 ** $selector);
+        $head = pack('Nn4', self::FILE_VERSION, $count, $range, $selector, self::TABLE_RECORD * $count - $range);
+        $pos = self::FILE_HEADER + self::TABLE_RECORD * $count;
         $body = '';
         foreach ($tables as $tag => $table) {
             $head .= $tag . pack('N3', $this->checksum($table), $pos + strlen($body), strlen($table));
@@ -402,7 +512,7 @@ class pdf_font
     {
         $sum = 0;
         foreach (unpack('N*', $this->padded($table)) ?: [] as $part) {
-            $sum = ($sum + $part) & 0xFFFFFFFF;
+            $sum = ($sum + $part) & self::U32_MASK;
         }
         return $sum;
     }
@@ -413,7 +523,8 @@ class pdf_font
      */
     private function padded(string $data): string
     {
-        return str_pad($data, (int)ceil(strlen($data) / 4) * 4, "\0");
+        $length = (int)ceil(strlen($data) / self::SIZE_U32) * self::SIZE_U32;
+        return str_pad($data, $length, "\0");
     }
 
 
@@ -456,8 +567,8 @@ class pdf_font
     private function descriptor(string $font_name, int $file_id): string
     {
         $box = [];
-        for ($i = 0; $i < 4; $i++) {
-            $box[] = $this->scaled($this->i16('head', self::HEAD_X_MIN + 2 * $i));
+        for ($i = 0; $i < self::HEAD_BOX_VALUES; $i++) {
+            $box[] = $this->scaled($this->i16('head', self::HEAD_X_MIN + self::SIZE_U16 * $i));
         }
         $ascent = $this->scaled($this->i16('hhea', self::HHEA_ASCENDER));
         $cap_height = $ascent;
@@ -472,7 +583,8 @@ class pdf_font
 
     /**
      * @param array $used the unicode code point of each glyph that the pdf shows by the glyph id
-     * @return string the map from the glyph ids to the chars, with which a pdf reader can copy and search the text
+     * @return string the map from the glyph ids to the chars, with which a pdf reader can copy and search the text;
+     *                the missing glyph is the replacement char, because it stands for every char that the font does not have
      */
     private function to_unicode(array $used): string
     {
@@ -480,7 +592,11 @@ class pdf_font
         foreach (array_chunk($used, self::TO_UNICODE_BLOCK, true) as $block) {
             $blocks .= count($block) . " beginbfchar\n";
             foreach ($block as $gid => $code) {
-                $utf16 = bin2hex(mb_convert_encoding(mb_chr($code, 'UTF-8'), 'UTF-16BE', 'UTF-8'));
+                if ($gid == self::MISSING_GLYPH) {
+                    $code = self::REPLACEMENT_CHAR;
+                }
+                $chr = mb_chr($code, self::TEXT_ENCODING);
+                $utf16 = bin2hex(mb_convert_encoding($chr, self::UNICODE_ENCODING, self::TEXT_ENCODING));
                 $blocks .= sprintf('<%04X> <%s>', $gid, strtoupper($utf16)) . "\n";
             }
             $blocks .= "endbfchar\n";
@@ -526,30 +642,72 @@ class pdf_font
         return substr($this->data, $pos, $length);
     }
 
+    /**
+     * @param string $tag the tag of a table of the font file e.g. "head"
+     * @param int $offset the position of the number in the table
+     * @return int the unsigned 16-bit number, zero if the font file does not have the table
+     */
     private function u16(string $tag, int $offset): int
     {
-        return isset($this->tables[$tag]) ? $this->u16_at($this->tables[$tag][0] + $offset) : 0;
+        $result = 0;
+        if (isset($this->tables[$tag])) {
+            $result = $this->u16_at($this->tables[$tag][0] + $offset);
+        }
+        return $result;
     }
 
+    /**
+     * @param string $tag the tag of a table of the font file e.g. "hhea"
+     * @param int $offset the position of the number in the table
+     * @return int the signed 16-bit number e.g. the descender below the base line, zero if the font file does not have the table
+     */
     private function i16(string $tag, int $offset): int
     {
-        $num = $this->u16($tag, $offset);
-        return $num >= 0x8000 ? $num - 0x10000 : $num;
+        $result = $this->u16($tag, $offset);
+        if ($result >= self::I16_NEGATIVE) {
+            $result -= self::U16_RANGE;
+        }
+        return $result;
     }
 
+    /**
+     * @param string $tag the tag of a table of the font file e.g. "loca"
+     * @param int $offset the position of the number in the table
+     * @return int the unsigned 32-bit number, zero if the font file does not have the table
+     */
     private function u32(string $tag, int $offset): int
     {
-        return isset($this->tables[$tag]) ? $this->u32_at($this->tables[$tag][0] + $offset) : 0;
+        $result = 0;
+        if (isset($this->tables[$tag])) {
+            $result = $this->u32_at($this->tables[$tag][0] + $offset);
+        }
+        return $result;
     }
 
+    /**
+     * @param int $pos the position of the number in the font file
+     * @return int the unsigned 16-bit number, zero if the font file ends before
+     */
     private function u16_at(int $pos): int
     {
-        return $pos + 2 <= strlen($this->data) ? unpack('n', $this->data, $pos)[1] : 0;
+        $result = 0;
+        if ($pos + self::SIZE_U16 <= strlen($this->data)) {
+            $result = unpack('n', $this->data, $pos)[1];
+        }
+        return $result;
     }
 
+    /**
+     * @param int $pos the position of the number in the font file
+     * @return int the unsigned 32-bit number, zero if the font file ends before
+     */
     private function u32_at(int $pos): int
     {
-        return $pos + 4 <= strlen($this->data) ? unpack('N', $this->data, $pos)[1] : 0;
+        $result = 0;
+        if ($pos + self::SIZE_U32 <= strlen($this->data)) {
+            $result = unpack('N', $this->data, $pos)[1];
+        }
+        return $result;
     }
 
 }

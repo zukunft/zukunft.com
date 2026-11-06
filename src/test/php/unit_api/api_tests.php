@@ -361,14 +361,14 @@ class api_tests
             $test_name = 'the pdf of the calculator editor is created from the posted data of the page';
             [$status, $answer] = $t->post_with_session($url, $pv_json, $token);
             $t->assert($test_name, $status, self::HTTP_OK, $t::TIMEOUT_LIMIT_IMPORT);
-            $t->assert_true($test_name, str_starts_with($answer, self::PDF_START));
+            $t->assert_text_starts($test_name, $answer, self::PDF_START);
             // negative: a request without the token of the session could come from another site
             $test_name = '... but not without the token of the session';
             [$status, $answer] = $t->post_with_session($url, $pv_json, '');
             $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
             $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_LOGIN->text());
             $test_name = '... and not with another token';
-            [$status, $answer] = $t->post_with_session($url, $pv_json, self::WRONG_TOKEN);
+            [$status] = $t->post_with_session($url, $pv_json, self::WRONG_TOKEN);
             $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
             $test_name = '... and not from a body that is no json';
             [$status, $answer] = $t->post_with_session($url, self::NO_JSON, $token);
