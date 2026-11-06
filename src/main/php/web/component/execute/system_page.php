@@ -1456,6 +1456,9 @@ class system_page extends component
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
                 . $html->script_data(self::CALC_EDITOR_TEXTS_ID, $this->calculator_editor_texts())
                 . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
+                // the page preview is the calculator page, built by its script without a save, because a save of the preview would store a case
+                . $html->script_data(self::CALC_PAGE_SETTINGS_ID, $this->calculator_page_settings($dbo, '', '', $msg))
+                . $html->script_src(files::CALCULATOR_JSON_SCRIPT)
                 . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }

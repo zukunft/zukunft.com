@@ -234,6 +234,53 @@ the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
 sent as text.
 
+The page structure starts with the collapsed section Arguments, above the inputs like on the page: each argument is
+its claim triple from the reason phrase to the claim argued about, e.g. `supply gap supports lifting the NPP ban`,
+with the side as the verb (`supports` pro, `limits` contra), the text of the page as its description and its label;
+the editor changes, adds and removes them, and a moved argument renames its claim if the claim is named by its
+parts. A removed argument leaves its claim, like a removed input leaves its phrase, because other pages can name it.
+The page settings change the title, the lead text and the hideable lead text, which the page shows collapsed below
+the title behind "... more": the descriptions of the `calculator label`, `calculator hint` and `calculator more`
+triples of the phrase that the page reads its lists from. The list Verdict holds the states of the verdict in the
+order yes, no, undecided, each with its headline as label and its text as hint; the settings of a state also change
+what all states share: the compared result and the threshold (the two `with` triples of the verdict, in their order),
+the scale below the meter with the two ends of the meter (its `field limit down` and `field limit up` values) and the
+note (`calculator scale` and `calculator note` of the verdict).
+The list Sensitivity table holds the two axes of the table, the rows first and then the columns, each with its values
+as sub-items with label and number (the value of the table and the axis value e.g. `construction cost 5000`; a new
+axis value gets a new value with the unit and quality phrases of its siblings); the settings of an axis or a value
+also change the hint below the table and the two results of a cell, the number in the cell and the one in brackets
+(the items of the `calculator cell` triple of the table), and the title is a list heading of the page settings.
+The list Presets holds the buttons that set several inputs at once, each a scenario phrase with the text of the
+button as label and its tooltip as hint; its settings show per number field the number that the preset sets, the
+value with the scenario and the field phrase and the fewest other phrases, as the page picks it: a changed number
+changes that value, a cleared one deletes it and a number for a field without a value adds one with the unit phrases
+of the field value. A removed preset leaves the numbers of its scenario, because studies use the same scenario phrase.
+A click on a part of the preview selects where it is changed: `calculator_json.js` marks with `data-part` an argument,
+a field, a preset button, the verdict, the sensitivity table with its row and column headings, the rows, row groups
+and column headings of the result table, the detail tables with their columns and extra rows (a row of the table
+phrase names its table, which defines the rows), the header and the hideable lead text with the name of the triple
+that defines them, a note of the notes list (`calculator note`, the last list of the page structure, where the text
+of a note is the description of its triple) with the name of its triple, a note of a formula with the name of the
+formula, and a source with its name. The sources of the loaded data are the list "Sources" below the lists of the
+page structure, without add or remove, because a source belongs to every page that shows one of its values: its
+name, description, link and doi are saved in the `sources` section of the `updatePut` message, and a new name also
+changes every text of the editor that names the source by `{source:…}`. The editor selects the item of that name without drawing the preview
+again, so that a collapsed part still opens; a formula like the page structure does, with its formula editor and
+compare instead of the preview; and any other name the page settings. A link in a part, e.g. of a source, selects
+too instead of leaving the editor with its unsaved changes.
+
+The page preview of the editor is the calculator page itself: the editor page also embeds the settings of the
+calculator page without the save (`system_page::calculator_editor`, a save of the preview would store a case) and
+`calculator_json.js`, whose `renderCalculatorPage` builds the preview after each change from the data with the unsaved
+changes (`editedDoc`) and calculates every result again, so that a changed value or formula shows at once; the
+collapsed blocks that the user has opened stay open. So every rule of the page holds in the preview without a second
+implementation; only the parts that `calculator_json.js` marks with `data-part` can be clicked to select them (see above).
+`system_views_read_tests::run_npp_ch_vote_editor` renders the editor of the Swiss NPP vote into
+`use_cases/npp_ch_vote_editor.html`, reads the preview (`#pane`, `html_page_diff::element_page`) and the page
+`npp_ch_vote_js.html` after both scripts have run in a headless browser with the sensitivity table opened, and writes
+the differences to `use_cases/npp_ch_vote_editor_diff.md`, which names only the save.
+
 A phraseData answer fills the request cache of a page with `phrase_data::fill`:
 each word, triple, formula, source, value and result of the answer becomes the
 api json that the frontend object maps, with the phrases of a triple, value or

@@ -96,7 +96,7 @@ class a_selected_test extends all_unit_tests
     // the system data files with code ids to load again before SELECTED_IMPORT_FILES, imported
     // as the system user like the db setup does, e.g. the calculator keywords of a use case page
     const array SELECTED_SYSTEM_IMPORT_FILES = [
-        //cfg_files::CALCULATOR_KEYWORDS_FILE,
+        cfg_files::CALCULATOR_KEYWORDS_FILE,
     ];
 
     // the import json files to load for a fast single-file debugging cycle
@@ -104,6 +104,7 @@ class a_selected_test extends all_unit_tests
     const array SELECTED_IMPORT_FILES = [
         // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
         //cfg_files::PV_LIFETIME_BALANCE_FILE,
+        cfg_files::NPP_CH_VOTE_FILE,
         //cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
@@ -131,7 +132,7 @@ class a_selected_test extends all_unit_tests
 
     // true to check and rebuild the start page snapshot
     // views_by_id/start_page/1_start_page_details.html, which localhost_ui_tests fetches from the pod
-    const bool SELECTED_START_PAGE = true;
+    const bool SELECTED_START_PAGE = false;
 
     /**
      * the data files of the start page in the import order of the db setup (sql_db):
@@ -364,7 +365,7 @@ class a_selected_test extends all_unit_tests
             //new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
             // the start page steps up to the results of the initial effort, after which the page stops
-            $msk_tests->run_start_page_steps($this);
+            //$msk_tests->run_start_page_steps($this);
             //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);
             //$msk_tests->run_words($this, $cfg);
@@ -390,6 +391,12 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_portfolio_split_calculator($this);
             //$msk_tests->run_portfolio_split_calculator_diff($this);
             //$msk_tests->run_portfolio_split_calculator_cases($this);
+            // the Swiss NPP vote pages, their differences to the sample, the editor preview compared with the page
+            // and the sensitivity table of the pdf; the calculator editor of the PV lifetime balance as its regression
+            $msk_tests->run_npp_ch_vote($this);
+            $msk_tests->run_npp_ch_vote_editor($this);
+            $msk_tests->run_npp_sensitivity($this);
+            $msk_tests->run_calculator_editor($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);

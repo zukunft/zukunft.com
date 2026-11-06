@@ -1,5 +1,26 @@
 # pending - list of planned llm prompts with prio 1
 
+## write tests of the calculator editor messages
+
+add to `update_put_write_tests` a write test with an undo for the `note_text` and the `source_rename` message of
+`src/test/resources/web/calculator_editor/`, in the style of `run_description_change` and `run_source`: load the
+objects by name for the normal test user, set their database ids in the message, put it, check the changed
+description or name for this user and the unchanged one for another user, put the undo with the loaded texts and
+check that no own version is left. The NPP use case is part of the db setup (`cfg/const/files.php`), so its objects
+exist in the write test db. The renamed source changes 22 triple descriptions, so the undo sends them back too.
+
+these messages are only compared in the browser test (`use_case_ui_tests`) and have no write test yet:
+- the arguments of the Swiss NPP vote: `argument_text`, `argument_side`, `add_argument`, `remove_argument`
+- the hideable lead text: `more_text`
+- the verdict: `verdict_label`, `verdict_scale_note`, `verdict_result`, `verdict_scale_limits`
+- the sensitivity table: `sensitivity_number`, `sensitivity_add_level`, `sensitivity_cell_hint`
+- the presets: `preset_label`, `preset_value`, `preset_new_value`, `preset_value_cleared`, `add_preset`, `remove_preset`
+- the notes and sources: `note_text`, `source_rename`, and `source_description` with its own NPP source (`run_source`
+  only takes the header of the message and changes a source of the PV use case)
+- the PV lifetime balance: `pv_capacity_down` (moved input), `pv_capacity_minimum_cleared` (cleared limit),
+  `remove_input` and `pv_capacity_label_undo`; the first three delete rows of the use case, see the open points of
+  the calculator editor scenarios below
+
 ## wikipedia link
 
 if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
@@ -59,8 +80,8 @@ prompt together with the sections it names, which follow the block. Every prompt
 **Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
 gets the CO2-eq costs). One phase, four agents in parallel:
 - agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
-- agent npp: "Swiss NPP": the compare test of the editor preview with the calculator page, its `*_diff.md`, the
-  missing argument sections and the CO2-eq reduction costs in the NPP use case json
+- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
+  costs in the NPP use case json
 - agent share: the "Share assumptions and vote" button of the calculator page
 - agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
 
@@ -72,8 +93,9 @@ in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=1
 in 'Page preview' the same view should be shown as e.g. http://localhost/http/view.php?m=calculator&id=-3321
 For the 'new CH npp' case e.g. the 'Undecided on cost - decide on the other arguments' and the 
 'Arguments for lifting the ban (yes)' and 'Arguments for keeping the ban (no)' seems to be missing
-create a compare test that the inner part of the editor matches the page view and the differences
-are reported in a *_diff.md file based on the 'new CH npp' case
+done: the preview is built by `calculator_json.js` from the edited data (docs/llm/frontend.md) and compared by
+`system_views_read_tests::run_npp_ch_vote_editor`; the only difference left in
+`src/test/resources/web/html/use_cases/npp_ch_vote_editor_diff.md` should be the save, which the preview leaves out
 
 add costs of CO2-eq reduction to the npp
 

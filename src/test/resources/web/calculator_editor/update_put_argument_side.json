@@ -1,0 +1,39 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "id": 4114,
+                "name": "supply gap limits lifting the NPP ban",
+                "description": "The four existing plants deliver {num:36 %} of Swiss electricity and almost half of the winter electricity; the last one (Leibstadt) is expected to stop around 2044, while demand rises to about {num:76 TWh} by 2050. Without new plants the winter net import grows to {num:7.5 TWh} in 2050; one EPR cuts it to {num:3.2 TWh}. {source:BAK economiesuisse study 2026}",
+                "from": "supply gap",
+                "verb": "limits",
+                "to": "lifting the NPP ban"
+            },
+            {
+                "id": 4274,
+                "name": "supply gap argument label",
+                "description": "Winter supply gap",
+                "from": "supply gap limits lifting the NPP ban",
+                "verb": "has a",
+                "to": "calculator label"
+            },
+            {
+                "id": 4288,
+                "name": "new NPP argument supply gap",
+                "from": "new NPP arguments",
+                "verb": "has a",
+                "to": "supply gap limits lifting the NPP ban"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

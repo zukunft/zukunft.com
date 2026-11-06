@@ -44,6 +44,7 @@ include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_IMPORT . 'update_put.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
@@ -51,6 +52,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -73,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -139,6 +143,9 @@ class update_put_write_tests
     const string TABLE_TITLE = 'sector of revenue title';
     const string TABLE_TITLE_COM = 'Revenue by sector';
     const string TABLE_TITLE_COM_CHANGED = 'Revenue by business area';
+    // a source of the PV use case, which is owned by the user who has imported it, so that the change of another
+    // user is saved as the own version of that user; a seed source without owner is changed for all users
+    const string PV_SOURCE = 'KBOB energy systems 2022';
 
     function run(test_cleanup $t): void
     {
@@ -320,6 +327,7 @@ class update_put_write_tests
 
         $this->run_use_case($t);
         $this->run_formula($t);
+        $this->run_source($t);
         $this->run_scenarios($t);
         $this->run_table_editor($t);
     }
@@ -1253,6 +1261,78 @@ class update_put_write_tests
             $trp_json[json_fields::DESCRIPTION] = $description;
         }
         $json[json_fields::BODY][json_fields::TRIPLES][0] = $trp_json;
+        return $json;
+    }
+
+    /**
+     * the change of the description and the url of a source of the PV use case as the calculator editor sends it,
+     * by a user who does not own the source, and its undo with the loaded fields
+     * public to run the source change also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the normal test user
+     * @return void
+     */
+    function run_source(test_cleanup $t): void
+    {
+        $upd = new update_put();
+        $ts = 'db write update put ';
+        $t->subheader($ts . 'change and undo of a source');
+        $usr = $t->usr_normal;
+        $msg = new user_message($usr);
+        $chk_msg = new user_message($usr);
+
+        $src = new source($usr);
+        $src->load_by_name(self::PV_SOURCE, $chk_msg);
+        $description = $src->get_description();
+        $url = $src->url;
+
+        $test_name = 'put the changed description and url of a source';
+        $put_body = $upd->put($this->source_message($src, sources::TEST_DESCRIPTION_CHANGED, sources::TEST_URL_CHANGED), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = '... and the answer confirms the change';
+        $src_res = $put_body[json_fields::SOURCES][0] ?? [];
+        $t->assert($test_name, $src_res[json_fields::ACTION] ?? '', update_put::CHANGED);
+        $test_name = '... as the own version of the user';
+        $t->assert_true($test_name, $src_res[json_fields::USER_OVERWRITE] ?? false);
+        $test_name = 'the user sees the changed description';
+        $src_chk = new source($usr);
+        $src_chk->load_by_id($src->id(), $chk_msg);
+        $t->assert($test_name, $src_chk->get_description(), sources::TEST_DESCRIPTION_CHANGED, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and the changed url';
+        $t->assert($test_name, $src_chk->url, sources::TEST_URL_CHANGED);
+        // negative: the change is a user overwrite, so another user still gets the source as before
+        $test_name = '... but another user still sees the description before the change';
+        $src_other = new source($t->usr1);
+        $src_other->load_by_id($src->id(), $chk_msg);
+        $t->assert($test_name, $src_other->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the undo of the source change';
+        $upd->put($this->source_message($src, $description, $url), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = 'the user sees the description before the change again';
+        $src_chk = new source($usr);
+        $src_chk->load_by_id($src->id(), $chk_msg);
+        $t->assert($test_name, $src_chk->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and has no own version left';
+        $t->assert_false($test_name, $src_chk->has_usr_cfg());
+    }
+
+    /**
+     * @param source $src the source with its database id
+     * @param string|null $description the description that the message sets
+     * @param string|null $url the url that the message sets
+     * @return array the update put message of the calculator editor that changes the description and the url of the source
+     */
+    private function source_message(source $src, ?string $description, ?string $url): array
+    {
+        $json = $this->scenario_message(test_files::UPDATE_PUT_SOURCE_DESCRIPTION, $src->get_user());
+        $json[json_fields::BODY][json_fields::SOURCES] = [[
+            json_fields::ID => $src->id(),
+            json_fields::DESCRIPTION => $description,
+            json_fields::URL => $url
+        ]];
         return $json;
     }
 

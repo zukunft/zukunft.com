@@ -115,11 +115,16 @@ class files
     CONST string NPP_CH_VOTE_JS = 'npp_ch_vote_js';
     CONST string NPP_CH_VOTE_SAMPLE = 'npp_ch_vote_sample';
     CONST string NPP_CH_VOTE_DIFF = 'npp_ch_vote_diff';
+    // the calculator editor of the Swiss NPP vote and the report of the differences of its page preview to the page
+    CONST string NPP_CH_VOTE_EDITOR = 'npp_ch_vote_editor';
+    CONST string NPP_CH_VOTE_EDITOR_DIFF = 'npp_ch_vote_editor_diff';
     // the expected csv export of the table of the global warming solutions and the report of the differences of the real export
     CONST string GLOBAL_WARMING_SOLUTIONS_CSV = test_paths::EXPORT_START_PAGE . 'global_warming_solutions' . self::CSV;
     CONST string GLOBAL_WARMING_SOLUTIONS_DIFF = test_paths::EXPORT_START_PAGE . 'global_warming_solutions_diff' . self::MD;
     // the sample fills its verdict and its tables by its script, so the compare reads it after a browser has run it
     CONST string NPP_CH_VOTE_CASES = test_paths::JS . 'npp_ch_vote_cases' . self::JS;
+    // ... and opens the sensitivity table, whose cells the page and the editor preview calculate only while it is open
+    CONST string NPP_CH_VOTE_SENSITIVITY_CASES = test_paths::JS . 'npp_ch_vote_sensitivity_cases' . self::JS;
     // the calculator page of the example portfolio split that the server renders without javascript
     CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS ='portfolio_split_calculator_no_js';
     // the same page that the browser builds with javascript from the database
@@ -167,14 +172,55 @@ class files
     CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
     CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
     CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the scenarios of the pro and contra arguments, which run in the calculator editor of the Swiss NPP vote
+    CONST string SCENARIO_ARGUMENTS_COLLAPSED = 'arguments_collapsed';
+    CONST string SCENARIO_ARGUMENT_TEXT = 'argument_text';
+    CONST string SCENARIO_ARGUMENT_SIDE = 'argument_side';
+    CONST string SCENARIO_ADD_ARGUMENT = 'add_argument';
+    CONST string SCENARIO_ADD_ARGUMENT_WITHOUT_REASON = 'add_argument_without_reason';
+    CONST string SCENARIO_REMOVE_ARGUMENT = 'remove_argument';
+    // ... and of the lead text that the page shows collapsed below the title
+    CONST string SCENARIO_MORE_TEXT = 'more_text';
+    CONST string SCENARIO_MORE_TEXT_UNCHANGED = 'more_text_unchanged';
+    // ... of the verdict and of the clicks in the page preview, which select where a part is changed
+    CONST string SCENARIO_VERDICT_LABEL = 'verdict_label';
+    CONST string SCENARIO_VERDICT_SCALE_NOTE = 'verdict_scale_note';
+    CONST string SCENARIO_VERDICT_RESULT = 'verdict_result';
+    CONST string SCENARIO_VERDICT_RESULT_UNCHANGED = 'verdict_result_unchanged';
+    CONST string SCENARIO_VERDICT_SCALE_LIMITS = 'verdict_scale_limits';
+    CONST string SCENARIO_VERDICT_SCALE_LIMITS_UNCHANGED = 'verdict_scale_limits_unchanged';
+    // ... of the sensitivity table
+    CONST string SCENARIO_SENSITIVITY_NUMBER = 'sensitivity_number';
+    CONST string SCENARIO_SENSITIVITY_ADD_LEVEL = 'sensitivity_add_level';
+    CONST string SCENARIO_SENSITIVITY_ADD_LEVEL_WITHOUT_PHRASE = 'sensitivity_add_level_without_phrase';
+    CONST string SCENARIO_SENSITIVITY_CELL_HINT = 'sensitivity_cell_hint';
+    // ... of the presets
+    CONST string SCENARIO_PRESET_LABEL = 'preset_label';
+    CONST string SCENARIO_PRESET_VALUE = 'preset_value';
+    CONST string SCENARIO_PRESET_NEW_VALUE = 'preset_new_value';
+    CONST string SCENARIO_PRESET_VALUE_CLEARED = 'preset_value_cleared';
+    CONST string SCENARIO_ADD_PRESET = 'add_preset';
+    CONST string SCENARIO_ADD_PRESET_WITHOUT_PHRASE = 'add_preset_without_phrase';
+    CONST string SCENARIO_REMOVE_PRESET = 'remove_preset';
+    // ... of the notes
+    CONST string SCENARIO_NOTE_TEXT = 'note_text';
+    CONST string SCENARIO_NOTE_TEXT_UNCHANGED = 'note_text_unchanged';
+    // ... of the sources
+    CONST string SCENARIO_SOURCE_DESCRIPTION = 'source_description';
+    CONST string SCENARIO_SOURCE_RENAME = 'source_rename';
+    CONST string SCENARIO_SOURCE_URL_UNCHANGED = 'source_url_unchanged';
+    CONST string SCENARIO_PREVIEW_PARTS = 'preview_parts';
     // the scenarios that end with the json of the Definition tab as their message
     CONST string SCENARIO_JSON_TAB_LABEL = 'json_tab_label';
     CONST string SCENARIO_JSON_TAB = 'json_tab';
     // the scenarios that end with the posted request of the PDF tab or the state of its button as their message
     CONST string SCENARIO_PDF_TAB_LABEL = 'pdf_tab_label';
     CONST string SCENARIO_PDF_TAB_OFFLINE = 'pdf_tab_offline';
+    // the scenario that ends with the settings that the clicks on the detail table of the preview show
+    CONST string SCENARIO_PREVIEW_DETAIL_PARTS = 'preview_detail_parts';
     // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_SOURCE_DESCRIPTION = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_DESCRIPTION . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;

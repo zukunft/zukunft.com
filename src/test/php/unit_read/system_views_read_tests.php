@@ -126,6 +126,8 @@ class system_views_read_tests
     const string CASE_NOT_ENDED = 'the case has not ended in the headless browser';
     // the row of the PV calculator page whose numbers every input case changes
     const string PV_PRODUCTION_ROW = html_page_diff::KIND_ROW . ': Electricity / PV production';
+    // the element of calculator_editor.js that holds the page preview
+    const string EDITOR_PREVIEW_ID = 'pane';
 
     /**
      * render every system view with the data read from the database and compare it with the snapshot
@@ -168,6 +170,7 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
         $this->run_npp_ch_vote($t);
+        $this->run_npp_ch_vote_editor($t);
         $this->run_npp_sensitivity($t);
         $this->run_global_warming_solutions_csv($t);
         $this->run_populism_solutions_table($t);
@@ -1371,6 +1374,78 @@ class system_views_read_tests
             test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
         $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
             test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
+    }
+
+    /**
+     * the calculator editor of the Swiss NPP vote and the differences of its page preview to the calculator page
+     * as the browser builds it (run_npp_ch_vote), because the preview should show the same page; both are read
+     * after their script has run in a headless browser, because the html of both holds only the json data, and
+     * with the sensitivity table opened, because both calculate its cells only while it is open
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_ch_vote_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::CALCULATOR_EDITOR_NAME, test_files::NPP_CH_VOTE_EDITOR,
+            triple_names::NEW_NPP_VOTE);
+        $hpd = new html_page_diff();
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+        $page_file = test_files::NPP_CH_VOTE_JS . test_files::HTML;
+        $editor_file = test_files::NPP_CH_VOTE_EDITOR . test_files::HTML;
+        $editor_snapshot = $t->path_file($dir . $editor_file);
+        $page_html = $this->sample_in_browser($t->path_file($dir . $page_file), test_files::NPP_CH_VOTE_SENSITIVITY_CASES);
+        $editor_html = $this->sample_in_browser($editor_snapshot, test_files::NPP_CH_VOTE_SENSITIVITY_CASES);
+        $closed_html = $this->sample_in_browser($editor_snapshot, test_files::NPP_CH_VOTE_CASES);
+        if ($page_html === null or $editor_html === null or $closed_html === null) {
+            $t->dsp_warning('no headless browser found, so the differences of the preview of ' . $editor_file . ' are not reported');
+        } else {
+            $preview_html = $hpd->element_page($editor_html, self::EDITOR_PREVIEW_ID);
+            $preview = $hpd->page_items($preview_html);
+            $page = $hpd->page_items($page_html);
+            $test_name = 'the page preview of ' . $editor_file . ' has items to compare';
+            $t->assert_true($test_name, count($preview) > 0);
+            // negative: the page has no preview, so a part that is not found is never compared as the whole page
+            $test_name = '... but the page itself has no preview';
+            $no_preview = $hpd->element_page($page_html, self::EDITOR_PREVIEW_ID);
+            $t->assert($test_name, $no_preview, '');
+            $this->assert_verdict_items($t, $hpd);
+            // the opened sensitivity table calculates the page again per cell, also with other numbers than the inputs
+            $test_name = 'the opened sensitivity table of the preview has the cell of the inputs';
+            $t->assert_text_contains($test_name, $preview_html, self::NPP_SENSITIVITY_INPUT_CELL);
+            $test_name = '... and a cell of other numbers';
+            $t->assert_text_contains($test_name, $preview_html, self::NPP_SENSITIVITY_OTHER_CELL);
+            // negative: the closed table calculates nothing
+            $test_name = '... but the closed table has no cells';
+            $closed_preview = $hpd->element_page($closed_html, self::EDITOR_PREVIEW_ID);
+            $t->assert_text_not_contains($test_name, $closed_preview, self::NPP_SENSITIVITY_INPUT_CELL);
+            $test_name = 'the differences of the preview of ' . $editor_file . ' to the page are reported';
+            $report = $hpd->report($page, $preview, $page_file, $editor_file, html_page_diff::PROMPT_PREVIEW);
+            $t->assert_file($test_name, $report, $dir . test_files::NPP_CH_VOTE_EDITOR_DIFF . test_files::MD, test_files::MD);
+        }
+    }
+
+    /**
+     * the verdict is named by its headline, so that the same state with another text is a difference
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param html_page_diff $hpd the compare that reads the items of a page
+     * @return void
+     */
+    private function assert_verdict_items(test_cleanup $t, html_page_diff $hpd): void
+    {
+        $test_name = 'the compare reads a verdict by its headline';
+        $verdict_html = '<main><div class="verdict open"><p><span class="headline">Undecided</span></p><p>%s</p></div></main>';
+        $verdict = $hpd->page_items(sprintf($verdict_html, 'within 0.25'));
+        $verdict_key = html_page_diff::KIND_VERDICT . ': Undecided';
+        $t->assert_key_exists($test_name, $verdict_key, $verdict);
+        $test_name = '... the same with white space between its paragraphs';
+        $spaced_verdict = $hpd->page_items(str_replace('</p><p>', "</p>\n <p>", sprintf($verdict_html, 'within 0.25')));
+        $t->assert($test_name, $spaced_verdict, $verdict);
+        // negative: another text of the same verdict stays a difference
+        $test_name = '... but another text of it is a difference';
+        $other_verdict = $hpd->page_items(sprintf($verdict_html, 'within 0.5'));
+        $t->assert_false($test_name, $verdict == $other_verdict);
     }
 
     /**

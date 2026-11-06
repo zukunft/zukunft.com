@@ -295,6 +295,8 @@
         const FUNC_SEPARATORS = {[FUNC_MIN]: 1, [FUNC_MAX]: 1, [FUNC_IF]: 2};
         /* the decimals of a stored result, the same as formula_calc::DECIMALS */
         const DECIMALS = 2;
+        /* a calculated number is rounded only to these decimals, the same as number_format NOISE_DECIMALS */
+        const NOISE_DECIMALS = 8;
         /* the kinds of the tokens of an expression */
         const T_PHR = 'phr';
         const T_NUM = 'num';
@@ -969,11 +971,12 @@
                             });
                         });
                     }
+                    // only the float noise, because a result rounded to the compared decimals would make the next result of the chain wrong
                     if (num !== null) {
-                        num = roundTo(num, DECIMALS);
+                        num = roundTo(num, NOISE_DECIMALS);
                     }
                     operands[i] = used;
-                    if (!sameNumber(num, numbers[i])) {
+                    if (num !== numbers[i]) {
                         numbers[i] = num;
                         changed = true;
                     }

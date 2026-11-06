@@ -468,11 +468,11 @@ class sandbox_code_id extends sandbox_typed
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
+        // without the check of set_code_id, because the code id of the given object is the stored one or one that
+        // its import has already checked, so taking it over is no change of the code id e.g. if a normal user
+        // changes only the description of a source with a code id
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
-            // a local buffer for the requesting user of the fill, merged into the returned message
-            $code_msg = new user_message($usr_req);
-            $this->set_code_id($obj->get_code_id(), $code_msg);
-            $msg->merge($code_msg);
+            $this->set_code_id_db($obj->get_code_id());
         }
         return $msg;
     }
