@@ -91,6 +91,7 @@ const TXT = {
     listVerdict: "calc_editor_list_verdict",
     listSensitivity: "calc_editor_list_sensitivity",
     listPresets: "calc_editor_list_presets",
+    listNotes: "calc_editor_list_notes",
     kindPage: "calc_editor_kind_page",
     kindInput: "calc_editor_kind_input",
     kindAssumption: "calc_editor_kind_assumption",
@@ -108,6 +109,7 @@ const TXT = {
     kindSaxis: "calc_editor_kind_saxis",
     kindSlevel: "calc_editor_kind_slevel",
     kindPreset: "calc_editor_kind_preset",
+    kindNote: "calc_editor_kind_note",
     addInput: "calc_editor_add_input",
     addAssumption: "calc_editor_add_assumption",
     addColumn: "calc_editor_add_column",
@@ -152,6 +154,17 @@ const TXT = {
     addPreset: "calc_editor_add_preset",
     presetValues: "calc_editor_preset_values",
     presetValuesNote: "calc_editor_preset_values_note",
+    addNote: "calc_editor_add_note",
+    noteText: "calc_editor_note_text",
+    noteTextNote: "calc_editor_note_text_note",
+    listSources: "calc_editor_list_sources",
+    kindSource: "calc_editor_kind_source",
+    sourceName: "calc_editor_source_name",
+    sourceNameNote: "calc_editor_source_name_note",
+    sourceDescription: "calc_editor_source_description",
+    sourceDescriptionNote: "calc_editor_source_description_note",
+    sourceUrl: "calc_editor_source_url",
+    sourceDoi: "calc_editor_source_doi",
     fromItem: "calc_editor_from_item",
     fromNothing: "calc_editor_from_nothing",
     fromPhraseName: "calc_editor_from_phrase_name",
@@ -273,6 +286,7 @@ const TXT = {
     values: "calc_editor_values",
     newWords: "calc_editor_new_words",
     changedFormulas: "calc_editor_changed_formulas",
+    changedSources: "calc_editor_changed_sources",
     removed: "calc_editor_removed",
     discarded: "calc_editor_discarded",
     podAnswered: "calc_editor_pod_answered",
@@ -437,9 +451,9 @@ const PREVIEW_STYLE = "use-case";
 /* the attribute of a part of the preview with the name of the triple that defines it, the same as in calculator_json.js */
 const PART_ATTR = "data-part";
 
-/* the nine lists of a calculator page, in the order of the page: the arguments are below the title above the inputs,
-   the presets in the panel of the inputs, the verdict on top of the results and the sensitivity table below them; a
-   list without heading on the page has none in the page settings */
+/* the ten lists of a calculator page, in the order of the page: the arguments are below the title above the inputs,
+   the presets in the panel of the inputs, the verdict on top of the results, the sensitivity table below them and the
+   notes below the detail tables; a list without heading on the page has none in the page settings */
 const LISTS = [
     {key: "argument", kw: KW.argument, title: txt(TXT.listArguments), suffix: "arguments", fallback: ""},
     {key: "input", kw: KW.input, title: txt(TXT.inputs), suffix: "inputs", fallback: txt(TXT.inputs)},
@@ -449,7 +463,8 @@ const LISTS = [
     {key: "column", kw: KW.column, title: txt(TXT.listColumns), suffix: "result columns", fallback: ""},
     {key: "rowgroup", kw: KW.rowgroup, title: txt(TXT.listRowgroups), suffix: "row groups", fallback: ""},
     {key: "sensitivity", kw: KW.sensitivity, title: txt(TXT.listSensitivity), suffix: "sensitivity", fallback: ""},
-    {key: "detail", kw: KW.detail, title: txt(TXT.listDetails), suffix: "detail tables", fallback: ""}
+    {key: "detail", kw: KW.detail, title: txt(TXT.listDetails), suffix: "detail tables", fallback: ""},
+    {key: "note", kw: KW.note, title: txt(TXT.listNotes), suffix: "notes", fallback: ""}
 ];
 
 /* what each kind of item is, which verb links it to its parent and which sub-items it can have */
@@ -469,10 +484,13 @@ const KIND = {
     verdict: {name: txt(TXT.kindVerdict), verb: HAS, kids: [], prefix: "verdict", hint: true},
     sensitivity: {name: txt(TXT.kindSaxis), verb: HAS, kids: ["slevel"], prefix: "sensitivity"},
     slevel: {name: txt(TXT.kindSlevel), verb: HAS, kids: [], prefix: null},
-    preset: {name: txt(TXT.kindPreset), verb: HAS, kids: [], prefix: "preset", hint: true}
+    preset: {name: txt(TXT.kindPreset), verb: HAS, kids: [], prefix: "preset", hint: true},
+    // the text of a note is the description of its triple
+    note: {name: txt(TXT.kindNote), verb: HAS, kids: [], prefix: "note", text: true}
 };
 const ADD_TEXT = {
     preset: txt(TXT.addPreset),
+    note: txt(TXT.addNote),
     argument: txt(TXT.addArgument),
     verdict: txt(TXT.addVerdict),
     sensitivity: txt(TXT.addSaxis),
@@ -799,6 +817,9 @@ function parseNode(i, kind, used) {
     if (kind === "argument") {
         node.claim = parseClaim(t.to, used);
     }
+    if (KIND[kind].text) {
+        node.text = t.description || "";
+    }
     const kids = kidIdx.map(function (j) {
         return parseNode(j, childKind(kind, T[j].verb), used);
     });
@@ -866,8 +887,9 @@ function parseDoc(doc) {
     const page = selectionName(doc);
     let base = "";
     T.forEach(function (t) {
+        // not by a note, because the verdict has a note of its own
         if (!base && t.verb === HAS && LISTS.some(function (L) {
-            return L.kw === t.to;
+            return L.kw === t.to && L.key !== "note";
         })) {
             base = t.from;
         }
@@ -880,7 +902,7 @@ function parseDoc(doc) {
             base = page;
         }
     }
-    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}, formulaEdits: {}};
+    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}, formulaEdits: {}, sourceEdits: {}};
     state = model;
     const itemNames = new Set();
     LISTS.forEach(function (L) {
@@ -1446,7 +1468,9 @@ function emitAll() {
                 if (n.claim) {
                     emitClaim(n.claim);
                 }
-                triple(n.src, n.name, parentName, n.verb, n.to, "", false);
+                // the text of a note, which an empty text leaves out unless the stored triple has one to clear
+                const textManaged = n.text !== undefined && (n.text !== "" || (n.src !== null && IDX.T[n.src].description !== undefined));
+                triple(n.src, n.name, parentName, n.verb, n.to, n.text, textManaged);
                 emitProp(n.label, n.name, KW.label, "label");
                 emitProp(n.hint, n.name, KW.hint, "hint");
                 emitFlag(n.highlight, n.name, KW.highlight, "highlight");
@@ -1711,7 +1735,7 @@ function buildOutput() {
     const emitted = emitAll();
     const bySrc = new Map();
     const fresh = [];
-    const changes = {add: [], del: [], mod: [], words: [], values: [], formulas: []};
+    const changes = {add: [], del: [], mod: [], words: [], values: [], formulas: [], sources: []};
     emitted.forEach(function (e) {
         if (e.src !== null && e.src !== undefined && !bySrc.has(e.src)) {
             bySrc.set(e.src, e);
@@ -1804,6 +1828,18 @@ function buildOutput() {
         }
     });
 
+    /* sources: the changed fields, which are saved as the own version of the user */
+    (DOC.sources || []).forEach(function (s) {
+        const fields = SOURCE_FIELDS.filter(function (f) {
+            return sourceField(s, f) !== (s[f] || "");
+        }).map(function (f) {
+            return {field: f, before: s[f] || "", after: sourceField(s, f)};
+        });
+        if (fields.length > 0) {
+            changes.sources.push({id: s.id, name: s.name, fields: fields});
+        }
+    });
+
     /* words: every phrase that is not in the database yet is added as a word */
     const knownNow = new Set(IDX.known);
     finalTriples.forEach(function (t) {
@@ -1819,7 +1855,7 @@ function buildOutput() {
         });
     });
 
-    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length;
+    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length + changes.sources.length;
     const warnings = validate(finalTriples);
     const result = {changes: changes, changed: changed, warnings: warnings, triples: finalTriples};
     return result;
@@ -2074,6 +2110,15 @@ function renderTree() {
             '<div class="addrow" style="padding-left:6px"><button class="addlink" data-act="addTop" data-list="' + L.key + '">' + esc(ADD_TEXT[L.key]) + "</button></div>" +
             "</details>";
     });
+    /* the sources of the values of the page, which are changed but not added here */
+    const sources = DOC ? DOC.sources || [] : [];
+    if (sources.length > 0) {
+        const open = openLists.has(SOURCE_LIST) ? " open" : "";
+        html += '<details class="sect" data-list="' + SOURCE_LIST + '"' + open + '>' +
+            '<summary class="sect-head"><h3>' + txtHtml(TXT.listSources) + '</h3><span class="chip">' + sources.length + "</span></summary>" +
+            '<div class="list" data-list="' + SOURCE_LIST + '">' + sources.map(sourceRow).join("") + "</div>" +
+            "</details>";
+    }
     host.innerHTML = html;
 }
 
@@ -2114,6 +2159,8 @@ function renderInspector() {
     } else if (findFormula(selected)) {
         /* the formula editor shows the formula in its own host */
         html = "";
+    } else if (findSource(selected)) {
+        html = sourceInspector(findSource(selected));
     } else {
         const hit = findNode(selected);
         if (hit && hit.node.claim) {
@@ -2192,6 +2239,13 @@ function nodeInspector(hit) {
             area: true,
             placeholder: n.hint.text ? "" : hint.text,
             note: hintNote
+        });
+    }
+    if (K.text) {
+        html += inputHtml({t: "node", uid: n.uid, f: "text"}, n.text, {
+            label: txtHtml(TXT.noteText),
+            area: true,
+            note: txtHtml(TXT.noteTextNote)
         });
     }
     if (K.highlight || n.highlight.on) {
@@ -2667,6 +2721,111 @@ function showFormulaEditor(f) {
 }
 
 /* ------------------------------------------------------------------ */
+/* sources                                                              */
+/* ------------------------------------------------------------------ */
+/* the selection key of a source in the structure, so that it never matches the uid of an item or a formula */
+const SOURCE_SEL = "source:";
+/* the key of the list of the sources in the page structure, below the lists of the page */
+const SOURCE_LIST = "source";
+/* the fields of a source that the editor changes, in the order of the settings */
+const SOURCE_FIELDS = ["name", "description", "url", "doi"];
+
+/* a field of a source with the change of this session e.g. its url */
+function sourceField(s, f) {
+    const edit = (state.sourceEdits || {})[s.id] || {};
+    const result = edit[f] !== undefined ? edit[f] : (s[f] || "");
+    return result;
+}
+
+/* the source of a selection key of the structure or null if the key selects no source */
+function findSource(sel) {
+    const key = String(sel);
+    const id = key.indexOf(SOURCE_SEL) === 0 ? key.slice(SOURCE_SEL.length) : null;
+    const result = id === null ? null : (DOC.sources || []).find(function (s) {
+        return String(s.id) === id;
+    }) || null;
+    return result;
+}
+
+/* the source of a name as the page preview shows it, so with the change of this session */
+function sourceOfName(name) {
+    const result = (DOC.sources || []).find(function (s) {
+        return sourceField(s, "name") === name;
+    }) || null;
+    return result;
+}
+
+function sourceRow(s) {
+    const key = SOURCE_SEL + s.id;
+    const sel = selected === key ? " sel" : "";
+    const changed = SOURCE_FIELDS.some(function (f) {
+        return sourceField(s, f) !== (s[f] || "");
+    }) ? '<span class="chip new">' + txtHtml(TXT.chipChanged) + "</span>" : "";
+    const result = '<div class="node source' + sel + '" data-uid="' + esc(key) + '" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
+        '<span class="txt"><span class="lbl">' + esc(sourceField(s, "name")) + "</span>" +
+        '<span class="ph mono">' + esc(sourceField(s, "url") || "—") + "</span></span>" +
+        '<span class="side">' + changed + "</span></div>";
+    return result;
+}
+
+/* the settings of a source, which is not part of the page but of every page that shows a value of it */
+function sourceInspector(s) {
+    const bind = function (f) {
+        return {t: "src", id: s.id, f: f};
+    };
+    let html = '<div class="insp-title"><span class="kind">' + txtHtml(TXT.kindSource) + '</span><span class="big">' + esc(sourceField(s, "name")) + "</span></div>";
+    html += inputHtml(bind("name"), sourceField(s, "name"), {label: txtHtml(TXT.sourceName), note: txtHtml(TXT.sourceNameNote)});
+    html += inputHtml(bind("description"), sourceField(s, "description"), {
+        label: txtHtml(TXT.sourceDescription),
+        area: true,
+        note: txtHtml(TXT.sourceDescriptionNote)
+    });
+    html += inputHtml(bind("url"), sourceField(s, "url"), {label: txtHtml(TXT.sourceUrl), mono: true});
+    html += inputHtml(bind("doi"), sourceField(s, "doi"), {label: txtHtml(TXT.sourceDoi), mono: true});
+    return html;
+}
+
+/* a changed field of a source; a new name also changes the texts of the editor that name the source by
+   {source:…}, but an empty name leaves them, because the pod refuses a source without a name */
+function setSourceField(id, f, value) {
+    state.sourceEdits = state.sourceEdits || {};
+    const s = findSource(SOURCE_SEL + id);
+    if (s) {
+        const edit = state.sourceEdits[id] || {};
+        const text = f === "name" ? value.trim() : value;
+        if (f === "name" && text !== "") {
+            renameSourceRefs(edit.ref !== undefined ? edit.ref : s.name, text);
+            edit.ref = text;
+        }
+        if (text === (s[f] || "")) {
+            delete edit[f];
+        } else {
+            edit[f] = text;
+        }
+        state.sourceEdits[id] = edit;
+    }
+}
+
+/* the placeholders {source:…} of the old name in every text of the editor e.g. of an argument or a hint */
+function renameSourceRefs(oldName, newName) {
+    const from = "{source:" + oldName + "}";
+    const to = "{source:" + newName + "}";
+    const visit = function (obj) {
+        Object.keys(obj).forEach(function (k) {
+            const v = obj[k];
+            if (k === "text" && typeof v === "string") {
+                obj[k] = v.split(from).join(to);
+            } else if (v !== null && typeof v === "object") {
+                visit(v);
+            }
+        });
+    };
+    if (oldName !== newName) {
+        visit({lists: state.lists, phrases: state.phrases, kept: state.keptClaims || []});
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* rendering: texts, changes and json                                   */
 /* ------------------------------------------------------------------ */
 function textsPane() {
@@ -2806,6 +2965,13 @@ function changesPane() {
     if (c.formulas.length) {
         html += "<div><h3>" + txtHtml(TXT.changedFormulas, {[VAR.count]: c.formulas.length}) + "</h3><ul>" + c.formulas.map(function (f) {
             return '<li class="mod">' + esc(f.name) + ": " + esc(f.before) + "<br>→ " + esc(f.after) + "</li>";
+        }).join("") + "</ul></div>";
+    }
+    if (c.sources.length) {
+        html += "<div><h3>" + txtHtml(TXT.changedSources, {[VAR.count]: c.sources.length}) + "</h3><ul>" + c.sources.map(function (s) {
+            return '<li class="mod">' + esc(s.name) + ": " + s.fields.map(function (x) {
+                return esc(x.field + " " + x.before) + "<br>→ " + esc(x.after);
+            }).join("<br>") + "</li>";
         }).join("") + "</ul></div>";
     }
     html += "</div>";
@@ -2983,6 +3149,9 @@ function newNode(kind) {
     };
     if (kind === "argument") {
         result.claim = newClaim();
+    }
+    if (KIND[kind].text) {
+        result.text = "";
     }
     return result;
 }
@@ -3166,6 +3335,8 @@ function setBound(b, value) {
         if (hit && hit.node.claim) {
             setClaimField(hit, b.f, value);
         }
+    } else if (b.t === "src") {
+        setSourceField(b.id, b.f, value);
     } else if (b.t === "cmp") {
         setComparedPhrase(b.i, value);
     } else if (b.t === "cell") {
@@ -3248,6 +3419,8 @@ function setNodeField(hit, f, value) {
         n.label.text = value;
     } else if (f === "hint") {
         n.hint.text = value;
+    } else if (f === "text") {
+        n.text = value;
     } else if (f === "number") {
         // the number of a new value of an axis of the sensitivity table, which has no stored value yet
         n.number = value.trim();
@@ -3475,6 +3648,16 @@ function putMessage(changes) {
     changes.formulas.forEach(function (f) {
         body.formulas.push({id: f.id, user_text: f.after});
     });
+    /* only with a changed source, so that a message without one keeps the sections of before */
+    if (changes.sources.length > 0) {
+        body.sources = changes.sources.map(function (s) {
+            const json = {id: s.id};
+            s.fields.forEach(function (x) {
+                json[x.field] = x.after;
+            });
+            return json;
+        });
+    }
     changes.values.forEach(function (v) {
         if (v.kind === "add") {
             body.values.push(valueJson(v));
@@ -3553,7 +3736,7 @@ async function save() {
 function savedReport(body) {
     const lines = [];
     let warn = Boolean(body.warnings);
-    ["words", "triples", "formulas", "values"].forEach(function (section) {
+    ["words", "triples", "formulas", "sources", "values"].forEach(function (section) {
         (body[section] || []).forEach(function (o) {
             const name = o.name || (section.slice(0, -1) + " " + o.id);
             const own = " " + (o.user_overwrite ? txt(TXT.ownVersion) : txt(TXT.sharedVersion));
@@ -3801,6 +3984,10 @@ function onClick(e) {
     } else if (nodeEl) {
         select(nodeEl.dataset.uid);
     } else if (part && document.getElementById("pane").contains(part)) {
+        // the link of a source selects too instead of leaving the editor with its unsaved changes
+        if (e.target.closest("a")) {
+            e.preventDefault();
+        }
         selectPart(part.getAttribute(PART_ATTR));
     } else if (tab) {
         activeTab = tab.dataset.tab;
@@ -3825,6 +4012,8 @@ function showSelected(id) {
     const hit = findNode(id);
     if (hit) {
         openLists.add(hit.listKey);
+    } else if (findSource(id)) {
+        openLists.add(SOURCE_LIST);
     }
     renderTree();
     renderInspector();
@@ -3833,7 +4022,8 @@ function showSelected(id) {
 /* a part of the page preview selects the item with the name of its triple e.g. an argument or a state of the verdict,
    any other part e.g. the hideable lead text the page; the preview is not drawn again, so that a click on a collapsed
    part also opens it; a note of a formula selects the formula like the page structure, which shows the formula editor
-   and its compare instead of the preview, in the row groups, whose result rows list their formulas */
+   and its compare instead of the preview, in the row groups, whose result rows list their formulas; a source by
+   its name selects the source in the list of the sources */
 function selectPart(name) {
     let id = "page";
     walkAll(function (n) {
@@ -3844,6 +4034,10 @@ function selectPart(name) {
     const formula = (DOC.formulas || []).find(function (f) {
         return f.name === name;
     });
+    const source = sourceOfName(name);
+    if (id === "page" && source !== null) {
+        id = SOURCE_SEL + source.id;
+    }
     if (id === "page" && formula !== undefined) {
         openLists.add("rowgroup");
         select(FORMULA_SEL + formula.id);
@@ -4128,8 +4322,20 @@ function editedDoc() {
             added.push({words: v.words, number: v.number});
         }
     });
+    // a value names its source, so a renamed source is named by its new name
+    const renamed = new Map();
+    out.changes.sources.forEach(function (s) {
+        s.fields.forEach(function (x) {
+            if (x.field === "name") {
+                renamed.set(x.before, x.after);
+            }
+        });
+    });
     const values = (DOC.values || []).map(function (v, i) {
-        const result = numbers.has(i) ? Object.assign({}, v, {number: numbers.get(i)}) : v;
+        let result = numbers.has(i) ? Object.assign({}, v, {number: numbers.get(i)}) : v;
+        if (renamed.has(v.source)) {
+            result = Object.assign({}, result, {source: renamed.get(v.source)});
+        }
         return result;
     }).filter(function (v, i) {
         return !removed.has(i);
@@ -4141,6 +4347,15 @@ function editedDoc() {
         triples: out.triples,
         formulas: (DOC.formulas || []).map(function (f) {
             return Object.assign({}, f, {expression: formulaExpression(f)});
+        }),
+        sources: (DOC.sources || []).map(function (s) {
+            const result = Object.assign({}, s);
+            SOURCE_FIELDS.forEach(function (f) {
+                if (sourceField(s, f) !== (s[f] || "")) {
+                    result[f] = sourceField(s, f);
+                }
+            });
+            return result;
         }),
         values: values.concat(added)
     });

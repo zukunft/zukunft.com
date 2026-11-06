@@ -130,6 +130,12 @@ class use_case_ui_tests
     const string CLICK_COLUMN = 'column';
     const string CLICK_LEVEL = 'level';
     const string CLICK_SOURCE = 'source';
+    const string CLICK_SOURCE_STAYS = 'stays';
+    const string CLICK_HEADING = 'heading';
+    const string SHOWN_SOURCE_NPP = 'Source: Fraunhofer ISE LCOE 2024 via Faktenfackel';
+    const string SHOWN_SOURCE_PV = "Source: Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)";
+    const string CLICK_NOTE = 'note';
+    const string SHOWN_NOTE = 'Note: Model limits';
     const string SHOWN_DETAIL_COLUMN = 'Detail column: Direct';
     const string SHOWN_DETAIL_TABLE = 'Detail table: Monthly energy balance, average year';
     const string SHOWN_ROW_GROUP = 'Row group: New nuclear plant';
@@ -2234,10 +2240,16 @@ class use_case_ui_tests
             $test_name = '... and on a row of the table phrase the table';
             $detail_row = $clicks[self::CLICK_ROW] ?? '';
             $t->assert($test_name, $detail_row, self::SHOWN_DETAIL_TABLE);
-            // negative: a source has no part, so the click keeps what is selected
-            $test_name = '... but a click on a source keeps the selection';
+            // negative: the heading of the sources has no part, so the click keeps what is selected
+            $test_name = '... but a click on the heading of the sources keeps the selection';
+            $heading = $clicks[self::CLICK_HEADING] ?? '';
+            $t->assert($test_name, $heading, self::SHOWN_DETAIL_TABLE);
+            $test_name = 'a click on a source selects the source';
             $source = $clicks[self::CLICK_SOURCE] ?? '';
-            $t->assert($test_name, $source, self::SHOWN_DETAIL_TABLE);
+            $t->assert($test_name, $source, self::SHOWN_SOURCE_PV);
+            $test_name = '... and its link does not leave the editor';
+            $stays = $clicks[self::CLICK_SOURCE_STAYS] ?? false;
+            $t->assert_true($test_name, $stays);
             unlink($page);
         }
         $brw->stop();
@@ -2291,6 +2303,9 @@ class use_case_ui_tests
                 test_files::SCENARIO_PRESET_VALUE_CLEARED => 'a cleared number of a preset is sent as a deleted value',
                 test_files::SCENARIO_ADD_PRESET => 'a new preset is sent as a new word, its triples and its numbers',
                 test_files::SCENARIO_REMOVE_PRESET => 'a removed preset is sent as its deleted triples, while the numbers of its scenario stay',
+                test_files::SCENARIO_NOTE_TEXT => 'the changed text of a note is sent as the description of its triple',
+                test_files::SCENARIO_SOURCE_DESCRIPTION => 'the changed description of a source is sent as the changed field of the source',
+                test_files::SCENARIO_SOURCE_RENAME => 'a renamed source is sent with the texts that name it by its placeholder',
             ];
             foreach ($saved as $scenario => $test_name) {
                 $put = $this->scenario_message($brw, $page, $scenario);
@@ -2312,6 +2327,10 @@ class use_case_ui_tests
             $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_SENSITIVITY_ADD_LEVEL_WITHOUT_PHRASE), '');
             $test_name = '... nor for a new preset with a button text but without a scenario';
             $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_ADD_PRESET_WITHOUT_PHRASE), '');
+            $test_name = '... nor for the loaded text of a note typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_NOTE_TEXT_UNCHANGED), '');
+            $test_name = '... nor for the loaded link of a source typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_SOURCE_URL_UNCHANGED), '');
             $this->assert_preview_parts($t, $brw, $page);
             unlink($page);
         }
@@ -2321,8 +2340,9 @@ class use_case_ui_tests
     /**
      * a click on a part of the page preview selects where it is changed: an argument, the verdict, a field, a preset
      * button, a row group, a result row, a result column and a row of the sensitivity table their item, the hideable
-     * lead text the page settings without closing it again, a note of a formula the formula, and a part without an
-     * item e.g. a source keeps the selection
+     * lead text the page settings without closing it again, a source the source, a note of the notes
+     * list the note, a note of a formula the formula, and a part without an item e.g. the heading of the sources keeps
+     * the selection
      *
      * @param test_cleanup $t the test environment with the test users
      * @param headless_browser $brw the started headless browser
@@ -2337,10 +2357,13 @@ class use_case_ui_tests
         $test_name = '... on the verdict the state that it shows';
         $verdict = $clicks[self::CLICK_VERDICT] ?? '';
         $t->assert($test_name, $verdict, self::SHOWN_VERDICT);
-        // negative: a source is no part, so the click keeps what is selected
-        $test_name = '... but a click on a source keeps the selection';
+        // negative: the heading of the sources is no part, so the click keeps what is selected
+        $test_name = '... but a click on the heading of the sources keeps the selection';
+        $heading = $clicks[self::CLICK_HEADING] ?? '';
+        $t->assert($test_name, $heading, self::SHOWN_VERDICT);
+        $test_name = 'a click on a source selects the source';
         $source = $clicks[self::CLICK_SOURCE] ?? '';
-        $t->assert($test_name, $source, self::SHOWN_VERDICT);
+        $t->assert($test_name, $source, self::SHOWN_SOURCE_NPP);
         $test_name = 'a click on a field selects the input field';
         $field = $clicks[self::CLICK_FIELD] ?? '';
         $t->assert($test_name, $field, self::SHOWN_FIELD);
@@ -2365,6 +2388,9 @@ class use_case_ui_tests
         $test_name = '... and opens the text, because the preview is not drawn again';
         $more_open = $clicks[self::CLICK_MORE_OPEN] ?? false;
         $t->assert_true($test_name, $more_open);
+        $test_name = 'a click on a note of the notes list selects the note';
+        $note = $clicks[self::CLICK_NOTE] ?? '';
+        $t->assert($test_name, $note, self::SHOWN_NOTE);
         $test_name = 'a click on a note of a formula selects the formula';
         $formula = $clicks[self::CLICK_FORMULA] ?? '';
         $t->assert($test_name, $formula, self::SHOWN_FORMULA);

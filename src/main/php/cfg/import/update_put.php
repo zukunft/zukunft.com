@@ -18,6 +18,7 @@
       by their name only if they have no id yet, e.g. a word that the same message adds
     - formulas: the formulas that are changed, each with its id and the expression in the user
       format e.g. the formula of a calculator row that the user has changed in the editor
+    - sources: the sources that are changed, each with its id and the changed fields e.g. the url
     - delete: the class and id of the words, triples and values that the user removes; the del()
       of the object decides if the object is deleted or only excluded for the user
     a message whose header names another user than the requesting one is refused; the sections
@@ -63,6 +64,7 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -79,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -94,11 +97,12 @@ class update_put
 
     // the class of the objects of each body section in the order of the save,
     // so that e.g. a triple can use a word that is added by the same message
-    // and a formula a phrase that is added by the same message
+    // and a formula a phrase that is added by the same message; a source is only changed, like a formula
     const array SECTION_CLASSES = [
         json_fields::WORDS => word::class,
         json_fields::TRIPLES => triple::class,
         json_fields::FORMULAS => formula::class,
+        json_fields::SOURCES => source::class,
         json_fields::VALUES => value::class,
     ];
 
@@ -261,16 +265,16 @@ class update_put
      * confirms only what is in the database and a change that has not been written is reported
      *
      * @param array $obj_json the object of the message
-     * @param word|triple|formula|value $dbo the saved object
-     * @param word|triple|formula|value|null $db_obj the database row before the save or null for an added object
+     * @param word|triple|formula|source|value $dbo the saved object
+     * @param word|triple|formula|source|value|null $db_obj the database row before the save or null for an added object
      * @param user_message $msg with the requesting user, to warn about an object that the save has not changed
      * @return array the object of the message with the action, the changed fields and if the user has an own version after the save
      */
     private function confirmed(
-        array                  $obj_json,
-        word|triple|formula|value      $dbo,
-        word|triple|formula|value|null $db_obj,
-        user_message           $msg
+        array                                 $obj_json,
+        word|triple|formula|source|value      $dbo,
+        word|triple|formula|source|value|null $db_obj,
+        user_message                          $msg
     ): array
     {
         $lib = new library();
@@ -318,11 +322,11 @@ class update_put
      * the row that the save of an object without id in the message changes, because the save finds
      * an existing row by the name or the linked phrases (get_similar) or a value by its phrase group
      *
-     * @param word|triple|formula|value $dbo the object of the message without database id
+     * @param word|triple|formula|source|value $dbo the object of the message without database id
      * @param user_message $msg with the requesting user, to report a problem of the database read
-     * @return word|triple|formula|value|null the existing row or null if the save adds the object
+     * @return word|triple|formula|source|value|null the existing row or null if the save adds the object
      */
-    private function existing(word|triple|formula|value $dbo, user_message $msg): word|triple|formula|value|null
+    private function existing(word|triple|formula|source|value $dbo, user_message $msg): word|triple|formula|source|value|null
     {
         $result = null;
         if ($dbo instanceof value) {
@@ -346,11 +350,11 @@ class update_put
      * take over the fields that the message does not name from the database row of the object,
      * so that e.g. the type of a triple stays if the message changes only its description
      *
-     * @param word|triple|formula|value $dbo the object of the message with its database id
+     * @param word|triple|formula|source|value $dbo the object of the message with its database id
      * @param user_message $msg with the requesting user, to report an id that does not exist
-     * @return word|triple|formula|value|null the database row before the save or null if the id does not exist
+     * @return word|triple|formula|source|value|null the database row before the save or null if the id does not exist
      */
-    private function fill_from_db(word|triple|formula|value $dbo, user_message $msg): word|triple|formula|value|null
+    private function fill_from_db(word|triple|formula|source|value $dbo, user_message $msg): word|triple|formula|source|value|null
     {
         $result = null;
         $lib = new library();

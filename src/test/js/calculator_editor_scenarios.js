@@ -100,6 +100,22 @@ const PRESET_ACADEMIES_ITEM = "new NPP preset Academies";
 /* the detail table of the PV lifetime balance and one of its columns, which a click in the preview selects */
 const DETAIL_TABLE = "PV installation detail monthly balance";
 const DETAIL_COLUMN = "PV installation detail column direct use";
+/* a source of the PV lifetime balance and of the Swiss NPP vote, which a click in the preview selects, the NPP source
+   with a changed description, and a source that the texts of the NPP vote name by {source:…} with a new name */
+const SOURCE_PV = "Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)";
+const SOURCE_NPP = "Fraunhofer ISE LCOE 2024 via Faktenfackel";
+const FIELD_SOURCE_NAME = "Name";
+const FIELD_SOURCE_DESCRIPTION = "Description";
+const FIELD_SOURCE_URL = "Link";
+const SOURCE_DESCRIPTION = "Fraunhofer ISE (2024): levelised cost of electricity of renewable energy technologies";
+const SOURCE_RENAMED = "BAK economiesuisse study 2026";
+const SOURCE_NEW_NAME = "BAK economiesuisse balance study 2026";
+/* a note of the notes list of the Swiss NPP vote by its phrase and its triple, and its changed text */
+const KIND_NOTE = "note";
+const NOTE_MODEL_LIMITS = "model limits";
+const NOTE_MODEL_LIMITS_ITEM = "new NPP note model limits";
+const FIELD_NOTE_TEXT = "Text on the page";
+const NOTE_TEXT = "annual balance in prices of 2024, no hourly dispatch";
 /* the parts of the page preview that a click selects: an argument, the hideable lead text and a result row without a part */
 const SUPPLY_GAP_ARGUMENT = "new NPP argument supply gap";
 
@@ -128,6 +144,19 @@ function itemOf(phrase, kind) {
         return n.querySelector(".ph").textContent === phrase;
     });
     return result;
+}
+
+/* the row of a source in the list of the sources of the page structure */
+function sourceOf(name) {
+    const result = Array.from(document.querySelectorAll("#tree .node.source")).find(function (n) {
+        return n.querySelector(".lbl").textContent === name;
+    });
+    return result;
+}
+
+/* the link of a source in the list of the sources of the page preview */
+function sourceLink(name) {
+    return document.getElementById("pane").querySelector(".src li[" + PART_ATTR + '="' + name + '"] a');
 }
 
 /* move the item of the page structure one place up or down with its arrow button */
@@ -438,8 +467,9 @@ const SCENARIOS = {
         pressSave();
     },
     /* the user clicks a column heading and a month row of the detail table in the page preview, which selects the
-       column and the table, because a row of the table phrase has no triple of its own, and then a source, which has
-       no part and keeps the selection */
+       column and the table, because a row of the table phrase has no triple of its own, then the heading of the
+       sources, which has no part and keeps the selection, and the link of a source, which selects the source and
+       stays in the editor */
     preview_detail_parts: function () {
         const pane = document.getElementById("pane");
         const clicks = {};
@@ -447,8 +477,12 @@ const SCENARIOS = {
         clicks.column = selectedTitle();
         pane.querySelector("tr[" + PART_ATTR + '="' + DETAIL_TABLE + '"] td').click();
         clicks.row = selectedTitle();
-        pane.querySelector(".src li").click();
+        pane.querySelector(".src h2").click();
+        clicks.heading = selectedTitle();
+        const href = location.href;
+        sourceLink(SOURCE_PV).click();
         clicks.source = selectedTitle();
+        clicks.stays = location.href === href;
         messageElement.textContent = JSON.stringify(clicks);
     },
     /* the user changes the text of a preset button, which is the label of the preset */
@@ -489,14 +523,51 @@ const SCENARIOS = {
         typeField(FIELD_LABEL, PRESET_LABEL);
         pressSave();
     },
+    /* the user changes the text of a note, which is the description of the triple of the note */
+    note_text: function () {
+        itemOf(NOTE_MODEL_LIMITS, KIND_NOTE).click();
+        typeField(FIELD_NOTE_TEXT, NOTE_TEXT);
+        pressSave();
+    },
+    /* the user types the loaded text of a note again, so there is nothing to save */
+    note_text_unchanged: function () {
+        itemOf(NOTE_MODEL_LIMITS, KIND_NOTE).click();
+        const note = DOC.triples.find(function (t) {
+            return t.name === NOTE_MODEL_LIMITS_ITEM;
+        });
+        typeField(FIELD_NOTE_TEXT, note.description);
+        pressSave();
+    },
+    /* the user changes the description of a source, which is sent as the changed field of the source */
+    source_description: function () {
+        sourceOf(SOURCE_NPP).click();
+        typeField(FIELD_SOURCE_DESCRIPTION, SOURCE_DESCRIPTION);
+        pressSave();
+    },
+    /* the user renames a source, which also changes the texts that name it by {source:…} */
+    source_rename: function () {
+        sourceOf(SOURCE_RENAMED).click();
+        typeField(FIELD_SOURCE_NAME, SOURCE_NEW_NAME);
+        pressSave();
+    },
+    /* the user types the loaded link of a source again, so there is nothing to save */
+    source_url_unchanged: function () {
+        sourceOf(SOURCE_NPP).click();
+        const source = DOC.sources.find(function (s) {
+            return s.name === SOURCE_NPP;
+        });
+        typeField(FIELD_SOURCE_URL, source.url || "");
+        pressSave();
+    },
     /* the user removes a preset from the page, which keeps the numbers of its scenario */
     remove_preset: function () {
         itemOf(PRESET_ETH_LOW, KIND_PRESET).querySelector('[data-act="remove"]').click();
         pressSave();
     },
     /* the user clicks an argument, the verdict, a field, a preset button, a row group, a result row, a result column,
-       a row of the sensitivity table, the hideable lead text and a note of a formula in the page preview, which
-       selects where each is changed, and a source, which has no part and keeps the selection */
+       a row of the sensitivity table, the hideable lead text, a source, a note of the notes list and a note of a
+       formula in the page preview, which selects where each is changed, and the heading of the sources, which has no
+       part and keeps the selection */
     preview_parts: function () {
         const pane = document.getElementById("pane");
         const clicks = {};
@@ -505,7 +576,9 @@ const SCENARIOS = {
         clicks.argument = selectedTitle();
         pane.querySelector(".verdict .headline").click();
         clicks.verdict = selectedTitle();
-        pane.querySelector(".src li").click();
+        pane.querySelector(".src h2").click();
+        clicks.heading = selectedTitle();
+        sourceLink(SOURCE_NPP).click();
         clicks.source = selectedTitle();
         pane.querySelector(".field label").click();
         clicks.field = selectedTitle();
@@ -523,6 +596,8 @@ const SCENARIOS = {
         more.querySelector("summary").click();
         clicks.more = selectedTitle();
         clicks.moreOpen = pane.contains(more) && more.open;
+        pane.querySelector(".notes p[" + PART_ATTR + '="' + NOTE_MODEL_LIMITS_ITEM + '"]').click();
+        clicks.note = selectedTitle();
         // the last click, because the selected formula shows the formula compare instead of the preview
         pane.querySelector(".notes p[" + PART_ATTR + "]").click();
         const formula = findFormula(selected);

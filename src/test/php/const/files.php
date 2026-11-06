@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -202,6 +202,13 @@ class files
     CONST string SCENARIO_ADD_PRESET = 'add_preset';
     CONST string SCENARIO_ADD_PRESET_WITHOUT_PHRASE = 'add_preset_without_phrase';
     CONST string SCENARIO_REMOVE_PRESET = 'remove_preset';
+    // ... of the notes
+    CONST string SCENARIO_NOTE_TEXT = 'note_text';
+    CONST string SCENARIO_NOTE_TEXT_UNCHANGED = 'note_text_unchanged';
+    // ... of the sources
+    CONST string SCENARIO_SOURCE_DESCRIPTION = 'source_description';
+    CONST string SCENARIO_SOURCE_RENAME = 'source_rename';
+    CONST string SCENARIO_SOURCE_URL_UNCHANGED = 'source_url_unchanged';
     CONST string SCENARIO_PREVIEW_PARTS = 'preview_parts';
     // the scenarios that end with the json of the Definition tab as their message
     CONST string SCENARIO_JSON_TAB_LABEL = 'json_tab_label';
@@ -213,6 +220,7 @@ class files
     CONST string SCENARIO_PREVIEW_DETAIL_PARTS = 'preview_detail_parts';
     // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_SOURCE_DESCRIPTION = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_DESCRIPTION . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;

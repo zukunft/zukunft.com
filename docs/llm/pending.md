@@ -1,5 +1,26 @@
 # pending - list of planned llm prompts with prio 1
 
+## write tests of the calculator editor messages
+
+add to `update_put_write_tests` a write test with an undo for the `note_text` and the `source_rename` message of
+`src/test/resources/web/calculator_editor/`, in the style of `run_description_change` and `run_source`: load the
+objects by name for the normal test user, set their database ids in the message, put it, check the changed
+description or name for this user and the unchanged one for another user, put the undo with the loaded texts and
+check that no own version is left. The NPP use case is part of the db setup (`cfg/const/files.php`), so its objects
+exist in the write test db. The renamed source changes 22 triple descriptions, so the undo sends them back too.
+
+these messages are only compared in the browser test (`use_case_ui_tests`) and have no write test yet:
+- the arguments of the Swiss NPP vote: `argument_text`, `argument_side`, `add_argument`, `remove_argument`
+- the hideable lead text: `more_text`
+- the verdict: `verdict_label`, `verdict_scale_note`, `verdict_result`, `verdict_scale_limits`
+- the sensitivity table: `sensitivity_number`, `sensitivity_add_level`, `sensitivity_cell_hint`
+- the presets: `preset_label`, `preset_value`, `preset_new_value`, `preset_value_cleared`, `add_preset`, `remove_preset`
+- the notes and sources: `note_text`, `source_rename`, and `source_description` with its own NPP source (`run_source`
+  only takes the header of the message and changes a source of the PV use case)
+- the PV lifetime balance: `pv_capacity_down` (moved input), `pv_capacity_minimum_cleared` (cleared limit),
+  `remove_input` and `pv_capacity_label_undo`; the first three delete rows of the use case, see the open points of
+  the calculator editor scenarios below
+
 ## language
 
 add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists

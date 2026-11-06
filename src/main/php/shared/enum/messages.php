@@ -1951,6 +1951,7 @@ enum messages: string
     case CALC_EDITOR_LIST_VERDICT = 'calc_editor_list_verdict';
     case CALC_EDITOR_LIST_SENSITIVITY = 'calc_editor_list_sensitivity';
     case CALC_EDITOR_LIST_PRESETS = 'calc_editor_list_presets';
+    case CALC_EDITOR_LIST_NOTES = 'calc_editor_list_notes';
     case CALC_EDITOR_KIND_PAGE = 'calc_editor_kind_page';
     case CALC_EDITOR_KIND_INPUT = 'calc_editor_kind_input';
     case CALC_EDITOR_KIND_ASSUMPTION = 'calc_editor_kind_assumption';
@@ -1968,6 +1969,7 @@ enum messages: string
     case CALC_EDITOR_KIND_SAXIS = 'calc_editor_kind_saxis';
     case CALC_EDITOR_KIND_SLEVEL = 'calc_editor_kind_slevel';
     case CALC_EDITOR_KIND_PRESET = 'calc_editor_kind_preset';
+    case CALC_EDITOR_KIND_NOTE = 'calc_editor_kind_note';
     case CALC_EDITOR_ADD_INPUT = 'calc_editor_add_input';
     case CALC_EDITOR_ADD_ASSUMPTION = 'calc_editor_add_assumption';
     case CALC_EDITOR_ADD_COLUMN = 'calc_editor_add_column';
@@ -2016,6 +2018,17 @@ enum messages: string
     case CALC_EDITOR_ADD_PRESET = 'calc_editor_add_preset';
     case CALC_EDITOR_PRESET_VALUES = 'calc_editor_preset_values';
     case CALC_EDITOR_PRESET_VALUES_NOTE = 'calc_editor_preset_values_note';
+    case CALC_EDITOR_ADD_NOTE = 'calc_editor_add_note';
+    case CALC_EDITOR_NOTE_TEXT = 'calc_editor_note_text';
+    case CALC_EDITOR_NOTE_TEXT_NOTE = 'calc_editor_note_text_note';
+    case CALC_EDITOR_LIST_SOURCES = 'calc_editor_list_sources';
+    case CALC_EDITOR_KIND_SOURCE = 'calc_editor_kind_source';
+    case CALC_EDITOR_SOURCE_NAME = 'calc_editor_source_name';
+    case CALC_EDITOR_SOURCE_NAME_NOTE = 'calc_editor_source_name_note';
+    case CALC_EDITOR_SOURCE_DESCRIPTION = 'calc_editor_source_description';
+    case CALC_EDITOR_SOURCE_DESCRIPTION_NOTE = 'calc_editor_source_description_note';
+    case CALC_EDITOR_SOURCE_URL = 'calc_editor_source_url';
+    case CALC_EDITOR_SOURCE_DOI = 'calc_editor_source_doi';
     // where the shown label, hint or highlight of an item comes from e.g. "Empty: shows the phrase name."
     case CALC_EDITOR_FROM_ITEM = 'calc_editor_from_item';
     case CALC_EDITOR_FROM_NOTHING = 'calc_editor_from_nothing';
@@ -2146,6 +2159,7 @@ enum messages: string
     case CALC_EDITOR_VALUES = 'calc_editor_values';
     case CALC_EDITOR_NEW_WORDS = 'calc_editor_new_words';
     case CALC_EDITOR_CHANGED_FORMULAS = 'calc_editor_changed_formulas';
+    case CALC_EDITOR_CHANGED_SOURCES = 'calc_editor_changed_sources';
     // the notices and toasts of the load, the save, the undo and the draft
     case CALC_EDITOR_REMOVED = 'calc_editor_removed';
     case CALC_EDITOR_DISCARDED = 'calc_editor_discarded';

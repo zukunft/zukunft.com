@@ -260,9 +260,15 @@ A click on a part of the preview selects where it is changed: `calculator_json.j
 a field, a preset button, the verdict, the sensitivity table with its row and column headings, the rows, row groups
 and column headings of the result table, the detail tables with their columns and extra rows (a row of the table
 phrase names its table, which defines the rows), the header and the hideable lead text with the name of the triple
-that defines them, and a note of a formula with the name of the formula. The editor selects the item of that name
-without drawing the preview again, so that a collapsed part still opens; a formula like the page structure does, with
-its formula editor and compare instead of the preview; and any other name the page settings.
+that defines them, a note of the notes list (`calculator note`, the last list of the page structure, where the text
+of a note is the description of its triple) with the name of its triple, a note of a formula with the name of the
+formula, and a source with its name. The sources of the loaded data are the list "Sources" below the lists of the
+page structure, without add or remove, because a source belongs to every page that shows one of its values: its
+name, description, link and doi are saved in the `sources` section of the `updatePut` message, and a new name also
+changes every text of the editor that names the source by `{source:…}`. The editor selects the item of that name without drawing the preview
+again, so that a collapsed part still opens; a formula like the page structure does, with its formula editor and
+compare instead of the preview; and any other name the page settings. A link in a part, e.g. of a source, selects
+too instead of leaving the editor with its unsaved changes.
 
 The page preview of the editor is the calculator page itself: the editor page also embeds the settings of the
 calculator page without the save (`system_page::calculator_editor`, a save of the preview would store a case) and

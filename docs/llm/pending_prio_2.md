@@ -2429,6 +2429,6 @@ and styles of the old preview are no longer used: the `TXT` entries `legendClick
 rules `.legend`, `.use-case .legend`, `.use-case .derived`, `.use-case .miss`, `.use-case .is-sel` and
 `.use-case .empty-list` of `calculator_editor.css`; decide if the message ids are retired. A click in the preview
 selects only the parts that `calculator_json.js` marks with `data-part` (header, hideable lead text, arguments,
-verdict, sensitivity table, result table, fields, preset buttons, detail tables, formula notes); the sources and the
-notes of the `calculator note` list are not marked, because the editor does not change them yet, so a click on them
-keeps the selection.
+verdict, sensitivity table, result table, fields, preset buttons, detail tables, formula notes, sources, notes). A
+renamed source changes only the `{source:…}` texts that the editor manages; a text of another triple that names the
+source keeps the old name.

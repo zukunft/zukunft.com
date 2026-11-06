@@ -2301,7 +2301,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     function notesHtml() {
         return items(KW.note).map(function (note) {
-            return block('p', block('b', esc(label(note))) + ' ' + esc(note.description));
+            return block('p', block('b', esc(label(note))) + ' ' + esc(note.description), '', note.name);
         }).join('');
     }
 
@@ -2381,7 +2381,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         const html = pageSources.map(function (name) {
             const src = sources.get(name);
             const text = src.url ? '<a href="' + esc(src.url) + '">' + esc(name) + '</a>' : esc(name);
-            return block('li', text);
+            return block('li', text, '', name);
         }).join('');
         const result = html === '' ? '' : block('div', block('h2', esc(TEXTS[TXT.sources])) + block('ol', html), STYLE.sources);
         return result;

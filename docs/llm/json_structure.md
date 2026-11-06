@@ -1748,13 +1748,16 @@ differs from an import file in three ways:
 
 The body holds only the changed objects, each with the fields that the client
 manages; a field that the message does not name keeps its database value.
-`words`, `triples`, `formulas` and `values` are added or changed in this order,
+`words`, `triples`, `formulas`, `sources` and `values` are added or changed in this order,
 then each entry of `delete` (`class` and `id`) is removed by the `del()` of the
 object, which decides if it is deleted or only excluded for the user. A formula
 is named by its `id` and changed by its expression in the user format
 (`user_text`, the same text as the `expression` of an import file); it is never
 deleted by a message, so a `delete` entry of a formula is refused
-(`OBJECT_NOT_FOUND`), like the one of any other class except word, triple and value. The session
+(`OBJECT_NOT_FOUND`), like the one of any other class except word, triple and value. A source is
+named by its `id` and changed by its `name`, `description`, `url` or `doi`; the calculator editor
+sends the `sources` section only if a source has changed, and an empty description is not saved,
+so a description can be changed but not cleared. The session
 decides who saves: a message whose header `user_id` names another user is
 refused (`UPDATE_PUT_OTHER_USER`), and a message without `user_id` is saved for
 the requesting user. The save stops at the first problem and reports the number
