@@ -21,14 +21,6 @@ these messages are only compared in the browser test (`use_case_ui_tests`) and h
   `remove_input` and `pv_capacity_label_undo`; the first three delete rows of the use case, see the open points of
   the calculator editor scenarios below
 
-## language
-
-add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
-
-creat a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
-the src/main/resources/translations/de.yaml file exists and is complete
-and that the docs linked from about have a translation file and at least the number of ## header marks match
-
 ## wikipedia link
 
 if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
