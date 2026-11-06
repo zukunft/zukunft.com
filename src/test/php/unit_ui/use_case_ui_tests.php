@@ -111,6 +111,36 @@ class use_case_ui_tests
     const string PDF_POST_TOKEN_SENT = 'token_sent';
     const string PDF_POST_BODY = 'body';
     const string PDF_BUTTON_DISABLED = 'disabled';
+    // the fields of a section of the page structure in the message of the arguments_collapsed scenario and the key of the arguments
+    const string TREE_LIST = 'list';
+    const string TREE_LIST_OPEN = 'open';
+    const string TREE_LIST_ARGUMENT = 'argument';
+    // the clicks of the preview_parts scenario and the settings that each click shows by their kind and label
+    const string CLICK_ARGUMENT = 'argument';
+    const string CLICK_VERDICT = 'verdict';
+    const string CLICK_FORMULA = 'formula';
+    const string CLICK_COMPARE = 'compare';
+    const string SHOWN_FORMULA = 'alternative cost formula';
+    const string CLICK_FIELD = 'field';
+    const string CLICK_PRESET = 'preset';
+    const string SHOWN_FIELD = 'Input field: Construction cost (overnight)';
+    const string SHOWN_PRESET = 'Preset: Academies pessimistic';
+    const string CLICK_ROW_GROUP = 'rowGroup';
+    const string CLICK_ROW = 'row';
+    const string CLICK_COLUMN = 'column';
+    const string CLICK_LEVEL = 'level';
+    const string CLICK_SOURCE = 'source';
+    const string SHOWN_DETAIL_COLUMN = 'Detail column: Direct';
+    const string SHOWN_DETAIL_TABLE = 'Detail table: Monthly energy balance, average year';
+    const string SHOWN_ROW_GROUP = 'Row group: New nuclear plant';
+    const string SHOWN_ROW = 'Result row: Annual production';
+    const string SHOWN_COLUMN = 'Result column: with new plant';
+    const string SHOWN_LEVEL = "Axis value: 5'000 CHF/kW";
+    const string CLICK_MORE = 'more';
+    const string CLICK_MORE_OPEN = 'moreOpen';
+    const string SHOWN_ARGUMENT = 'Argument: Winter supply gap';
+    const string SHOWN_VERDICT = 'Verdict state: Undecided on cost - decide on the other arguments';
+    const string SHOWN_PAGE = 'Page: New nuclear power plants in Switzerland: the vote of 28 February 2027';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -673,6 +703,15 @@ class use_case_ui_tests
         $test_name = '... with the formula editor script before the calculator editor script, which starts it';
         $t->assert_text_contains($test_name, $editor_html,
             $html->script_src(files::FORMULA_EDITOR_SCRIPT) . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT));
+        // the page preview is the calculator page itself, which the script of the page builds from the edited data
+        $test_name = '... with the script of the calculator page before them, which builds the page preview';
+        $t->assert_text_contains($test_name, $editor_html,
+            $html->script_src(files::CALCULATOR_JSON_SCRIPT) . $html->script_src(files::FORMULA_EDITOR_SCRIPT));
+        $test_name = '... and the settings of the calculator page';
+        $t->assert_text_contains($test_name, $editor_html, 'id="' . system_page::CALC_PAGE_SETTINGS_ID . '"');
+        // negative: a save of the preview would store its inputs as a case of the page
+        $test_name = '... but without the save of the calculator page';
+        $t->assert_text_contains($test_name, $editor_html, '"' . system_page::CALC_PAGE_SAVE . '":""');
         $test_name = '... and the style of the formula editor';
         $t->assert_text_contains($test_name, $editor_html, $html->link_style(files::FORMULA_EDITOR_STYLE));
         // negative: the host of the formula editor view would start the editor a second time without the calculator editor
@@ -1259,6 +1298,7 @@ class use_case_ui_tests
         $this->table_editor_tests($t, $ts);
         $this->calculator_save_tests($t, $ts);
         $this->calculator_editor_scenario_tests($t, $ts);
+        $this->calculator_editor_argument_tests($t, $ts);
         $this->table_editor_scenario_tests($t, $ts);
 
         $t->subheader($ts . 'calculation result');
@@ -1906,6 +1946,17 @@ class use_case_ui_tests
         $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . ':1}', $zh_city, $dto, $dto->val_lst, [], $msg), '50.0');
         $test_name = '... and no decimals if it names none';
         $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $dto->val_lst, [], $msg), '50');
+        // a result placeholder names a number of the page, which a study value of the same phrase must not hide
+        $test_name = 'a result placeholder shows the number of the page before the value of a study';
+        $page_lst = $dto->val_lst;
+        $dto->val_lst = $t_val->value_list_calculator_study_ui();
+        $result_text = $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $page_lst, [], $msg);
+        $t->assert($test_name, $result_text, '50');
+        // negative: without a number of the page the placeholder shows what a field of the phrase would show
+        $test_name = '... but the value of the study without a number of the page';
+        $no_page_lst = $t_val->value_list_calculator_option_ui();
+        $study_text = $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $no_page_lst, [], $msg);
+        $t->assert($test_name, $study_text, '70');
         $dto->val_lst = $t_val->value_list_calculator_verdict_ui(5);
         $test_name = 'a number within the threshold selects the third state';
         $vd_open_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
@@ -2175,9 +2226,151 @@ class use_case_ui_tests
             $test_name = '... but a page that is not on a pod offers no pdf';
             $offline = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_OFFLINE), true) ?? [];
             $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
+            // a click on a detail table in the preview selects its column, and a row its table, which defines the rows
+            $clicks = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PREVIEW_DETAIL_PARTS), true) ?? [];
+            $test_name = 'a click on a column heading of a detail table in the preview selects the detail column';
+            $detail_column = $clicks[self::CLICK_COLUMN] ?? '';
+            $t->assert($test_name, $detail_column, self::SHOWN_DETAIL_COLUMN);
+            $test_name = '... and on a row of the table phrase the table';
+            $detail_row = $clicks[self::CLICK_ROW] ?? '';
+            $t->assert($test_name, $detail_row, self::SHOWN_DETAIL_TABLE);
+            // negative: a source has no part, so the click keeps what is selected
+            $test_name = '... but a click on a source keeps the selection';
+            $source = $clicks[self::CLICK_SOURCE] ?? '';
+            $t->assert($test_name, $source, self::SHOWN_DETAIL_TABLE);
             unlink($page);
         }
         $brw->stop();
+    }
+
+    /**
+     * the pro and contra arguments in the calculator editor of the Swiss NPP vote: the section starts collapsed above
+     * the inputs, and a changed, moved, added or removed argument is sent as the change of its claim triple, like the
+     * changed hideable lead text of the page as the change of its triple; the
+     * actions run in a headless browser, so without a browser the tests are skipped with a warning
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_editor_argument_tests(test_cleanup $t, string $ts): void
+    {
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        $t->subheader($ts . 'calculator editor arguments in ' . $browser_name);
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the calculator editor argument tests are skipped');
+        } else {
+            $page = $this->scenario_page($brw, test_files::NPP_CH_VOTE_EDITOR, test_files::CALCULATOR_EDITOR_SCENARIOS);
+            $lists = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_ARGUMENTS_COLLAPSED), true) ?? [];
+            $test_name = 'the arguments are the first section of the page structure';
+            $first_list = $lists[0][self::TREE_LIST] ?? '';
+            $t->assert($test_name, $first_list, self::TREE_LIST_ARGUMENT);
+            $test_name = '... and collapsed';
+            $first_open = $lists[0][self::TREE_LIST_OPEN] ?? true;
+            $t->assert_false($test_name, $first_open);
+            // negative: the inputs below stay open, so only the arguments are collapsed
+            $test_name = '... but the inputs below them are open';
+            $second_open = $lists[1][self::TREE_LIST_OPEN] ?? false;
+            $t->assert_true($test_name, $second_open);
+            $saved = [
+                test_files::SCENARIO_ARGUMENT_TEXT => 'the changed text of an argument is sent as the description of its claim',
+                test_files::SCENARIO_ARGUMENT_SIDE => 'an argument moved to the other side is sent with the verb and the name of its claim',
+                test_files::SCENARIO_ADD_ARGUMENT => 'a new argument with a new reason is sent as a new word and new triples',
+                test_files::SCENARIO_REMOVE_ARGUMENT => 'a removed argument is sent as its deleted triple and order triple, while its claim stays',
+                test_files::SCENARIO_MORE_TEXT => 'the changed hideable lead text is sent as the description of its triple',
+                test_files::SCENARIO_VERDICT_LABEL => 'the changed headline of a verdict state is sent as the label of the state',
+                test_files::SCENARIO_VERDICT_SCALE_NOTE => 'the changed scale and note of the verdict box are sent as the descriptions of their triples',
+                test_files::SCENARIO_VERDICT_RESULT => 'another result of the verdict is sent as the new phrase of its result triple',
+                test_files::SCENARIO_VERDICT_SCALE_LIMITS => 'the new ends of the meter are sent as the changed limit values of the scale',
+                test_files::SCENARIO_SENSITIVITY_NUMBER => 'the changed number of an axis value of the sensitivity table is sent as its value',
+                test_files::SCENARIO_SENSITIVITY_ADD_LEVEL => 'a new axis value is sent as a new word, its triples and a value with the unit of the axis',
+                test_files::SCENARIO_SENSITIVITY_CELL_HINT => 'another result in brackets and the hint of the table are sent as their triples',
+                test_files::SCENARIO_PRESET_LABEL => 'the changed text of a preset button is sent as the label of the preset',
+                test_files::SCENARIO_PRESET_VALUE => 'a changed number of a preset is sent as its value',
+                test_files::SCENARIO_PRESET_NEW_VALUE => 'a new number of a preset is sent as a new value with the unit of the field',
+                test_files::SCENARIO_PRESET_VALUE_CLEARED => 'a cleared number of a preset is sent as a deleted value',
+                test_files::SCENARIO_ADD_PRESET => 'a new preset is sent as a new word, its triples and its numbers',
+                test_files::SCENARIO_REMOVE_PRESET => 'a removed preset is sent as its deleted triples, while the numbers of its scenario stay',
+            ];
+            foreach ($saved as $scenario => $test_name) {
+                $put = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $put,
+                    test_paths::WEB_CALCULATOR_EDITOR_RES . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON,
+                    test_files::JSON);
+            }
+            // negative: an argument without a reason has no claim, so nothing is sent
+            $test_name = '... but nothing for a new argument without a reason';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_ADD_ARGUMENT_WITHOUT_REASON), '');
+            // negative: the loaded lead text typed again is no change
+            $test_name = '... nor for the loaded hideable lead text typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_MORE_TEXT_UNCHANGED), '');
+            $test_name = '... nor for the loaded result of the verdict typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_VERDICT_RESULT_UNCHANGED), '');
+            $test_name = '... nor for the loaded end of the meter typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_VERDICT_SCALE_LIMITS_UNCHANGED), '');
+            $test_name = '... nor for a new axis value with a number but without a phrase';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_SENSITIVITY_ADD_LEVEL_WITHOUT_PHRASE), '');
+            $test_name = '... nor for a new preset with a button text but without a scenario';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_ADD_PRESET_WITHOUT_PHRASE), '');
+            $this->assert_preview_parts($t, $brw, $page);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * a click on a part of the page preview selects where it is changed: an argument, the verdict, a field, a preset
+     * button, a row group, a result row, a result column and a row of the sensitivity table their item, the hideable
+     * lead text the page settings without closing it again, a note of a formula the formula, and a part without an
+     * item e.g. a source keeps the selection
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param headless_browser $brw the started headless browser
+     * @param string $page the path of the editor page with the scenarios
+     */
+    private function assert_preview_parts(test_cleanup $t, headless_browser $brw, string $page): void
+    {
+        $clicks = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PREVIEW_PARTS), true) ?? [];
+        $test_name = 'a click on an argument in the preview selects the argument';
+        $argument = $clicks[self::CLICK_ARGUMENT] ?? '';
+        $t->assert($test_name, $argument, self::SHOWN_ARGUMENT);
+        $test_name = '... on the verdict the state that it shows';
+        $verdict = $clicks[self::CLICK_VERDICT] ?? '';
+        $t->assert($test_name, $verdict, self::SHOWN_VERDICT);
+        // negative: a source is no part, so the click keeps what is selected
+        $test_name = '... but a click on a source keeps the selection';
+        $source = $clicks[self::CLICK_SOURCE] ?? '';
+        $t->assert($test_name, $source, self::SHOWN_VERDICT);
+        $test_name = 'a click on a field selects the input field';
+        $field = $clicks[self::CLICK_FIELD] ?? '';
+        $t->assert($test_name, $field, self::SHOWN_FIELD);
+        $test_name = '... on a preset button the preset';
+        $preset = $clicks[self::CLICK_PRESET] ?? '';
+        $t->assert($test_name, $preset, self::SHOWN_PRESET);
+        $test_name = 'a click on a row group of the result table selects the row group';
+        $row_group = $clicks[self::CLICK_ROW_GROUP] ?? '';
+        $t->assert($test_name, $row_group, self::SHOWN_ROW_GROUP);
+        $test_name = '... on a result row the row';
+        $row = $clicks[self::CLICK_ROW] ?? '';
+        $t->assert($test_name, $row, self::SHOWN_ROW);
+        $test_name = '... and on the heading of a column the result column';
+        $column = $clicks[self::CLICK_COLUMN] ?? '';
+        $t->assert($test_name, $column, self::SHOWN_COLUMN);
+        $test_name = 'a click on a row of the sensitivity table selects the value of its axis';
+        $level = $clicks[self::CLICK_LEVEL] ?? '';
+        $t->assert($test_name, $level, self::SHOWN_LEVEL);
+        $test_name = 'a click on the hideable lead text selects the page settings';
+        $more = $clicks[self::CLICK_MORE] ?? '';
+        $t->assert($test_name, $more, self::SHOWN_PAGE);
+        $test_name = '... and opens the text, because the preview is not drawn again';
+        $more_open = $clicks[self::CLICK_MORE_OPEN] ?? false;
+        $t->assert_true($test_name, $more_open);
+        $test_name = 'a click on a note of a formula selects the formula';
+        $formula = $clicks[self::CLICK_FORMULA] ?? '';
+        $t->assert($test_name, $formula, self::SHOWN_FORMULA);
+        $test_name = '... and shows its compare like a click on the formula in the page structure';
+        $compare = $clicks[self::CLICK_COMPARE] ?? false;
+        $t->assert_true($test_name, $compare);
     }
 
     /**

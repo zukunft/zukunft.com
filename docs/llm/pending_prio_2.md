@@ -2419,3 +2419,16 @@ a seed hits `pcre.backtrack_limit` (1,000,000) and returns null, so `library::fo
 which parts of a seed the page really needs, drop the rest and split the seed into smaller parts, e.g. one
 script element per phrase list, value list and formula list, so that a seed stays well below the limit, the
 page loads faster and a snapshot diff shows only the part that has changed.
+
+## calculator editor preview leftovers
+
+The page preview of the calculator editor is now built by `calculator_json.js` (docs/llm/frontend.md), so the texts
+and styles of the old preview are no longer used: the `TXT` entries `legendClick`, `legendNumbers`, `noInputs`,
+`noAssumptions`, `otherOperands`, `noRowGroups`, `noRows`, `rowsNote`, `formulasNote`, `noValue`, `noOptions`,
+`result`, `details`, `sources`, `measured` and `assumed` of `calculator_editor.js` with their message ids, and the
+rules `.legend`, `.use-case .legend`, `.use-case .derived`, `.use-case .miss`, `.use-case .is-sel` and
+`.use-case .empty-list` of `calculator_editor.css`; decide if the message ids are retired. A click in the preview
+selects only the parts that `calculator_json.js` marks with `data-part` (header, hideable lead text, arguments,
+verdict, sensitivity table, result table, fields, preset buttons, detail tables, formula notes); the sources and the
+notes of the `calculator note` list are not marked, because the editor does not change them yet, so a click on them
+keeps the selection.

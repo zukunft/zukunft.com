@@ -45,8 +45,8 @@ prompt together with the sections it names, which follow the block. Every prompt
 **Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
 gets the CO2-eq costs). One phase, four agents in parallel:
 - agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
-- agent npp: "Swiss NPP": the compare test of the editor preview with the calculator page, its `*_diff.md`, the
-  missing argument sections and the CO2-eq reduction costs in the NPP use case json
+- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
+  costs in the NPP use case json
 - agent share: the "Share assumptions and vote" button of the calculator page
 - agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
 
@@ -58,8 +58,9 @@ in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=1
 in 'Page preview' the same view should be shown as e.g. http://localhost/http/view.php?m=calculator&id=-3321
 For the 'new CH npp' case e.g. the 'Undecided on cost - decide on the other arguments' and the 
 'Arguments for lifting the ban (yes)' and 'Arguments for keeping the ban (no)' seems to be missing
-create a compare test that the inner part of the editor matches the page view and the differences
-are reported in a *_diff.md file based on the 'new CH npp' case
+done: the preview is built by `calculator_json.js` from the edited data (docs/llm/frontend.md) and compared by
+`system_views_read_tests::run_npp_ch_vote_editor`; the only difference left in
+`src/test/resources/web/html/use_cases/npp_ch_vote_editor_diff.md` should be the save, which the preview leaves out
 
 add costs of CO2-eq reduction to the npp
 

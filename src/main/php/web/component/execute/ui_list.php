@@ -2970,7 +2970,7 @@ class ui_list extends ui_base
                 $sep = strrpos($arg, ':');
                 $name = $sep === false ? $arg : substr($arg, 0, $sep);
                 $decimals = $sep === false ? 0 : (int)substr($arg, $sep + 1);
-                $val = $this->calculator_hint_value($name, $dbo, $dto, $lst, $msg);
+                $val = $this->calculator_text_value($name, $dbo, $dto, $lst, $msg);
                 $result = $val == null ? '' : $this->calculator_fixed_number((float)$val->number(), $decimals);
             }
             return $result;
@@ -4104,6 +4104,30 @@ class ui_list extends ui_base
             $result = $this->calculator_value($phr, $dbo, $dto, $msg);
             if ($result == null) {
                 $result = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the number of a result placeholder of a text: the result of the page first, because the placeholder names a
+     * number that the page calculates, which a value of a study with the same phrase must not hide (calculator_json.js textHtml)
+     *
+     * @param string $name the name of the phrase of the placeholder e.g. capital cost
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the number of the page with the phrase, else the value that a field of the phrase would show, else null
+     */
+    private function calculator_text_value(string $name, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        $phr = $dto->phr_lst->get_by_name($name, $msg);
+        if ($phr != null) {
+            $result = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            if ($result == null) {
+                $result = $this->calculator_value($phr, $dbo, $dto, $msg);
             }
         }
         return $result;

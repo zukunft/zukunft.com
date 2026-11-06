@@ -1862,6 +1862,19 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_list_ui a number of the inhabitants without the page phrase, like the value of a study that a field
+     *                       would show, e.g. the capital cost of the BAK base case next to the result of the NPP vote page
+     */
+    function value_list_calculator_study_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_inhabitant()->phrase()], 70));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the number of the option 2020 of the phrase selector canton (test_triples::calculator_zh_input)
      */
     function value_list_calculator_option_ui(): value_list_ui

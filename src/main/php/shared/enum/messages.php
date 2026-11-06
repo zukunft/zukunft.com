@@ -1947,6 +1947,10 @@ enum messages: string
     case CALC_EDITOR_LIST_COLUMNS = 'calc_editor_list_columns';
     case CALC_EDITOR_LIST_ROWGROUPS = 'calc_editor_list_rowgroups';
     case CALC_EDITOR_LIST_DETAILS = 'calc_editor_list_details';
+    case CALC_EDITOR_LIST_ARGUMENTS = 'calc_editor_list_arguments';
+    case CALC_EDITOR_LIST_VERDICT = 'calc_editor_list_verdict';
+    case CALC_EDITOR_LIST_SENSITIVITY = 'calc_editor_list_sensitivity';
+    case CALC_EDITOR_LIST_PRESETS = 'calc_editor_list_presets';
     case CALC_EDITOR_KIND_PAGE = 'calc_editor_kind_page';
     case CALC_EDITOR_KIND_INPUT = 'calc_editor_kind_input';
     case CALC_EDITOR_KIND_ASSUMPTION = 'calc_editor_kind_assumption';
@@ -1959,6 +1963,11 @@ enum messages: string
     case CALC_EDITOR_KIND_DEXTRA = 'calc_editor_kind_dextra';
     case CALC_EDITOR_KIND_DFILTER = 'calc_editor_kind_dfilter';
     case CALC_EDITOR_KIND_SUB = 'calc_editor_kind_sub';
+    case CALC_EDITOR_KIND_ARGUMENT = 'calc_editor_kind_argument';
+    case CALC_EDITOR_KIND_VERDICT = 'calc_editor_kind_verdict';
+    case CALC_EDITOR_KIND_SAXIS = 'calc_editor_kind_saxis';
+    case CALC_EDITOR_KIND_SLEVEL = 'calc_editor_kind_slevel';
+    case CALC_EDITOR_KIND_PRESET = 'calc_editor_kind_preset';
     case CALC_EDITOR_ADD_INPUT = 'calc_editor_add_input';
     case CALC_EDITOR_ADD_ASSUMPTION = 'calc_editor_add_assumption';
     case CALC_EDITOR_ADD_COLUMN = 'calc_editor_add_column';
@@ -1968,6 +1977,45 @@ enum messages: string
     case CALC_EDITOR_ADD_DETAIL = 'calc_editor_add_detail';
     case CALC_EDITOR_ADD_DCOL = 'calc_editor_add_dcol';
     case CALC_EDITOR_ADD_DEXTRA = 'calc_editor_add_dextra';
+    case CALC_EDITOR_ADD_ARGUMENT = 'calc_editor_add_argument';
+    // the fields of a pro or contra argument: the claim triple from the reason to the claim argued about
+    case CALC_EDITOR_ARGUMENT_REASON = 'calc_editor_argument_reason';
+    case CALC_EDITOR_ARGUMENT_SIDE = 'calc_editor_argument_side';
+    case CALC_EDITOR_ARGUMENT_PRO = 'calc_editor_argument_pro';
+    case CALC_EDITOR_ARGUMENT_CONTRA = 'calc_editor_argument_contra';
+    case CALC_EDITOR_ARGUMENT_TARGET = 'calc_editor_argument_target';
+    case CALC_EDITOR_ARGUMENT_TEXT = 'calc_editor_argument_text';
+    case CALC_EDITOR_ARGUMENT_TEXT_NOTE = 'calc_editor_argument_text_note';
+    // the states of the verdict and the texts of the verdict box below them
+    case CALC_EDITOR_ADD_VERDICT = 'calc_editor_add_verdict';
+    case CALC_EDITOR_VERDICT_BOX = 'calc_editor_verdict_box';
+    case CALC_EDITOR_VERDICT_BOX_NOTE = 'calc_editor_verdict_box_note';
+    case CALC_EDITOR_VERDICT_SCALE = 'calc_editor_verdict_scale';
+    case CALC_EDITOR_VERDICT_SCALE_NOTE = 'calc_editor_verdict_scale_note';
+    case CALC_EDITOR_VERDICT_NOTE = 'calc_editor_verdict_note';
+    case CALC_EDITOR_VERDICT_RESULT = 'calc_editor_verdict_result';
+    case CALC_EDITOR_VERDICT_RESULT_NOTE = 'calc_editor_verdict_result_note';
+    case CALC_EDITOR_VERDICT_THRESHOLD = 'calc_editor_verdict_threshold';
+    case CALC_EDITOR_VERDICT_THRESHOLD_NOTE = 'calc_editor_verdict_threshold_note';
+    case CALC_EDITOR_VERDICT_SCALE_MIN = 'calc_editor_verdict_scale_min';
+    case CALC_EDITOR_VERDICT_SCALE_MAX = 'calc_editor_verdict_scale_max';
+    case CALC_EDITOR_VERDICT_SCALE_LIMIT_NOTE = 'calc_editor_verdict_scale_limit_note';
+    // the axes, their values and the cells of the sensitivity table
+    case CALC_EDITOR_ADD_SAXIS = 'calc_editor_add_saxis';
+    case CALC_EDITOR_ADD_SLEVEL = 'calc_editor_add_slevel';
+    case CALC_EDITOR_SENSITIVITY_BOX = 'calc_editor_sensitivity_box';
+    case CALC_EDITOR_SENSITIVITY_BOX_NOTE = 'calc_editor_sensitivity_box_note';
+    case CALC_EDITOR_SENSITIVITY_HINT = 'calc_editor_sensitivity_hint';
+    case CALC_EDITOR_SENSITIVITY_CELL_MAIN = 'calc_editor_sensitivity_cell_main';
+    case CALC_EDITOR_SENSITIVITY_CELL_MAIN_NOTE = 'calc_editor_sensitivity_cell_main_note';
+    case CALC_EDITOR_SENSITIVITY_CELL_CHANGE = 'calc_editor_sensitivity_cell_change';
+    case CALC_EDITOR_SENSITIVITY_CELL_CHANGE_NOTE = 'calc_editor_sensitivity_cell_change_note';
+    case CALC_EDITOR_SENSITIVITY_NUMBER = 'calc_editor_sensitivity_number';
+    case CALC_EDITOR_SENSITIVITY_NUMBER_NOTE = 'calc_editor_sensitivity_number_note';
+    // the buttons that set several inputs at once and the numbers that each of them sets
+    case CALC_EDITOR_ADD_PRESET = 'calc_editor_add_preset';
+    case CALC_EDITOR_PRESET_VALUES = 'calc_editor_preset_values';
+    case CALC_EDITOR_PRESET_VALUES_NOTE = 'calc_editor_preset_values_note';
     // where the shown label, hint or highlight of an item comes from e.g. "Empty: shows the phrase name."
     case CALC_EDITOR_FROM_ITEM = 'calc_editor_from_item';
     case CALC_EDITOR_FROM_NOTHING = 'calc_editor_from_nothing';
@@ -2003,6 +2051,8 @@ enum messages: string
     case CALC_EDITOR_READ_FROM = 'calc_editor_read_from';
     case CALC_EDITOR_PAGE_TITLE = 'calc_editor_page_title';
     case CALC_EDITOR_LEAD_TEXT = 'calc_editor_lead_text';
+    case CALC_EDITOR_MORE_TEXT = 'calc_editor_more_text';
+    case CALC_EDITOR_MORE_TEXT_NOTE = 'calc_editor_more_text_note';
     case CALC_EDITOR_LIST_HEADINGS = 'calc_editor_list_headings';
     case CALC_EDITOR_NO_HEADING = 'calc_editor_no_heading';
     case CALC_EDITOR_LABEL_OF = 'calc_editor_label_of';
