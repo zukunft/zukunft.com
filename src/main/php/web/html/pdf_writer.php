@@ -40,10 +40,12 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'pdf_font.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 
 use Closure;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class pdf_writer
 {
@@ -113,25 +115,26 @@ class pdf_writer
 
 
     /**
+     * @param user_message $msg to tell the user that a font is unknown or cannot be used
      * @param bool $portrait true for A4 portrait pages e.g. for a document to read, else A4 landscape e.g. for wide tables;
      *                       a page break can change the format of the next pages
      * @param string $family the font family of the texts e.g. self::FAMILY_NOTO, DejaVu Sans if the family is unknown;
      *                       a char that the family does not have is shown in the fallback family
      */
-    function __construct(bool $portrait = false, string $family = self::FAMILY_DEJAVU)
+    function __construct(user_message $msg, bool $portrait = false, string $family = self::FAMILY_DEJAVU)
     {
         $this->set_format($portrait);
         if (!array_key_exists($family, self::FAMILIES)) {
-            log_warning('the pdf font family ' . $family . ' is unknown, so the pdf uses ' . self::FAMILY_DEJAVU);
+            log_warning_msg_ui('the pdf font family ' . $family . ' is unknown, so the pdf uses ' . self::FAMILY_DEJAVU, $msg);
             $family = self::FAMILY_DEJAVU;
         }
         [$normal, $bold] = self::FAMILIES[$family];
-        $this->add_font(self::FONT_NORMAL, $normal, false);
-        $this->add_font(self::FONT_BOLD, $bold, true);
+        $this->add_font(self::FONT_NORMAL, $normal, false, $msg);
+        $this->add_font(self::FONT_BOLD, $bold, true, $msg);
         if ($family != self::FAMILY_FALLBACK) {
             [$normal, $bold] = self::FAMILIES[self::FAMILY_FALLBACK];
-            $this->add_font(self::FONT_FALLBACK_NORMAL, $normal, false);
-            $this->add_font(self::FONT_FALLBACK_BOLD, $bold, true);
+            $this->add_font(self::FONT_FALLBACK_NORMAL, $normal, false, $msg);
+            $this->add_font(self::FONT_FALLBACK_BOLD, $bold, true, $msg);
         }
     }
 
@@ -139,10 +142,11 @@ class pdf_writer
      * @param string $font the name of the font on a page e.g. self::FONT_NORMAL
      * @param string $file the path of the font file
      * @param bool $bold true for a bold font, which is looked up for a bold text
+     * @param user_message $msg to tell the user that the font file cannot be used
      */
-    private function add_font(string $font, string $file, bool $bold): void
+    private function add_font(string $font, string $file, bool $bold, user_message $msg): void
     {
-        $this->fonts[$font] = new pdf_font($file);
+        $this->fonts[$font] = new pdf_font($file, $msg);
         $this->used[$font] = [];
         $this->lookup[(int)$bold][] = $font;
     }
@@ -264,8 +268,7 @@ class pdf_writer
     function fits_portrait(array $head, array $rows): bool
     {
         $widths = $this->column_widths($head, $rows);
-        $table_width = array_sum($widths) * self::TEXT_SIZE + count($widths) * self::CELL_PADDING;
-        return $table_width <= self::PAGE_SHORT - 2 * self::MARGIN;
+        return $this->table_size($widths, self::PAGE_SHORT) >= self::TEXT_SIZE;
     }
 
     /**
@@ -286,8 +289,7 @@ class pdf_writer
     function table(array $head, array $rows, array $right): void
     {
         $widths = $this->column_widths($head, $rows);
-        $padding = count($widths) * self::CELL_PADDING;
-        $size = min(self::TEXT_SIZE, ($this->width - 2 * self::MARGIN - $padding) / max(1, array_sum($widths)));
+        $size = $this->table_size($widths, $this->width);
         $height = $size * self::LINE_FACTOR;
         $this->keep_space(2 * $height);
         $this->table_row($head, $widths, $right, $size, true);
@@ -446,6 +448,17 @@ class pdf_writer
         }
         ksort($result);
         return $result;
+    }
+
+    /**
+     * @param array $widths per column the width of its widest text at font size 1
+     * @param int $page_width the width of the page in points, which differs for a portrait and a landscape page
+     * @return float the normal text size, or the smaller size with which the table fits the page
+     */
+    private function table_size(array $widths, int $page_width): float
+    {
+        $space = $page_width - 2 * self::MARGIN - count($widths) * self::CELL_PADDING;
+        return min(self::TEXT_SIZE, $space / max(1, array_sum($widths)));
     }
 
     /**

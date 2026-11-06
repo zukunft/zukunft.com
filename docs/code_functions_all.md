@@ -7841,7 +7841,9 @@
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
 \-- markdown
     \-- doc_path - section for function doc_path missing in /html/markdown.php
+    \-- is_doc_file - section for function is_doc_file is expected to be info in /html/markdown.php
     \-- doc_url - section for function doc_url missing in /html/markdown.php
+    \-- doc_translations - section for function doc_translations missing in /html/markdown.php
     \-- title - section for function title missing in /html/markdown.php
     \-- to_html - section for function to_html missing in /html/markdown.php
 \-- pdf_font
@@ -9707,8 +9709,7 @@
         \-- number_format - @param formula_list|null $frm_lst the formulas that convert the units; null for the preloade
                 d ones
         \-- pdf_font - @param string $file the path of the TrueType font file e.g. files::PDF_FONT_DEJAVU
-        \-- pdf_writer - @param bool $portrait true for A4 portrait pages e.g. for a document to read,
-                 else A4 landscape e.g. for wide tables;
+        \-- pdf_writer - @param user_message $msg to tell the user that a font is unknown or cannot be used
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
@@ -10174,8 +10175,12 @@
         \-- html_selector - @returns string the HTML code to end a selector field
     \-- doc_path
         \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- is_doc_file
+        \-- markdown - @param string $path the path of a file e.g. of a markdown document
     \-- doc_url
         \-- markdown - @param string $doc the name of the document without the extension e.g. "faq"
+    \-- doc_translations
+        \-- markdown - the translations of the documents of /docs/, which must have the same headings as the document
     \-- title
         \-- markdown - @param string $md the markdown text e.g. of a file of /docs/
     \-- to_html

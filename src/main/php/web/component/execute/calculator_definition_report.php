@@ -100,7 +100,7 @@ class calculator_definition_report
         $name = $this->page_name($doc);
         $time_txt = $time->format(calculator_report::TIME_FORMAT);
         $title = $this->txt(msg_id::CALCULATOR_DEFINITION_FOOTER, [msg_id::VAR_NAME => $name]);
-        $pdf = new pdf_writer(true);
+        $pdf = new pdf_writer($msg, true);
         $rpt = new calculator_report();
         $rpt->add_footer($pdf, $title, $time_txt);
         $rpt->add_logo($pdf);

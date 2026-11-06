@@ -14,27 +14,25 @@ that will not be changed any more and from this extract the description and the 
 
 ## language
 
-add italien to the navbar languages selection
-
-add a MAIN_LANGUAGES const that contains a list of language code_ids / wikipedia id for which all translation should exists
-
-create a script that checks that the translations for the MAIN_LANGUAGES are done e.g.
-the src/main/resources/translations/de.yaml file exists and is complete
-and that the docs linked from about have a translation file and at least the number of ## header marks match
-
 ### import sample
+
+allow in import json files everywhere where a name is used a translation section like this 
 
 `"words": [
     {
         "name": "problem",
-        "language-de": [
-            {
-                "name": "Problem",
-                "description": "Ein Problem ist ..."
-            }
+        "translations": [
+            "de": {
+                  {
+                    "name": "Problem",
+                    "description": "Ein Problem ist ..."
+                  }
+             }
         ]
     },
 `
+
+where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
 
 ## this document
 

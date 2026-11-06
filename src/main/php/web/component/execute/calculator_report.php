@@ -145,6 +145,8 @@ class calculator_report
     // and whose main parts with a wide table are on landscape pages
     private bool $main_on_new_page = false;
     private bool $wide_on_landscape = false;
+    // the parts of each table of the html that is added, by the path of the table within the html (see table_parts)
+    private array $tables = [];
     // the html wrapper to read a part of a page as utf-8
     const string DOM_PREFIX = '<?xml encoding="UTF-8"><div>';
     const string DOM_SUFFIX = '</div>';
@@ -165,7 +167,7 @@ class calculator_report
             $list = new ui_list();
             $step?->__invoke(msg_id::CALCULATOR_REPORT_STEP_NUMBERS);
             $lst = $list->calculator_numbers($dbo, $dto, $msg);
-            $pdf = new pdf_writer(true);
+            $pdf = new pdf_writer($msg, true);
             $this->add_footer($pdf, $calc->title(), $time->format(self::TIME_FORMAT));
             $this->add_logo($pdf);
             $pdf->title($calc->title());
@@ -212,7 +214,7 @@ class calculator_report
         global $mtr;
         $lib = new library();
         $pdf->set_footer(POD_NAME, $name . self::FOOTER_TIME_SEPARATOR . $time_txt,
-            fn(int $page, int $count): string => $lib->msg_var_text([[msg_id::CALCULATOR_REPORT_PAGE, [
+            fn(int $page, int $count): string => $lib->msg_var_text([[msg_id::CALCULATOR_DEFINITION_PAGE, [
                 msg_id::VAR_VALUE => (string)$page,
                 msg_id::VAR_VALUE_COUNT => (string)$count
             ]]], $mtr));
@@ -438,6 +440,7 @@ class calculator_report
         $this->add_node($pdf, $doc->documentElement);
         $this->main_on_new_page = false;
         $this->wide_on_landscape = false;
+        $this->tables = [];
     }
 
     /**
@@ -701,9 +704,23 @@ class calculator_report
 
     /**
      * @param DOMElement $table the html table of the page
-     * @return array the texts of the header cells, the texts of the cells per row and per column true if it is a number
+     * @return array the texts of the header cells, the texts of the cells per row and per column true if it is a number,
+     *               read once for the format of the pages of its part and for the table of the report
      */
     private function table_parts(DOMElement $table): array
+    {
+        $path = $table->getNodePath();
+        if (!array_key_exists($path, $this->tables)) {
+            $this->tables[$path] = $this->read_table($table);
+        }
+        return $this->tables[$path];
+    }
+
+    /**
+     * @param DOMElement $table the html table of the page
+     * @return array the texts of the header cells, the texts of the cells per row and per column true if it is a number
+     */
+    private function read_table(DOMElement $table): array
     {
         $head = [];
         $rows = [];

@@ -1,5 +1,7 @@
 # Concept
 
+[auf Deutsch](konzept_de.md)
+
 One idea is to have an "all-in-one" concept for calculation and decisions. 
 For calculation numbers are needed, but for humans numbers without words are a kind of useless, 
 so all numbers are linked with a list of words. Words may have more than one meaning and 

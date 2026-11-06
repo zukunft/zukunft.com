@@ -38,6 +38,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+
 class pdf_font
 {
 
@@ -132,8 +138,9 @@ class pdf_font
 
     /**
      * @param string $file the path of the TrueType font file e.g. files::PDF_FONT_DEJAVU
+     * @param user_message $msg to tell the user that the pdf shows no text in this font, because the file cannot be used
      */
-    function __construct(string $file)
+    function __construct(string $file, user_message $msg)
     {
         $this->name = pathinfo($file, PATHINFO_FILENAME);
         $data = false;
@@ -141,19 +148,19 @@ class pdf_font
             $data = file_get_contents($file);
         }
         if ($data === false) {
-            log_err('the pdf font ' . $file . ' cannot be read, so the pdf shows no text in this font');
+            log_err_msg_ui('the pdf font ' . $file . ' cannot be read, so the pdf shows no text in this font', $msg);
         } else {
             $this->data = $data;
             $this->read_tables();
             $missing = array_diff(self::REQUIRED_TABLES, array_keys($this->tables));
             if ($missing != []) {
-                log_err('the pdf font ' . $file . ' has no ' . implode(', ', $missing) . ' table, so the pdf shows no text in this font');
+                log_err_msg_ui('the pdf font ' . $file . ' has no ' . implode(', ', $missing) . ' table, so the pdf shows no text in this font', $msg);
                 $this->data = '';
                 $this->tables = [];
             } else {
                 $this->units_per_em = max(1, $this->u16('head', self::HEAD_UNITS_PER_EM));
                 $this->read_widths();
-                $this->read_glyphs();
+                $this->read_glyphs($msg);
             }
         }
     }
@@ -260,8 +267,10 @@ class pdf_font
 
     /**
      * read the glyph of each char from the full unicode map of the font or else from the map of the basic plane
+     *
+     * @param user_message $msg to tell the user that the pdf shows no text in this font, because it has no unicode map
      */
-    private function read_glyphs(): void
+    private function read_glyphs(user_message $msg): void
     {
         $basic = null;
         $full = null;
@@ -282,7 +291,7 @@ class pdf_font
         } elseif ($basic !== null) {
             $this->read_basic_map($basic);
         } else {
-            log_err('the pdf font ' . $this->name . ' has no unicode map, so the pdf shows no text in this font');
+            log_err_msg_ui('the pdf font ' . $this->name . ' has no unicode map, so the pdf shows no text in this font', $msg);
         }
     }
 

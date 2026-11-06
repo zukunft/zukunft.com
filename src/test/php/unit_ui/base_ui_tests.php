@@ -130,6 +130,19 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class base_ui_tests
 {
+    // the German translation of the document overview and a document without a translation, for the docs.csv tests
+    const string DOC_CONCEPT_DE = 'konzept_de';
+    const string DOC_WITHOUT_TRANSLATION = 'install';
+    const string LANGUAGE_DE = 'de';
+    // names of http/docs.php that must not read a file, because they would point outside the files of /docs/
+    const string DOC_ABSOLUTE = '/etc/passwd';
+    const string DOC_SUB_FOLDER = 'llm/coding';
+    const string DOC_BACKSLASH = '..\\README';
+    const string DOC_NULL_BYTE = "faq\0";
+    const string DOC_UPPER_CASE = 'FAQ';
+    // a file outside /docs/ that a path of /docs/ reaches by ".."
+    const string DOC_OUTSIDE = '..' . DIRECTORY_SEPARATOR . 'README.md';
+
     function run(test_cleanup $t): void
     {
         global $mtr;
@@ -713,6 +726,32 @@ class base_ui_tests
         $t->assert($test_name, $md->doc_path('../README'), '');
         $test_name = '... and no name with the extension or a trailing new line';
         $t->assert($test_name, $md->doc_path(markdown::DOC_FAQ . markdown::DOC_EXT) . $md->doc_path(markdown::DOC_FAQ . "\n"), '');
+        $test_name = '... and no absolute path';
+        $t->assert($test_name, $md->doc_path(self::DOC_ABSOLUTE), '');
+        $test_name = '... and no file of a sub folder';
+        $t->assert($test_name, $md->doc_path(self::DOC_SUB_FOLDER), '');
+        $test_name = '... and no path with a backslash';
+        $t->assert($test_name, $md->doc_path(self::DOC_BACKSLASH), '');
+        $test_name = '... and no name with a null byte';
+        $t->assert($test_name, $md->doc_path(self::DOC_NULL_BYTE), '');
+        $test_name = '... and no name in upper case';
+        $t->assert($test_name, $md->doc_path(self::DOC_UPPER_CASE), '');
+        // the resolved path decides, so that also a symlink in /docs/ cannot point to a file outside
+        $test_name = 'a file of /docs/ is a document file';
+        $t->assert_true($test_name, $md->is_doc_file(html_paths::DOCS . markdown::DOC_FAQ . markdown::DOC_EXT));
+        $test_name = '... but not a file outside /docs/ that the path reaches by ..';
+        $t->assert_false($test_name, $md->is_doc_file(html_paths::DOCS . self::DOC_OUTSIDE));
+        $test_name = '... and not the folder /docs/ itself';
+        $t->assert_false($test_name, $md->is_doc_file(html_paths::DOCS));
+        $test_name = '... and not a path with a null byte, which is refused without an error';
+        $t->assert_false($test_name, $md->is_doc_file(html_paths::DOCS . self::DOC_NULL_BYTE . markdown::DOC_EXT));
+        $test_name = 'the translation of a document is read from docs.csv';
+        $translations = $md->doc_translations();
+        $concept_de = $translations[markdown::DOC_CONCEPT][self::LANGUAGE_DE] ?? '';
+        $t->assert($test_name, $concept_de, self::DOC_CONCEPT_DE);
+        // negative: a document that docs.csv does not name has no translation
+        $test_name = '... but not of a document without a translation';
+        $t->assert_key_not_exists($test_name, self::DOC_WITHOUT_TRANSLATION, $translations);
         $test_name = 'a link to another document of /docs/ opens it with http/docs.php';
         $t->assert_text_contains($test_name, $md->to_html('see the [FAQ](faq.md#how-can-i-help)'),
             'href="' . api::DOCS_SCRIPT . url_var::PAR . url_var::DOC . url_var::EQ . markdown::DOC_FAQ . '#how-can-i-help"');

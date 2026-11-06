@@ -2266,10 +2266,10 @@ enum messages: string
     case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
     case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
-    // the page number on the right of the footer of both reports
-    case CALCULATOR_REPORT_PAGE = 'calculator_report_page';
     // the pdf of the definition of a calculator, which the PDF tab of the calculator editor creates (calculator_definition_report)
     case CALCULATOR_DEFINITION_FOOTER = 'calculator_definition_footer';
+    // the page number on the right of the footer, also of the portfolio split report (calculator_report::add_footer)
+    case CALCULATOR_DEFINITION_PAGE = 'calculator_definition_page';
     case CALCULATOR_DEFINITION_CREATED = 'calculator_definition_created';
     case CALCULATOR_DEFINITION_NO_CALCULATOR = 'calculator_definition_no_calculator';
     // the technical setup after the page: every object of the data that defines the page

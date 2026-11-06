@@ -40,10 +40,16 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class markdown
@@ -59,6 +65,19 @@ class markdown
     const string DOC_INTRO = 'idea_and_intro';
     const string DOC_CONCEPT = 'concept';
     const string DOC_FAQ = 'faq';
+    // the documents that the about page links in this order with the message id of the link text
+    const array ABOUT_DOCS = [
+        self::DOC_INTRO => msg_id::ABOUT_DOC_INTRO,
+        self::DOC_CONCEPT => msg_id::ABOUT_DOC_CONCEPT,
+        self::DOC_FAQ => msg_id::ABOUT_DOC_FAQ,
+    ];
+    // the char that ends a string in c, which a file path must not contain
+    const string NULL_BYTE = "\0";
+    // the columns of the csv of the document translations (files::DOC_TRANSLATIONS)
+    const int TRANSLATION_COLUMNS = 3;
+    // the start and the end of a code block and a heading with its level and its text e.g. "## Install"
+    const string CODE_FENCE = '```';
+    const string HEADING = '/^(#{1,6}) +(.+?) *#*$/';
     // a link to a document of /docs/ e.g. "faq.md" or "faq.md#an-anchor"
     const string DOC_LINK = '/^([a-z0-9_]+)\.md(#[A-Za-z0-9_-]*)?$/';
     // an image of /docs/ without a path e.g. "server_structure.svg", which the web server shows itself
@@ -84,8 +103,26 @@ class markdown
         $result = '';
         if (preg_match(self::DOC_NAME, $doc)) {
             $path = html_paths::DOCS . $doc . self::DOC_EXT;
-            if (is_file($path)) {
+            if ($this->is_doc_file($path)) {
                 $result = $path;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $path the path of a file e.g. of a markdown document
+     * @return bool true if the path is a file that is really in /docs/, also after resolving a symlink or a ".."
+     */
+    function is_doc_file(string $path): bool
+    {
+        $result = false;
+        // a null byte is never part of a file name and would let realpath throw an error
+        if (!str_contains($path, self::NULL_BYTE)) {
+            $real_path = realpath($path);
+            $real_docs = realpath(html_paths::DOCS);
+            if ($real_path !== false and $real_docs !== false and is_file($real_path)) {
+                $result = str_starts_with($real_path, $real_docs . DIRECTORY_SEPARATOR);
             }
         }
         return $result;
@@ -98,6 +135,38 @@ class markdown
     function doc_url(string $doc): string
     {
         return api::DOCS_SCRIPT . url_var::PAR . url_var::DOC . url_var::EQ . $doc;
+    }
+
+    /**
+     * the translations of the documents of /docs/, which must have the same headings as the document
+     * (see coding_rule_tests::doc_translation_tests)
+     *
+     * @return array per document the name of its translation by the code id of the language e.g. ["concept" => ["de" => "konzept_de"]],
+     *               empty if the csv files::DOC_TRANSLATIONS cannot be read
+     */
+    function doc_translations(): array
+    {
+        $lib = new library();
+        $result = [];
+        $lines = false;
+        if (is_readable(files::DOC_TRANSLATIONS)) {
+            $lines = file(files::DOC_TRANSLATIONS, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        }
+        if ($lines === false) {
+            log_warning('the document translations ' . files::DOC_TRANSLATIONS . ' cannot be read');
+            $lines = [];
+        }
+        // the first line names the columns
+        foreach (array_slice($lines, 1) as $line) {
+            $cells = $lib->array_trim($lib->csv_line_to_array($line));
+            if (count($cells) == self::TRANSLATION_COLUMNS) {
+                [$doc, $lan, $translation] = $cells;
+                $result[$doc][$lan] = $translation;
+            } else {
+                log_warning('the line "' . $line . '" of ' . files::DOC_TRANSLATIONS . ' has not the columns doc_name, language, translation');
+            }
+        }
+        return $result;
     }
 
     /**
@@ -137,17 +206,17 @@ class markdown
             $trimmed = trim($line);
             if ($trimmed == '') {
                 $i++;
-            } elseif (str_starts_with($trimmed, '```')) {
+            } elseif (str_starts_with($trimmed, self::CODE_FENCE)) {
                 // a code block up to the closing fence, shown as it is
                 $code = [];
                 $i++;
-                while ($i < $count and !str_starts_with(trim($lines[$i]), '```')) {
+                while ($i < $count and !str_starts_with(trim($lines[$i]), self::CODE_FENCE)) {
                     $code[] = $lines[$i];
                     $i++;
                 }
                 $i++;
                 $result .= '<pre><code>' . $this->esc(implode("\n", $code)) . '</code></pre>' . "\n";
-            } elseif (preg_match('/^(#{1,6}) +(.+?) *#*$/', $trimmed, $match)) {
+            } elseif (preg_match(self::HEADING, $trimmed, $match)) {
                 $level = strlen($match[1]);
                 $id = $this->anchor($match[2]);
                 $result .= '<h' . $level . ' id="' . $id . '">' . $this->inline($match[2]) . '</h' . $level . '>' . "\n";
@@ -206,7 +275,7 @@ class markdown
     {
         $trimmed = trim($line);
         return str_starts_with($trimmed, '#')
-            or str_starts_with($trimmed, '```')
+            or str_starts_with($trimmed, self::CODE_FENCE)
             or str_starts_with($trimmed, '>')
             or str_starts_with($trimmed, '|')
             or preg_match('/^(-{3,}|\*{3,}|_{3,})$/', $trimmed)

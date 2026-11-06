@@ -284,6 +284,7 @@ class files
     CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
     CONST string DOCS_PINNED_ID_FINDINGS = test_paths::DOCS . 'pinned_id_findings' . self::MD;
+    CONST string DOCS_TRANSLATION_FINDINGS = test_paths::DOCS . 'translation_findings' . self::MD;
 
 
     /*

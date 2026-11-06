@@ -2588,9 +2588,11 @@ class html_base
         // the entry documents of /docs/ shown by http/docs.php
         $md = new markdown();
         $result .= $mtr->txt(msg_id::ABOUT_DOCS) . ' ';
-        $result .= $this->ref($md->doc_url(markdown::DOC_INTRO), $mtr->txt(msg_id::ABOUT_DOC_INTRO), '', '', false, false);
-        $result .= ' &middot; ' . $this->ref($md->doc_url(markdown::DOC_CONCEPT), $mtr->txt(msg_id::ABOUT_DOC_CONCEPT), '', '', false, false);
-        $result .= ' &middot; ' . $this->ref($md->doc_url(markdown::DOC_FAQ), $mtr->txt(msg_id::ABOUT_DOC_FAQ), '', '', false, false);
+        $doc_links = [];
+        foreach (markdown::ABOUT_DOCS as $doc => $txt_id) {
+            $doc_links[] = $this->ref($md->doc_url($doc), $mtr->txt($txt_id), '', '', false, false);
+        }
+        $result .= implode(' &middot; ', $doc_links);
         $result .= '<' . self::BR . '><' . self::BR . '>';
         // the bank account for a donation to the project
         $result .= $mtr->txt(msg_id::ABOUT_DONATION) . ' ' . def::DONATION_RECEIVER . ', IBAN ' . def::DONATION_IBAN;
