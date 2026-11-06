@@ -40,6 +40,84 @@ const FIELD_TRIPLE_NAME = "Triple name";
 const FIELD_SHOWN_NUMBER = "Shown number";
 const FIELD_MINIMUM = "Minimum";
 const FIELD_MAXIMUM = "Maximum";
+/* the arguments scenarios run in the calculator editor of the Swiss NPP vote: the claim of the first pro argument,
+   the fields of an argument, the verb of the contra side and a new text */
+const KIND_ARGUMENT = "argument";
+const SUPPLY_GAP_CLAIM = "supply gap supports lifting the NPP ban";
+const FIELD_ARGUMENT_REASON = "Reason phrase";
+const FIELD_ARGUMENT_SIDE = "Side";
+const FIELD_ARGUMENT_TEXT = "Text on the page";
+const SIDE_CONTRA = "limits";
+const ARGUMENT_TEXT = "the winter gap is closed by imports {source:BAK economiesuisse study 2026}";
+/* the field of the page settings with the lead text that the page shows collapsed below the title, and its keyword */
+const FIELD_MORE_TEXT = "Hideable lead text";
+const KW_MORE = "calculator more";
+/* the state of the verdict that the default numbers select, its fields and the fields of the verdict box */
+const KIND_VERDICT = "verdict";
+const VERDICT_UNDECIDED = "undecided";
+const FIELD_LABEL = "Label on this page";
+const FIELD_VERDICT_SCALE = "Scale below the meter";
+const FIELD_VERDICT_NOTE = "Note";
+const VERDICT_LABEL = "Undecided - decide on the other arguments";
+const VERDICT_SCALE = "cheaper | 0 | dearer";
+/* the field of the result that the verdict compares, the loaded phrase and another result of the page */
+const FIELD_VERDICT_RESULT = "Compared result";
+const VERDICT_RESULT = "average cost";
+const VERDICT_RESULT_OTHER = "average cost change";
+/* the fields of the ends of the meter, the loaded left end and wider ends */
+const FIELD_VERDICT_SCALE_MIN = "Left end of the meter";
+const FIELD_VERDICT_SCALE_MAX = "Right end of the meter";
+const VERDICT_SCALE_MIN = "-1";
+const VERDICT_SCALE_MIN_WIDE = "-2";
+const VERDICT_SCALE_MAX_WIDE = "2";
+/* the axes of the sensitivity table, a value of the row axis, a new one with its label and number and the fields */
+const KIND_SAXIS = "sensitivity";
+const KIND_SLEVEL = "slevel";
+const SENSITIVITY_ROWS = "overnight construction cost";
+const SENSITIVITY_LEVEL = "construction cost 5000";
+const SENSITIVITY_LEVEL_NUMBER = "6000";
+const SENSITIVITY_NEW_LEVEL = "construction cost 20000";
+const SENSITIVITY_NEW_LEVEL_LABEL = "20'000 CHF/kW";
+const SENSITIVITY_NEW_LEVEL_NUMBER = "20000";
+const SENSITIVITY_CHANGE = "household bill change";
+const SENSITIVITY_HINT = "each cell: the levelised cost and the change of the household bill";
+const FIELD_SENSITIVITY_NUMBER = "Number of this value";
+const FIELD_SENSITIVITY_CHANGE = "Number in brackets";
+const FIELD_SENSITIVITY_HINT = "Hint below the table";
+/* the presets: the one that the scenarios change, the one that they remove, the fields of the numbers that a preset
+   sets by the label of the number field and the new texts and numbers */
+const KIND_PRESET = "preset";
+const PRESET_ACADEMIES = "Academies pessimistic scenario";
+const PRESET_ETH_LOW = "ETH low scenario";
+const PRESET_LABEL = "Swiss Academies";
+const FIELD_CONSTRUCTION_COST = "Construction cost (overnight)";
+const FIELD_CONSTRUCTION_TIME = "Construction time";
+const FIELD_CAPACITY_FACTOR = "Capacity factor";
+const PRESET_CONSTRUCTION_COST = "20000";
+const PRESET_CONSTRUCTION_TIME = "15";
+const PRESET_CAPACITY_FACTOR = "0.8";
+const PRESET_ACADEMIES_ITEM = "new NPP preset Academies";
+/* the detail table of the PV lifetime balance and one of its columns, which a click in the preview selects */
+const DETAIL_TABLE = "PV installation detail monthly balance";
+const DETAIL_COLUMN = "PV installation detail column direct use";
+/* a source of the PV lifetime balance and of the Swiss NPP vote, which a click in the preview selects, the NPP source
+   with a changed description, and a source that the texts of the NPP vote name by {source:…} with a new name */
+const SOURCE_PV = "Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)";
+const SOURCE_NPP = "Fraunhofer ISE LCOE 2024 via Faktenfackel";
+const FIELD_SOURCE_NAME = "Name";
+const FIELD_SOURCE_DESCRIPTION = "Description";
+const FIELD_SOURCE_URL = "Link";
+const SOURCE_DESCRIPTION = "Fraunhofer ISE (2024): levelised cost of electricity of renewable energy technologies";
+const SOURCE_RENAMED = "BAK economiesuisse study 2026";
+const SOURCE_NEW_NAME = "BAK economiesuisse balance study 2026";
+/* a note of the notes list of the Swiss NPP vote by its phrase and its triple, and its changed text */
+const KIND_NOTE = "note";
+const NOTE_MODEL_LIMITS = "model limits";
+const NOTE_MODEL_LIMITS_ITEM = "new NPP note model limits";
+const FIELD_NOTE_TEXT = "Text on the page";
+const NOTE_TEXT = "annual balance in prices of 2024, no hourly dispatch";
+/* the parts of the page preview that a click selects: an argument, the hideable lead text and a result row without a part */
+const SUPPLY_GAP_ARGUMENT = "new NPP argument supply gap";
 
 /* select the formula by its name in the page structure, which shows it in the formula editor */
 function selectFormula(name) {
@@ -68,19 +146,32 @@ function itemOf(phrase, kind) {
     return result;
 }
 
+/* the row of a source in the list of the sources of the page structure */
+function sourceOf(name) {
+    const result = Array.from(document.querySelectorAll("#tree .node.source")).find(function (n) {
+        return n.querySelector(".lbl").textContent === name;
+    });
+    return result;
+}
+
+/* the link of a source in the list of the sources of the page preview */
+function sourceLink(name) {
+    return document.getElementById("pane").querySelector(".src li[" + PART_ATTR + '="' + name + '"] a');
+}
+
 /* move the item of the page structure one place up or down with its arrow button */
 function moveItem(phrase, kind, direction) {
     itemOf(phrase, kind).querySelector('[data-act="' + direction + '"]').click();
 }
 
 /* type the text into the field of the settings with the label, which the editor stores while typing,
-   and leave the field */
+   and leave the field; a selector gets the option with the text as its value */
 function typeField(label, text) {
     const group = Array.from(document.querySelectorAll("#insp .fg")).find(function (g) {
         const lab = g.querySelector("label");
         return lab !== null && lab.textContent.indexOf(label) === 0;
     });
-    const el = group.querySelector("input, textarea");
+    const el = group.querySelector("input, textarea, select");
     el.value = text;
     el.dispatchEvent(new Event("input", {bubbles: true}));
     el.dispatchEvent(new Event("change", {bubbles: true}));
@@ -88,6 +179,11 @@ function typeField(label, text) {
 
 function click(selector) {
     document.querySelector(selector).click();
+}
+
+/* the kind and the label of what the settings show e.g. "Argument: Winter supply gap" */
+function selectedTitle() {
+    return document.querySelector("#insp .insp-title .kind").textContent + ": " + document.querySelector("#insp .insp-title .big").textContent;
 }
 
 /* press Save as on a pod: the fetch of the save writes its message into the page and never answers */
@@ -252,6 +348,262 @@ const SCENARIOS = {
     embodied_emission_down: function () {
         moveItem(EMBODIED_EMISSION, KIND_ROW_GROUP, MOVE_DOWN);
         pressSave();
+    },
+    /* the arguments start collapsed above the inputs, which start open */
+    arguments_collapsed: function () {
+        const lists = Array.from(document.querySelectorAll("#tree details.sect")).map(function (d) {
+            return {list: d.dataset.list, open: d.open};
+        });
+        messageElement.textContent = JSON.stringify(lists.slice(0, 2));
+    },
+    /* the user changes the text of an argument, which is the description of its claim triple */
+    argument_text: function () {
+        itemOf(SUPPLY_GAP_CLAIM, KIND_ARGUMENT).click();
+        typeField(FIELD_ARGUMENT_TEXT, ARGUMENT_TEXT);
+        pressSave();
+    },
+    /* the user moves an argument to the other side, which changes the verb and so the name of its claim */
+    argument_side: function () {
+        itemOf(SUPPLY_GAP_CLAIM, KIND_ARGUMENT).click();
+        typeField(FIELD_ARGUMENT_SIDE, SIDE_CONTRA);
+        pressSave();
+    },
+    /* the user adds an argument with a reason that is not in the database yet */
+    add_argument: function () {
+        click('[data-act="addTop"][data-list="argument"]');
+        typeField(FIELD_ARGUMENT_REASON, NEW_WORD);
+        typeField(FIELD_ARGUMENT_TEXT, ARGUMENT_TEXT);
+        pressSave();
+    },
+    /* the user adds an argument but types no reason, so there is nothing to save */
+    add_argument_without_reason: function () {
+        click('[data-act="addTop"][data-list="argument"]');
+        typeField(FIELD_ARGUMENT_TEXT, ARGUMENT_TEXT);
+        pressSave();
+    },
+    /* the user removes an argument from the page, which keeps its claim */
+    remove_argument: function () {
+        itemOf(SUPPLY_GAP_CLAIM, KIND_ARGUMENT).querySelector('[data-act="remove"]').click();
+        pressSave();
+    },
+    /* the user changes the lead text that the page shows collapsed below the title */
+    more_text: function () {
+        typeField(FIELD_MORE_TEXT, ARGUMENT_TEXT);
+        pressSave();
+    },
+    /* the user types the loaded lead text again, so there is nothing to save */
+    more_text_unchanged: function () {
+        const more = DOC.triples.find(function (t) {
+            return t.to === KW_MORE;
+        });
+        typeField(FIELD_MORE_TEXT, more.description);
+        pressSave();
+    },
+    /* the user changes the headline of a state of the verdict, which is the label of the state */
+    verdict_label: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_LABEL, VERDICT_LABEL);
+        pressSave();
+    },
+    /* the user changes the scale and the note of the verdict box, which all states share */
+    verdict_scale_note: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_VERDICT_SCALE, VERDICT_SCALE);
+        typeField(FIELD_VERDICT_NOTE, ARGUMENT_TEXT);
+        pressSave();
+    },
+    /* the user lets the verdict compare another result, which links the result triple of the verdict to it */
+    verdict_result: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_VERDICT_RESULT, VERDICT_RESULT_OTHER);
+        pressSave();
+    },
+    /* the user types the loaded result again, so there is nothing to save */
+    verdict_result_unchanged: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_VERDICT_RESULT, VERDICT_RESULT);
+        pressSave();
+    },
+    /* the user widens the meter of the verdict, which changes the two limit values of the scale */
+    verdict_scale_limits: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_VERDICT_SCALE_MIN, VERDICT_SCALE_MIN_WIDE);
+        typeField(FIELD_VERDICT_SCALE_MAX, VERDICT_SCALE_MAX_WIDE);
+        pressSave();
+    },
+    /* the user types the loaded left end again, so there is nothing to save */
+    verdict_scale_limits_unchanged: function () {
+        itemOf(VERDICT_UNDECIDED, KIND_VERDICT).click();
+        typeField(FIELD_VERDICT_SCALE_MIN, VERDICT_SCALE_MIN);
+        pressSave();
+    },
+    /* the user changes the number of a value of the row axis of the sensitivity table, which is its stored value */
+    sensitivity_number: function () {
+        itemOf(SENSITIVITY_LEVEL, KIND_SLEVEL).click();
+        typeField(FIELD_SENSITIVITY_NUMBER, SENSITIVITY_LEVEL_NUMBER);
+        pressSave();
+    },
+    /* the user adds a value to the row axis with its label and number, which adds the phrase, the triples and the value */
+    sensitivity_add_level: function () {
+        const axis = itemOf(SENSITIVITY_ROWS, KIND_SAXIS);
+        click('[data-act="addChild"][data-uid="' + axis.dataset.uid + '"]');
+        typeField(FIELD_PHRASE, SENSITIVITY_NEW_LEVEL);
+        typeField(FIELD_LABEL, SENSITIVITY_NEW_LEVEL_LABEL);
+        typeField(FIELD_SENSITIVITY_NUMBER, SENSITIVITY_NEW_LEVEL_NUMBER);
+        pressSave();
+    },
+    /* the user adds a value to the row axis with a number, but types no phrase, so there is nothing to save */
+    sensitivity_add_level_without_phrase: function () {
+        const axis = itemOf(SENSITIVITY_ROWS, KIND_SAXIS);
+        click('[data-act="addChild"][data-uid="' + axis.dataset.uid + '"]');
+        typeField(FIELD_SENSITIVITY_NUMBER, SENSITIVITY_NEW_LEVEL_NUMBER);
+        pressSave();
+    },
+    /* the user lets the cells show another result in brackets and changes the hint below the table */
+    sensitivity_cell_hint: function () {
+        itemOf(SENSITIVITY_ROWS, KIND_SAXIS).click();
+        typeField(FIELD_SENSITIVITY_CHANGE, SENSITIVITY_CHANGE);
+        typeField(FIELD_SENSITIVITY_HINT, SENSITIVITY_HINT);
+        pressSave();
+    },
+    /* the user clicks a column heading and a month row of the detail table in the page preview, which selects the
+       column and the table, because a row of the table phrase has no triple of its own, then the heading of the
+       sources, which has no part and keeps the selection, and the link of a source, which selects the source and
+       stays in the editor */
+    preview_detail_parts: function () {
+        const pane = document.getElementById("pane");
+        const clicks = {};
+        pane.querySelector("th[" + PART_ATTR + '="' + DETAIL_COLUMN + '"]').click();
+        clicks.column = selectedTitle();
+        pane.querySelector("tr[" + PART_ATTR + '="' + DETAIL_TABLE + '"] td').click();
+        clicks.row = selectedTitle();
+        pane.querySelector(".src h2").click();
+        clicks.heading = selectedTitle();
+        const href = location.href;
+        sourceLink(SOURCE_PV).click();
+        clicks.source = selectedTitle();
+        clicks.stays = location.href === href;
+        messageElement.textContent = JSON.stringify(clicks);
+    },
+    /* the user changes the text of a preset button, which is the label of the preset */
+    preset_label: function () {
+        itemOf(PRESET_ACADEMIES, KIND_PRESET).click();
+        typeField(FIELD_LABEL, PRESET_LABEL);
+        pressSave();
+    },
+    /* the user changes a number that a preset sets, which is the stored value of the preset and the field */
+    preset_value: function () {
+        itemOf(PRESET_ACADEMIES, KIND_PRESET).click();
+        typeField(FIELD_CONSTRUCTION_COST, PRESET_CONSTRUCTION_COST);
+        pressSave();
+    },
+    /* the user lets a preset set a field that it has left as it is, which adds a value with the unit of the field */
+    preset_new_value: function () {
+        itemOf(PRESET_ACADEMIES, KIND_PRESET).click();
+        typeField(FIELD_CAPACITY_FACTOR, PRESET_CAPACITY_FACTOR);
+        pressSave();
+    },
+    /* the user clears a number of a preset, which deletes its value */
+    preset_value_cleared: function () {
+        itemOf(PRESET_ACADEMIES, KIND_PRESET).click();
+        typeField(FIELD_CONSTRUCTION_TIME, "");
+        pressSave();
+    },
+    /* the user adds a preset with a new scenario, its button text and a number */
+    add_preset: function () {
+        click('[data-act="addTop"][data-list="preset"]');
+        typeField(FIELD_PHRASE, NEW_WORD);
+        typeField(FIELD_LABEL, PRESET_LABEL);
+        typeField(FIELD_CONSTRUCTION_TIME, PRESET_CONSTRUCTION_TIME);
+        pressSave();
+    },
+    /* the user adds a preset with a button text, but no scenario, so there is nothing to save */
+    add_preset_without_phrase: function () {
+        click('[data-act="addTop"][data-list="preset"]');
+        typeField(FIELD_LABEL, PRESET_LABEL);
+        pressSave();
+    },
+    /* the user changes the text of a note, which is the description of the triple of the note */
+    note_text: function () {
+        itemOf(NOTE_MODEL_LIMITS, KIND_NOTE).click();
+        typeField(FIELD_NOTE_TEXT, NOTE_TEXT);
+        pressSave();
+    },
+    /* the user types the loaded text of a note again, so there is nothing to save */
+    note_text_unchanged: function () {
+        itemOf(NOTE_MODEL_LIMITS, KIND_NOTE).click();
+        const note = DOC.triples.find(function (t) {
+            return t.name === NOTE_MODEL_LIMITS_ITEM;
+        });
+        typeField(FIELD_NOTE_TEXT, note.description);
+        pressSave();
+    },
+    /* the user changes the description of a source, which is sent as the changed field of the source */
+    source_description: function () {
+        sourceOf(SOURCE_NPP).click();
+        typeField(FIELD_SOURCE_DESCRIPTION, SOURCE_DESCRIPTION);
+        pressSave();
+    },
+    /* the user renames a source, which also changes the texts that name it by {source:…} */
+    source_rename: function () {
+        sourceOf(SOURCE_RENAMED).click();
+        typeField(FIELD_SOURCE_NAME, SOURCE_NEW_NAME);
+        pressSave();
+    },
+    /* the user types the loaded link of a source again, so there is nothing to save */
+    source_url_unchanged: function () {
+        sourceOf(SOURCE_NPP).click();
+        const source = DOC.sources.find(function (s) {
+            return s.name === SOURCE_NPP;
+        });
+        typeField(FIELD_SOURCE_URL, source.url || "");
+        pressSave();
+    },
+    /* the user removes a preset from the page, which keeps the numbers of its scenario */
+    remove_preset: function () {
+        itemOf(PRESET_ETH_LOW, KIND_PRESET).querySelector('[data-act="remove"]').click();
+        pressSave();
+    },
+    /* the user clicks an argument, the verdict, a field, a preset button, a row group, a result row, a result column,
+       a row of the sensitivity table, the hideable lead text, a source, a note of the notes list and a note of a
+       formula in the page preview, which selects where each is changed, and the heading of the sources, which has no
+       part and keeps the selection */
+    preview_parts: function () {
+        const pane = document.getElementById("pane");
+        const clicks = {};
+        // PART_ATTR of calculator_editor.js, which the page of the editor loads before this script
+        pane.querySelector("[" + PART_ATTR + '="' + SUPPLY_GAP_ARGUMENT + '"] b').click();
+        clicks.argument = selectedTitle();
+        pane.querySelector(".verdict .headline").click();
+        clicks.verdict = selectedTitle();
+        pane.querySelector(".src h2").click();
+        clicks.heading = selectedTitle();
+        sourceLink(SOURCE_NPP).click();
+        clicks.source = selectedTitle();
+        pane.querySelector(".field label").click();
+        clicks.field = selectedTitle();
+        pane.querySelector("[" + PART_ATTR + '="' + PRESET_ACADEMIES_ITEM + '"]').click();
+        clicks.preset = selectedTitle();
+        pane.querySelector("tbody tr.sec td").click();
+        clicks.rowGroup = selectedTitle();
+        pane.querySelector("tbody tr:not(.sec) td").click();
+        clicks.row = selectedTitle();
+        pane.querySelector("thead th[" + PART_ATTR + "]").click();
+        clicks.column = selectedTitle();
+        pane.querySelector("details.sensitivity tbody td").click();
+        clicks.level = selectedTitle();
+        const more = pane.querySelector("header details");
+        more.querySelector("summary").click();
+        clicks.more = selectedTitle();
+        clicks.moreOpen = pane.contains(more) && more.open;
+        pane.querySelector(".notes p[" + PART_ATTR + '="' + NOTE_MODEL_LIMITS_ITEM + '"]').click();
+        clicks.note = selectedTitle();
+        // the last click, because the selected formula shows the formula compare instead of the preview
+        pane.querySelector(".notes p[" + PART_ATTR + "]").click();
+        const formula = findFormula(selected);
+        clicks.formula = formula === null ? "" : formula.name;
+        clicks.compare = !document.getElementById(FORMULA_COMPARE_HOST_ID).hidden;
+        messageElement.textContent = JSON.stringify(clicks);
     }
 };
 

@@ -9,7 +9,7 @@ Change the generated page npp_ch_vote.html so that it shows what the hand made s
 - button: Recent projects (12'000 CHF/kW)
 - button: Academies pessimistic
 
-## Different (43)
+## Different (42)
 
 - field: Construction cost (overnight), unit: the sample shows "CHF/kW" and the generated page "CHF per kW"
 - field: Construction time, unit: the sample shows "a" and the generated page ""
@@ -38,7 +38,6 @@ Change the generated page npp_ch_vote.html so that it shows what the hand made s
 - field: Decision threshold, unit: the sample shows "Rp/kWh" and the generated page "Rp per kWh"
 - row: New nuclear plant / Annual production, cells: the sample shows "12.14 TWh | 0 TWh | 12.14 TWh" and the generated page "12.14 | 0.00 | +12.14"
 - row: New nuclear plant / Investment incl. interest during construction, cells: the sample shows "17.3 billion CHF |  | " and the generated page "17.3 CHF |  | "
-- row: New nuclear plant / Levelised cost of electricity, sub text: the sample shows "75.1 capital + 39.3 operation" and the generated page "76.2 capital + 39.3 operation"
 - row: New nuclear plant / Levelised cost of electricity, cells: the sample shows "114.4 CHF/MWh | 100.0 CHF/MWh | +14.4 CHF/MWh" and the generated page "114.4 CHF per MWh | 100.0 CHF per MWh | +14.4 CHF per MWh"
 - row: New nuclear plant / Subsidy need above the market price, cells: the sample shows "612 million CHF/a |  | " and the generated page "612 CHF |  | "
 - row: Winter balance / Winter net import, cells: the sample shows "4.5 TWh | 7.5 TWh | -3.0 TWh" and the generated page "4.5 | 7.5 | -3.0"

@@ -1,0 +1,39 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [
+            {
+                "name": "System Test Word"
+            }
+        ],
+        "triples": [
+            {
+                "name": "System Test Word supports lifting the NPP ban",
+                "description": "the winter gap is closed by imports {source:BAK economiesuisse study 2026}",
+                "from": "System Test Word",
+                "verb": "supports",
+                "to": "lifting the NPP ban"
+            },
+            {
+                "name": "new NPP argument System Test Word",
+                "from": "new NPP arguments",
+                "verb": "has a",
+                "to": "System Test Word supports lifting the NPP ban"
+            },
+            {
+                "name": "new NPP argument System Test Word order",
+                "from": "new NPP argument System Test Word",
+                "verb": "is follower of",
+                "to": "new NPP argument cluster risk"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}
