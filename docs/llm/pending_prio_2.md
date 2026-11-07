@@ -2507,3 +2507,15 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    found yet: the suspicion is that a load after the failed refresh step behaves differently, because e.g.
    `ref::row_mapper` returns `$msg->is_ok()` of the shared message instead of its own result, so a reference
    without type reaches the api json. The trace of the fatal is in the system log, which only an admin can read.
+9. `test_base::cleanup_leftover_refs` removes the change log of each reference after its `del()`, also if the
+   delete has only written an exclusion, e.g. because no test user owns the reference and the system user is
+   used as fallback; the change log may only be removed for a deleted test row, so the cleanup should check that
+   the reference is gone and otherwise report it instead of removing the log.
+10. `test_base::ref_test_users` reads `usr_test_admin`, which only `all_unit_tests::run_unit` sets; a write
+    workflow run that starts without the unit setup, e.g. via `test/test_full_load.php`, would stop with
+    "Typed property must not be accessed before initialization", so the list should leave out an unset user.
+11. Small cleanups of the refresh code: the docblock of `web/ref/ref::wikipedia_refresh_link` still names only
+    the confirm page, although the icon can also open the reference add page; the web `ref::$external_key` is
+    public only so that the tests and `phrase::save_ref_of_refresh` can set it, a setter would keep it private;
+    `phrase::confirm_url_of_refresh` reads the stored wikidata reference twice (`$wd_ref` and
+    `wikidata_id($old)`).
