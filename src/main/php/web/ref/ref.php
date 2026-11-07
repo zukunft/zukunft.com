@@ -120,7 +120,7 @@ class ref extends sandbox
             $this->url = $value;
         }
     }
-    public ?string $external_key = null {
+    private ?string $external_key = null {
         set {
             $this->external_key = $value;
         }
@@ -404,6 +404,14 @@ class ref extends sandbox
         return $this->external_key;
     }
 
+    /**
+     * @param string|null $key the id of the referenced object in the external system e.g. "Q72" for wikidata
+     */
+    function set_external_key(?string $key): void
+    {
+        $this->external_key = $key;
+    }
+
     function url(): ?string
     {
         return $this->url;
@@ -543,8 +551,9 @@ class ref extends sandbox
     }
 
     /**
-     * the refresh icon of a wikipedia reference opens the confirm page of the phrase with the
-     * description and the wikidata id of the wikipedia page (see frontend::url_with_wikipedia_refresh)
+     * the refresh icon of a wikipedia reference opens the confirm page of the description or of the
+     * wikidata id of the wikipedia page, or the filled add page of the missing wikidata reference
+     * (see phrase::confirm_url_of_refresh)
      * @param html_base $html the html creator passed in to avoid creating it twice
      * @returns string the html code of the refresh icon, grey for a user without login
      */

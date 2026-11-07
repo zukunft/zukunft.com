@@ -4860,8 +4860,29 @@ class test_base
             $ref->set_user($owner);
             $ref->del($del_msg);
             $msg->merge($del_msg);
-            $this->delete_change_log_of_obj(ref::class, $ref->id());
+            // a delete by a user that does not own the reference only writes an exclusion, and the
+            // change log may only be removed for a deleted test row
+            if ($this->ref_is_removed($ref->id(), $msg)) {
+                $this->delete_change_log_of_obj(ref::class, $ref->id());
+            } else {
+                $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => ref::class]);
+            }
         }
+    }
+
+    /**
+     * @param int $id the database id of the reference that should have been deleted
+     * @param user_message $msg to report a failed read, which never counts as removed
+     * @return bool true if the standard row of the reference is no longer in the database
+     */
+    private function ref_is_removed(int $id, user_message $msg): bool
+    {
+        // load_standard is also ok without a row, so only the loaded id tells if the row is still there
+        $std_msg = new user_message($this->usr_system);
+        $std_ref = new ref($this->usr_system);
+        $std_ref->load_standard($id, $std_msg);
+        $msg->merge($std_msg);
+        return ($std_msg->is_ok() and $std_ref->id() == 0);
     }
 
     /**
@@ -4902,14 +4923,18 @@ class test_base
      */
     private function ref_test_users(): array
     {
-        return [
+        $result = [
             $this->usr1,
             $this->usr2,
             $this->usr_normal,
             $this->usr_admin,
-            $this->usr_test_admin,
             $this->usr_system,
         ];
+        // only the unit test setup creates the test admin, e.g. not test/test_full_load.php
+        if (isset($this->usr_test_admin)) {
+            $result[] = $this->usr_test_admin;
+        }
+        return $result;
     }
 
     /**

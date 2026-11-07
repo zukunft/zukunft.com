@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1618 of 6459 public functions have at least 2 unit test calls; the 4633 functions below do not; the 208 functions of the last section are called nowhere
+1618 of 6460 public functions have at least 2 unit test calls; the 4634 functions below do not; the 208 functions of the last section are called nowhere
 
 ## 1940 functions of main backend have no test at all
 
@@ -781,7 +781,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- name_field - 0 unit test calls shared by 36 classes
     \-- needs_to - 0 unit test calls shared by 2 classes
     \-- predicate_name - 0 unit test calls shared by 8 classes
-    \-- set_external_key - 0 unit test calls
+    \-- set_external_key - 0 unit test calls shared by 2 classes
     \-- set_phrase_by_id - 0 unit test calls
     \-- set_source_by_id - 0 unit test calls
     \-- set_to_id - 0 unit test calls
@@ -2206,7 +2206,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 923 functions of frontend have no test at all
+## 924 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2689,6 +2689,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- ref
     \-- phrase_selector - 0 unit test calls shared by 6 classes
     \-- ref_type_selector - 0 unit test calls shared by 2 classes
+    \-- set_external_key - 0 unit test calls shared by 2 classes
     \-- source_name - 0 unit test calls shared by 4 classes
     \-- type_url - 0 unit test calls
     \-- used_url - 0 unit test calls

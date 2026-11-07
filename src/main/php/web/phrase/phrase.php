@@ -1013,7 +1013,8 @@ class phrase extends combine_named
         $wd_ref = $old->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
         $has_description = $old->get_description() != '';
         $same_description = $old->get_description() == $new->get_description();
-        $is_new_key = ($new_key != '' and $new_key != $this->wikidata_id($old));
+        $old_key = $wd_ref?->external_key() ?? '';
+        $is_new_key = ($new_key != '' and $new_key != $old_key);
         if ($has_description and $wd_ref == null and $is_new_key) {
             $result = $this->ref_add_url_of_refresh($url_array, $new_key);
         } elseif ($has_description and $same_description and $is_new_key) {
@@ -1145,7 +1146,7 @@ class phrase extends combine_named
                 $msg->merge($ref->add_via_api($msg));
             } else {
                 // the loaded reference keeps all other fields, so that only the external key changes
-                $wd_ref->external_key = $ref->external_key();
+                $wd_ref->set_external_key($ref->external_key());
                 $msg->merge($wd_ref->update($msg));
             }
         }

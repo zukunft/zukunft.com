@@ -224,7 +224,7 @@ class reference_ui_tests
         $new->description = self::MATH_WIKIPEDIA_COM;
         $new->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
         $new_wd_ref = $new->ref_lst->get_by_type_code_id(ref_types::WIKIDATA);
-        $new_wd_ref->external_key = refs::CHANGE_NEW_KEY;
+        $new_wd_ref->set_external_key(refs::CHANGE_NEW_KEY);
         $phr = $old->phrase();
 
         $test_name = 'a wikipedia reference links to the refresh of the phrase description';

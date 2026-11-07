@@ -35,7 +35,7 @@ job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_hig
 language: $dbo, $dbo_ui, $lan_by_id, $lan_no_name, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_min, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_split, $phr_sym, $phr_sys_cfg, $phr_tbl, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
-ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $result, $std_rec, $type, $usr_ref, $wd_ref
+ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $result, $std_rec, $std_ref, $type, $usr_ref, $wd_ref
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_chk, $src_db, $src_filled, $src_map, $src_no_url, $src_other, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
