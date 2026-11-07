@@ -94,7 +94,6 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'formula_names.php';
-include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_languages.php';
 include_once test_paths::CREATE . 'test_phrases.php';
@@ -201,7 +200,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
-use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 // test group (alphabetic by FQN)
@@ -370,9 +368,6 @@ class test_mappers
         sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox $obj
     ): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
     {
-        $t_wrd = new test_words($this->env);
-        $t_frm = new test_formulas($this->env);
-        $t_msk = new test_views($this->env);
         switch ($obj::class) {
             case user::class:
                 $obj->name = users::TEST_USER_NAME_UPDATED;
@@ -383,14 +378,16 @@ class test_mappers
             case verb::class:
                 $obj->set_name(verbs::TEST_ADD_RENAMED);
                 break;
+            // the same rename as the sql write update test in triple_tests, because both write the same fixture
             case triple::class:
-                $obj->set_name(triple_names::SYSTEM_TEST_RENAMED);
+                $obj->set_name(word_names::TEST_RENAMED);
                 break;
             case source::class:
                 $obj->set_name(sources::SYSTEM_TEST_RENAMED);
                 break;
+            // the external key is the normal field of a ref, because the phrase and the type identify it
             case ref::class:
-                $obj->set_name(refs::SYSTEM_TEST_RENAMED);
+                $obj->set_external_key(refs::SYSTEM_TEST_RENAMED);
                 break;
             case value::class:
                 $obj->set_value(values::SAMPLE_FLOAT);
@@ -402,8 +399,9 @@ class test_mappers
             case formula::class:
                 $obj->set_name(formula_names::SYSTEM_TEST_RENAMED);
                 break;
+            // the link of a link object is never changed (the do not update a link guard), only the other fields
             case formula_link::class:
-                $obj->set_formula($t_frm->formula());
+                $obj->order_nbr = test_const::FORMULA_LINK_ORDER_NBR + 1;
                 break;
             case result::class:
                 $obj->set_value(results::TV_FLOAT);
@@ -413,13 +411,9 @@ class test_mappers
                 $obj->set_name(views::TEST_RENAMED_NAME);
                 break;
             case view_relation::class:
-                $obj->set_parent($t_msk->view_word_edit());
-                $obj->set_child($t_msk->view_word_log());
                 $obj->set_protection_by_code_id(protection_types::USER);
                 break;
             case term_view::class:
-                $obj->set_term($t_wrd->word()->term());
-                $obj->set_view($t_msk->view());
                 $obj->set_protection_by_code_id(protection_types::ADMIN);
                 break;
             case component::class:
@@ -427,7 +421,6 @@ class test_mappers
                 break;
             case component_link::class:
                 $obj->set_predicate(component_link_type::ALWAYS);
-                $obj->set_view($t_msk->view());
                 break;
             default:
                 log_err('no base object defined for ' . $obj::class);

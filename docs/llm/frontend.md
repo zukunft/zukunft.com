@@ -232,7 +232,11 @@ message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
-sent as text.
+sent as text. A triple with another from, verb or to, e.g. a moved item, an argument moved to the other
+side or another result of the verdict, is sent as removed and added (`relinkLinks` in
+`calculator_editor.js`), because the link of a triple is never changed (`docs/llm/architecture.md`);
+a triple that names it goes the same way, the added one gets the generated name if it would keep the
+name of the removed one, and the added triples come parents first.
 
 The page structure starts with the collapsed section Arguments, above the inputs like on the page: each argument is
 its claim triple from the reason phrase to the claim argued about, e.g. `supply gap supports lifting the NPP ban`,

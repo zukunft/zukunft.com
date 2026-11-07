@@ -30,7 +30,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human population",
           "type": "wikipedia"
         },
         {
@@ -100,7 +100,7 @@
       "description": "the use of goods and services by households to satisfy current needs and wants.",
       "refs": [
         {
-          "name": "Consumption_(economics)",
+          "name": "Consumption (economics)",
           "type": "wikipedia"
         }
       ]

@@ -395,6 +395,10 @@ class value_base extends sandbox_value
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
         }
+        // e.g. the undo of a removed value includes the value again for the user
+        if (array_key_exists(json_fields::EXCLUDED, $api_json)) {
+            $this->set_excluded($api_json[json_fields::EXCLUDED]);
+        }
         // only the request, the save checks if the user is an admin
         $this->set_default = (($api_json[json_fields::SET_DEFAULT] ?? false) === true);
         // the phrases define the value, so their group id wins over the id 0 sent for a new value;

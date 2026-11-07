@@ -124,17 +124,7 @@
       ]
     },
     {
-      "name": "elasticity",
-      "refs": [
-        {
-          "name": "Elasticity (economics)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q223639",
-          "type": "wikidata"
-        }
-      ]
+      "name": "elasticity"
     },
     {
       "name": "utility",

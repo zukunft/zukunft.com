@@ -1,25 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
-## write tests of the calculator editor messages
+## delete a removed triple only if it is really not used
 
-add to `update_put_write_tests` a write test with an undo for the `note_text` and the `source_rename` message of
-`src/test/resources/web/calculator_editor/`, in the style of `run_description_change` and `run_source`: load the
-objects by name for the normal test user, set their database ids in the message, put it, check the changed
-description or name for this user and the unchanged one for another user, put the undo with the loaded texts and
-check that no own version is left. The NPP use case is part of the db setup (`cfg/const/files.php`), so its objects
-exist in the write test db. The renamed source changes 22 triple descriptions, so the undo sends them back too.
-
-these messages are only compared in the browser test (`use_case_ui_tests`) and have no write test yet:
-- the arguments of the Swiss NPP vote: `argument_text`, `argument_side`, `add_argument`, `remove_argument`
-- the hideable lead text: `more_text`
-- the verdict: `verdict_label`, `verdict_scale_note`, `verdict_result`, `verdict_scale_limits`
-- the sensitivity table: `sensitivity_number`, `sensitivity_add_level`, `sensitivity_cell_hint`
-- the presets: `preset_label`, `preset_value`, `preset_new_value`, `preset_value_cleared`, `add_preset`, `remove_preset`
-- the notes and sources: `note_text`, `source_rename`, and `source_description` with its own NPP source (`run_source`
-  only takes the header of the message and changes a source of the PV use case)
-- the PV lifetime balance: `pv_capacity_down` (moved input), `pv_capacity_minimum_cleared` (cleared limit),
-  `remove_input` and `pv_capacity_label_undo`; the first three delete rows of the use case, see the open points of
-  the calculator editor scenarios below
+a removed triple is deleted through `del()` if no other user has changed it (`used_by_someone_else`), and the
+triple `del_links` then also deletes its values, so the remove of e.g. an argument whose triple other values or
+results still name loses them. Add the check whether a value, a result, a formula or another triple still uses the
+triple (values and results first), delete it only if it is really not used and else exclude it for the user.
 
 ## wikipedia link
 
@@ -33,11 +19,18 @@ Additional to the description the wikidata link should be taken from the wikiped
 create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
 that will not be changed any more and from this extract the description and the wikidata link as a unit test.
 
+check if the external key of a wikipedia ref should be the url slug e.g. `Canton_of_Zurich` or the title
+as shown on the screen e.g. `Canton of Zurich`. The import files use the title for now
+(see the one external key rule in docs/llm/json_structure.md), so check that the link built from the key opens
+the right page with both forms, decide on one, and update the rule and the import files to it.
+
 ## language
 
 ### import sample
 
-allow in import json files everywhere where a name is used a translation section like this 
+make here a plan how to add other languages. this should include
+
+allow in import json files to import a translation for where a name is used a translation section like this 
 
 `"words": [
     {
@@ -54,6 +47,23 @@ allow in import json files everywhere where a name is used a translation section
 `
 
 where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
+
+add the translations to src/main/resources/messages/solution_prio.json
+
+add how translations can be imported to json_structure.md
+
+import the translation and save it to user_words. define how the standard translation should be saved. 
+If possible without a user or a default user or the owner of the related object.
+
+add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions. 
+So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
+
+apply the transplation to all objects that have language specific fields
+
+add the translations to the export and check where changes due to translations might be useful 
+e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes  
+
+and finally show the translated page if the url has something link =de
 
 ## this document
 
@@ -579,11 +589,6 @@ for a formula expression, a description, a renamed, a new and a removed triple, 
 removed value, an undo and an input, a row and a row group moved up or down. The write test saves and undoes the
 description, the formula, the renamed triple, the changed number, the new limit, the new input field and the moved
 row and row group. Open:
-- a cleared limit, a removed input and a moved input delete rows of the use case, which the write test does not
-  save yet; a moved row shows the way: the undo adds the removed rows again by their name and link
-- the editor sends a moved item as removed and added order triples, because the link of a triple is the same for
-  all users; an item dragged into another list changes the link of its own triple, which other triples name, so
-  it is still sent as a changed triple, which a user who does not own the triple can not save yet
 - the triples of a new input field are not in `triple_names::TEST_TRIPLES`, so the global cleanup does not remove
   them if a run stops before the undo
 - scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector

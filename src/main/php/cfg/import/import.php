@@ -419,6 +419,8 @@ class import
             // analyse the import file
             $this->step_main_start(msg_id::COUNT, $this->est_time_create);
             $dto = $this->get_data_object_yaml($yaml_array, $msg);
+            // a yaml key only names a triple, so an existing triple keeps its link
+            $dto->triple_list()->set_links_by_db_name($msg);
             $this->step_main_end();
 
             // write to the database

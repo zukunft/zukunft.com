@@ -2387,7 +2387,10 @@ class sandbox extends db_object_seq_id_user
                 if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    // null e.g. if the do not update a link guard has refused the update
+                    if ($qp != null) {
+                        $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    }
                     // delete the user overwrite db row because it is not needed any more
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
@@ -2552,7 +2555,10 @@ class sandbox extends db_object_seq_id_user
         if (!$fvt_lst->is_empty_except_internal_fields()) {
             $sc_par_lst->add(sql_type::UPDATE);
             $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-            $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+            // null e.g. if the do not update a link guard has refused the update
+            if ($qp != null) {
+                $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+            }
         }
 
         return $msg->is_ok();
@@ -3128,6 +3134,7 @@ class sandbox extends db_object_seq_id_user
                 if (!$this->has_usr_cfg() and $db_rec->has_usr_cfg()) {
                     $this->usr_cfg_id = $db_rec->usr_cfg_id;
                 }
+                $this->refuse_link_change($db_rec, $msg);
             }
         }
 
@@ -3246,6 +3253,9 @@ class sandbox extends db_object_seq_id_user
                     // load the common object
                     $std_rec = $this->get_standard($msg);
 
+                    // also if the database row has been found by the name e.g. of an import
+                    $this->refuse_link_change($db_rec, $msg);
+
                     // check if the id parameters are supposed to be changed
                     if ($msg->is_ok()) {
                         if ($this->is_key_updated($db_rec)) {
@@ -3316,6 +3326,22 @@ class sandbox extends db_object_seq_id_user
      * @param user_message $msg
      * @return sandbox
      */
+    /**
+     * the do not update a link guard of the save: refuse another from, predicate or to for an existing link,
+     * because the link is what the object is (docs/llm/architecture.md), so the client removes the old link
+     * and adds the one with the other link instead
+     *
+     * @param sandbox $db_rec the database row of the link as the requesting user sees it
+     * @param user_message $msg to tell the user why nothing is saved and what to do instead
+     * @return void
+     */
+    private function refuse_link_change(sandbox $db_rec, user_message $msg): void
+    {
+        if ($this->is_link_obj() and $db_rec->has_id() and $this->is_link_changed($db_rec)) {
+            $this->add_link_change_refused($msg);
+        }
+    }
+
     protected function load_db(user_message $msg): sandbox
     {
         // prepare
@@ -4387,6 +4413,13 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
+        // the do not update a link guard of the sql layer, so that no path writes another link into an existing row;
+        // checked first, because the empty check below takes the verb of a triple as an internal field
+        if ($this->is_link_obj() and $this->is_link_field_changed($fvt_lst)) {
+            $this->add_link_change_refused($msg);
+            return null;
+        }
+
         // if no field has changed, no database update is needed
         // and an update statement without any fields to set would be invalid
         if ($fvt_lst->is_empty_except_internal_fields()) {

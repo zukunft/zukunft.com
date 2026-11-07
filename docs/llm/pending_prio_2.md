@@ -157,6 +157,21 @@ make this text translatable so that the frontend language shows the warning in t
 
 `triple_list::save_with_cache` renames a triple whose from/verb/to link exists under another name also when its from side is a triple that gets its id only in a later level of the import. No test covers this yet: add a write test that saves a triple below a named triple, imports the same link under a new name and checks that the row is renamed and no second row is added, and a negative test with a new link that is inserted.
 
+## phrases used with two meanings in the import files
+
+These phrases have one description and one ref, but some import files use them in another sense. Each needs its own phrase in that file with its own ref, e.g. `Faraday's laws of electrolysis`:
+
+- `Faraday's law`: induction in physics.json, electrolysis in chemistry.json
+- `Zurich`: the city in zurich.json, the canton in base_data/zh_canton.json (84 uses there)
+- `base`: the topology base in units.json, the base currency in system_unit_test_data/currencies.json
+- `efficacy`: efficacy in units.json, political efficacy in start_page/theses_complex_simple.json
+- `elasticity`: the material property in engineering.json, the price elasticity in economics.json
+- `fossil`: the fossil in geology.json, the fossil fuel in start_page/problem_global_warming_solutions.json
+- `gain`: the amplifier gain in engineering.json, the utility in solution_prio.json
+- `power`: the physical power in physics.json, the exponentiation in base_data/math_propagation_of_uncertainty.json, the social power in solution_prio.json
+- `solution`: the chemical solution in chemistry.json, the problem solving in solution_prio.json
+- `square`: the algebraic square in units.json, also the geometric shape in math.json
+
 ## calculator selector with and without numbers
 
 A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.

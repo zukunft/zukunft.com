@@ -136,11 +136,11 @@
       "name": "DALY",
       "refs": [
         {
-          "name": "Disability-adjusted_life_year",
+          "name": "Disability-adjusted life year",
           "type": "wikipedia"
         },
         {
-          "name": "Q1138106",
+          "name": "Q55627",
           "type": "wikidata"
         }
       ]
@@ -282,17 +282,7 @@
       "name": "reform"
     },
     {
-      "name": "fossil",
-      "refs": [
-        {
-          "name": "Fossil_fuel",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q12748",
-          "type": "wikidata"
-        }
-      ]
+      "name": "fossil"
     },
     {
       "name": "fuel"
@@ -305,7 +295,7 @@
           "type": "wikipedia"
         },
         {
-          "name": "Q242305",
+          "name": "Q193219",
           "type": "wikidata"
         }
       ]
@@ -552,7 +542,7 @@
           "type": "wikipedia"
         },
         {
-          "name": "Q118096",
+          "name": "Q52389",
           "type": "wikidata"
         }
       ]

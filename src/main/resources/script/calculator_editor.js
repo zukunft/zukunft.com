@@ -438,6 +438,8 @@ const UNIT_TYPES = new Set(["measure unit", "format percent"]);
 const FOLLOW = "is follower of";
 const HAS = "has a";
 const WITH = "with";
+/* the name of the verb "is", for which the pod creates the name of a triple as "from (to)" */
+const IS_A = "is a";
 /* the roles of the two phrases that the verdict compares, in their order, which also end the names of their triples */
 const COMPARED_ROLES = ["result", "threshold"];
 /* the roles of the results of a cell of the sensitivity table: the number in the cell and the one in brackets */
@@ -1697,36 +1699,102 @@ function mergeObj(orig, gen, textManaged) {
     return result;
 }
 
-/* a moved item links its order triple to another item, but the link of a triple is the same for all users,
-   so the order triple is removed for the user and added with the new link; the added one gets the name
-   that the pod creates from the link, because the removed one keeps its name for the other users;
-   a link that only follows the rename of the linked item is no move */
-function relinkOrders(changes) {
+/* the link of a triple is what the triple is and is never changed (docs/llm/architecture.md), so a triple with
+   another from, verb or to, e.g. a moved item or an argument moved to the other side, is removed for the user
+   and added with the new link; a triple that names a removed one goes the same way, because it would else still
+   name the removed one; the added one gets the name that the pod creates from the link if it keeps the name of
+   the removed one, because the removed one keeps its name for the other users; a link that only follows the
+   rename of the linked item is no move; the added triples are sorted parents first, so that each names its
+   parent by a name that the pod already knows */
+function relinkLinks(changes, unchanged) {
     const renamed = new Map();
     changes.mod.forEach(function (m) {
         if (m.before.name !== m.after.name) {
             renamed.set(m.before.name, m.after.name);
         }
     });
+    // the name of each removed triple and the name of the triple that is added instead
+    const relinked = new Map();
 
-    function moved(m) {
+    function linkChanged(m) {
         const from = renamed.get(m.before.from) || m.before.from;
         const to = renamed.get(m.before.to) || m.before.to;
-        return m.after.verb === FOLLOW && (m.after.from !== from || m.after.to !== to);
+        return m.after.verb !== m.before.verb || m.after.from !== from || m.after.to !== to;
     }
 
-    const kept = [];
-    changes.mod.forEach(function (m) {
-        if (moved(m)) {
-            const added = Object.assign({}, m.after);
-            delete added.name;
-            changes.del.push({src: m.src, t: m.before});
-            changes.add.push(added);
-        } else {
-            kept.push(m);
+    function namesRelinked(m) {
+        return relinked.has(m.before.from) || relinked.has(m.before.to);
+    }
+
+    const added = [];
+
+    function relink(m) {
+        const t = Object.assign({}, m.after);
+        t.from = relinked.get(m.before.from) || t.from;
+        t.to = relinked.get(m.before.to) || t.to;
+        if (t.verb === FOLLOW || t.name === m.before.name) {
+            delete t.name;
         }
+        relinked.set(m.before.name, t.name || generatedName(t));
+        changes.del.push({src: m.src, t: m.before});
+        added.push(t);
+    }
+
+    let open = changes.mod.concat(unchanged);
+    let found = true;
+    while (found) {
+        found = false;
+        const kept = [];
+        open.forEach(function (m) {
+            if (linkChanged(m) || namesRelinked(m)) {
+                relink(m);
+                found = true;
+            } else {
+                kept.push(m);
+            }
+        });
+        open = kept;
+    }
+    // an unchanged triple has the same object before and after and is no change
+    changes.mod = open.filter(function (m) {
+        return m.before !== m.after;
     });
-    changes.mod = kept;
+    parentsFirst(added).forEach(function (t) {
+        changes.add.push(t);
+    });
+}
+
+/* the name that the pod creates for a triple without a given name (triple::generate_name) */
+function generatedName(t) {
+    if (t.verb === IS_A) {
+        return t.from + " (" + t.to + ")";
+    }
+    return t.from + " " + t.verb + " " + t.to;
+}
+
+/* the triples in an order that adds a triple only after the triples of the list that it names */
+function parentsFirst(trp) {
+    const result = [];
+    let open = trp.slice();
+    let found = true;
+    while (open.length > 0 && found) {
+        found = false;
+        const openNames = new Set(open.map(function (t) {
+            return t.name || generatedName(t);
+        }));
+        const kept = [];
+        open.forEach(function (t) {
+            if (openNames.has(t.from) || openNames.has(t.to)) {
+                kept.push(t);
+            } else {
+                result.push(t);
+                found = true;
+            }
+        });
+        open = kept;
+    }
+    // a cycle is not possible for triples, but would be reported by the pod instead of an endless loop
+    return result.concat(open);
 }
 
 /* what has changed against the loaded data: the triples, values and words to add, change or remove */
@@ -1744,6 +1812,8 @@ function buildOutput() {
         }
     });
     const finalTriples = [];
+    // the unchanged triples, which are removed and added again if they name a triple with another link
+    const unchanged = [];
     T.forEach(function (t, i) {
         if (!MANAGED.triples.has(i)) {
             finalTriples.push(t);
@@ -1752,6 +1822,8 @@ function buildOutput() {
             const merged = mergeObj(t, e.obj, e.textManaged);
             if (JSON.stringify(merged) !== JSON.stringify(t)) {
                 changes.mod.push({src: i, before: t, after: merged});
+            } else {
+                unchanged.push({src: i, before: t, after: t});
             }
             finalTriples.push(merged);
         } else {
@@ -1762,7 +1834,7 @@ function buildOutput() {
         finalTriples.push(e.obj);
         changes.add.push(e.obj);
     });
-    relinkOrders(changes);
+    relinkLinks(changes, unchanged);
 
     /* values: the limits of the fields and the edited shown numbers */
     const V = DOC.values || [];
@@ -3672,14 +3744,18 @@ function putMessage(changes) {
         return [d.t.name, d];
     }));
 
-    function depth(d) {
-        let n = 0;
-        let cur = d;
-        while (cur && delNames.has(cur.t.from) && n < 20) {
-            n = n + 1;
-            cur = byName.get(cur.t.from);
+    // the number of removed triples that a removed triple names by its from or its to, e.g. the order of an
+    // argument names the argument by its to, so that a triple is removed before the ones that it names
+    function depth(d, n = 0) {
+        let result = 0;
+        if (n < 20) {
+            [d.t.from, d.t.to].forEach(function (name) {
+                if (delNames.has(name) && name !== d.t.name) {
+                    result = Math.max(result, 1 + depth(byName.get(name), n + 1));
+                }
+            });
         }
-        return n;
+        return result;
     }
 
     changes.del.slice().sort(function (a, b) {

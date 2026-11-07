@@ -54,7 +54,7 @@
     {"from": "Switzerland", "verb": "is a", "to": "country"},
     {"from": "Germany", "verb": "is a", "to": "country"},
     {"name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton",
-      "refs": [ { "name": "canton of Zürich", "type": "wikipedia" },
+      "refs": [ { "name": "Canton of Zurich", "type": "wikipedia" },
                 { "name": "Q11943", "type": "wikidata" } ]
     },
     {"name": "Zurich (city)", "from": "Zurich", "verb": "is a", "to": "city"},

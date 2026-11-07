@@ -148,6 +148,23 @@ to run the suite and report the results, and fix what the report shows. If a
 run seems to "work" from the LLM environment, that is not permission — it means
 the environment accidentally reaches a deployment it should not touch.
 
+## Each change is tested upfront with `test/test_part.php`
+
+A full test run with `test/test.php` takes more than 30 minutes, so the developer
+tests each change first with `test/test_part.php`, which runs only the tests that
+`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls.
+
+- With every change the LLM activates or adds the tests that cover the change in
+  `a_selected_test::run`, so that the developer can run them right away.
+- In the same edit it deactivates the tests there whose changes are already
+  committed, so that the selected run stays short.
+- The full `test/test.php` run is still needed before a commit; `test_part.php`
+  only gives the fast feedback for one change.
+
+So the target is to keep the number of changes low: every change has to be
+covered by the selected tests and confirmed by a `test_part.php` run, and a short
+list of changes keeps both the selected run and the next full run short.
+
 ## Test object creation
 
 All objects used in tests come from a factory function in

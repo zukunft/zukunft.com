@@ -3365,6 +3365,11 @@
     \-- is_named_obj - section for function is_named_obj is expected to be info in /sandbox/sandbox_link.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox_lin
             k.php
+    \-- is_link_changed - section for function is_link_changed is expected to be info in /sandbox/sandbox_link.php
+    \-- is_link_field_changed - section for function is_link_field_changed is expected to be info in /sandbox/sandbox_li
+            nk.php
+    \-- add_link_change_refused - section for function add_link_change_refused not yet defined that it should be do not 
+            update a link guard in /sandbox/sandbox_link.php
     \-- link_id - section for function link_id is expected to be link in /sandbox/sandbox_link.php
     \-- order error - order of section info has difference at is_valid should be before db_ready
 \-- sandbox_link_list
@@ -4287,6 +4292,8 @@
     \-- rename_link_conflicts - section for function rename_link_conflicts not yet defined that it should be parts in /w
             ord/triple_list.php
     \-- fill_by_name - section for function fill_by_name not yet defined that it should be save in /word/triple_list.php
+    \-- set_links_by_db_name - section for function set_links_by_db_name is expected to be set and get in /word/triple_l
+            ist.php
     \-- fill_missing_verbs - section for function fill_missing_verbs not yet defined that it should be save in /word/tri
             ple_list.php
     \-- get_ready - section for function get_ready is expected to be save helper in /word/triple_list.php

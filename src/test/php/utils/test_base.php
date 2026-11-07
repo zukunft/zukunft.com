@@ -2479,6 +2479,31 @@ class test_base
     }
 
     /**
+     * check the do not update a link guard of one link class: a link with a database id never gets another
+     * from, predicate or to, neither by the save (is_link_changed) nor by the sql update creation
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox_link $lnk a link with a database id as it is in the database
+     * @param array $changed_lst the copies of the link with another part, e.g. 'from' => the link with another from
+     * @return void
+     */
+    function assert_link_guard(sql_creator $sc, sandbox_link $lnk, array $changed_lst): void
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $same = clone $lnk;
+        $this->assert_false('the ' . $class . ' guard accepts the same link', $same->is_link_changed($lnk));
+        foreach ($changed_lst as $part => $changed) {
+            $this->assert_true('the ' . $class . ' guard refuses another ' . $part, $changed->is_link_changed($lnk));
+            $msg = new user_message($this->usr1);
+            $sc->reset(sql_db::POSTGRES);
+            $qp = $changed->sql_update($sc, $lnk, $msg);
+            $refused = ($qp === null and !$msg->is_ok());
+            $this->assert_true('... also in the sql update of another ' . $part, $refused);
+        }
+    }
+
+    /**
      * check the SQL statement creation to update a database row
      * for all allowed SQL database dialects
      *
@@ -4634,6 +4659,31 @@ class test_base
         $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * remove the change log entries of rows that a test has added and deleted again, identified by their
+     * database id, because e.g. an added order triple or a value of seed phrases has no reserved test name;
+     * a row that can still be loaded keeps its change log, so that the log of a live row is never removed
+     *
+     * @param array $dbo_lst the deleted words, triples or values as loaded before their delete
+     * @return void
+     */
+    function cleanup_change_log_of_deleted(array $dbo_lst): void
+    {
+        foreach ($dbo_lst as $dbo) {
+            $class = $dbo::class;
+            $chk = new $class($this->usr_system);
+            $msg = new user_message($this->usr_system);
+            $deleted = $chk->load_by_id($dbo->id(), $msg) == 0;
+            if ($deleted and $dbo instanceof value) {
+                $this->delete_value_change_log($dbo->id());
+                $this->delete_value_link_change_log($dbo->id());
+                $this->delete_value_time_series_change_log($dbo->grp());
+            } elseif ($deleted) {
+                $this->delete_change_log_of_obj($class, $dbo->id());
+            }
+        }
     }
 
     /**

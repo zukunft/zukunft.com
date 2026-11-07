@@ -1457,18 +1457,19 @@ class sandbox_link extends sandbox
                     }
                 }
             }
-            // check with the user link space
+            // check with the user link space by the same key as the standard link space, so for a triple
+            // with the verb, because a triple with another verb between the same phrases is no duplicate
             if ($db_chk->id() == 0) {
                 $db_chk->set_user($this->get_user());
                 if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
-                    if ($db_chk->load_by_link_id($this->fob->id(), $msg, 0, $this->tob->id(), $this::class)) {
+                    if ($db_chk->load_by_link_id($this->fob->id(), $msg, $this->predicate_id(), $this->tob->id(), $this::class)) {
                         if ($db_chk->id() != 0) {
                             log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space with type ' . $this->predicate_name());
                             $sim = $db_chk;
                         }
                     }
                 } else {
-                    if ($db_chk->load_by_link_id($this->fob->id(), $msg, $this->predicate_id(), $this->tob->id(), $this::class)) {
+                    if ($db_chk->load_by_link_id($this->fob->id(), $msg, 0, $this->tob->id(), $this::class)) {
                         if ($db_chk->id() != 0) {
                             log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
                             $sim = $db_chk;
@@ -1701,7 +1702,10 @@ class sandbox_link extends sandbox
             $type_id,
             sql_field_type::INT_SMALL
         );
-        if ($to_id != null) {
+        // by the same rule as the log insert (sql_creator::sql_func_log_user_link), which has the column
+        // whenever the to of the link is an id and not an external key, also if the old value is empty,
+        // e.g. if the user includes again a link that has been excluded
+        if (is_int($this->to_id())) {
             $fvt_lst_out->add_field(
                 change_link::FLD_OLD_TO_ID,
                 $to_id,
@@ -2121,6 +2125,112 @@ class sandbox_link extends sandbox
         } else {
             return null;
         }
+    }
+
+
+    /*
+     * do not update a link guard
+     */
+
+    /**
+     * the do not update a link guard: the from, the to and, for a class whose type is part of the link,
+     * the predicate identify a link (docs/llm/architecture.md), so a link with a database id never gets
+     * another one; a from, predicate or to that the request does not name is taken as unchanged;
+     * the external key of a ref is a normal field, because the phrase and the type identify a ref
+     *
+     * @param sandbox_link $db_rec the link as it is in the database
+     * @return bool true if this link has another from, predicate or to than the database row with the same id
+     */
+    function is_link_changed(sandbox_link $db_rec): bool
+    {
+        $result = false;
+        if ($db_rec->id() != 0) {
+            if ($this->from_id() != 0 and $this->from_id() != $db_rec->from_id()) {
+                $result = true;
+            }
+            $predicate_id = $this->predicate_id();
+            if ($this->is_predicate_key() and $predicate_id != 0 and $predicate_id != $db_rec->predicate_id()) {
+                $result = true;
+            }
+            $to_id = $this->to_id();
+            if ($this->is_to_link() and $to_id != 0 and $to_id != $db_rec->to_id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the do not update a link guard of the sql layer, so that no path writes another link into an existing row
+     *
+     * @param sql_par_field_list $fvt_lst the fields of a database update with their values before the update
+     * @return bool true if the update would write another from, predicate or to into the row
+     */
+    function is_link_field_changed(sql_par_field_list $fvt_lst): bool
+    {
+        $result = false;
+        $link_fields = [$this->from_field()];
+        if ($this->is_to_link()) {
+            $link_fields[] = $this->to_field();
+        }
+        if ($this->is_predicate_key()) {
+            $link_fields[] = $this->type_field();
+        }
+        foreach ($link_fields as $fld) {
+            if ($fvt_lst->has_name($fld) and $this->field_value_changed($fvt_lst, $fld)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to tell the user why nothing is saved and what to do instead
+     * @return void
+     */
+    function add_link_change_refused(user_message $msg): void
+    {
+        $lib = new library();
+        $msg->add(msg_id::LINK_CHANGE_REFUSED, [
+            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+            msg_id::VAR_ID => (string)$this->id(),
+            msg_id::VAR_NAME_FROM => $this->from_name() ?? '',
+            msg_id::VAR_NAME_TO => $this->to_name() ?? ''
+        ]);
+    }
+
+    /**
+     * @return bool true if the type of this link class is part of the link e.g. the verb of a triple
+     */
+    private function is_predicate_key(): bool
+    {
+        return in_array($this::class, def::LINK_TYPE_CLASSES);
+    }
+
+    /**
+     * @return bool true if the to is a linked object with an id, false for the external key of a ref,
+     *              which the ref save updates like a normal field e.g. if an import names another wikipedia page
+     */
+    private function is_to_link(): bool
+    {
+        return is_int($this->to_id());
+    }
+
+    /**
+     * @param sql_par_field_list $fvt_lst the fields of a database update with their values before the update
+     * @param string $fld the name of a link field of the update
+     * @return bool true if the update writes another id, or if the field list has no id another value, into the field
+     */
+    private function field_value_changed(sql_par_field_list $fvt_lst, string $fld): bool
+    {
+        $id = $fvt_lst->get_id($fld);
+        $old_id = $fvt_lst->get_old_id($fld);
+        if ($id !== null or $old_id !== null) {
+            $result = $id != $old_id;
+        } else {
+            $result = $fvt_lst->get_value($fld) != $fvt_lst->get_old($fld);
+        }
+        return $result;
     }
 
 

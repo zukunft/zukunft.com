@@ -62,6 +62,7 @@ include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_by_id_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
@@ -428,6 +429,12 @@ class a_selected_test extends all_unit_tests
             //new value_by_id_write_tests()->run($this);
             // the triple description change of the calculator editor and its undo
             //new update_put_write_tests()->run_use_case($this);
+            // the messages of the calculator editor on the Swiss NPP vote and the PV lifetime balance and their undo
+            //new update_put_write_tests()->run_npp_vote($this);
+            //new update_put_write_tests()->run_notes_and_sources($this);
+            //new update_put_write_tests()->run_scenarios($this);
+            // the calculator editor messages with another link for a triple of the Swiss NPP vote, which are refused
+            new update_put_write_tests()->run_npp_links($this);
             //run_system_test($this);
             //$t_db->create_test_db_entries($this);
             //new user_write_tests()->run($this);

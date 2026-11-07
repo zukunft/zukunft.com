@@ -190,6 +190,7 @@ messages:
   update_put_other_user: "These changes have been prepared for the user with the id z$VarObjId$z, but you are logged in as z$VarUserName$z, so nothing is saved. Please reload the page and repeat the changes."
   update_put_skipped: "z$VarCounter$z changes after the problem are not saved. Please fix the problem and save again."
   update_put_unchanged: "The z$VarClassName$z with the id z$VarObjId$z has not been changed by the save. Please reload the page and check the values."
+  link_change_refused: "The z$VarClassName$z with the id z$VarObjId$z cannot be linked from \"z$VarFromName$z\" to \"z$VarToName$z\", because a z$VarClassName$z with another link is another z$VarClassName$z. Please remove it and add the new z$VarClassName$z instead."
   solution_prio_title: "Which problem is worth solving first?"
   solution_prio_ranking_table: "Global problems ranked by the loss a solution can avoid"
   phrase_has: "has"

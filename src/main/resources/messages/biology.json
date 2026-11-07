@@ -603,11 +603,11 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human population",
           "type": "wikipedia"
         },
         {
-          "name": "Q175385",
+          "name": "Q33829",
           "type": "wikidata"
         }
       ]

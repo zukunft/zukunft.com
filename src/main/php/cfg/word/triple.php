@@ -1964,6 +1964,11 @@ class triple extends sandbox_link_named
             // fill the names, but not the given name of the database if another name is requested,
             // because it is the old name e.g. of the user overlay row on a rename back
             $is_renamed = ($this->name !== null and $this->name != $trp->name(true));
+            // a request without a name keeps the name of the database row, e.g. an update put that only
+            // includes a triple again, so that the save never takes the missing name as a rename to empty
+            if ($this->name === null) {
+                $this->name = $trp->name;
+            }
             if ($this->name_given === null and $trp->name_given != null and !$is_renamed) {
                 $this->name_given = $trp->name_given;
             }
@@ -3383,7 +3388,8 @@ class triple extends sandbox_link_named
             }
         }
         // TODO Prio 2 check if the excluded field is not already added by the sandbox function
-        if ($obj->excluded !== $this->excluded) {
+        // compared as bool, because an unset excluded (null) is the same as not excluded (false)
+        if ($obj->is_excluded() !== $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,

@@ -131,13 +131,7 @@
       "description": "the result of dividing one number by another"
     },
     {
-      "name": "power",
-      "refs": [
-        {
-          "name": "Exponentiation",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "power"
     },
     {
       "name": "exponential",

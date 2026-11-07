@@ -56,7 +56,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human population",
           "type": "wikipedia"
         },
         {
@@ -83,11 +83,11 @@
       "description": "quantity per unit area or volume",
       "refs": [
         {
-          "name": "Population_density",
+          "name": "Density",
           "type": "wikipedia"
         },
         {
-          "name": "Q183334",
+          "name": "Q29539",
           "type": "wikidata"
         }
       ]
@@ -126,11 +126,11 @@
       "name": "death",
       "refs": [
         {
-          "name": "Mortality_rate",
+          "name": "Death",
           "type": "wikipedia"
         },
         {
-          "name": "Q58702",
+          "name": "Q4",
           "type": "wikidata"
         }
       ]
@@ -309,7 +309,7 @@
       "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
       "refs": [
         {
-          "name": "canton_of_Zürich",
+          "name": "Canton of Zurich",
           "type": "wikipedia"
         },
         {

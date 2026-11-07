@@ -29,11 +29,11 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Constant",
+          "name": "Mathematical constant",
           "type": "wikipedia"
         },
         {
-          "name": "Q1127670",
+          "name": "Q186509",
           "type": "wikidata"
         }
       ]
@@ -159,7 +159,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "life",
+          "name": "Life",
           "type": "wikipedia"
         },
         {
@@ -174,7 +174,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "death",
+          "name": "Death",
           "type": "wikipedia"
         },
         {
@@ -189,7 +189,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Homo",
+          "name": "Human",
           "type": "wikipedia"
         },
         {

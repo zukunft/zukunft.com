@@ -64,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_li
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -140,6 +141,14 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the do not update a link guard: the link type of a formula link is a normal field, so only the
+        // formula and the phrase identify the link
+        $t_wrd = new test_words($t);
+        $lnk_from = clone $lnk;
+        $lnk_from->set_fob($t_frm->formula_increase());
+        $lnk_to = clone $lnk;
+        $lnk_to->set_tob($t_wrd->word_hour()->phrase());
+        $t->assert_link_guard($sc, $lnk, ['formula' => $lnk_from, 'phrase' => $lnk_to]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         // the delete log function is created once per name, so a link to a phrase that has been
