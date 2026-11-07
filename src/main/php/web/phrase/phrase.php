@@ -48,6 +48,8 @@ include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::WORD . 'word.php';
 //include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::WORD . 'triple.php';
+// after the triple, which loads the reference classes in the order they need
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
@@ -55,6 +57,7 @@ include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'ref_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -62,6 +65,7 @@ include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -76,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -783,6 +788,18 @@ class phrase extends combine_named
     }
 
     /**
+     * @return int the edit view of the word or the triple e.g. to change the description
+     */
+    function edit_view_id(): int
+    {
+        $result = views::WORD_EDIT_ID;
+        if ($this->is_triple()) {
+            $result = views::TRIPLE_EDIT_ID;
+        }
+        return $result;
+    }
+
+    /**
      * simply to display a single word in a table cell
      */
     function dsp_tbl_cell(int $intent): string
@@ -946,5 +963,222 @@ class phrase extends combine_named
         }
         log_debug('for ' . $this->dsp_id());
         return $result;
+    }
+
+
+    /*
+     * wikipedia
+     */
+
+    /**
+     * the page that offers the description or the wikidata id that the backend takes from the
+     * wikipedia page of this phrase, so that the user confirms them like an own change
+     *
+     * @param array $url_array the url of the refresh icon with the edit view and the id of this phrase
+     * @param user_message $msg with the requesting user and to tell why nothing can be taken from wikipedia
+     * @return array the url of the reference add page or of the confirm page, or of the edit view if wikipedia cannot be read
+     */
+    function wikipedia_confirm_url(array $url_array, user_message $msg): array
+    {
+        $id = $this->obj_id();
+        $usr_id = $msg->usr?->id() ?? 0;
+        $old = $this->new_obj();
+        $new = $this->new_obj();
+        $refresh = [url_var::REFRESH => url_var::REFRESH_WIKIPEDIA, url_var::INCL_RELATED => url_var::TRUE];
+        $result = $url_array;
+        unset($result[url_var::REFRESH]);
+        // the phrase as stored is the from side of the confirm page and the wikipedia answer the to side
+        if ($old->load_by_id_with_related($id, $msg, $usr_id)
+            and $new->load_by_id($id, $msg, $refresh, $usr_id)) {
+            $result = $this->confirm_url_of_refresh($result, $old, $new, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the next step of the wikipedia refresh: a phrase without description gets the description and
+     * the wikidata id with one confirm; a phrase with an own description first gets the missing
+     * wikidata reference by the prefilled add page, else the wikipedia description is suggested
+     * and only if the description already matches the changed wikidata id
+     *
+     * @param array $url_array the url of the edit view of this phrase without the refresh
+     * @param word|triple $old the phrase as stored
+     * @param word|triple $new the phrase with the description and the references taken from wikipedia
+     * @param user_message $msg to report a problem of the url mapping of the stored phrase
+     * @return array the url of the reference add page or of the confirm page of the description or of the reference
+     */
+    function confirm_url_of_refresh(array $url_array, word|triple $old, word|triple $new, user_message $msg): array
+    {
+        $new_key = $this->wikidata_id($new);
+        $wd_ref = $old->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
+        $has_description = $old->get_description() != '';
+        $same_description = $old->get_description() == $new->get_description();
+        $is_new_key = ($new_key != '' and $new_key != $this->wikidata_id($old));
+        if ($has_description and $wd_ref == null and $is_new_key) {
+            $result = $this->ref_add_url_of_refresh($url_array, $new_key);
+        } elseif ($has_description and $same_description and $is_new_key) {
+            $result = $this->ref_update_url_of_refresh($url_array, $wd_ref, $new_key, $msg);
+        } else {
+            $result = $this->description_url_of_refresh($url_array, $old, $new, $msg);
+            // only a phrase without own description takes over the wikidata id with the description
+            if (!$has_description and $is_new_key) {
+                $result[url_var::LINK . url_var::EXTERNAL_KEY] = $new_key;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url of the edit view of this phrase without the refresh
+     * @param string $new_key the wikidata id of the wikipedia page e.g. "Q12147"
+     * @return array the url of the reference add page filled with the wikidata reference of this phrase
+     */
+    private function ref_add_url_of_refresh(array $url_array, string $new_key): array
+    {
+        $result = $this->url_back_to_phrase($url_array);
+        $result[url_var::MASK] = ref::VIEW_ADD_ID;
+        // the reference does not exist yet
+        $result[url_var::ID] = 0;
+        $result[url_var::PHRASE] = $this->id();
+        $result[url_var::REF_TYPE] = $this->wikidata_type_id();
+        $result[url_var::EXTERNAL_KEY] = $new_key;
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url of the edit view of this phrase without the refresh
+     * @param ref $wd_ref the stored wikidata reference of this phrase
+     * @param string $new_key the wikidata id of the wikipedia page e.g. "Q12147"
+     * @param user_message $msg to report a problem of the url mapping of the stored reference
+     * @return array the url of the confirm page with the changed external key of the wikidata reference
+     */
+    private function ref_update_url_of_refresh(array $url_array, ref $wd_ref, string $new_key, user_message $msg): array
+    {
+        // the references of a loaded phrase may come without their phrase, which the update needs
+        $wd_ref->set_phrase($this);
+        // like the description, the complete reference with its '8' values limits the write to the key
+        $ref_url = $wd_ref->to_url_array($msg);
+        $back_url = $this->url_back_to_phrase($url_array);
+        $result = array_merge($back_url, $ref_url, html_base::pre_url_array($ref_url));
+        $result[url_var::ORIGIN_MASK] = ref::VIEW_EDIT_ID;
+        $result[url_var::MASK] = views::CONFIRM_EDIT_ID;
+        $result[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $result[url_var::EXTERNAL_KEY] = $new_key;
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url of the edit view of this phrase without the refresh
+     * @param word|triple $old the phrase as stored
+     * @param word|triple $new the phrase with the description taken from wikipedia
+     * @param user_message $msg to report a problem of the url mapping of the stored phrase
+     * @return array the url of the confirm page with the changed description
+     */
+    private function description_url_of_refresh(array $url_array, word|triple $old, word|triple $new, user_message $msg): array
+    {
+        // the confirm writes the complete phrase like an edit form, e.g. a triple with its from,
+        // verb and to, and the '8' values of the stored phrase limit the write to the description;
+        // the stored name is carried unchanged, because without it the update would remove the given
+        // name of a triple (see docs/llm/pending_prio_2.md "wikipedia refresh leftovers")
+        $old_url = $old->to_url_array($msg);
+        $back_url = $this->url_back_to_phrase($url_array);
+        $result = array_merge($back_url, $old_url, html_base::pre_url_array($old_url));
+        // like the confirm view of a form submit (see frontend::url_to_action)
+        $result[url_var::ORIGIN_MASK] = $url_array[url_var::MASK] ?? $this->edit_view_id();
+        $result[url_var::MASK] = views::CONFIRM_EDIT_ID;
+        $result[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $result[url_var::DESCRIPTION] = $new->get_description();
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url of the edit view of this phrase
+     * @return array the url with the page of this phrase as back target, so that cancel and the write return to it
+     */
+    private function url_back_to_phrase(array $url_array): array
+    {
+        $result = $url_array;
+        if (!array_key_exists(url_var::BACK . url_var::MASK, $result)) {
+            $result[url_var::BACK . url_var::MASK] = $this->view_id();
+            $result[url_var::BACK . url_var::ID] = $this->obj_id();
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the confirm url with the '7'-prefixed vars of the wikidata reference
+     * @param user_message $msg to report a problem of the reference mapping
+     * @return ref|null the wikidata reference that the confirm adds or changes, null if the url carries none
+     */
+    function ref_of_refresh(array $url_array, user_message $msg): ?ref
+    {
+        $link_vars = html_base::link_vars($url_array);
+        $result = null;
+        if (array_key_exists(url_var::EXTERNAL_KEY, $link_vars)) {
+            $result = new ref();
+            // the reference is created by the confirm, so it has no id yet
+            $link_vars[url_var::ACTION] = url_var::CRUD_CREATE;
+            $link_vars[url_var::PHRASE] = $this->id();
+            // always a wikidata reference, so that a typed url cannot add e.g. a second wikipedia reference
+            $link_vars[url_var::REF_TYPE] = $this->wikidata_type_id();
+            $result->url_mapper($link_vars, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * add the wikidata reference that the user has confirmed together with the description, or
+     * change the external key of the wikidata reference that the phrase has already
+     *
+     * @param array $url_array the confirmed url with the '7'-prefixed vars of the wikidata reference
+     * @param user_message $msg with the requesting user to report the result of the reference write
+     * @return void
+     */
+    function save_ref_of_refresh(array $url_array, user_message $msg): void
+    {
+        $ref = $this->ref_of_refresh($url_array, $msg);
+        if ($ref != null) {
+            $cur = $this->new_obj();
+            $cur->load_by_id_with_related($this->obj_id(), $msg, $msg->usr?->id() ?? 0);
+            $wd_ref = $cur->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
+            if ($wd_ref == null) {
+                $msg->merge($ref->add_via_api($msg));
+            } else {
+                // the loaded reference keeps all other fields, so that only the external key changes
+                $wd_ref->external_key = $ref->external_key();
+                $msg->merge($wd_ref->update($msg));
+            }
+        }
+    }
+
+    /**
+     * @return word|triple an empty object of the class of this phrase e.g. to load it again
+     */
+    private function new_obj(): word|triple
+    {
+        $result = new word();
+        if ($this->is_triple()) {
+            $result = new triple();
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $phr_obj a loaded phrase with its references
+     * @return string the external key of the wikidata reference e.g. "Q72", empty if the phrase has none
+     */
+    private function wikidata_id(word|triple $phr_obj): string
+    {
+        $wd_ref = $phr_obj->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
+        return $wd_ref?->external_key() ?? '';
+    }
+
+    /**
+     * @return int the database id of the wikidata reference type
+     */
+    private function wikidata_type_id(): int
+    {
+        global $ui_sys;
+        return $ui_sys->typ_lst_cache->ref_typ->id(ref_types::WIKIDATA);
     }
 }

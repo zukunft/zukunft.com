@@ -236,6 +236,11 @@ enum messages: string
     case RESERVED_NAME = 'reserved_name';
     case NOT_SIMILAR = 'not_similar';
     case RELOAD = 'reload';
+    // the tooltip of the refresh icon of a wikipedia reference and the problems of that refresh
+    case WIKIPEDIA_REFRESH = 'wikipedia_refresh';
+    case WIKIPEDIA_REF_MISSING = 'wikipedia_ref_missing';
+    case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
+    case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
     case READ = 'read';

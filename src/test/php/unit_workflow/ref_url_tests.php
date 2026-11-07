@@ -39,29 +39,46 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_refs.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_url_tests extends url_test_base
 {
+
+    // a part of the lead text of the live wikipedia page refs::GENEVA_WIKIPEDIA_KEY that stays stable
+    const string WIKIPEDIA_DESCRIPTION_PART = 'Geneva';
+    // the start of a pronunciation e.g. the IPA "[ʒənɛv]" that must not be part of the description
+    const string WIKIPEDIA_PRONUNCIATION_PART = '[';
 
     function run(test_cleanup $t): void
     {
@@ -321,6 +338,124 @@ class ref_url_tests extends url_test_base
         if ($do_it) {
             $this->assert_ref_removed('del_ref workflow has removed the reference');
         }
+    }
+
+    /**
+     * run the wikipedia_refresh workflow on the triple Geneva (city) of the base data: the refresh
+     * of Bern (city), which has no wikipedia reference, keeps the edit view, then the user presses
+     * the refresh icon of the wikipedia reference of Geneva (city) and confirms the description of
+     * the wikipedia page; the backend reads the live wikipedia page, so this workflow runs only in
+     * the write tests and only the triple page before the refresh is a snapshot, because the live
+     * text can change (see workflows::WF_WIKIPEDIA_REFRESH); the system user owns the triple, so the
+     * confirmed description is only a user overlay of usr1, which cleanup_wikipedia_refresh removes
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 42 for wf42
+     */
+    protected function wikipedia_refresh_workflow(int $wf_nbr): void
+    {
+        $msg = new user_message($this->t->usr1);
+        $this->wf_start($wf_nbr, workflows::WF_WIKIPEDIA_REFRESH, $this->t->usr1,
+            triple_names::CITY_GE_ID, true);
+        // the frontend reads the session user from the request cache, e.g. to block a user without login
+        $this->req->dto->usr = $this->usr;
+        $ui_msg = new user_message_ui($this->usr);
+        $this->wf_id = triple_names::CITY_GE_ID;
+        $this->wf_fixed_id = triple_names::CITY_GE_ID;
+        $no_ref_url = [
+            url_var::MASK => views::TRIPLE_EDIT_ID,
+            url_var::ID => triple_names::CITY_BE_ID,
+            url_var::REFRESH => url_var::REFRESH_WIKIPEDIA,
+        ];
+        $edit_url = [
+            url_var::MASK => views::TRIPLE_EDIT_ID,
+            url_var::ID => $this->wf_id,
+            url_var::REFRESH => url_var::REFRESH_WIKIPEDIA,
+        ];
+
+        $test_name = 'a triple without wikipedia reference stays in the edit view';
+        $url = $this->ui->url_with_wikipedia_refresh($no_ref_url, $ui_msg, false);
+        $mask = $url[url_var::MASK];
+        $this->t->assert($test_name, $mask, views::TRIPLE_EDIT_ID);
+
+        $test_name = '... and the user is told that the triple has no wikipedia reference';
+        $msg_txt = $ui_msg->text();
+        $this->t->assert_text_contains($test_name, $msg_txt, triple_names::CITY_BE);
+        $ui_msg->reset();
+
+        // show: the triple page lists the wikipedia reference with its refresh icon
+        $html = $this->assert_step(workflows::SHOW, [url_var::ID => $this->wf_id], views::TRIPLE_ID);
+
+        $test_name = 'the wikipedia reference on the triple page links to the refresh';
+        $this->t->assert_text_contains($test_name, $html, url_var::REFRESH . '=' . url_var::REFRESH_WIKIPEDIA);
+
+        // refresh: the user presses the refresh icon, which shows the confirm page
+        $test_name = 'the refresh shows the confirm page of the edit';
+        $cnf_url = $this->ui->url_with_wikipedia_refresh($edit_url, $ui_msg, false);
+        $mask = $cnf_url[url_var::MASK];
+        $this->t->assert($test_name, $mask, views::CONFIRM_EDIT_ID);
+
+        $test_name = '... with the lead text of the wikipedia page as description';
+        $description = $cnf_url[url_var::DESCRIPTION] ?? '';
+        $this->t->assert_text_contains($test_name, $description, self::WIKIPEDIA_DESCRIPTION_PART);
+
+        $test_name = '... but without the pronunciation';
+        $this->t->assert_text_not_contains($test_name, $description, self::WIKIPEDIA_PRONUNCIATION_PART);
+
+        $test_name = '... with the to phrase of the triple, so that the confirm can write it';
+        $to_id = $cnf_url[url_var::PHRASE_TO] ?? 0;
+        $this->t->assert($test_name, $to_id, word_names::CITY_ID);
+
+        $test_name = '... and without a wikidata change, because the triple has the wikidata id of the page';
+        $this->t->assert_key_not_exists($test_name, url_var::LINK . url_var::EXTERNAL_KEY, $cnf_url);
+
+        $test_name = '... without a message';
+        $this->t->assert_msg($test_name, $ui_msg);
+        $ui_msg->reset();
+
+        // confirmed: the user confirms the description
+        $test_name = 'the confirmed refresh writes the description';
+        $cnf_url[url_var::POST_SUBMIT] = '';
+        $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $db_trp = new triple($this->t->usr1);
+        $db_trp->load_by_id(triple_names::CITY_GE_ID, $msg);
+        $db_description = $db_trp->get_description();
+        $this->t->assert($test_name, $db_description, $description);
+
+        $test_name = '... without a message';
+        $this->t->assert_msg($test_name, $ui_msg);
+        $ui_msg->reset();
+
+        $test_name = '... and the wikidata reference is kept';
+        $ref_lst = new ref_list($this->t->usr1);
+        $ref_lst->load_by_phr_id($db_trp->phrase()->id(), $msg);
+        $db_wd_ref = $ref_lst->get_by_type_code_id(ref_types::WIKIDATA);
+        $db_key = $db_wd_ref?->get_external_key();
+        $this->t->assert($test_name, $db_key, refs::GENEVA_KEY);
+        $msg->reset();
+    }
+
+    /**
+     * remove the description of Geneva (city) that the wikipedia refresh workflow has confirmed, which
+     * is a user overlay of usr1, so that the standard row of the base data has never been changed
+     */
+    protected function cleanup_wikipedia_refresh(): void
+    {
+        $msg = new user_message($this->t->usr1);
+        $trp = new triple($this->t->usr1);
+        $trp->load_by_id(triple_names::CITY_GE_ID, $msg);
+        if ($trp->has_usr_cfg()) {
+            $trp->del_usr_cfg($msg);
+        }
+        $test_name = 'the cleanup of the wikipedia refresh has removed the description of usr1';
+        $this->t->assert_msg($test_name, $msg);
+
+        // Bern (city) has no references in the base data, so that its refresh must tell the user
+        $be_msg = new user_message($this->t->usr_system);
+        $be = new triple($this->t->usr_system);
+        $be->load_by_id(triple_names::CITY_BE_ID, $be_msg);
+        $this->t->cleanup_leftover_refs($be->phrase(), $be_msg);
+        $test_name = '... and the references left on Bern (city)';
+        $this->t->assert_msg($test_name, $be_msg);
     }
 
     /**

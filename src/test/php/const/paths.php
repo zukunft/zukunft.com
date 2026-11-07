@@ -97,6 +97,8 @@ class paths
     const string IMPORT_PROTECTED_TOLERANCE = self::IMPORT . 'protected_tolerance' . DIRECTORY_SEPARATOR;
     const string IMPORT_V_DEM = self::IMPORT . 'v_dem' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
+    // hand made json as received from the summary api of wikipedia, so no import json
+    const string IMPORT_WIKIPEDIA_CACHE = self::IMPORT_WIKIPEDIA . 'cache' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIDATA = self::IMPORT . 'wikidata' . DIRECTORY_SEPARATOR;
     // the json as received from wikidata
     const string IMPORT_WIKIDATA_CACHE = self::IMPORT_WIKIDATA . 'cache' . DIRECTORY_SEPARATOR;

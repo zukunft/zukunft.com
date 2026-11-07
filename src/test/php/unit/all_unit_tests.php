@@ -181,6 +181,7 @@ class all_unit_tests extends test_cleanup
         // do the im- and export unit tests
         new import_tests()->run($this);
         new wikidata_tests()->run($this);
+        new wikipedia_tests()->run($this);
 
         // db setup
         new db_setup_tests()->run($this);

@@ -353,6 +353,14 @@ class workflows
     // the id of the current login_start_page workflow; increase it to add the next snapshot set
     const int WF_LOGIN_START_PAGE_NBR = 41;
 
+    // the wikipedia_refresh workflow name used for the snapshot folder and the test subheader: the user
+    // presses the refresh icon of the wikipedia reference of the triple Geneva (city) and confirms the
+    // description of the wikipedia page; the backend reads wikipedia, so this
+    // workflow has no test mode twin and only the page before the refresh is a snapshot, because
+    // the text of the live wikipedia page can change (see ref_write_url_tests)
+    const string WF_WIKIPEDIA_REFRESH = 'wikipedia_refresh';
+    const int WF_WIKIPEDIA_REFRESH_NBR = 42;
+
     /**
      * the user process step that a user reaction action triggers
      *

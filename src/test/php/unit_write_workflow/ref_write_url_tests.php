@@ -66,6 +66,12 @@ class ref_write_url_tests extends ref_url_tests
         $this->change_ref_workflow(workflows::WF_CHANGE_REF_NBR, true);
         $this->del_ref_workflow(workflows::WF_DEL_REF_NBR, true);
 
+        // the refresh icon of a wikipedia reference is answered by the backend, which reads the live
+        // wikipedia page, so this workflow runs only here and not in the read tests
+        $this->cleanup_wikipedia_refresh();
+        $this->wikipedia_refresh_workflow(workflows::WF_WIKIPEDIA_REFRESH_NBR);
+        $this->cleanup_wikipedia_refresh();
+
         // cleanup - fallback delete in case the workflow did not persist as expected
         $t_ref->cleanup($this->ts);
 

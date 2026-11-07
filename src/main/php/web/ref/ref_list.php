@@ -87,6 +87,22 @@ class ref_list extends ListBase
         return $ref_lst;
     }
 
+    /**
+     * @param string $code_id the code id of the reference type e.g. ref_types::WIKIDATA
+     * @return ref|null the reference of the given type e.g. the wikidata item of a phrase, null if the list has none
+     */
+    function get_by_type_code_id(string $code_id): ?ref
+    {
+        $result = null;
+        // a phrase has at most one reference per type, like in the backend ref_list
+        foreach ($this->lst() as $ref) {
+            if ($ref->is_type($code_id)) {
+                $result = $ref;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * display

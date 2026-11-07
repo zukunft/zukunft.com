@@ -499,6 +499,8 @@ class files
     CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
     CONST string IMPORT_WTW_SAMPLE = test_paths::IMPORT_V_DEM . 'wtw_sample' . self::JSON;
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
+    // the summary of the Zurich page with a pronunciation in the lead text for the wikipedia refresh tests
+    CONST string IMPORT_WIKIPEDIA_SUMMARY_ZURICH = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Zurich' . self::JSON;
     // the json converted from the wikidata cache that can be imported into the database
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
 

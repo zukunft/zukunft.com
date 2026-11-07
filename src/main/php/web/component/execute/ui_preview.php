@@ -50,6 +50,8 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
@@ -76,6 +78,8 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -266,8 +270,9 @@ class ui_preview extends ui_base
         // field; without this url_mapper would reset the fields not posted (e.g. the plural or the
         // share) to their default. the keys owned by the back / confirm components (the view mask, the
         // object id, the process step, the origin mask, the 7-prefixed link vars and the 9-prefixed
-        // back targets) are emitted there (see system_form::form_back), and the 8-prefixed old values
-        // are shown only in the diff, so skip those
+        // back targets) are emitted there (see system_form::form_back), so skip those; the 8-prefixed
+        // old values are carried as well, so that a confirm page shown again after a failed write
+        // still lists only the changed fields (the write itself never reads them)
         // a url array is expected to carry only scalar values, so report a non scalar value
         // as an internal inconsistency and drop it instead of failing with a fatal on a cast
         foreach ($url_array as $key => $val) {
@@ -281,7 +286,6 @@ class ui_preview extends ui_base
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
                 and !str_starts_with($key, url_var::LINK)
-                and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)) {
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
@@ -330,16 +334,21 @@ class ui_preview extends ui_base
         global $mtr, $ui_sys;
         $html = new html_base();
         $result = '';
+        $lnk_txt = '';
         if ($dbo instanceof formula) {
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $frm = new formula();
             $frm->set_name($url_array[url_var::NAME] ?? '');
             $lnk = $frm->link_of_new($url_array, $msg, $ui_sys);
             $lnk_txt = $lnk?->link_preview($msg, $test_mode) ?? '';
-            if ($lnk_txt != '') {
-                $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
-                $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
-            }
+        } elseif ($dbo instanceof word or $dbo instanceof triple) {
+            // the wikidata reference that a wikipedia refresh changes together with the description
+            $ref = $dbo->phrase()->ref_of_refresh($url_array, $msg);
+            $lnk_txt = $ref?->link_preview() ?? '';
+        }
+        if ($lnk_txt != '') {
+            $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
+            $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
         }
         return $result;
     }

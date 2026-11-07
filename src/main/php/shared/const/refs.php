@@ -47,6 +47,9 @@ class refs
     const string PI_KEY = 'Q167';
     const int PI_ID = 29;
     const string PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    // the wikipedia reference of mathematics, the first reference of the base data (see src/test/resources/unit/ref/list.csv)
+    const string MATH_WIKIPEDIA_KEY = 'Mathematics';
+    const int MATH_WIKIPEDIA_ID = 1;
     const string MATH_KEY = 'Q395';
     const int MATH_ID = 2;
     const string MATH_COM = 'field of study';
@@ -61,6 +64,10 @@ class refs
     const string SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const int SYSTEM_TEST_ADD_ID = 992; // fixed snapshot id of the add workflow reference (like word_names::TEST_ADD_ID)
+    // the wikipedia and the wikidata reference of Geneva (city) used by the wikipedia refresh workflow,
+    // whose lead text starts with a pronunciation to remove
+    const string GENEVA_WIKIPEDIA_KEY = 'Geneva';
+    const string GENEVA_KEY = 'Q71';
     // the url and the description that the change_ref workflow writes in its two rounds
     const string TEST_URL_CHANGED = 'https://api.zukunft.com/';
     const string TEST_DESCRIPTION_CHANGED = 'System Test Reference Description Changed';

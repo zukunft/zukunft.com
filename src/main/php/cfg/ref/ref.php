@@ -679,7 +679,8 @@ class ref extends sandbox_link
 
     function type_name(): string
     {
-        if ($this->predicate_id() >= 0) {
+        // only a set type id has a code id; a null type id would pass ">= 0" in php
+        if ($this->predicate_id() > 0) {
             return $this->get_predicate_code_id();
         } else {
             return '';

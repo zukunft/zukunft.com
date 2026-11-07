@@ -104,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -194,6 +195,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -292,6 +294,7 @@ include_once test_paths::UNIT . 'change_log_tests.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UNIT . 'import_tests.php';
 include_once test_paths::UNIT . 'wikidata_tests.php';
+include_once test_paths::UNIT . 'wikipedia_tests.php';
 include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
@@ -4833,6 +4836,80 @@ class test_base
                 $this->delete_change_log_of_obj(ref::class, $ref->id());
             }
         }
+    }
+
+    /**
+     * remove the references that a test run has left on a phrase without references in the base
+     * data, e.g. on Bern (city), whose wikipedia refresh must tell that it has no wikipedia reference;
+     * the overlay rows of the test users are removed first, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else), and the change log of the removed test row last
+     *
+     * @param phrase $phr the phrase that has no references in the base data
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    function cleanup_leftover_refs(phrase $phr, user_message $msg): void
+    {
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            $this->cleanup_ref_overlays($ref->id(), $msg);
+            $owner = $this->ref_owner($ref);
+            // the message names the requesting user, whose permission the delete checks
+            $del_msg = new user_message($owner);
+            $ref->set_user($owner);
+            $ref->del($del_msg);
+            $msg->merge($del_msg);
+            $this->delete_change_log_of_obj(ref::class, $ref->id());
+        }
+    }
+
+    /**
+     * @param int $id the database id of the reference whose user overlay rows are removed
+     * @param user_message $msg to report an overlay row that cannot be removed
+     * @return void
+     */
+    private function cleanup_ref_overlays(int $id, user_message $msg): void
+    {
+        foreach ($this->ref_test_users() as $usr) {
+            $usr_msg = new user_message($usr);
+            $usr_ref = new ref($usr);
+            $usr_ref->load_by_id($id, $usr_msg);
+            if ($usr_ref->has_usr_cfg()) {
+                $usr_ref->del_usr_cfg($usr_msg);
+            }
+            $msg->merge($usr_msg);
+        }
+    }
+
+    /**
+     * @param ref $ref the reference whose owner deletes it
+     * @return user the test user that owns the reference, the system user if no test user owns it
+     */
+    private function ref_owner(ref $ref): user
+    {
+        $result = $this->usr_system;
+        foreach ($this->ref_test_users() as $usr) {
+            if ($usr->id() == $ref->owner_id()) {
+                $result = $usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the users of the test run that can own or overwrite a test reference
+     */
+    private function ref_test_users(): array
+    {
+        return [
+            $this->usr1,
+            $this->usr2,
+            $this->usr_normal,
+            $this->usr_admin,
+            $this->usr_test_admin,
+            $this->usr_system,
+        ];
     }
 
     /**

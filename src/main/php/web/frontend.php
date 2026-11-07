@@ -1160,6 +1160,8 @@ class frontend
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
         $url_array = $url_map->url_to_standard($url_array, $msg_ui);
+        // the refresh icon of a wikipedia reference leads to the confirm page or the reference add page
+        $url_array = $this->url_with_wikipedia_refresh($url_array, $msg_ui, $test_mode);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -2878,6 +2880,10 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
+            // the wikidata reference that the confirm page of a wikipedia refresh has shown
+            if ($crud == url_var::CRUD_UPDATE and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+                $dbo->phrase()->save_ref_of_refresh($url_array, $msg_ui);
+            }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
@@ -3233,6 +3239,34 @@ class frontend
             }
         }
         return $url_array;
+    }
+
+    /**
+     * the confirm page of the description and the wikidata id that the backend takes from the
+     * wikipedia page of a phrase, because the refresh icon of a wikipedia reference changes nothing
+     * before the user has confirmed it (see phrase::wikipedia_confirm_url)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell why nothing is taken from wikipedia
+     * @param bool $test_mode true to render without a backend call, so without reading wikipedia
+     * @return array the url of the confirm page or of the edit view, unchanged if no wikipedia refresh is requested
+     */
+    function url_with_wikipedia_refresh(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_WIKIPEDIA and !$test_mode) {
+            unset($result[url_var::REFRESH]);
+            $view = (int)($url_array[url_var::MASK] ?? 0);
+            $dbo = $this->dbo_for_url($view, $url_array);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif ($dbo instanceof word_ui or $dbo instanceof triple_ui) {
+                $result = $dbo->phrase()->wikipedia_confirm_url($url_array, $msg_ui);
+            } else {
+                log_err_msg_ui('the wikipedia refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
     }
 
     /**

@@ -123,6 +123,25 @@ class ref_list extends sandbox_list
         return $this->key_lst;
     }
 
+    /**
+     * @param string $code_id the code id of the reference type e.g. ref_types::WIKIPEDIA
+     * @return ref|null the reference of the given type e.g. the wikipedia page of a phrase, null if the list has none
+     */
+    function get_by_type_code_id(string $code_id): ?ref
+    {
+        global $sys;
+        $result = null;
+        // compared by the type id, because a reference without a known type has no code id
+        $type_id = $sys->typ_lst->ref_typ->id($code_id);
+        // a phrase has at most one reference per type (see ref::load_by_link_ids)
+        foreach ($this->lst() as $ref) {
+            if ($ref->predicate_id() == $type_id) {
+                $result = $ref;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * api

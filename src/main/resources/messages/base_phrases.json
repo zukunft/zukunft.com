@@ -311,15 +311,15 @@
       "name": "Geneva (city)",
       "refs": [
         {
-          "name": "Zürich",
+          "name": "Geneva",
           "type": "wikipedia"
         },
         {
-          "name": "Q72",
+          "name": "Q71",
           "type": "wikidata"
         },
         {
-          "name": "zurich",
+          "name": "geneva",
           "type": "conceptnet"
         }
       ],

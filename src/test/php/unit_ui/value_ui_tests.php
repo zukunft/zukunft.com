@@ -471,6 +471,9 @@ class value_ui_tests
         $same_url[url_var::SOURCE] = (string)sources::BFS_ID;
         $same_html = $preview->popup_changes($msg_ui, $same_url, $val_chg, true);
         $t->assert_text_not_contains($test_name, $same_html, $mtr->text_db_field(source_fields::FLD_ID));
+        $test_name = 'the confirm page posts the old value again, so that after a failed write it still lists only the changes';
+        $pre_source = $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::BFS_ID);
+        $t->assert_text_contains($test_name, $chg_html, $pre_source);
 
         // the overwrite form writes the changed number of the value without the confirm view
         $t->subheader($ts . 'value overwrite');

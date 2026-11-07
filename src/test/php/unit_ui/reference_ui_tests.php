@@ -37,19 +37,32 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class reference_ui_tests
 {
+
+    // the description that the backend has taken from the wikipedia page of mathematics
+    const string MATH_WIKIPEDIA_COM = 'Mathematics is a field of study that discovers and organizes methods, theories and theorems.';
+    // the description that the backend has taken from the wikipedia page of geneva
+    const string GENEVA_WIKIPEDIA_COM = 'Geneva is the second-most populous city in Switzerland.';
+
     function run(test_cleanup $t): void
     {
         global $mtr;
@@ -197,6 +210,113 @@ class reference_ui_tests
         // the views of an object are offered by the edit menu of the navbar only
         $test_name = 'the reference page shows no views tab';
         $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $t->subheader($ts . 'wikipedia refresh');
+
+        // the stored word and the word as the backend answers the wikipedia refresh
+        $t_wrd = new test_words($t);
+        $refresh_par = url_var::REFRESH . '=' . url_var::REFRESH_WIKIPEDIA;
+        $edit_url = [url_var::MASK => views::WORD_EDIT_ID, url_var::ID => word_names::MATH_ID];
+        $old = new word_ui($t_wrd->word_math()->api_json());
+        $old->description = word_names::MATH_COM;
+        $old->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $new = new word_ui($t_wrd->word_math()->api_json());
+        $new->description = self::MATH_WIKIPEDIA_COM;
+        $new->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $new_wd_ref = $new->ref_lst->get_by_type_code_id(ref_types::WIKIDATA);
+        $new_wd_ref->external_key = refs::CHANGE_NEW_KEY;
+        $phr = $old->phrase();
+
+        $test_name = 'a wikipedia reference links to the refresh of the phrase description';
+        $wiki_ref = $old->ref_lst->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $lnk_html = $wiki_ref->name_link();
+        $t->assert_text_contains($test_name, $lnk_html, $refresh_par);
+
+        $test_name = 'a wikidata reference has no wikipedia refresh';
+        $lnk_html = $ref->name_link();
+        $t->assert_text_not_contains($test_name, $lnk_html, $refresh_par);
+
+        $test_name = 'an empty reference list has no wikipedia reference';
+        $no_ref = new ref_list_ui()->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $t->assert_null($test_name, $no_ref?->external_key());
+
+        $test_name = 'the wikipedia refresh shows the confirm page of the edit';
+        $cnf_url = $phr->confirm_url_of_refresh($edit_url, $old, $new, $msg);
+        $mask = $cnf_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::CONFIRM_EDIT_ID);
+
+        $test_name = '... with the wikipedia text as the new description';
+        $description = $cnf_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, self::MATH_WIKIPEDIA_COM);
+
+        $test_name = '... with the stored description as the from value';
+        $pre_description = $cnf_url[url_var::PRE . url_var::DESCRIPTION];
+        $t->assert($test_name, $pre_description, word_names::MATH_COM);
+
+        $test_name = '... but without the wikidata id, because the phrase has an own description';
+        $t->assert_key_not_exists($test_name, url_var::LINK . url_var::EXTERNAL_KEY, $cnf_url);
+
+        $test_name = 'a phrase without description takes over the wikidata id with the description';
+        $no_com = clone $old;
+        $no_com->description = '';
+        $no_com_url = $phr->confirm_url_of_refresh($edit_url, $no_com, $new, $msg);
+        $wd_key = $no_com_url[url_var::LINK . url_var::EXTERNAL_KEY];
+        $t->assert($test_name, $wd_key, refs::CHANGE_NEW_KEY);
+
+        $test_name = 'if the description matches, the changed wikidata id is confirmed';
+        $same_com = clone $new;
+        $same_com->description = word_names::MATH_COM;
+        $upd_url = $phr->confirm_url_of_refresh($edit_url, $old, $same_com, $msg);
+        $t->assert($test_name, $upd_url[url_var::ORIGIN_MASK], views::REF_EDIT_ID);
+        $test_name = '... with the new wikidata id';
+        $t->assert($test_name, $upd_url[url_var::EXTERNAL_KEY], refs::CHANGE_NEW_KEY);
+        $test_name = '... and with the stored wikidata id as the from value';
+        $t->assert($test_name, $upd_url[url_var::PRE . url_var::EXTERNAL_KEY], refs::MATH_KEY);
+
+        $test_name = 'a phrase with description but without wikidata reference gets the filled reference add page';
+        $no_wd = clone $old;
+        $no_wd->ref_lst = $t_ref->ref_list_math_without_wikidata_ui();
+        $add_url = $phr->confirm_url_of_refresh($edit_url, $no_wd, $new, $msg);
+        $t->assert($test_name, $add_url[url_var::MASK], views::REF_ADD_ID);
+        $test_name = '... for the phrase';
+        $t->assert($test_name, $add_url[url_var::PHRASE], $phr->id());
+        $test_name = '... with the wikidata id';
+        $t->assert($test_name, $add_url[url_var::EXTERNAL_KEY], refs::CHANGE_NEW_KEY);
+        $msg->reset();
+
+        $test_name = 'an unchanged wikidata id is not confirmed again';
+        $same_url = $phr->confirm_url_of_refresh($edit_url, $old, $old, $msg);
+        $t->assert_key_not_exists($test_name, url_var::LINK . url_var::EXTERNAL_KEY, $same_url);
+
+        $test_name = 'the confirm page of a triple keeps its to phrase';
+        $t_trp = new test_triples($t);
+        $ge_old = $t_trp->triple_ge_ui();
+        $ge_new = $t_trp->triple_ge_ui();
+        $ge_new->description = self::GENEVA_WIKIPEDIA_COM;
+        $ge_edit_url = [url_var::MASK => views::TRIPLE_EDIT_ID, url_var::ID => triple_names::CITY_GE_ID];
+        $ge_url = $ge_old->phrase()->confirm_url_of_refresh($ge_edit_url, $ge_old, $ge_new, $msg);
+        $to_id = $ge_url[url_var::PHRASE_TO] ?? 0;
+        $t->assert($test_name, $to_id, word_names::CITY_ID);
+
+        $test_name = '... and its stored to phrase, so that only the description is written';
+        $pre_to_id = $ge_url[url_var::PRE . url_var::PHRASE_TO] ?? 0;
+        $t->assert($test_name, $pre_to_id, word_names::CITY_ID);
+
+        $test_name = '... with the wikipedia text as the new description';
+        $description = $ge_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, self::GENEVA_WIKIPEDIA_COM);
+        $msg->reset();
+
+        $test_name = 'the confirm page shows the changed wikidata reference';
+        $cnf_ref = $phr->ref_of_refresh($no_com_url, $msg);
+        $preview = $cnf_ref?->link_preview();
+        $t->assert($test_name, $preview, ref_types::WIKIDATA_NAME . ' ' . refs::CHANGE_NEW_KEY);
+        $msg->reset();
+
+        $test_name = 'a confirm page without wikidata id shows no reference';
+        $cnf_ref = $phr->ref_of_refresh($same_url, $msg);
+        $t->assert_null($test_name, $cnf_ref?->external_key());
+        $msg->reset();
     }
 
 }

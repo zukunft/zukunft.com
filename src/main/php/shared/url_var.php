@@ -160,6 +160,8 @@ class url_var
     const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
     // the phrase selection asks the backend for the phrases that match the typed chars
     const string REFRESH_PHRASES = 'frp'; // add the phrases that match the typed chars to the selector
+    // the refresh icon of a wikipedia reference takes over the description and the wikidata id of the phrase
+    const string REFRESH_WIKIPEDIA = 'frw';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -422,8 +424,10 @@ class url_var
 
     // the url vars that a '7'-prefixed link var may name, so that a typed url cannot set e.g. the id of
     // the link that is created with a new object (the phrase of the formula link of a new formula)
+    // or with a changed phrase (the wikidata reference of a wikipedia refresh)
     const array LINK_VARS = [
         self::PHRASE,
+        self::EXTERNAL_KEY,
     ];
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
@@ -639,6 +643,7 @@ class url_var
     const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
     const string REFRESH_TERMS_HUMAN = 'terms_only';
     const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
+    const string REFRESH_WIKIPEDIA_HUMAN = 'description_from_wikipedia';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -1009,6 +1014,7 @@ class url_var
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
+        self::REFRESH_WIKIPEDIA => self::REFRESH_WIKIPEDIA_HUMAN,
     ];
 
     // map human-readable url values to standard url values

@@ -2458,3 +2458,52 @@ selects only the parts that `calculator_json.js` marks with `data-part` (header,
 verdict, sensitivity table, result table, fields, preset buttons, detail tables, formula notes, sources, notes). A
 renamed source changes only the `{source:…}` texts that the editor manages; a text of another triple that names the
 source keeps the old name.
+
+## wikipedia refresh leftovers
+
+The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/ref/ref_link_wikipedia.php`,
+`web/phrase/phrase::wikipedia_confirm_url`) has these known gaps:
+1. Only the english wikipedia is read, because the wikipedia reference type links to `en.wikipedia.org`; a phrase
+   of another language would need the language of the reference.
+2. A pronunciation is detected by its markers (ipa in `/…/` or `[…]`, "pronounced", "pronunciation", "listen",
+   "IPA"), so a bracket that only mentions e.g. "listen" is removed as well.
+3. If neither the description nor the wikidata id differs, the confirm page shows no change and no message.
+4. The write workflow `wikipedia_refresh` (wf42, `ref_url_tests::wikipedia_refresh_workflow`) reads the live
+   wikipedia page, so only the triple page of Geneva (city) before the refresh is a snapshot and the confirm page
+   and the saved description are checked by asserts; a hand made summary would need a way to answer the backend
+   call offline. The workflow writes the description as a user overlay of usr1 on the base triple and removes the
+   overlay afterwards, but the change log entries of that overlay stay with the base triple, because no test helper
+   removes the change log of one user on a row that is not deleted. The change of an existing wikidata id is
+   therefore covered by the unit test `reference_ui_tests` only.
+5. The confirm url of the refresh (`phrase::confirm_url_of_refresh`) carries the complete stored phrase with its
+   '8' values and not only the description, so it also carries the name (`k`) and for a triple the from, verb and
+   to. The confirm writes the frontend object that `frontend::action_crud` builds from the url alone, without
+   loading the stored object first: without the from and the to the backend answers "triple to phrase is
+   missing", and without the name `triple::set_names` removes the given name of e.g. "Geneva (city)". The
+   carried name equals the stored one, so it is no change and is not logged. A confirm url with only the
+   description and its '8' value needs an update path that loads the stored object and maps only the posted
+   fields onto it. The undo link of the 'my' tab (`db_object::field_change_confirm_url`) carries one field only,
+   so it has the same gap for a triple.
+6. The refresh offers one change per step (`phrase::confirm_url_of_refresh`): a phrase without description gets
+   the description and the wikidata id with one confirm, a phrase with an own description first gets the missing
+   wikidata reference by the filled reference add page, then the wikipedia description and only if the
+   description matches a changed wikidata id. Later all of it should be offered in one step, where the user
+   selects what should be updated and can adjust the data before it is written to the database.
+7. The external key of a wikipedia reference is written both as the page title ("Canton of Zurich") and as the
+   url part ("Canton_of_Zurich"): about 550 keys of the import json use spaces and about 160 underscores, e.g.
+   "Abraham_Maslow". The backend treats the two spellings as different keys, so the same page can get a second
+   reference and a key comparison misses the match; the link text shows the underscore, and `ref::name_link`
+   adds the key to the url without encoding, so e.g. "Zürich" or a key with `?` or `#` gives a wrong href.
+   Store only the page title with spaces, like the wikipedia title and the wikidata site links: map an underscore
+   to a space when a wikipedia reference is read from an import or a form, build the url (space to `_` and
+   `rawurlencode`) in one function used by the link and by `ref_link_wikipedia::summary`, change the underscore
+   keys of the import json (no reference is added or removed, so no id shifts) and add a unit test that both
+   spellings give the same key and the same url.
+8. A wikipedia refresh with the related data (`api/triple/?id=143&fr=frw&ir=1`, Bern (city) without wikipedia
+   reference) ended in the fatal error `ref::get_predicate_code_id(): Return value must be of type string, null
+   returned`, also after a complete rebuild of the database; the same call without `ir=1` and the call with `ir=1`
+   but without `fr=frw` answered correctly. The api now skips the json of a failed refresh, because the answer is
+   the message only, and `ref::type_name` no longer reads the code id of a reference without type. The cause is not
+   found yet: the suspicion is that a load after the failed refresh step behaves differently, because e.g.
+   `ref::row_mapper` returns `$msg->is_ok()` of the shared message instead of its own result, so a reference
+   without type reaches the api json. The trace of the fatal is in the system log, which only an admin can read.

@@ -58,6 +58,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'ref_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -118,7 +120,7 @@ class ref extends sandbox
             $this->url = $value;
         }
     }
-    private ?string $external_key = null {
+    public ?string $external_key = null {
         set {
             $this->external_key = $value;
         }
@@ -520,10 +522,39 @@ class ref extends sandbox
                 $this->get_description()
             );
             // the edit icon follows the refresh icon so the user can correct e.g. the external key
-            return $name . ' ' . $this->refresh_job_link($html) . ' ' . $this->edit_icon_link();
+            return $name . ' ' . $this->refresh_link($html) . ' ' . $this->edit_icon_link();
         } else {
             return 'ERROR: url is null';
         }
+    }
+
+    /**
+     * @param html_base $html the html creator passed in to avoid creating it twice
+     * @returns string the html code of the refresh icon behind the reference name
+     */
+    private function refresh_link(html_base $html): string
+    {
+        if ($this->is_type(ref_types::WIKIPEDIA)) {
+            $result = $this->wikipedia_refresh_link($html);
+        } else {
+            $result = $this->refresh_job_link($html);
+        }
+        return $result;
+    }
+
+    /**
+     * the refresh icon of a wikipedia reference opens the confirm page of the phrase with the
+     * description and the wikidata id of the wikipedia page (see frontend::url_with_wikipedia_refresh)
+     * @param html_base $html the html creator passed in to avoid creating it twice
+     * @returns string the html code of the refresh icon, grey for a user without login
+     */
+    private function wikipedia_refresh_link(html_base $html): string
+    {
+        global $mtr;
+        $phr = $this->phrase();
+        $refresh = url_var::REFRESH . '=' . url_var::REFRESH_WIKIPEDIA;
+        $url = $html->url_back($phr->edit_view_id(), $phr->obj_id() ?? 0, [], $refresh);
+        return $html->change_icon($url, icons::REFRESH, $mtr->txt(msg_id::WIKIPEDIA_REFRESH));
     }
 
     /**
@@ -556,6 +587,25 @@ class ref extends sandbox
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * @param string $code_id the code id of a reference type e.g. ref_types::WIKIPEDIA
+     * @return bool true if this reference has the given type
+     */
+    function is_type(string $code_id): bool
+    {
+        global $ui_sys;
+        $type_id = $ui_sys->typ_lst_cache->ref_typ->id($code_id);
+        return $this->predicate_id() == $type_id;
+    }
+
+    /**
+     * @return string the type and the external key e.g. "wikidata Q72" as the confirm page shows a reference
+     */
+    function link_preview(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key();
     }
 
 
