@@ -4853,20 +4853,60 @@ class test_base
         $ref_lst = new ref_list($this->usr_system);
         $ref_lst->load_by_phr_id($phr->id(), $msg);
         foreach ($ref_lst->lst() as $ref) {
-            $this->cleanup_ref_overlays($ref->id(), $msg);
-            $owner = $this->ref_owner($ref);
-            // the message names the requesting user, whose permission the delete checks
-            $del_msg = new user_message($owner);
-            $ref->set_user($owner);
-            $ref->del($del_msg);
-            $msg->merge($del_msg);
-            // a delete by a user that does not own the reference only writes an exclusion, and the
-            // change log may only be removed for a deleted test row
-            if ($this->ref_is_removed($ref->id(), $msg)) {
-                $this->delete_change_log_of_obj(ref::class, $ref->id());
+            $this->cleanup_test_ref($ref, $msg);
+        }
+    }
+
+    /**
+     * undo the reference rows that a test has confirmed on a phrase of the base data: the overlay
+     * rows of the test users on its references are removed, e.g. a changed external key or the
+     * exclusion of a deleted reference, and the reference that the test has added is deleted
+     *
+     * @param phrase $phr the phrase of the base data whose references the test has changed
+     * @param string $added_key the external key of the reference that the test has added
+     * @param user_message $msg to report a reference or an overlay row that cannot be removed
+     * @return void
+     */
+    function cleanup_ref_rows_of(phrase $phr, string $added_key, user_message $msg): void
+    {
+        // loaded by the system user, so that a reference excluded by a test user is found too
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            // a reference of the system user is base data, also if it has the key that the test adds
+            $is_added = ($ref->get_external_key() == $added_key and $ref->owner_id() != $this->usr_system->id());
+            if ($is_added) {
+                $this->cleanup_test_ref($ref, $msg);
             } else {
-                $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => ref::class]);
+                $this->cleanup_ref_overlays($ref->id(), $msg);
             }
+        }
+    }
+
+    /**
+     * delete a reference that a test has written by the logged delete of its owner and remove its
+     * change log, after the overlay rows of the test users, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else)
+     *
+     * @param ref $ref the test reference that should be removed
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    private function cleanup_test_ref(ref $ref, user_message $msg): void
+    {
+        $this->cleanup_ref_overlays($ref->id(), $msg);
+        $owner = $this->ref_owner($ref);
+        // the message names the requesting user, whose permission the delete checks
+        $del_msg = new user_message($owner);
+        $ref->set_user($owner);
+        $ref->del($del_msg);
+        $msg->merge($del_msg);
+        // a delete by a user that does not own the reference only writes an exclusion, and the
+        // change log may only be removed for a deleted test row
+        if ($this->ref_is_removed($ref->id(), $msg)) {
+            $this->delete_change_log_of_obj(ref::class, $ref->id());
+        } else {
+            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => ref::class]);
         }
     }
 
@@ -4879,10 +4919,10 @@ class test_base
     {
         // load_standard is also ok without a row, so only the loaded id tells if the row is still there
         $std_msg = new user_message($this->usr_system);
-        $std_ref = new ref($this->usr_system);
-        $std_ref->load_standard($id, $std_msg);
+        $ref = new ref($this->usr_system);
+        $ref->load_standard($id, $std_msg);
         $msg->merge($std_msg);
-        return ($std_msg->is_ok() and $std_ref->id() == 0);
+        return ($std_msg->is_ok() and $ref->id() == 0);
     }
 
     /**

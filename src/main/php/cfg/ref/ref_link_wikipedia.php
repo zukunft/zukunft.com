@@ -118,7 +118,9 @@ class ref_link_wikipedia
     {
         $result = '';
         if (($summary[self::WP_TYPE] ?? '') == self::WP_TYPE_STANDARD) {
-            $paragraphs = explode(self::PARAGRAPH_SEPARATOR, $summary[self::WP_EXTRACT] ?? '');
+            // trimmed first, because e.g. the extract of the page Health starts with a line break
+            $extract = trim($summary[self::WP_EXTRACT] ?? '');
+            $paragraphs = explode(self::PARAGRAPH_SEPARATOR, $extract);
             $result = trim($this->without_pronunciation($paragraphs[0]));
         }
         return $result;
@@ -161,13 +163,14 @@ class ref_link_wikipedia
     }
 
     /**
-     * read the summary of a wikipedia page
+     * read the summary of a wikipedia page; public, so that a write test can compare what the live
+     * page gives with the values of the last test run
      *
      * @param string $page the name of the wikipedia page as the external key of the reference e.g. "Zurich"
      * @param user_message $msg to tell the user that the page cannot be read
      * @return array the summary json of the page, empty if the page cannot be read
      */
-    private function summary(string $page, user_message $msg): array
+    function summary(string $page, user_message $msg): array
     {
         $page_name = str_replace(self::NAME_SPACE, self::PAGE_SPACE, $page);
         $url = self::SUMMARY_URL . rawurlencode($page_name);

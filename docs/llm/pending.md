@@ -1,5 +1,15 @@
 # pending - list of planned llm prompts with prio 1
 
+## confirm the reference changes together with the phrase
+
+the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
+of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
+component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
+per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
+value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
+`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
+external key, so that an unchanged form writes no reference.
+
 ## write tests of the calculator editor messages
 
 add to `update_put_write_tests` a write test with an undo for the `note_text` and the `source_rename` message of

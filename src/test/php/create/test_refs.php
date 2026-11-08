@@ -315,6 +315,22 @@ class test_refs extends test_objects
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * @return ref_list_ui the wikidata reference of Geneva (city), whose wikipedia page names the same wikidata item
+     */
+    function ref_list_geneva_ui(): ref_list_ui
+    {
+        global $sys;
+        $tl = new test_lib();
+        $t_trp = new test_triples($this->env);
+        $ref = new ref($this->env->usr1);
+        $wd_type_id = $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA);
+        $ref->set(refs::GENEVA_ID, $t_trp->triple_ge()->phrase(), $wd_type_id, refs::GENEVA_KEY);
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($ref);
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
 
     /*
      * url

@@ -551,9 +551,8 @@ class ref extends sandbox
     }
 
     /**
-     * the refresh icon of a wikipedia reference opens the confirm page of the description or of the
-     * wikidata id of the wikipedia page, or the filled add page of the missing wikidata reference
-     * (see phrase::confirm_url_of_refresh)
+     * the refresh icon of a wikipedia reference opens one confirm page of the description and of the
+     * added or changed wikidata reference of the wikipedia page (see phrase::confirm_url_of_refresh)
      * @param html_base $html the html creator passed in to avoid creating it twice
      * @returns string the html code of the refresh icon, grey for a user without login
      */
@@ -607,14 +606,6 @@ class ref extends sandbox
         global $ui_sys;
         $type_id = $ui_sys->typ_lst_cache->ref_typ->id($code_id);
         return $this->predicate_id() == $type_id;
-    }
-
-    /**
-     * @return string the type and the external key e.g. "wikidata Q72" as the confirm page shows a reference
-     */
-    function link_preview(): string
-    {
-        return $this->type_name() . ' ' . $this->external_key();
     }
 
 

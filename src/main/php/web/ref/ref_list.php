@@ -93,10 +93,20 @@ class ref_list extends ListBase
      */
     function get_by_type_code_id(string $code_id): ?ref
     {
+        global $ui_sys;
+        return $this->get_by_type_id($ui_sys->typ_lst_cache->ref_typ->id($code_id));
+    }
+
+    /**
+     * @param int $type_id the database id of the reference type e.g. of wikidata
+     * @return ref|null the reference of the given type, null if the list has none
+     */
+    function get_by_type_id(int $type_id): ?ref
+    {
         $result = null;
         // a phrase has at most one reference per type, like in the backend ref_list
         foreach ($this->lst() as $ref) {
-            if ($ref->is_type($code_id)) {
+            if ($ref->predicate_id() == $type_id) {
                 $result = $ref;
             }
         }

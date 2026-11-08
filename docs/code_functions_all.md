@@ -270,6 +270,7 @@
     \-- reload_objects - section for function reload_objects is expected to be related in /ref/ref.php
     \-- from_field - section for function from_field is expected to be sql fields in /ref/ref.php
     \-- to_field - section for function to_field is expected to be sql fields in /ref/ref.php
+    \-- link_key_fields - section for function link_key_fields is expected to be link in /ref/ref.php
     \-- to_value - section for function to_value not yet defined that it should be load in /ref/ref.php
     \-- type_field - section for function type_field is expected to be sql fields in /ref/ref.php
     \-- name_field - section for function name_field is expected to be sql fields in /ref/ref.php
@@ -3049,6 +3050,7 @@
     \-- description - section for function description missing in /ref/ref_link_wikipedia.php
     \-- without_pronunciation - section for function without_pronunciation missing in /ref/ref_link_wikipedia.php
     \-- wikidata_id - section for function wikidata_id missing in /ref/ref_link_wikipedia.php
+    \-- summary - section for function summary missing in /ref/ref_link_wikipedia.php
 \-- ref_list
     \-- key_list - section for function key_list not yet defined that it should be set and get in /ref/ref_list.php
     \-- load_dummy - section for function load_dummy is expected to be load in /ref/ref_list.php
@@ -3165,6 +3167,7 @@
     \-- from_field - section for function from_field is expected to be sql fields in /sandbox/sandbox.php
     \-- from_name - section for function from_name not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- to_field - section for function to_field is expected to be sql fields in /sandbox/sandbox.php
+    \-- link_key_fields - section for function link_key_fields is expected to be link in /sandbox/sandbox.php
     \-- to_name - section for function to_name not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- to_value - section for function to_value not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- fob - section for function fob not yet defined that it should be placeholder in /sandbox/sandbox.php
@@ -4595,6 +4598,9 @@
                 he largest city"
     \-- wikidata_id
         \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
+    \-- summary
+        \-- ref_link_wikipedia - read the summary of a wikipedia page; public,
+                 so that a write test can compare what the live
 \-- load
     \-- load_by_view
         \-- component_link_list - interface function to load all component links of the given view
@@ -8001,9 +8007,7 @@
             n /phrase/phrase.php
     \-- confirm_url_of_refresh - section for function confirm_url_of_refresh not yet defined that it should be wikipedia
              in /phrase/phrase.php
-    \-- ref_of_refresh - section for function ref_of_refresh not yet defined that it should be wikipedia in /phrase/phra
-            se.php
-    \-- save_ref_of_refresh - section for function save_ref_of_refresh is expected to be save in /phrase/phrase.php
+    \-- save_ref_rows - section for function save_ref_rows is expected to be save in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
 \-- phrase_data
     \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
@@ -8189,7 +8193,6 @@
     \-- name_tip - section for function name_tip not yet defined that it should be base in /ref/ref.php
     \-- name_link - section for function name_link not yet defined that it should be base in /ref/ref.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be info in /ref/ref.php
-    \-- link_preview - section for function link_preview is expected to be link in /ref/ref.php
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be select in /ref/ref.php
     \-- source_selector - section for function source_selector not yet defined that it should be select in /ref/ref.php
     \-- display - section for function display not yet defined that it should be select in /ref/ref.php
@@ -9681,6 +9684,8 @@
         \-- ref_list - select the references that are linked to the given phrase
     \-- get_by_type_code_id
         \-- ref_list - @param string $code_id the code id of the reference type e.g. ref_types::WIKIDATA
+    \-- get_by_type_id
+        \-- ref_list - @param int $type_id the database id of the reference type e.g. of wikidata
     \-- set_name
         \-- combine_named - @param string $name the name of the word, triple, formula or verb
     \-- name

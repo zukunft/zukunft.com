@@ -90,6 +90,9 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
+    // prefix of the references that the confirm of a phrase change writes too, the row number at the
+    // end of the key e.g. 6ek1 for the external key of the first reference (see REF_ROW_VARS)
+    const string REF_ROW = '6';
     const string LINK = '7'; // prefix to add the vars of a link that the add view creates together with the new object e.g. 7p for the phrase of a formula added from a word page
     const string PRE = '8'; // prefix to add the database values the fields to an edit view when the view has be called. Used to detect the real user change requests
     const string BACK = '9'; // prefix to list of url targets for the back action
@@ -417,6 +420,7 @@ class url_var
     // the prefix chars that move a normal url key into another part of the url: the vars of the link
     // created with a new object, the db values of an edit view and the back targets
     const array PREFIXES = [
+        self::REF_ROW,
         self::LINK,
         self::PRE,
         self::BACK,
@@ -424,11 +428,31 @@ class url_var
 
     // the url vars that a '7'-prefixed link var may name, so that a typed url cannot set e.g. the id of
     // the link that is created with a new object (the phrase of the formula link of a new formula)
-    // or with a changed phrase (the wikidata reference of a wikipedia refresh)
     const array LINK_VARS = [
         self::PHRASE,
-        self::EXTERNAL_KEY,
     ];
+
+    // the url vars that a '6'-prefixed reference row may name; the phrase is never a row var, because
+    // the rows always belong to the confirmed phrase, so a typed url cannot change another phrase
+    const array REF_ROW_VARS = [
+        self::ACTION,
+        self::REF,
+        self::REF_TYPE,
+        self::EXTERNAL_KEY,
+        self::URL,
+        self::SOURCE,
+        self::DESCRIPTION,
+    ];
+
+    // the crud actions of a reference row; a row without one of them is no change
+    const array REF_ROW_ACTIONS = [
+        self::CRUD_CREATE,
+        self::CRUD_UPDATE,
+        self::CRUD_DELETE,
+    ];
+
+    // the chars of the row number at the end of a reference row key
+    const string ROW_DIGITS = '0123456789';
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
     // form and the activation key, which alone confirms the email and sets a new password)
@@ -496,6 +520,7 @@ class url_var
     const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
     const string LINK_HUMAN = 'link';
+    const string REF_ROW_HUMAN = 'ref_change';
     const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
@@ -786,6 +811,7 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::LINK_HUMAN, self::LINK],
+        [self::REF_ROW_HUMAN, self::REF_ROW],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
         [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
@@ -1089,6 +1115,102 @@ class url_var
             }
         }
         return [$prefix, substr($key, strlen($prefix))];
+    }
+
+    /**
+     * split a url key into its prefix, the url var and the row number of a reference row (see REF_ROW);
+     * the '8' value of a row field is the only compound prefix e.g. 86ek2
+     *
+     * @param string $key the url key e.g. '6ek2', '86ek2' or '9m'
+     * @return array the prefix, the url var and the row number e.g. ['86', 'ek', '2'], the row number empty for a key of no row
+     */
+    static function split_ref_row(string $key): array
+    {
+        [$prefix, $var] = self::split_prefix($key);
+        if ($prefix == self::PRE and str_starts_with($var, self::REF_ROW)) {
+            $prefix .= self::REF_ROW;
+            $var = substr($var, strlen(self::REF_ROW));
+        }
+        $row = '';
+        if (str_ends_with($prefix, self::REF_ROW)) {
+            $field = rtrim($var, self::ROW_DIGITS);
+            $row = substr($var, strlen($field));
+            $var = $field;
+        }
+        return [$prefix, $var, $row];
+    }
+
+    /**
+     * @param array $url_array the url e.g. of the confirm page of a phrase change
+     * @return array the reference rows with a known crud action e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
+     */
+    static function ref_rows(array $url_array): array
+    {
+        $rows = self::ref_row_fields($url_array, self::REF_ROW);
+        return array_filter($rows, fn(array $fields) => in_array($fields[self::ACTION] ?? '', self::REF_ROW_ACTIONS));
+    }
+
+    /**
+     * @param array $url_array the url e.g. of the confirm page of a phrase change
+     * @return array the stored values of the changed or deleted references by row e.g. [1 => ['ek' => 'Q72']]
+     */
+    static function ref_row_pre_values(array $url_array): array
+    {
+        return self::ref_row_fields($url_array, self::PRE . self::REF_ROW);
+    }
+
+    /**
+     * @param array $rows the reference rows e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
+     * @param array $pre_rows the stored values of the rows e.g. [1 => ['ek' => 'Q72']]
+     * @return array the url vars of the rows e.g. ['6a1' => 'u', '6l1' => 279, '6ek1' => 'Q71', '86ek1' => 'Q72']
+     */
+    static function ref_row_url_array(array $rows, array $pre_rows = []): array
+    {
+        $result = [];
+        foreach ($rows as $row => $fields) {
+            foreach ($fields as $var => $val) {
+                $result[self::REF_ROW . $var . $row] = $val;
+            }
+            foreach ($pre_rows[$row] ?? [] as $var => $val) {
+                $result[self::PRE . self::REF_ROW . $var . $row] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url with the reference rows
+     * @param int $row the number of the row that has been written
+     * @return array the url without the vars and the stored values of this row
+     */
+    static function without_ref_row(array $url_array, int $row): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$prefix, , $key_row] = self::split_ref_row((string)$key);
+            if (!str_ends_with($prefix, self::REF_ROW) or $key_row != (string)$row) {
+                $result[$key] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url with the reference rows
+     * @param string $prefix the prefix of the row part e.g. REF_ROW or PRE . REF_ROW
+     * @return array the fields of each row number that are listed in REF_ROW_VARS
+     */
+    private static function ref_row_fields(array $url_array, string $prefix): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$key_prefix, $var, $row] = self::split_ref_row((string)$key);
+            $is_row_var = ($key_prefix == $prefix and $row != '' and in_array($var, self::REF_ROW_VARS));
+            if ($is_row_var) {
+                $result[(int)$row][$var] = $val;
+            }
+        }
+        return $result;
     }
 
     /**

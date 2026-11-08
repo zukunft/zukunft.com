@@ -79,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -985,87 +986,87 @@ class phrase extends combine_named
         $old = $this->new_obj();
         $new = $this->new_obj();
         $refresh = [url_var::REFRESH => url_var::REFRESH_WIKIPEDIA, url_var::INCL_RELATED => url_var::TRUE];
-        $result = $url_array;
-        unset($result[url_var::REFRESH]);
+        $edit_url = $url_array;
+        unset($edit_url[url_var::REFRESH]);
+        // if wikipedia cannot be read, the user stays on the page of the phrase with the message why
+        $result = $this->url_of_page($edit_url);
         // the phrase as stored is the from side of the confirm page and the wikipedia answer the to side
         if ($old->load_by_id_with_related($id, $msg, $usr_id)
             and $new->load_by_id($id, $msg, $refresh, $usr_id)) {
-            $result = $this->confirm_url_of_refresh($result, $old, $new, $msg);
+            $result = $this->confirm_url_of_refresh($edit_url, $old, $new, $msg);
         }
         return $result;
     }
 
     /**
-     * the next step of the wikipedia refresh: a phrase without description gets the description and
-     * the wikidata id with one confirm; a phrase with an own description first gets the missing
-     * wikidata reference by the prefilled add page, else the wikipedia description is suggested
-     * and only if the description already matches the changed wikidata id
+     * @param array $url_array the url of the refresh e.g. with the edit view of this phrase
+     * @return array the url of the default page of this phrase, where the refresh icon has been pressed
+     */
+    private function url_of_page(array $url_array): array
+    {
+        $result = $url_array;
+        $result[url_var::MASK] = $this->view_id();
+        $result[url_var::ID] = $this->obj_id();
+        return $result;
+    }
+
+    // the row of the wikidata reference on the confirm page of a wikipedia refresh (see url_var::REF_ROW)
+    const int REFRESH_WIKIDATA_ROW = 1;
+
+    /**
+     * one confirm page for all that the wikipedia refresh takes over: the description and, as a
+     * reference row, the add of the missing or the change of the different wikidata reference;
+     * if neither wikipedia nor the phrase names a wikidata item, the user stays on the page of the
+     * phrase and is told that no wikidata link has been found
      *
      * @param array $url_array the url of the edit view of this phrase without the refresh
      * @param word|triple $old the phrase as stored
      * @param word|triple $new the phrase with the description and the references taken from wikipedia
-     * @param user_message $msg to report a problem of the url mapping of the stored phrase
-     * @return array the url of the reference add page or of the confirm page of the description or of the reference
+     * @param user_message $msg to report a problem of the url mapping or that wikipedia names no wikidata item
+     * @return array the url of the confirm page with the description and the reference rows, or of the page of the phrase
      */
     function confirm_url_of_refresh(array $url_array, word|triple $old, word|triple $new, user_message $msg): array
     {
         $new_key = $this->wikidata_id($new);
-        $wd_ref = $old->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
-        $has_description = $old->get_description() != '';
-        $same_description = $old->get_description() == $new->get_description();
-        $old_key = $wd_ref?->external_key() ?? '';
-        $is_new_key = ($new_key != '' and $new_key != $old_key);
-        if ($has_description and $wd_ref == null and $is_new_key) {
-            $result = $this->ref_add_url_of_refresh($url_array, $new_key);
-        } elseif ($has_description and $same_description and $is_new_key) {
-            $result = $this->ref_update_url_of_refresh($url_array, $wd_ref, $new_key, $msg);
+        if ($new_key == '') {
+            $msg->add_warning_with_vars(msg_id::WIKIPEDIA_NO_WIKIDATA, [msg_id::VAR_NAME => $old->name()]);
+            $result = $this->url_of_page($url_array);
         } else {
             $result = $this->description_url_of_refresh($url_array, $old, $new, $msg);
-            // only a phrase without own description takes over the wikidata id with the description
-            if (!$has_description and $is_new_key) {
-                $result[url_var::LINK . url_var::EXTERNAL_KEY] = $new_key;
+            $wd_ref = $old->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
+            $old_key = $wd_ref?->external_key() ?? '';
+            // the wikidata item of the phrase needs no reference change
+            if ($new_key != $old_key) {
+                $row_url = $this->wikidata_row_url($wd_ref, $new_key);
+                $result = array_merge($result, $row_url);
             }
         }
         return $result;
     }
 
     /**
-     * @param array $url_array the url of the edit view of this phrase without the refresh
-     * @param string $new_key the wikidata id of the wikipedia page e.g. "Q12147"
-     * @return array the url of the reference add page filled with the wikidata reference of this phrase
+     * @param ref|null $wd_ref the stored wikidata reference of this phrase, null if it has none
+     * @param string $new_key the wikidata id of the wikipedia page e.g. "Q71"
+     * @return array the url vars of the reference row that adds or changes the wikidata reference
      */
-    private function ref_add_url_of_refresh(array $url_array, string $new_key): array
+    private function wikidata_row_url(?ref $wd_ref, string $new_key): array
     {
-        $result = $this->url_back_to_phrase($url_array);
-        $result[url_var::MASK] = ref::VIEW_ADD_ID;
-        // the reference does not exist yet
-        $result[url_var::ID] = 0;
-        $result[url_var::PHRASE] = $this->id();
-        $result[url_var::REF_TYPE] = $this->wikidata_type_id();
-        $result[url_var::EXTERNAL_KEY] = $new_key;
-        return $result;
-    }
-
-    /**
-     * @param array $url_array the url of the edit view of this phrase without the refresh
-     * @param ref $wd_ref the stored wikidata reference of this phrase
-     * @param string $new_key the wikidata id of the wikipedia page e.g. "Q12147"
-     * @param user_message $msg to report a problem of the url mapping of the stored reference
-     * @return array the url of the confirm page with the changed external key of the wikidata reference
-     */
-    private function ref_update_url_of_refresh(array $url_array, ref $wd_ref, string $new_key, user_message $msg): array
-    {
-        // the references of a loaded phrase may come without their phrase, which the update needs
-        $wd_ref->set_phrase($this);
-        // like the description, the complete reference with its '8' values limits the write to the key
-        $ref_url = $wd_ref->to_url_array($msg);
-        $back_url = $this->url_back_to_phrase($url_array);
-        $result = array_merge($back_url, $ref_url, html_base::pre_url_array($ref_url));
-        $result[url_var::ORIGIN_MASK] = ref::VIEW_EDIT_ID;
-        $result[url_var::MASK] = views::CONFIRM_EDIT_ID;
-        $result[url_var::STEP] = url_var::STEP_CONFIRMED;
-        $result[url_var::EXTERNAL_KEY] = $new_key;
-        return $result;
+        $fields = [
+            url_var::ACTION => url_var::CRUD_CREATE,
+            url_var::REF_TYPE => $this->wikidata_type_id(),
+            url_var::EXTERNAL_KEY => $new_key,
+        ];
+        $pre_fields = [];
+        if ($wd_ref != null) {
+            $fields[url_var::ACTION] = url_var::CRUD_UPDATE;
+            $fields[url_var::REF] = $wd_ref->id();
+            $pre_fields = [
+                url_var::REF_TYPE => $wd_ref->predicate_id(),
+                url_var::EXTERNAL_KEY => $wd_ref->external_key(),
+            ];
+        }
+        $row = self::REFRESH_WIKIDATA_ROW;
+        return url_var::ref_row_url_array([$row => $fields], [$row => $pre_fields]);
     }
 
     /**
@@ -1107,49 +1108,114 @@ class phrase extends combine_named
     }
 
     /**
-     * @param array $url_array the confirm url with the '7'-prefixed vars of the wikidata reference
-     * @param user_message $msg to report a problem of the reference mapping
-     * @return ref|null the wikidata reference that the confirm adds or changes, null if the url carries none
+     * write the reference rows that the user has confirmed together with the change of this phrase
+     * (see url_var::REF_ROW): add, change or delete each reference in the row order
+     *
+     * @param array $url_array the confirmed url with the '6'-prefixed reference rows
+     * @param user_message $msg with the requesting user to report the result of each reference write
+     * @return array the url with only the rows that could not be written, so that the confirm page can show them again
      */
-    function ref_of_refresh(array $url_array, user_message $msg): ?ref
+    function save_ref_rows(array $url_array, user_message $msg): array
     {
-        $link_vars = html_base::link_vars($url_array);
-        $result = null;
-        if (array_key_exists(url_var::EXTERNAL_KEY, $link_vars)) {
-            $result = new ref();
-            // the reference is created by the confirm, so it has no id yet
-            $link_vars[url_var::ACTION] = url_var::CRUD_CREATE;
-            $link_vars[url_var::PHRASE] = $this->id();
-            // always a wikidata reference, so that a typed url cannot add e.g. a second wikipedia reference
-            $link_vars[url_var::REF_TYPE] = $this->wikidata_type_id();
-            $result->url_mapper($link_vars, $msg);
+        $result = $url_array;
+        foreach (url_var::ref_rows($url_array) as $row => $fields) {
+            $row_msg = new user_message($msg->usr); // the result of this row only, merged into $msg right away
+            $this->save_ref_row($fields, $row_msg);
+            $msg->merge($row_msg);
+            if ($row_msg->is_ok()) {
+                $result = url_var::without_ref_row($result, $row);
+            }
         }
         return $result;
     }
 
     /**
-     * add the wikidata reference that the user has confirmed together with the description, or
-     * change the external key of the wikidata reference that the phrase has already
-     *
-     * @param array $url_array the confirmed url with the '7'-prefixed vars of the wikidata reference
-     * @param user_message $msg with the requesting user to report the result of the reference write
+     * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
+     * @param user_message $msg with the requesting user to report the result of the write
      * @return void
      */
-    function save_ref_of_refresh(array $url_array, user_message $msg): void
+    private function save_ref_row(array $fields, user_message $msg): void
     {
-        $ref = $this->ref_of_refresh($url_array, $msg);
-        if ($ref != null) {
-            $cur = $this->new_obj();
-            $cur->load_by_id_with_related($this->obj_id(), $msg, $msg->usr?->id() ?? 0);
-            $wd_ref = $cur->ref_lst?->get_by_type_code_id(ref_types::WIKIDATA);
-            if ($wd_ref == null) {
-                $msg->merge($ref->add_via_api($msg));
-            } else {
-                // the loaded reference keeps all other fields, so that only the external key changes
-                $wd_ref->set_external_key($ref->external_key());
-                $msg->merge($wd_ref->update($msg));
+        $action = $fields[url_var::ACTION];
+        if ($action == url_var::CRUD_CREATE) {
+            $this->add_ref_of_row($fields, $msg);
+        } else {
+            $ref = $this->stored_ref_of_row($fields, $msg);
+            if ($ref != null and $action == url_var::CRUD_UPDATE) {
+                // the stored reference keeps all fields that the row does not change
+                $ref_url = array_merge($ref->to_url_array($msg), $this->ref_url_of_row($fields));
+                $ref->url_mapper($ref_url, $msg);
+                $msg->merge($ref->update($msg));
+            } elseif ($ref != null) {
+                $msg->merge($ref->del($msg));
             }
         }
+    }
+
+    /**
+     * add the reference of a create row, but never a second reference of the same type to this phrase,
+     * because the backend would then change the stored reference of that type instead of adding one
+     * (see the backend ref::get_similar), which the confirm page has not shown to the user
+     *
+     * @param array $fields the url vars of a create row e.g. ['a' => 'a', 'lt' => 2, 'ek' => 'Q71']
+     * @param user_message $msg with the requesting user to report the result of the add
+     * @return void
+     */
+    private function add_ref_of_row(array $fields, user_message $msg): void
+    {
+        global $ui_sys;
+        $type_id = (int)($fields[url_var::REF_TYPE] ?? 0);
+        // loaded for each create row, so that an earlier row of the same confirm is included
+        $cur = $this->new_obj();
+        $cur->load_by_id_with_related($this->obj_id(), $msg, $msg->usr?->id() ?? 0);
+        if ($cur->ref_lst?->get_by_type_id($type_id) != null) {
+            $msg->add(msg_id::REF_ROW_TYPE_USED, [
+                msg_id::VAR_NAME => $this->name(),
+                msg_id::VAR_TYPE => $ui_sys->typ_lst_cache->ref_typ->name($type_id),
+            ]);
+        } else {
+            $ref = new ref();
+            $ref->url_mapper($this->ref_url_of_row($fields), $msg);
+            $msg->merge($ref->add_via_api($msg));
+        }
+    }
+
+    /**
+     * @param array $fields the url vars of one reference row
+     * @return array the url vars of the reference of the row for its url_mapper, always of this phrase
+     */
+    private function ref_url_of_row(array $fields): array
+    {
+        $result = $fields;
+        unset($result[url_var::REF]);
+        $result[url_var::PHRASE] = $this->id();
+        if (array_key_exists(url_var::REF, $fields)) {
+            $result[url_var::ID] = $fields[url_var::REF];
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $fields the url vars of a row that changes or deletes a reference
+     * @param user_message $msg to tell the user that the reference does not belong to this phrase
+     * @return ref|null the stored reference of the row, null if it is not a reference of this phrase
+     */
+    private function stored_ref_of_row(array $fields, user_message $msg): ?ref
+    {
+        $id = (int)($fields[url_var::REF] ?? 0);
+        $ref = new ref();
+        $loaded = ($id > 0 and $ref->load_by_id($id, $msg, [], $msg->usr?->id() ?? 0));
+        $result = null;
+        // a typed url must never change the reference of another phrase
+        if ($loaded and $ref->phrase()->id() == $this->id()) {
+            $result = $ref;
+        } else {
+            $msg->add(msg_id::REF_ROW_OF_OTHER_PHRASE, [
+                msg_id::VAR_ID => $id,
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        return $result;
     }
 
     /**

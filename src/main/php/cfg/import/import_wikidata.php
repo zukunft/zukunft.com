@@ -66,8 +66,11 @@ class import_wikidata
     const string JSON_EXTENSION = '.json';
     // wikidata answers with a http 403 if no descriptive user agent is sent, so identify zukunft.com
     const string USER_AGENT = 'zukunft.com (https://github.com/zukunft/zukunft.com)';
-    // the seconds to wait for wikidata or wikipedia, so that a slow answer does not block the page of the user
+    // the seconds to wait for wikipedia, so that a slow answer does not block the page of the user
     const int READ_TIMEOUT = 10;
+    // the seconds to wait for the entity json of wikidata, which an import reads without a user waiting
+    // for the page, so a slow answer of wikidata is waited for like with the php default socket timeout
+    const int IMPORT_TIMEOUT = 60;
     // the fields of the php stream context of the http request
     const string HTTP_CONTEXT = 'http';
     const string HTTP_HEADER = 'header';
@@ -127,13 +130,14 @@ class import_wikidata
      * the context of a http request to wikidata or wikipedia: a descriptive user agent, because
      * else they answer with a http 403, and a timeout, because else a slow answer blocks the page
      *
+     * @param int $timeout the seconds to wait for the answer e.g. self::IMPORT_TIMEOUT for an import
      * @return resource the php stream context for file_get_contents
      */
-    static function request_context()
+    static function request_context(int $timeout = self::READ_TIMEOUT)
     {
         $http = [
             self::HTTP_HEADER => self::HTTP_USER_AGENT . self::USER_AGENT,
-            self::HTTP_TIMEOUT => self::READ_TIMEOUT,
+            self::HTTP_TIMEOUT => $timeout,
         ];
         return stream_context_create([self::HTTP_CONTEXT => $http]);
     }
@@ -147,7 +151,7 @@ class import_wikidata
     {
         $result = '';
         $url = self::ENTITY_DATA_URL . $id . self::JSON_EXTENSION;
-        $context = self::request_context();
+        $context = self::request_context(self::IMPORT_TIMEOUT);
         // the @ suppresses the php warning of a failed http request (e.g. a http 403 or no network)
         // so that the failure is reported as a log warning and the program continues
         $json = @file_get_contents($url, false, $context);

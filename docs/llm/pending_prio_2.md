@@ -2473,8 +2473,9 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    and the saved description are checked by asserts; a hand made summary would need a way to answer the backend
    call offline. The workflow writes the description as a user overlay of usr1 on the base triple and removes the
    overlay afterwards, but the change log entries of that overlay stay with the base triple, because no test helper
-   removes the change log of one user on a row that is not deleted. The change of an existing wikidata id is
-   therefore covered by the unit test `reference_ui_tests` only.
+   removes the change log of one user on a row that is not deleted. The same is true for the write workflow
+   `ref_rows` (wf43) on Zurich (canton): the change log of the description, the changed wikidata id and the
+   exclusion of the wikipedia reference of usr1 stays with the base rows after its cleanup.
 5. The confirm url of the refresh (`phrase::confirm_url_of_refresh`) carries the complete stored phrase with its
    '8' values and not only the description, so it also carries the name (`k`) and for a triple the from, verb and
    to. The confirm writes the frontend object that `frontend::action_crud` builds from the url alone, without
@@ -2484,11 +2485,12 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    description and its '8' value needs an update path that loads the stored object and maps only the posted
    fields onto it. The undo link of the 'my' tab (`db_object::field_change_confirm_url`) carries one field only,
    so it has the same gap for a triple.
-6. The refresh offers one change per step (`phrase::confirm_url_of_refresh`): a phrase without description gets
-   the description and the wikidata id with one confirm, a phrase with an own description first gets the missing
-   wikidata reference by the filled reference add page, then the wikipedia description and only if the
-   description matches a changed wikidata id. Later all of it should be offered in one step, where the user
-   selects what should be updated and can adjust the data before it is written to the database.
+6. The refresh offers the description and the added or changed wikidata reference with one confirm
+   (`phrase::confirm_url_of_refresh`, the reference as a '6'-prefixed row, see `url_var::REF_ROW`). Later the user
+   should select on the confirm page what is written, e.g. by a checkbox per reference row
+   (`url_var::REF_ROW_SELECTED` as a row var) and one for the description, and adjust a value before it is written.
+   The confirm form sends the rows by get, so many rows with long texts can exceed the url length of the server;
+   the values are never cut, so such a confirm would need the post method.
 7. The external key of a wikipedia reference is written both as the page title ("Canton of Zurich") and as the
    url part ("Canton_of_Zurich"): about 550 keys of the import json use spaces and about 160 underscores, e.g.
    "Abraham_Maslow". The backend treats the two spellings as different keys, so the same page can get a second
@@ -2507,3 +2509,21 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    found yet: the suspicion is that a load after the failed refresh step behaves differently, because e.g.
    `ref::row_mapper` returns `$msg->is_ok()` of the shared message instead of its own result, so a reference
    without type reaches the api json. The trace of the fatal is in the system log, which only an admin can read.
+9. A create row of the confirm is refused if the phrase has a reference of the same type already
+   (`phrase::add_ref_of_row`), because the backend `ref::save` would change that reference instead (see
+   `ref::get_similar`), which the import relies on. Open: a confirm that deletes a reference of a type and adds a
+   new one of the same type, e.g. to replace the wikipedia page, passes the check when the delete is only an
+   exclusion of the user, but the backend then finds the excluded reference as similar and changes it.
+10. A backend object that `MapObject::convertToDb` builds from the api json of the frontend has no owner if the
+    api json carries none, as the answer of `api/reference` does, and `sandbox::can_change` lets any user change
+    the standard row of an object without owner (`save_fields_func`). `ref::save` now takes over the owner of the
+    loaded standard row; the generic `sandbox::save` should do the same for every class, and the api answer could
+    name the owner, so that no request object can change the standard row of another owner.
+11. The user overlay row of a reference keeps its external key, because `ref::link_key_fields` names only the
+    phrase (see `sandbox::sql_insert_with_log`). The insert without log in `sandbox::sql_insert_switch` has no
+    check whether the key is a real change, so the overlay row of an exclusion written this way also gets the
+    stored key; `save_fields_func` always writes with the log, so only a direct `sql_insert` call is affected.
+12. Before the sign fix of the phrase id and the owner fix of `ref::save`, the write workflows ref_rows (wf43) and
+    ref_row_confirm (wf44) moved the wikidata reference 277 of Zurich (canton) to the word with id 142 and changed
+    its standard row; a database that has not been rebuilt since then still has these rows, which the cleanups
+    cannot repair, because they only look at the references of the triple.

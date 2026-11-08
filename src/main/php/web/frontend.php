@@ -2799,8 +2799,9 @@ class frontend
 
     /**
      * the object field values of a url without the control vars that select the view, the object and
-     * the render mode and without the '9'-prefixed back navigation targets and the '7'-prefixed link
-     * vars, e.g. to carry the posted values of a simulated write to the following page (see action_crud)
+     * the render mode and without the '9'-prefixed back navigation targets, the '7'-prefixed link
+     * vars and the '6'-prefixed reference rows, e.g. to carry the posted values of a simulated write
+     * to the following page (see action_crud)
      *
      * @param array $url_array the parsed url
      * @return array the url keys and values that are object field values
@@ -2812,7 +2813,8 @@ class frontend
             if (!in_array($key, url_var::CONTROL_VARS)
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
                 and !str_starts_with($key, url_var::BACK)
-                and !str_starts_with($key, url_var::LINK)) {
+                and !str_starts_with($key, url_var::LINK)
+                and !str_starts_with($key, url_var::REF_ROW)) {
                 $result[$key] = $val;
             }
         }
@@ -2880,9 +2882,10 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
-            // the wikidata reference that the confirm page of a wikipedia refresh has shown
+            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW)
+            $open_url = $url_array;
             if ($crud == url_var::CRUD_UPDATE and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
-                $dbo->phrase()->save_ref_of_refresh($url_array, $msg_ui);
+                $open_url = $dbo->phrase()->save_ref_rows($url_array, $msg_ui);
             }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
@@ -2892,6 +2895,11 @@ class frontend
             // the settings page shows many numbers, so it confirms which one has changed and how
             if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));
+            }
+            // the api calls of the rows have no common transaction, so the confirm page shows the
+            // reference rows again that could not be written, together with the message why
+            if (url_var::ref_rows($open_url) != []) {
+                return $open_url;
             }
         }
 

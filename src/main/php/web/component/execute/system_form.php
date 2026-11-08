@@ -566,9 +566,12 @@ class system_form extends component
         // (only those that a link may name, see html_base::link_vars) and the origin mask that names the
         // object type of a confirm view
         $link_url = html_base::prefixed_url_array(html_base::link_vars($url_array), url_var::LINK);
+        // and the '6'-prefixed reference rows that the confirm writes with the phrase (see url_var::REF_ROW)
+        $row_url = url_var::ref_row_url_array(url_var::ref_rows($url_array));
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::BACK)
                 or array_key_exists($key, $link_url)
+                or array_key_exists($key, $row_url)
                 or $key == url_var::ORIGIN_MASK) {
                 $result .= $html->form_hidden($key, (string)$val);
             }

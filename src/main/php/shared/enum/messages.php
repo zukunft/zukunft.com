@@ -241,6 +241,11 @@ enum messages: string
     case WIKIPEDIA_REF_MISSING = 'wikipedia_ref_missing';
     case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
     case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
+    case WIKIPEDIA_NO_WIKIDATA = 'wikipedia_no_wikidata';
+    // the reference rows that the confirm of a phrase change writes too (see url_var::REF_ROW)
+    case INFO_CONFIRM_REFS = 'info_confirm_refs';
+    case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';
+    case REF_ROW_TYPE_USED = 'ref_row_type_used';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
     case READ = 'read';

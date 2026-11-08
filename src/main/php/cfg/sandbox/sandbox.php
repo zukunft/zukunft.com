@@ -1077,6 +1077,16 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * only for link objects
+     * @return array the fields that define what the link connects, which a user overlay row never has,
+     *               because a user who changes them means another link e.g. the from, verb and to of a triple
+     */
+    function link_key_fields(): array
+    {
+        return [$this->from_field(), verb_db::FLD_ID, $this->to_field()];
+    }
+
+    /**
+     * only for link objects
      * the name of the destination object
      * to be overwritten by the child object
      * @return string|null
@@ -4112,9 +4122,9 @@ class sandbox extends db_object_seq_id_user
             // TODO Prio 2 remove this exception e.g. by adding the $sc_par_lst to the call
             if ($this->is_link_obj()) {
                 if ($sc_par_lst->is_usr_tbl()) {
-                    $fvt_lst->del($this->from_field());
-                    $fvt_lst->del(verb_db::FLD_ID);
-                    $fvt_lst->del($this->to_field());
+                    foreach ($this->link_key_fields() as $fld) {
+                        $fvt_lst->del($fld);
+                    }
                 }
             }
             // add the child object specific fields and values
@@ -4267,11 +4277,14 @@ class sandbox extends db_object_seq_id_user
                 if ($usr_tbl) {
                     // insert a new row in the user table
                     $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user_db::FLD_ID], $fld_lst_ex_log);
-                    // TODO Prio 2 remove this exception e.g. by adding the $sc_par_lst to the call
-                    if ($this::class == triple::class) {
-                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
-                    } elseif ($this->is_link_obj()) {
-                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
+                    // without the fields that define the link, but e.g. with the external key of a reference
+                    if ($this->is_link_obj()) {
+                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $this->link_key_fields());
+                        // the to of a link has an own parameter only if it is logged as an own field, e.g. the
+                        // changed external key of a reference, but not as the text of the link log of an exclusion
+                        if (!in_array($this->to_field(), $fld_lst_log)) {
+                            $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->to_field()]);
+                        }
                     }
                     $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
                     $sc_insert = clone $sc;

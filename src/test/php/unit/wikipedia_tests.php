@@ -95,6 +95,15 @@ class wikipedia_tests
         $result = $wik->description($page);
         $t->assert($test_name, $result, '');
 
+        $test_name = 'a lead text that starts with a line break still gives the first paragraph';
+        $page = [
+            ref_link_wikipedia::WP_TYPE => ref_link_wikipedia::WP_TYPE_STANDARD,
+            ref_link_wikipedia::WP_EXTRACT => ref_link_wikipedia::PARAGRAPH_SEPARATOR . self::WITHOUT_IPA
+                . ref_link_wikipedia::PARAGRAPH_SEPARATOR . self::WITH_BRACKET,
+        ];
+        $result = $wik->description($page);
+        $t->assert($test_name, $result, self::WITHOUT_IPA);
+
         $test_name = 'a page without lead text has no description';
         $page = [ref_link_wikipedia::WP_TYPE => ref_link_wikipedia::WP_TYPE_STANDARD];
         $result = $wik->description($page);
@@ -178,6 +187,12 @@ class wikipedia_tests
         $test_name = '... and names zukunft.com as user agent, because else wikipedia refuses it';
         $header = $http[import_wikidata::HTTP_CONTEXT][import_wikidata::HTTP_HEADER] ?? '';
         $t->assert_text_contains($test_name, $header, import_wikidata::USER_AGENT);
+
+        // an import waits longer, because no user waits for a page and the entity json of wikidata is large
+        $test_name = 'the request of a wikidata import waits longer than the request of a page';
+        $import_http = stream_context_get_options(import_wikidata::request_context(import_wikidata::IMPORT_TIMEOUT));
+        $import_timeout = $import_http[import_wikidata::HTTP_CONTEXT][import_wikidata::HTTP_TIMEOUT] ?? 0;
+        $t->assert($test_name, $import_timeout, import_wikidata::IMPORT_TIMEOUT);
     }
 
 }

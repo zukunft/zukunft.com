@@ -35,7 +35,7 @@ job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_hig
 language: $dbo, $dbo_ui, $lan_by_id, $lan_no_name, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_min, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_split, $phr_sym, $phr_sys_cfg, $phr_tbl, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
-ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $result, $std_rec, $std_ref, $type, $usr_ref, $wd_ref
+ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $std_rec, $std_ref, $type, $usr_ref, $wd_ref
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_chk, $src_db, $src_filled, $src_map, $src_no_url, $src_other, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
@@ -44,7 +44,7 @@ system_time: $long_tim, $new, $short_tim, $sys_exe, $sys_tim_ui
 system_time_list: $answer_times, $lst, $refused_times, $result, $tim_lst, $times
 system_time_type_list: $sys_tim_typ_csv
 term: $frm, $msk, $result, $term, $trm_by_obj_id, $trm_case, $trm_dsp, $trm_map, $trm_other, $trm_start, $trm_wrd, $trm_zero, $trp, $vrb, $wrd
-triple: $bare_trp_ui, $base, $be, $cfg_trp, $colour, $db_trp, $dbo, $dbo_ui, $effort, $hint, $kw, $kw_hint, $lbl, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $operand, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $sol, $tbl_phr, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_code, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_std, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
+triple: $bare_trp_ui, $base, $be, $cfg_trp, $colour, $db_trp, $dbo, $dbo_ui, $effort, $hint, $kw, $kw_hint, $lbl, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $old, $operand, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $sol, $tbl_phr, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_code, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_std, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
 user: $adm_usr_ui, $cfm_usr, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $edit_usr, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_owner, $new_usr, $new_usr_ui, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sgn_usr, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_ip, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sgn_key, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_log_sum: $new, $sum, $sum_ui
 user_log_sum_list: $lst, $result, $sum_lst
@@ -186,7 +186,7 @@ position_type: $cmp_pos_typ
 prior_operand: $pri, $pri_two
 protection_type: $prt_typ
 ref_link_wikipedia: $wik
-ref_list: $db_lst, $lst, $ref_lst
+ref_list: $db_lst, $lst, $ref_lst, $std_lst
 ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest

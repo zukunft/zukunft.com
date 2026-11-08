@@ -41,5 +41,7 @@ class ref_types
     const string WIKIDATA_NAME = "wikidata";
     const string WIKIDATA_COM = "wikidata";
     const string WIKIPEDIA = "wikipedia";
+    // e.g. for the reference that the reference rows write test adds to a phrase without one
+    const string CONCEPTNET = "conceptnet";
 
 }

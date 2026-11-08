@@ -501,6 +501,10 @@ class files
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
     // the summary of the Zurich page with a pronunciation in the lead text for the wikipedia refresh tests
     CONST string IMPORT_WIKIPEDIA_SUMMARY_ZURICH = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Zurich' . self::JSON;
+    // the description and the wikidata reference that the live wikipedia page gives the phrase of a
+    // wikipedia refresh workflow, as an import json, so that a change of the live page is reported
+    CONST string IMPORT_WIKIPEDIA_REFRESH_GENEVA = test_paths::IMPORT_WIKIPEDIA . 'refresh_geneva_city' . self::JSON;
+    CONST string IMPORT_WIKIPEDIA_REFRESH_HEALTH = test_paths::IMPORT_WIKIPEDIA . 'refresh_health' . self::JSON;
     // the json converted from the wikidata cache that can be imported into the database
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
 
