@@ -8,6 +8,8 @@ PREPARE formula_norm_by_ids FROM
                formula_type_id,
                all_values_needed,
                last_update,
+               view_id,
+               impact,
                excluded,
                share_type_id,
                protect_id,

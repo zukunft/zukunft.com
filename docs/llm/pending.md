@@ -1,25 +1,579 @@
 # pending - list of planned llm prompts with prio 1
 
-## write tests of the calculator editor messages
+## lesson learned from changes
 
-add to `update_put_write_tests` a write test with an undo for the `note_text` and the `source_rename` message of
-`src/test/resources/web/calculator_editor/`, in the style of `run_description_change` and `run_source`: load the
-objects by name for the normal test user, set their database ids in the message, put it, check the changed
-description or name for this user and the unchanged one for another user, put the undo with the loaded texts and
-check that no own version is left. The NPP use case is part of the db setup (`cfg/const/files.php`), so its objects
-exist in the write test db. The renamed source changes 22 triple descriptions, so the undo sends them back too.
+for each non-trivial and non bug fix change create in docs/llm/log a file 
+with a one word (max 3 words) description of the change and the start date
+this file should contain 
+- the description / prompt of the change
+- a table of the wanted and expected changes e.g. in which file which old lines are replaced with which new lines and a short description to the target / reason
+- a table which changes might be caused with the filename, the old lines, the new lines and  
 
-these messages are only compared in the browser test (`use_case_ui_tests`) and have no write test yet:
-- the arguments of the Swiss NPP vote: `argument_text`, `argument_side`, `add_argument`, `remove_argument`
-- the hideable lead text: `more_text`
-- the verdict: `verdict_label`, `verdict_scale_note`, `verdict_result`, `verdict_scale_limits`
-- the sensitivity table: `sensitivity_number`, `sensitivity_add_level`, `sensitivity_cell_hint`
-- the presets: `preset_label`, `preset_value`, `preset_new_value`, `preset_value_cleared`, `add_preset`, `remove_preset`
-- the notes and sources: `note_text`, `source_rename`, and `source_description` with its own NPP source (`run_source`
-  only takes the header of the message and changes a source of the PV use case)
-- the PV lifetime balance: `pv_capacity_down` (moved input), `pv_capacity_minimum_cleared` (cleared limit),
-  `remove_input` and `pv_capacity_label_undo`; the first three delete rows of the use case, see the open points of
-  the calculator editor scenarios below
+## a fresh message for each row of a list mapping and no mapping after an earlier error
+
+`docs/llm/dependent-errors.md`: a mapping does not start if `$msg` already carries an error, returns true only
+if it has mapped the row, and each try of an independent entry gets a fresh message that is merged afterwards
+and never reads the shared request message. The steps belong into one change, because the guard of step 2
+without step 1 would add the rows after a row with an error as empty objects to the list.
+
+1. **Fresh message per row:** `sandbox_list::rows_mapper_obj` (and every other list loop that maps rows) maps
+   each row with its own message (with the buffer comment), merges it into `$msg` after the row and adds the
+   object to the list only if its mapping has returned true.
+2. **No mapping after an earlier error:** `db_object_seq_id::row_mapper` starts with a guard that returns false
+   without setting the id if `$msg` is not ok; `sandbox::row_mapper_sandbox` returns true only if a row has
+   been mapped (id set and `$msg` ok), so its docblock and the comment about the half mapped object change.
+3. **`if ($result)` in the child mappers:** `component.php`, `component_link.php`, `formula_link.php` and
+   `formula_map.php` continue with `if ($result)` after the parent mapper instead of `if ($this->id() != 0)`
+   and drop the "TODO Prio 1 can result be false" line.
+4. **Not saved, not added:** an entry whose mapping has returned false is neither saved nor added to a list of
+   objects that are saved; check the import and the save path for callers that continue with such an entry.
+5. **Tests:** add a test to `formula_link_tests`, `term_view_tests` and `formula_tests` that a row with an
+   earlier error on the message is not mapped at all (result false, id 0) and its negative with a clean
+   message; a list test checks that the row after a row with a mapping error is mapped completely and that
+   the row with the error is not added.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+## deprecate save_fields_func and the *_old functions
+
+Rule 5 of docs/llm/coding.md: every write is one named prepared statement with its change log, created by the
+sql creator and covered by a fixture in `src/test/resources/db/<class>/` and a unit test. Do one step per commit,
+in this order, and ask the developer to run the unit and write tests after each step.
+
+Each `save_fields_func` call is replaced by the decision (`can_change`, `has_usr_cfg`, `no_diff`) in the caller
+and one named builder per write, followed directly by the execution, like the change log insert:
+
+```php
+$qp = $this->sql_insert_log($sc, $msg);
+$db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $msg);
+```
+
+### save_fields_func locations, callers and replacements
+
+`$sc = $db_con->sql_creator()`, `$norm` is the standard row (`$std_rec`), `$db` the row before the change
+(`$db_rec`), `[LOG, USER]` is short for `new sql_type_list([sql_type::LOG, sql_type::USER])`.
+"new" marks a builder that does not exist yet; "test" names the unit test line with its fixture assert.
+
+| where in the code                                                    | planned change                                                       | called from                                                                     | `$qp = ...` replacement                                                                                                                                                                                                                        | sql tested in                                                                                                                                                                                                                                                                                                    |
+|----------------------------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `sandbox.php:2358` definition                                        | remove the function, the decision moves into `sandbox::save`         | update of an existing object after the permission, link and rename checks: `sandbox::save` (`sandbox.php:3296`); formula save or add: `formula_map::save_fields_func` (parent) | removed, the branches below move into `sandbox::save`                                                                                                                                                                                          | `assert_sql_save_fields` (`test_base.php:2349`) mirrors only the user row insert                                                                                                                                                                                                                                 |
+| `sandbox.php:2384` norm, no diff: delete user row                    | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);` then `$db_con->delete($qp, ...)`                                                                                                                                                            | word_tests:273, triple_tests:154, formula_tests:142, ref_tests:166 (`assert_sql_delete` with `[LOG, USER]`)                                                                                                                                                                                                      |
+| `sandbox.php:2393` norm: update standard row                         | use the existing `sql_update` with log instead of `sql_update_switch` | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_update($sc, $db, $msg, [LOG]);` then `if ($qp != null) $db_con->update($qp, ...)`; `sql_update` adds the `can_update` check that the direct `sql_update_switch` call skips                                                   | word_tests:171, 195, triple_tests:133, formula_tests:134, ref_tests:146 (`assert_sql_update` with `[LOG]`)                                                                                                                                                                                                       |
+| `sandbox.php:2401` norm updated: delete user row                     | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);` (check that the query name has no `UPDATE` left from the update before)                                                                                       | same as `sandbox.php:2384`                                                                                                                                                                                                                                                                                       |
+| `sandbox.php:2452` user, no diff: delete user row                    | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);`                                                                                                                                                                                             | same as `sandbox.php:2384`                                                                                                                                                                                                                                                                                       |
+| `sandbox.php:2463` user row exists, excluded: update user row        | use the existing `sql_exclude`                                       | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_exclude($sc, $db, $msg);` (exists; compares with the user row, the branch compares with `$norm`: check which row gives the right fields)                                                                                                     | word_tests:277, triple_tests:158 (`assert_sql_exclude`); not for formula, ref, source, view, component                                                                                                                                                                                                           |
+| `sandbox.php:2477` user row exists: update user row with the delta   | add `sql_update_user`, the delta and the user row load stay in the caller | update of an existing object: `sandbox::save`                                   | new `$qp = $usr_chg->sql_update_user($sc, $usr_db, $msg);` with `$usr_chg = $this->delta($norm, $this->clone_reset(true))` and `$usr_db->load_user_changes(...)` in the caller (no db read inside a builder)                                   | word_tests:167, 190, triple_tests:132, 134, formula_tests:135, ref_tests:147 (`assert_sql_update` with `[LOG, USER]`, but without the delta step)                                                                                                                                                                |
+| `sandbox.php:2497` no user row: insert user row with the delta       | add `sql_insert_user` that writes the fields changed vs the standard row | update of an existing object: `sandbox::save`                                   | new `$qp = $this->sql_insert_user($sc, $norm, $msg);` (`[LOG, USER, INSERT, NO_ID_RETURN]`, fields changed vs `$norm`); then `$db_con->insert($qp, ..., new sql_message(), true)` and `set_uses_sandbox`                                       | word_tests:155, triple_tests:122 (`assert_sql_save_fields`); not tested for formula, ref, source, view, component (`assert_sql_insert` with `[LOG, USER]` compares with an empty object, not with `$norm`)                                                                                                       |
+| `formula_map.php:1722` override                                      | remove the override, the formula word rename moves to `save_related` | update of an existing formula: `sandbox::save` (`sandbox.php:3296`); new formula after its insert and its formula word: `formula_map::add` (`formula_map.php:1679`) | the rename of the formula word (`wrd_rename`) moves to `formula_map::save_related`, called by `sandbox::save` before the writes; no own sql                                                                                                                                  | no sql; the formula rename in formula_write_tests:449, the formula word name is not checked                                                                                                                                                                                                                                                         |
+| `formula_map.php:1679` call                                          | drop the call if the insert writes all fields, else `sql_update`     | new formula after its insert with log and its formula word: `formula_map::add`  | `$qp = $this->sql_update($sc, $db_rec, $msg, [LOG]);` with the empty `$db_rec`; first check if the insert at `formula_map.php:1660` already writes all fields, then the call can be dropped                                                    | formula_tests:134 (`[LOG]`), the insert in formula_tests:125                                                                                                                                                                                                                                                      |
+| `ref.php:1478` call                                                  | `ref::save` uses the parent `sandbox::save` for the update           | update of an existing ref: `ref::save`                                          | the same branches as `sandbox.php:2384` to `2497`, called from `sandbox::save` once `ref::save` uses the parent save                                                                                                                           | ref_tests:146, 147, 166; user row insert vs `$norm` not tested                                                                                                                                                                                                                                                   |
+| `sandbox_multi.php:3591` definition                                  | remove the function, the decision moves into the callers             | update of an existing group: `sandbox_multi::save` (`:3366`, result has its own save without this call); delete of a value or result that another user uses: `sandbox_multi::del` (`:3568`); update of an existing value: `value_base::save_for_user` (`value_base.php:2375`); update of an existing time series: `value_time_series::save` (`value_time_series.php:425`) | removed, the branches below move into the update callers, `del` writes only the user row                                                                                                                                                    | -                                                                                                                                                                                                                                                                                                                |
+| `sandbox_multi.php:3617` norm, no diff: delete user row              | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $db->sql_delete_user_row($sc, $msg, [LOG]);` (exists)                                                                                                                                                                                   | value_tests:1021, 1026, 1028 (`assert_sql_delete` `[LOG, USER]`), value_tests:573 (source key); result only without log (result_tests:201, 204)                                                                                                                                                                 |
+| `sandbox_multi.php:3627` norm: update standard row                   | use the existing `sql_update` with log instead of `sql_write`        | see definition                                                                  | `$qp = $this->sql_update($sc, $db, $msg, [LOG]);` (`sandbox_value::sql_update` wraps the same `sql_write`); then `report_empty_write` on null                                                                                                  | value_tests:846, 853, 855, 859 (`[LOG]`); result only without log (result_tests:189 to 197)                                                                                                                                                                                                                      |
+| `sandbox_multi.php:3636` norm updated: delete user row               | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $this->sql_delete_user_row($sc, $msg, [LOG]);`                                                                                                                                                                                          | same as `sandbox_multi.php:3617`                                                                                                                                                                                                                                                                                 |
+| `sandbox_multi.php:3651` user, no diff: delete user row              | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $db->sql_delete_user_row($sc, $msg, [LOG]);`                                                                                                                                                                                            | same as `sandbox_multi.php:3617`                                                                                                                                                                                                                                                                                 |
+| `sandbox_multi.php:3664` user row exists: update user row            | add `sql_update_user` for values and results                         | see definition                                                                  | new `$qp = $this->sql_update_user($sc, $db, $msg);` (`set_user_table_source`, `[LOG, USER, UPDATE]`, null if only key fields differ)                                                                                                          | value_tests:847, 854, 856 (`[LOG, USER]`), value_tests:502 to 518 (no update without set clause); result only without log (result_tests:191, 198)                                                                                                                                                               |
+| `sandbox_multi.php:3676` no user row: insert user row                | add `sql_insert_user` for values and results                         | see definition                                                                  | new `$qp = $this->sql_insert_user($sc, $norm, $msg);` (`set_user_table_source`, `[LOG, USER, INSERT, NO_ID_RETURN]`); the branch passes `$db` to `sql_write` while its comment names the norm row: decide which one is right                           | not tested as such: value_tests:818, 822 (`assert_sql_insert` `[LOG, USER]`, without `NO_ID_RETURN` and vs an empty row), value_tests:494 (excluded field in the insert)                                                                                                                                       |
+| `sandbox_multi.php:3568` call in `del`                               | write the user row with `sql_update_user` or `sql_insert_user`      | delete of a value or result that another user uses: `sandbox_multi::del`        | `$qp = $this->sql_update_user($sc, $db, $msg);` if the user row exists, else `$qp = $this->sql_insert_user($sc, $db, $msg);`                                                                                                                 | value_tests:1022 (`assert_sql_delete` `[USER, EXCLUDE]`), value_tests:494; a test of the excluded user row update and insert is missing                                                                                                                                                                              |
+| `value_base.php:2375` call                                           | use the `sandbox_multi` branches directly                            | update of an existing value: `value_base::save_for_user` from `value_base::save` (`value_base.php:2258`) | the branches of `sandbox_multi.php:3617` to `3676`                                                                                                                                                                                             | see the `sandbox_multi` rows                                                                                                                                                                                                                                                                                     |
+| `value_time_series.php:425` call                                     | use the `sandbox_multi` branches directly and add a write test       | update of an existing time series: `value_time_series::save`                    | the branches of `sandbox_multi.php:3617` to `3676`                                                                                                                                                                                             | not tested: no sql write fixture for `value_time_series` (only the log delete in change_log_tests:486)                                                                                                                                                                                                           |
+
+#### sample code changes for `sandbox.php:2358` definition: remove the function, the decision moves into `sandbox::save`
+
+The line numbers are those of the file before the change.
+
+add at `sandbox.php:3830`, after `sql_exclude`:
+
+```php
+    /**
+     * create the sql statement to update the user row with the delta of this object to the standard row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $usr_db the user row as it is in the database
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if no field of the user row has changed
+     */
+    function sql_update_user(
+        sql_creator   $sc,
+        sandbox       $usr_db,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::UPDATE);
+        $fvt_lst = $this->db_fields_changed($usr_db, $msg, $par_lst);
+        if ($fvt_lst->is_empty_except_internal_fields()) {
+            return null;
+        }
+        return $usr_db->sql_update_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
+    }
+
+    /**
+     * create the sql statement to insert the user row with the fields that differ from the standard row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $norm the standard row
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par the sql statement to insert the user row
+     */
+    function sql_insert_user(
+        sql_creator   $sc,
+        sandbox       $norm,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par
+    {
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::INSERT);
+        $par_lst->add(sql_type::NO_ID_RETURN);
+        $fvt_lst = $this->db_fields_changed($norm, $msg, $par_lst);
+        return $this->sql_insert_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
+    }
+```
+
+add at `sandbox.php:2348`, in place of `save_fields_func`: the code id sync of `sandbox.php:2419` to `2447`
+unchanged as `private function sync_code_ids(sandbox $norm): void` (`$norm_obj` renamed to `$norm`).
+
+add at `sandbox.php:3296`, in place of the `save_fields_func` call:
+
+```php
+                        $sc = $db_con->sql_creator();
+                        $obj_name = new library()->class_to_name($this::class);
+                        $usr_par_lst = clone $sc_par_lst;
+                        $usr_par_lst->add(sql_type::USER);
+                        if ($this->can_change($msg)) {
+                            // the user may change the standard row, so a user row is not needed
+                            $no_diff = $this->no_diff($std_rec, $msg, $sc_par_lst);
+                            // null e.g. if the do not update a link guard has refused the update
+                            $qp = $no_diff ? null : $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
+                            if ($qp != null) {
+                                $db_con->update($qp, 'update ' . $obj_name . ' ' . $this->dsp_id(), $msg);
+                            }
+                            if ($this->has_usr_cfg() and ($no_diff or $qp != null)) {
+                                $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
+                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+                            }
+                        } else {
+                            $this->sync_code_ids($std_rec);
+                            if ($this->has_usr_cfg()) {
+                                if ($this->no_diff($std_rec, $msg, $usr_par_lst)) {
+                                    $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
+                                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+                                } else {
+                                    if ($this->is_excluded()) {
+                                        $qp = $this->sql_exclude($sc, $db_rec, $msg);
+                                    } else {
+                                        $usr_db = $this->clone_reset(true);
+                                        $usr_db->load_user_changes($this->id(), $msg);
+                                        $usr_chg = $this->delta($std_rec, $this->clone_reset(true));
+                                        $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
+                                    }
+                                    if ($qp != null) {
+                                        $db_con->update($qp, 'update user ' . $obj_name, $msg);
+                                    }
+                                }
+                            } elseif (!$this->no_diff($std_rec, $msg, $usr_par_lst)) {
+                                $qp = $this->sql_insert_user($sc, $std_rec, $msg, $sc_par_lst);
+                                if ($db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true)) {
+                                    // the pages for this user must now be created from the user sandbox
+                                    $this->get_user()->set_uses_sandbox($msg);
+                                }
+                            }
+                        }
+                        if ($msg->is_ok()) {
+                            // remove the user rows that have no overwrite left
+                            $this->del_usr_cfg_if_not_needed($msg);
+                        }
+```
+
+add at `test_base.php:2349`, in `assert_sql_save_fields` for both dialects:
+
+```php
+        $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, new sql_type_list($sc_par_lst_in));
+```
+
+del at `sandbox.php:2348` to `2509`: the doc block and the body of `save_fields_func`.
+
+del at `test_base.php:2357` to `2362`: the "prepare like in save_fields_func" lines of `assert_sql_save_fields`.
+
+Check after the change: the fixtures of word_tests:155 and triple_tests:122 are unchanged; the excluded user row
+uses `sql_exclude` with `$db_rec` (see the table); if the update is refused by the link guard, the user row is kept.
+
+#### sample code changes for `sandbox_multi.php:3591` definition: remove the function, the decision moves into the callers
+
+The line numbers are those of the file before the change. The two builders have the same signature as in
+`sandbox`, so `assert_sql_save_fields` works for both.
+
+add at `sandbox_multi.php:3738`, after `sql_delete_user_row`:
+
+```php
+    /**
+     * create the sql statement to update the user row of this value, result or group
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_multi $usr_db the user row as it is in the database
+     * @param user_message $msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if only the key fields differ
+     */
+    function sql_update_user(
+        sql_creator   $sc,
+        sandbox_multi $usr_db,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $this->set_user_table_source();
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        // an update of only the key fields would be an sql without a set clause
+        if ($this->db_fields_changed($usr_db, $msg, $par_lst)->is_empty_except_internal_fields()) {
+            return null;
+        }
+        $par_lst->add(sql_type::UPDATE);
+        return $this->sql_write($sc, $usr_db, $this->db_fields_all(), $msg, $par_lst);
+    }
+
+    /**
+     * create the sql statement to insert the user row of this value, result or group
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_multi $db_row the row that the user row is compared with
+     * @param user_message $msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if only the key fields differ
+     */
+    function sql_insert_user(
+        sql_creator   $sc,
+        sandbox_multi $db_row,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $this->set_user_table_source();
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::INSERT);
+        $par_lst->add(sql_type::NO_ID_RETURN);
+        return $this->sql_write($sc, $db_row, $this->db_fields_all(), $msg, $par_lst);
+    }
+```
+
+add at `sandbox_multi.php:3366` (group), `value_base.php:2375` (value) and `value_time_series.php:425`
+(time series), each in place of the `save_fields_func` call:
+
+```php
+                        $sc = $db_con->sql_creator();
+                        $obj_name = new library()->class_to_name($this::class);
+                        $log_lst = new sql_type_list([sql_type::LOG]);
+                        if ($this->can_change()) {
+                            // the user may change the standard row, so a user row is not needed
+                            $no_diff = $this->no_diff($std_rec, $msg);
+                            $qp = $no_diff ? null : $this->sql_update($sc, $db_rec, $msg, $log_lst);
+                            if ($qp != null) {
+                                $db_con->update($qp, 'update ' . $obj_name . ' ' . $this->dsp_id(), $msg);
+                            } elseif (!$no_diff) {
+                                $this->report_empty_write('update', $msg);
+                            }
+                            if ($this->has_usr_cfg() and ($no_diff or $qp != null)) {
+                                // logged with the user row as stored, so that the log shows the number that the user had
+                                $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
+                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+                            }
+                            if ($msg->is_ok()) {
+                                // remove the user rows that have no overwrite left
+                                $this->del_usr_cfg_if_not_needed($msg);
+                            }
+                        } elseif ($db_rec->has_usr_cfg()) {
+                            if ($this->no_diff($std_rec, $msg)) {
+                                $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
+                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+                            } else {
+                                // null e.g. if a leftover user row already matches the request
+                                $qp = $this->sql_update_user($sc, $db_rec, $msg);
+                                if ($qp != null) {
+                                    $db_con->update($qp, 'update user ' . $obj_name, $msg);
+                                }
+                            }
+                        } elseif (!$this->no_diff($std_rec, $msg)) {
+                            $qp = $this->sql_insert_user($sc, $db_rec, $msg);
+                            if ($qp != null) {
+                                $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                            } else {
+                                $this->report_empty_write('user overwrite', $msg);
+                            }
+                        }
+```
+
+add at `sandbox_multi.php:3568`, in `del` in place of the `save_fields_func` call: the exclude is always a write
+of the user row, because the object is used by another user
+
+```php
+                            $sc = $db_con->sql_creator();
+                            if ($db_rec->has_usr_cfg()) {
+                                $qp = $this->sql_update_user($sc, $db_rec, $msg);
+                                if ($qp != null) {
+                                    $db_con->update($qp, 'exclude ' . $this->dsp_id(), $msg);
+                                }
+                            } else {
+                                $qp = $this->sql_insert_user($sc, $db_rec, $msg);
+                                if ($qp != null) {
+                                    $db_con->insert($qp, 'exclude ' . $this->dsp_id(), $msg, new sql_message(), true, true);
+                                }
+                            }
+```
+
+add at `sandbox_multi.php:3818`: `report_empty_write` becomes `protected`, because `value_base` and
+`value_time_series` call it.
+
+add at `value_tests.php:854`, with a new fixture for Postgres and MySQL:
+
+```php
+        $t->assert_sql_save_fields($sc, $val_16, $db_val_16, [sql_type::LOG]);
+```
+
+del at `sandbox_multi.php:3580` to `3690`: the doc block and the body of `save_fields_func`.
+
+Check after the change:
+- the block is written three times (group, value, time series); if `value_base::save_for_user` and
+  `value_time_series::save` can use `sandbox_multi::save` for the update, it is written once
+- the user row delete after the update of the standard row uses `$db_rec` like the no diff case, the function
+  uses `$this` there: check that the logged number is the one the user had
+- `del` writes only the user row; the function updates the standard row if no median user is found and the
+  deleting user is still the owner, check that this case is meant to exclude only for the user
+
+#### sample code changes for `formula_map.php:1722` override: remove the override, the formula word rename moves to `save_related`
+
+The line numbers are those of the file before the change. `formula` has no own `save`, so the rename uses the
+related object hook `sandbox::save_related` (`sandbox.php:3317`, so far not called): the formula word is the
+related object of the formula, and the hook gets the database row to see the old name.
+
+add at `sandbox.php:3317`, in place of the `save_related` signature:
+
+```php
+    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
+```
+
+add at `sandbox.php:3296`, before the writes of the `sandbox.php:2358` sample:
+
+```php
+                        // e.g. rename the formula word together with the formula
+                        $this->save_related($msg, $db_rec);
+```
+
+and wrap the writes in `if ($msg->is_ok()) { ... }`, so that a failed related save writes nothing.
+
+add at `formula_map.php:1712`, in place of the `save_fields_func` override:
+
+```php
+    /**
+     * rename the formula word if the formula has been renamed
+     *
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param sandbox|null $db_rec the formula as it is in the database before the change
+     * @return bool true if everything has been successful
+     */
+    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
+    {
+        if ($db_rec != null and $db_rec->name() <> $this->name()) {
+            if (!$this->wrd_rename($db_rec->name(), $msg)) {
+                $msg->add(msg_id::FORMULA_WORD_RENAME_FAILED, [
+                    msg_id::VAR_FORMULA => $db_rec->name(),
+                    msg_id::VAR_NAME => $this->name()
+                ]);
+            }
+        }
+        return $msg->is_ok();
+    }
+```
+
+add at `formula_map.php:1679`, in `add` in place of the `save_fields_func` call (the new formula has the name of
+`$db_rec`, so no rename is needed):
+
+```php
+                $qp = $this->sql_update($sc, $db_rec, $msg, new sql_type_list([sql_type::LOG]));
+                if ($qp != null) {
+                    $db_con->update($qp, 'update and log ' . $this->dsp_id(), $msg);
+                }
+```
+
+add at `formula_write_tests.php:464`: a check that the formula word has the new name after the rename.
+
+del at `formula_map.php:1712` to `1747`: the doc block and the body of the `save_fields_func` override.
+
+Check after the change:
+- the update in `add` compares with an empty formula, so it writes and logs the fields of the insert again;
+  if the insert at `formula_map.php:1659` already writes all fields, drop these lines instead (see the table)
+- the rename of the formula word runs before the formula writes, like in the override; if the formula write fails,
+  the word keeps the new name
+
+#### sample code changes for `ref.php:1478` call: `ref::save` uses the parent `sandbox::save` for the update
+
+The line numbers are those of the file before the change. `ref` extends `sandbox_link`, so `sandbox::save` with
+the writes of the `sandbox.php:2358` sample covers the check, the reload of the linked objects, the duplicate
+check, the add and the update; `ref::save` keeps only the check of the type that is part of the prime index.
+
+add at `ref.php:1409`, in place of the doc block of `save`:
+
+```php
+    /**
+     * add or update a ref in the database
+     * the type is checked upfront, because it is part of the prime index
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
+     * @return bool true if everything has been fine
+     */
+```
+
+add at `ref.php:1436`, after the type check, in place of the rest of the body:
+
+```php
+        return parent::save($msg, $sc_par_lst);
+```
+
+del at `ref.php:1436` to `1482`: from the preserved name check to the end of the update branch, including the
+`save_fields_func` call and the `global $db_con` that is no longer used.
+
+Check after the change:
+- a ref found by `get_similar` (e.g. the same external key of an import) was updated with its id; `sandbox::save`
+  updates it only if `is_same` (`sandbox_link.php:887`) is true and else reports the id as used: check with
+  ref_write_tests and import_write_tests
+- `sandbox::save` adds what `ref::save` skips: the permission check, the owner of the standard row, the do not
+  update a link guard (`refuse_link_change`), the protection check and the delete of the old key row; check that
+  ref_write_tests still passes with them
+- the standard row comes from `get_standard` instead of `load_standard`: check that the owner is set, which the
+  TODO in `ref::save` names as missing
+
+#### sample code changes for `value_time_series.php:425` call: use the `sandbox_multi` branches directly and add a write test
+
+The line numbers are those of the file before the change. `value_time_series` extends `sandbox_value`, so it uses
+the `sql_update`, `sql_update_user`, `sql_insert_user` and `sql_delete_user_row` builders of the
+`sandbox_multi.php:3591` sample; `library`, `sql_message`, `sql_type` and `sql_type_list` are already imported.
+
+add at `value_time_series.php:420`, in place of the `save_fields_func` call and its comments (`420` to `426`):
+
+```php
+            if ($msg->is_ok()) {
+                // the same lines as at sandbox_multi.php:3366 in the sandbox_multi.php:3591 sample,
+                // from $sc = $db_con->sql_creator(); to the insert of the user row
+            }
+```
+
+add at `value_tests.php:1220`, after the by group query, with new fixtures for Postgres and MySQL:
+
+```php
+        // sql to update the standard row and to insert the user row of a time series
+        $vts_excl = clone $vts;
+        $vts_excl->exclude();
+        $t->assert_sql_update($sc, $vts_excl, $vts, [sql_type::LOG]);
+        $t->assert_sql_save_fields($sc, $vts_excl, $vts, [sql_type::LOG]);
+```
+
+del at `value_time_series.php:416` to `418`: the commented out `save_id_if_updated` call and its TODO, because the
+id of a time series is the group and the key change is not part of this step.
+
+Check after the change:
+- the user table of the time series is listed in `def.php:849`, but `db_check.php:474` still names its creation
+  as TODO: check that `user_value_time_series` exists before the user row branches can be reached
+- `assert_sql_standard` of the time series is not yet active (value_tests:1214), so the load of `$std_rec` that
+  the decision uses is not tested either
+- the add (`value_time_series.php:345`) does not save the data list yet (TODO Prio 1), so a write test can only
+  check the time series row
+
+#### sample code changes for `value_base.php:2375` call: use the `sandbox_multi` branches directly
+
+The line numbers are those of the file before the change. `value_base` extends `sandbox_value`, so it uses the
+builders of the `sandbox_multi.php:3591` sample; `set_user_table_source` of `value_base` sets the source of the
+user row inside `sql_update_user`, `sql_insert_user` and `sql_delete_user_row`. `save_as_default`
+(`value_base.php:2418`) already writes this way with `sql_update` and `$db_con->update`.
+
+add at `value_base.php:2374`, in place of the `save_fields_func` call and its comment (`2374` to `2375`), after
+`check_protection_change`:
+
+```php
+                    // the same lines as at sandbox_multi.php:3366 in the sandbox_multi.php:3591 sample,
+                    // from $sc = $db_con->sql_creator(); to the insert of the user row
+```
+
+add at `value_tests.php:856`, after the user row updates, with new fixtures for Postgres and MySQL:
+
+```php
+        // the user row of a value without own source is written with the placeholder source
+        $val_no_src = $t_val->value_16();
+        $val_no_src->set_source(null);
+        $t->assert_sql_save_fields($sc, $val_no_src, $db_val_16, [sql_type::LOG]);
+```
+
+add at `value_write_tests.php:423` to `424`: activate the check that the change of the user row is logged, because the
+writes now always include the log.
+
+del at `value_base.php:2338`: the TODO to change the default value if no one else has changed it,
+because `can_change` in the decision does this.
+
+Check after the change:
+- the standard row is loaded with its own message `$std_msg` that is not merged, so a failed load lets the
+  decision compare with an empty standard row; merge `$std_msg` or stop if the standard row is missing
+- the open point of the `sandbox_multi.php:3676` row matters most here: the insert of the user row compares with
+  `$db_rec`, which for a value without source has the placeholder source (value_tests:508 to 518)
+- the write tests for the user row are value_write_tests:407 (insert of the overwrite of `usr2`) and :440 (the
+  undo deletes the user row)
+
+### step 1: split sandbox::save_fields_func into named writes
+
+Add the two new builders `sql_update_user` and `sql_insert_user` with a fixture for Postgres and MySQL
+and close the test gaps of the `sandbox` rows in the table. Then `sandbox::save`, `ref::save` and
+`formula_map::add` use the replacements of the table, the rename moves to `formula_map::save_related`, and
+`sandbox::save_fields_func` and its override are removed.
+
+### step 2: the same for sandbox_multi (values and results)
+
+Add `sql_update_user` and `sql_insert_user` to `sandbox_multi` with fixtures for each value
+and result table (`value_db::TBL_LIST`, `result_db::TBL_LIST`) and close the test gaps of the `sandbox_multi`
+rows in the table. Then the four callers use the replacements of the table and
+`sandbox_multi::save_fields_func` is removed. Check that no `*_fields_func` is left (docs/llm/coding.md rule 5).
+
+### step 3: replace sql_db::get_old by named prepared statements
+
+`get_old` runs a raw sql text. Its callers each get a `load_sql_*` builder with a fixture and use `get()`:
+`cfg/value/value_list.php`, `cfg/group/group_list.php`, `cfg/result/result.php`,
+`cfg/log/change_log_link_list.php` and `web/value/value.php` (the frontend reads through the api instead).
+Then remove `sql_db::get_old`.
+
+### step 4: remove sql_creator::where_old
+
+`where()` falls back to `where_old` if no parameter has been added with `add_where_par`. Log the builders that
+still reach `where_old` during a full test run, switch them to `add_where_par` (the fixtures must not change),
+then remove `where_old` and the fallback.
+
+### step 5: remove the unused legacy functions
+
+Without a caller in src: `result_list::load_by_obj` with `load_sql_by_obj_old`, `change::load_sql_old`,
+`phrase_list::time_lst_old`, `expression::element_part_list_old`, `word::calc_usage_old` and
+`library::str_diff_old`. Check each again for a caller (also by a string or a dynamic call) before removing it.
+
+### step 6: the frontend *_old functions
+
+`html_base::url_old` (12 callers in web/ and base_ui_tests) moves to `html_base::url` or the `url()` of the
+object; `result_list::display_old` and `formula_list::display_old` (web), `element_group::dsp_values_old` and
+`db_object::phrase_selector_old` move to their current replacements. The html snapshots must not change.
+
+### not part of this plan
+
+These names mean the value before a change or an age, not legacy code, and stay:
+`sql_par_field_list::get_old`, `sandbox::sql_key_fields_text_old` and `sql_key_fields_id_old` (also in
+`sandbox_link`), `user_log::load_sql_old` (the ended sessions) and `job_db_cleanup::is_old`.
+
+if done remove this prompt from pending.md
 
 ## wikipedia link
 
@@ -33,11 +587,18 @@ Additional to the description the wikidata link should be taken from the wikiped
 create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
 that will not be changed any more and from this extract the description and the wikidata link as a unit test.
 
+check if the external key of a wikipedia ref should be the url slug e.g. `Canton_of_Zurich` or the title
+as shown on the screen e.g. `Canton of Zurich`. The import files use the title for now
+(see the one external key rule in docs/llm/json_structure.md), so check that the link built from the key opens
+the right page with both forms, decide on one, and update the rule and the import files to it.
+
 ## language
 
 ### import sample
 
-allow in import json files everywhere where a name is used a translation section like this 
+make here a plan how to add other languages. this should include
+
+allow in import json files to import a translation for where a name is used a translation section like this 
 
 `"words": [
     {
@@ -54,6 +615,23 @@ allow in import json files everywhere where a name is used a translation section
 `
 
 where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
+
+add the translations to src/main/resources/messages/solution_prio.json
+
+add how translations can be imported to json_structure.md
+
+import the translation and save it to user_words. define how the standard translation should be saved. 
+If possible without a user or a default user or the owner of the related object.
+
+add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions. 
+So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
+
+apply the translation to all objects that have language specific fields
+
+add the translations to the export and check where changes due to translations might be useful 
+e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes  
+
+and finally show the translated page if the url has something link =de
 
 ## this document
 
@@ -579,11 +1157,6 @@ for a formula expression, a description, a renamed, a new and a removed triple, 
 removed value, an undo and an input, a row and a row group moved up or down. The write test saves and undoes the
 description, the formula, the renamed triple, the changed number, the new limit, the new input field and the moved
 row and row group. Open:
-- a cleared limit, a removed input and a moved input delete rows of the use case, which the write test does not
-  save yet; a moved row shows the way: the undo adds the removed rows again by their name and link
-- the editor sends a moved item as removed and added order triples, because the link of a triple is the same for
-  all users; an item dragged into another list changes the link of its own triple, which other triples name, so
-  it is still sent as a changed triple, which a user who does not own the triple can not save yet
 - the triples of a new input field are not in `triple_names::TEST_TRIPLES`, so the global cleanup does not remove
   them if a run stops before the undo
 - scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector
@@ -2573,4 +3146,68 @@ if done remove this prompt from pending.md
 **next prompt**
 
 **full test run: /test/test.php**
+
+**Prompt:** the error limit for independent import entries (size M; re-pin, because the new `config.yaml` key
+becomes a seed word and shifts the ids after it). One agent: "error limit", see `docs/llm/dependent-errors.md` and
+the entry of the same name in `docs/llm/pending_prio_2.md`.
+
+## error limit
+
+1. **Config key:** add the number of errors after which the tries of fully independent import entries stop to
+   `config.yaml` under `import`, with a default and a tooltip-comment that says each user can overwrite it.
+2. **Read it:** read the value via the config of the requesting user (`$msg->usr`), so that a user overwrite wins
+   over the default.
+3. **Stop at the limit:** in the import loops over independent entries, stop when the per-row errors reach the
+   limit and add a notice with `ok = true` that the rest was not checked (`docs/llm/dependent-errors.md`, rule 3).
+4. **Tests:** a positive and a negative test on both sides of the limit, and a test that a user overwrite of the
+   limit is used instead of the default.
+5. **Finish:** remove the entry "error limit for independent import entries" from `docs/llm/pending_prio_2.md`.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+## the delete rules of docs/llm/delete.md that the code does not follow yet
+
+1. **`del_links` only for system and admin users:** `sandbox::del_exe` calls `del_links()` only if the requesting
+   user is a system or admin user; for any other user an object with dependent rows (section 5 of
+   `docs/llm/delete.md`) is refused with a new message that names the dependent rows, so that the user removes
+   them first. Add the message to `messages.php` and the translations.
+2. **An excluded word excludes its results:** if `del()` excludes a word for the user (`exclude_exe`), all results
+   with the word in their group are excluded for this user too.
+3. **Tests:** a write test that a normal user cannot delete a word with own values (refused, word and values kept)
+   and that an admin user can (word and values deleted); and a write test that the results of a word excluded by
+   usr2 are hidden for usr2 and still shown for usr1.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run: /test/test.php**
+
+## expected errors of the next test.php run
+
+The write section of `test.php` is not expected to run without errors yet. Open after the last fixes:
+
+1. **Formula write flow not run yet:** the `assert_write_named` call of `formula_write_tests.php` is switched on
+   again after a long time with the included `formula_filled_add`. The flow deletes the formula as `usr2`, then as
+   `usr1`, re-adds it and deletes it again; a formula delete also removes the formula word, its links and
+   elements, so follow-up errors are expected there, e.g. a formula word that survives or a name in use from the
+   word of the previous add.
+2. **View write flow after the include fix:** the exclude check of `view_write_tests.php` should pass with the
+   included `view_filled_add`, but the later steps of `assert_write_named` for views (ownership transfer, all
+   delete, re-add) have never been reached before.
+3. **Cleanups unconfirmed:** `cleanup_without_created` and the remembered rows of `create_test_db_entries` in
+   `check_cleanup` are not confirmed by a full run; the remembered ids also skip a real leftover that existed
+   before the create, so such a leftover is not reported.
+4. **Timeout of 182 seconds:** only made measurable, the cause is unknown.
+5. **Final cleanup order:** words hidden by a cleanup may block the delete of the rows that use them.
+6. **Delete rules not implemented:** see the delete rules of `docs/llm/delete.md` at the end of this file.
+7. **`exclude_exe` guard:** returns ok when the object is already excluded for the user; reasonable, but it
+   also hid the excluded standard row of the view until the log check caught it.
+
+The next step is a `test_part.php` run with the active word, triple, value, formula, job and view write tests
+and to fix what it reports, starting with the formula write flow.
 

@@ -69,7 +69,7 @@ class word_list_write_tests
         $ts = 'db write word list ';
         $t->header($ts);
         // cleanup any leftovers of a previous failed test run
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         /*
          * prepare
@@ -424,7 +424,7 @@ class word_list_write_tests
         $t->assert('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // cleanup - fallback delete
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($msg, library::class_to_name(word::class));

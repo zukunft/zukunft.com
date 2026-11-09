@@ -9,16 +9,28 @@
         "words": [],
         "triples": [
             {
-                "id": 4075,
-                "name": "new NPP verdict result",
                 "description": "the result the verdict compares with the threshold",
                 "from": "new NPP verdict",
                 "verb": "with",
                 "to": "average cost change"
+            },
+            {
+                "from": "new NPP verdict threshold",
+                "verb": "is follower of",
+                "to": "new NPP verdict with average cost change"
             }
         ],
         "formulas": [],
         "values": [],
-        "delete": []
+        "delete": [
+            {
+                "class": "triple",
+                "id": 4230
+            },
+            {
+                "class": "triple",
+                "id": 4075
+            }
+        ]
     }
 }

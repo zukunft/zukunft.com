@@ -273,6 +273,14 @@ class word_tests
         $t->assert_sql_delete($sc, $wrd, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
+        // the exclusion of a word that is still used, which keeps the word for the other users
+        $t->assert_sql_exclude($sc, $wrd);
+        // a word that is not in the database is used by no data, so the check needs no database;
+        // the words that data uses are checked in word_write_tests
+        $test_name = 'a word without id is used by no data';
+        $wrd_new = $t_wrd->word_filled_add();
+        $is_used = $wrd_new->used_by_data($msg);
+        $t->assert_false($test_name, $is_used);
 
         $t->subheader($ts . 'base object handling');
         $wrd = $t_wrd->word_filled();

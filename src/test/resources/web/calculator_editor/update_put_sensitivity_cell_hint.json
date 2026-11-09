@@ -9,23 +9,35 @@
         "words": [],
         "triples": [
             {
+                "from": "new NPP sensitivity cells",
+                "verb": "has a",
+                "to": "household bill change"
+            },
+            {
+                "from": "new NPP sensitivity cells has a household bill change",
+                "verb": "is follower of",
+                "to": "new NPP sensitivity cell levelised cost"
+            },
+            {
                 "id": 4106,
                 "name": "new NPP sensitivity hint",
                 "description": "each cell: the levelised cost and the change of the household bill",
                 "from": "new NPP sensitivity",
                 "verb": "has a",
                 "to": "calculator hint"
-            },
-            {
-                "id": 4273,
-                "name": "new NPP sensitivity cell average cost",
-                "from": "new NPP sensitivity cells",
-                "verb": "has a",
-                "to": "household bill change"
             }
         ],
         "formulas": [],
         "values": [],
-        "delete": []
+        "delete": [
+            {
+                "class": "triple",
+                "id": 4354
+            },
+            {
+                "class": "triple",
+                "id": 4273
+            }
+        ]
     }
 }

@@ -543,6 +543,9 @@
     \-- needs_db_update - section for function needs_db_update is expected to be info in /word/triple.php
     \-- generate_name - section for function generate_name not yet defined that it should be internal in /word/triple.ph
             p
+    \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be sandbox in /w
+            ord/triple.php
+    \-- used_by_data - section for function used_by_data not yet defined that it should be sandbox in /word/triple.php
     \-- get_similar_named - section for function get_similar_named is expected to be set and get in /word/triple.php
     \-- add - section for function add not yet defined that it should be save in /word/triple.php
     \-- is_key_updated - section for function is_key_updated is expected to be info in /word/triple.php
@@ -573,6 +576,9 @@
     \-- delta - section for function delta is expected to be del in /word/word.php
     \-- calc_usage_old - section for function calc_usage_old not yet defined that it should be ui support in /word/word.
             php
+    \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be sandbox in /w
+            ord/word.php
+    \-- used_by_data - section for function used_by_data not yet defined that it should be sandbox in /word/word.php
     \-- order error - order of section preloaded has difference at type_name should be before has_preload_type,
             order of section info has difference at delta should be before needs_db_update
 ```
@@ -3088,8 +3094,6 @@
     \-- load_sql_by_frm - section for function load_sql_by_frm is expected to be load sql in /result/result_list.php
     \-- load_sql_by_formula - section for function load_sql_by_formula is expected to be load sql in /result/result_list
             .php
-    \-- load_sql_by_phrase - section for function load_sql_by_phrase is expected to be load sql in /result/result_list.p
-            hp
     \-- load_sql_by_src - section for function load_sql_by_src is expected to be load sql in /result/result_list.php
     \-- load_sql_by_frm_single - section for function load_sql_by_frm_single is expected to be load sql in /result/resul
             t_list.php
@@ -3240,6 +3244,8 @@
     \-- update - section for function update not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /sandbox/sandbox.php
+    \-- sql_exclude - section for function sql_exclude not yet defined that it should be sql write in /sandbox/sandbox.p
+            hp
     \-- sql_write_prepared - section for function sql_write_prepared not yet defined that it should be sql write in /san
             dbox/sandbox.php
     \-- db_fields_all_sandbox - section for function db_fields_all_sandbox not yet defined that it should be sql write f
@@ -3365,6 +3371,11 @@
     \-- is_named_obj - section for function is_named_obj is expected to be info in /sandbox/sandbox_link.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox_lin
             k.php
+    \-- is_link_changed - section for function is_link_changed is expected to be info in /sandbox/sandbox_link.php
+    \-- is_link_field_changed - section for function is_link_field_changed is expected to be info in /sandbox/sandbox_li
+            nk.php
+    \-- add_link_change_refused - section for function add_link_change_refused not yet defined that it should be do not 
+            update a link guard in /sandbox/sandbox_link.php
     \-- link_id - section for function link_id is expected to be link in /sandbox/sandbox_link.php
     \-- order error - order of section info has difference at is_valid should be before db_ready
 \-- sandbox_link_list
@@ -4287,6 +4298,8 @@
     \-- rename_link_conflicts - section for function rename_link_conflicts not yet defined that it should be parts in /w
             ord/triple_list.php
     \-- fill_by_name - section for function fill_by_name not yet defined that it should be save in /word/triple_list.php
+    \-- set_links_by_db_name - section for function set_links_by_db_name is expected to be set and get in /word/triple_l
+            ist.php
     \-- fill_missing_verbs - section for function fill_missing_verbs not yet defined that it should be save in /word/tri
             ple_list.php
     \-- get_ready - section for function get_ready is expected to be save helper in /word/triple_list.php

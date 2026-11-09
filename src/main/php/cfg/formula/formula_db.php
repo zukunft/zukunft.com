@@ -126,6 +126,8 @@ class formula_db
         formula_fields::FLD_TYPE,
         formula_fields::FLD_ALL_NEEDED,
         fields::FLD_LAST_UPDATE,
+        fields::FLD_VIEW,
+        fields::FLD_IMPACT,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,
         fields::FLD_PROTECT

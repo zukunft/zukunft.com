@@ -1159,22 +1159,25 @@ class sandbox_named extends sandbox
                     $sim = $db_chk;
                 }
             }
-            // check with the user namespace
-            $db_chk->set_user($this->get_user());
+            // check with the user namespace in an own object, because a load without result resets the id,
+            // which would turn the row found in the standard namespace into a similar object without id,
+            // e.g. if the user renames a source back to its standard name
+            $usr_chk = $this->clone_reset(true);
+            $usr_chk->set_user($this->get_user());
             if ($this::class == change::class) {
                 // TODO Prio 2 check if it is working with build in tests
-                if ($db_chk->load_by_id($this->id(), $msg)) {
-                    if ($db_chk->id() > 0) {
-                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $sim = $db_chk;
+                if ($usr_chk->load_by_id($this->id(), $msg)) {
+                    if ($usr_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $usr_chk->dsp_id() . '" of the user namespace');
+                        $sim = $usr_chk;
                     }
                 }
             } else {
                 if ($this->name() != '') {
-                    if ($db_chk->load_by_name($this->name(), $msg)) {
-                        if ($db_chk->id() > 0) {
-                            log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                            $sim = $db_chk;
+                    if ($usr_chk->load_by_name($this->name(), $msg)) {
+                        if ($usr_chk->id() > 0) {
+                            log_debug($this->dsp_id() . ' has the same name is the already existing "' . $usr_chk->dsp_id() . '" of the user namespace');
+                            $sim = $usr_chk;
                         }
                     }
                 } else {

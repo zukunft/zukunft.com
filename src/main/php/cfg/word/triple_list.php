@@ -903,9 +903,6 @@ class triple_list extends sandbox_list_named
                 // add the database id to the triple list of words and triples used until now
                 $chk_lst->fill_by_name($cache, $msg_chk, true, false);
 
-                // fill missing verbs
-                $chk_lst->fill_missing_verbs();
-
                 // get the triples that needs to be added
                 // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $load_lst = $chk_lst->missing_ids($msg_chk);
@@ -928,6 +925,10 @@ class triple_list extends sandbox_list_named
 
                 // fill up the loaded list with db value to select only the triples that really needs to be inserted
                 $load_lst->fill_by_name($db_lst, $msg_chk, true, false);
+
+                // only a new triple gets the not set verb, because a triple that the import only names
+                // keeps the verb of the database row and another verb would be refused as a link change
+                $chk_lst->fill_missing_verbs();
 
                 // select the triples that are ready to be added to the database
                 // pass the buffer (merged into $msg below) and file name so a triple that cannot be
@@ -1083,6 +1084,28 @@ class triple_list extends sandbox_list_named
         }
     }
 
+    /**
+     * take the from, verb and to of the database triple with the same name,
+     * because e.g. a yaml key such as "system configuration" only names the triple
+     * and its link is what the triple is (docs/llm/architecture.md)
+     *
+     * @param user_message $msg with the requesting user to report a load problem
+     * @return void
+     */
+    function set_links_by_db_name(user_message $msg): void
+    {
+        $db_lst = new triple_list($this->get_user());
+        $db_lst->load_by_names($this->names(), $msg, true);
+        foreach ($this->lst() as $trp) {
+            $db_trp = $db_lst->get_by_name($trp->name(), $msg, true);
+            if ($db_trp != null) {
+                $trp->set_fob($db_trp->fob());
+                $trp->set_predicate_id($db_trp->predicate_id());
+                $trp->set_tob($db_trp->tob());
+            }
+        }
+    }
+
     function fill_missing_verbs(): user_message
     {
         global $sys;
@@ -1090,7 +1113,9 @@ class triple_list extends sandbox_list_named
         $msg = new user_message(); // the message built here IS the return value of this function, so the caller merges it
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
-                if ($phr->get_verb() == null) {
+                // a triple with a database id has its verb in the database, which the update fill takes,
+                // e.g. if only the name and the id are taken from the phrase cache
+                if ($phr->get_verb() == null and $phr->id() == 0) {
                     $phr->set_verb($sys->verb(verbs::NOT_SET));
                     $msg->add(msg_id::TRIPLE_VERB_SET, [
                         msg_id::VAR_ID => $phr->dsp_id(),

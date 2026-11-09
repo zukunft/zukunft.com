@@ -28,17 +28,7 @@
     },
     {
       "name": "solution",
-      "description": "a homogeneous mixture of a solute dissolved in a solvent",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q730920",
-          "type": "wikidata"
-        }
-      ]
+      "description": "a homogeneous mixture of a solute dissolved in a solvent"
     },
     {
       "name": "priority",
@@ -94,7 +84,7 @@
       "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
       "refs": [
         {
-          "name": "Deviation_(statistics)",
+          "name": "Deviation (statistics)",
           "type": "wikipedia"
         }
       ]
@@ -115,17 +105,7 @@
     },
     {
       "name": "gain",
-      "description": "the ratio of output to input of a system or amplifier",
-      "refs": [
-        {
-          "name": "Utility",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q466707",
-          "type": "wikidata"
-        }
-      ]
+      "description": "the ratio of output to input of a system or amplifier"
     },
     {
       "name": "effort",
@@ -444,11 +424,11 @@
       "name": "human",
       "refs": [
         {
-          "name": "Homo",
+          "name": "Human",
           "type": "wikipedia"
         },
         {
-          "name": "Q15978631",
+          "name": "Q5",
           "type": "wikidata"
         }
       ]
@@ -458,11 +438,11 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human population",
           "type": "wikipedia"
         },
         {
-          "name": "Q2625603",
+          "name": "Q33829",
           "type": "wikidata"
         }
       ]
@@ -564,20 +544,14 @@
       "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
       "refs": [
         {
-          "name": "Market_(economics)",
+          "name": "Market (economics)",
           "type": "wikipedia"
         }
       ]
     },
     {
       "name": "power",
-      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
-      "refs": [
-        {
-          "name": "Power_(social_and_political)",
-          "type": "wikipedia"
-        }
-      ]
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "biased",
@@ -1405,7 +1379,7 @@
       "to": "standard",
       "refs": [
         {
-          "name": "Standard_deviation",
+          "name": "Standard deviation",
           "type": "wikipedia"
         }
       ]

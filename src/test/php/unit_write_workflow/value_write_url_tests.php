@@ -50,11 +50,13 @@ include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_db_load.php';
+include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UNIT_WORKFLOW . 'value_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -64,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\unit_workflow\value_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -89,9 +92,34 @@ class value_write_url_tests extends value_url_tests
         $this->add_value_details_workflow(workflows::WF_ADD_VALUE_DETAILS_NBR, true);
         // names the group of the value that the add_value workflow has written above
         $this->change_value_group_workflow(workflows::WF_CHANGE_VALUE_GROUP_NBR, true);
-        // changes the number of the same value; the test cleanup deletes the value and its change log
+        // changes the number of the same value
         $this->calculator_save_write($t);
 
+        // the values and test words of this run are removed by this run, so that the later
+        // cleanups find no value that keeps the test words in use (see word::used_by_data)
+        $t->subheader($this->ts . 'cleanup');
+        $this->cleanup_test_values($t);
+
+    }
+
+    /**
+     * remove the values that the add value workflows and the calculator save have written,
+     * with their change log, and then the test words that create_test_phrases has added
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function cleanup_test_values(test_cleanup $t): void
+    {
+        new test_values($t)->cleanup_objects($this->ts, [
+            [word_names::TEST_ADD, word_names::TEST_ADD_TO],
+            [word_names::CITY, word_names::TEST_ADD, word_names::TEST_ADD_TO],
+            [word_names::CITY, word_names::TEST_ADD_TO, word_names::CANTON],
+        ], new value($t->usr1));
+        $wrd = new word($t->usr1);
+        $t->cleanup_change_log($wrd, [word_names::TEST_ADD, word_names::TEST_ADD_TO]);
+        foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
+            $t->write_named_cleanup($wrd, $wrd_name);
+        }
     }
 
     /**

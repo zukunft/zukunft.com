@@ -132,6 +132,22 @@ that the leftover check needs to explain a row.
 - **Wrong**: `$db_con->delete($grp->sql_delete($sc, $msg), ...)` "because the
   logged delete does not work".
 
+## The write tests of `test.php` start on a recreated database — a leftover is a failed delete of the same run
+
+`test/test.php` recreates the complete database (`run_db_recreate`) before the write tests
+start, so at that stage the database holds only the seed data: there are never leftovers of
+an earlier run. When a write test finds a test object that it is about to add, or a row that
+its own flow does not explain, a delete earlier in the same run has failed.
+
+- The analysis reads the test code backwards from the failing assert to the last place where
+  that object was deleted or cleaned up, and checks why that delete did not remove the row.
+  A database query is not needed: the row can only come from the code that ran before.
+- The usual cause is a delete that became an exclusion (`docs/llm/delete.md` section 2):
+  another object that uses the row, or a user row of another test user, was still there when
+  the delete ran, so the row stayed and only an exclusion was written.
+- `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
+  `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,
@@ -147,6 +163,42 @@ changed files (`php -l` is fine — it executes nothing). Then ask the developer
 to run the suite and report the results, and fix what the report shows. If a
 run seems to "work" from the LLM environment, that is not permission — it means
 the environment accidentally reaches a deployment it should not touch.
+
+## Each change is tested upfront with `test/test_part.php`
+
+A full test run with `test/test.php` takes more than 30 minutes, so the developer
+tests each change first with `test/test_part.php`, which runs only the tests that
+`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls.
+
+- With every change the LLM activates or adds the tests that cover the change in
+  `a_selected_test::run`, so that the developer can run them right away.
+- `a_selected_test::run` always covers every potential fail of all uncommitted changes, not only
+  the expected ones: for each changed function the unit, read and write tests that call it, the
+  coding rule tests for a changed include, message or generated doc, the test that writes a
+  changed resource file (html snapshot, api json, `list.csv`) and, for a changed cleanup, the
+  cleanup with `check_cleanup` itself. A changed function without a test is a gap: write the test
+  first, then switch it on.
+- If `$t_db->create_test_db_entries($this)` and `$t_db->create_unit_test_db_entries($this)` are
+  switched on for the read tests, `$this->cleanup($msg)` is switched on after the read tests and
+  before the url tests, so that the url and write tests start without the test rows of the read
+  tests; the write tests create their test entries again.
+- In the same edit it deactivates the tests there whose changes are already
+  committed, so that the selected run stays short.
+- The full `test/test.php` run is still needed before a commit; `test_part.php`
+  only gives the fast feedback for one change.
+- `a_selected_test::run` calls the tests of `test/test.php` in the same order and
+  switches off the tests that are not needed as a comment; `php bin/test_differences.php`
+  writes every test that is missing, added or in another order to `docs/test_differences.md`.
+- Each test call in `a_selected_test::run` is one line that is switched on and off on its own,
+  e.g. `new system_views_read_tests()->run($this);`; never a test object in a var whose creation
+  and call are separate lines (`$msk_tests = new system_views_read_tests();` and then
+  `$msk_tests->run($this);`), because switching off one of the lines breaks the other.
+- `a_selected_test.php` has as few comments as possible: mainly the section separators
+  (e.g. `/* db read */`) for a fast orientation; why a test exists belongs into the test itself.
+
+So the target is to keep the number of changes low: every change has to be
+covered by the selected tests and confirmed by a `test_part.php` run, and a short
+list of changes keeps both the selected run and the next full run short.
 
 ## Test object creation
 
@@ -165,6 +217,12 @@ it from `test_words` (add `word_with_plural()` if none fits), not
 method doesn't exist yet, add it to the appropriate `test_*.php` in
 `src/test/php/create/` before writing the test. `test_mappers.php` coordinates
 factory calls when a test resolves a class name to a test object at runtime.
+
+The factory names follow one pattern per type for all objects, e.g. `word_filled`, `view_filled`
+(all fields set, excluded), `*_filled_included` (the same, active), `*_filled_add` (active, with the
+reserved test name for the db write test), `*_add`, `*_add_by_func`, `*_incomplete` and `*_name_only`.
+`php bin/test_object_overview.php` writes the matrix of the types per object to
+`docs/test_object_overview.md`, so a missing or oddly named factory shows up there.
 
 **Don't-repeat-yourself applies here too.** A multi-step object setup belongs in
 one named factory method, not written inline in a test (and never copied into a

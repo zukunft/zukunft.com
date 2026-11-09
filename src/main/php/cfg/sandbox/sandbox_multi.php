@@ -3306,8 +3306,9 @@ class sandbox_multi extends db_object_multi_user
                     log_debug('update');
 
                     // read the database values to be able to check if something has been changed;
-                    // done first, because it needs to be done for user and general object values
-                    $db_rec = clone $this;
+                    // done first, because it needs to be done for user and general object values;
+                    // clone_all, because the id hook of the reset would also reset the shared group of this object
+                    $db_rec = $this->clone_all();
                     $db_rec->reset();
                     $db_rec->set_user($this->get_user());
                     if ($db_rec->load_by_id($this->id(), $msg) != $this->id()) {
@@ -3542,7 +3543,8 @@ class sandbox_multi extends db_object_multi_user
 
                         // simple version TODO Prio 2 combine with save function
 
-                        $db_rec = clone $this;
+                        // clone_all, because the id hook of the reset would also reset the shared group of this object
+                        $db_rec = $this->clone_all();
                         $db_rec->reset();
                         $db_rec->set_user($this->get_user());
                         if ($db_rec->load_by_id($this->id(), $msg)) {

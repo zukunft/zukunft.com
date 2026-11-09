@@ -340,7 +340,7 @@ class test_views extends test_objects
         $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
         $msk->set_style(view_styles::COL_SM_4, new user_message($this->env->usr1));
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
-        $msk->exclude();
+        $msk->include();
         $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $msk;

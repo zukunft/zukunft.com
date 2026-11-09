@@ -107,8 +107,7 @@ class formula_write_tests
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);
 
         $t->subheader($ts . 'sandbox for ' . formula_names::SYSTEM_TEST_ADD);
-        // TODO Prio 0 activate
-        //$t->assert_write_named($t_frm->formula_filled_add(), formula_names::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t_frm->formula_filled_add(), formula_names::SYSTEM_TEST_ADD, $msg);
 
         // TODO Prio 2 remove
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);

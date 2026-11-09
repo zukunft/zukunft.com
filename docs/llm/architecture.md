@@ -99,6 +99,28 @@ phrases. When describing why two objects of different classes must not share a
 name or id, pick the noun that actually covers both classes — e.g. a triple and
 a formula are both *terms* (not *phrases*, because a formula is not a phrase).
 
+**The link of a triple is its identity and is never changed.** The from phrase,
+the verb and the to phrase define the triple, like the phrases define a group, so
+a triple with another from, verb or to is always another triple. The same holds for
+every link (`formula_link`, `component_link`, `view_relation`, `term_view`, `ref`):
+its from and its to, and for a class in `def::LINK_TYPE_CLASSES` (triple, ref) its
+predicate, identify it; the other types are normal fields. A `ref` is identified by its
+phrase and its type only, so its external key is a normal field that e.g. a later import
+changes to another wikipedia page. The **do not update a link
+guard** refuses another link for a link with a database id for every user, also the
+owner (`LINK_CHANGE_REFUSED`), in two layers: the save (`sandbox_link::is_link_changed`
+in `sandbox::save`) and the sql update creation (`sandbox_link::is_link_field_changed`
+in `sandbox::sql_update_switch`), so that no path writes another link into a row; each
+link class has a unit test of it (`test_base::assert_link_guard`). The client sends the
+old link as removed and the one with the other link as added instead, like a moved
+item of the calculator editor, and the undo adds the old link again and removes the
+new one.
+Values, formulas and other triples that name the old triple keep naming it; a
+triple that should name the new one is itself another triple and goes the same
+way. Never describe or implement this as "the from (verb, to) of the triple has
+changed": the name, the description and the other fields of a triple can change,
+its link cannot.
+
 ## Key architectural patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`,
@@ -358,7 +380,8 @@ and when), the base of the undo and the only way a lost row can be explained
 later, so a plain `DELETE` that leaves no entry destroys information that
 nothing can bring back. This is why a plain delete is never the fix for a
 logged delete that does not remove a row — the logged delete is repaired
-instead — and why test cleanups delete through `del()` as well.
+instead — and why test cleanups delete through `del()` as well. When `del()`
+deletes, when it only excludes and which dependent rows it removes: `docs/llm/delete.md`.
 
 An exception is possible only for rows that carry no user history because the
 next read recreates them, and it must be guarded by **more than one layer at

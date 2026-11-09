@@ -2322,17 +2322,7 @@
       "name": "Faraday's law",
       "from": "Faraday",
       "verb": "name of",
-      "to": "law",
-      "refs": [
-        {
-          "name": "Faraday's laws of electrolysis",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q220609",
-          "type": "wikidata"
-        }
-      ]
+      "to": "law"
     },
     {
       "name": "Faraday's law of electrolysis",

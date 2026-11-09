@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -144,6 +145,20 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'do not update a link guard');
+        // the phrase and the reference type identify a reference
+        global $sys;
+        $t_wrd = new test_words($t);
+        $ref_from = $ref->clone_all();
+        $ref_from->set_fob($t_wrd->word()->phrase());
+        $ref_type = $ref->clone_all();
+        $ref_type->set_predicate_id($sys->typ_lst->ref_typ->id(ref_types::WIKIPEDIA));
+        $t->assert_link_guard($sc, $ref, ['phrase' => $ref_from, 'type' => $ref_type]);
+        // ... but the external key is a normal field, e.g. if a later import names another wikipedia page
+        $test_name = 'another external key is no link change';
+        $ref_key = $ref->cloned_linked(refs::CHANGE_OLD_KEY);
+        $t->assert_false($test_name, $ref_key->is_link_changed($ref));
 
         $t->subheader($ts . 'sql delete');
         // TODO Prio 1 log deleting the link by logging the change of the external link to empty

@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -58,6 +58,7 @@ class files
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
+    CONST string PHP = '.php';
     CONST string CSV = '.csv';
     CONST string ZIP = '.zip';
     CONST string XML = '.xml';
@@ -149,6 +150,8 @@ class files
     CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
     CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
+    // the undo of a removed value, which includes the value again for the user; the test sets the id and the number
+    CONST string UPDATE_PUT_VALUE_CLEARED_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_value_cleared_undo' . self::JSON;
     CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
     // the user actions that a headless browser runs in a copy of the calculator editor snapshot, selected by the
     // scenario name as the url hash; the update put message that the editor sends after a scenario is compared
@@ -221,6 +224,8 @@ class files
     // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
     CONST string UPDATE_PUT_SOURCE_DESCRIPTION = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_DESCRIPTION . self::JSON;
+    CONST string UPDATE_PUT_SOURCE_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_RENAME . self::JSON;
+    CONST string UPDATE_PUT_NOTE_TEXT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_NOTE_TEXT . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;
@@ -326,6 +331,11 @@ class files
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
     CONST string DOCS_MATH = test_paths::DOCS . 'math' . self::MD;
+    CONST string DOCS_TEST_DIFFERENCES = test_paths::DOCS . 'test_differences' . self::MD;
+    CONST string DOCS_TEST_OBJECT_OVERVIEW = test_paths::DOCS . 'test_object_overview' . self::MD;
+    // the test runners whose tests the test differences report compares
+    CONST string TEST_ALL_SCRIPT = test_paths::SCRIPTS . 'test' . self::PHP;
+    CONST string TEST_PART_SCRIPT = test_paths::SCRIPTS . 'test_part' . self::PHP;
     // the javascript evaluators of the math function report, started with node
     CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;

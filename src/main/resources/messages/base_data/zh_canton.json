@@ -13,17 +13,7 @@
   "description": "100 most relevant numeric indicators about the canton of Zurich, Switzerland — geography, administration, population, demographics, economy, labour market, public finances, taxes, housing, transport, education, research, health, environment, energy, governance and quality of life. Data from Statistik Kanton Zürich, BFS, Wikipedia, S&P, Mercer and official publications, mostly 2023–2025.",
   "words": [
     {
-      "name": "Zurich",
-      "refs": [
-        {
-          "name": "Canton_of_Zürich",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11943",
-          "type": "wikidata"
-        }
-      ]
+      "name": "Zurich"
     },
     {
       "name": "canton"

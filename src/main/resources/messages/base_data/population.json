@@ -16,7 +16,7 @@
       "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
       "refs": [
         {
-          "name": "Disability-adjusted_life_year",
+          "name": "Disability-adjusted life year",
           "type": "wikipedia"
         }
       ],

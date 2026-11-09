@@ -27,17 +27,7 @@
       ]
     },
     {
-      "name": "solution",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q730920",
-          "type": "wikidata"
-        }
-      ]
+      "name": "solution"
     },
     {
       "name": "priority",
@@ -66,17 +56,7 @@
       ]
     },
     {
-      "name": "gain",
-      "refs": [
-        {
-          "name": "Utility",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q466707",
-          "type": "wikidata"
-        }
-      ]
+      "name": "gain"
     },
     {
       "name": "loss"
@@ -213,11 +193,11 @@
       "name": "human",
       "refs": [
         {
-          "name": "Homo",
+          "name": "Human",
           "type": "wikipedia"
         },
         {
-          "name": "Q15978631",
+          "name": "Q5",
           "type": "wikidata"
         }
       ]
@@ -226,11 +206,11 @@
       "name": "population",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human population",
           "type": "wikipedia"
         },
         {
-          "name": "Q2625603",
+          "name": "Q33829",
           "type": "wikidata"
         }
       ]

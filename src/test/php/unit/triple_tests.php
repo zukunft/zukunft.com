@@ -48,6 +48,8 @@ use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_tests
@@ -111,6 +113,13 @@ class triple_tests
         $trp_excl->description = '';
         $trp_excl->set_type('', new user_message($t->usr1));
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
+        // a user includes again a triple that is excluded for all users, so the user row sets only the excluded
+        // field and the link is the same as in the standard row, which leaves the old link of the log empty
+        $trp_std_excl = $t_trp->triple();
+        $trp_std_excl->excluded = true;
+        $trp_incl = $t_trp->triple();
+        $trp_incl->excluded = false;
+        $t->assert_sql_save_fields($sc, $trp_incl, $trp_std_excl, [sql_type::LOG, sql_type::USER]);
         $trp = $t_trp->triple_incomplete();
         $t->assert_sql_insert_fail($sc, $trp, [sql_type::LOG]);
 
@@ -119,10 +128,22 @@ class triple_tests
         $trp_renamed = $trp->cloned_named(word_names::TEST_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
-        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
+        // the update with log is tested by the horizontal sql test, which writes the same sql name
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'do not update a link guard');
+        $t_wrd = new test_words($t);
+        $t_vrb = new test_verbs($t);
+        $trp = $t_trp->triple();
+        $trp_from = clone $trp;
+        $trp_from->set_from($t_wrd->word_pi()->phrase());
+        $trp_verb = clone $trp;
+        $trp_verb->set_verb($t_vrb->verb_is());
+        $trp_to = clone $trp;
+        $trp_to->set_to($t_wrd->word_year()->phrase());
+        $t->assert_link_guard($sc, $trp, ['from' => $trp_from, 'verb' => $trp_verb, 'to' => $trp_to]);
 
         $t->subheader($ts . 'sql delete');
         // TODO Prio 0 activate db write
@@ -133,6 +154,14 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
+        // the exclusion of a triple that is still used, which keeps the triple for the other users
+        $t->assert_sql_exclude($sc, $trp);
+        // a triple that is not in the database is used by no data, so the check needs no database;
+        // the triples that data uses are checked in triple_write_tests
+        $test_name = 'a triple without id is used by no data';
+        $trp_new = $t_trp->triple_filled_add_name();
+        $is_used = $trp_new->used_by_data($msg);
+        $t->assert_false($test_name, $is_used);
 
         $t->subheader($ts . 'view base object handling');
         $trp = $t_trp->triple_filled_add_name();

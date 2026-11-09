@@ -2922,6 +2922,9 @@ enum messages: string
     case UPDATE_PUT_SKIPPED = 'update_put_skipped';
     // shown if an object of an update put is not changed by the save, so that a lost change is never confirmed as saved
     case UPDATE_PUT_UNCHANGED = 'update_put_unchanged';
+    // shown if a request sends another from, predicate or to for an existing link e.g. a triple, which is
+    // never changed, because another link is another object (the do not update a link guard, docs/llm/architecture.md)
+    case LINK_CHANGE_REFUSED = 'link_change_refused';
 
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
@@ -2947,6 +2950,10 @@ enum messages: string
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
+
+    // if a delete has only excluded the object for the user, because it is still used
+    // always added with ok = true, because the exclusion is the normal answer to the delete of a used object
+    case DELETE_EXCLUDED_IN_USE = 'delete_excluded_in_use';
 
 
     /*

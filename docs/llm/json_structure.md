@@ -482,12 +482,20 @@ same split-identity problem as a partial trim.
 For a `ref` the identifying part is the **external key** (the Wikipedia article
 slug or the Wikidata Q-id, with its `type` / `ref_type`), and that key follows
 the **external source's** spelling and casing — Wikipedia and Wikidata
-capitalise (`Zurich (City)`, `Canton_of_Zürich`, `Q72`). Never lower-case a
+capitalise (`Zurich (City)`, `Canton of Zurich`, `Q72`). Never lower-case a
 ref to match an internal phrase, and never assume a ref tracks the phrase name:
 the lower-case-first and byte-for-byte rules above govern *phrase names only*;
 in a `ref` the external key is what counts and the internal name is irrelevant,
 so leave refs exactly as the external system spells them even when the phrase
 they belong to is lower-cased.
+
+**One external key per phrase and ref type in all import files.** A phrase is
+one term, so every file that lists a ref of it gives the same key: the
+Wikipedia article title with spaces (`Standard deviation`, not
+`Standard_deviation`) and the Q-id of that article. Otherwise each import
+overwrites the key of the previous one. A ref follows the meaning of the
+phrase's description; a file that uses the phrase in another sense lists no
+ref for it.
 
 ### Intentional symbol / abbreviation aliasing
 
@@ -1750,7 +1758,12 @@ The body holds only the changed objects, each with the fields that the client
 manages; a field that the message does not name keeps its database value.
 `words`, `triples`, `formulas`, `sources` and `values` are added or changed in this order,
 then each entry of `delete` (`class` and `id`) is removed by the `del()` of the
-object, which decides if it is deleted or only excluded for the user. A formula
+object, which decides if it is deleted or only excluded for the user. The link of
+a triple is never changed (`docs/llm/architecture.md`), so another `from`, `verb`
+or `to` for a triple id is refused (`LINK_CHANGE_REFUSED`); the message
+removes the old triple in `delete` and adds the triple with the other link without
+id instead. `"excluded": false` on a triple or a value includes it again for the
+user. A formula
 is named by its `id` and changed by its expression in the user format
 (`user_text`, the same text as the `expression` of an import file); it is never
 deleted by a message, so a `delete` entry of a formula is refused

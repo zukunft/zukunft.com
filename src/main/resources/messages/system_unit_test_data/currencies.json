@@ -109,13 +109,7 @@
       "description": "A value that remains after specified deductions or adjustments. In foreign exchange turnover statistics, 'net' refers to adjustments removing double-counting between reporting dealers."
     },
     {
-      "name": "base",
-      "refs": [
-        {
-          "name": "Currency pair",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "base"
     },
     {
       "name": "transaction",

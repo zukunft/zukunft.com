@@ -231,17 +231,7 @@
       ]
     },
     {
-      "name": "square",
-      "refs": [
-        {
-          "name": "Square",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q164",
-          "type": "wikidata"
-        }
-      ]
+      "name": "square"
     },
     {
       "name": "parallelogram",
@@ -307,7 +297,7 @@
           "type": "wikipedia"
         },
         {
-          "name": "Q10861",
+          "name": "Q812880",
           "type": "wikidata"
         }
       ]
@@ -410,7 +400,7 @@
           "type": "wikipedia"
         },
         {
-          "name": "Q11518",
+          "name": "Q11352",
           "type": "wikidata"
         }
       ]

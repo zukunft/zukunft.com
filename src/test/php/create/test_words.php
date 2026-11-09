@@ -100,6 +100,23 @@ class test_words extends test_objects
         parent::cleanup_objects($ts, word_names::TEST_WORDS, new word($this->env->usr1));
     }
 
+    /**
+     * delete the remaining test words of a previous run, but not the words that create_test_db_entries has
+     * just added, because their values and triples keep them in use, so del() would only hide them for the owner
+     * and a phrase list by names would miss them (see word::used_by_data)
+     */
+    function cleanup_without_created(string $ts): void
+    {
+        $created = array_merge(
+            word_names::TEST_WORDS_CREATE,
+            word_names::TEST_WORDS_MEASURE,
+            word_names::TEST_WORDS_SCALING,
+            word_names::TEST_WORDS_TIME_YEAR
+        );
+        $names = array_values(array_diff(word_names::TEST_WORDS, $created));
+        parent::cleanup_objects($ts, $names, new word($this->env->usr1));
+    }
+
 
     /*
      * unit
