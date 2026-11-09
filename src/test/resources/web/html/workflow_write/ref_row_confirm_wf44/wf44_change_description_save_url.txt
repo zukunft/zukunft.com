@@ -1,0 +1,36 @@
+GET
+http://localhost/http/view.php?id=142&k=Zurich+%28canton%29&o=System+Test+Description+of+the+Reference+Rows&pf=228&b=2&pt=201&8id=142&8k=Zurich+%28canton%29&8o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8pf=228&8b=2&8pt=201&9m=4&9id=142&6a1=u&6l1=277&6lt1=2&6ek1=Q999999999&86lt1=2&86ek1=Q11943&m=51&z=1&submit=
+/http/view.php?id=142&k=Zurich+%28canton%29&o=System+Test+Description+of+the+Reference+Rows&pf=228&b=2&pt=201&8id=142&8k=Zurich+%28canton%29&8o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8pf=228&8b=2&8pt=201&9m=4&9id=142&6a1=u&6l1=277&6lt1=2&6ek1=Q999999999&86lt1=2&86ek1=Q11943&m=51&z=1&submit=
+/http/view.php?id=142&name=Zurich+%28canton%29&description=System+Test+Description+of+the+Reference+Rows&from_id=228&verb_id=2&to_id=201&8id=142&8name=Zurich+%28canton%29&8description=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8from_id=228&8verb_id=2&8to_id=201&9mask_id=triple_default&9id=142&6action1=show&6ref_id1=277&6ref_type1=2&6external_key1=Q999999999&86ref_type1=2&86external_key1=Q11943&mask_id=triple_edit&step=confirm&
+{
+    "id": "142",
+    "name": "Zurich (canton)",
+    "description": "System Test Description of the Reference Rows",
+    "from_id": "228",
+    "verb_id": "2",
+    "to_id": "201",
+    "mask_id": "triple_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "142",
+        "name": "Zurich (canton)",
+        "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
+        "from_id": "228",
+        "verb_id": "2",
+        "to_id": "201",
+        "6ref_type1": "2",
+        "6external_key1": "Q11943"
+    },
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "142"
+    },
+    "url_part_ref_row": {
+        "1": {
+            "action": "show",
+            "ref_id": "277",
+            "ref_type": "2",
+            "external_key": "Q999999999"
+        }
+    }
+}

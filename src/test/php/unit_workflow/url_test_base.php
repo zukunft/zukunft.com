@@ -220,6 +220,17 @@ class url_test_base
                 $lst->add($wrd->phrase());
             }
         }
+        $this->add_phrases_to_cache($lst);
+    }
+
+    /**
+     * add phrases to the request cache, because a read run renders without backend calls, so a page
+     * would else link e.g. the from and the to phrase of a triple without a name
+     *
+     * @param phrase_list $lst the phrases that the pages of the workflow show by their name
+     */
+    protected function add_phrases_to_cache(phrase_list $lst): void
+    {
         if (!$lst->is_empty()) {
             $cac_msg = new user_message(); // a test setup without a user action, so nothing to report
             $this->req->dto->add_phrases(new phrase_list_ui($lst->api_json()), $cac_msg);

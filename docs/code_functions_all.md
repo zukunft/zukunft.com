@@ -270,6 +270,7 @@
     \-- reload_objects - section for function reload_objects is expected to be related in /ref/ref.php
     \-- from_field - section for function from_field is expected to be sql fields in /ref/ref.php
     \-- to_field - section for function to_field is expected to be sql fields in /ref/ref.php
+    \-- link_key_fields - section for function link_key_fields is expected to be link in /ref/ref.php
     \-- to_value - section for function to_value not yet defined that it should be load in /ref/ref.php
     \-- type_field - section for function type_field is expected to be sql fields in /ref/ref.php
     \-- name_field - section for function name_field is expected to be sql fields in /ref/ref.php
@@ -3050,6 +3051,12 @@
     \-- names - section for function names is expected to be info in /phrase/term_list.php
 \-- trm_ids
     \-- order error - order of section  has difference at count should be before __construct
+\-- ref_link_wikipedia
+    \-- refresh_from_url - section for function refresh_from_url missing in /ref/ref_link_wikipedia.php
+    \-- description - section for function description missing in /ref/ref_link_wikipedia.php
+    \-- without_pronunciation - section for function without_pronunciation missing in /ref/ref_link_wikipedia.php
+    \-- wikidata_id - section for function wikidata_id missing in /ref/ref_link_wikipedia.php
+    \-- summary - section for function summary missing in /ref/ref_link_wikipedia.php
 \-- ref_list
     \-- key_list - section for function key_list not yet defined that it should be set and get in /ref/ref_list.php
     \-- load_dummy - section for function load_dummy is expected to be load in /ref/ref_list.php
@@ -3164,6 +3171,7 @@
     \-- from_field - section for function from_field is expected to be sql fields in /sandbox/sandbox.php
     \-- from_name - section for function from_name not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- to_field - section for function to_field is expected to be sql fields in /sandbox/sandbox.php
+    \-- link_key_fields - section for function link_key_fields is expected to be link in /sandbox/sandbox.php
     \-- to_name - section for function to_name not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- to_value - section for function to_value not yet defined that it should be placeholder in /sandbox/sandbox.php
     \-- fob - section for function fob not yet defined that it should be placeholder in /sandbox/sandbox.php
@@ -4593,6 +4601,19 @@
         \--  - write a log message to the database and return the message that should be shown to the user
     \-- read
         \-- ref_link_wikidata - 
+    \-- refresh_from_url
+        \-- ref_link_wikipedia - take over the description and the wikidata id from the wikipedia page of the phrase if 
+                the
+    \-- description
+        \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
+    \-- without_pronunciation
+        \-- ref_link_wikipedia - @param string $txt a lead text of wikipedia e.g. "Zürich (German: [ˈtsyːrɪç]) is t
+                he largest city"
+    \-- wikidata_id
+        \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
+    \-- summary
+        \-- ref_link_wikipedia - read the summary of a wikipedia page; public,
+                 so that a write test can compare what the live
 \-- load
     \-- load_by_view
         \-- component_link_list - interface function to load all component links of the given view
@@ -5362,6 +5383,8 @@
         \-- term_list - @returns array with all unique names of this list with the keys within this list
     \-- key_list
         \-- ref_list - map the database rows of one load to the refs of this list
+    \-- get_by_type_code_id
+        \-- ref_list - @param string $code_id the code id of the reference type e.g. ref_types::WIKIPEDIA
     \-- name_lst
         \-- sandbox_value_list - @return array with the value group names
     \-- key
@@ -5617,7 +5640,7 @@
         \-- change_log - create an array for the api json creation
         \-- change_log_list - create the api json array with one entry per change so that the frontend
         \-- change_value - create an array for the api json message
-        \-- ref_list - map the database rows of one load to the refs of this list
+        \-- ref_list - @param string $code_id the code id of the reference type e.g. ref_types::WIKIPEDIA
         \-- ref_type - TODO Prio 2 use parent function for setting the name, ...
         \-- list_db_read - create an array for the api json message
         \-- system_time - create an array for the api json creation e.g. of the slow requests for the admin dashboard
@@ -7346,6 +7369,8 @@
             p
     \-- url_with_selected_phrase - section for function url_with_selected_phrase not yet defined that it should be execu
             te in /frontend.php
+    \-- url_with_wikipedia_refresh - section for function url_with_wikipedia_refresh not yet defined that it should be e
+            xecute in /frontend.php
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
 \-- group
     \-- unset_name_tip_dirty - section for function unset_name_tip_dirty not yet defined that it should be set and get i
@@ -7975,6 +8000,7 @@
     \-- name_link_with_tip - section for function name_link_with_tip not yet defined that it should be base in /phrase/p
             hrase.php
     \-- own_view_id - section for function own_view_id not yet defined that it should be base in /phrase/phrase.php
+    \-- edit_view_id - section for function edit_view_id not yet defined that it should be base in /phrase/phrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
     \-- is_or_can_be - section for function is_or_can_be is expected to be info in /phrase/phrase.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /phrase/phrase.php
@@ -7990,6 +8016,11 @@
             e/phrase.php
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be to review in /phrase/phrase.php
     \-- dsp_tbl - section for function dsp_tbl not yet defined that it should be to review in /phrase/phrase.php
+    \-- wikipedia_confirm_url - section for function wikipedia_confirm_url not yet defined that it should be wikipedia i
+            n /phrase/phrase.php
+    \-- confirm_url_of_refresh - section for function confirm_url_of_refresh not yet defined that it should be wikipedia
+             in /phrase/phrase.php
+    \-- save_ref_rows - section for function save_ref_rows is expected to be save in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
 \-- phrase_data
     \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
@@ -9664,6 +9695,10 @@
         \-- term_list - get a verb from the term list selected by the verb id
     \-- get_by_phrase
         \-- ref_list - select the references that are linked to the given phrase
+    \-- get_by_type_code_id
+        \-- ref_list - @param string $code_id the code id of the reference type e.g. ref_types::WIKIDATA
+    \-- get_by_type_id
+        \-- ref_list - @param int $type_id the database id of the reference type e.g. of wikidata
     \-- set_name
         \-- combine_named - @param string $name the name of the word, triple, formula or verb
     \-- name
@@ -10945,6 +10980,8 @@
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- url_with_selected_phrase
         \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
+    \-- url_with_wikipedia_refresh
+        \-- frontend - the confirm page of the description and the wikidata id that the backend takes from the
     \-- show
         \-- view_exe - create the html code to view a sandbox object
     \-- add_page_cache

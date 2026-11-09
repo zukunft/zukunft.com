@@ -353,6 +353,33 @@ class workflows
     // the id of the current login_start_page workflow; increase it to add the next snapshot set
     const int WF_LOGIN_START_PAGE_NBR = 41;
 
+    // the wikipedia_refresh workflow name used for the snapshot folder and the test subheader: the user
+    // presses the refresh icon of the wikipedia reference of the triple Geneva (city) and confirms the
+    // description of the wikipedia page; the backend reads wikipedia, so this
+    // workflow has no test mode twin and only the page before the refresh is a snapshot, because
+    // the text of the live wikipedia page can change (see ref_write_url_tests)
+    const string WF_WIKIPEDIA_REFRESH = 'wikipedia_refresh';
+    const int WF_WIKIPEDIA_REFRESH_NBR = 42;
+
+    // the ref_rows workflow name used for the test subheader: the user confirms the description of the
+    // triple Zurich (canton) together with the change, the delete and the add of a reference; it writes
+    // the base data as overlays of usr1, so it runs only in the write tests and has no snapshot
+    const string WF_REF_ROWS = 'ref_rows';
+    const int WF_REF_ROWS_NBR = 43;
+
+    // the ref_row_confirm workflow name used for the snapshot folder and the test subheader: the user
+    // saves the edit view of Zurich (canton) with one reference row, an add, a change or a delete, each
+    // with and without a change of the description, and confirms it; one snapshot set per case
+    const string WF_REF_ROW_CONFIRM = 'ref_row_confirm';
+    const int WF_REF_ROW_CONFIRM_NBR = 44;
+
+    // the wikidata_refresh workflow name used for the snapshot folder and the test subheader: the user
+    // presses the refresh icon of the wikipedia reference of the word health, which has no wikidata
+    // reference yet, and confirms the wikidata reference that wikipedia names; like the wikipedia_refresh
+    // workflow it reads the live wikipedia page, so only the word page before the refresh is a snapshot
+    const string WF_WIKIDATA_REFRESH = 'wikidata_refresh';
+    const int WF_WIKIDATA_REFRESH_NBR = 45;
+
     /**
      * the user process step that a user reaction action triggers
      *

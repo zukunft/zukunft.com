@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -232,6 +233,13 @@ class formula_link_tests
         $lnk_new = new formula_link($t->usr1);
         $lnk_new->api_mapper($t_frm->formula_link()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $lnk_new->order_nbr, test_const::FORMULA_LINK_ORDER_NBR);
+        $msg->reset();
+        // a formula linked to a triple must not be linked to the word with the same id
+        $test_name = 'the api mapper keeps the negative phrase id of a triple';
+        $lnk_new = new formula_link($t->usr1);
+        $trp_phr_id = triple_names::CANTON_ZURICH_ID * -1;
+        $lnk_new->api_mapper([json_fields::ID => 0, json_fields::PHRASE_ID => $trp_phr_id], $msg);
+        $t->assert($test_name, $lnk_new->phrase_id(), $trp_phr_id);
         $msg->reset();
         // the formula is expected as a json object, not only by its id
         $test_name = 'an api message with only an id as the formula is refused';

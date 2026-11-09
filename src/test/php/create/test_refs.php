@@ -271,6 +271,66 @@ class test_refs extends test_objects
         return $tl->list_to_ui($this->ref_list_math(), [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * @return ref the wikipedia reference of mathematics, whose refresh icon takes over the description from wikipedia
+     */
+    function reference_math_wikipedia(): ref
+    {
+        global $sys;
+        $t_wrd = new test_words($this->env);
+        $ref = new ref($this->env->usr1);
+        $ref->set(refs::MATH_WIKIPEDIA_ID, $t_wrd->word_math()->phrase(),
+            $sys->typ_lst->ref_typ->id(ref_types::WIKIPEDIA), refs::MATH_WIKIPEDIA_KEY);
+        return $ref;
+    }
+
+    /**
+     * @return ref_list the wikipedia and the wikidata reference of mathematics
+     */
+    function ref_list_math_wikipedia(): ref_list
+    {
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($this->reference_math_wikipedia());
+        $lst->add_obj($this->reference_math());
+        return $lst;
+    }
+
+    /**
+     * @return ref_list_ui the wikipedia and the wikidata reference of mathematics as the word page gets them
+     */
+    function ref_list_math_wikipedia_ui(): ref_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->ref_list_math_wikipedia(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return ref_list_ui only the wikipedia reference of mathematics e.g. to test the add of the missing wikidata reference
+     */
+    function ref_list_math_without_wikidata_ui(): ref_list_ui
+    {
+        $tl = new test_lib();
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($this->reference_math_wikipedia());
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return ref_list_ui the wikidata reference of Geneva (city), whose wikipedia page names the same wikidata item
+     */
+    function ref_list_geneva_ui(): ref_list_ui
+    {
+        global $sys;
+        $tl = new test_lib();
+        $t_trp = new test_triples($this->env);
+        $ref = new ref($this->env->usr1);
+        $wd_type_id = $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA);
+        $ref->set(refs::GENEVA_ID, $t_trp->triple_ge()->phrase(), $wd_type_id, refs::GENEVA_KEY);
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($ref);
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
 
     /*
      * url

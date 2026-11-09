@@ -63,6 +63,7 @@ the object structure is:
 ├── qlever - import of qlever nt and tsv files
 ├── ref_db - the database const for reference tables
 ├── ref_link_wikidata - link for the reference type wikidata
+├── ref_link_wikipedia - take over the description of a phrase from wikipedia
 ├── source_db - the database const for source tables
 ├── result_db - the database const for triple tables
 ├── sandbox_related - the related data of a sandbox object for its page tabs

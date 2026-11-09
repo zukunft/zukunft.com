@@ -1015,6 +1015,14 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "Geneva (city)" triple for frontend unit testing e.g. of the wikipedia refresh
+     */
+    function triple_ge_ui(): triple_ui
+    {
+        return $this->page_ui($this->triple_ge());
+    }
+
+    /**
      * @return triple_ui the "US dollar" triple for frontend unit testing
      */
     function us_dollar_ui(): triple_ui

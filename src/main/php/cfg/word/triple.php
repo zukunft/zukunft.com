@@ -1015,7 +1015,8 @@ class triple extends sandbox_link_named
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO Prio 2 use phrase cache
-                $phr->set_id($value);
+                // with the sign, because the from or the to of a triple can be a triple
+                $phr->set_obj_from_id($value);
             }
         } else {
             $msg->add_id($missing_msg);

@@ -45,6 +45,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
@@ -52,7 +53,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -61,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -136,6 +140,21 @@ class ref_tests
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
         $ref = $t_ref->reference_incomplete();
         $t->assert_sql_insert_fail($sc, $ref, [sql_type::LOG]);
+
+        // the external key is the to of a reference, but a user can overwrite it, so a user who changes
+        // the key of a reference of another owner must find the new key in the own overlay row
+        $test_name = 'the overlay row of a user who changes the external key includes the external key';
+        $msg = new user_message($t->usr1);
+        $std_ref = $t_ref->reference_math();
+        $usr_ref = $t_ref->reference_math();
+        $usr_ref->set_external_key(refs::CHANGE_NEW_KEY);
+        $par_lst = new sql_type_list([sql_type::LOG, sql_type::USER, sql_type::INSERT, sql_type::NO_ID_RETURN]);
+        $fvt_lst = $usr_ref->db_fields_changed($std_ref, $msg, $par_lst);
+        $qp = $usr_ref->sql_insert_switch(new sql_creator(), $fvt_lst, $usr_ref->db_fields_all(), $msg, $par_lst);
+        $usr_tbl = sql_db::TBL_USER_PREFIX . new library()->class_to_table(ref::class);
+        $usr_insert = substr($qp->sql, strpos($qp->sql, $usr_tbl));
+        $t->assert_text_contains($test_name, $usr_insert, ref_fields::FLD_EX_KEY);
+        $t->assert_msg($test_name, $msg);
 
         $t->subheader($ts . 'sql write update');
         $ref = $t_ref->reference_change();
@@ -249,6 +268,13 @@ class ref_tests
         $test_name = 'the api mapper ignores a phrase id of zero';
         $ref_map->api_mapper([json_fields::ID => refs::PI_ID, json_fields::PHRASE_ID => 0], $msg);
         $t->assert($test_name, $ref_map->phrase_id(), 0);
+        $msg->reset();
+
+        // a reference of a triple must stay linked to the triple and not move to the word with the same id
+        $test_name = 'the api mapper keeps the negative phrase id of a triple';
+        $trp_phr_id = triple_names::CANTON_ZURICH_ID * -1;
+        $ref_map->api_mapper([json_fields::ID => refs::ZURICH_CANTON_WIKIDATA_ID, json_fields::PHRASE_ID => $trp_phr_id], $msg);
+        $t->assert($test_name, $ref_map->phrase_id(), $trp_phr_id);
         $msg->reset();
 
         // the base url of a reference type is part of the pod setup, so a trusted source sets it

@@ -299,7 +299,9 @@ class ref extends sandbox_link
         if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
             if ($api_json[json_fields::PHRASE_ID] != '' and $api_json[json_fields::PHRASE_ID] != 0) {
                 $phr = new phrase($this->get_user());
-                $phr->set_id($api_json[json_fields::PHRASE_ID]);
+                // with the sign, because a negative phrase id is a triple and phrase::set_id keeps
+                // only the absolute id, which would link the reference to the word with that id
+                $phr->set_obj_from_id((int)$api_json[json_fields::PHRASE_ID]);
                 $this->set_phrase($phr);
             }
         }
@@ -679,7 +681,8 @@ class ref extends sandbox_link
 
     function type_name(): string
     {
-        if ($this->predicate_id() >= 0) {
+        // only a set type id has a code id; a null type id would pass ">= 0" in php
+        if ($this->predicate_id() > 0) {
             return $this->get_predicate_code_id();
         } else {
             return '';
@@ -1099,6 +1102,15 @@ class ref extends sandbox_link
         return ref_fields::FLD_EX_KEY;
     }
 
+    /**
+     * @return array only the phrase, because the external key is the to of a reference, but a value
+     *               that a user can overwrite in the user_refs overlay row like the url or the description
+     */
+    function link_key_fields(): array
+    {
+        return [$this->from_field()];
+    }
+
     function to_value(): string|null
     {
         return $this->get_external_key();
@@ -1469,7 +1481,11 @@ class ref extends sandbox_link
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership
             $std_rec->load_standard($this->id(), $msg);
-            // TODO Prio 1 check and set owner
+            // a request object e.g. built from the api json of the frontend does not know the owner, and
+            // without one can_change would let any user change the standard row of another owner
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
+            }
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if everything has been fine until here

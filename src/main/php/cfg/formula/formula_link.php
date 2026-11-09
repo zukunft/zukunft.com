@@ -632,8 +632,9 @@ class formula_link extends sandbox_link
         if (is_int($api_msg_part)) {
             if ($dto != null) {
                 $phr = $dto->get_phrase_by_id($api_msg_part, $phr);
-            } else {
-                $phr->set_id($api_msg_part);
+            } elseif ($api_msg_part != 0) {
+                // with the sign, because a formula can be linked to a triple
+                $phr->set_obj_from_id($api_msg_part);
             }
         } else {
             $msg->add(msg_id::FORMULA_ID_MISSING, [

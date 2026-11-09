@@ -104,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -194,6 +195,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -292,6 +294,7 @@ include_once test_paths::UNIT . 'change_log_tests.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UNIT . 'import_tests.php';
 include_once test_paths::UNIT . 'wikidata_tests.php';
+include_once test_paths::UNIT . 'wikipedia_tests.php';
 include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
@@ -4940,6 +4943,145 @@ class test_base
                 $this->delete_change_log_of_obj(ref::class, $ref->id());
             }
         }
+    }
+
+    /**
+     * remove the references that a test run has left on a phrase without references in the base
+     * data, e.g. on Bern (city), whose wikipedia refresh must tell that it has no wikipedia reference;
+     * the overlay rows of the test users are removed first, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else), and the change log of the removed test row last
+     *
+     * @param phrase $phr the phrase that has no references in the base data
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    function cleanup_leftover_refs(phrase $phr, user_message $msg): void
+    {
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            $this->cleanup_test_ref($ref, $msg);
+        }
+    }
+
+    /**
+     * undo the reference rows that a test has confirmed on a phrase of the base data: the overlay
+     * rows of the test users on its references are removed, e.g. a changed external key or the
+     * exclusion of a deleted reference, and the reference that the test has added is deleted
+     *
+     * @param phrase $phr the phrase of the base data whose references the test has changed
+     * @param string $added_key the external key of the reference that the test has added
+     * @param user_message $msg to report a reference or an overlay row that cannot be removed
+     * @return void
+     */
+    function cleanup_ref_rows_of(phrase $phr, string $added_key, user_message $msg): void
+    {
+        // loaded by the system user, so that a reference excluded by a test user is found too
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            // a reference of the system user is base data, also if it has the key that the test adds
+            $is_added = ($ref->get_external_key() == $added_key and $ref->owner_id() != $this->usr_system->id());
+            if ($is_added) {
+                $this->cleanup_test_ref($ref, $msg);
+            } else {
+                $this->cleanup_ref_overlays($ref->id(), $msg);
+            }
+        }
+    }
+
+    /**
+     * delete a reference that a test has written by the logged delete of its owner and remove its
+     * change log, after the overlay rows of the test users, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else)
+     *
+     * @param ref $ref the test reference that should be removed
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    private function cleanup_test_ref(ref $ref, user_message $msg): void
+    {
+        $this->cleanup_ref_overlays($ref->id(), $msg);
+        $owner = $this->ref_owner($ref);
+        // the message names the requesting user, whose permission the delete checks
+        $del_msg = new user_message($owner);
+        $ref->set_user($owner);
+        $ref->del($del_msg);
+        $msg->merge($del_msg);
+        // a delete by a user that does not own the reference only writes an exclusion, and the
+        // change log may only be removed for a deleted test row
+        if ($this->ref_is_removed($ref->id(), $msg)) {
+            $this->delete_change_log_of_obj(ref::class, $ref->id());
+        } else {
+            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => ref::class]);
+        }
+    }
+
+    /**
+     * @param int $id the database id of the reference that should have been deleted
+     * @param user_message $msg to report a failed read, which never counts as removed
+     * @return bool true if the standard row of the reference is no longer in the database
+     */
+    private function ref_is_removed(int $id, user_message $msg): bool
+    {
+        // load_standard is also ok without a row, so only the loaded id tells if the row is still there
+        $std_msg = new user_message($this->usr_system);
+        $ref = new ref($this->usr_system);
+        $ref->load_standard($id, $std_msg);
+        $msg->merge($std_msg);
+        return ($std_msg->is_ok() and $ref->id() == 0);
+    }
+
+    /**
+     * @param int $id the database id of the reference whose user overlay rows are removed
+     * @param user_message $msg to report an overlay row that cannot be removed
+     * @return void
+     */
+    private function cleanup_ref_overlays(int $id, user_message $msg): void
+    {
+        foreach ($this->ref_test_users() as $usr) {
+            $usr_msg = new user_message($usr);
+            $usr_ref = new ref($usr);
+            $usr_ref->load_by_id($id, $usr_msg);
+            if ($usr_ref->has_usr_cfg()) {
+                $usr_ref->del_usr_cfg($usr_msg);
+            }
+            $msg->merge($usr_msg);
+        }
+    }
+
+    /**
+     * @param ref $ref the reference whose owner deletes it
+     * @return user the test user that owns the reference, the system user if no test user owns it
+     */
+    private function ref_owner(ref $ref): user
+    {
+        $result = $this->usr_system;
+        foreach ($this->ref_test_users() as $usr) {
+            if ($usr->id() == $ref->owner_id()) {
+                $result = $usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the users of the test run that can own or overwrite a test reference
+     */
+    private function ref_test_users(): array
+    {
+        $result = [
+            $this->usr1,
+            $this->usr2,
+            $this->usr_normal,
+            $this->usr_admin,
+            $this->usr_system,
+        ];
+        // only the unit test setup creates the test admin, e.g. not test/test_full_load.php
+        if (isset($this->usr_test_admin)) {
+            $result[] = $this->usr_test_admin;
+        }
+        return $result;
     }
 
     /**

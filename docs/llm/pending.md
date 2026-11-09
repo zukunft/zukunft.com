@@ -194,6 +194,17 @@ add at `sandbox.php:3296`, in place of the `save_fields_func` call:
                             $this->del_usr_cfg_if_not_needed($msg);
                         }
 ```
+## confirm the reference changes together with the phrase
+
+the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
+of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
+component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
+per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
+value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
+`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
+external key, so that an unchanged form writes no reference.
+
+## write tests of the calculator editor messages
 
 add at `test_base.php:2349`, in `assert_sql_save_fields` for both dialects:
 

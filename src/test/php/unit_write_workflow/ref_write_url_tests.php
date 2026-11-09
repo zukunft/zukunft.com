@@ -66,6 +66,28 @@ class ref_write_url_tests extends ref_url_tests
         $this->change_ref_workflow(workflows::WF_CHANGE_REF_NBR, true);
         $this->del_ref_workflow(workflows::WF_DEL_REF_NBR, true);
 
+        // the refresh icon of a wikipedia reference is answered by the backend, which reads the live
+        // wikipedia page, so this workflow runs only here and not in the read tests; the values of
+        // the live pages are compared first, so that a change of a page is reported as such
+        $this->wikipedia_page_tests();
+        $this->cleanup_wikipedia_refresh();
+        $this->wikipedia_refresh_workflow(workflows::WF_WIKIPEDIA_REFRESH_NBR);
+        $this->cleanup_wikipedia_refresh();
+
+        // the same refresh on a word without wikidata reference adds the one that wikipedia names
+        $this->cleanup_wikidata_refresh();
+        $this->wikidata_refresh_workflow(workflows::WF_WIKIDATA_REFRESH_NBR);
+        $this->cleanup_wikidata_refresh();
+
+        // the confirm of a description with the change, the delete and the add of a reference writes
+        // overlays of usr1 on the base data, so it runs only here and is undone before and after
+        $this->cleanup_ref_rows();
+        $this->ref_rows_workflow(workflows::WF_REF_ROWS_NBR);
+        $this->cleanup_ref_rows();
+
+        // the same reference row confirm cases as the snapshot test, each written and undone by itself
+        $this->ref_row_confirm_workflow(workflows::WF_REF_ROW_CONFIRM_NBR, true);
+
         // cleanup - fallback delete in case the workflow did not persist as expected
         $t_ref->cleanup($this->ts);
 

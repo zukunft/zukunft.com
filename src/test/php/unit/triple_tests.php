@@ -405,6 +405,14 @@ class triple_tests
         $t->assert($test_name, $trp_map->get_to()->id(), word_names::MATH_ID);
         $msg->reset();
 
+        // the from or the to of a triple can be a triple, which must not become the word with the same id
+        $test_name = 'the api mapper keeps the negative phrase id of a triple as the to phrase';
+        $trp_map = new triple($t->usr1);
+        $trp_phr_id = triple_names::CANTON_ZURICH_ID * -1;
+        $trp_map->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID, json_fields::TO => $trp_phr_id], $msg);
+        $t->assert($test_name, $trp_map->get_to()->id(), $trp_phr_id);
+        $msg->reset();
+
         // a triple without the from phrase is incomplete, so the mapper reports the missing from phrase
         $test_name = 'the api mapper reports a missing from phrase';
         $trp_map = new triple($t->usr1);
