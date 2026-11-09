@@ -84,10 +84,6 @@ class all_unit_read_tests extends all_unit_tests
         $t->subheader($ts . 'prepare');
         $this->set_users();
 
-        // check that the main database test entries are still active
-        $t_db->create_test_db_entries($t);
-        $t_db->create_unit_test_db_entries($t);
-
         // run the unit database tests
         $this->init_unit_db_tests($t, $msg);
         $this->usr1->load_usr_data($msg);
@@ -96,7 +92,12 @@ class all_unit_read_tests extends all_unit_tests
         $t->subheader($ts . 'general');
         // TODO Prio 0 use $t instead of $this ?
         (new system_read_tests)->run($this);
+        // the view snapshots before the test entries are created, so that the pages show only the seed data
         (new system_views_read_tests)->run($t);
+
+        // the test entries that the following read tests use
+        $t_db->create_test_db_entries($t);
+        $t_db->create_unit_test_db_entries($t);
         (new sql_db_read_tests)->run($this);
         (new user_read_tests)->run($this);
         (new protection_read_tests)->run($this);
@@ -120,6 +121,7 @@ class all_unit_read_tests extends all_unit_tests
         (new formula_list_read_tests)->run($this);
         (new expression_read_tests)->run($this);
         (new element_list_read_tests)->run($this);
+        (new result_list_read_tests)->run($this);
         (new view_read_tests)->run($this);
         (new view_list_read_tests)->run($this);
         (new component_read_tests)->run($this);

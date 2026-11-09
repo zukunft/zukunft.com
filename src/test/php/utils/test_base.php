@@ -330,6 +330,7 @@ include_once test_paths::UNIT_READ . 'formula_read_tests.php';
 include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'expression_read_tests.php';
 include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'result_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'component_read_tests.php';
@@ -1680,6 +1681,10 @@ class test_base
         if ($cfg == null) {
             $cfg = $this->view_context($msg_ui);
         }
+        // the live page context always has the type cache, so a context of a test without one gets the fixed one
+        if ($cfg->typ_lst_cache == null) {
+            $cfg->typ_lst_cache = $this->view_context($msg_ui)->typ_lst_cache;
+        }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();
             $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
@@ -1690,19 +1695,28 @@ class test_base
         $msg_ui->usr = $cfg->usr;
         // render in test mode so that the result is reproducible without backend calls
         // the wait for the backend is part of the rendering, but not frontend work
+        // the phrases and the type cache of the page are those of this context, because http/view.php renders with
+        // $ui_sys as the page context; else e.g. the meaning of an ambiguous symbol depends on the tests before
+        global $ui_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $typ_lst_keep = $ui_sys->typ_lst_cache;
+        $ui_sys->phr_lst = $cfg->phr_lst;
+        $ui_sys->typ_lst_cache = $cfg->typ_lst_cache;
         frontend::book_times();
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
+        // the page title is the one the live page shows (see frontend::url_to_html), the object name and the view name
+        $title = $dsp_html->title($dbo_dsp, $msg_ui);
         frontend::book_times();
+        $ui_sys->phr_lst = $phr_lst_keep;
+        $ui_sys->typ_lst_cache = $typ_lst_keep;
         log_debug('html of the view ' . $view_key . ' created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         // continue with the section of the caller for the following tests
         $sys->times->switch();
 
-        // check if the created view matches the expected view; the page title is the one the
-        // live page shows (see frontend::url_to_html), the object name and the view name
+        // check if the created view matches the expected view
         return $this->assert_html_body(
-            $this->name . ' view ' . $view_key,
-            $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $dsp_html->title($dbo_dsp, $msg_ui));
+            $this->name . ' view ' . $view_key, $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $title);
     }
 
     /**
@@ -2475,6 +2489,51 @@ class test_base
             $qp = $usr_obj->sql_update($sc, $db_obj, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
+        return $result;
+    }
+
+    /**
+     * check the sql function that excludes an object for the user,
+     * once as the insert of a new user row and once as the update of an existing user row,
+     * and that a user row which already excludes the object leads to no sql
+     *
+     * @param sql_creator $sc the test database connection
+     * @param sandbox $usr_obj the object that should be excluded for the user
+     * @return bool true if all sql statements match the expected fixtures
+     */
+    function assert_sql_exclude(sql_creator $sc, sandbox $usr_obj): bool
+    {
+        $msg = new user_message($this->usr1);
+        $obj_excl = clone $usr_obj;
+        $obj_excl->exclude();
+        $db_rec_usr = clone $usr_obj;
+        $db_rec_usr->usr_cfg_id = $usr_obj->id();
+        $result = true;
+        foreach ([$usr_obj, $db_rec_usr] as $db_rec) {
+            foreach ([sql_db::POSTGRES, sql_db::MYSQL] as $db_type) {
+                $sc->reset($db_type);
+                $qp = $obj_excl->sql_exclude($sc, $db_rec, $msg);
+                $result = ($result and $qp != null and $this->assert_qp($qp, $sc->db_type));
+            }
+        }
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // a standard row loaded from the database with excluded 0 must give the same insert function,
+        // because both are prepared with the same name
+        $db_rec_std = clone $usr_obj;
+        $db_rec_std->include();
+        $sc->reset(sql_db::POSTGRES);
+        $qp_fixture = $obj_excl->sql_exclude($sc, $usr_obj, $msg);
+        $sc->reset(sql_db::POSTGRES);
+        $qp_loaded = $obj_excl->sql_exclude($sc, $db_rec_std, $msg);
+        $this->assert('the ' . $class . ' exclude insert with excluded 0 of the standard row', $qp_loaded->sql, $qp_fixture->sql);
+        $this->assert('... and its parameters', $qp_loaded->par, $qp_fixture->par);
+        // the user row already excludes the object, so the exclude of a repeated delete has nothing to write
+        $db_rec_excl = clone $db_rec_usr;
+        $db_rec_excl->exclude();
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $obj_excl->sql_exclude($sc, $db_rec_excl, $msg);
+        $this->assert_true('the ' . $class . ' exclude of a user row that already excludes it has no sql', $qp == null);
         return $result;
     }
 
@@ -4052,11 +4111,9 @@ class test_base
             $new_name = $this->write_named_rename($sbx, $id, $this->usr1);
         }
 
-        // check the log
-        if ($id != 0) {
+        // check the log (only if the rename has been done, because the rename log of a skipped rename cannot exist)
+        if ($result) {
             $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, msg_id::LOG_UPDATE->value, $msg, $name);
-        } else {
-            $result = false;
         }
 
 
@@ -4909,6 +4966,23 @@ class test_base
     }
 
     /**
+     * @param phrase_list $phr_lst the phrases loaded from the database
+     * @return array the names of the phrases without the rows created by a write test e.g. a leftover of a stopped run,
+     *               so that a read test compares only the seed data; the reserved names e.g. "mathematics" are seed words
+     *               and stay in the list
+     */
+    function phrase_names_without_test_rows(phrase_list $phr_lst): array
+    {
+        $result = [];
+        foreach ($phr_lst->names() as $name) {
+            if (!str_contains($name, self::TEST_ROW_NAME_PART)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase_list $phr_lst the phrases to check
      * @return bool true if at least one phrase of the list is a reserved test row
      */
@@ -5021,14 +5095,19 @@ class test_base
             $sbx_sys->set_user($this->usr_system);
             $sbx_sys->load_by_name($name, $msg);
             if ($sbx_sys->id() != 0) {
-                // remove the overlay rows of all test users, so that the delete below is not
+                // remove the overlay rows of all test users and of the system user, so that the delete below is not
                 // diverted to yet another exclusion overlay by the used by someone else check
-                foreach ([$this->usr1, $this->usr2, $this->usr_normal] as $usr) {
+                $owner = $sbx_sys->owner($msg);
+                if ($owner == null) {
+                    $owner = $this->usr_system;
+                }
+                foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
                     $sbx_sys->set_user($usr);
                     $sbx_sys->del_usr_cfg($msg);
                 }
-                $sbx_sys->set_user($this->usr_system);
-                $sbx_sys->del($msg);
+                // deleted by the owner, because the delete of any other user is only an exclusion for this user
+                $sbx_sys->set_user($owner);
+                $sbx_sys->del(new user_message($owner));
             }
         }
     }
@@ -6849,17 +6928,33 @@ class test_base
      * a snapshot is named by the database id of the shown object, so re-baselining a phrase id
      * leaves the snapshot of the old id behind, where it is never checked again; the same
      * cleanup as for the views_by_id folder, but based on the files that assert_view has
-     * collected in updated_files
+     * collected in updated_files; only the subfolders that assert_view has written in this run are cleaned,
+     * so that a snapshot of another test e.g. the admin page of system_view_ui_tests is never removed,
+     * also if that test is not part of the run
      *
      * @param string $path the resource folder to clean e.g. test_paths::VIEWS
      * @return void
      */
     function delete_unused_files(string $path): void
     {
+        $this->delete_unused_files_in(test_paths::RESOURCE . test_paths::HTML . $path, $this->updated_files);
+    }
+
+    /**
+     * remove the html snapshots below the folder that the test has not written in this run, but only in the
+     * subfolders that it has written, so that a snapshot of another test is never removed
+     *
+     * @param string $dir the complete path of the folder to clean e.g. of views_by_id
+     * @param array $updated_files the complete paths of the snapshots that the test has written in this run
+     * @return void
+     */
+    function delete_unused_files_in(string $dir, array $updated_files): void
+    {
         $lib = new library();
-        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . $path) as $file_path) {
-            if (str_ends_with($file_path, test_files::HTML)
-                and !in_array($file_path, $this->updated_files)) {
+        $own_dirs = array_unique(array_map('dirname', $updated_files));
+        foreach ($lib->dir_files($dir) as $file_path) {
+            $unused = (str_ends_with($file_path, test_files::HTML) and !in_array($file_path, $updated_files));
+            if ($unused and in_array(dirname($file_path), $own_dirs)) {
                 $this->delete_path_file($file_path);
             }
         }

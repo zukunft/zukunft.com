@@ -380,7 +380,8 @@ and when), the base of the undo and the only way a lost row can be explained
 later, so a plain `DELETE` that leaves no entry destroys information that
 nothing can bring back. This is why a plain delete is never the fix for a
 logged delete that does not remove a row — the logged delete is repaired
-instead — and why test cleanups delete through `del()` as well.
+instead — and why test cleanups delete through `del()` as well. When `del()`
+deletes, when it only excludes and which dependent rows it removes: `docs/llm/delete.md`.
 
 An exception is possible only for rows that carry no user history because the
 next read recreates them, and it must be guarded by **more than one layer at

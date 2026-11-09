@@ -154,6 +154,14 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
+        // the exclusion of a triple that is still used, which keeps the triple for the other users
+        $t->assert_sql_exclude($sc, $trp);
+        // a triple that is not in the database is used by no data, so the check needs no database;
+        // the triples that data uses are checked in triple_write_tests
+        $test_name = 'a triple without id is used by no data';
+        $trp_new = $t_trp->triple_filled_add_name();
+        $is_used = $trp_new->used_by_data($msg);
+        $t->assert_false($test_name, $is_used);
 
         $t->subheader($ts . 'view base object handling');
         $trp = $t_trp->triple_filled_add_name();

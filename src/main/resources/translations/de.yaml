@@ -765,6 +765,7 @@ messages:
   result_differs_from_value: "Der Wert z$VarValue$z von z$VarObjName$z weicht vom Ergebnis z$VarValueCheck$z ab, das seine Formel berechnet; der Wert wird angezeigt, bitte prüfe den Wert oder die Formel."
   term_row_id_missing: "Ein Wort, Triple, eine Formel oder ein Verb konnte nicht gelesen werden, weil der Datenbankzeile das Feld z$VarObjName$z fehlt. Der Admin wurde informiert. Bitte versuchen Sie es später erneut."
   import_step_skipped: "z$VarObjName$z wurde noch nicht geprüft, weil die Fehler oben hier vermutlich Folgefehler verursachen würden. Bitte beheben Sie die Fehler oben und importieren Sie erneut."
+  delete_excluded_in_use: "Das Objekt z$VarClassName$z \"z$VarObjName$z\" wird noch verwendet, deshalb wurde es nur für Sie ausgeblendet und nicht gelöscht. Um es zu löschen, entfernen Sie zuerst, was es verwendet."
   about_sponsored_by: "wird unterstützt von"
   about_main_idea: "Eine der Hauptideen ist die Verwendung von"
   about_once_implemented: "Wenn implementiert, könnte es möglich sein"

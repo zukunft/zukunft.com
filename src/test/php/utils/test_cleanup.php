@@ -101,6 +101,26 @@ class test_cleanup extends test_api
     // so that the cleanup can remove them even if a test has failed before its own cleanup
     public array $test_val_ids = [];
 
+    // the ids per cleanup check query of the rows that create_test_db_entries has added; they belong to the whole
+    // write section, so a check_cleanup within it skips them and only the full cleanup removes them
+    private array $created_row_ids = [];
+
+    /**
+     * remember the test rows that exist after create_test_db_entries, so that a check_cleanup of a single
+     * write test reports only the leftovers of that test (see docs/llm/delete.md, test cleanup)
+     */
+    function remember_created_rows(): void
+    {
+        $this->created_row_ids = [];
+        foreach (test_files::CLEAN_CHECKS as $sql_file_name) {
+            foreach ($this->cleanup_check_rows(new user_message($this->usr_system), $sql_file_name) as $row) {
+                if (is_array($row)) {
+                    $this->created_row_ids[$sql_file_name][] = $row[0];
+                }
+            }
+        }
+    }
+
 
     /*
      * execute
@@ -173,27 +193,10 @@ class test_cleanup extends test_api
         // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
         $ts = 'db cleanup ';
         $this->header($ts);
+        // the full cleanup removes also the rows of create_test_db_entries, so the next check covers them again
+        $this->created_row_ids = [];
 
-        if ($this->test_val_ids != []) {
-            foreach ($this->test_val_ids as $val_id) {
-                // the id of a value is the id of its group, which is a text for more than a few phrases
-                if ($val_id !== 0 and $val_id !== '') {
-                    // request to delete the added test value
-                    $val = new value($this->usr1);
-                    $val->load_by_id($val_id, $msg);
-                    // check again, because some id may be added twice
-                    if ($val->is_id_set()) {
-                        $this->del_value($val, $msg);
-                        $result .= $msg->get_last_message();
-                        $target = '';
-                        $this->assert('value->del test value for "' . word_names::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
-                    } else {
-                        // a test that has removed its value itself may have left the group row behind
-                        $this->del_group_row($val_id, $msg);
-                    }
-                }
-            }
-        }
+        $this->cleanup_test_values($msg);
 
         // remove the fixed test groups that create_test_groups has added for the write tests like
         // the test words below, because the next read or write tests add them again if needed
@@ -212,7 +215,10 @@ class test_cleanup extends test_api
 
         // a term view is not expected after a database reset, so the link that the write tests
         // create is removed here (see test_db_load::test_term_view_unlink)
-        $result .= $t_db->test_term_view_unlink($msg, new test_views($this)->term_view());
+        // with a message of its own, because the shared message may already carry the leftover report
+        $trm_msk_msg = $msg->clone_reset();
+        $result .= $t_db->test_term_view_unlink($trm_msk_msg, new test_views($this)->term_view());
+        $msg->merge($trm_msk_msg);
 
         // load the test view
         $msk = $t_db->load_view(views::TEST_ADD_NAME);
@@ -275,12 +281,14 @@ class test_cleanup extends test_api
         foreach (views::TEST_VIEWS as $dsp_name) {
             $msk = $t_db->load_view($dsp_name);
             if ($msk->id() > 0) {
-                $test_name = '';
-                $msk->del($msg);
-                $result .= $msg->get_last_message();
-                $target = '';
+                // with a message of its own, because the shared message may already carry e.g. the
+                // leftover report of check_cleanup, which is no problem of this delete
+                $usr_msg_del = $msg->clone_reset();
+                $msk->del($usr_msg_del);
+                $result .= $usr_msg_del->get_last_message();
                 // deleting the view writes to the database, so a db timeout is used to avoid a false timeout
-                $this->assert('view->del of "' . $dsp_name . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
+                $this->assert_msg('view->del of "' . $dsp_name . '"', $usr_msg_del, self::TIMEOUT_LIMIT_DB);
+                $msg->merge($usr_msg_del);
             }
         }
 
@@ -412,20 +420,7 @@ class test_cleanup extends test_api
             }
         }
 
-        // request to delete some triples not yet covered by the other cleanup jobs; only a triple
-        // whose "from" is a test word is a test row: the triples of the real year words are seed
-        // rows of companies.json with a pinned id (triple_names::YEAR_2019_ID and YEAR_2020_ID)
-        // and deleting one excludes it for the test user, which takes it out of every later read
-        $t_db->del_triple($msg, word_names::TEST_2021, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::TEST_2022, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
-        $t_db->del_triple($msg, word_names::TEST_2022, verbs::FOLLOW, word_names::TEST_2021);
-        $t_db->del_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
-        $t_db->del_triple($msg, word_names::TEST_TAX_REPORT, verbs::PART_NAME, word_names::TEST_CASH_FLOW);
-        $t_db->del_triple($msg, word_names::TEST_CASH, verbs::PART_NAME, word_names::TEST_ASSETS_CURRENT);
-        $t_db->del_triple($msg, word_names::TEST_ASSETS_CURRENT, verbs::PART_NAME, word_names::TEST_ASSETS);
-        $t_db->del_triple($msg, word_names::TEST_SECTOR, verbs::CAN_CONTAIN, word_names::TEST_ENERGY);
-        $t_db->del_triple($msg, word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
+        $this->cleanup_unnamed_test_triples($msg);
 
         // request to delete the added test word
         // TODO Prio 2 if a user has changed the word during the test, delete also the user words
@@ -466,6 +461,10 @@ class test_cleanup extends test_api
                     $wrd->del($msg);
                     $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);
                     $msg->usr = $usr_before;
+                } else {
+                    // a word that the test user has excluded is not loaded for this user,
+                    // so it is removed via the system user (see write_named_cleanup_force)
+                    $this->write_named_cleanup(new word($this->usr1), $wrd_name);
                 }
             } else {
                 log_info(' ... but keep the read only test word ' . word_names::MATH);
@@ -494,6 +493,70 @@ class test_cleanup extends test_api
             return false;
         }
 
+    }
+
+    /**
+     * remove the test triples without a name of triple_names::TEST_TRIPLES, because a word that
+     * a triple uses is only excluded by its delete (see word::used_by_data)
+     * public to remove them also before the test words in the word write tests
+     *
+     * @param user_message $msg the shared message of the cleanup
+     * @return void
+     */
+    function cleanup_unnamed_test_triples(user_message $msg): void
+    {
+        $t_db = new test_db_load($this);
+        // the time test words are linked to the year and to the previous year like in
+        // word_write_tests::create_test_words; only a triple whose "from" is a test word is a test row:
+        // the triples of the real year words are seed rows with a pinned id (e.g. triple_names::YEAR_2019_ID)
+        // and deleting one excludes it for the test user, which takes it out of every later read
+        $prev_word_name = null;
+        foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {
+            if (in_array($word_name, word_names::TEST_WORDS)) {
+                $t_db->del_triple($msg, $word_name, verbs::IS, words::YEAR_CAP);
+                if ($prev_word_name != null) {
+                    $t_db->del_triple($msg, $word_name, verbs::FOLLOW, $prev_word_name);
+                }
+            }
+            $prev_word_name = $word_name;
+        }
+        $t_db->del_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
+        $t_db->del_triple($msg, word_names::TEST_TAX_REPORT, verbs::PART_NAME, word_names::TEST_CASH_FLOW);
+        $t_db->del_triple($msg, word_names::TEST_CASH, verbs::PART_NAME, word_names::TEST_ASSETS_CURRENT);
+        $t_db->del_triple($msg, word_names::TEST_ASSETS_CURRENT, verbs::PART_NAME, word_names::TEST_ASSETS);
+        $t_db->del_triple($msg, word_names::TEST_SECTOR, verbs::CAN_CONTAIN, word_names::TEST_ENERGY);
+        $t_db->del_triple($msg, word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
+        // a test row although its "from" is a seed word, because word_write_tests links it to the test parent word (add_child)
+        $t_db->del_triple($msg, word_names::MATH, verbs::IS, word_names::TEST_PARENT);
+    }
+
+    /**
+     * remove the values that the tests have added to test_val_ids
+     *
+     * @param user_message $msg the shared message of the cleanup, which may already carry e.g. the
+     *                          leftover report of check_cleanup; the problems of the deletes are added
+     * @return void
+     */
+    function cleanup_test_values(user_message $msg): void
+    {
+        foreach ($this->test_val_ids as $val_id) {
+            // the id of a value is the id of its group, which is a text for more than a few phrases
+            if ($val_id !== 0 and $val_id !== '') {
+                // with a message of its own, because del() writes nothing if the message is not ok
+                $val_msg = new user_message($this->usr1);
+                $val = new value($this->usr1);
+                // check again via the returned id, because some id may be added twice
+                // and the query creation already sets the id of the value
+                if ($val->load_by_id($val_id, $val_msg) != 0) {
+                    $this->del_value($val, $val_msg);
+                    $this->assert_msg('value->del test value ' . $val_id, $val_msg, self::TIMEOUT_LIMIT_DB_MULTI);
+                } else {
+                    // a test that has removed its value itself may have left the group row behind
+                    $this->del_group_row($val_id, $val_msg);
+                }
+                $msg->merge($val_msg);
+            }
+        }
     }
 
     /**
@@ -619,34 +682,50 @@ class test_cleanup extends test_api
      */
     private function cleanup_check_query(user_message $msg, string $class, string $sql_file_name): bool
     {
+        $created_ids = $this->created_row_ids[$sql_file_name] ?? [];
+        foreach ($this->cleanup_check_rows($msg, $sql_file_name) as $row) {
+            // a row of create_test_db_entries is no leftover until the full cleanup has run
+            if (is_array($row) and in_array($row[0], $created_ids)) {
+                continue;
+            }
+            $name = 'name missing';
+            if (is_array($row)) {
+                if (count($row) > 2) {
+                    $name = $row[2] . ' (' . $row[0] . ')';
+                } else {
+                    $name = library::dsp_array($row);
+                }
+            } elseif (is_string($row)) {
+                $name = $row;
+            }
+
+            $msg->add(msg_id::DB_CLEANUP_ERROR, [
+                msg_id::VAR_CLASS_NAME => $class,
+                msg_id::VAR_NAME => $name,
+                msg_id::VAR_FILE_NAME => $sql_file_name
+            ]);
+        }
+
+        return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to collect the problems of the query
+     * @param string $sql_file_name the cleanup check query e.g. test_files::CLEAN_CHECK_WORDS
+     * @return array the system test rows that the query finds
+     */
+    private function cleanup_check_rows(user_message $msg, string $sql_file_name): array
+    {
         global $db_con;
 
         $qp = new sql_par(self::class);
         $qp->name .= $sql_file_name;
         $qp->sql = $this->file($sql_file_name);
         $db_rows = $db_con->get($qp, $msg);
-        if ($db_rows !== false) {
-            foreach ($db_rows as $row) {
-                $name = 'name missing';
-                if (is_array($row)) {
-                    if (count($row) > 2) {
-                        $name = $row[2] . ' (' . $row[0] . ')';
-                    } else {
-                        $name = library::dsp_array($row);
-                    }
-                } elseif (is_string($row)) {
-                    $name = $row;
-                }
-
-                $msg->add(msg_id::DB_CLEANUP_ERROR, [
-                    msg_id::VAR_CLASS_NAME => $class,
-                    msg_id::VAR_NAME => $name,
-                    msg_id::VAR_FILE_NAME => $sql_file_name
-                ]);
-            }
+        if ($db_rows === false) {
+            return [];
         }
-
-        return $msg->is_ok();
+        return $db_rows;
     }
 
     /**

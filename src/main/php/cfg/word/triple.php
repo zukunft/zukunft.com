@@ -101,6 +101,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
+// for used_by_data; loaded via value.php like value_list.php
+//include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 // for sandbox_related::views_assigned; loaded via word.php like view.php, because term.php includes this file
@@ -164,6 +166,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
@@ -2914,6 +2917,57 @@ class triple extends sandbox_link_named
 
         // TODO Prio 2 review: maybe replace by a database foreign key check
         return $this->not_changed($msg);
+    }
+
+    /**
+     * a triple that a value, a result, a formula or another triple still uses is only excluded for the user
+     * by del(), because the delete would also delete its values (del_links) or leave rows that name a
+     * triple that does not exist any more
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the triple must not be deleted, but only excluded for the user
+     */
+    function used_by_someone_else(user_message $msg): bool
+    {
+        return parent::used_by_someone_else($msg) or $this->used_by_data($msg);
+    }
+
+    /**
+     * the values and results first, because they are lost by a delete
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if a value, a result, a formula or another triple uses this triple, false for a triple without id
+     */
+    function used_by_data(user_message $msg): bool
+    {
+        // a triple that is not in the database cannot be used by any data
+        if ($this->id() == 0) {
+            return false;
+        }
+        $phr = $this->phrase();
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr($phr, $msg, 1);
+        $used = !$val_lst->is_empty();
+        if (!$used) {
+            $res_lst = new result_list($this->get_user());
+            $res_lst->load_by_phrase($phr, $msg);
+            $used = !$res_lst->is_empty();
+        }
+        if (!$used) {
+            // a formula linked to the triple or a formula expression that names it
+            $frm_lst = new formula_list($this->get_user());
+            $frm_lst->load_by_phr($phr, $msg);
+            $frm_ref_lst = new formula_list($this->get_user());
+            $frm_ref_lst->load_by_triple_ref($this, $msg);
+            $used = (!$frm_lst->is_empty() or !$frm_ref_lst->is_empty());
+        }
+        if (!$used) {
+            // a triple with this triple as from or to
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_phr($phr, $msg);
+            $used = !$trp_lst->is_empty();
+        }
+        return $used;
     }
 
     /**

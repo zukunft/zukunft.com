@@ -199,10 +199,16 @@ class result_list extends sandbox_value_list
      */
     function load_by_phrase(phrase $phr, user_message $msg): bool
     {
-        global $db_con;
-
-        $qp = $this->load_sql_by_phrase($db_con, $phr);
-        return $this->load($qp, $msg);
+        if ($phr->id() == 0) {
+            log_err('The word or triple id must be set to load the results of a ' . self::class,
+                self::class . '->load_by_phrase');
+            return false;
+        }
+        // the results have no word or triple id field, the phrase is part of the group id in every result table
+        // TODO Prio 1 check if the results are still correct if the user has excluded the word or triple
+        $phr_lst = new phrase_list($this->get_user());
+        $phr_lst->add($phr);
+        return $this->load_by_phrase_list($phr_lst, $msg);
     }
 
     /**
@@ -380,46 +386,6 @@ class result_list extends sandbox_value_list
             $db_con->set_usr($this->get_user()->id);
             $db_con->add_par(sql_par_type::INT, $frm->id());
             $qp->sql = $db_con->select_by_field_list(array(formula_fields::FLD_ID));
-            $qp->par = $db_con->get_par();
-        }
-        return $qp;
-    }
-
-    /**
-     * create the SQL statement to load the list of results linked to the given phrase (a word or a triple)
-     * dedicated replacement for the word and triple case of the deprecated load_sql_by_obj_old
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phrase $phr the phrase whose results should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_by_phrase(sql_db $db_con, phrase $phr): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $obj = $phr->obj();
-        $fld = '';
-        if ($obj !== null and $obj->id() > 0) {
-            if (get_class($obj) == word::class) {
-                $fld = word_fields::FLD_ID;
-            } elseif (get_class($obj) == triple::class) {
-                $fld = triple_fields::FLD_ID;
-            }
-        }
-        if ($fld == '') {
-            log_err('The word or triple id must be set to load the results of a ' . self::class,
-                self::class . '->load_sql_by_phrase');
-            $qp->name = '';
-        } else {
-            $db_con->set_class(result::class);
-            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-            $res = new result($this->get_user());
-            $db_con->set_id_field($res->id_field());
-            $qp->name .= $fld;
-            $db_con->set_name($qp->name);
-            $db_con->set_fields(result_db::FLD_NAMES);
-            $db_con->set_usr($this->get_user()->id);
-            $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-            $qp->sql = $db_con->select_by_field_list(array($fld));
             $qp->par = $db_con->get_par();
         }
         return $qp;
@@ -694,14 +660,14 @@ class result_list extends sandbox_value_list
      * a phrase group
      *   either of the source or the result
      *   and with or without time selection
-     * a word or a triple
+     * a word or a triple is not selectable here, because the results have no word or triple id field
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      * @deprecated use the dedicated builder instead: load_sql_by_formula() for a formula,
-     *             load_sql_by_phrase() for a word or triple,
+     *             load_sql_by_phr_lst_multi() for a word or triple,
      *             and load_sql_by_grp() / load_sql_by_src_grp() for a phrase group
      */
     function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
@@ -717,15 +683,12 @@ class result_list extends sandbox_value_list
                 } else {
                     $sql_by .= group_fields::FLD_ID;
                 }
-            } elseif (get_class($obj) == word::class) {
-                $sql_by .= word_fields::FLD_ID;
-            } elseif (get_class($obj) == triple::class) {
-                $sql_by .= triple_fields::FLD_ID;
             }
         }
         if ($sql_by == '') {
             log_err('Either the formula id or the phrase group id and the user (' . $this->get_user()->id .
-                ') must be set to load a ' . self::class, self::class . '->load_sql');
+                ') must be set to load a ' . self::class . ', for a word or triple use load_by_phrase',
+                self::class . '->load_sql');
             $qp->name = '';
         } else {
             $db_con->set_class(result::class);
@@ -749,16 +712,6 @@ class result_list extends sandbox_value_list
                         $link_fields[] = group_fields::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
-                } elseif (get_class($obj) == word::class) {
-                    // TODO Prio 1 check if the results are still correct if the user has excluded the word
-                    $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    // $db_con->set_join_fields(                        array(result_fields::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_fields::FLD_GRP,                        result_fields::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(word_fields::FLD_ID));
-                } elseif (get_class($obj) == triple::class) {
-                    // TODO Prio 1 check if the results are still correct if the user has excluded the triple
-                    $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    //$db_con->set_join_fields( array(result_fields::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_fields::FLD_GRP,         result_fields::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(triple_fields::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -811,7 +764,7 @@ class result_list extends sandbox_value_list
      * a phrase group
      *   either of the source or the result
      *   and with or without time selection
-     * a word or a triple
+     * a word or a triple is loaded by load_by_phrase(), because the results have no word or triple id field
      *
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id

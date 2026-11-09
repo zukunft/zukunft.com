@@ -1636,6 +1636,10 @@ class sandbox extends db_object_seq_id_user
             // to recreate the calling object
             $std = $this->clone_reset(true);
             $std->load_standard($this->id(), $msg);
+            // the standard load sets only the ids of the linked objects, but the update checks that they are valid
+            if ($std->is_link_obj()) {
+                $std->reload_objects($msg);
+            }
             $std->owner_id = $new_owner_id;
             $std->update_standard_fields($db_con, $std, $msg);
             $this->set_owner_id($new_owner_id);
@@ -3321,12 +3325,6 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * read the database values to be able to check if something has been changed;
-     * done first, because it needs to be done for user and general object values
-     * @param user_message $msg
-     * @return sandbox
-     */
-    /**
      * the do not update a link guard of the save: refuse another from, predicate or to for an existing link,
      * because the link is what the object is (docs/llm/architecture.md), so the client removes the old link
      * and adds the one with the other link instead
@@ -3342,6 +3340,12 @@ class sandbox extends db_object_seq_id_user
         }
     }
 
+    /**
+     * read the database values to be able to check if something has been changed;
+     * done first, because it needs to be done for user and general object values
+     * @param user_message $msg
+     * @return sandbox
+     */
     protected function load_db(user_message $msg): sandbox
     {
         // prepare
@@ -3411,6 +3415,50 @@ class sandbox extends db_object_seq_id_user
             ]);
         }
 
+        return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the user row of this object itself already excludes the object, so the
+     *              object is already deleted for the user and an exclude has nothing to write; read from
+     *              the user row, because the excluded of a loaded object falls back to the standard row
+     */
+    private function usr_row_excluded(user_message $msg): bool
+    {
+        global $db_con;
+        $db_con->usr_id = $this->get_user()->id;
+        $usr_row = $db_con->get1($this->load_sql_user_changes($db_con->sql_creator()), $msg);
+        return ($usr_row[fields::FLD_EXCLUDED] ?? null) == 1;
+    }
+
+    /**
+     * exclude the object only for the user, so that the standard row and the other users keep it
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the exclusion has been written including its change log entry
+     */
+    private function exclude_exe(user_message $msg): bool
+    {
+        global $db_con;
+
+        // reloaded, because an owner change before may have removed the user row
+        $db_rec = $this->clone_reset(true);
+        $db_rec->load_by_id($this->id(), $msg);
+        // already excluded as the user sees it, so there is no change to write
+        if ($db_rec->is_excluded() or ($db_rec->has_usr_cfg() and $this->usr_row_excluded($msg))) {
+            return $msg->is_ok();
+        }
+        $this->exclude();
+        $qp = $this->sql_exclude($db_con->sql_creator(), $db_rec, $msg);
+        if ($qp == null) {
+            log_err_msg('the exclude of ' . $this->dsp_id() . ' could not be created', $msg);
+        } elseif ($db_rec->has_usr_cfg()) {
+            $db_con->update($qp, 'exclude ' . $this->dsp_id(), $msg);
+        } elseif ($db_con->insert($qp, 'exclude ' . $this->dsp_id(), $msg, new sql_message(), true)) {
+            // the pages for this user must be created from the user sandbox and not from the standard page cache
+            $this->get_user()->set_uses_sandbox($msg);
+        }
         return $msg->is_ok();
     }
 
@@ -3505,30 +3553,13 @@ class sandbox extends db_object_seq_id_user
                         $this->del_exe($msg);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
-                        $this->exclude();
-
-                        // simple version TODO Prio 2 combine with save function
-
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->set_user($this->get_user());
-                        if ($db_rec->load_by_id($this->id(), $msg)) {
-                            log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
-                            if ($this->is_link_obj()) {
-                                if (!$db_rec->reload_objects($msg)) {
-                                    $msg_txt .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
-                                }
-                            }
-                        }
-                        if ($msg_txt == '') {
-                            $std_rec = $this->clone_reset(true);
-                            if (!$std_rec->load_standard($this->id(), $msg)) {
-                                $msg_txt .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
-                            }
-                        }
-                        if ($msg_txt == '') {
-                            log_debug('loaded standard ' . $std_rec->dsp_id());
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                        $name = $this->name();
+                        if ($this->exclude_exe($msg)) {
+                            // ok = true, because the exclusion is the normal answer to the delete of a used object
+                            $msg->add(msg_id::DELETE_EXCLUDED_IN_USE, [
+                                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                                msg_id::VAR_NAME => $name
+                            ], true);
                         }
                     }
                 }
@@ -3790,6 +3821,40 @@ class sandbox extends db_object_seq_id_user
             $qp->par = $par_lst;
         }
 
+        return $qp;
+    }
+
+    /**
+     * create the sql function that excludes this object only for the user and logs the change,
+     * as an update of the user row if the user has one and else as an insert of the user row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $db_rec the object as the user sees it in the database before the exclusion
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @return sql_par|null the SQL function and its call, or null if the update has been refused
+     */
+    function sql_exclude(sql_creator $sc, sandbox $db_rec, user_message $msg): sql_par|null
+    {
+        $sc_par_lst = new sql_type_list([sql_type::LOG, sql_type::USER]);
+        if ($db_rec->has_usr_cfg()) {
+            $sc_par_lst->add(sql_type::UPDATE);
+            $sc_par_lst->add(sql_type::EXCLUDE);
+        } else {
+            $sc_par_lst->add(sql_type::INSERT);
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
+            // the new user row has no old excluded value, also if the standard row has e.g. excluded 0,
+            // so the function has the same parameters as the prepared one of the same name
+            $db_rec = clone $db_rec;
+            $db_rec->excluded = null;
+        }
+        // compared with the row of the user, so that only the excluded field is written
+        $fvt_lst = $this->db_fields_changed($db_rec, $msg, $sc_par_lst);
+        $all_fields = $this->db_fields_all();
+        if ($db_rec->has_usr_cfg()) {
+            $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        } else {
+            $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        }
         return $qp;
     }
 

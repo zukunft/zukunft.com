@@ -73,7 +73,7 @@ class phrase_write_tests
         $t->header($ts);
         // cleanup any leftovers of a previous failed test run (triples first because they link words)
         $t_trp->cleanup($ts);
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
@@ -133,7 +133,7 @@ class phrase_write_tests
         $t->assert('phrase->is_mainly for ' . $phr->name(), $result, $target);
 
         // cleanup - fallback delete
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which

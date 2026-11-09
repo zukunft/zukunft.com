@@ -1,5 +1,27 @@
 # pending prio 2
 
+## test factory inconsistencies
+
+The create classes in `src/test/php/create/` build the test objects with the same function names per class
+(`*_filled`, `*_filled_included`, `*_filled_add`, `*_add`, `*_add_by_func`, `*_name_only`). The target is one
+pattern per name for all classes, so that a test written for one class works for the others.
+`php bin/test_object_overview.php` writes the matrix of the factory types per object to
+`docs/test_object_overview.md`. The differences found so far:
+
+| function / object type | objects | potential inconsistency |
+|---|---|---|
+| `*_filled_add` excluded | `formula_filled_add` vs `word_filled_add`, `triple_filled_add`, `source_filled_add`, `ref_filled_add`, `view_filled_add`, `component_filled_add`, `formula_link_filled_add`, `view_relation_filled_add`, `term_view_filled_add`, `component_link_filled_add`, `view_link_filled_add` | the formula still calls `exclude()`, all others `include()`; an excluded standard row hides the exclusion that the delete of the second user in `assert_write_named` is expected to write (the view case is fixed); the formula call of `assert_write_named` is switched off (`formula_write_tests.php`) |
+| `*_filled_add` build pattern | copy: `word_filled_add`, `formula_filled_add`, `view_filled_add`; derive: `source_filled_add`, `component_filled_add`, `ref_filled_add`, `triple_filled_add_name`, `formula_link_filled_add`, `view_relation_filled_add`, `term_view_filled_add`, `component_link_filled_add`, `view_link_filled_add` | the copy pattern sets the field list of `*_filled` again on `*_add`, so a field can differ unnoticed (the view exclude); the derive pattern takes `*_filled`, calls `include()`, sets `id = 0` and the test name; `word_filled_add` sets the description, the plural and the code id twice |
+| `*_filled` excluded | `ref_filled` vs `word_filled`, `triple_filled`, `formula_filled`, `formula_link_filled`, `source_filled`, `view_filled`, `view_relation_filled`, `term_view_filled`, `component_filled`, `component_link_filled`, `view_link_filled`, `result_main_filled`, `ref_filled_user` | the ref calls `include()`, all others `exclude()`; `ref_filled_add` then includes again |
+| `*_filled_included` | exist: triple, formula_link, source, view, view_relation, term_view, component, component_all, component_link; missing: word, formula, result, view_link | the included variant exists only for some classes, so a test that needs an active filled word or formula has no factory |
+| `*_filled_add` signature | `triple_filled_add(phrase, verb, phrase)` vs all other `*_filled_add()` | the triple variant takes parameters and sets the protection `ADMIN`, the parameterless variant is named `triple_filled_add_name`; the others have no parameters and the protection `USER` |
+| `*_add_by_func` | exist: word, triple (with a `$msg` parameter), formula, source, view, component; missing: ref, value, result, group, verb, formula_link, view_relation, term_view, component_link | the sql function add test exists only for some classes; `source_add_by_func` names its var `$msk` |
+| `*_name_only` | exist: word, triple, formula, verb; missing: source, view, component, ref | the minimal object exists only for some classes |
+| term_view factories | `term_view_*` in `test_views` vs `view_link_*` in `test_components` (both return a `term_view`) | two factory families for one class; `view_link_filled_add` is only used in a switched off call (`view_link_write_tests.php`) |
+| result factories | `result_main_filled` vs `*_filled` of the other classes | the name differs and there is no `result_filled_add` or `result_filled_included`; `test_mappers` uses the excluded `result_main_filled` as the add object |
+| `test_mappers::class_to_add_filled_object` | word, triple, formula, view → `*_filled_add`; source, component, view_relation → excluded `*_filled` although `source_filled_add`, `component_filled_add` and `view_relation_filled_add` exist; ref → `reference_plus`, value → `value_16_filled`, result → `result_main_filled`, user → `user_filled` | the add object is an active add object for some classes and an excluded filled object for others |
+| type const aliases | `test_sources` uses `share_type_shared` and `protect_type_shared`; the other create classes use `share_types` and `protection_types` | the same enums are imported under different alias names |
+
 ## speed up
 
 ### group id index
@@ -22,6 +44,25 @@ received from the database with a second sql call
 check that the json messages are as compact as possible, so one rule is that within one message data should not be repeated
 this implies e.g. that for values that have a group id and where the phrase with name is already included in the message
 the phrase names and also the phrase id should not be repeated in the values because the group id contains already this information
+
+## test entries only for the test group that needs them
+
+`create_test_db_entries` creates all test words, triples, sources, formulas, views, components and values once
+before the read tests, and only the final cleanup of `test.php` removes them. So every read test group sees
+the test rows of all others, e.g. a word page lists the test values of a word.
+Target: each test group creates only the test rows it needs at its start and removes them with the logged
+delete at its end, so that the database is again as it was when the group started.
+The view snapshots of `system_views_read_tests` already run before `create_test_db_entries`.
+
+## sql name of an old value 0, '' or false
+
+`library::sql_field_ext` takes an old value of 0, '' or false as no old value (`$fvt->old == null`), but
+`sql_creator` adds the `_old` parameter for every old value that is not null (`!== null`). So one prepared
+name can stand for two functions with different parameters, and the second call fails with e.g. "Bind message
+supplies 6 parameters, but prepared statement requires 5". `sandbox::sql_exclude` avoids this only for the
+insert of the exclusion.
+Fix: check `old` and `old_id` with `=== null` in `sql_field_ext`, like `sql_creator`, and list and rename the
+fixtures whose name changes because of an old value 0, '' or false.
 
 ## phrases of a list answer in the request cache
 
@@ -2473,3 +2514,31 @@ selects only the parts that `calculator_json.js` marks with `data-part` (header,
 verdict, sensitivity table, result table, fields, preset buttons, detail tables, formula notes, sources, notes). A
 renamed source changes only the `{source:…}` texts that the editor manages; a text of another triple that names the
 source keeps the old name.
+
+## exclude of a value or result as its own prepared statement
+
+`sandbox::del()` excludes a word, triple or other sandbox object that is still used with `sandbox::sql_exclude()`,
+one prepared sql function with its change log. `sandbox_multi::del()` still excludes a value or a result through the
+legacy `save_fields_func()`; give it the same exclude statement per value and result table, with its fixtures and a
+unit test that compares the two.
+
+## owner change before an exclude
+
+`sandbox::set_owner()` sets the user of the object to the new owner, so if the owner removes an object that other
+users still use, `del()` excludes it afterwards for the new owner and not for the user who removed it. Keep the
+requesting user for the exclude and add a write test with a second user that uses the object.
+
+## change log of an exclude without a user row
+
+`sandbox::sql_exclude()` logs the exclude of an object with a user row as the excluded flag and the name of the
+object (e.g. `word_update_log_excluded_…_user`), which the change log shows as `deleted user "…"`. The exclude of
+an object without a user row (`word_insert_log_…_user`) logs only the excluded flag, so the change log of the
+object shows no delete by this user. Log the name in both cases and check both in `assert_sql_exclude`.
+
+## error limit for independent import entries
+
+`docs/llm/dependent-errors.md` stops every following action once `$msg` carries an error, except for fully
+independent entries such as the rows of an imported list, which are tried until a configured number of errors.
+Neither the `config.yaml` key for this number (a default that each user can overwrite) nor the stop at the limit
+exists yet: the import loops try every entry. Add the key, read it via the config of the requesting user, stop
+the loop at the limit with a notice that the rest was not checked, and test both sides of the limit.

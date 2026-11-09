@@ -121,7 +121,7 @@ class test_triples extends test_objects
 
         // also clean up the words and verbs used for the triples
         $t_wrd = new test_words($this->env);
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
         parent::cleanup_objects($ts, [triple_names::SYSTEM_TEST_ADD_AUTO], new verb());
     }
 

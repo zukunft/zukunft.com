@@ -66,6 +66,8 @@ include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
 include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::UTILS . 'test_differences.php';
+include_once test_paths::UTILS . 'test_object_overview.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -96,6 +98,8 @@ use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
 use Zukunft\ZukunftCom\test\php\utils\math_function_report;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_differences;
+use Zukunft\ZukunftCom\test\php\utils\test_object_overview;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use ReflectionClass;
@@ -265,6 +269,79 @@ class coding_rule_tests
         // negative: a function without a test call is not listed as incomplete
         $test_name = 'a function without a test call is not listed as incomplete';
         $t->assert_text_not_contains($test_name, $incomplete_md, 'save');
+
+        // the test differences report lists each test call and a test call in a comment as switched off
+        $test_name = 'a test call and a commented test call are listed in their order';
+        $dif = new test_differences();
+        $stp_lst = $dif->code_steps("<?php\nnew word_tests()->run(\$t);\n//(new verb_tests)->run_list(\$t);\n");
+        $t->assert($test_name, $stp_lst, [['word_tests::run', true], ['verb_tests::run_list', false]]);
+        $test_name = '... also the call of a test object held in a var and of a global test function';
+        $stp_lst = $dif->code_steps("<?php\n\$msk = new view_tests();\n\$msk->run_words(\$t);\nrun_system_test(\$t);\n");
+        $t->assert($test_name, $stp_lst, [['view_tests::run_words', true], ['run_system_test()', true]]);
+        $test_name = '... and the call of the var that gets the result of the call';
+        $stp_lst = $dif->code_steps("<?php\n\$msk = new view_tests();\n\$msk = \$msk->run_words(\$t);\n");
+        $t->assert($test_name, $stp_lst, [['view_tests::run_words', true]]);
+        // negative: an assert, a helper object and a test function without the run prefix are no test
+        $test_name = 'an assert, a helper and a test function without the run prefix are not listed';
+        $stp_lst = $dif->code_steps("<?php\n\$t->assert(\$test_name, 1, 1);\nnew test_types(\$t)->run(\$t);\nnew word_tests()->check(\$t);\n");
+        $t->assert($test_name, $stp_lst, []);
+        $test_name = '... and a var that gets another value is no test object any more';
+        $stp_lst = $dif->code_steps("<?php\n\$msk = new view_tests();\n\$msk = \$msk->context(\$t);\n\$msk->run_words(\$t);\n");
+        $t->assert($test_name, $stp_lst, []);
+
+        // the differences compare test.php with test_part.php
+        $test_name = 'a test of test.php that test_part.php does not call is missing after the previous common test';
+        $full_lst = [['a::run', true], ['b::run', true], ['c::run', false]];
+        $part_lst = [['a::run', false], ['c::run', true], ['d::run', false], ['a::run', true]];
+        $dif_lst = $dif->differences($full_lst, $part_lst);
+        $missing = $dif_lst[test_differences::MISSING];
+        $t->assert($test_name, $missing, [[2, 'b::run', true, 1]]);
+        $test_name = '... a test only in test_part.php is listed as not in test.php';
+        $extra = $dif_lst[test_differences::EXTRA];
+        $t->assert($test_name, $extra, [[3, 'd::run', false]]);
+        $test_name = '... a second call is listed as called more often with the first call in test.php';
+        $repeated = $dif_lst[test_differences::REPEATED];
+        $t->assert($test_name, $repeated, [[4, 'a::run', true, 1]]);
+        $test_name = '... and a test switched off in test.php, but on in test_part.php is listed';
+        $switched_on = $dif_lst[test_differences::SWITCHED_ON];
+        $t->assert($test_name, $switched_on, [[3, 2, 'c::run']]);
+        $test_name = 'a test in another order is listed with both positions';
+        $dif_lst = $dif->differences([['a::run', true], ['b::run', true], ['c::run', true]], [['c::run', true], ['a::run', true], ['b::run', true]]);
+        $moved = $dif_lst[test_differences::MOVED];
+        $t->assert($test_name, $moved, [[3, 1, 'c::run']]);
+        // negative: test_part.php is expected to switch off tests, so that is no difference
+        $test_name = 'the same tests in the same order with some switched off are no difference';
+        $dif_lst = $dif->differences([['a::run', true], ['b::run', true]], [['a::run', true], ['b::run', false]]);
+        $no_dif = [
+            test_differences::MISSING => [],
+            test_differences::EXTRA => [],
+            test_differences::REPEATED => [],
+            test_differences::MOVED => [],
+            test_differences::SWITCHED_ON => [],
+        ];
+        $t->assert($test_name, $dif_lst, $no_dif);
+
+        // the test object overview lists per factory type and object the plain factory, the extensions or missing
+        $test_name = 'a plain factory is OK, an extension is named and a missing factory is missing';
+        $ovw = new test_object_overview();
+        $ok = test_object_overview::OK;
+        $missing = test_object_overview::MISSING;
+        $tbl = $ovw->table(['word', 'view', 'result', 'source', 'triple'],
+            ['word_filled', 'source_filled', 'triple_filled', 'word_add', 'view_add', 'result_add', 'view_filled_zh', 'result_main_filled']);
+        $target = [
+            'add' => ['word' => $ok, 'view' => $ok, 'result' => $ok, 'source' => $missing, 'triple' => $missing],
+            'filled' => ['word' => $ok, 'view' => '`view_filled_zh`', 'result' => '`result_main_filled`', 'source' => $ok, 'triple' => $ok],
+        ];
+        $t->assert($test_name, $tbl, $target);
+        // negative: a factory belongs to the object with the longest name and a name used by few objects is no type
+        $test_name = 'the add factory of the view relation is no view factory and a rare name is no type';
+        $tbl = $ovw->table(['view', 'view_relation', 'word', 'source'],
+            ['view_relation_add', 'word_add', 'source_add', 'view_filled', 'word_filled', 'source_filled', 'view_add_by_func', 'word_add_by_func']);
+        $target = [
+            'add' => ['view' => '`view_add_by_func`', 'view_relation' => $ok, 'word' => $ok, 'source' => $ok],
+            'filled' => ['view' => $ok, 'view_relation' => $missing, 'word' => $ok, 'source' => $ok],
+        ];
+        $t->assert($test_name, $tbl, $target);
 
         $this->php_class_name_check($t);
 

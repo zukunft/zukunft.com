@@ -10,6 +10,8 @@ PREPARE formula_list_by_name_like (bigint, text) AS
                CASE WHEN (u.formula_type_id      IS     NULL) THEN s.formula_type_id   ELSE u.formula_type_id   END AS formula_type_id,
                CASE WHEN (u.all_values_needed    IS     NULL) THEN s.all_values_needed ELSE u.all_values_needed END AS all_values_needed,
                CASE WHEN (u.last_update          IS     NULL) THEN s.last_update       ELSE u.last_update       END AS last_update,
+               CASE WHEN (u.view_id              IS     NULL) THEN s.view_id           ELSE u.view_id           END AS view_id,
+               CASE WHEN (u.impact               IS     NULL) THEN s.impact            ELSE u.impact            END AS impact,
                CASE WHEN (u.excluded             IS     NULL) THEN s.excluded          ELSE u.excluded          END AS excluded,
                CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id     ELSE u.share_type_id     END AS share_type_id,
                CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id

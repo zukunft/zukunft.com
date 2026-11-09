@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -58,10 +59,15 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_write_tests
 {
+    // the number of the value that uses the triple of the delete only if not used test
+    const float USED_TRIPLE_NUMBER = 3.5;
+    // the description that the second user gives the triple of the delete by the owner test
+    const string OWNER_CHANGE_COM = 'the description of the second user';
 
     function run(test_cleanup $t): void
     {
@@ -160,9 +166,7 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last($msg, true);
-        // TODO Prio 0 fix it
-        //$target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT . '';
-        $target = 'zukunft.com system test partner ';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT;
         $t->assert($test_name, $result, $target);
 
 
@@ -203,10 +207,9 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last($msg, true);
-        $target = users::SYSTEM_TEST_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT;
+        // the last unlink is still the one of the second user, because the delete of the first user
+        // after the exclusion by the second user writes no unlink entry of its own
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT;
-        // TODO Prio 0 fix it
-        $target = 'zukunft.com system test partner ';
         $t->assert('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $result, $target);
 
         // check if the formula is not used any more for both users
@@ -249,10 +252,8 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last($msg, true);
-        $target = users::SYSTEM_TEST_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT;
-        $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Word Renamed from System Test Word Parent';
-        // TODO Prio 0 fix it
-        $target = 'zukunft.com system test partner ';
+        // the rename and the code id are no link change, so the last unlink is still the one of the second user
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_names::TEST_RENAMED . ' from ' . word_names::TEST_PARENT;
         $t->assert('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $result, $target);
 
         // check that even after renaming the triple no word with the standard name of the triple can be added
@@ -334,12 +335,117 @@ class triple_write_tests
 
         // the code changes and tests for formula link should be moved the component_link
 
+        $this->run_del_used($t);
+        $this->run_del_owner_change($t);
+
         // cleanup - fallback delete
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($msg, library::class_to_name(triple::class));
 
+    }
+
+    /**
+     * a removed triple that a value still uses is only excluded for the user, so that the value is not lost,
+     * and a triple that is not used any more is really deleted
+     * public to run it also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_del_used(test_cleanup $t): void
+    {
+        $t_db = new test_db_load($t);
+        $msg = new user_message($t->usr1);
+        $chk_msg = new user_message($t->usr1);
+        $std_msg = new user_message($t->usr2);
+        $t->subheader('db write triple delete only if not used');
+        $t_db->test_word($msg, word_names::TEST_ADD_VIA_FUNC);
+        $t_db->test_word($msg, word_names::TEST_PARENT);
+        $trp = $t_db->test_triple($msg, word_names::TEST_ADD_VIA_FUNC, verbs::IS, word_names::TEST_PARENT);
+        $val = $t_db->test_value([$trp->name()], self::USED_TRIPLE_NUMBER);
+
+        $test_name = 'remove a triple that a value uses';
+        $trp->del($msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = '... is only excluded for the user';
+        $trp_chk = new triple($t->usr1);
+        $removed = ($trp_chk->load_by_id($trp->id(), $chk_msg) == 0 or $trp_chk->is_excluded() === true);
+        $t->assert_true($test_name, $removed);
+        $test_name = '... but another user still sees the triple';
+        $trp_std = new triple($t->usr2);
+        $t->assert_greater_zero($test_name, $trp_std->load_by_id($trp->id(), $std_msg));
+        $test_name = '... and the value is kept';
+        $val_chk = new value($t->usr1);
+        $val_chk->load_by_id($val->id(), $chk_msg);
+        $t->assert($test_name, $val_chk->number(), self::USED_TRIPLE_NUMBER, test_base::TIMEOUT_LIMIT_DB);
+
+        // negative: without the value the triple is not used any more
+        $val->del($msg);
+        $msg->reset();
+        $test_name = 'remove the triple that is not used any more';
+        $trp->del($msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = '... is really deleted';
+        $trp_std = new triple($t->usr2);
+        $t->assert($test_name, $trp_std->load_by_id($trp->id(), $std_msg), 0, test_base::TIMEOUT_LIMIT_DB);
+        $t->cleanup_change_log_of_deleted([$val, $trp]);
+
+        $test_name = 'a triple that only another triple uses is used by data';
+        $trp = $t_db->test_triple($msg, word_names::TEST_ADD_VIA_FUNC, verbs::IS, word_names::TEST_PARENT);
+        $trp_part = $t_db->test_triple($msg, $trp->name(), verbs::PART_NAME, word_names::TEST_PARENT);
+        $is_used = $trp->used_by_data($chk_msg);
+        $t->assert_true($test_name, $is_used);
+        // negative: without the other triple nothing uses the triple any more
+        $test_name = '... but not any more without the other triple';
+        $trp_part->del($msg);
+        $is_used = $trp->used_by_data($chk_msg);
+        $t->assert_false($test_name, $is_used);
+        $test_name = 'remove the triple after the other triple';
+        $trp->del($msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $t->cleanup_change_log_of_deleted([$trp_part, $trp]);
+    }
+
+    /**
+     * the owner removes a triple that another user has changed, so the other user becomes the owner
+     * and set_owner writes the standard row with the linked objects that it has reloaded
+     * public to run it also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_del_owner_change(test_cleanup $t): void
+    {
+        $t_db = new test_db_load($t);
+        $msg = new user_message($t->usr1);
+        $chk_msg = new user_message($t->usr1);
+        $usr2_msg = new user_message($t->usr2);
+        $t->subheader('db write triple delete by the owner');
+
+        $test_name = 'the owner removes a triple that another user has changed';
+        $trp = $t_db->test_triple($msg, word_names::TEST_ADD_VIA_FUNC, verbs::IS, word_names::TEST_PARENT);
+        $trp_usr2 = new triple($t->usr2);
+        $trp_usr2->load_by_id($trp->id(), $usr2_msg);
+        $trp_usr2->description = self::OWNER_CHANGE_COM;
+        $trp_usr2->save($usr2_msg);
+        $trp->del($msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $test_name = '... is removed for the owner';
+        $trp_chk = new triple($t->usr1);
+        $removed = ($trp_chk->load_by_id($trp->id(), $chk_msg) == 0 or $trp_chk->is_excluded() === true);
+        $t->assert_true($test_name, $removed);
+
+        // the second user removes the triple, if the owner change has kept it for them
+        $trp_left = new triple($t->usr2);
+        if ($trp_left->load_by_id($trp->id(), $usr2_msg) != 0) {
+            $trp_left->del($usr2_msg);
+        }
+        $t->cleanup_change_log_of_deleted([$trp]);
     }
 
     function create_test_triples(all_tests|a_selected_test $t): void

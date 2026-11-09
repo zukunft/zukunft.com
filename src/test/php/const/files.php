@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -58,6 +58,7 @@ class files
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
+    CONST string PHP = '.php';
     CONST string CSV = '.csv';
     CONST string ZIP = '.zip';
     CONST string XML = '.xml';
@@ -330,6 +331,11 @@ class files
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
     CONST string DOCS_MATH = test_paths::DOCS . 'math' . self::MD;
+    CONST string DOCS_TEST_DIFFERENCES = test_paths::DOCS . 'test_differences' . self::MD;
+    CONST string DOCS_TEST_OBJECT_OVERVIEW = test_paths::DOCS . 'test_object_overview' . self::MD;
+    // the test runners whose tests the test differences report compares
+    CONST string TEST_ALL_SCRIPT = test_paths::SCRIPTS . 'test' . self::PHP;
+    CONST string TEST_PART_SCRIPT = test_paths::SCRIPTS . 'test_part' . self::PHP;
     // the javascript evaluators of the math function report, started with node
     CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;

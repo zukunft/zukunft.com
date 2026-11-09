@@ -1272,11 +1272,7 @@ class system_view_ui_tests
 
         // remove test files not used any more, except the details list fetched from the pod
         $updated_files[] = test_paths::RESOURCE . self::START_PAGE_DETAILS_FILE . test_files::HTML;
-        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
-            if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {
-                $t->delete_path_file($path);
-            }
-        }
+        $t->delete_unused_files_in(test_paths::RESOURCE . test_paths::VIEWS_BY_ID, $updated_files);
     }
 
     /**

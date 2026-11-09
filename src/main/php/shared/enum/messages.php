@@ -2951,6 +2951,10 @@ enum messages: string
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
 
+    // if a delete has only excluded the object for the user, because it is still used
+    // always added with ok = true, because the exclusion is the normal answer to the delete of a used object
+    case DELETE_EXCLUDED_IN_USE = 'delete_excluded_in_use';
+
 
     /*
      * form fields

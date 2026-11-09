@@ -503,13 +503,15 @@ class test_db_load
                         string $to_name
     ): bool
     {
-        $trp = $this->load_triple($msg, $from_name, $verb_code_id, $to_name);
+        $del_msg = new user_message($this->env->usr1); // a fresh message per try that is merged into $msg, see docs/llm/dependent-errors.md
+        $trp = $this->load_triple($del_msg, $from_name, $verb_code_id, $to_name);
+        $result = false;
         if ($trp->id() <> 0) {
-            $trp->del(new user_message($this->env->usr1));
-            return true;
-        } else {
-            return false;
+            $trp->del($del_msg);
+            $result = true;
         }
+        $msg->merge($del_msg);
+        return $result;
     }
 
     function del_triple_by_name(string $name): bool
@@ -961,8 +963,12 @@ class test_db_load
     function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
-        $result = $val->get_value();
-        $this->env->assert(', value->load for ' . $val->name(), $result, $target);
+        // reloaded, because the number of the added object is the one that has been set and not the one in the database
+        $val_db = $this->load_value($array_of_word_str);
+        $result = $val_db->get_value();
+        $db_info = $val_db->is_saved() ? '' : 'no row found for user ' . $this->env->usr1->name;
+        $this->env->assert(', value->load for ' . $val->name(), $result, $target,
+            test_base::TIMEOUT_LIMIT_DB_MULTI, $db_info);
         return $val;
     }
 
@@ -1346,6 +1352,7 @@ class test_db_load
         new component_write_tests()->create_test_components($t);
         new component_link_write_tests()->create_test_component_links($t);
         new value_write_tests()->create_test_values($t);
+        $t->remember_created_rows();
     }
 
     /**
