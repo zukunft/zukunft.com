@@ -7,7 +7,11 @@ with a one word (max 3 words) description of the change and the start date
 this file should contain 
 - the description / prompt of the change
 - a table of the wanted and expected changes e.g. in which file which old lines are replaced with which new lines and a short description to the target / reason
-- a table which changes might be caused with the filename, the old lines, the new lines and  
+- a table which changes might be caused with the filename, the range of old lines, the range of new lines and the reason why a change is expected (do not write every line, jsut the start and the end of the section either by the code line or a function name before and after the change)
+- once the change is done fill another table with the start and end of the lines of code parts that have been unexpectedly be changed 
+- and finally a description of the lessons learned from the difference between the original change request with the expected changes and the final result with the real changes
+
+Create this as an example for the last two commits if possible
 
 ## a fresh message for each row of a list mapping and no mapping after an earlier error
 
