@@ -153,7 +153,7 @@
             in /formula/formula_map.php
     \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be true if no other us
             er has modified the formula in /formula/formula_map.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /formula/formula_map.php
+    \-- save_related - section for function save_related is expected to be save in /formula/formula_map.php
     \-- element_refresh - section for function element_refresh not yet defined that it should be save helper in /formula
             /formula_map.php
     \-- delete_elements - section for function delete_elements is expected to be del in /formula/formula_map.php
@@ -1170,8 +1170,8 @@
     \-- generate_ref_text
         \-- formula_map - dummy function that is supposed to be overwritten by the child class formula
 \-- save helper
-    \-- save_fields_func
-        \-- formula_map - save all updated fields with one sql function
+    \-- save_related
+        \-- formula_map - rename the formula word if the formula has been renamed
     \-- element_refresh
         \-- formula_map - update the database references to the formula elements
     \-- delete_elements
@@ -3219,7 +3219,6 @@
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /sandbox/sandbox.php
     \-- del_usr_cfg - section for function del_usr_cfg is expected to be del in /sandbox/sandbox.php
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox.php
     \-- fix_user_overwrites_after_rename - section for function fix_user_overwrites_after_rename not yet defined that it
              should be save fields in /sandbox/sandbox.php
     \-- update_standard_fields - section for function update_standard_fields not yet defined that it should be save fiel
@@ -3254,6 +3253,10 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_exclude - section for function sql_exclude not yet defined that it should be sql write in /sandbox/sandbox.p
             hp
+    \-- sql_update_user - section for function sql_update_user not yet defined that it should be sql write in /sandbox/s
+            andbox.php
+    \-- sql_insert_user - section for function sql_insert_user not yet defined that it should be sql write in /sandbox/s
+            andbox.php
     \-- sql_write_prepared - section for function sql_write_prepared not yet defined that it should be sql write in /san
             dbox/sandbox.php
     \-- db_fields_all_sandbox - section for function db_fields_all_sandbox not yet defined that it should be sql write f

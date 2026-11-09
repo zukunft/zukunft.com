@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1629 of 6475 public functions have at least 2 unit test calls; the 4638 functions below do not; the 208 functions of the last section are called nowhere
+1629 of 6477 public functions have at least 2 unit test calls; the 4641 functions below do not; the 207 functions of the last section are called nowhere
 
-## 1922 functions of main backend have no test at all
+## 1924 functions of main backend have no test at all
 
 ```
 \-- application
@@ -493,8 +493,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- not_changed_sql - 0 unit test calls shared by 6 classes
     \-- not_used - 0 unit test calls shared by 8 classes
     \-- reload_wrd - 0 unit test calls
-    \-- save_fields_func - 0 unit test calls shared by 3 classes
     \-- save_links - 0 unit test calls
+    \-- save_related - 0 unit test calls shared by 2 classes
     \-- uses_following - 0 unit test calls
     \-- wrd_add - 0 unit test calls
     \-- wrd_add_fix - 0 unit test calls
@@ -903,7 +903,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- protection_type_code_id - 0 unit test calls shared by 2 classes
     \-- protection_type_name - 0 unit test calls shared by 2 classes
     \-- row_mapper_usr - 0 unit test calls shared by 2 classes
-    \-- save_fields_func - 0 unit test calls shared by 3 classes
+    \-- save_related - 0 unit test calls shared by 2 classes
     \-- set_owner - 0 unit test calls shared by 2 classes
     \-- set_protection - 0 unit test calls shared by 2 classes
     \-- set_share - 0 unit test calls shared by 2 classes
@@ -917,6 +917,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_foreign_key - 0 unit test calls shared by 7 classes
     \-- sql_index - 0 unit test calls shared by 8 classes
     \-- sql_insert_key_field - 0 unit test calls shared by 9 classes
+    \-- sql_insert_user - 0 unit test calls
     \-- sql_insert_with_log - 0 unit test calls
     \-- sql_key_fields_id - 0 unit test calls shared by 2 classes
     \-- sql_key_fields_id_old - 0 unit test calls shared by 2 classes
@@ -952,6 +953,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- is_link_obj - 0 unit test calls shared by 3 classes
     \-- is_link_type_obj - 0 unit test calls shared by 3 classes
     \-- is_named_obj - 0 unit test calls shared by 6 classes
+    \-- is_to_link_key - 0 unit test calls
     \-- is_valid - 0 unit test calls shared by 9 classes
     \-- link_id - 0 unit test calls
     \-- load_sql_by_link - 0 unit test calls shared by 2 classes
@@ -1087,7 +1089,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- protection_type_code_id - 0 unit test calls shared by 2 classes
     \-- protection_type_name - 0 unit test calls shared by 2 classes
     \-- row_mapper_usr - 0 unit test calls shared by 2 classes
-    \-- save_fields_func - 0 unit test calls shared by 3 classes
+    \-- save_fields_func - 0 unit test calls
     \-- save_set_log_id - 0 unit test calls shared by 2 classes
     \-- set_excluded - 0 unit test calls shared by 2 classes
     \-- set_owner - 0 unit test calls shared by 2 classes
@@ -3216,7 +3218,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1139 functions of main backend have incomplete tests
+## 1140 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3820,6 +3822,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_insert_switch - 1 unit test calls shared by 3 classes
     \-- sql_update - 4 unit test calls shared by 8 classes
+    \-- sql_update_user - 1 unit test calls
     \-- to_name - 4 unit test calls shared by 3 classes
     \-- tob - 1 unit test calls shared by 3 classes
     \-- type_name - 1 unit test calls shared by 13 classes
@@ -5308,7 +5311,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- sandbox
     \-- save_id_fields - maybe called by name
     \-- save_id_fields_link - maybe called by name
-    \-- save_related
     \-- sql_extension
     \-- sql_write_prepared
 \-- sandbox_link

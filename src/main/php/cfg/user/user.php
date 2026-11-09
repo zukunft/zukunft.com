@@ -3320,8 +3320,7 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * save all updated fields with one sql function
-     * similar to the sandbox save_fields_func function but for non-user sandbox objects like the user
+     * save all updated fields with one sql function for non-user sandbox objects like the user
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param user $db_usr the database record before saving the changes whereas $this is the record with the changes

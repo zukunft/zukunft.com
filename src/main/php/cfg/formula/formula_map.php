@@ -1674,9 +1674,11 @@ class formula_map extends sandbox_code_id
                 // create an empty db_frm element to force saving of all set fields
                 $db_rec = new formula($this->get_user());
                 $db_rec->set_name($this->name());
-                $std_rec = clone $db_rec;
                 // save the formula fields
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                $qp = $this->sql_update($sc, $db_rec, $msg, new sql_type_list([sql_type::LOG]));
+                if ($qp != null) {
+                    $db_con->update($qp, 'update and log ' . $this->dsp_id(), $msg);
+                }
             }
         } else {
             $msg->add(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
@@ -1710,40 +1712,25 @@ class formula_map extends sandbox_code_id
      */
 
     /**
-     * save all updated fields with one sql function
-     * similar to the sandbox_multi save_fields_func function but for only one table
+     * rename the formula word if the formula has been renamed
      *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
-     * @param sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @param user_message $msg the user message object that collects any issues during the sql creation
-     * @return bool true if everything has been fine
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param sandbox|null $db_rec the formula as it is in the database before the change
+     * @return bool true if everything has been successful
      */
-    function save_fields_func(
-        sql_db         $db_con,
-        sandbox        $db_obj,
-        sandbox        $norm_obj,
-        user_message   $msg,
-        ?sql_type_list $sc_par_lst = null
-    ): bool
+    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
     {
-        if ($db_obj->name() <> $this->name()) {
-            log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_obj->dsp_id()
-                . ' (standard ' . $norm_obj->dsp_id() . ')');
+        if ($db_rec != null and $db_rec->name() <> $this->name()) {
+            log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id());
             // in case a word link exist, change also the name of the word
-            if (!$this->wrd_rename($db_obj->name(), $msg)) {
+            if (!$this->wrd_rename($db_rec->name(), $msg)) {
                 $msg->add(msg_id::FORMULA_WORD_RENAME_FAILED, [
-                    msg_id::VAR_FORMULA => $db_obj->name(),
+                    msg_id::VAR_FORMULA => $db_rec->name(),
                     msg_id::VAR_NAME => $this->name()
                 ]);
             }
         }
-
-        if ($msg->is_ok()) {
-            return parent::save_fields_func($db_con, $db_obj, $norm_obj, $msg, $sc_par_lst);
-        } else {
-            return false;
-        }
+        return $msg->is_ok();
     }
 
     /**

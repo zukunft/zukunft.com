@@ -2396,22 +2396,51 @@ class test_base
     ): bool
     {
         $msg = new user_message();
-        // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
-        $sc_par_lst->add(sql_type::INSERT);
-        $sc_par_lst->add(sql_type::NO_ID_RETURN);
-        $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the sql statement creation to update the user row with the delta to the user row in the database
+     * for all allowed sql database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox $usr_chg the user overwrites as they should be after the change
+     * @param sandbox $usr_db the user row as it is in the database before the change
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update_user(
+        sql_creator $sc,
+        sandbox     $usr_chg,
+        sandbox     $usr_db,
+        array       $sc_par_lst_in = [sql_type::LOG]
+    ): bool
+    {
+        $msg = new user_message($this->usr1);
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;

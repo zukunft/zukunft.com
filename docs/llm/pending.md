@@ -1,5 +1,186 @@
 # pending - list of planned llm prompts with prio 1
 
+## confirm the reference changes together with the phrase
+
+the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
+of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
+component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
+per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
+value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
+`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
+external key, so that an unchanged form writes no reference.
+
+### suggested code changes
+
+The line numbers are those of the files when this suggestion was written. The phrase edit views are `word_edit`
+(`system_views.json:5076`) and `triple_edit` (`system_views.json:5433`), not views of `base_views.json`. Today the
+references are only shown in the tab box of the edit view (`ref list word`, `ui_list::ref_list_word`,
+`ui_list.php:1248`), which is outside the form, so nothing of it is posted with the save. The rest of the flow
+exists: the save carries the whole posted url to the confirm view (`frontend.php:950`), the preview shows the rows
+(`ui_preview::ref_rows_section`, `ui_preview.php:371`), `system_form::form_back` (`system_form.php:569`) carries
+them to the confirmed post and `frontend::action_crud` writes them with `phrase::save_ref_rows`
+(`frontend.php:2885`, `web/phrase/phrase.php:1118`). Three changes, each with its own log file and test run:
+
+#### step 1: an unchanged row is no change
+
+`url_var::ref_rows` (`url_var.php:1147`) keeps every row with a crud action, so the empty add row and the unchanged
+rows of the edit form would be shown on the confirm page and written. A row is dropped if it is an add without
+external key or an update whose fields all equal their '86' values; a delete row is always kept. A row without '86'
+values (the confirmed post, because `form_back` carries only the row vars, and the wikipedia refresh) is kept like
+before, so that the decision is taken once, on the confirm page.
+
+add at `url_var.php:1147`, in place of the body of `ref_rows`:
+
+```php
+        $pre_rows = self::ref_row_pre_values($url_array);
+        $result = [];
+        foreach (self::ref_row_fields($url_array, self::REF_ROW) as $row => $fields) {
+            if (self::is_ref_row_change($fields, $pre_rows[$row] ?? [])) {
+                $result[$row] = $fields;
+            }
+        }
+        return $result;
+```
+
+add after `ref_rows`:
+
+```php
+    /**
+     * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
+     * @param array $pre_fields the stored values of the row e.g. ['ek' => 'Q72'], empty if the url has none
+     * @return bool true if the row adds, changes or deletes a reference, false e.g. for the empty add row of the edit view
+     */
+    private static function is_ref_row_change(array $fields, array $pre_fields): bool
+    {
+        $action = $fields[self::ACTION] ?? '';
+        $result = in_array($action, self::REF_ROW_ACTIONS);
+        if ($action == self::CRUD_CREATE) {
+            $result = (($fields[self::EXTERNAL_KEY] ?? '') != '');
+        } elseif ($action == self::CRUD_UPDATE and $pre_fields != []) {
+            // the action and the id of the reference have no stored value
+            $row_values = array_diff_key($fields, [self::ACTION => '', self::REF => '']);
+            $result = (array_diff_assoc($row_values, $pre_fields) != []);
+        }
+        return $result;
+    }
+```
+
+add at `reference_ui_tests.php:367`, in the reference rows section, each with its negative: an update row with all
+fields equal to their '86' values is no change, one changed field keeps it; an add row without external key is no
+change, with one it is kept; a delete row with '86' values is kept; an update row without '86' values is kept.
+
+Check after the change: the fixtures of the wikipedia refresh (`ref_url_tests::wikipedia_refresh_workflow`, the
+`ref_rows` and `ref_row_confirm` workflows) are unchanged, because their rows are a change.
+
+#### step 2: the component that writes the rows
+
+A new system form component type `system_form_ref_rows`:
+- `db_code_links/component_types.csv`: the row `295, 'form reference rows', 'the references of a phrase as rows of
+  its edit form, which the confirm of the phrase change writes too', 'system_form_ref_rows'` after the row 294
+- `component_types.php`: `FORM_REF_ROWS` and `FORM_REF_ROWS_ID = 295` next to `FORM_SELECT_REFS` (`:123`), in
+  `SYSTEM_TYPES` (`:847`) and in the list of the type ids (`:1120`)
+- `component_exe.php:254`: the arm `component_types::FORM_REF_ROWS => $form->form_ref_rows($dbo, $form_name, $msg, $cfg),`
+- `messages.php` with the en and de texts: `FORM_REF_ROWS` for the title of the rows and `FORM_FIELD_REF_DELETE`
+  for the label of the delete checkbox; the fields reuse `FORM_FIELD_EXTERNAL_KEY`, `FORM_FIELD_URL`,
+  `FORM_FIELD_DESCRIPTION`, `FORM_SELECT_SOURCE` and `FORM_FIELD_TYPE`
+
+The references of the phrase come from the same place as in the tab box: move the lines `ui_list.php:1259` to
+`1265` into a public `ui_list::refs_of_phrase(db_object $dbo, user_message $msg, ?data_object $dto): ref_list`,
+which `ref_list_word` and the new component both call.
+
+add to `system_form.php`, after `form_refs` (`:2447`):
+
+```php
+    /**
+     * the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW), so that the
+     * confirm of the phrase change also adds, changes or deletes them: one row per reference and one add row
+     *
+     * @param db_object $dbo the frontend word or triple of the edit view
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg to report a reference list that cannot be loaded
+     * @param data_object|null $dto the frontend cache with the type lists and the cached references
+     * @return string the html code of the reference rows, '' for an object that is not a phrase
+     */
+    function form_ref_rows(db_object $dbo, string $form_name, user_message $msg, ?data_object $dto): string
+    {
+        $result = '';
+        if ($dbo instanceof word or $dbo instanceof triple) {
+            $row = 1;
+            foreach (new ui_list()->refs_of_phrase($dbo, $msg, $dto)->lst() as $ref) {
+                $result .= $this->ref_row_change($ref, $row, $form_name, $msg);
+                $row++;
+            }
+            $result .= $this->ref_row_add($row, $form_name, $msg, $dto);
+        }
+        return $result;
+    }
+```
+
+`ref_row_change` writes the hidden `6a<n>=u` and `6l<n>=<ref id>`, the type as read only text, an input with its
+hidden '86' value for the external key, the url and the description, the source selector and, after the hidden
+action, the delete checkbox `6a<n>=d`, because the last value of a posted var wins. `ref_row_add` writes the hidden
+`6a<n>=a`, the type selector `$dto->typ_lst_cache->ref_typ->selector($form_name, $default_id, url_var::REF_ROW .
+url_var::REF_TYPE . $row)` and the empty inputs without '86' values. Both build the row var as
+`url_var::REF_ROW . $var . $row`; a helper `ref_row_field(string $var, int $row, msg_id $label, ?string $value)`
+writes one input and its '86' value, and on a re-render after an error it keeps the posted value and the posted
+'86' value of the row like `form_field_tracked` (`system_form.php:1480`).
+
+Needed in the html helpers:
+- `html_base::field_id` (`html_base.php:3410`) builds the html id from the label, so every row would get the same id
+  (e.g. `external_key`) and the duplicate id check of the snapshots would fail: `form_field` and `input` get an
+  optional id extension, e.g. `_1` for the first row, which `field_id` appends like the `_add` of an add form
+- `html_base::input_checkbox` (`html_base.php:3295`) always posts the value `1`: an optional `$value` for `d`
+- `source_list::selector` and `type_list::selector` (`type_list.php:532`) take the row var as name already; check
+  that their html id also gets the row extension
+
+add to `reference_ui_tests.php`: the fragment of `form_ref_rows` for a phrase with two references, written to a new
+`object_pages/` snapshot, and its negative (an object that is not a phrase gets no rows); the posted form of the
+fragment read back with `url_var::ref_rows` is empty (step 1), and with one changed external key, one checked delete
+box and one filled add row it gives the three rows.
+
+#### step 3: the rows in the phrase edit views
+
+add at the end of the `components` block of `system_views.json` (after `system admin subtitle`, `:2636`):
+
+```json
+    {
+      "name": "system form ref rows",
+      "description": "the references of the phrase as rows of the edit form, which the confirm of the phrase change writes too",
+      "type": "system_form_ref_rows",
+      "code_id": "form_ref_rows",
+      "ui_msg_code_id": "form_ref_rows"
+    }
+```
+
+and in `word_edit` after `system form select protection type` (`:5122`) and in `triple_edit` after the same
+component (`:5507`) the entry `"name": "system form ref rows"` with the next position; the positions of the later
+components of the two views move by one. The new component shifts the id of every component imported after
+`system_views.json` (e.g. `base_views.json`, the calculator views), and the two view entries shift the component
+link ids of the later views, so this step needs the re-pin of a full test run.
+
+Tests of this step:
+- the html snapshots of `word_edit` and `triple_edit` change, regenerated by the test run and reviewed by the
+  developer
+- a new workflow in `ref_url_tests` (snapshots under `workflow/`) and its write version in `ref_write_url_tests`
+  (under `workflow_write/`) on the test triple of `pending_prio_2.md` ("the reference write workflows change the
+  change log of a seed triple"), never on a seed phrase: show the edit view, change the external key of one
+  reference, check the delete box of another and fill the add row, save, confirm with the preview of the three
+  rows, confirmed, and check the three references in the database; its negative: save the edit view without a
+  change and get the no change message of the confirm (`ui_preview.php:898`)
+
+Check after the change:
+- a confirm that changes only the references writes the phrase without a change: check that `update` of the
+  phrase reports no error for an unchanged phrase, else `action_crud` stops before `save_ref_rows`
+- the type of a stored reference is read only, because the phrase and the type are the prime index of a reference
+  (`ref::link_key_fields`) and another type is another reference (delete and add); ask the developer if the type
+  should be editable instead, as the prompt names an input for each field of `url_var::REF_ROW_VARS`
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
 ## deprecate save_fields_func and the *_old functions
 
 Rule 5 of docs/llm/coding.md: every write is one named prepared statement with its change log, created by the
@@ -156,17 +337,6 @@ add at `sandbox.php:3296`, in place of the `save_fields_func` call:
                             $this->del_usr_cfg_if_not_needed($msg);
                         }
 ```
-## confirm the reference changes together with the phrase
-
-the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
-of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
-component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
-per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
-value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
-`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
-external key, so that an unchanged form writes no reference.
-
-## write tests of the calculator editor messages
 
 add at `test_base.php:2349`, in `assert_sql_save_fields` for both dialects:
 
@@ -501,7 +671,10 @@ Check after the change:
 - the write tests for the user row are value_write_tests:407 (insert of the overwrite of `usr2`) and :440 (the
   undo deletes the user row)
 
-### step 1: split sandbox::save_fields_func into named writes
+### step 1: split sandbox::save_fields_func into named writes (done)
+
+Done, see `docs/llm/log/save_fields_func_2026-11-09.md`; the table and the samples above stay until the whole prompt
+is done, because the samples of step 2 build on the builders of this step.
 
 Add the two new builders `sql_update_user` and `sql_insert_user` with a fixture for Postgres and MySQL
 and close the test gaps of the `sandbox` rows in the table. Then `sandbox::save`, `ref::save` and

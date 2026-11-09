@@ -287,54 +287,56 @@ class a_selected_test extends all_unit_tests
         new coding_rule_tests()->run($this);
         //new change_link_validation_tests()->run($this);
         //new sql_tests()->run($this);
-        new sys_log_tests()->run($this);
-        new change_log_tests()->run($this);
-        new job_tests()->run($this);
+        //new sys_log_tests()->run($this);
+        //new change_log_tests()->run($this);
+        //new job_tests()->run($this);
         //new pod_tests()->run($this);
-        new user_tests()->run($this);
-        new user_list_tests()->run($this);
+        //new user_tests()->run($this);
+        //new user_list_tests()->run($this);
         //new base_object_tests()->run($this);
         //new sandbox_tests()->run($this);
         //new language_tests()->run($this);
-        new type_tests()->run($this);
-        new db_cache_tests()->run($this);
+        //new type_tests()->run($this);
+        //new db_cache_tests()->run($this);
         //new horizontal_tests()->run($this);
         //new permission_tests()->run($this);
-        new system_view_ui_tests()->run($this);
+        //new system_view_ui_tests()->run($this);
+        // the new user row update builder and the user row insert of assert_sql_save_fields
         new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
-        new word_list_tests()->run($this);
-        new verb_tests()->run($this);
+        //new word_list_tests()->run($this);
+        //new verb_tests()->run($this);
+        // the user row insert of assert_sql_save_fields
         new triple_tests()->run($this);
-        new triple_list_tests()->run($this);
-        new phrase_tests()->run($this);
-        new phrase_list_tests()->run($this);
-        new group_tests()->run($this);
-        new group_list_tests()->run($this);
-        new term_tests()->run($this);
-        new term_list_tests()->run($this);
-        new source_tests()->run($this);
-        new source_list_tests()->run($this);
-        new ref_tests()->run($this);
-        new value_tests()->run($this);
-        new value_list_tests()->run($this);
-        new formula_tests()->run($this);
+        //new triple_list_tests()->run($this);
+        //new phrase_tests()->run($this);
+        //new phrase_list_tests()->run($this);
+        //new group_tests()->run($this);
+        //new group_list_tests()->run($this);
+        //new term_tests()->run($this);
+        //new term_list_tests()->run($this);
+        //new source_tests()->run($this);
+        //new source_list_tests()->run($this);
+        //new ref_tests()->run($this);
+        //new value_tests()->run($this);
+        //new value_list_tests()->run($this);
+        //new formula_tests()->run($this);
         //new formula_calc_tests()->run($this);
-        new formula_list_tests()->run($this);
-        new formula_link_tests()->run($this);
-        new element_tests()->run($this);
-        new element_list_tests()->run($this);
+        //new formula_list_tests()->run($this);
+        //new formula_link_tests()->run($this);
+        //new element_tests()->run($this);
+        //new element_list_tests()->run($this);
         //new expression_tests()->run($this);
-        new result_tests()->run($this);
-        new result_list_tests()->run($this);
-        new figure_tests()->run($this);
-        new figure_list_tests()->run($this);
-        new view_tests()->run($this);
-        new view_list_tests()->run($this);
-        new term_view_tests()->run($this);
-        new component_tests()->run($this);
-        new component_list_tests()->run($this);
-        new component_link_tests()->run($this);
-        new component_link_list_tests()->run($this);
+        //new result_tests()->run($this);
+        //new result_list_tests()->run($this);
+        //new figure_tests()->run($this);
+        //new figure_list_tests()->run($this);
+        //new view_tests()->run($this);
+        //new view_list_tests()->run($this);
+        //new term_view_tests()->run($this);
+        //new component_tests()->run($this);
+        //new component_list_tests()->run($this);
+        //new component_link_tests()->run($this);
+        //new component_link_list_tests()->run($this);
         //new import_tests()->run($this);
         //new wikidata_tests()->run($this);
         //new db_setup_tests()->run($this);
@@ -495,7 +497,7 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             //new system_read_tests()->run($this);
-            new system_views_read_tests()->run($this);
+            //new system_views_read_tests()->run($this);
             // the start page steps up to the results of the initial effort, after which the page stops
             //$msk_tests->run_start_page_steps($this);
             //$cfg = $msk_tests->context($this);
@@ -532,43 +534,43 @@ class a_selected_test extends all_unit_tests
 
             // the view snapshots above show only the seed data, so the test entries are created after them
             // like in test.php (all_unit_read_tests) for the read tests below
-            $t_db->create_test_db_entries($this);
-            $t_db->create_unit_test_db_entries($this);
+            //$t_db->create_test_db_entries($this);
+            //$t_db->create_unit_test_db_entries($this);
             // the db read tests in the order of all_unit_read_tests::run_unit_db_tests
             //new sql_db_read_tests()->run($this);
-            new user_read_tests()->run($this);
+            //new user_read_tests()->run($this);
             //new protection_read_tests()->run($this);
             //new share_read_tests()->run($this);
             //new horizontal_read_tests()->run($this);
-            new word_read_tests()->run($this);
-            new word_list_read_tests()->run($this);
-            new verb_read_tests()->run($this);
-            new triple_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
-            new phrase_read_tests()->run($this);
+            //new word_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new verb_read_tests()->run($this);
+            //new triple_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
+            //new phrase_read_tests()->run($this);
             // the phrases starting with "mathemat" without a leftover test triple
-            new phrase_list_read_tests()->run($this);
-            new group_read_tests()->run($this);
-            new term_read_tests()->run($this);
-            new term_list_read_tests()->run($this);
-            new value_read_tests()->run($this);
+            //new phrase_list_read_tests()->run($this);
+            //new group_read_tests()->run($this);
+            //new term_read_tests()->run($this);
+            //new term_list_read_tests()->run($this);
+            //new value_read_tests()->run($this);
             // the inhabitants of all years, which needs the seed values without an exclusion of the test user
-            new value_list_read_tests()->run($this);
-            new formula_read_tests()->run($this);
-            new formula_list_read_tests()->run($this);
+            //new value_list_read_tests()->run($this);
+            //new formula_read_tests()->run($this);
+            //new formula_list_read_tests()->run($this);
             //new expression_read_tests()->run($this);
-            new element_list_read_tests()->run($this);
-            new result_list_read_tests()->run($this);
-            new view_read_tests()->run($this);
-            new view_list_read_tests()->run($this);
-            new component_read_tests()->run($this);
-            new component_list_read_tests()->run($this);
-            new source_read_tests()->run($this);
-            new ref_read_tests()->run($this);
-            new language_read_tests()->run($this);
-            new change_log_read_tests()->run($this);
-            new sys_log_read_tests()->run($this);
-            new job_read_tests()->run($this);
+            //new element_list_read_tests()->run($this);
+            //new result_list_read_tests()->run($this);
+            //new view_read_tests()->run($this);
+            //new view_list_read_tests()->run($this);
+            //new component_read_tests()->run($this);
+            //new component_list_read_tests()->run($this);
+            //new source_read_tests()->run($this);
+            //new ref_read_tests()->run($this);
+            //new language_read_tests()->run($this);
+            //new change_log_read_tests()->run($this);
+            //new sys_log_read_tests()->run($this);
+            //new job_read_tests()->run($this);
             //new type_lists_ui_tests()->run($this, $ui);
             //new word_ui_read_tests()->run($this, $ui);
             //new start_ui_read_tests()->run($this, $ui);
@@ -576,7 +578,7 @@ class a_selected_test extends all_unit_tests
             // the data of a phrase for api/phraseData, checked against the hand made sample
             //new phrase_data_read_tests()->run($this);
             //$msk_tests->run_web_frontend($this);
-            new api_tests()->run($this);
+            //new api_tests()->run($this);
             //new graph_tests()->run($this);
             $this->cleanup($msg);
 
@@ -655,7 +657,7 @@ class a_selected_test extends all_unit_tests
             //new view_write_url_tests()->run($this);
             //new component_write_url_tests()->run($this);
             //new ref_write_url_tests()->run($this);
-            new value_write_url_tests()->run($this);
+            //new value_write_url_tests()->run($this);
             //new signup_write_url_tests()->run($this);
             //new login_write_url_tests()->run($this);
 
@@ -676,6 +678,7 @@ class a_selected_test extends all_unit_tests
             //new update_put_write_tests()->run_notes_and_sources($this);
             //new update_put_write_tests()->run_scenarios($this);
             // the calculator editor messages with another link for a triple of the Swiss NPP vote, which are refused
+            // by the do not update a link guard, which keeps the user row now
             new update_put_write_tests()->run_npp_links($this);
             // the test entries for the write tests like in test.php (all_unit_write_tests)
             $t_db->create_test_db_entries($this);
@@ -684,13 +687,15 @@ class a_selected_test extends all_unit_tests
             new word_write_tests()->run($this);
             new triple_write_tests()->run($this);
             // reads the test values of create_test_values on seed words e.g. the inhabitants of the canton Zurich
-            new value_write_tests()->run($this);
+            //new value_write_tests()->run($this);
+            // the formula word rename in save_related and the update after the insert in formula_map::add
             new formula_write_tests()->run($this);
-            new job_write_tests()->run($this);
-            new job_write_tests()->run_list($this);
+            //new job_write_tests()->run($this);
+            //new job_write_tests()->run_list($this);
+            // a view is saved with the sandbox save, too
             new view_write_tests()->run($this);
             // reads the seed values of 2019 and 2020 without changing them
-            new formula_trigger_tests()->run($this);
+            //new formula_trigger_tests()->run($this);
             // the db write tests in the order of all_unit_write_tests::run_db_write_tests
             //run_system_test($this);
             // the global tests and lib_tests need an all_tests object with the test users
@@ -718,8 +723,10 @@ class a_selected_test extends all_unit_tests
             //new graph_tests()->run($t);
             //new term_write_tests()->run($t);
             //new term_list_tests()->run($t);
-            //new source_write_tests()->run($this);
-            //new ref_write_tests()->run($this);
+            // a source is saved with the sandbox save, too
+            new source_write_tests()->run($this);
+            // ref::save uses the parent save (docs/llm/log/save_fields_func_2026-11-09.md)
+            new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
@@ -738,12 +745,14 @@ class a_selected_test extends all_unit_tests
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            //new component_write_tests()->run($this);
+            // a component is saved with the sandbox save, too
+            new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
-            //new import_write_tests()->run($this);
+            // the import of a ref with the same phrase and type uses the duplicate check of the parent save
+            new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             //new wikidata_write_tests()->run($this);
             //new update_put_write_tests()->run($this);
@@ -772,7 +781,7 @@ class a_selected_test extends all_unit_tests
             $t_db->csv_leftover_check($sys_msg);
             //$t_db->update_files_with_not_yet_fixed_db_id($this, $sys_msg);
             //$t_db->type_list_check($this, $sys_msg);
-            new coding_rule_tests()->run_html_snapshots($this);
+            //new coding_rule_tests()->run_html_snapshots($this);
 
             // cleanup - fallback delete
             //$this->cleanup_objects();

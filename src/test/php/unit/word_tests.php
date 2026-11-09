@@ -179,6 +179,16 @@ class word_tests
         $qp = $wrd_same->sql_update($sc, $wrd, $msg, new sql_type_list([sql_type::LOG]));
         $t->assert_true($t->name . $test_name, $qp === null);
 
+        $t->subheader($ts . 'sql write update of the user row');
+        // the user row has the rename of the user, who now changes also the description
+        $wrd_usr_chg = clone $wrd_renamed;
+        $wrd_usr_chg->description = word_names::MATH_COM;
+        $t->assert_sql_update_user($sc, $wrd_usr_chg, $wrd_renamed);
+        $test_name = 'no user row update if the user row has already all overwrites';
+        $qp = $wrd_renamed->sql_update_user($sc, $wrd_renamed, $msg);
+        $qp_name = $qp?->name;
+        $t->assert_null($test_name, $qp_name);
+
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
         $wrd->description = word_names::MATH_COM;

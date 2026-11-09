@@ -3580,7 +3580,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * save all updated fields with one sql function
-     * similar to the sandbox save_fields_func function but for more than one table
+     * for more than one table
      * *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_multi $db_obj the database record before the saving
