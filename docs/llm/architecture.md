@@ -372,6 +372,21 @@ with the next free id if missing. Example: logged writes of
 new loggable column is added to any table: register it in `change_fields.csv`
 in the same change.
 
+1**The csv type files are internal resource files**: the files in
+`src/main/resources/db_code_links/` are written by the developers, shipped with
+the program and have very few rows (a few to some hundred). So a row that cannot
+be read is never a user input problem but a program error, and the cost of a
+check never matters: `sql_db::load_db_code_link_file` checks every row
+completely and reports each problem with the file and the row, and the row it
+gives to a row mapper is a complete database row including its id.
+
+- **Wrong** — the update row leaves out the id column, so the row mapper has to
+  treat a row without id as normal and a broken row is no longer reported:
+  `for ($i = 1; $i < count($data); $i++) { $upd_row[$col_names[$i]] = trim($data[$i]); }`
+- **Right** — the update row carries the id like every row of the table, so the
+  row mapper reports every row without id:
+  `$upd_row = [$col_names[0] => $id];` before the loop that adds the other columns
+
 **Delete always with change log — top rule 4 of `docs/llm/coding.md`**: a row
 leaves the database only through the logged delete of its object (`del()`,
 which builds the sql with `sql_type::LOG`, e.g. `value_delete_log`,

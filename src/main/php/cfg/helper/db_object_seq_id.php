@@ -141,26 +141,25 @@ class db_object_seq_id extends db_object
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $this->id = 0;
-        if (!$msg->is_ok()) {
-            return false;
-        }
-        parent::row_mapper($db_row, $msg, $id_fld);
-        if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            if (array_key_exists($id_fld, $db_row)) {
-                // TODO Prio 2 check that $this->reset() is removed from all load function and only this reset is used
-                $this->reset(true);
-                if ($db_row[$id_fld] != 0) {
-                    $this->id = $db_row[$id_fld];
+        if ($msg->is_ok()) {
+            parent::row_mapper($db_row, $msg, $id_fld);
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                if (array_key_exists($id_fld, $db_row)) {
+                    // TODO Prio 2 check that $this->reset() is removed from all load function and only this reset is used
+                    $this->reset(true);
+                    if ($db_row[$id_fld] != 0) {
+                        $this->id = $db_row[$id_fld];
+                    }
                 }
             }
-        }
-        // also a missing row, because the caller maps only a found row; reported, so that the child
-        // mappers stop and a list does not add an empty object
-        if ($this->id == 0) {
-            $msg->add(msg_id::DB_ROW_ID_MISSING, [
-                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
-                msg_id::VAR_NAME => $id_fld,
-            ]);
+            // also a missing row, because the caller maps only a found row; reported, so that the child
+            // mappers stop and a list does not add an empty object
+            if ($this->id == 0) {
+                $msg->add(msg_id::DB_ROW_ID_MISSING, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_NAME => $id_fld,
+                ]);
+            }
         }
         return $msg->is_ok();
     }

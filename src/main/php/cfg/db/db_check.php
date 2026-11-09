@@ -115,7 +115,6 @@ class db_check
      */
     function db_check(sql_db $db_con, user_message $msg): bool
     {
-        global $cfg;
         global $sys;
 
         $do_consistency_check = false;

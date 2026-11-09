@@ -156,12 +156,18 @@ class word_write_url_tests extends word_url_tests
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $this->ui->execute_and_next($url_arr, $req);
+        $t->assert_msg($test_name, $req->msg);
         $wrd_chk = new word($t->usr1);
         $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD, $msg) > 0);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $this->ui->execute_and_next($url_arr, $req);
+        // an own message like the new http request of the delete, so that an error of the add does
+        // not stop the reload of the word by the delete (docs/llm/dependent-errors.md); the url has
+        // the name but not the id of the just added word, so this tests the delete by name
+        $del_req = new user_request($t->usr1, new user_message_ui($this->usr), $this->ui->dto, true, true);
+        $this->ui->execute_and_next($url_arr, $del_req);
+        $t->assert_msg($test_name, $del_req->msg);
         $wrd_chk = new word($t->usr1);
         $wrd_chk->load_by_name(word_names::TEST_ADD, $msg);
         // the assert follows a create/delete executed via url and a reload, so a long page timeout is used

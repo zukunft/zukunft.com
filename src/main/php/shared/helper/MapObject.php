@@ -263,6 +263,10 @@ class MapObject
     {
         $ui_msg = new user_message_ui();
         $ui_msg->api_mapper($db_msg->api_array($db_msg), $ui_msg);
+        // the api array has no plain texts yet, e.g. the sql error of a failed delete, which must not get lost
+        foreach ($db_msg->get_all_messages() as $msg_text) {
+            $ui_msg->add_message_text($msg_text);
+        }
         return $ui_msg;
     }
 

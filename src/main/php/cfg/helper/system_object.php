@@ -97,6 +97,11 @@ class system_object
     // itself (e.g. a failed sys_log insert or a permission check of the log function name) does
     // not call the log writer again, which would never end (see log_msg)
     public bool $log_writing = false;
+    // true only while a test calls a function whose internal error is the expected result: log_err then
+    // neither writes the error nor counts it, but keeps its text for the assert (see test_base::assert_log_err)
+    public bool $log_test_only = false;
+    // the text of the last internal error that log_err has kept while log_test_only is true
+    public string $log_test_txt = '';
     // the number of log entries dropped because they have been caused by the log writer itself;
     // these errors are still counted in errors above (log_err counts before it writes), so a log
     // loop is never hidden, and this counter tells how many of the errors the log writer caused
@@ -139,6 +144,8 @@ class system_object
         $this->times = new system_time_list();
         $this->log_msg_lst = array();
         $this->log_writing = false;
+        $this->log_test_only = false;
+        $this->log_test_txt = '';
         $this->log_dropped = 0;
         $this->typ_lst = new type_lists();
         $this->log_txt = new text_log();

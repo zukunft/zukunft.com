@@ -958,6 +958,10 @@ class test_base
             $msg_txt = $usr_msg instanceof user_message
                 ? $usr_msg->all_message_text()
                 : $usr_msg->text();
+            // e.g. a plain text of the backend, which the shared text() does not include yet
+            if ($msg_txt == '' and $usr_msg instanceof user_message_ui) {
+                $msg_txt = $usr_msg->get_last_message();
+            }
             return $this->assert_dsp($msg, false, true, $msg_txt, '', $exe_max_time);
         }
     }
@@ -987,6 +991,26 @@ class test_base
         $msg_txt = $usr_msg->text();
         $usr_msg->reset();
         return $this->assert_text_contains($msg, $msg_txt, $expected, $exe_max_time);
+    }
+
+    /**
+     * check that a call logs the expected internal error, which is neither written to the system log
+     * nor counted as an internal error of the test run (see system_object::log_test_only)
+     *
+     * @param string $test_name (unique) description of the test
+     * @param callable $call the call that is expected to log the internal error
+     * @param string $expected the text that the logged error is expected to contain
+     * @return bool true if the expected error has been logged
+     */
+    function assert_log_err(string $test_name, callable $call, string $expected): bool
+    {
+        global $sys;
+        $sys->log_test_only = true;
+        $sys->log_test_txt = '';
+        $call();
+        $sys->log_test_only = false;
+        $logged = $sys->log_test_txt;
+        return $this->assert_text_contains($test_name, $logged, $expected);
     }
 
     /**

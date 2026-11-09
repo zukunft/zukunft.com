@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-**next prompt**
-
-**full test run: /test/test.php**
-
 ## deprecate save_fields_func and the *_old functions
 
 Rule 5 of docs/llm/coding.md: every write is one named prepared statement with its change log, created by the
@@ -3187,4 +3183,34 @@ The write section of `test.php` is not expected to run without errors yet. Open 
 
 The next step is a `test_part.php` run with the active word, triple, value, formula, job and view write tests
 and to fix what it reports, starting with the formula write flow.
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** the pinned ids of the production and user acceptance test environment (size L; about 180 files use a
+pinned id const, so split the replacement by class). One agent: "pinned ids per environment".
+
+## pinned ids per environment
+
+1. **Prod const:** for each id const listed in `src/test/php/create/test_pinned_ids.php::PINNED_IDS` add a const
+   with the id in the production and user acceptance test environment, e.g. `word_names::ONE_ID_PROD` next to
+   `word_names::ONE_ID`.
+2. **Pinned list:** add the prod const as third entry of each row, e.g. `[word_names::ONE, word_names::ONE_ID]`
+   becomes `[word_names::ONE, word_names::ONE_ID, word_names::ONE_ID_PROD]`.
+3. **Lookup function:** add a function e.g. `get_test_object_id(word::class, $env, word_names::ONE)` that gets the
+   class, the environment and the name or code id, finds the row in `PINNED_IDS` and returns the `*_ID_PROD` for
+   production (`ENV_PROD`) and user acceptance test (`ENV_UA`) and the `*_ID` in all other cases; an unknown class or
+   name is reported with an error message that names both.
+4. **No direct use:** replace each direct use of a pinned id const by a call of the lookup function, so that the id
+   const is only used in `PINNED_IDS`.
+5. **Re-pin:** the re-pin of `test_pinned_ids` rewrites only the `*_ID` consts, never a `*_ID_PROD` const.
+6. **Tests:** a unit test that the lookup returns the prod id for `ENV_PROD` and `ENV_UA`, the test id for `ENV_DEV`
+   and an error for an unknown name.
+
+Open before the start, ask the developer: where the `*_ID_PROD` values come from, and how the consts of
+`src/main/php/shared/const/` in `PINNED_IDS` (e.g. `words::POD_ID`, `views::START_ID`) that the production code
+uses are handled, because a test function should not be called from `src/main/`.
+
+if done remove this prompt from pending.md
 

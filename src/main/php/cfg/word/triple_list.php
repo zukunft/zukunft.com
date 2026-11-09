@@ -258,9 +258,11 @@ class triple_list extends sandbox_list_named
                         $result = true;
                         // fill verb
                         $db_trp->set_verb_id($db_row[verb_db::FLD_ID]);
-                        // fill from
+                        // fill from, which is null for a valid triple e.g. if a symbol is assigned to a triple
                         $db_trp->set_fob(new phrase($this->get_user()));
-                        $db_trp->fob()->row_mapper_sandbox($db_row, $row_msg, triple_fields::FLD_FROM, '1');
+                        if ($db_row[triple_fields::FLD_FROM] != 0) {
+                            $db_trp->fob()->row_mapper_sandbox($db_row, $row_msg, triple_fields::FLD_FROM, '1');
+                        }
                         // fill to
                         $db_trp->set_tob(new phrase($this->get_user()));
                         $db_trp->tob()->row_mapper_sandbox($db_row, $row_msg, triple_fields::FLD_TO, '2');

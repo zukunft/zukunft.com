@@ -1609,8 +1609,8 @@ class sql_db
                                     . ' does not match the id field of ' . $class);
                             }
                         } else {
-                            // build a db_row array from the csv line to use the row_mapper
-                            $upd_row = [];
+                            // build a db_row array from the csv line to use the row_mapper, with the id like every db row
+                            $upd_row = [$col_names[0] => $id];
                             for ($i = 1; $i < count($data); $i++) {
                                 $upd_row[$col_names[$i]] = trim($data[$i]);
                                 // check, which values need to be updates
@@ -1627,10 +1627,18 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $typ_obj->row_mapper_typ_obj($upd_row, $msg, $class);
+                                $upd_mapped = $typ_obj->row_mapper_typ_obj($upd_row, $msg, $class);
                                 $db_obj = $typ_obj->clone_reset();
-                                $typ_obj->row_mapper_typ_obj($db_row, $msg, $class);
-                                $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
+                                $db_mapped = $typ_obj->row_mapper_typ_obj($db_row, $msg, $class);
+                                if (!$upd_mapped) {
+                                    log_err('csv code link row ' . $row . ' of ' . $table_name
+                                        . ' cannot be mapped to update ' . $class);
+                                } elseif (!$db_mapped) {
+                                    log_err('the database row of csv code link row ' . $row . ' of ' . $table_name
+                                        . ' cannot be mapped to ' . $class);
+                                } else {
+                                    $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
+                                }
                             }
                         }
                     }

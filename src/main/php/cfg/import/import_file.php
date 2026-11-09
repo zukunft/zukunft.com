@@ -108,7 +108,13 @@ class import_file
         // load the config e.g. after initial setup
         if ($cfg == null) {
             $cfg = new config_numbers($usr);
-            $cfg->load_cfg($msg, null, $usr);
+            $cfg_msg = new user_message($usr); // a buffer, because a missing config e.g. during the setup only means that the fallback values are used
+            if ($cfg->load_cfg($cfg_msg, null, $usr)) {
+                $msg->merge($cfg_msg);
+            } else {
+                // an info, because a warning status is not ok and would stop the import (docs/llm/dependent-errors.md)
+                $msg->add_info_text($cfg_msg->all_message_text());
+            }
         }
 
         // get the relevant config values
@@ -249,10 +255,12 @@ class import_file
             if (!$msg->is_ok() or $validate) {
 
                 // load the system configuration from the database
-                $sys->load_cache_type($db_con, $msg);
+                $val_msg = new user_message($usr); // a buffer, because the validation runs also after a failed import, merged into $msg below
+                $sys->load_cache_type($db_con, $val_msg);
                 // TODO Prio 3 base the validation on the export yaml
                 $cfg = new config_numbers($usr);
-                $cfg->load_cfg($msg, null, $usr);
+                $cfg->load_cfg($val_msg, null, $usr);
+                $msg->merge($val_msg);
 
                 // check based on the number of values
                 $cfg_nbr = $cfg->count();
@@ -273,10 +281,12 @@ class import_file
                     $imp->usr = $usr;
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
-                    $dto = $imp->get_data_object_yaml($yaml_array, $msg);
-                    // the load reports the issues on $msg itself, so only its result is needed here
-                    $load_ok = $dto->load($db_con, $msg);
-                    $sys->typ_lst->load($db_con, $msg);
+                    $dto_msg = new user_message($usr); // a buffer of the target values, which are loaded also after an error of the config load, merged into $msg below
+                    $dto = $imp->get_data_object_yaml($yaml_array, $dto_msg);
+                    // the load reports the issues on $dto_msg itself, so only its result is needed here
+                    $load_ok = $dto->load($db_con, $dto_msg);
+                    $sys->typ_lst->load($db_con, $dto_msg);
+                    $msg->merge($dto_msg);
                     if (!$load_ok) {
 
                         // the issues on loading the config values are already on $msg
@@ -523,8 +533,9 @@ class import_file
      */
     private function failed(string $err_txt, user_message $msg): void
     {
+        // the summary var, because IMPORT_FAILED shows the reason as the summary
         $msg->add(msg_id::IMPORT_FAILED, [
-            msg_id::VAR_ERROR_TEXT => $err_txt
+            msg_id::VAR_SUMMARY => $err_txt
         ]);
     }
 

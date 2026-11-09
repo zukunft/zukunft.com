@@ -150,6 +150,35 @@ foreach ($frm_lst as $frm) {
 that makes the rest of the body meaningless. Everything else flows to the single
 return; loops have no equivalent exception.
 
+A guard placed after other statements is no top guard but an early return in the
+middle of the body; and where the condition and the return value are the same
+(`$msg->is_ok()`), the single return is reached without any guard by wrapping the
+body in the positive condition:
+
+```php
+// Wrong — the guard follows a statement, so it is an early return in the middle
+function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
+{
+    $this->id = 0;
+    if (!$msg->is_ok()) {
+        return false;
+    }
+    parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+    // ... map the type fields ...
+    return $msg->is_ok();
+}
+
+// Right — the work lives inside the positive condition and the function has one return
+function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
+{
+    if ($msg->is_ok()) {
+        parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+        // ... map the type fields ...
+    }
+    return $msg->is_ok();
+}
+```
+
 ## Validate inside the function, not before the call
 
 A function validates its own input — as a top-of-function guard clause (see the
@@ -405,6 +434,38 @@ This is the `$msg` counterpart of "log the unexpected branch": `log_err` makes a
 facing* rejection visible to the user. A real regression this caught: a triple
 add was blocked by the reserved-name check, but the rejection message rendered
 empty and never reached the UI, so the confirmed save silently did nothing.
+
+### Every error is reported — no exception
+
+Every error is reported with a unique and self-explaining text, and this rule has no
+exception. When a caller hands a function an input that it cannot handle, the input is
+never declared a "normal case" so that the report can be skipped: the report stays, and
+the caller that produces the wrong input is fixed.
+
+- **Wrong** — the row mapper of a type excuses a row without its id, because the code
+  link csv fill builds its update row without the id column, so a row without id is
+  mapped silently for every caller:
+
+  ```php
+  if (array_key_exists($id_fld, $db_row)) {
+      parent::row_mapper($db_row, $msg, $id_fld);
+  } else {
+      // e.g. the update row of a code link csv has no id field, which the parent would report as an error
+      $this->unset_modified();
+      $this->id = 0;
+  }
+  ```
+
+- **Right** — the mapper always reports a row without id (`msg_id::DB_ROW_ID_MISSING`
+  names the class and the id field), and the csv fill builds a complete row:
+
+  ```php
+  // row_mapper_typ_obj: no special case
+  parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+
+  // sql_db::load_db_code_link_file: the update row carries its id like every database row
+  $upd_row = [$col_names[0] => $id];
+  ```
 
 ### Take `$msg` when the error is the user's to see
 

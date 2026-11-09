@@ -513,7 +513,10 @@ class type_tests
             sys_log_status::FLD_NAME => sys_log_statuum::OPEN_NAME,
             fields::FLD_CODE_ID => sys_log_statuum::OPEN
         ];
-        $t->assert_false($test_name, $log_sta->row_mapper_typ_obj($csv_row, $msg, sys_log_statuum::class));
+        $map_row = fn() => $log_sta->row_mapper_typ_obj($csv_row, $msg, sys_log_statuum::class);
+        $t->assert_log_err($test_name, $map_row, 'id field is missing for ' . sys_log_statuum::class);
+        $test_name = '... and the mapping is not ok';
+        $t->assert_false($test_name, $msg->is_ok());
 
         $t->subheader($ts . 'type load sql');
         // a type child class must create its load sql with its own table and id field

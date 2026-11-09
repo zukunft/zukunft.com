@@ -560,12 +560,21 @@ class sandbox_named extends sandbox
     /**
      * get the term corresponding to this word or formula name
      * so in this case, if a formula or verb with the same name already exists, get it
+     * @param user_message $msg to collect any term retriving issues for the user
      * @return term
      */
     function get_term(user_message $msg): term
     {
         $trm = new term($this->get_user());
-        $trm->load_by_name($this->name(), $msg);
+        $name = $this->name();
+        // a term is found by its name only, so an object without name is reported instead of a fatal
+        if ($name === null or $name === '') {
+            $msg->add(msg_id::NAME_EMPTY, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+            ]);
+        } else {
+            $trm->load_by_name($name, $msg);
+        }
         return $trm;
     }
 
@@ -918,7 +927,14 @@ class sandbox_named extends sandbox
      */
     protected function check_save(user_message $msg): bool
     {
-        return $this->check_preserved($msg);
+        // a named object is found and shown by its name, so it is never saved without one
+        $name = $this->name();
+        if ($name === null or $name === '') {
+            $msg->add(msg_id::NAME_EMPTY, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+            ]);
+        }
+        return ($this->check_preserved($msg) and $msg->is_ok());
     }
 
     /**

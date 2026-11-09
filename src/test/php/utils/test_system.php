@@ -91,7 +91,9 @@ function run_system_test(test_cleanup $t): void
     $usr_test = new user;
     $usr_test->ip_addr = users::TEST_IP;
     $target = 'Your IP ' . $usr_test->ip_addr . ' is blocked at the moment because too much damage from this IP. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
-    $result = $usr_test->get($msg);
+    // an own message, because the expected block is an error that would stop the loads of the next tests
+    $ip_msg = new user_message();
+    $result = $usr_test->get($ip_msg);
     if ($usr_test->id() > 0) {
         $result = 'permitted!';
     }

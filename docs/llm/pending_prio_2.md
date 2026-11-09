@@ -2635,3 +2635,96 @@ list is not affected; a single load after an earlier error still maps the row. A
 return, with the tests of `test_base::assert_row_mapper_guard` for a value, a result and a group.
 `group_list::rows_mapper` calls `rows_mapper_obj` with a group, which has no `row_mapper_sandbox`, so it would
 fail on its first row; the group lists are loaded by `load_by_phr` today, which maps the rows itself.
+
+## expected internal errors in tests only via `$sys->log_test_only`
+
+A test that expects an internal error (`log_err`, `log_err_msg`) calls `test_base::assert_log_err`, which sets
+`$sys->log_test_only`, so that the error is neither written to the system log nor counted as an internal error
+of the run, and asserts the text of the error (first used by the csv row without id of `type_tests`). Align the
+other cases that handle an expected or an absent internal error in their own way:
+
+1. `math_function_report::backend_result` saves and restores `$sys->errors` and sets `$sys->log_writing`, whose
+   purpose is to stop the log writer from calling itself; use `$sys->log_test_only` instead.
+2. `term::row_has_ids` is public only "so that the check can be tested without the error log of the row
+   mapper" (`term_tests` 233-238); test the corrupted row with `term::row_mapper_sandbox` and
+   `assert_log_err` instead, so that the `TERM_ROW_ID_MISSING` and the logged text are checked too.
+3. `math_tests` (around line 179) says in a comment that "no cannot parse error is logged", but no assert
+   checks it; add an assert that no internal error is logged, e.g. a `test_base::assert_no_log_err`.
+
+These cases have been found by a search for the comments that name the error log; a test that triggers an
+internal error without saying so shows up as an internal error in the summary of a test run.
+
+## a triple whose own name is cleared is reported as a duplicate of itself
+
+If a user clears the own name of a triple (`set_name('')`, so that the generated name is used), `sandbox::save`
+reports "A triple that links … already exists" about the triple itself: `sandbox_link_named::is_key_updated`
+compares the raw `name` ('' against the stored name) and starts `get_similar`, which finds the same triple, but
+the rename branch of `save` compares `name()`, which falls back to the generated name, so both names are equal
+and the save ends in the last `else` with the duplicate message. Use the same name comparison in both places,
+so that clearing the own name is saved as a rename, with a write test for it; found by the second user test of
+`triple_write_tests`, which therefore saves an own object of the second user.
+
+## the reference write workflows change the change log of a seed triple
+
+`ref_write_url_tests` runs `ref_rows_workflow` and the six cases of `ref_row_confirm_workflow` on the seed triple
+"Zurich (canton)" (`triple_names::CANTON_ZURICH_ID`): each writes an overlay of `usr1` and removes it with the
+logged `del_usr_cfg`, so that every run adds "deleted user" and protection rows to the change log of the seed
+triple. The snapshots that show this change log therefore depend on the runs since the last `reset_db`:
+`views_by_object/triple/triple_default_triple_142.html` (since fbf6fa381 with the rows of one run) and the six
+confirmed pages of `workflow_write/ref_row_confirm_wf44/`. Move both workflows to a test triple:
+
+1. **Test triple:** `create_test_db_entries` creates a triple with a reserved test name (`System Test …`) of
+   another user than `usr1`, e.g. `usr2`, with a description, a wikipedia and a wikidata reference, so that the
+   changes of `usr1` stay overlays; the cleanup deletes the triple and its references through `del()`, and
+   `cleanup_change_log_deleted` removes the change log rows that carry the test name.
+2. **Fixed ids:** the snapshots contain the id of the triple and of both references (today 142, 276 and 277 in
+   the reference rows), but a created triple gets a new id each run and `wf_fixed_id` pins only the main
+   object; find how the reference ids of the rows are pinned in the snapshots before the move.
+3. **Workflow:** `ref_rows_workflow`, `ref_row_confirm_workflow`, `ref_row_confirm_url`, `ref_row_of_case`,
+   `assert_ref_row_written` and `cleanup_ref_rows` use the test triple and its references instead of
+   `CANTON_ZURICH_ID`, `ZURICH_CANTON_WIKIDATA_*` and `ZURICH_CANTON_WIKIPEDIA_*`.
+4. **Snapshots:** the existing snapshots of `ref_row_confirm_wf44` (12 html and 12 url files each in `workflow/`
+   and `workflow_write/`) show triple 142 and are rewritten by the developer with a run with `test_files::AUTO_UPDATE_TEST_FILES`;
+   `triple_default_triple_142.html` goes back to the seed history only (as before fbf6fa381).
+5. **Check the other two:** `wikipedia_refresh_workflow` ("Geneva (city)") and `wikidata_refresh_workflow`
+   ("health") write overlays on seed objects too; move them as well if a snapshot shows the change log of
+   these objects.
+
+## one message for all steps of a workflow stops a later write after an earlier error
+
+`url_test_base::wf_start` creates one message and one `user_request` for all steps of a workflow, and the frontend
+`db_object::add_via_api`, `update` and `del` convert this whole message into the backend message
+(`MapObject::convertMsgToDb`). So an error of an earlier step, e.g. of a render, stops the row mappers of a later
+write step (`docs/llm/dependent-errors.md`): e.g. the reload at the start of `sandbox::del` maps nothing, and
+the delete only logs a warning and deletes nothing, without a message for the step. Found by
+`word_write_url_tests::url_to_action_write_tests`, where the add and the delete url shared one message; that test
+now runs the delete with an own request. Fix it for all workflows:
+
+1. **Per step:** each step of `assert_step` that sends a url (like a new http request) gets an own message,
+   and the message of each step is asserted, so that the step that has the problem is named.
+2. **Frontend writes:** check whether `db_object::add_via_api`, `update` and `del` should give the backend an
+   own message with only the requesting user and merge the result into the frontend message, so that a
+   message of an earlier step of the same request does not stop the write.
+3. **Tests:** a write test with a not ok message before a confirmed delete url, which deletes the object and
+   still reports the earlier message.
+
+## the plain message texts in the api json of a user message
+
+The backend `user_message::api_array` carries only the message ids (`json_fields::USER_MESSAGES`), the messages
+with vars and the status, so a plain text of `add_message_text`, e.g. "Delete of … failed due to …" of
+`sql_db::delete` or the texts of `sandbox::del`, is lost on the way to the frontend: the frontend message is not
+ok and has no text. Today the frontend writes call the backend directly (the REST call of `db_object::del`,
+`update` and `add_via_api` is still a TODO), so `MapObject::convertMsgToUi` copies the plain texts; the json
+of the REST answer does not carry them. Before the REST call is activated:
+
+1. **Json field:** add a json field for the plain texts, e.g. `json_fields::USER_MESSAGES_TEXT`, which the
+   backend `api_array` fills from `get_all_messages()` and the frontend `api_mapper` reads with
+   `add_message_text`; the backend `api_mapper` and the frontend `api_array` the same way, so that both
+   directions keep the texts.
+2. **Remove the workaround:** remove the copy of the plain texts in `MapObject::convertMsgToUi`, because the
+   api array then carries them.
+3. **Text:** the shared `Message::text()` ("TODO Prio 1 fill up") includes the last plain text if there is no
+   message id, so that `test_base::assert_msg` no longer needs its fallback to `get_last_message()`; or the
+   plain texts are replaced by message ids, as the TODO of the frontend `user_message::api_array` asks.
+4. **Tests:** a unit test that a backend message with a plain text keeps the text through `api_array` and
+   `api_mapper` in both directions.

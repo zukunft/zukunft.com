@@ -180,7 +180,12 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                // a delete by name gets its id from the name (see frontend::action_crud)
+                $is_del_by_name = (($url_array[url_var::ACTION] ?? '') == url_var::CRUD_DELETE
+                    and ($url_array[url_var::NAME] ?? '') != '');
+                if (!$is_del_by_name) {
+                    $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                }
             }
         }
         return $msg;

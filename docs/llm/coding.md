@@ -10,7 +10,7 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The five rules above all others
+## The six rules above all others
 
 1. **Reduce to the max.** This is about the **resulting code**, so that a human
    reads it easily: fewer lines, functions, assertions, parameters. When in
@@ -18,7 +18,7 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
    correctness excepted: shorter is never worth a wrong answer. (Saint-Exupéry:
    perfection is reached not when there is nothing left to add, but when there
    is nothing left to remove.) The size of the **change** is a separate rule,
-   see "smallest diff" under "Understanding the request".
+   see rule 6.
 2. **One logical element per line — three at most** (one assignment, one call,
    one condition). When a line packs more, split it into named steps or push a
    chain behind a well-named helper. Fewer lines are not better in themselves:
@@ -62,6 +62,14 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
    so the statement is reviewable before it ever touches the database. This is
    what rule 4 relies on: a delete or exclusion that is not one prepared statement
    together with its change log entry cannot be audited.
+6. **Fewer changes are better than more changes.** This is about the **change**
+   itself, so that a human can review it: of two ways to fulfil the task, take
+   the one that changes fewer lines and fewer files, because every changed line
+   has to be read, understood and tested by the developer before the commit. A
+   change that the task does not need waits for its own task, and a large task is
+   split into several small changes (see the log file rule under "Understanding
+   the request"). Correctness and rule 3 come first: fewer changes are never worth
+   a wrong or an incomplete result.
 
 ## Build / test / commit
 
@@ -97,7 +105,7 @@ detail file. Order is by how often they fire, not importance.
 - If the request's target is ambiguous ("here", "this", a name that matches several places), name the candidates and ask which is meant before changing anything; a pasted error trace, file path or line number counts as unambiguous. Investigating to narrow the candidates is fine, but the question comes before the fix — stating the chosen reading in the final report is not a substitute.
 - The target is error-free code, not just the reported issue gone: when fixing a defect, apply the corrected rule to every place that shares the same structure — the symmetric branch, the sibling class, the same pattern in the other list — in the same change. A fix that leaves an unexplained asymmetry (the from side checked, the to side not) is a latent copy of the bug; if a counterpart is deliberately left different, the code comment says why. → `docs/llm/structure.md`
 - Deliver the **smallest diff** that fulfils the task: never rename, move or delete an existing function, const, variable, db field, code_id or file that the task did not ask about, and never tidy up code the task merely touched — a better name found while working nearby goes into the final report or `docs/llm/pending_prio_2.md`, not into the diff. "Nothing references it any more" is not proof that a url var, code_id, message id or json field is dead; those are external contracts and retiring one is the developer's decision. This never weakens the rule above: a *defect* travels to every place sharing the broken structure, an *improvement* does not travel at all. → `docs/llm/structure.md`
-- Every non-trivial change that is not a bug fix gets a log file `docs/llm/log/<one to three words>_<start date>.md` that is started **before** the first edit with the request and two tables (file, old and new line range or the function before and after, reason): "Expected changes" lists the changes that the humans want, at most three (a request that needs more is split into several changes, each with its own log file), and "Changes that the expected changes might cause" lists the side effects that the LLM expects from them. "Unexpected changes" stays empty until the human developer has run the tests, and is then filled with the changes that neither table names, followed by the lessons learned from the difference; examples: `docs/llm/log/ref_row_confirm_2026-11-07.md`, `docs/llm/log/exclude_used_phrase_2026-11-08.md`.
+- Every non-trivial change that is not a bug fix gets a log file `docs/llm/log/<one to three words>_<start date>.md` that is started **before** the first edit with the request and two tables (file, old and new line range or the function before and after, reason): "Expected changes" lists the changes that the humans want, at most three (a request that needs more is split into several changes, each with its own log file), and "Changes that the expected changes might cause" lists the side effects that the LLM expects from them. "Unexpected changes" stays empty until the human developer has run the tests, and is then filled with the changes that neither table names, followed by the lessons learned from the difference. Once the first test has started, the two tables are never changed again: every change after that goes into "Unexpected changes", because the difference to the first plan is what the log has to show; examples: `docs/llm/log/ref_row_confirm_2026-11-07.md`, `docs/llm/log/exclude_used_phrase_2026-11-08.md`.
 
 ### Structure & style
 - Comments are short: the best one is a single line saying **why** the code is there, because the *what* is in the code below it. A comment that restates the next line is deleted; a rule that holds for the whole class goes into the class docblock and a decision goes into `docs/` with one line pointing there. → `docs/llm/structure.md`
@@ -107,6 +115,8 @@ detail file. Order is by how often they fire, not importance.
 - Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`
 - A `Throwable` never travels: it is not a return value and never handed to the caller (no `@throws`), so the `try` wraps the **single statement** that can raise one and the handler turns it into a translatable `msg_id` on `$msg` — and if the cause is unexpected (the user can neither have caused nor fix it) into `log_err_msg($txt, $msg)`, which informs the user, the admin and the system log in one call; the entry point handlers are the last safety net for a missed catch, not the place to handle exceptions. → `docs/llm/structure.md`
 - Never fail silently: a function carrying a `user_message $msg` that rejects or aborts must record the reason on `$msg` (a `msg_id` that renders to real text) and let it propagate to the UI — never return a failure with `$msg` unchanged, empty, or hidden by an `is_ok()` gate. → `docs/llm/structure.md`
+- Every error is reported with a unique and self-explaining text — **no exception**: an input that a function cannot handle is never declared a "normal case" to skip the report; if a caller produces such input on purpose, the caller is fixed, not the report. → `docs/llm/structure.md`
+- **NEVER EVER remove an error message that might occur, or make it less specific.** Even if a fix makes the error unlikely, the message stays; a message is only replaced by one that names at least the same object, place and cause (e.g. the class, the csv file and the row), never by a more general one further away. If a message looks obsolete, ask the developer instead of removing it.
 - A helper that can produce a *user-actionable* error takes a `user_message $msg` parameter (thread it from the callers) so it can return the specific problem and its solution; reserve `log_err` (no `$msg`) for internal inconsistencies the user cannot fix. E.g. `triple::verb_from_api_json`. → `docs/llm/structure.md`
 - Long term almost every `log_err` becomes `log_err_msg($txt, $msg)` (admin log **and** a generic internal notice with the log link for the user), so **when you change anything in a function that still has a bare `log_err`, add the `user_message $msg` parameter and switch that call** — an error nobody tells the user about is not acceptable. Keep the bare `log_err` only where no caller can hold a `$msg` (entry point, bootstrap, cron, HTML-only display) or where the message would fire on a normal path. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
@@ -131,6 +141,7 @@ detail file. Order is by how often they fire, not importance.
 - Every class file declares its suggested `$abbr` var name in the opening docblock. → `docs/llm/architecture.md`
 - Use a class's suggested var name everywhere an instance of it is held; deviate only for a strong reason (e.g. two instances of the same class live in one scope). The generated `docs/code_object_name_exceptions.md` lists every deviation and must stay short — a `user_message` is always `$msg`. → `docs/llm/architecture.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
+- The csv type files in `src/main/resources/db_code_links/` are internal resource files with very few rows: every row is checked completely, and a row that cannot be read is a program error that is reported with the file and the row, never skipped or tolerated. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
 
 ### Constants & files

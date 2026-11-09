@@ -283,23 +283,30 @@ function log_err(string $msg_text,
                  ?user  $calling_usr = null): string
 {
     global $sys;
-    if ($sys !== null) {
-        $sys->errors++;
+    $result = '';
+    if ($sys?->log_test_only) {
+        // the error is the expected result of a test, which checks this text (see test_base::assert_log_err)
+        $sys->log_test_txt = $msg_text;
+    } else {
+        if ($sys !== null) {
+            $sys->errors++;
+        }
+        // TODO Prio 2 move the next lines to a class and a private function "get_function_name"
+        $lib = new library();
+        if ($trace == '') {
+            $trace = (new Exception)->getTraceAsString();
+        }
+        if ($function_name == '' or $function_name == null) {
+            $function_name = library::php_function_from_exception($trace);
+        }
+        $result = log_msg($msg_text,
+            $msg_description,
+            sys_log_levels::ERROR_ID,
+            $function_name,
+            $trace,
+            $calling_usr);
     }
-    // TODO Prio 2 move the next lines to a class and a private function "get_function_name"
-    $lib = new library();
-    if ($trace == '') {
-        $trace = (new Exception)->getTraceAsString();
-    }
-    if ($function_name == '' or $function_name == null) {
-        $function_name = library::php_function_from_exception($trace);
-    }
-    return log_msg($msg_text,
-        $msg_description,
-        sys_log_levels::ERROR_ID,
-        $function_name,
-        $trace,
-        $calling_usr);
+    return $result;
 }
 
 /**

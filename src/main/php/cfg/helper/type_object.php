@@ -186,34 +186,34 @@ class type_object extends db_object_seq_id
      */
     function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        // the fields below are mapped without the parent result, because a language row has another id field
-        if (!$msg->is_ok()) {
-            return false;
-        }
-        $id_fld = $this->id_field_typ($class);
-        if (array_key_exists($id_fld, $db_row)) {
-            parent::row_mapper($db_row, $msg, $id_fld);
-        } else {
-            // e.g. the update row of a code link csv has no id field, which the parent would report as an error
-            $this->unset_modified();
-            $this->id = 0;
-        }
-        // set the id upfront to allow row mapping
-        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-            $this->id = ($db_row[language::FLD_ID]);
-        }
-        if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-            $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
-        }
-        if (array_key_exists($this->name_field(), $db_row)) {
-            $this->name = strval($db_row[$this->name_field()]);
-        }
-        if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
-            $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
-        }
-        if (($this->code_id == null or $this->code_id == '')
-            and ($this->name == null or $this->name == '')) {
-            log_err_msg('either the name or code_id must be set', $msg);
+        if ($msg->is_ok()) {
+            // the fields below are mapped without the parent result, because a language row has another id field
+            $id_fld = $this->id_field_typ($class);
+            if (array_key_exists($id_fld, $db_row)) {
+                parent::row_mapper($db_row, $msg, $id_fld);
+            } else {
+                // e.g. the update row of a code link csv has no id field, which the parent would report as an error
+                log_err_msg('id field is missing for ' . $class, $msg);
+                $this->unset_modified();
+                $this->id = 0;
+            }
+            // set the id upfront to allow row mapping
+            if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
+                $this->id = ($db_row[language::FLD_ID]);
+            }
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
+            }
+            if (array_key_exists($this->name_field(), $db_row)) {
+                $this->name = strval($db_row[$this->name_field()]);
+            }
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
+            }
+            if (($this->code_id == null or $this->code_id == '')
+                and ($this->name == null or $this->name == '')) {
+                log_err_msg('either the name or code_id must be set', $msg);
+            }
         }
         return $msg->is_ok();
     }
@@ -859,7 +859,7 @@ class type_object extends db_object_seq_id
     {
         $sql = $sc->sql_separator();
         // the pod is a type object but the number of pods might be significant higher than the number of types
-        if ($this:: class == pod::class) {
+        if ($this::class == pod::class) {
             $sql .= $this->sql_table_create($sc);
         } else {
             $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::KEY_SMALL_INT]));
