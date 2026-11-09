@@ -213,11 +213,7 @@ class sandbox_named extends sandbox
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
-        // map the loaded fields whenever the row has been mapped (id set), independent of a prior
-        // error left on $msg by an earlier operation; gating this on $msg->is_ok() (via $result)
-        // would silently drop the name and make the object unreachable by a later name based
-        // lookup, e.g. the import cache that matches triples by name
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists($name_fld, $db_row)) {
                 $this->set_name($db_row[$name_fld]);
             }

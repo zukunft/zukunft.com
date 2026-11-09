@@ -180,12 +180,24 @@ class type_object extends db_object_seq_id
     /**
      * fill the type object vars based on an array of fields from the database
      * @param array $db_row with the data from the database
+     * @param user_message $msg an earlier error stops the mapping before any field is set (docs/llm/dependent-errors.md)
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
     function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+        // the fields below are mapped without the parent result, because a language row has another id field
+        if (!$msg->is_ok()) {
+            return false;
+        }
+        $id_fld = $this->id_field_typ($class);
+        if (array_key_exists($id_fld, $db_row)) {
+            parent::row_mapper($db_row, $msg, $id_fld);
+        } else {
+            // e.g. the update row of a code link csv has no id field, which the parent would report as an error
+            $this->unset_modified();
+            $this->id = 0;
+        }
         // set the id upfront to allow row mapping
         if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
             $this->id = ($db_row[language::FLD_ID]);

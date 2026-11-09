@@ -2956,6 +2956,9 @@ enum messages: string
     // if a database row of a term misses the id that selects the word, triple, formula or verb
     case TERM_ROW_ID_MISSING = 'term_row_id_missing';
 
+    // if the row mapper gets no database row or a row without its id, so that it cannot map it (see db_object_seq_id::row_mapper)
+    case DB_ROW_ID_MISSING = 'db_row_id_missing';
+
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one

@@ -195,8 +195,7 @@ class user_profile extends type_object
         string       $id_fld = self::FLD_ID): bool
     {
         $result = parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(self::FLD_LEVEL, $db_row)) {
                 if ($db_row[self::FLD_LEVEL] != null) {
                     $this->right_level = $db_row[self::FLD_LEVEL];

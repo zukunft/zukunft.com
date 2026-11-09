@@ -118,11 +118,12 @@ class ip_range_list extends list_db_write
         $ip_lst = $db_con->get($qp, $msg, 'ip range list');
         foreach ($ip_lst as $db_row) {
             $ip = new ip_range();
-            $ip->row_mapper($db_row, $msg);
-            if ($ip->id() > 0) {
-                $this->add($ip, $msg);
+            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+            if ($ip->row_mapper($db_row, $row_msg)) {
+                $this->add($ip, $row_msg);
                 $result = true;
             }
+            $msg->merge($row_msg);
         }
 
         return $result;

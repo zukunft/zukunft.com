@@ -1,43 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## lesson learned from changes
-
-for each non-trivial and non bug fix change create in docs/llm/log a file 
-with a one word (max 3 words) description of the change and the start date
-this file should contain 
-- the description / prompt of the change
-- a table of the wanted and expected changes e.g. in which file which old lines are replaced with which new lines and a short description to the target / reason
-- a table which changes might be caused with the filename, the range of old lines, the range of new lines and the reason why a change is expected (do not write every line, jsut the start and the end of the section either by the code line or a function name before and after the change)
-- once the change is done fill another table with the start and end of the lines of code parts that have been unexpectedly be changed 
-- and finally a description of the lessons learned from the difference between the original change request with the expected changes and the final result with the real changes
-
-Create this as an example for the last two commits if possible
-
-## a fresh message for each row of a list mapping and no mapping after an earlier error
-
-`docs/llm/dependent-errors.md`: a mapping does not start if `$msg` already carries an error, returns true only
-if it has mapped the row, and each try of an independent entry gets a fresh message that is merged afterwards
-and never reads the shared request message. The steps belong into one change, because the guard of step 2
-without step 1 would add the rows after a row with an error as empty objects to the list.
-
-1. **Fresh message per row:** `sandbox_list::rows_mapper_obj` (and every other list loop that maps rows) maps
-   each row with its own message (with the buffer comment), merges it into `$msg` after the row and adds the
-   object to the list only if its mapping has returned true.
-2. **No mapping after an earlier error:** `db_object_seq_id::row_mapper` starts with a guard that returns false
-   without setting the id if `$msg` is not ok; `sandbox::row_mapper_sandbox` returns true only if a row has
-   been mapped (id set and `$msg` ok), so its docblock and the comment about the half mapped object change.
-3. **`if ($result)` in the child mappers:** `component.php`, `component_link.php`, `formula_link.php` and
-   `formula_map.php` continue with `if ($result)` after the parent mapper instead of `if ($this->id() != 0)`
-   and drop the "TODO Prio 1 can result be false" line.
-4. **Not saved, not added:** an entry whose mapping has returned false is neither saved nor added to a list of
-   objects that are saved; check the import and the save path for callers that continue with such an entry.
-5. **Tests:** add a test to `formula_link_tests`, `term_view_tests` and `formula_tests` that a row with an
-   earlier error on the message is not mapped at all (result false, id 0) and its negative with a clean
-   message; a list test checks that the row after a row with a mapping error is mapped completely and that
-   the row with the error is not added.
-
-if done remove this prompt from pending.md
-
 **next prompt**
 
 **full test run: /test/test.php**

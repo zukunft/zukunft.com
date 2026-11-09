@@ -354,8 +354,7 @@ class verb extends type_object
         string       $name_fld = verb_db::FLD_NAME): bool
     {
         $result = parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 if ($db_row[fields::FLD_CODE_ID] != null) {
                     $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);

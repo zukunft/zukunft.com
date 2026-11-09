@@ -274,15 +274,17 @@ class result_list extends sandbox_value_list
                     $res = new result($this->get_user());
                     // the result mapper, because the inherited row_mapper of the key object is
                     // a stub that maps nothing; a row of any result table maps to a group
-                    $res->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    $row_ok = $res->row_mapper_multi($db_row, $row_msg, $qp->ext);
                     // a result row that maps to no phrase group can never be shown or changed,
                     // so the corrupted row is skipped and reported like in value_list
                     if ($res->id() == 0 or $res->id() == '') {
                         log_err('result db row without a phrase group skipped'
                             . ' (table type "' . $qp->ext . '"): ' . implode(',', $db_row));
-                    } else {
+                    } elseif ($row_ok) {
                         $mapped[] = $res;
                     }
+                    $msg->merge($row_msg);
                 }
                 // the phrases of all results with one query instead of some queries per result,
                 // set before the results are added, because the phrases may complete the group id

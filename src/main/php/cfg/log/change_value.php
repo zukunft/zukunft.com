@@ -164,8 +164,7 @@ class change_value extends change_log
     {
         global $sys;
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {

@@ -125,9 +125,12 @@ class group_list extends sandbox_list_named
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $phr_grp = new group($this->get_user());
-                $phr_grp->row_mapper($db_row, $msg);
-                $this->add_obj($phr_grp, false, $msg);
-                $result = true;
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($phr_grp->row_mapper($db_row, $row_msg)) {
+                    $this->add_obj($phr_grp, false, $row_msg);
+                    $result = true;
+                }
+                $msg->merge($row_msg);
             }
         }
 

@@ -385,10 +385,7 @@ class triple extends sandbox_link_named
     {
         // TODO Prio 0 add to coding.md that explicit is better than implicit: use this case as a sample. If a function returns a bool that indicates the status if the process should be continued, use id. Do not use any other values like the database id that are not explicit designed for the case e.g. because this would not work if a database table does not have an id but has only a timestamp
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        // map the fields whenever the row has been mapped (id set), not based on the parent return,
-        // because the parent return includes $msg->is_ok() and an error left on $msg by an earlier
-        // operation must not lead to a half mapped triple e.g. with a name but without the verb
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(triple_fields::FLD_FROM, $db_row)) {
                 $phr_id = $db_row[triple_fields::FLD_FROM];
                 if ($phr_id != null) {
@@ -435,7 +432,7 @@ class triple extends sandbox_link_named
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**

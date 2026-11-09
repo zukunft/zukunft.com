@@ -334,11 +334,11 @@ class sandbox extends db_object_seq_id_user
      * this row_mapper_sandbox function should be used for all user sandbox objects
      *
      * @param array|null $db_row with the data directly from the database
-     * @param user_message $msg to enrich with any mapping problem; a missing row is normal-empty and adds no message
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if a row has been loaded and the mapping can continue; problems are reported via $msg
+     * @return bool $msg->is_ok(), so that a child mapper continues with if ($result); a missing row or a row without id is reported
      */
     function row_mapper_sandbox(
         ?array       $db_row,
@@ -351,10 +351,8 @@ class sandbox extends db_object_seq_id_user
         if ($id_fld == '') {
             $id_fld = $this->id_field();
         }
-        parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields whenever the row has been mapped (id set), not based on $msg->is_ok(),
-        // because an error left on $msg by an earlier operation must not lead to a half mapped object
-        if ($this->id() != 0) {
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
+        if ($result) {
             // e.g. a row without user sandbox join does not include the user id field
             $usr_id_fld = sql_db::TBL_USER_PREFIX . $id_fld;
             if (!$load_std and array_key_exists($usr_id_fld, $db_row)) {
@@ -1173,7 +1171,7 @@ class sandbox extends db_object_seq_id_user
         // reset the id first, so that a missing database row is reported with id 0 as documented
         // and never with the stale id of e.g. a row that another user has deleted in the meantime,
         // because e.g. del() decides between delete and user exclude based on the reloaded id
-        // (a found row sets the id again in the row_mapper independent of the message state)
+        // (a found row sets the id again in the row_mapper, but only if the message carries no earlier error)
         $this->id = 0;
         $db_row = $db_con->get1($qp, $msg);
         // a false db row means that the query itself failed

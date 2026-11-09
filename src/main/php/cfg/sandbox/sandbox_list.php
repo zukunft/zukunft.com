@@ -143,7 +143,7 @@ class sandbox_list extends list_db_write
      *
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj the user sandbox object that should be added to the list
      * @param array|null $db_rows is an array of an array with the database values
-     * @param user_message $msg to collect the mapping errors
+     * @param user_message $msg to collect the mapping errors of all rows; each row is mapped with its own message
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
@@ -163,10 +163,13 @@ class sandbox_list extends list_db_write
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = $db_obj->clone_reset(true);
-                    $obj_to_add->row_mapper_sandbox($db_row, $msg);
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
                     // TODO Prio 3 check if object direct should be used to save time
-                    $this->add_obj($obj_to_add);
-                    $result = true;
+                    if ($obj_to_add->row_mapper_sandbox($db_row, $row_msg)) {
+                        $this->add_obj($obj_to_add);
+                        $result = true;
+                    }
+                    $msg->merge($row_msg);
                 }
             }
         }

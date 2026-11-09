@@ -202,6 +202,7 @@ messages:
   protection_raise_denied: "Only an admin can set the protection of z$VarObjName$z to z$VarProtectCheck$z, so the protection stays z$VarProtect$z."
   result_differs_from_value: "The value z$VarValue$z of z$VarObjName$z differs from the result z$VarValueCheck$z that its formula calculates; the value is shown, so please check the value or the formula."
   term_row_id_missing: "A word, triple, formula or verb could not be read, because the database row misses the field z$VarObjName$z. The admin has been informed. Please try again later."
+  db_row_id_missing: "A z$VarClassName$z could not be read, because the row mapper got no database row with an id in the field z$VarObjName$z. This is a problem of the program, please report it to the admin."
   import_step_skipped: "z$VarObjName$z has not been checked yet, because the errors above would probably cause follow-up errors here. Please fix the errors above and import again."
   delete_excluded_in_use: "The z$VarClassName$z \"z$VarObjName$z\" is still used, so it has only been hidden for you and has not been deleted. To delete it, first remove what uses it."
   system_title_error_log: "Error log"

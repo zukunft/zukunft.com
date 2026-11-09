@@ -215,6 +215,22 @@ class formula_link_tests
         $t->assert($test_name, $lnk_id_only->formula()->name() ?? '', '');
         $test_name = 'a row without a description leaves the description empty';
         $t->assert($test_name, $lnk_id_only->description ?? '', '');
+        $t->assert_row_mapper_guard($t_frm->formula_link(), $t_frm->formula_link_row());
+
+        // the rows of a list are independent, so the error of one row must not stop the next row
+        $test_name = 'a row whose mapping fails is not added to the list';
+        $lnk_lst = new formula_link_list($t->usr1);
+        $db_rows = [$t_frm->formula_link_row_untrimmed(), $t_frm->formula_link_row()];
+        $t->map_list_rows($lnk_lst, $db_rows, $msg);
+        $lnk_ids = $lnk_lst->ids();
+        $t->assert($test_name, $lnk_ids, [$t_frm->formula_link()->id()]);
+        $test_name = '... but the row after it is mapped completely';
+        $lnk_after = $lnk_lst->get_first_object();
+        $lnk_name = $lnk_after?->name();
+        $t->assert($test_name, $lnk_name, formula_names::SCALE_TO_SEC . ' to ' . word_names::MINUTE);
+        $test_name = '... and the failed row is reported';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
 
         $t->subheader($ts . 'api mapper');
 

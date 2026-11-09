@@ -128,10 +128,8 @@ class sandbox_typed extends sandbox_named
         string       $name_fld = '',
         string       $type_fld = ''): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld);
-        // map the fields whenever the row has been mapped (id set), not based on the parent return,
-        // because an error left on $msg by an earlier operation must not lead to a half mapped object
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        if ($result) {
             // TODO Prio 2 easy use set_type_by_id function
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];

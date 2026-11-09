@@ -111,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
@@ -6076,6 +6077,53 @@ class test_base
         $sbx->reset(true);
         $api_json = $sbx->api_json([api_types::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
+    }
+
+    /**
+     * check that the row mapper does not start if the message already carries an error, so that not even
+     * the id is set, and that it maps the same row with a clean message (docs/llm/dependent-errors.md)
+     *
+     * @param sandbox $sbx an object of the class whose row mapper is tested
+     * @param array $db_row a database row of the object as the load returns it
+     * @return bool true if the row is mapped only with the clean message
+     */
+    function assert_row_mapper_guard(sandbox $sbx, array $db_row): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $msg_err = new user_message($this->usr1); // carries the earlier error that stops the mapping
+        $msg_err->add(msg_id::FAILED, []);
+        $sbx_err = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper does not start after an earlier error';
+        $mapped = $sbx_err->row_mapper_sandbox($db_row, $msg_err);
+        $result = $this->assert_false($test_name, $mapped);
+        $test_name = '... so not even the id of the ' . $class . ' is set';
+        $id_err = $sbx_err->id();
+        $result = ($this->assert($test_name, $id_err, 0) and $result);
+        $msg = new user_message($this->usr1); // the clean message of the negative test
+        $sbx_ok = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper maps the row with a clean message';
+        $mapped = $sbx_ok->row_mapper_sandbox($db_row, $msg);
+        $result = ($this->assert_true($test_name, $mapped) and $result);
+        $test_name = '... including the id of the ' . $class;
+        $id_ok = $sbx_ok->id();
+        return ($this->assert($test_name, $id_ok, $sbx->id()) and $result);
+    }
+
+    /**
+     * map database rows into a list like its load does, which only the protected rows mapper of the list can do
+     *
+     * @param sandbox_list $lst the list that is filled
+     * @param array $db_rows the database rows e.g. with a row that cannot be mapped
+     * @param user_message $msg collects the problems of all rows
+     * @return bool true if at least one object has been added
+     */
+    function map_list_rows(sandbox_list $lst, array $db_rows, user_message $msg): bool
+    {
+        $rows_mapper = function (array $rows, user_message $row_msg): bool {
+            return $this->rows_mapper($rows, $row_msg);
+        };
+        return $rows_mapper->call($lst, $db_rows, $msg);
     }
 
     /**

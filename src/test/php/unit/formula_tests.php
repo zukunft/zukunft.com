@@ -149,6 +149,9 @@ class formula_tests
         $frm = $t_frm->formula_filled_not_db_ready();
         $t->assert_not_db_ready($frm);
 
+        $t->subheader($ts . 'row mapper');
+        $t->assert_row_mapper_guard($t_frm->formula(), $t_frm->formula_row());
+
         $t->subheader($ts . 'api');
         $frm = $t_frm->formula_filled();
         $t->assert_api_json($frm);

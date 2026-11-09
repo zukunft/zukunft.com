@@ -170,17 +170,19 @@ class value_list extends sandbox_value_list
                         $obj_to_add = new value($this->get_user());
                         log_err('Value type of value db_row cannot be detected');
                     }
-                    $obj_to_add->row_mapper_sandbox_multi($db_row, $msg, $ext);
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    $mapped = $obj_to_add->row_mapper_sandbox_multi($db_row, $row_msg, $ext);
                     // a value row that maps to no phrase group can never be changed or deleted
                     // by a user, so skip the corrupted row and report it to the admin for manual
                     // cleanup instead of e.g. blocking the deletion of a linked word
                     if ($obj_to_add->id() == 0 or $obj_to_add->id() == '') {
                         log_err('value db row without a phrase group skipped'
                             . ' (table type "' . $ext . '"): ' . implode(',', $db_row));
-                    } else {
+                    } elseif ($mapped) {
                         $this->add_obj($obj_to_add);
                         $result = true;
                     }
+                    $msg->merge($row_msg);
                 }
             }
         }

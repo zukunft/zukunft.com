@@ -764,6 +764,7 @@ messages:
   protection_raise_denied: "Nur ein Admin kann den Schutz von z$VarObjName$z auf z$VarProtectCheck$z setzen, deshalb bleibt der Schutz z$VarProtect$z."
   result_differs_from_value: "Der Wert z$VarValue$z von z$VarObjName$z weicht vom Ergebnis z$VarValueCheck$z ab, das seine Formel berechnet; der Wert wird angezeigt, bitte prüfe den Wert oder die Formel."
   term_row_id_missing: "Ein Wort, Triple, eine Formel oder ein Verb konnte nicht gelesen werden, weil der Datenbankzeile das Feld z$VarObjName$z fehlt. Der Admin wurde informiert. Bitte versuchen Sie es später erneut."
+  db_row_id_missing: "Ein z$VarClassName$z konnte nicht gelesen werden, weil die Zuordnung keine Datenbankzeile mit einer Id im Feld z$VarObjName$z erhalten hat. Das ist ein Fehler des Programms, bitte melden Sie ihn dem Admin."
   import_step_skipped: "z$VarObjName$z wurde noch nicht geprüft, weil die Fehler oben hier vermutlich Folgefehler verursachen würden. Bitte beheben Sie die Fehler oben und importieren Sie erneut."
   delete_excluded_in_use: "Das Objekt z$VarClassName$z \"z$VarObjName$z\" wird noch verwendet, deshalb wurde es nur für Sie ausgeblendet und nicht gelöscht. Um es zu löschen, entfernen Sie zuerst, was es verwendet."
   about_sponsored_by: "wird unterstützt von"

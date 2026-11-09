@@ -2610,3 +2610,28 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
     ref_row_confirm (wf44) moved the wikidata reference 277 of Zurich (canton) to the word with id 142 and changed
     its standard row; a database that has not been rebuilt since then still has these rows, which the cleanups
     cannot repair, because they only look at the references of the triple.
+
+## the sign of a phrase id in phrase::set_id
+
+`phrase::set_id()` takes a phrase id, whose sign says word (positive) or triple (negative), but sets only its
+absolute value on the object (`set_obj_id(abs($id))`). A new phrase holds a dummy word, so `set_id(-142)` makes
+the word 142 out of the triple 142 without any message. `ref::api_mapper`, `triple::phrase_from_api_json` and
+`formula_link::set_phrase_from_id` have been switched to `set_obj_from_id()`, but only after the write workflows
+ref_rows (wf43) and ref_row_confirm (wf44) had linked a reference of a triple to a word (see item 12 of the
+wikipedia refresh leftovers). Still calling `set_id()` with a phrase id that can be negative:
+`data_object::get_phrase_by_id` (the dto branch of `formula_link::set_phrase_from_id`), `data_object::set_phrase_id`
+and `phrase_list::add_id`. Make `set_id()` keep the sign like `set_obj_from_id()`, or remove it and switch every
+caller, with a unit test per caller that a negative id gives a triple and a positive id a word.
+
+## no mapping after an earlier error for the multi key objects
+
+The row mappers of the objects with a sequence id (`db_object_seq_id::row_mapper` and every child, `phrase`,
+`term` and `type_object`) do not start if `$msg` already carries an error and return true only if they have
+mapped the row (`docs/llm/dependent-errors.md`). The mappers of the objects with a group id or a text key do not
+have this guard yet: `db_object_key::row_mapper`, `db_object_multi::row_mapper_multi`,
+`sandbox_multi::row_mapper_sandbox_multi` with `value_base`, `value_time_series`, `sandbox_value` and `result`,
+`group::row_mapper` and `figure::row_mapper`. Their list loops already map each row with an own message, so a
+list is not affected; a single load after an earlier error still maps the row. Add the same guard and the same
+return, with the tests of `test_base::assert_row_mapper_guard` for a value, a result and a group.
+`group_list::rows_mapper` calls `rows_mapper_obj` with a group, which has no `row_mapper_sandbox`, so it would
+fail on its first row; the group lists are loaded by `load_by_phr` today, which maps the rows itself.

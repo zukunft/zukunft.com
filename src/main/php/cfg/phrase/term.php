@@ -283,12 +283,16 @@ class term extends combine_named
     /**
      * TODO Prio 2 deprecate and replace with row_mapper_obj
      * map the main field from the term view to a term object
-     * @return bool true if at least one term has been loaded
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
+     * @return bool $msg->is_ok(); a missing row or a row without id is reported
      */
     function row_mapper(array $db_row, user_message $msg): bool
     {
         $result = false;
         $this->set_id(0);
+        if (!$msg->is_ok()) {
+            return false;
+        }
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
@@ -304,13 +308,21 @@ class term extends combine_named
                 $result = true;
             }
         }
+        // reported like in db_object_seq_id::row_mapper, so that a list does not add an empty term
+        if (!$result) {
+            $msg->add(msg_id::DB_ROW_ID_MISSING, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                msg_id::VAR_NAME => self::FLD_ID,
+            ]);
+        }
         return $msg->is_ok();
     }
 
     /**
      * map a complete underlying object to a term
      * @param array|null $db_row with the data directly from the database
-     * @return bool true if at least one term has been loaded
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
+     * @return bool $msg->is_ok(); a missing row or a row without id is reported
      */
     function row_mapper_sandbox(
         ?array       $db_row,
@@ -324,6 +336,9 @@ class term extends combine_named
     {
         $result = false;
         $this->set_obj_id(0);
+        if (!$msg->is_ok()) {
+            return false;
+        }
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($this->row_has_ids($db_row, $id_fld)) {
                 $this->set_obj_from_id($db_row[term::FLD_ID]);

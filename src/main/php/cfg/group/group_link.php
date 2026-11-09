@@ -87,8 +87,7 @@ class group_link extends db_object_seq_id
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->grp_id = $db_row[group_fields::FLD_ID];
             $this->trp_id = $db_row[triple_fields::FLD_ID];
         }

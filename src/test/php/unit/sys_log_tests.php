@@ -520,6 +520,9 @@ class sys_log_tests
         $sys_tim = new system_time();
         $sys_tim->row_mapper(null, $msg);
         $t->assert_null($test_name, $sys_tim->url);
+        // the caller maps only a found row, so a missing row is a problem of the program
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $msg->is_ok());
         $msg->reset();
 
         // negative: a system time that has not been started sends no start time

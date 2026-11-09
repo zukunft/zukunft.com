@@ -964,9 +964,12 @@ class phrase_list extends sandbox_list_named
                         // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->get_user());
-                            $new_phrase->row_mapper_sandbox($db_phr, $msg);
-                            $additional_added->add($new_phrase);
-                            log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb_db::FLD_ID] . ')');
+                            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                            if ($new_phrase->row_mapper_sandbox($db_phr, $row_msg)) {
+                                $additional_added->add($new_phrase);
+                                log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb_db::FLD_ID] . ')');
+                            }
+                            $msg->merge($row_msg);
                         }
                     }
                 }

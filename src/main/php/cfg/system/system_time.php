@@ -147,9 +147,8 @@ class system_time extends db_object_seq_id
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $lib = new library();
-        parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        if ($result) {
             $this->start_time = $lib->get_datetime($db_row[self::FLD_TIME_START] ?? null, $this->dsp_id());
             // the end time can be missing, which must not be shown as now
             if (($db_row[self::FLD_TIME_END] ?? null) !== null) {

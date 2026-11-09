@@ -122,8 +122,11 @@ class view_sys_list extends type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $msk = new view($this->usr);
-                $msk->row_mapper_sandbox($db_row, $msg);
-                $msk_lst[] = $msk;
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($msk->row_mapper_sandbox($db_row, $row_msg)) {
+                    $msk_lst[] = $msk;
+                }
+                $msg->merge($row_msg);
             }
         }
         // the component links and the components of all system views are loaded with one query each

@@ -1133,12 +1133,15 @@ class change_log_list extends list_db_read
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row, $msg, '', $usr);
-                    // allow duplicates, because the change id is unique per change table only:
-                    // a list that merges the changes of the named objects with the changes of
-                    // the value tables (see load_by_user) always has repeated ids
-                    $this->add_obj($chg, true);
-                    $result = true;
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    if ($chg->row_mapper($db_row, $row_msg, '', $usr)) {
+                        // allow duplicates, because the change id is unique per change table only:
+                        // a list that merges the changes of the named objects with the changes of
+                        // the value tables (see load_by_user) always has repeated ids
+                        $this->add_obj($chg, true);
+                        $result = true;
+                    }
+                    $msg->merge($row_msg);
                 }
             }
         }

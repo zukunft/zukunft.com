@@ -132,8 +132,7 @@ class ip_range extends db_object_seq_id
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $result = parent::row_mapper($db_row, $msg, ip_range_db::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->from = $db_row[ip_range_db::FLD_FROM];
             $this->to = $db_row[ip_range_db::FLD_TO];
             $this->reason = $db_row[ip_range_db::FLD_REASON];

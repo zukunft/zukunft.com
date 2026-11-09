@@ -44,6 +44,7 @@ include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -692,6 +694,21 @@ class test_views extends test_objects
         $trm_msk->set_predicate(view_link_types::DEFAULT);
         $trm_msk->set_view($this->view_math());
         return $trm_msk;
+    }
+
+    /**
+     * @return array the database row of the standard test link of a term to a view e.g. for the row mapper tests
+     */
+    function term_view_row(): array
+    {
+        $trm_msk = $this->term_view();
+        return [
+            term_view::FLD_ID => $trm_msk->id(),
+            term_view::FLD_FROM => $trm_msk->term()->id(),
+            term_view::FLD_PREDICATE => $trm_msk->predicate_id(),
+            term_view::FLD_TO => $trm_msk->get_view()->id(),
+            fields::FLD_DESCRIPTION => $trm_msk->description,
+        ];
     }
 
     function term_view_filled(): term_view

@@ -227,11 +227,12 @@ class term_list extends sandbox_list_named
         $trm_lst = $db_con->get($qp, $msg, 'term list');
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->get_user());
-            $trm->row_mapper_sandbox($db_row, $msg);
-            if ($trm->id() != 0) {
+            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+            if ($trm->row_mapper_sandbox($db_row, $row_msg)) {
                 $this->add($trm);
                 $result = true;
             }
+            $msg->merge($row_msg);
         }
 
         return $result;

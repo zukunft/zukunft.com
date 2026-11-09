@@ -190,14 +190,17 @@ class change_log_link_list extends list_db_read
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change_link($usr);
-                    $chg->row_mapper($db_row, $msg);
-                    // normalise the display text so the api always shows the relevant side as old/new text
-                    if ($use_from) {
-                        $chg->old_text_to = $chg->old_text_from;
-                        $chg->new_text_to = $chg->new_text_from;
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    if ($chg->row_mapper($db_row, $row_msg)) {
+                        // normalise the display text so the api always shows the relevant side as old/new text
+                        if ($use_from) {
+                            $chg->old_text_to = $chg->old_text_from;
+                            $chg->new_text_to = $chg->new_text_from;
+                        }
+                        $this->add_obj($chg);
+                        $result = true;
                     }
-                    $this->add_obj($chg);
-                    $result = true;
+                    $msg->merge($row_msg);
                 }
             }
         }

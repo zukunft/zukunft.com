@@ -402,8 +402,7 @@ class user extends db_id_object_non_sandbox
     {
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->name = $db_row[user_db::FLD_NAME];
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
             $this->email = $db_row[user_db::FLD_EMAIL];
