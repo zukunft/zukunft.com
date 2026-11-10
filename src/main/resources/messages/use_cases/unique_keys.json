@@ -26,7 +26,7 @@
       "type": "unique_key",
       "refs": [
         {
-          "name": "International Securities Identification Number",
+          "name": "International_Securities_Identification_Number",
           "type": "wikipedia"
         }
       ]
@@ -37,7 +37,7 @@
       "type": "unique_key",
       "refs": [
         {
-          "name": "International Article Number",
+          "name": "International_Article_Number",
           "type": "wikipedia"
         }
       ]
@@ -53,7 +53,7 @@
       "type": "unique_key",
       "refs": [
         {
-          "name": "Universal Product Code",
+          "name": "Universal_Product_Code",
           "type": "wikipedia"
         }
       ]
@@ -86,7 +86,7 @@
       "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
       "refs": [
         {
-          "name": "The Myth of Sisyphus",
+          "name": "The_Myth_of_Sisyphus",
           "type": "wikipedia"
         }
       ]
@@ -96,7 +96,7 @@
       "description": "the book of Grove Press with the play Rhinoceros by Eugène Ionesco in the English translation of Derek Prouse",
       "refs": [
         {
-          "name": "Rhinoceros (play)",
+          "name": "Rhinoceros_(play)",
           "type": "wikipedia"
         }
       ]
@@ -105,7 +105,7 @@
       "name": "A Theory of Justice",
       "refs": [
         {
-          "name": "A Theory of Justice",
+          "name": "A_Theory_of_Justice",
           "type": "wikipedia"
         }
       ]

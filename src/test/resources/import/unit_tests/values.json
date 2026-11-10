@@ -180,7 +180,7 @@
       "name": "DALY",
       "refs": [
         {
-          "name": "Disability-adjusted life year",
+          "name": "Disability-adjusted_life_year",
           "type": "wikipedia"
         },
         {
@@ -206,7 +206,7 @@
       "name": "population",
       "refs": [
         {
-          "name": "Human population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
@@ -320,7 +320,7 @@
       "to": "human",
       "refs": [
         {
-          "name": "World population",
+          "name": "World_population",
           "type": "wikipedia"
         },
         {

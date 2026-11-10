@@ -484,7 +484,7 @@ same split-identity problem as a partial trim.
 For a `ref` the identifying part is the **external key** (the Wikipedia article
 slug or the Wikidata Q-id, with its `type` / `ref_type`), and that key follows
 the **external source's** spelling and casing — Wikipedia and Wikidata
-capitalise (`Zurich (City)`, `Canton of Zurich`, `Q72`). Never lower-case a
+capitalise (`Canton_of_Zurich`, `Q72`). Never lower-case a
 ref to match an internal phrase, and never assume a ref tracks the phrase name:
 the lower-case-first and byte-for-byte rules above govern *phrase names only*;
 in a `ref` the external key is what counts and the internal name is irrelevant,
@@ -493,8 +493,9 @@ they belong to is lower-cased.
 
 **One external key per phrase and ref type in all import files.** A phrase is
 one term, so every file that lists a ref of it gives the same key: the
-Wikipedia article title with spaces (`Standard deviation`, not
-`Standard_deviation`) and the Q-id of that article. Otherwise each import
+slug of the direct url of the Wikipedia article (`Standard_deviation`, not
+`Standard deviation`), because the link is the url of the ref type plus the
+key, and the Q-id of that article. Otherwise each import
 overwrites the key of the previous one. A ref follows the meaning of the
 phrase's description; a file that uses the phrase in another sense lists no
 ref for it.

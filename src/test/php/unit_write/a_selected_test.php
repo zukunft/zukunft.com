@@ -62,6 +62,7 @@ include_once test_paths::UNIT . 'result_list_tests.php';
 include_once test_paths::UNIT . 'triple_tests.php';
 include_once test_paths::UNIT . 'user_tests.php';
 include_once test_paths::UNIT . 'word_tests.php';
+include_once test_paths::UNIT . 'wikipedia_tests.php';
 include_once test_paths::UNIT_READ . 'phrase_data_read_tests.php';
 include_once test_paths::UNIT_READ . 'result_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
@@ -138,6 +139,7 @@ use Zukunft\ZukunftCom\test\php\unit\triple_tests;
 use Zukunft\ZukunftCom\test\php\unit\type_tests;
 use Zukunft\ZukunftCom\test\php\unit\user_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\user_tests;
+use Zukunft\ZukunftCom\test\php\unit\wikipedia_tests;
 use Zukunft\ZukunftCom\test\php\unit\value_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\value_tests;
 use Zukunft\ZukunftCom\test\php\unit\verb_tests;
@@ -335,6 +337,8 @@ class a_selected_test extends all_unit_tests
         //new source_tests()->run($this);
         //new source_list_tests()->run($this);
         //new ref_tests()->run($this);
+        // the frozen summary of the Geneva page
+        new wikipedia_tests()->run($this);
         // the user row builders of sandbox_multi for the value and the time series tables
         new value_tests()->run($this);
         //new value_list_tests()->run($this);

@@ -1,0 +1,45 @@
+GET
+http://localhost/http/view.php?id=142&k=Zurich+%28canton%29&o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&pf=228&b=2&pt=201&8id=142&8k=Zurich+%28canton%29&8o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8pf=228&8b=2&8pt=201&9m=4&9id=142&6a1=u&6l1=277&6ek1=Q999999999&86ek1=Q11943&6a2=d&6l2=276&6ek2=Canton_of_Zurich&86ek2=Canton_of_Zurich&6a3=a&6lt3=3&6ek3=System+Test+Reference+Row+Added&m=51&z=1&submit=
+/http/view.php?id=142&k=Zurich+%28canton%29&o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&pf=228&b=2&pt=201&8id=142&8k=Zurich+%28canton%29&8o=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8pf=228&8b=2&8pt=201&9m=4&9id=142&6a1=u&6l1=277&6ek1=Q999999999&86ek1=Q11943&6a2=d&6l2=276&6ek2=Canton_of_Zurich&86ek2=Canton_of_Zurich&6a3=a&6lt3=3&6ek3=System+Test+Reference+Row+Added&m=51&z=1&submit=
+/http/view.php?id=142&name=Zurich+%28canton%29&description=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&from_id=228&verb_id=2&to_id=201&8id=142&8name=Zurich+%28canton%29&8description=The+canton+of+Zurich+is+an+administrative+unit+%28canton%29+of+Switzerland%2C+situated+in+the+northeastern+part+of+the+country.&8from_id=228&8verb_id=2&8to_id=201&9mask_id=triple_default&9id=142&6action1=show&6ref_id1=277&6external_key1=Q999999999&86external_key1=Q11943&6action2=del&6ref_id2=276&6external_key2=Canton_of_Zurich&86external_key2=Canton_of_Zurich&6action3=add&6ref_type3=3&6external_key3=System+Test+Reference+Row+Added&mask_id=triple_edit&step=confirm&
+{
+    "id": "142",
+    "name": "Zurich (canton)",
+    "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
+    "from_id": "228",
+    "verb_id": "2",
+    "to_id": "201",
+    "mask_id": "triple_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "142",
+        "name": "Zurich (canton)",
+        "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
+        "from_id": "228",
+        "verb_id": "2",
+        "to_id": "201",
+        "6external_key1": "Q11943",
+        "6external_key2": "Canton_of_Zurich"
+    },
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "142"
+    },
+    "url_part_ref_row": {
+        "1": {
+            "action": "show",
+            "ref_id": "277",
+            "external_key": "Q999999999"
+        },
+        "2": {
+            "action": "del",
+            "ref_id": "276",
+            "external_key": "Canton_of_Zurich"
+        },
+        "3": {
+            "action": "add",
+            "ref_type": "3",
+            "external_key": "System Test Reference Row Added"
+        }
+    }
+}

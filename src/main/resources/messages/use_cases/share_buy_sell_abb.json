@@ -357,7 +357,7 @@
       "description": "earnings before interest, taxes, depreciation and amortisation",
       "refs": [
         {
-          "name": "Earnings before interest, taxes, depreciation and amortization",
+          "name": "Earnings_before_interest,_taxes,_depreciation_and_amortization",
           "type": "wikipedia"
         }
       ]

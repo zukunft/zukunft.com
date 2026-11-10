@@ -380,6 +380,13 @@ class workflows
     const string WF_WIKIDATA_REFRESH = 'wikidata_refresh';
     const int WF_WIKIDATA_REFRESH_NBR = 45;
 
+    // the ref_rows_form workflow name used for the snapshot folder and the test subheader: the user opens
+    // the edit view of Zurich (canton) with its reference rows, changes the key of one reference, checks
+    // the delete box of the other, fills the add row, saves and confirms; it only renders, because a
+    // write would change the change log of the seed triple (see docs/llm/pending_prio_2.md)
+    const string WF_REF_ROWS_FORM = 'ref_rows_form';
+    const int WF_REF_ROWS_FORM_NBR = 46;
+
     /**
      * the user process step that a user reaction action triggers
      *

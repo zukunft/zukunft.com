@@ -12,7 +12,7 @@
       "name": "portfolio",
       "description": "a grouping of financial assets such as stocks, bonds, commodities, currencies and cash equivalents held by an investor",
       "refs": [
-        {"name": "Portfolio (finance)", "type": "wikipedia"},
+        {"name": "Portfolio_(finance)", "type": "wikipedia"},
         {"name": "Q1936956", "type": "wikidata"}
       ]
     },
@@ -55,7 +55,7 @@
       "name": "share",
       "description": "unit of ownership of a corporation; one of the equal parts into which a company's capital is divided",
       "refs": [
-        {"name": "Share (finance)", "type": "wikipedia"},
+        {"name": "Share_(finance)", "type": "wikipedia"},
         {"name": "Q160151", "type": "wikidata"}
       ]
     },
@@ -78,7 +78,7 @@
       "name": "lot",
       "description": "in trading, a standard tradable unit size of a security",
       "refs": [
-        {"name": "Lot (securities)", "type": "wikipedia"}
+        {"name": "Lot_(securities)", "type": "wikipedia"}
       ]
     },
     {
@@ -89,7 +89,7 @@
       "name": "value",
       "description": "the amount of money for which something can be exchanged in the market; in this file always denominated in CHF unless otherwise qualified",
       "refs": [
-        {"name": "Value (economics)", "type": "wikipedia"},
+        {"name": "Value_(economics)", "type": "wikipedia"},
         {"name": "Q193912", "type": "wikidata"}
       ]
     },
@@ -97,7 +97,7 @@
       "name": "position",
       "description": "the amount of a particular security held by an investor",
       "refs": [
-        {"name": "Position (finance)", "type": "wikipedia"},
+        {"name": "Position_(finance)", "type": "wikipedia"},
         {"name": "Q1378818", "type": "wikidata"}
       ]
     },
@@ -109,7 +109,7 @@
       "name": "weight",
       "description": "the relative share of a portfolio that a position or beneficiary accounts for",
       "refs": [
-        {"name": "Asset allocation", "type": "wikipedia"}
+        {"name": "Asset_allocation", "type": "wikipedia"}
       ]
     },
     {
@@ -119,7 +119,7 @@
       "name": "deviation",
       "description": "in this file, the signed difference between the rounded allocated value and the unrounded target value for a beneficiary at a single position",
       "refs": [
-        {"name": "Deviation (statistics)", "type": "wikipedia"}
+        {"name": "Deviation_(statistics)", "type": "wikipedia"}
       ]
     },
     {

@@ -1,0 +1,13 @@
+GET
+http://localhost/http/view.php?id=142&9m=4&9id=142&m=51&z=0
+/http/view.php?id=142&9m=4&9id=142&m=51&z=0
+/http/view.php?id=142&9mask_id=triple_default&9id=142&mask_id=triple_edit&step=no&
+{
+    "id": "142",
+    "mask_id": "triple_edit",
+    "step": "no",
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "142"
+    }
+}

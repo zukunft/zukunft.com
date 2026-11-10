@@ -1,67 +1,56 @@
 # pending - list of planned llm prompts with prio 1
 
-## confirm the reference changes together with the phrase
+## the old `$back` url parameter
 
-the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
-of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
-component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
-per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
-value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
-`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
-external key, so that an unchanged form writes no reference.
+The back target of a page is the `'9'`-prefixed part of its url (`url_var::BACK`), built from the url array of
+the calling page (`html_base::url_back`, `url_with_back`, `back_url_part`); `web/` is free of `$back` and of a
+literal `&back=`, which `coding_rule_tests::php_web_no_back_param_tests` keeps that way. The code lines below are
+what is left of the old parameter, found on 2026-11-10.
 
-### suggested code changes
+### the open issue descriptions
 
-The line numbers are those of the files when this suggestion was written. The phrase edit views are `word_edit`
-(`system_views.json:5076`) and `triple_edit` (`system_views.json:5433`), not views of `base_views.json`. Today the
-references are only shown in the tab box of the edit view (`ref list word`, `ui_list::ref_list_word`,
-`ui_list.php:1248`), which is outside the form, so nothing of it is posted with the save. The rest of the flow
-exists: the save carries the whole posted url to the confirm view (`frontend.php:950`), the preview shows the rows
-(`ui_preview::ref_rows_section`, `ui_preview.php:371`), `system_form::form_back` (`system_form.php:569`) carries
-them to the confirmed post and `frontend::action_crud` writes them with `phrase::save_ref_rows`
-(`frontend.php:2885`, `web/phrase/phrase.php:1118`). Steps 1 (an unchanged row is no change) and 2 (the component
-`system_form_ref_rows` that writes the rows) are done, see `docs/llm/log/ref_rows_form_2026-11-10.md`; the test runs:
-- after step 3 the full run with re-pin of the end of this prompt (first `test/reset_db.php`, then at least twice
-  `test/test.php`), because the new component shifts the ids of the later components and component links
-- a step that is committed on its own needs a full `test/test.php` before its commit (`docs/llm/testing.md:187`),
-  so steps 1 and 2 are either committed each after a full run or together with step 3 after its re-pin run
+- `docs/todo.md:97` — "TODO deprecate the old $back parameter and use instead back prefixed parameters"
+- `docs/llm/pending_prio_2.md:609` — section "after replacing the `$back` parameter by the url array of the calling
+  page": what the conversion found and left open; its item "the write only properties
+  `cfg/system/sys_log_list.php::$back` and `cfg/formula/formula_list.php::$back`" is done, both properties are gone
+- `docs/llm/pending_prio_2.md:1053` — `web/user/user.php::dsp_errors` (only its `string $back` became `array $url_arr`)
+- `docs/llm/pending.md` "more" — the agent buttons of the triage prompt names `$back`, and the items "review buttons"
+  and "review $back"; the note on `web/value/value_list.php:1352` and `:1360` is done: both calls pass `$url_arr`
+  (now `value_list.php:4132` and `:4140`)
 
-#### step 3: the rows in the phrase edit views
+### the code lines
 
-add at the end of the `components` block of `system_views.json` (after `system admin subtitle`, `:2636`):
+backend, not reachable today:
 
-```json
-    {
-      "name": "system form ref rows",
-      "description": "the references of the phrase as rows of the edit form, which the confirm of the phrase change writes too",
-      "type": "system_form_ref_rows",
-      "code_id": "form_ref_rows",
-      "ui_msg_code_id": "form_ref_rows"
-    }
-```
+- `src/main/php/cfg/phrase/phrase.php:2001` — `function dsp_time_selector($type, $form_name, $pos, $back, user_message $msg): string`
+- `src/main/php/cfg/phrase/phrase.php:2005` — `return $wrd->dsp_time_selector($type, $form_name, $pos, $back, $msg);`
+  calls a `word::dsp_time_selector` that exists in neither layer; its only callers are the frontend calls
+  `src/main/php/web/value/value.php:1319` and `:1334` (`$time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr)`)
+  of `value::dsp_edit`, which call a frontend function that does not exist either
+- `src/main/php/cfg/word/word_list.php:10` — `TODO Prio 2 check the consistence usage of the parameter $back`
+  names a parameter that no longer exists
+- `src/main/php/web/html/html_base.php:1430` — `TODO Prio 1 deprecate and replace if the the url_arr based back var`
+  is a docblock without a function, directly above the docblock of the next function
 
-and in `word_edit` after `system form select protection type` (`:5122`) and in `triple_edit` after the same
-component (`:5507`) the entry `"name": "system form ref rows"` with the next position; the positions of the later
-components of the two views move by one. The new component shifts the id of every component imported after
-`system_views.json` (e.g. `base_views.json`, the calculator views), and the two view entries shift the component
-link ids of the later views, so this step needs the re-pin of a full test run.
+tests, live code:
 
-Tests of this step:
-- the html snapshots of `word_edit` and `triple_edit` change, regenerated by the test run and reviewed by the
-  developer
-- a new workflow in `ref_url_tests` (snapshots under `workflow/`) and its write version in `ref_write_url_tests`
-  (under `workflow_write/`) on the test triple of `pending_prio_2.md` ("the reference write workflows change the
-  change log of a seed triple"), never on a seed phrase: show the edit view, change the external key of one
-  reference, check the delete box of another and fill the add row, save, confirm with the preview of the three
-  rows, confirmed, and check the three references in the database; its negative: save the edit view without a
-  change and get the no change message of the confirm (`ui_preview.php:898`)
+- `src/test/php/unit_write/element_write_tests.php:117`, `:121`, `:123` — the targets of `element::link` still end
+  with `&back=0`; the assert below is switched off (`TODO Prio 0 activate`)
+- `src/test/php/unit_ui/base_ui_tests.php:1400` — the target of `button::back` is the old `?words=1` page; the assert
+  is switched off
+- `src/test/php/unit/lib_tests.php:1518` to `:1522` — `&back=1` is only sample text of the `str_diff` test, no use of
+  the parameter
+- `src/test/php/unit_workflow/login_url_tests.php:128` — the local `$back` holds the `'9'`-prefixed
+  `START_PAGE_BACK`, so it is the new parameter with an old name
 
-Check after the change:
-- a confirm that changes only the references writes the phrase without a change: check that `update` of the
-  phrase reports no error for an unchanged phrase, else `action_crud` stops before `save_ref_rows`
-- the type of a stored reference is read only, because the phrase and the type are the prime index of a reference
-  (`ref::link_key_fields`) and another type is another reference (delete and add); ask the developer if the type
-  should be editable instead, as the prompt names an input for each field of `url_var::REF_ROW_VARS`
+tests, commented out (they call the retired `http/*_add.php`, `*_edit.php` and `*_del.php` pages):
+
+- `src/test/php/unit_write/formula_write_tests.php:375`, `:382`, `:391`, `:395`
+- `src/test/php/unit_write/test_word_display.php:174`
+- `src/test/php/unit_write/view_write_tests.php:112`
+- `src/test/php/unit_ui/formula_ui_tests.php:673`, `:680`, `:685`
+- `src/test/php/unit_write/value_write_tests.php:283`, `:292`
+- `src/test/php/unit_write/element_group_write_tests.php:168`
 
 if done remove this prompt from pending.md
 
@@ -69,22 +58,140 @@ if done remove this prompt from pending.md
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-## wikipedia link
+## prime group id within 2^53
 
-if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
-the refresh icon right of wikipedia is pressed the corresponding page from wikipedia should be 
-received and the first part of the description should be taken from wikipedia without pronouciation and links
-and used as the description . so the result should be that the change confirm page is shown with the adjusted 
-description.
-Additional to the description the wikidata link should be taken from the wikipedia page and if needed included in the update
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
 
-create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
-that will not be changed any more and from this extract the description and the wikidata link as a unit test.
+if done remove this prompt from pending.md
 
-check if the external key of a wikipedia ref should be the url slug e.g. `Canton_of_Zurich` or the title
-as shown on the screen e.g. `Canton of Zurich`. The import files use the title for now
-(see the one external key rule in docs/llm/json_structure.md), so check that the link built from the key opens
-the right page with both forms, decide on one, and update the rule and the import files to it.
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
+"Other" are part of the admin dashboard prompt; step 1 is done.
+- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
+  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
+- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
+  step 5 and agent export import with step 7; stop for a run with re-pin
+- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
+  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
+
+## deprecate http_old
+
+**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
+`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
+of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
+
+**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
+when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
+feature with it that is not written down.
+
+### http_old scripts and the functionality to move
+
+The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
+http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
+
+| script | generic replacement | functionality to move |
+|---|---|---|
+| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
+| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
+| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
+| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
+| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
+| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
+| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
+| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
+| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
+| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
+| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
+| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
+| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
+| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
+| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
+| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
+| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
+| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
+| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
+| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
+| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
+| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
+| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
+| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
+| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
+| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
+| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
+| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
+| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
+| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
+| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
+| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
+
+### bugs found while checking http_old
+
+All found by reading the code, none by a test run; confirm each with a failing test before the fix.
+
+#### Code
+
+1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
+   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
+2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
+   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
+3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
+   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
+   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
+   never-fail-silently violation.
+4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
+   about the verb, and it writes nothing (the update is commented out, the db field is missing).
+
+#### Documentation
+
+5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
+   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
+   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
+   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
+   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
+   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
+   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
+   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
+   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
+   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
+   seed view; m=20 is now even the value add view instead of the value del view.
+
+#### Other
+
+1. **List the functionality to move per script.** Done: see the table above.
+2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
+   by replacing the numbers with the consts.
+3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
+   `verb_edit` (appended component position, no new component), with the workflow snapshots.
+4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
+   test in `unit_ui/`.
+5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
+   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
+   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
+6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
+   formulas (replacing `calculate.php`), both shown on the job control view.
+7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
+   (`api/json`, the export views, the upload of the import view).
+8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
+   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
+   the order of their prio, one section per commit.
+9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
+   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
+   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
+   that might still define a class.
+10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
+    other than the scripts in `http/`, so a retired script cannot get a new caller.
+11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 ## language
 
@@ -127,36 +234,6 @@ e.g. test if the Calculator Editor can be used with translated data including wr
 
 and finally show the translated page if the url has something link =de
 
-## this document
-
-**How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
-prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
-- see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
-  removes it from this file, asks the developer the decisions that the sections name, starts the agents of a phase in
-  parallel and waits for all of them before the next phase
-- a phase that says "stop for a run" ends with the lead asking the developer for the named test run; the lead continues
-  with the next phase only after the developer has reported the result
-- each agent gets the prompt, the sections of its task and the result of the earlier phases as context, changes only
-  the files of its task (a change that another agent of the same phase owns goes as a note to the lead), uses
-  Edit/Write only, never commits, never runs a `/test/*` script and reports the changed files and the open points
-- in the end the lead reviews the whole change as one (one style, no doubled code, lint clean), keeps every open point
-  here or moves it to `docs/llm/pending_prio_2.md`, removes the done sections and reports the id shift, the tests to
-  run and a short commit message
-- the size is S (one agent, a few files), M (two or three agents) or L (four or more agents or several phases)
-- the marker after `**next prompt**` is the test run of the developer before the next prompt:
-  - `**full test run: /test/test.php**` if no seed data changes
-  - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
-    seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
-    `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
-
-**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
-gets the CO2-eq costs). One phase, four agents in parallel:
-- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
-- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
-  costs in the NPP use case json
-- agent share: the "Share assumptions and vote" button of the calculator page
-- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
-
 ## Calculator editor
 
 ### Swiss NPP
@@ -173,18 +250,6 @@ add costs of CO2-eq reduction to the npp
 
 add to the calculator a 'Share assumptions and vote' button
 and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
-
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
@@ -2499,131 +2564,6 @@ sees the difference and can empty the given name to fall back to the generated o
 (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable
 fields impact and inactive as display-only info in the edit view next to the existing usage component
 
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
-"Other" are part of the admin dashboard prompt; step 1 is done.
-- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
-  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
-- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
-  step 5 and agent export import with step 7; stop for a run with re-pin
-- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
-  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
-
-## deprecate http_old
-
-**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
-`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
-of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
-
-**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
-when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
-feature with it that is not written down.
-
-### http_old scripts and the functionality to move
-
-The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
-http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
-
-| script | generic replacement | functionality to move |
-|---|---|---|
-| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
-| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
-| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
-| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
-| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
-| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
-| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
-| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
-| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
-| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
-| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
-| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
-| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
-| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
-| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
-| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
-| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
-| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
-| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
-| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
-| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
-| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
-| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
-| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
-| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
-| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
-| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
-| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
-| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
-| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
-| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
-| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
-
-### bugs found while checking http_old
-
-All found by reading the code, none by a test run; confirm each with a failing test before the fix.
-
-#### Code
-
-1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
-   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
-2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
-   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
-3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
-   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
-   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
-   never-fail-silently violation.
-4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
-   about the verb, and it writes nothing (the update is commented out, the db field is missing).
-
-#### Documentation
-
-5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
-   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
-   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
-   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
-   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
-   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
-   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
-   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
-   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
-   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
-   seed view; m=20 is now even the value add view instead of the value del view.
-
-#### Other
-
-1. **List the functionality to move per script.** Done: see the table above.
-2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
-   by replacing the numbers with the consts.
-3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
-   `verb_edit` (appended component position, no new component), with the workflow snapshots.
-4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
-   test in `unit_ui/`.
-5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
-   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
-   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
-6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
-   formulas (replacing `calculate.php`), both shown on the job control view.
-7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
-   (`api/json`, the export views, the upload of the import view).
-8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
-   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
-   the order of their prio, one section per commit.
-9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
-   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
-   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
-   that might still define a class.
-10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
-    other than the scripts in `http/`, so a retired script cannot get a new caller.
-11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
-
-if done remove this prompt from pending.md
-
 **next prompt**
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
@@ -2781,58 +2721,6 @@ These reuse the token helpers of `coding_rule_tests` (`brace_end`, `next_code_id
 | 21 | a new url var has its human format | each field const of `url_var` has a `*_HUMAN` twin and a `HUMAN_TO_STD` row, each value const a `HUMAN_TO_STD_<FIELD>_VAL` entry | — |
 | 22 | every prepared statement has a fixture | each sql name of the `assert_sql_*` calls has a file in `src/test/resources/db/<class>/` and each fixture file is used by a test | — |
 
-## the old `$back` url parameter
-
-The back target of a page is the `'9'`-prefixed part of its url (`url_var::BACK`), built from the url array of
-the calling page (`html_base::url_back`, `url_with_back`, `back_url_part`); `web/` is free of `$back` and of a
-literal `&back=`, which `coding_rule_tests::php_web_no_back_param_tests` keeps that way. The code lines below are
-what is left of the old parameter, found on 2026-11-10.
-
-### the open issue descriptions
-
-- `docs/todo.md:97` — "TODO deprecate the old $back parameter and use instead back prefixed parameters"
-- `docs/llm/pending_prio_2.md:609` — section "after replacing the `$back` parameter by the url array of the calling
-  page": what the conversion found and left open; its item "the write only properties
-  `cfg/system/sys_log_list.php::$back` and `cfg/formula/formula_list.php::$back`" is done, both properties are gone
-- `docs/llm/pending_prio_2.md:1053` — `web/user/user.php::dsp_errors` (only its `string $back` became `array $url_arr`)
-- `docs/llm/pending.md` "more" — the agent buttons of the triage prompt names `$back`, and the items "review buttons"
-  and "review $back"; the note on `web/value/value_list.php:1352` and `:1360` is done: both calls pass `$url_arr`
-  (now `value_list.php:4132` and `:4140`)
-
-### the code lines
-
-backend, not reachable today:
-
-- `src/main/php/cfg/phrase/phrase.php:2001` — `function dsp_time_selector($type, $form_name, $pos, $back, user_message $msg): string`
-- `src/main/php/cfg/phrase/phrase.php:2005` — `return $wrd->dsp_time_selector($type, $form_name, $pos, $back, $msg);`
-  calls a `word::dsp_time_selector` that exists in neither layer; its only callers are the frontend calls
-  `src/main/php/web/value/value.php:1319` and `:1334` (`$time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr)`)
-  of `value::dsp_edit`, which call a frontend function that does not exist either
-- `src/main/php/cfg/word/word_list.php:10` — `TODO Prio 2 check the consistence usage of the parameter $back`
-  names a parameter that no longer exists
-- `src/main/php/web/html/html_base.php:1430` — `TODO Prio 1 deprecate and replace if the the url_arr based back var`
-  is a docblock without a function, directly above the docblock of the next function
-
-tests, live code:
-
-- `src/test/php/unit_write/element_write_tests.php:117`, `:121`, `:123` — the targets of `element::link` still end
-  with `&back=0`; the assert below is switched off (`TODO Prio 0 activate`)
-- `src/test/php/unit_ui/base_ui_tests.php:1400` — the target of `button::back` is the old `?words=1` page; the assert
-  is switched off
-- `src/test/php/unit/lib_tests.php:1518` to `:1522` — `&back=1` is only sample text of the `str_diff` test, no use of
-  the parameter
-- `src/test/php/unit_workflow/login_url_tests.php:128` — the local `$back` holds the `'9'`-prefixed
-  `START_PAGE_BACK`, so it is the new parameter with an old name
-
-tests, commented out (they call the retired `http/*_add.php`, `*_edit.php` and `*_del.php` pages):
-
-- `src/test/php/unit_write/formula_write_tests.php:375`, `:382`, `:391`, `:395`
-- `src/test/php/unit_write/test_word_display.php:174`
-- `src/test/php/unit_write/view_write_tests.php:112`
-- `src/test/php/unit_ui/formula_ui_tests.php:673`, `:680`, `:685`
-- `src/test/php/unit_write/value_write_tests.php:283`, `:292`
-- `src/test/php/unit_write/element_group_write_tests.php:168`
-
 ## error message reporting
 
 ### use $msg_txt for text and $msg for the message object
@@ -2856,3 +2744,34 @@ log_err($msg_txt);
 
 write a php script that checks if all error and warning messages at least can be shown to the user.
 The script should check the all text messages are unique 
+
+## this document
+
+**How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
+prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
+- see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
+  removes it from this file, asks the developer the decisions that the sections name, starts the agents of a phase in
+  parallel and waits for all of them before the next phase
+- a phase that says "stop for a run" ends with the lead asking the developer for the named test run; the lead continues
+  with the next phase only after the developer has reported the result
+- each agent gets the prompt, the sections of its task and the result of the earlier phases as context, changes only
+  the files of its task (a change that another agent of the same phase owns goes as a note to the lead), uses
+  Edit/Write only, never commits, never runs a `/test/*` script and reports the changed files and the open points
+- in the end the lead reviews the whole change as one (one style, no doubled code, lint clean), keeps every open point
+  here or moves it to `docs/llm/pending_prio_2.md`, removes the done sections and reports the id shift, the tests to
+  run and a short commit message
+- the size is S (one agent, a few files), M (two or three agents) or L (four or more agents or several phases)
+- the marker after `**next prompt**` is the test run of the developer before the next prompt:
+    - `**full test run: /test/test.php**` if no seed data changes
+    - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
+      seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
+      `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
+
+**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
+gets the CO2-eq costs). One phase, four agents in parallel:
+- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
+- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
+  costs in the NPP use case json
+- agent share: the "Share assumptions and vote" button of the calculator page
+- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
+

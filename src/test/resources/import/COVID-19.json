@@ -29,7 +29,7 @@
       "name": "Appenzell Ausserrhoden",
       "refs": [
         {
-          "name": "Appenzell Ausserrhoden",
+          "name": "Appenzell_Ausserrhoden",
           "type": "wikipedia"
         }
       ],
@@ -39,7 +39,7 @@
       "name": "Appenzell Innerrhoden",
       "refs": [
         {
-          "name": "Appenzell Innerrhoden",
+          "name": "Appenzell_Innerrhoden",
           "type": "wikipedia"
         }
       ],
@@ -95,7 +95,7 @@
       "name": "canton",
       "refs": [
         {
-          "name": "canton of Switzerland",
+          "name": "canton_of_Switzerland",
           "type": "wikipedia"
         },
         {
@@ -207,7 +207,7 @@
       "name": "ICU",
       "refs": [
         {
-          "name": "Intensive care unit",
+          "name": "Intensive_care_unit",
           "type": "wikipedia"
         },
         {
@@ -320,7 +320,7 @@
       "name": "sample",
       "refs": [
         {
-          "name": "Sample (statistics)",
+          "name": "Sample_(statistics)",
           "type": "wikipedia"
         }
       ],
@@ -386,7 +386,7 @@
       "name": "St. Gallen",
       "refs": [
         {
-          "name": "St. Gallen",
+          "name": "St._Gallen",
           "type": "wikipedia"
         }
       ],

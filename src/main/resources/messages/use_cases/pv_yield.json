@@ -22,7 +22,7 @@
     {"name": "annual"},
     {"name": "kWh"},
     {"name": "m2"},
-    {"name": "kWp", "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius", "type": "measure_unit", "refs": [{"name": "Nominal power (photovoltaic)", "type": "wikipedia"}]},
+    {"name": "kWp", "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius", "type": "measure_unit", "refs": [{"name": "Nominal_power_(photovoltaic)", "type": "wikipedia"}]},
     {"name": "EUR"},
     {"name": "electricity"},
     {"name": "price"},

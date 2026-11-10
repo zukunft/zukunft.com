@@ -12,28 +12,18 @@
   "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Derived values carry 'assumed' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
   "words": [
     {
-      "name": "Zurich",
-      "refs": [
-        {
-          "name": "Zurich",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q72",
-          "type": "wikidata"
-        }
-      ]
+      "name": "Zurich"
     },
     {
       "name": "city",
       "plural": "cities",
       "refs": [
         {
-          "name": "Zurich",
+          "name": "City",
           "type": "wikipedia"
         },
         {
-          "name": "Q72",
+          "name": "Q515",
           "type": "wikidata"
         }
       ]
@@ -42,11 +32,11 @@
       "name": "canton",
       "refs": [
         {
-          "name": "canton_of_Zurich",
+          "name": "Cantons_of_Switzerland",
           "type": "wikipedia"
         },
         {
-          "name": "Q11943",
+          "name": "Q23058",
           "type": "wikidata"
         }
       ]
@@ -56,7 +46,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Human population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
@@ -309,7 +299,7 @@
       "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
       "refs": [
         {
-          "name": "Canton of Zurich",
+          "name": "Canton_of_Zurich",
           "type": "wikipedia"
         },
         {

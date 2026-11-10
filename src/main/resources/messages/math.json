@@ -25,7 +25,7 @@
       "name": "constant",
       "refs": [
         {
-          "name": "Mathematical constant",
+          "name": "Mathematical_constant",
           "type": "wikipedia"
         },
         {
@@ -76,7 +76,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Tau (mathematics)",
+          "name": "Tau_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -165,7 +165,7 @@
       "description": "A surface is a mathematical model of the common concept of a surface, generalising a plane.",
       "refs": [
         {
-          "name": "Surface (mathematics)",
+          "name": "Surface_(mathematics)",
           "type": "wikipedia"
         }
       ]
@@ -349,7 +349,7 @@
       "description": "A pyramid is a polyhedron formed by connecting a polygonal base and a point, called the apex.",
       "refs": [
         {
-          "name": "Pyramid (geometry)",
+          "name": "Pyramid_(geometry)",
           "type": "wikipedia"
         },
         {
@@ -363,7 +363,7 @@
       "description": "A prism is a polyhedron comprising an n-sided polygon base, a second base which is a translated copy of the first, and n other faces joining corresponding sides of the two bases.",
       "refs": [
         {
-          "name": "Prism (geometry)",
+          "name": "Prism_(geometry)",
           "type": "wikipedia"
         },
         {
@@ -410,7 +410,7 @@
       "description": "The sine is a trigonometric function defined, for an acute angle in a right-angled triangle, as the ratio of the length of the opposite side to that of the hypotenuse.",
       "refs": [
         {
-          "name": "Sine and cosine",
+          "name": "Sine_and_cosine",
           "type": "wikipedia"
         },
         {
@@ -424,7 +424,7 @@
       "description": "The cosine is a trigonometric function defined, for an acute angle in a right-angled triangle, as the ratio of the length of the adjacent side to that of the hypotenuse.",
       "refs": [
         {
-          "name": "Sine and cosine",
+          "name": "Sine_and_cosine",
           "type": "wikipedia"
         },
         {
@@ -438,7 +438,7 @@
       "description": "The tangent is a trigonometric function equal to the ratio of sine over cosine.",
       "refs": [
         {
-          "name": "Trigonometric functions",
+          "name": "Trigonometric_functions",
           "type": "wikipedia"
         }
       ]
@@ -447,7 +447,7 @@
       "name": "secant",
       "refs": [
         {
-          "name": "Trigonometric functions",
+          "name": "Trigonometric_functions",
           "type": "wikipedia"
         }
       ]
@@ -456,7 +456,7 @@
       "name": "cosecant",
       "refs": [
         {
-          "name": "Trigonometric functions",
+          "name": "Trigonometric_functions",
           "type": "wikipedia"
         }
       ]
@@ -465,7 +465,7 @@
       "name": "cotangent",
       "refs": [
         {
-          "name": "Trigonometric functions",
+          "name": "Trigonometric_functions",
           "type": "wikipedia"
         }
       ]
@@ -478,7 +478,7 @@
       "description": "unit of angle equal to 1/360 of a full rotation",
       "refs": [
         {
-          "name": "Degree (angle)",
+          "name": "Degree_(angle)",
           "type": "wikipedia"
         },
         {
@@ -537,7 +537,7 @@
       "description": "a single unit on a scale",
       "refs": [
         {
-          "name": "Point (geometry)",
+          "name": "Point_(geometry)",
           "type": "wikipedia"
         },
         {
@@ -550,7 +550,7 @@
       "name": "line",
       "refs": [
         {
-          "name": "Line (geometry)",
+          "name": "Line_(geometry)",
           "type": "wikipedia"
         },
         {
@@ -592,7 +592,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "E (mathematical constant)",
+          "name": "E_(mathematical_constant)",
           "type": "wikipedia"
         },
         {
@@ -607,7 +607,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Imaginary unit",
+          "name": "Imaginary_unit",
           "type": "wikipedia"
         },
         {
@@ -638,7 +638,7 @@
       "description": "c is the speed of light in vacuum, a universal physical constant exactly equal to 299792458 m/s.",
       "refs": [
         {
-          "name": "Speed of light",
+          "name": "Speed_of_light",
           "type": "wikipedia"
         },
         {
@@ -667,7 +667,7 @@
       "description": "h is the Planck constant, a fundamental physical constant that relates the energy carried by a photon to its frequency.",
       "refs": [
         {
-          "name": "Planck constant",
+          "name": "Planck_constant",
           "type": "wikipedia"
         },
         {
@@ -702,7 +702,7 @@
       "description": "In algebra, a quadratic equation is any equation that can be rearranged in standard form as ax² + bx + c = 0.",
       "refs": [
         {
-          "name": "Quadratic equation",
+          "name": "Quadratic_equation",
           "type": "wikipedia"
         },
         {
@@ -773,7 +773,7 @@
       "description": "Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.",
       "refs": [
         {
-          "name": "Leonhard Euler",
+          "name": "Leonhard_Euler",
           "type": "wikipedia"
         },
         {
@@ -787,7 +787,7 @@
       "description": "Hero of Alexandria was a Greek mathematician and engineer who was active in his native city of Alexandria, Roman Egypt.",
       "refs": [
         {
-          "name": "Hero of Alexandria",
+          "name": "Hero_of_Alexandria",
           "type": "wikipedia"
         },
         {
@@ -801,7 +801,7 @@
       "description": "In elementary algebra, a binomial is a polynomial that is the sum of two terms.",
       "refs": [
         {
-          "name": "Binomial (polynomial)",
+          "name": "Binomial_(polynomial)",
           "type": "wikipedia"
         }
       ]
@@ -825,7 +825,7 @@
       "description": "In mathematics, a series is, roughly speaking, an addition of infinitely many terms, one after the other.",
       "refs": [
         {
-          "name": "Series (mathematics)",
+          "name": "Series_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -906,7 +906,7 @@
       "description": "In mathematics, a limit is the value that a function approaches as the input approaches some value.",
       "refs": [
         {
-          "name": "Limit (mathematics)",
+          "name": "Limit_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -920,7 +920,7 @@
       "description": "In mathematics, a function from a set X to a set Y assigns to each element of X exactly one element of Y.",
       "refs": [
         {
-          "name": "Function (mathematics)",
+          "name": "Function_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -1005,7 +1005,7 @@
       "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
       "refs": [
         {
-          "name": "Deviation (statistics)",
+          "name": "Deviation_(statistics)",
           "type": "wikipedia"
         }
       ]
@@ -1041,7 +1041,7 @@
       "name": "event",
       "refs": [
         {
-          "name": "Event (probability theory)",
+          "name": "Event_(probability_theory)",
           "type": "wikipedia"
         },
         {
@@ -1104,7 +1104,7 @@
       "description": "a distinct part of a whole",
       "refs": [
         {
-          "name": "Circular sector",
+          "name": "Circular_sector",
           "type": "wikipedia"
         },
         {
@@ -1122,7 +1122,7 @@
       "description": "an equality that holds for all values of the variables involved",
       "refs": [
         {
-          "name": "Identity (mathematics)",
+          "name": "Identity_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -1168,7 +1168,7 @@
       "description": "in set theory and probability, the set of outcomes in either of two events",
       "refs": [
         {
-          "name": "Union (set theory)",
+          "name": "Union_(set_theory)",
           "type": "wikipedia"
         },
         {
@@ -1319,7 +1319,7 @@
       "to": "formula",
       "refs": [
         {
-          "name": "Quadratic formula",
+          "name": "Quadratic_formula",
           "type": "wikipedia"
         },
         {
@@ -1336,7 +1336,7 @@
       "to": "theorem",
       "refs": [
         {
-          "name": "Pythagorean theorem",
+          "name": "Pythagorean_theorem",
           "type": "wikipedia"
         },
         {
@@ -1353,7 +1353,7 @@
       "to": "formula",
       "refs": [
         {
-          "name": "Heron's formula",
+          "name": "Heron's_formula",
           "type": "wikipedia"
         },
         {
@@ -1370,7 +1370,7 @@
       "to": "formula",
       "refs": [
         {
-          "name": "Euler's formula",
+          "name": "Euler's_formula",
           "type": "wikipedia"
         },
         {
@@ -1387,7 +1387,7 @@
       "to": "theorem",
       "refs": [
         {
-          "name": "Binomial theorem",
+          "name": "Binomial_theorem",
           "type": "wikipedia"
         },
         {
@@ -1404,7 +1404,7 @@
       "to": "square",
       "refs": [
         {
-          "name": "Difference of two squares",
+          "name": "Difference_of_two_squares",
           "type": "wikipedia"
         },
         {
@@ -1420,7 +1420,7 @@
       "to": "square",
       "refs": [
         {
-          "name": "Square number",
+          "name": "Square_number",
           "type": "wikipedia"
         },
         {
@@ -1460,7 +1460,7 @@
       "to": "formula",
       "refs": [
         {
-          "name": "Euclidean distance",
+          "name": "Euclidean_distance",
           "type": "wikipedia"
         },
         {
@@ -1477,7 +1477,7 @@
       "to": "length",
       "refs": [
         {
-          "name": "Arc length",
+          "name": "Arc_length",
           "type": "wikipedia"
         },
         {
@@ -1499,7 +1499,7 @@
       "to": "area",
       "refs": [
         {
-          "name": "Surface area",
+          "name": "Surface_area",
           "type": "wikipedia"
         },
         {
@@ -1521,7 +1521,7 @@
       "to": "polygon",
       "refs": [
         {
-          "name": "Regular polygon",
+          "name": "Regular_polygon",
           "type": "wikipedia"
         },
         {
@@ -1538,7 +1538,7 @@
       "to": "identity",
       "refs": [
         {
-          "name": "Pythagorean trigonometric identity",
+          "name": "Pythagorean_trigonometric_identity",
           "type": "wikipedia"
         },
         {
@@ -1567,7 +1567,7 @@
       "to": "sine",
       "refs": [
         {
-          "name": "Law of sines",
+          "name": "Law_of_sines",
           "type": "wikipedia"
         },
         {
@@ -1584,7 +1584,7 @@
       "to": "cosine",
       "refs": [
         {
-          "name": "Law of cosines",
+          "name": "Law_of_cosines",
           "type": "wikipedia"
         },
         {
@@ -1601,7 +1601,7 @@
       "to": "sequence",
       "refs": [
         {
-          "name": "Arithmetic progression",
+          "name": "Arithmetic_progression",
           "type": "wikipedia"
         },
         {
@@ -1618,7 +1618,7 @@
       "to": "sequence",
       "refs": [
         {
-          "name": "Geometric progression",
+          "name": "Geometric_progression",
           "type": "wikipedia"
         },
         {
@@ -1665,7 +1665,7 @@
       "to": "rule",
       "refs": [
         {
-          "name": "Power rule",
+          "name": "Power_rule",
           "type": "wikipedia"
         },
         {
@@ -1682,7 +1682,7 @@
       "to": "rule",
       "refs": [
         {
-          "name": "Product rule",
+          "name": "Product_rule",
           "type": "wikipedia"
         },
         {
@@ -1699,7 +1699,7 @@
       "to": "rule",
       "refs": [
         {
-          "name": "Quotient rule",
+          "name": "Quotient_rule",
           "type": "wikipedia"
         },
         {
@@ -1716,7 +1716,7 @@
       "to": "rule",
       "refs": [
         {
-          "name": "Chain rule",
+          "name": "Chain_rule",
           "type": "wikipedia"
         },
         {
@@ -1733,7 +1733,7 @@
       "to": "theorem",
       "refs": [
         {
-          "name": "Fundamental theorem of calculus",
+          "name": "Fundamental_theorem_of_calculus",
           "type": "wikipedia"
         },
         {
@@ -1750,7 +1750,7 @@
       "to": "product",
       "refs": [
         {
-          "name": "Integration by parts",
+          "name": "Integration_by_parts",
           "type": "wikipedia"
         },
         {
@@ -1766,7 +1766,7 @@
       "to": "standard",
       "refs": [
         {
-          "name": "Standard deviation",
+          "name": "Standard_deviation",
           "type": "wikipedia"
         },
         {
@@ -1783,7 +1783,7 @@
       "to": "score",
       "refs": [
         {
-          "name": "Standard score",
+          "name": "Standard_score",
           "type": "wikipedia"
         },
         {
@@ -1800,7 +1800,7 @@
       "to": "probability",
       "refs": [
         {
-          "name": "Conditional probability",
+          "name": "Conditional_probability",
           "type": "wikipedia"
         },
         {
@@ -1816,7 +1816,7 @@
       "to": "event",
       "refs": [
         {
-          "name": "Complementary event",
+          "name": "Complementary_event",
           "type": "wikipedia"
         },
         {
@@ -1852,7 +1852,7 @@
       "to": "interest",
       "refs": [
         {
-          "name": "Compound interest",
+          "name": "Compound_interest",
           "type": "wikipedia"
         },
         {
@@ -1874,7 +1874,7 @@
       "to": "percent",
       "refs": [
         {
-          "name": "Relative change",
+          "name": "Relative_change",
           "type": "wikipedia"
         }
       ]

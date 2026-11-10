@@ -30,7 +30,7 @@
       "description": "the relative deformation of a body under stress",
       "refs": [
         {
-          "name": "Strain (mechanics)",
+          "name": "Strain_(mechanics)",
           "type": "wikipedia"
         },
         {
@@ -44,7 +44,7 @@
       "description": "the ability of a material to return to its shape after deformation",
       "refs": [
         {
-          "name": "Elasticity (physics)",
+          "name": "Elasticity_(physics)",
           "type": "wikipedia"
         },
         {
@@ -58,7 +58,7 @@
       "description": "the permanent deformation of a material under stress",
       "refs": [
         {
-          "name": "Plasticity (physics)",
+          "name": "Plasticity_(physics)",
           "type": "wikipedia"
         },
         {
@@ -142,7 +142,7 @@
       "description": "the weakening of a material caused by repeated loading",
       "refs": [
         {
-          "name": "Fatigue (material)",
+          "name": "Fatigue_(material)",
           "type": "wikipedia"
         },
         {
@@ -170,7 +170,7 @@
       "description": "a machine element that constrains motion and reduces friction",
       "refs": [
         {
-          "name": "Bearing (mechanical)",
+          "name": "Bearing_(mechanical)",
           "type": "wikipedia"
         },
         {
@@ -240,7 +240,7 @@
       "description": "a closed path through which electric current flows",
       "refs": [
         {
-          "name": "Electrical network",
+          "name": "Electrical_network",
           "type": "wikipedia"
         },
         {
@@ -324,7 +324,7 @@
       "description": "the opposition of a circuit to alternating current",
       "refs": [
         {
-          "name": "Electrical impedance",
+          "name": "Electrical_impedance",
           "type": "wikipedia"
         },
         {
@@ -338,7 +338,7 @@
       "description": "the opposition to current change due to capacitance or inductance",
       "refs": [
         {
-          "name": "Electrical reactance",
+          "name": "Electrical_reactance",
           "type": "wikipedia"
         },
         {
@@ -380,7 +380,7 @@
       "description": "a material that allows the flow of electric current",
       "refs": [
         {
-          "name": "Electrical conductor",
+          "name": "Electrical_conductor",
           "type": "wikipedia"
         },
         {
@@ -394,7 +394,7 @@
       "description": "a material that resists the flow of electric current",
       "refs": [
         {
-          "name": "Insulator (electricity)",
+          "name": "Insulator_(electricity)",
           "type": "wikipedia"
         },
         {
@@ -422,7 +422,7 @@
       "description": "a structural element that resists loads applied perpendicular to its axis",
       "refs": [
         {
-          "name": "Beam (structure)",
+          "name": "Beam_(structure)",
           "type": "wikipedia"
         },
         {
@@ -464,7 +464,7 @@
       "description": "the distance between two structural supports",
       "refs": [
         {
-          "name": "Span (engineering)",
+          "name": "Span_(engineering)",
           "type": "wikipedia"
         },
         {
@@ -478,7 +478,7 @@
       "description": "the lowest part of a structure that transfers loads to the ground",
       "refs": [
         {
-          "name": "Foundation (engineering)",
+          "name": "Foundation_(engineering)",
           "type": "wikipedia"
         },
         {
@@ -506,7 +506,7 @@
       "description": "the displacement of a structural element under load",
       "refs": [
         {
-          "name": "Deflection (engineering)",
+          "name": "Deflection_(engineering)",
           "type": "wikipedia"
         },
         {
@@ -534,7 +534,7 @@
       "description": "a vessel in which a chemical reaction is carried out",
       "refs": [
         {
-          "name": "Chemical reactor",
+          "name": "Chemical_reactor",
           "type": "wikipedia"
         },
         {
@@ -646,7 +646,7 @@
       "description": "a heat treatment that alters the properties of a material",
       "refs": [
         {
-          "name": "Annealing (materials science)",
+          "name": "Annealing_(materials_science)",
           "type": "wikipedia"
         },
         {
@@ -702,7 +702,7 @@
       "description": "the ratio of output to input of a system or amplifier",
       "refs": [
         {
-          "name": "Gain (electronics)",
+          "name": "Gain_(electronics)",
           "type": "wikipedia"
         },
         {
@@ -744,7 +744,7 @@
       "description": "the ability of a system to return to equilibrium after a disturbance",
       "refs": [
         {
-          "name": "Stability theory",
+          "name": "Stability_theory",
           "type": "wikipedia"
         },
         {
@@ -772,7 +772,7 @@
       "description": "the desired value that a control system tries to maintain",
       "refs": [
         {
-          "name": "Setpoint (control system)",
+          "name": "Setpoint_(control_system)",
           "type": "wikipedia"
         },
         {
@@ -818,7 +818,7 @@
       "description": "psychological feeling of strain and pressure, that could increase the risk of strokes, heart attacks, ulcers, and mental illnesses such as depression and aggravation of a pre-existing condition",
       "refs": [
         {
-          "name": "Stress (psychology)",
+          "name": "Stress_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -966,7 +966,7 @@
       "description": "gas layer surrounding Earth",
       "refs": [
         {
-          "name": "Atmosphere of Earth",
+          "name": "Atmosphere_of_Earth",
           "type": "wikipedia"
         },
         {
@@ -985,7 +985,7 @@
       "to": "mechanical",
       "refs": [
         {
-          "name": "Mechanical engineering",
+          "name": "Mechanical_engineering",
           "type": "wikipedia"
         },
         {
@@ -1002,7 +1002,7 @@
       "to": "electrical",
       "refs": [
         {
-          "name": "Electrical engineering",
+          "name": "Electrical_engineering",
           "type": "wikipedia"
         },
         {
@@ -1019,7 +1019,7 @@
       "to": "civil",
       "refs": [
         {
-          "name": "Civil engineering",
+          "name": "Civil_engineering",
           "type": "wikipedia"
         },
         {
@@ -1036,7 +1036,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical engineering",
+          "name": "Chemical_engineering",
           "type": "wikipedia"
         },
         {
@@ -1053,7 +1053,7 @@
       "to": "materials",
       "refs": [
         {
-          "name": "Materials science",
+          "name": "Materials_science",
           "type": "wikipedia"
         },
         {
@@ -1070,7 +1070,7 @@
       "to": "control",
       "refs": [
         {
-          "name": "Control engineering",
+          "name": "Control_engineering",
           "type": "wikipedia"
         },
         {
@@ -1087,7 +1087,7 @@
       "to": "mechanical",
       "refs": [
         {
-          "name": "Stress (mechanics)",
+          "name": "Stress_(mechanics)",
           "type": "wikipedia"
         },
         {
@@ -1104,7 +1104,7 @@
       "to": "yield",
       "refs": [
         {
-          "name": "Yield (engineering)",
+          "name": "Yield_(engineering)",
           "type": "wikipedia"
         },
         {
@@ -1121,7 +1121,7 @@
       "to": "tensile",
       "refs": [
         {
-          "name": "Ultimate tensile strength",
+          "name": "Ultimate_tensile_strength",
           "type": "wikipedia"
         },
         {
@@ -1138,7 +1138,7 @@
       "to": "ultimate",
       "refs": [
         {
-          "name": "Ultimate tensile strength",
+          "name": "Ultimate_tensile_strength",
           "type": "wikipedia"
         },
         {
@@ -1155,7 +1155,7 @@
       "to": "shear",
       "refs": [
         {
-          "name": "Shear stress",
+          "name": "Shear_stress",
           "type": "wikipedia"
         },
         {
@@ -1172,7 +1172,7 @@
       "to": "Young's",
       "refs": [
         {
-          "name": "Young's modulus",
+          "name": "Young's_modulus",
           "type": "wikipedia"
         },
         {
@@ -1189,7 +1189,7 @@
       "to": "shear",
       "refs": [
         {
-          "name": "Shear modulus",
+          "name": "Shear_modulus",
           "type": "wikipedia"
         },
         {
@@ -1206,7 +1206,7 @@
       "to": "Poisson's",
       "refs": [
         {
-          "name": "Poisson's ratio",
+          "name": "Poisson's_ratio",
           "type": "wikipedia"
         },
         {
@@ -1222,7 +1222,7 @@
       "to": "safety",
       "refs": [
         {
-          "name": "Factor of safety",
+          "name": "Factor_of_safety",
           "type": "wikipedia"
         },
         {
@@ -1239,7 +1239,7 @@
       "to": "alternating",
       "refs": [
         {
-          "name": "Alternating current",
+          "name": "Alternating_current",
           "type": "wikipedia"
         },
         {
@@ -1256,7 +1256,7 @@
       "to": "direct",
       "refs": [
         {
-          "name": "Direct current",
+          "name": "Direct_current",
           "type": "wikipedia"
         },
         {
@@ -1273,7 +1273,7 @@
       "to": "power",
       "refs": [
         {
-          "name": "Power factor",
+          "name": "Power_factor",
           "type": "wikipedia"
         },
         {
@@ -1290,7 +1290,7 @@
       "to": "structural",
       "refs": [
         {
-          "name": "Structural load",
+          "name": "Structural_load",
           "type": "wikipedia"
         },
         {
@@ -1307,7 +1307,7 @@
       "to": "reinforced",
       "refs": [
         {
-          "name": "Reinforced concrete",
+          "name": "Reinforced_concrete",
           "type": "wikipedia"
         },
         {
@@ -1324,7 +1324,7 @@
       "to": "bending",
       "refs": [
         {
-          "name": "Bending moment",
+          "name": "Bending_moment",
           "type": "wikipedia"
         },
         {
@@ -1341,7 +1341,7 @@
       "to": "shear",
       "refs": [
         {
-          "name": "Shear force",
+          "name": "Shear_force",
           "type": "wikipedia"
         },
         {
@@ -1358,7 +1358,7 @@
       "to": "heat",
       "refs": [
         {
-          "name": "Heat exchanger",
+          "name": "Heat_exchanger",
           "type": "wikipedia"
         },
         {
@@ -1375,7 +1375,7 @@
       "to": "fluid",
       "refs": [
         {
-          "name": "Fluid dynamics",
+          "name": "Fluid_dynamics",
           "type": "wikipedia"
         },
         {
@@ -1392,7 +1392,7 @@
       "to": "Reynolds",
       "refs": [
         {
-          "name": "Reynolds number",
+          "name": "Reynolds_number",
           "type": "wikipedia"
         },
         {
@@ -1409,7 +1409,7 @@
       "to": "laminar",
       "refs": [
         {
-          "name": "Laminar flow",
+          "name": "Laminar_flow",
           "type": "wikipedia"
         },
         {
@@ -1443,7 +1443,7 @@
       "to": "flow",
       "refs": [
         {
-          "name": "Volumetric flow rate",
+          "name": "Volumetric_flow_rate",
           "type": "wikipedia"
         },
         {
@@ -1460,7 +1460,7 @@
       "to": "composite",
       "refs": [
         {
-          "name": "Composite material",
+          "name": "Composite_material",
           "type": "wikipedia"
         },
         {
@@ -1477,7 +1477,7 @@
       "to": "crystal",
       "refs": [
         {
-          "name": "Crystal structure",
+          "name": "Crystal_structure",
           "type": "wikipedia"
         },
         {
@@ -1494,7 +1494,7 @@
       "to": "control",
       "refs": [
         {
-          "name": "Control system",
+          "name": "Control_system",
           "type": "wikipedia"
         },
         {
@@ -1511,7 +1511,7 @@
       "to": "transfer",
       "refs": [
         {
-          "name": "Transfer function",
+          "name": "Transfer_function",
           "type": "wikipedia"
         },
         {
@@ -1528,7 +1528,7 @@
       "to": "PID",
       "refs": [
         {
-          "name": "PID controller",
+          "name": "PID_controller",
           "type": "wikipedia"
         },
         {

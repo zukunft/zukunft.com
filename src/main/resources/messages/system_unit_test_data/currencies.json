@@ -19,7 +19,7 @@
       "description": "Over-the-counter (OTC) refers to trading conducted directly between two parties without the supervision of an exchange. Most foreign exchange trading takes place on OTC markets rather than on centralised exchanges.",
       "refs": [
         {
-          "name": "Over-the-counter (finance)",
+          "name": "Over-the-counter_(finance)",
           "type": "wikipedia"
         },
         {
@@ -37,7 +37,7 @@
       "description": "Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.",
       "refs": [
         {
-          "name": "Financial instrument",
+          "name": "Financial_instrument",
           "type": "wikipedia"
         }
       ]
@@ -73,7 +73,7 @@
       "description": "The yen (symbol: ¥; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.",
       "refs": [
         {
-          "name": "Japanese yen",
+          "name": "Japanese_yen",
           "type": "wikipedia"
         },
         {
@@ -116,7 +116,7 @@
       "description": "A completed agreement between a buyer and a seller to exchange goods, services, or financial instruments. In foreign exchange, a transaction typically involves the exchange of one currency for another at an agreed rate.",
       "refs": [
         {
-          "name": "Financial transaction",
+          "name": "Financial_transaction",
           "type": "wikipedia"
         }
       ]
@@ -130,7 +130,7 @@
       "description": "Forward contracts are agreements to buy or sell an asset at a predetermined price on a specified future date. Currency forwards are widely used to hedge foreign exchange risk arising from future cash flows in foreign currencies.",
       "refs": [
         {
-          "name": "Forward contract",
+          "name": "Forward_contract",
           "type": "wikipedia"
         }
       ]
@@ -140,7 +140,7 @@
       "description": "A currency swap (or FX swap) is a foreign exchange transaction that combines a spot purchase or sale of a currency with a simultaneous forward sale or purchase of the same currency. It is widely used to manage liquidity and hedge foreign exchange exposure.",
       "refs": [
         {
-          "name": "Foreign exchange swap",
+          "name": "Foreign_exchange_swap",
           "type": "wikipedia"
         }
       ]
@@ -150,7 +150,7 @@
       "description": "A foreign exchange option gives the holder the right, but not the obligation, to exchange one currency for another at a specified rate on or before a specified date. Options are typically used to hedge or to speculate on currency movements.",
       "refs": [
         {
-          "name": "Foreign exchange option",
+          "name": "Foreign_exchange_option",
           "type": "wikipedia"
         }
       ]
@@ -173,7 +173,7 @@
       "description": "The yen and yuan sign (¥) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.",
       "refs": [
         {
-          "name": "Yen and yuan sign",
+          "name": "Yen_and_yuan_sign",
           "type": "wikipedia"
         },
         {
@@ -235,7 +235,7 @@
       "description": "Pound sterling (symbol: £; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
       "refs": [
         {
-          "name": "Pound sterling",
+          "name": "Pound_sterling",
           "type": "wikipedia"
         },
         {
@@ -796,7 +796,7 @@
       "to": "US",
       "refs": [
         {
-          "name": "United States dollar",
+          "name": "United_States_dollar",
           "type": "wikipedia"
         },
         {
@@ -813,7 +813,7 @@
       "to": "U.S.",
       "refs": [
         {
-          "name": "United States dollar",
+          "name": "United_States_dollar",
           "type": "wikipedia"
         },
         {
@@ -830,7 +830,7 @@
       "to": "Australian",
       "refs": [
         {
-          "name": "Australian dollar",
+          "name": "Australian_dollar",
           "type": "wikipedia"
         },
         {
@@ -847,7 +847,7 @@
       "to": "Canadian",
       "refs": [
         {
-          "name": "Canadian dollar",
+          "name": "Canadian_dollar",
           "type": "wikipedia"
         },
         {
@@ -864,7 +864,7 @@
       "to": "Hong Kong",
       "refs": [
         {
-          "name": "Hong Kong dollar",
+          "name": "Hong_Kong_dollar",
           "type": "wikipedia"
         },
         {
@@ -881,7 +881,7 @@
       "to": "Singapore",
       "refs": [
         {
-          "name": "Singapore dollar",
+          "name": "Singapore_dollar",
           "type": "wikipedia"
         },
         {
@@ -898,7 +898,7 @@
       "to": "New Zealand",
       "refs": [
         {
-          "name": "New Zealand dollar",
+          "name": "New_Zealand_dollar",
           "type": "wikipedia"
         },
         {
@@ -921,7 +921,7 @@
       "to": "new",
       "refs": [
         {
-          "name": "New Taiwan dollar",
+          "name": "New_Taiwan_dollar",
           "type": "wikipedia"
         },
         {
@@ -938,7 +938,7 @@
       "to": "Swiss",
       "refs": [
         {
-          "name": "Swiss franc",
+          "name": "Swiss_franc",
           "type": "wikipedia"
         },
         {
@@ -955,7 +955,7 @@
       "to": "Japanese",
       "refs": [
         {
-          "name": "Japanese yen",
+          "name": "Japanese_yen",
           "type": "wikipedia"
         },
         {
@@ -972,7 +972,7 @@
       "to": "Swedish",
       "refs": [
         {
-          "name": "Swedish krona",
+          "name": "Swedish_krona",
           "type": "wikipedia"
         },
         {
@@ -989,7 +989,7 @@
       "to": "Danish",
       "refs": [
         {
-          "name": "Danish krone",
+          "name": "Danish_krone",
           "type": "wikipedia"
         },
         {
@@ -1006,7 +1006,7 @@
       "to": "Norwegian",
       "refs": [
         {
-          "name": "Norwegian krone",
+          "name": "Norwegian_krone",
           "type": "wikipedia"
         },
         {
@@ -1023,7 +1023,7 @@
       "to": "South Korea",
       "refs": [
         {
-          "name": "South Korean won",
+          "name": "South_Korean_won",
           "type": "wikipedia"
         },
         {
@@ -1040,7 +1040,7 @@
       "to": "Indian",
       "refs": [
         {
-          "name": "Indian rupee",
+          "name": "Indian_rupee",
           "type": "wikipedia"
         },
         {
@@ -1057,7 +1057,7 @@
       "to": "Mexican",
       "refs": [
         {
-          "name": "Mexican peso",
+          "name": "Mexican_peso",
           "type": "wikipedia"
         }
       ]
@@ -1070,7 +1070,7 @@
       "to": "Chilean",
       "refs": [
         {
-          "name": "Chilean peso",
+          "name": "Chilean_peso",
           "type": "wikipedia"
         }
       ]
@@ -1083,7 +1083,7 @@
       "to": "Philippine",
       "refs": [
         {
-          "name": "Philippine peso",
+          "name": "Philippine_peso",
           "type": "wikipedia"
         },
         {
@@ -1100,7 +1100,7 @@
       "to": "Colombian",
       "refs": [
         {
-          "name": "Colombian peso",
+          "name": "Colombian_peso",
           "type": "wikipedia"
         }
       ]
@@ -1113,7 +1113,7 @@
       "to": "Argentine",
       "refs": [
         {
-          "name": "Argentine peso",
+          "name": "Argentine_peso",
           "type": "wikipedia"
         }
       ]
@@ -1126,7 +1126,7 @@
       "to": "South Africa",
       "refs": [
         {
-          "name": "South African rand",
+          "name": "South_African_rand",
           "type": "wikipedia"
         }
       ]
@@ -1139,7 +1139,7 @@
       "to": "Brazilian",
       "refs": [
         {
-          "name": "Brazilian real",
+          "name": "Brazilian_real",
           "type": "wikipedia"
         },
         {
@@ -1156,7 +1156,7 @@
       "to": "Polish",
       "refs": [
         {
-          "name": "Polish złoty",
+          "name": "Polish_złoty",
           "type": "wikipedia"
         },
         {
@@ -1173,7 +1173,7 @@
       "to": "Thai",
       "refs": [
         {
-          "name": "Thai baht",
+          "name": "Thai_baht",
           "type": "wikipedia"
         }
       ]
@@ -1186,7 +1186,7 @@
       "to": "Indonesian",
       "refs": [
         {
-          "name": "Indonesian rupiah",
+          "name": "Indonesian_rupiah",
           "type": "wikipedia"
         },
         {
@@ -1203,7 +1203,7 @@
       "to": "Czech",
       "refs": [
         {
-          "name": "Czech koruna",
+          "name": "Czech_koruna",
           "type": "wikipedia"
         },
         {
@@ -1220,7 +1220,7 @@
       "to": "Turkish",
       "refs": [
         {
-          "name": "Turkish lira",
+          "name": "Turkish_lira",
           "type": "wikipedia"
         }
       ]
@@ -1233,7 +1233,7 @@
       "to": "Hungarian",
       "refs": [
         {
-          "name": "Hungarian forint",
+          "name": "Hungarian_forint",
           "type": "wikipedia"
         },
         {
@@ -1250,7 +1250,7 @@
       "to": "Saudi",
       "refs": [
         {
-          "name": "Saudi riyal",
+          "name": "Saudi_riyal",
           "type": "wikipedia"
         },
         {
@@ -1267,7 +1267,7 @@
       "to": "Malaysian",
       "refs": [
         {
-          "name": "Malaysian ringgit",
+          "name": "Malaysian_ringgit",
           "type": "wikipedia"
         },
         {
@@ -1284,7 +1284,7 @@
       "to": "Russian",
       "refs": [
         {
-          "name": "Russian ruble",
+          "name": "Russian_ruble",
           "type": "wikipedia"
         },
         {
@@ -1301,7 +1301,7 @@
       "to": "Romanian",
       "refs": [
         {
-          "name": "Romanian leu",
+          "name": "Romanian_leu",
           "type": "wikipedia"
         },
         {
@@ -1318,7 +1318,7 @@
       "to": "Peruvian",
       "refs": [
         {
-          "name": "Peruvian sol",
+          "name": "Peruvian_sol",
           "type": "wikipedia"
         }
       ]
@@ -1331,7 +1331,7 @@
       "to": "Bahraini",
       "refs": [
         {
-          "name": "Bahraini dinar",
+          "name": "Bahraini_dinar",
           "type": "wikipedia"
         }
       ]
@@ -1344,7 +1344,7 @@
       "to": "Bulgarian",
       "refs": [
         {
-          "name": "Bulgarian lev",
+          "name": "Bulgarian_lev",
           "type": "wikipedia"
         },
         {
@@ -1361,7 +1361,7 @@
       "to": "UAE",
       "refs": [
         {
-          "name": "United Arab Emirates dirham",
+          "name": "United_Arab_Emirates_dirham",
           "type": "wikipedia"
         },
         {
@@ -1384,7 +1384,7 @@
       "to": "Israeli",
       "refs": [
         {
-          "name": "Israeli new shekel",
+          "name": "Israeli_new_shekel",
           "type": "wikipedia"
         },
         {
@@ -1401,7 +1401,7 @@
       "to": "sterling",
       "refs": [
         {
-          "name": "Pound sterling",
+          "name": "Pound_sterling",
           "type": "wikipedia"
         },
         {
@@ -1439,7 +1439,7 @@
       "to": "ISO 4217",
       "refs": [
         {
-          "name": "ISO 4217",
+          "name": "ISO_4217",
           "type": "wikipedia"
         },
         {
@@ -1456,7 +1456,7 @@
       "to": "abbreviation",
       "refs": [
         {
-          "name": "Currency symbol",
+          "name": "Currency_symbol",
           "type": "wikipedia"
         }
       ]

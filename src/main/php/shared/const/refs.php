@@ -75,7 +75,7 @@ class refs
     const string HEALTH_WIKIPEDIA_KEY = 'Health';
     // the wikipedia and the wikidata reference of Zurich (canton) of the base data, which the reference
     // row confirm workflow deletes or changes (see src/test/resources/unit/ref/list.csv)
-    const string ZURICH_CANTON_WIKIPEDIA_KEY = 'canton_of_Zürich';
+    const string ZURICH_CANTON_WIKIPEDIA_KEY = 'Canton_of_Zurich';
     const int ZURICH_CANTON_WIKIPEDIA_ID = 276;
     const string ZURICH_CANTON_WIKIDATA_KEY = 'Q11943';
     const int ZURICH_CANTON_WIKIDATA_ID = 277;

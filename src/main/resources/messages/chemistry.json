@@ -165,7 +165,7 @@
       "description": "the combining capacity of an atom, given by the number of bonds it forms",
       "refs": [
         {
-          "name": "Valence (chemistry)",
+          "name": "Valence_(chemistry)",
           "type": "wikipedia"
         },
         {
@@ -179,7 +179,7 @@
       "description": "a region around the nucleus where an electron is likely to be found",
       "refs": [
         {
-          "name": "Atomic orbital",
+          "name": "Atomic_orbital",
           "type": "wikipedia"
         },
         {
@@ -235,7 +235,7 @@
       "description": "describing a reaction that releases energy as heat",
       "refs": [
         {
-          "name": "Exothermic process",
+          "name": "Exothermic_process",
           "type": "wikipedia"
         },
         {
@@ -249,7 +249,7 @@
       "description": "describing a reaction that absorbs energy as heat",
       "refs": [
         {
-          "name": "Endothermic process",
+          "name": "Endothermic_process",
           "type": "wikipedia"
         },
         {
@@ -263,7 +263,7 @@
       "description": "a homogeneous mixture of a solute dissolved in a solvent",
       "refs": [
         {
-          "name": "Solution (chemistry)",
+          "name": "Solution_(chemistry)",
           "type": "wikipedia"
         },
         {
@@ -309,7 +309,7 @@
       "description": "the amount of solute in moles per litre of solution",
       "refs": [
         {
-          "name": "Molar concentration",
+          "name": "Molar_concentration",
           "type": "wikipedia"
         },
         {
@@ -337,7 +337,7 @@
       "description": "the process of reducing the concentration of a solute",
       "refs": [
         {
-          "name": "Dilution (equation)",
+          "name": "Dilution_(equation)",
           "type": "wikipedia"
         },
         {
@@ -397,7 +397,7 @@
       "description": "the negative logarithm of the acid dissociation constant",
       "refs": [
         {
-          "name": "Acid dissociation constant",
+          "name": "Acid_dissociation_constant",
           "type": "wikipedia"
         },
         {
@@ -439,7 +439,7 @@
       "description": "an ionic compound formed from the neutralization of an acid and a base",
       "refs": [
         {
-          "name": "Salt (chemistry)",
+          "name": "Salt_(chemistry)",
           "type": "wikipedia"
         },
         {
@@ -453,7 +453,7 @@
       "description": "a solution that resists changes in pH when acid or base is added",
       "refs": [
         {
-          "name": "Buffer solution",
+          "name": "Buffer_solution",
           "type": "wikipedia"
         },
         {
@@ -467,7 +467,7 @@
       "description": "the reaction of an acid and a base to form a salt and water",
       "refs": [
         {
-          "name": "Neutralization (chemistry)",
+          "name": "Neutralization_(chemistry)",
           "type": "wikipedia"
         },
         {
@@ -641,7 +641,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Svante Arrhenius",
+          "name": "Svante_Arrhenius",
           "type": "wikipedia"
         },
         {
@@ -655,7 +655,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Robert Boyle",
+          "name": "Robert_Boyle",
           "type": "wikipedia"
         },
         {
@@ -669,7 +669,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Jacques Charles",
+          "name": "Jacques_Charles",
           "type": "wikipedia"
         },
         {
@@ -683,7 +683,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "John Dalton",
+          "name": "John_Dalton",
           "type": "wikipedia"
         },
         {
@@ -697,7 +697,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Germain Henri Hess",
+          "name": "Germain_Henri_Hess",
           "type": "wikipedia"
         },
         {
@@ -711,7 +711,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Henry Louis Le Chatelier",
+          "name": "Henry_Louis_Le_Chatelier",
           "type": "wikipedia"
         },
         {
@@ -725,7 +725,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "Walther Nernst",
+          "name": "Walther_Nernst",
           "type": "wikipedia"
         },
         {
@@ -739,7 +739,7 @@
       "description": "scientist after whom a chemistry law or equation is named",
       "refs": [
         {
-          "name": "François-Marie Raoult",
+          "name": "François-Marie_Raoult",
           "type": "wikipedia"
         },
         {
@@ -905,7 +905,7 @@
       "description": "the basic structural and functional unit of all living organisms",
       "refs": [
         {
-          "name": "Cell (biology)",
+          "name": "Cell_(biology)",
           "type": "wikipedia"
         },
         {
@@ -933,7 +933,7 @@
       "to": "general",
       "refs": [
         {
-          "name": "General chemistry",
+          "name": "General_chemistry",
           "type": "wikipedia"
         },
         {
@@ -950,7 +950,7 @@
       "to": "physical",
       "refs": [
         {
-          "name": "Physical chemistry",
+          "name": "Physical_chemistry",
           "type": "wikipedia"
         },
         {
@@ -967,7 +967,7 @@
       "to": "organic",
       "refs": [
         {
-          "name": "Organic chemistry",
+          "name": "Organic_chemistry",
           "type": "wikipedia"
         },
         {
@@ -984,7 +984,7 @@
       "to": "analytical",
       "refs": [
         {
-          "name": "Analytical chemistry",
+          "name": "Analytical_chemistry",
           "type": "wikipedia"
         },
         {
@@ -1001,7 +1001,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical element",
+          "name": "Chemical_element",
           "type": "wikipedia"
         },
         {
@@ -1018,7 +1018,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical compound",
+          "name": "Chemical_compound",
           "type": "wikipedia"
         },
         {
@@ -1035,7 +1035,7 @@
       "to": "atomic",
       "refs": [
         {
-          "name": "Atomic number",
+          "name": "Atomic_number",
           "type": "wikipedia"
         },
         {
@@ -1052,7 +1052,7 @@
       "to": "mass",
       "refs": [
         {
-          "name": "Mass number",
+          "name": "Mass_number",
           "type": "wikipedia"
         },
         {
@@ -1069,7 +1069,7 @@
       "to": "atomic",
       "refs": [
         {
-          "name": "Atomic mass",
+          "name": "Atomic_mass",
           "type": "wikipedia"
         },
         {
@@ -1086,7 +1086,7 @@
       "to": "molar",
       "refs": [
         {
-          "name": "Molar mass",
+          "name": "Molar_mass",
           "type": "wikipedia"
         },
         {
@@ -1103,7 +1103,7 @@
       "to": "molecular",
       "refs": [
         {
-          "name": "Molecular mass",
+          "name": "Molecular_mass",
           "type": "wikipedia"
         },
         {
@@ -1120,7 +1120,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical formula",
+          "name": "Chemical_formula",
           "type": "wikipedia"
         },
         {
@@ -1137,7 +1137,7 @@
       "to": "empirical",
       "refs": [
         {
-          "name": "Empirical formula",
+          "name": "Empirical_formula",
           "type": "wikipedia"
         },
         {
@@ -1154,7 +1154,7 @@
       "to": "molecular",
       "refs": [
         {
-          "name": "Chemical formula",
+          "name": "Chemical_formula",
           "type": "wikipedia"
         },
         {
@@ -1171,7 +1171,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical bond",
+          "name": "Chemical_bond",
           "type": "wikipedia"
         },
         {
@@ -1188,7 +1188,7 @@
       "to": "covalent",
       "refs": [
         {
-          "name": "Covalent bond",
+          "name": "Covalent_bond",
           "type": "wikipedia"
         },
         {
@@ -1205,7 +1205,7 @@
       "to": "ionic",
       "refs": [
         {
-          "name": "Ionic bonding",
+          "name": "Ionic_bonding",
           "type": "wikipedia"
         },
         {
@@ -1222,7 +1222,7 @@
       "to": "metallic",
       "refs": [
         {
-          "name": "Metallic bonding",
+          "name": "Metallic_bonding",
           "type": "wikipedia"
         },
         {
@@ -1239,7 +1239,7 @@
       "to": "hydrogen",
       "refs": [
         {
-          "name": "Hydrogen bond",
+          "name": "Hydrogen_bond",
           "type": "wikipedia"
         },
         {
@@ -1256,7 +1256,7 @@
       "to": "oxidation",
       "refs": [
         {
-          "name": "Oxidation state",
+          "name": "Oxidation_state",
           "type": "wikipedia"
         },
         {
@@ -1273,7 +1273,7 @@
       "to": "electron",
       "refs": [
         {
-          "name": "Electron configuration",
+          "name": "Electron_configuration",
           "type": "wikipedia"
         },
         {
@@ -1290,7 +1290,7 @@
       "to": "valence",
       "refs": [
         {
-          "name": "Valence electron",
+          "name": "Valence_electron",
           "type": "wikipedia"
         },
         {
@@ -1307,7 +1307,7 @@
       "to": "periodic",
       "refs": [
         {
-          "name": "Periodic table",
+          "name": "Periodic_table",
           "type": "wikipedia"
         },
         {
@@ -1324,7 +1324,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Period (periodic table)",
+          "name": "Period_(periodic_table)",
           "type": "wikipedia"
         },
         {
@@ -1341,7 +1341,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Group (periodic table)",
+          "name": "Group_(periodic_table)",
           "type": "wikipedia"
         },
         {
@@ -1358,7 +1358,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical reaction",
+          "name": "Chemical_reaction",
           "type": "wikipedia"
         },
         {
@@ -1375,7 +1375,7 @@
       "to": "reaction",
       "refs": [
         {
-          "name": "Product (chemistry)",
+          "name": "Product_(chemistry)",
           "type": "wikipedia"
         },
         {
@@ -1392,7 +1392,7 @@
       "to": "reaction",
       "refs": [
         {
-          "name": "Reaction rate",
+          "name": "Reaction_rate",
           "type": "wikipedia"
         },
         {
@@ -1409,7 +1409,7 @@
       "to": "rate",
       "refs": [
         {
-          "name": "Reaction rate constant",
+          "name": "Reaction_rate_constant",
           "type": "wikipedia"
         },
         {
@@ -1426,7 +1426,7 @@
       "to": "activation",
       "refs": [
         {
-          "name": "Activation energy",
+          "name": "Activation_energy",
           "type": "wikipedia"
         },
         {
@@ -1443,7 +1443,7 @@
       "to": "chemical",
       "refs": [
         {
-          "name": "Chemical equilibrium",
+          "name": "Chemical_equilibrium",
           "type": "wikipedia"
         },
         {
@@ -1460,7 +1460,7 @@
       "to": "equilibrium",
       "refs": [
         {
-          "name": "Equilibrium constant",
+          "name": "Equilibrium_constant",
           "type": "wikipedia"
         },
         {
@@ -1483,7 +1483,7 @@
       "to": "Gibbs",
       "refs": [
         {
-          "name": "Gibbs free energy",
+          "name": "Gibbs_free_energy",
           "type": "wikipedia"
         },
         {
@@ -1500,7 +1500,7 @@
       "to": "standard",
       "refs": [
         {
-          "name": "Standard enthalpy of reaction",
+          "name": "Standard_enthalpy_of_reaction",
           "type": "wikipedia"
         },
         {
@@ -1517,7 +1517,7 @@
       "to": "partial",
       "refs": [
         {
-          "name": "Partial pressure",
+          "name": "Partial_pressure",
           "type": "wikipedia"
         },
         {
@@ -1534,7 +1534,7 @@
       "to": "mole",
       "refs": [
         {
-          "name": "Mole fraction",
+          "name": "Mole_fraction",
           "type": "wikipedia"
         },
         {
@@ -1550,7 +1550,7 @@
       "to": "million",
       "refs": [
         {
-          "name": "Parts-per notation",
+          "name": "Parts-per_notation",
           "type": "wikipedia"
         },
         {
@@ -1573,7 +1573,7 @@
       "to": "acid dissociation",
       "refs": [
         {
-          "name": "Acid dissociation constant",
+          "name": "Acid_dissociation_constant",
           "type": "wikipedia"
         },
         {
@@ -1633,7 +1633,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Electrode potential",
+          "name": "Electrode_potential",
           "type": "wikipedia"
         },
         {
@@ -1650,7 +1650,7 @@
       "to": "functional",
       "refs": [
         {
-          "name": "Functional group",
+          "name": "Functional_group",
           "type": "wikipedia"
         },
         {
@@ -2136,7 +2136,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Avogadro's law",
+          "name": "Avogadro's_law",
           "type": "wikipedia"
         },
         {
@@ -2157,7 +2157,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Dalton's law",
+          "name": "Dalton's_law",
           "type": "wikipedia"
         },
         {
@@ -2178,7 +2178,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Boyle's law",
+          "name": "Boyle's_law",
           "type": "wikipedia"
         },
         {
@@ -2199,7 +2199,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Charles's law",
+          "name": "Charles's_law",
           "type": "wikipedia"
         },
         {
@@ -2220,7 +2220,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Hess's law",
+          "name": "Hess's_law",
           "type": "wikipedia"
         },
         {
@@ -2241,7 +2241,7 @@
       "to": "principle",
       "refs": [
         {
-          "name": "Le Chatelier's principle",
+          "name": "Le_Chatelier's_principle",
           "type": "wikipedia"
         },
         {
@@ -2262,7 +2262,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Arrhenius equation",
+          "name": "Arrhenius_equation",
           "type": "wikipedia"
         },
         {
@@ -2283,7 +2283,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Nernst equation",
+          "name": "Nernst_equation",
           "type": "wikipedia"
         },
         {
@@ -2304,7 +2304,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Raoult's law",
+          "name": "Raoult's_law",
           "type": "wikipedia"
         },
         {

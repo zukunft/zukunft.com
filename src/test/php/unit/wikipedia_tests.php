@@ -64,6 +64,9 @@ class wikipedia_tests
     const string WITHOUT_IPA = 'Zürich is a city.';
     const string WITH_BRACKET = 'Zürich is a city (the largest of Switzerland).';
     const string NO_WIKIDATA_ID = 'Zurich';
+    // the lead paragraph of test_files::IMPORT_WIKIPEDIA_SUMMARY_GENEVA, which the summary api sends already
+    // without the pronunciation of the page
+    const string GENEVA_DESCRIPTION = 'Geneva is the second-most populous city in Switzerland and the most populous in French-speaking Romandy. Situated in the southwest of the country, where the Rhône leaves Lake Geneva, it is the capital of the Republic and Canton of Geneva. Geneva is a global city, an international financial centre, and a worldwide centre for diplomacy, which has led to it being called the "Peace Capital".';
 
     /**
      * the offline tests of the description and the wikidata id that the refresh icon of a
@@ -136,6 +139,31 @@ class wikipedia_tests
 
         $test_name = 'a page without wikidata item has no wikidata id';
         $result = $wik->wikidata_id([]);
+        $t->assert($test_name, $result, '');
+
+        // the summary of the Geneva page as wikipedia sent it, so that a change of the live page or of the
+        // summary api does not change this test (the write tests compare the live page)
+        $t->subheader($ts . 'frozen page');
+        $geneva = json_decode(file_get_contents(test_files::IMPORT_WIKIPEDIA_SUMMARY_GENEVA), true);
+
+        $test_name = 'the description of the frozen Geneva page is its lead paragraph';
+        $result = $wik->description($geneva);
+        $t->assert($test_name, $result, self::GENEVA_DESCRIPTION);
+
+        $test_name = '... but the same page as a disambiguation page has no description';
+        $page = $geneva;
+        $page[ref_link_wikipedia::WP_TYPE] = self::TYPE_DISAMBIGUATION;
+        $result = $wik->description($page);
+        $t->assert($test_name, $result, '');
+
+        $test_name = 'the wikidata id of the frozen Geneva page is taken over';
+        $result = $wik->wikidata_id($geneva);
+        $t->assert($test_name, $result, refs::GENEVA_KEY);
+
+        $test_name = '... but not from the same page without its wikidata item';
+        $page = $geneva;
+        unset($page[ref_link_wikipedia::WP_WIKIDATA_ID]);
+        $result = $wik->wikidata_id($page);
         $t->assert($test_name, $result, '');
 
         $t->subheader($ts . 'reference');

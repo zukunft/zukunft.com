@@ -2574,16 +2574,14 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    (`url_var::REF_ROW_SELECTED` as a row var) and one for the description, and adjust a value before it is written.
    The confirm form sends the rows by get, so many rows with long texts can exceed the url length of the server;
    the values are never cut, so such a confirm would need the post method.
-7. The external key of a wikipedia reference is written both as the page title ("Canton of Zurich") and as the
-   url part ("Canton_of_Zurich"): about 550 keys of the import json use spaces and about 160 underscores, e.g.
-   "Abraham_Maslow". The backend treats the two spellings as different keys, so the same page can get a second
-   reference and a key comparison misses the match; the link text shows the underscore, and `ref::name_link`
-   adds the key to the url without encoding, so e.g. "Zürich" or a key with `?` or `#` gives a wrong href.
-   Store only the page title with spaces, like the wikipedia title and the wikidata site links: map an underscore
-   to a space when a wikipedia reference is read from an import or a form, build the url (space to `_` and
-   `rawurlencode`) in one function used by the link and by `ref_link_wikipedia::summary`, change the underscore
-   keys of the import json (no reference is added or removed, so no id shifts) and add a unit test that both
-   spellings give the same key and the same url.
+7. The external key of a wikipedia reference is the slug of the direct url ("Canton_of_Zurich", see the one
+   external key rule in `docs/llm/json_structure.md`), and the import json uses only the slug. A key with spaces
+   from an import file or a form is still a different key for the backend, so the same page can get a second
+   reference and a key comparison misses the match; and `ref::name_link` adds the key to the url without
+   encoding, so e.g. "Zürich" or a key with `?` or `#` gives a wrong href. Map a space to `_` when a wikipedia
+   reference is read from an import or a form, build the url (`rawurlencode` of the slug) in one function used by
+   the link and by `ref_link_wikipedia::summary`, and add a unit test that both spellings give the same key and
+   the same url.
 8. A wikipedia refresh with the related data (`api/triple/?id=143&fr=frw&ir=1`, Bern (city) without wikipedia
    reference) ended in the fatal error `ref::get_predicate_code_id(): Return value must be of type string, null
    returned`, also after a complete rebuild of the database; the same call without `ir=1` and the call with `ir=1`
@@ -2686,7 +2684,9 @@ confirmed pages of `workflow_write/ref_row_confirm_wf44/`. Move both workflows t
    object; find how the reference ids of the rows are pinned in the snapshots before the move.
 3. **Workflow:** `ref_rows_workflow`, `ref_row_confirm_workflow`, `ref_row_confirm_url`, `ref_row_of_case`,
    `assert_ref_row_written` and `cleanup_ref_rows` use the test triple and its references instead of
-   `CANTON_ZURICH_ID`, `ZURICH_CANTON_WIKIDATA_*` and `ZURICH_CANTON_WIKIPEDIA_*`.
+   `CANTON_ZURICH_ID`, `ZURICH_CANTON_WIKIDATA_*` and `ZURICH_CANTON_WIKIPEDIA_*`; `ref_rows_form_workflow`
+   moves too and gets its write version in `ref_write_url_tests`, which checks the three references in the
+   database after the confirm, because today it only renders on Zurich (canton).
 4. **Snapshots:** the existing snapshots of `ref_row_confirm_wf44` (12 html and 12 url files each in `workflow/`
    and `workflow_write/`) show triple 142 and are rewritten by the developer with a run with `test_files::AUTO_UPDATE_TEST_FILES`;
    `triple_default_triple_142.html` goes back to the seed history only (as before fbf6fa381).
@@ -2771,3 +2771,19 @@ script.
    because the add button is built by `btn_add`.
 2. **Tests:** the snapshot `object_pages/verb_list.html` is updated by the developer and a ui test checks that a verb
    link names the verb edit view.
+
+## the source selector of each reference row lists all sources
+
+The reference rows of the word and triple edit form (`system_form::form_ref_rows`, `system_form.php:2468`) write
+for each row a source selector with every source (`ref_row_source`, `:2600`), because the sources are loaded
+without a pattern (`source_list::load_for_selector`, `:2482`, `source_list.php:97`). In a write run these are about
+520 options per row: the edit page of a word with only the add row grows by 1612 lines
+(`workflow_write/change_word_wf2/wf2_show_edit.html`), and each stored reference adds the same list again, so
+every word and triple edit page carries a multiple of the source list.
+
+1. **Decide:** either all rows share one list of the sources that is written once per page, e.g. one datalist
+   that the source field of each row names, or each row shows only its stored source and a search field that
+   loads the matching sources by a pattern, like the phrase selector; the posted value stays the source id, so the
+   compare with the '86' value of `url_var::is_ref_row_change` is unchanged.
+2. **Tests:** the snapshot `object_pages/reference_form_rows.html` and the edit view snapshots are regenerated, and
+   a ui test checks that the number of source options of the form does not grow with the number of rows.

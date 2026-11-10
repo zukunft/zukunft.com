@@ -73,7 +73,7 @@
       "name": "Antigua and Barbuda",
       "refs": [
         {
-          "name": "Antigua and Barbuda",
+          "name": "Antigua_and_Barbuda",
           "type": "wikipedia"
         }
       ]
@@ -226,7 +226,7 @@
       "name": "Bosnia and Herzegovina",
       "refs": [
         {
-          "name": "Bosnia and Herzegovina",
+          "name": "Bosnia_and_Herzegovina",
           "type": "wikipedia"
         }
       ]
@@ -271,7 +271,7 @@
       "name": "Burkina Faso",
       "refs": [
         {
-          "name": "Burkina Faso",
+          "name": "Burkina_Faso",
           "type": "wikipedia"
         }
       ]
@@ -316,7 +316,7 @@
       "name": "Cape Verde",
       "refs": [
         {
-          "name": "Cape Verde",
+          "name": "Cape_Verde",
           "type": "wikipedia"
         }
       ]
@@ -325,7 +325,7 @@
       "name": "Central African Republic",
       "refs": [
         {
-          "name": "Central African Republic",
+          "name": "Central_African_Republic",
           "type": "wikipedia"
         }
       ]
@@ -388,7 +388,7 @@
       "name": "Costa Rica",
       "refs": [
         {
-          "name": "Costa Rica",
+          "name": "Costa_Rica",
           "type": "wikipedia"
         }
       ]
@@ -397,7 +397,7 @@
       "name": "Côte d'Ivoire",
       "refs": [
         {
-          "name": "Côte d'Ivoire",
+          "name": "Côte_d'Ivoire",
           "type": "wikipedia"
         }
       ]
@@ -433,7 +433,7 @@
       "name": "Czech Republic",
       "refs": [
         {
-          "name": "Czech Republic",
+          "name": "Czech_Republic",
           "type": "wikipedia"
         }
       ]
@@ -469,7 +469,7 @@
       "name": "Dominican Republic",
       "refs": [
         {
-          "name": "Dominican Republic",
+          "name": "Dominican_Republic",
           "type": "wikipedia"
         }
       ]
@@ -478,7 +478,7 @@
       "name": "East Timor",
       "refs": [
         {
-          "name": "East Timor",
+          "name": "East_Timor",
           "type": "wikipedia"
         }
       ]
@@ -505,7 +505,7 @@
       "name": "El Salvador",
       "refs": [
         {
-          "name": "El Salvador",
+          "name": "El_Salvador",
           "type": "wikipedia"
         }
       ]
@@ -514,7 +514,7 @@
       "name": "Equatorial Guinea",
       "refs": [
         {
-          "name": "Equatorial Guinea",
+          "name": "Equatorial_Guinea",
           "type": "wikipedia"
         }
       ]
@@ -703,7 +703,7 @@
       "name": "Hong Kong",
       "refs": [
         {
-          "name": "Hong Kong",
+          "name": "Hong_Kong",
           "type": "wikipedia"
         }
       ]
@@ -1009,7 +1009,7 @@
       "name": "Marshall Islands",
       "refs": [
         {
-          "name": "Marshall Islands",
+          "name": "Marshall_Islands",
           "type": "wikipedia"
         }
       ]
@@ -1144,7 +1144,7 @@
       "name": "New Zealand",
       "refs": [
         {
-          "name": "New Zealand",
+          "name": "New_Zealand",
           "type": "wikipedia"
         }
       ]
@@ -1180,7 +1180,7 @@
       "name": "North Macedonia",
       "refs": [
         {
-          "name": "North Macedonia",
+          "name": "North_Macedonia",
           "type": "wikipedia"
         }
       ]
@@ -1234,7 +1234,7 @@
       "name": "Papua New Guinea",
       "refs": [
         {
-          "name": "Papua New Guinea",
+          "name": "Papua_New_Guinea",
           "type": "wikipedia"
         }
       ]
@@ -1288,7 +1288,7 @@
       "name": "Puerto Rico",
       "refs": [
         {
-          "name": "Puerto Rico",
+          "name": "Puerto_Rico",
           "type": "wikipedia"
         }
       ]
@@ -1306,7 +1306,7 @@
       "name": "Republic of the Congo",
       "refs": [
         {
-          "name": "Republic of the Congo",
+          "name": "Republic_of_the_Congo",
           "type": "wikipedia"
         }
       ]
@@ -1342,7 +1342,7 @@
       "name": "Saint Kitts and Nevis",
       "refs": [
         {
-          "name": "Saint Kitts and Nevis",
+          "name": "Saint_Kitts_and_Nevis",
           "type": "wikipedia"
         }
       ]
@@ -1351,7 +1351,7 @@
       "name": "Saint Lucia",
       "refs": [
         {
-          "name": "Saint Lucia",
+          "name": "Saint_Lucia",
           "type": "wikipedia"
         }
       ]
@@ -1360,7 +1360,7 @@
       "name": "Saint Vincent and the Grenadines",
       "refs": [
         {
-          "name": "Saint Vincent and the Grenadines",
+          "name": "Saint_Vincent_and_the_Grenadines",
           "type": "wikipedia"
         }
       ]
@@ -1378,7 +1378,7 @@
       "name": "San Marino",
       "refs": [
         {
-          "name": "San Marino",
+          "name": "San_Marino",
           "type": "wikipedia"
         }
       ]
@@ -1387,7 +1387,7 @@
       "name": "São Tomé and Príncipe",
       "refs": [
         {
-          "name": "São Tomé and Príncipe",
+          "name": "São_Tomé_and_Príncipe",
           "type": "wikipedia"
         }
       ]
@@ -1396,7 +1396,7 @@
       "name": "Saudi Arabia",
       "refs": [
         {
-          "name": "Saudi Arabia",
+          "name": "Saudi_Arabia",
           "type": "wikipedia"
         }
       ]
@@ -1432,7 +1432,7 @@
       "name": "Sierra Leone",
       "refs": [
         {
-          "name": "Sierra Leone",
+          "name": "Sierra_Leone",
           "type": "wikipedia"
         }
       ]
@@ -1468,7 +1468,7 @@
       "name": "Solomon Islands",
       "refs": [
         {
-          "name": "Solomon Islands",
+          "name": "Solomon_Islands",
           "type": "wikipedia"
         }
       ]
@@ -1477,7 +1477,7 @@
       "name": "South Africa",
       "refs": [
         {
-          "name": "South Africa",
+          "name": "South_Africa",
           "type": "wikipedia"
         }
       ]
@@ -1486,7 +1486,7 @@
       "name": "South Korea",
       "refs": [
         {
-          "name": "South Korea",
+          "name": "South_Korea",
           "type": "wikipedia"
         }
       ]
@@ -1495,7 +1495,7 @@
       "name": "South Sudan",
       "refs": [
         {
-          "name": "South Sudan",
+          "name": "South_Sudan",
           "type": "wikipedia"
         }
       ]
@@ -1513,7 +1513,7 @@
       "name": "Sri Lanka",
       "refs": [
         {
-          "name": "Sri Lanka",
+          "name": "Sri_Lanka",
           "type": "wikipedia"
         }
       ]
@@ -1612,7 +1612,7 @@
       "name": "Trinidad and Tobago",
       "refs": [
         {
-          "name": "Trinidad and Tobago",
+          "name": "Trinidad_and_Tobago",
           "type": "wikipedia"
         }
       ]
@@ -1675,7 +1675,7 @@
       "name": "United Arab Emirates",
       "refs": [
         {
-          "name": "United Arab Emirates",
+          "name": "United_Arab_Emirates",
           "type": "wikipedia"
         }
       ]
@@ -1684,7 +1684,7 @@
       "name": "United Kingdom",
       "refs": [
         {
-          "name": "United Kingdom",
+          "name": "United_Kingdom",
           "type": "wikipedia"
         }
       ]
@@ -1693,7 +1693,7 @@
       "name": "United States",
       "refs": [
         {
-          "name": "United States",
+          "name": "United_States",
           "type": "wikipedia"
         }
       ]

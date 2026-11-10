@@ -84,7 +84,7 @@
       "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
       "refs": [
         {
-          "name": "Deviation (statistics)",
+          "name": "Deviation_(statistics)",
           "type": "wikipedia"
         }
       ]
@@ -411,7 +411,7 @@
       "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
       "refs": [
         {
-          "name": "Disability-adjusted life year",
+          "name": "Disability-adjusted_life_year",
           "type": "wikipedia"
         },
         {
@@ -438,7 +438,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Human population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
@@ -544,7 +544,7 @@
       "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
       "refs": [
         {
-          "name": "Market (economics)",
+          "name": "Market_(economics)",
           "type": "wikipedia"
         }
       ]
@@ -1102,7 +1102,7 @@
       "to": "human",
       "refs": [
         {
-          "name": "World population",
+          "name": "World_population",
           "type": "wikipedia"
         },
         {
@@ -1379,7 +1379,7 @@
       "to": "standard",
       "refs": [
         {
-          "name": "Standard deviation",
+          "name": "Standard_deviation",
           "type": "wikipedia"
         }
       ]
