@@ -3012,6 +3012,7 @@ enum messages: string
     case FORM_FIELD_URL = 'form_field_url';
     case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
+    case FORM_FIELD_REF_DELETE = 'form_field_ref_delete';
 
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
@@ -3068,6 +3069,7 @@ enum messages: string
     case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
+    case FORM_REF_ROWS = 'form_ref_rows';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
 
     // value and result select fields

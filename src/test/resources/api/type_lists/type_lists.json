@@ -11102,6 +11102,12 @@
                 "code_id": "list_child_triples",
                 "description": "show the children of the given phrase that are triples e.g. Swiss franc and US Dollar for currency",
                 "id": 294
+            },
+            {
+                "name": "form reference rows",
+                "code_id": "system_form_ref_rows",
+                "description": "the references of a phrase as rows of its edit form, which the confirm of the phrase change writes too",
+                "id": 295
             }
         ],
         "component_link_types": [

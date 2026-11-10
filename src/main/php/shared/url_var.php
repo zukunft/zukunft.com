@@ -1141,13 +1141,42 @@ class url_var
     }
 
     /**
+     * the reference rows that add, change or delete a reference; the empty add row and the unchanged rows of an
+     * edit form are dropped, so that only the real changes are confirmed and written
+     *
      * @param array $url_array the url e.g. of the confirm page of a phrase change
-     * @return array the reference rows with a known crud action e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
+     * @return array the reference rows that change a reference e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
      */
     static function ref_rows(array $url_array): array
     {
-        $rows = self::ref_row_fields($url_array, self::REF_ROW);
-        return array_filter($rows, fn(array $fields) => in_array($fields[self::ACTION] ?? '', self::REF_ROW_ACTIONS));
+        $pre_rows = self::ref_row_pre_values($url_array);
+        $result = [];
+        foreach (self::ref_row_fields($url_array, self::REF_ROW) as $row => $fields) {
+            if (self::is_ref_row_change($fields, $pre_rows[$row] ?? [])) {
+                $result[$row] = $fields;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
+     * @param array $pre_fields the stored values of the row e.g. ['ek' => 'Q72'], empty if the url has none
+     * @return bool true if the row adds, changes or deletes a reference, false e.g. for the empty add row of the edit view
+     */
+    private static function is_ref_row_change(array $fields, array $pre_fields): bool
+    {
+        $action = $fields[self::ACTION] ?? '';
+        $result = in_array($action, self::REF_ROW_ACTIONS);
+        if ($action == self::CRUD_CREATE) {
+            // a reference cannot exist without external key, so an add row without one is the untouched add row
+            $result = (($fields[self::EXTERNAL_KEY] ?? '') != '');
+        } elseif ($action == self::CRUD_UPDATE and $pre_fields != []) {
+            // the action and the id of the reference have no stored value
+            $row_values = array_diff_key($fields, [self::ACTION => '', self::REF => '']);
+            $result = (array_diff_assoc($row_values, $pre_fields) != []);
+        }
+        return $result;
     }
 
     /**

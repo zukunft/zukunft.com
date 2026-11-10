@@ -3199,17 +3199,18 @@ class html_base
     }
 
     /**
-     * a checkbox that sends the number 1 if it is checked; the id equals the name, so a label can point to it
+     * a checkbox that sends its value if it is checked; the id equals the name, so a label can point to it
      *
      * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
      * @param bool $checked true to show the checkbox checked
      * @param string $form_name the form that the input joins by its form attribute
+     * @param string $value the value that is sent if the checkbox is checked e.g. url_var::CRUD_DELETE for a delete box
      * @return string the html code of the checkbox
      */
-    function input_checkbox(string $name, bool $checked, string $form_name): string
+    function input_checkbox(string $name, bool $checked, string $form_name, string $value = '1'): string
     {
         $attr = ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
-        $form = ' ' . html_names::VALUE . '="1" ' . self::FORM . '="' . $this->esc($form_name) . '"';
+        $form = ' ' . html_names::VALUE . '="' . $this->esc($value) . '" ' . self::FORM . '="' . $this->esc($form_name) . '"';
         $state = $checked ? ' checked' : '';
         return '<' . self::INPUT . $attr . $form . $state . '>';
     }
@@ -3352,6 +3353,7 @@ class html_base
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field
      */
     function input(
@@ -3361,13 +3363,14 @@ class html_base
         string      $type = '',
         string      $class_add = '',
         string      $placeholder = '',
-        string      $form_name = ''): string
+        string      $form_name = '',
+        string      $id_ext = ''): string
     {
         $name = '';
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $id = $this->form_field_id($url_id, $msg_id);
+        $id = $this->form_field_id($url_id, $msg_id) . $id_ext;
         if ($value != '') {
             // escape the value so a name/description with " < > & cannot break out of the
             // attribute; the browser decodes it back so the resubmitted value is unchanged
@@ -3621,6 +3624,7 @@ class html_base
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -3630,7 +3634,8 @@ class html_base
         string                $type = html_base::INPUT_TEXT,
         string                $input_class = '',
         string                $style = view_styles::COL_SM_12,
-        string                $form_name = ''
+        string                $form_name = '',
+        string                $id_ext = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -3638,11 +3643,11 @@ class html_base
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
-            $text = $this->label($name, $this->field_id($url_id, $name));
-            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name);
+            $text = $this->label($name, $this->field_id($url_id, $name) . $id_ext);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name, $id_ext);
             return $this->div_form($text, $style);
         } else {
-            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name);
+            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name, $id_ext);
         }
     }
 

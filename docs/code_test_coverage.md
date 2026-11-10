@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1630 of 6477 public functions have at least 2 unit test calls; the 4635 functions below do not; the 212 functions of the last section are called nowhere
+1630 of 6479 public functions have at least 2 unit test calls; the 4637 functions below do not; the 212 functions of the last section are called nowhere
 
 ## 1914 functions of main backend have no test at all
 
@@ -2183,7 +2183,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 916 functions of frontend have no test at all
+## 917 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -3038,6 +3038,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- prior_names - 0 unit test calls
     \-- ranked_rows - 0 unit test calls
     \-- ref_list_word - 0 unit test calls
+    \-- refs_of_phrase - 0 unit test calls
     \-- result_changes - 0 unit test calls
     \-- result_width - 0 unit test calls
     \-- results - 0 unit test calls
@@ -4576,7 +4577,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 549 functions of frontend have incomplete tests
+## 550 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4985,6 +4986,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_from_json_array - 1 unit test calls shared by 6 classes
 \-- system_form
     \-- form_end - 2 unit test calls shared by 2 classes
+    \-- form_ref_rows - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
 \-- system_page

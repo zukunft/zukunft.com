@@ -57,6 +57,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
@@ -108,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
@@ -1256,13 +1258,7 @@ class ui_list extends ui_base
             $phr = $dbo->phrase();
         }
         if ($phr != null) {
-            // a word or triple loaded for its page carries its references directly (like the
-            // related values and formulas); otherwise fall back to the page reference cache
-            if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
-                $ref_lst = $dbo->ref_lst;
-            } else {
-                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr, $msg);
-            }
+            $ref_lst = $this->refs_of_phrase($dbo, $msg, $dto);
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($msg, $phr_lst);
@@ -1278,6 +1274,26 @@ class ui_list extends ui_base
             $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
+    }
+
+    /**
+     * the references of a word or triple, shown in the tab box and as the rows of its edit form
+     *
+     * @param word|triple $dbo the frontend word or triple whose references are selected
+     * @param user_message $msg to report a reference list of the cache that cannot be selected
+     * @param data_object|null $dto the request cache with the references of the page
+     * @return ref_list the references of the phrase
+     */
+    function refs_of_phrase(word|triple $dbo, user_message $msg, ?data_object $dto): ref_list
+    {
+        // a word or triple loaded for its page carries its references directly (like the
+        // related values and formulas); otherwise fall back to the page reference cache
+        if ($dbo->ref_lst != null) {
+            $ref_lst = $dbo->ref_lst;
+        } else {
+            $ref_lst = $dto->ref_list_cloned()->get_by_phrase($dbo->phrase(), $msg);
+        }
+        return $ref_lst;
     }
 
     /**

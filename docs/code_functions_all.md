@@ -6877,6 +6877,8 @@
             ut auto fill in /component/execute/system_form.php
     \-- form_refs - section for function form_refs not yet defined that it should be optional with show password but wit
             hout auto fill in /component/execute/system_form.php
+    \-- form_ref_rows - section for function form_ref_rows not yet defined that it should be optional with show password
+             but without auto fill in /component/execute/system_form.php
     \-- form_value - section for function form_value not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- form_values - section for function form_values not yet defined that it should be optional with show password but
@@ -7097,6 +7099,7 @@
     \-- value_add_link - section for function value_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
+    \-- refs_of_phrase - section for function refs_of_phrase missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
     \-- view_tab_box - section for function view_tab_box missing in /component/execute/ui_list.php
     \-- view_terms - section for function view_terms missing in /component/execute/ui_list.php
@@ -9976,6 +9979,8 @@
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
         \-- ui_list - show a list of references related to the given object
+    \-- refs_of_phrase
+        \-- ui_list - the references of a word or triple, shown in the tab box and as the rows of its edit form
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
@@ -10664,6 +10669,9 @@
         \-- system_form - create the html code for the form element to select the reference
     \-- form_refs
         \-- system_form - create the html code for the form element to select one or many references
+    \-- form_ref_rows
+        \-- system_form - the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW),
+                 so that the
     \-- form_value
         \-- system_form - create the html code for the form element to select a value
     \-- form_values
@@ -11347,7 +11355,7 @@
         \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
                 y number, or the text with the input that it wraps
     \-- input_checkbox
-        \-- html_base - a checkbox that sends the number 1 if it is checked; the id equals the name,
+        \-- html_base - a checkbox that sends its value if it is checked; the id equals the name,
                  so a label can point to it
     \-- label
         \-- html_base - create the html code for a label

@@ -68,6 +68,7 @@ include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'ref_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_by_id_write_tests.php';
@@ -76,10 +77,12 @@ include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'value_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'ref_write_url_tests.php';
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'job_ui_tests.php';
+include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
@@ -175,12 +178,15 @@ use Zukunft\ZukunftCom\test\php\unit_read\word_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\change_log_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\job_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\reference_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\result_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\word_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\ref_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\ref_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\value_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -300,8 +306,7 @@ class a_selected_test extends all_unit_tests
         //new change_link_validation_tests()->run($this);
         //new sql_tests()->run($this);
         //new sys_log_tests()->run($this);
-        // the prepared statements of the link change list by object
-        new change_log_tests()->run($this);
+        //new change_log_tests()->run($this);
         //new job_tests()->run($this);
         //new pod_tests()->run($this);
         //new user_tests()->run($this);
@@ -603,11 +608,10 @@ class a_selected_test extends all_unit_tests
              */
 
             // the html ui tests in the order of all_ui_tests::run
-            // the footer about link and the renderers whose url_old links are replaced
-            new base_ui_tests()->run($this);
+            //new base_ui_tests()->run($this);
             //new user_ui_tests()->run($this);
             //new horizontal_ui_tests()->run($this, $ui);
-            new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
+            //new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
             //new word_list_ui_tests()->run($this);
             //new verb_ui_tests()->run($this);
             //new verb_list_ui_tests()->run($this);
@@ -616,7 +620,7 @@ class a_selected_test extends all_unit_tests
             //new phrase_ui_tests()->run($this);
             //new phrase_list_ui_tests()->run($this);
             //new source_ui_tests()->run($this);
-            //new reference_ui_tests()->run($this);
+            new reference_ui_tests()->run($this);
             //new reference_list_ui_tests()->run($this);
             //new group_ui_tests()->run($this);
             //new value_ui_tests()->run($this);
@@ -625,13 +629,13 @@ class a_selected_test extends all_unit_tests
             //new formula_ui_tests()->run($this);
             //new formula_list_ui_tests()->run($this);
             //new number_format_ui_tests()->run($this);
-            new result_ui_tests()->run($this);
+            //new result_ui_tests()->run($this);
             //new result_list_ui_tests()->run($this);
             //new figure_ui_tests()->run($this);
             //new figure_list_ui_tests()->run($this);
             //new term_ui_tests()->run($this);
             //new term_list_ui_tests()->run($this);
-            new view_ui_tests()->run($this, $ui);
+            //new view_ui_tests()->run($this, $ui);
             //new view_list_ui_tests()->run($this);
             //new component_ui_tests()->run($this);
             //new component_list_ui_tests()->run($this);
@@ -639,10 +643,9 @@ class a_selected_test extends all_unit_tests
             //new use_case_ui_tests()->run($this);
             //new phrase_data_ui_tests()->run($this);
             //new language_ui_tests()->run($this);
-            // the link change list that is now loaded with a prepared statement
-            new change_log_ui_tests()->run($this);
+            //new change_log_ui_tests()->run($this);
             //new sys_log_ui_tests()->run($this);
-            new job_ui_tests()->run($this);
+            //new job_ui_tests()->run($this);
             //new config_tree_ui_tests()->run($this);
             //new localhost_ui_tests()->run($this);
             //new start_ui_tests()->run($this);
@@ -663,7 +666,7 @@ class a_selected_test extends all_unit_tests
             //new source_url_tests()->run($this);
             //new view_url_tests()->run($this);
             //new component_url_tests()->run($this);
-            //new ref_url_tests()->run($this);
+            new ref_url_tests()->run($this);
             //new value_url_tests()->run($this);
             //new signup_url_tests()->run($this);
             //new login_url_tests()->run($this);
@@ -673,7 +676,7 @@ class a_selected_test extends all_unit_tests
             //new source_write_url_tests()->run($this);
             //new view_write_url_tests()->run($this);
             //new component_write_url_tests()->run($this);
-            //new ref_write_url_tests()->run($this);
+            new ref_write_url_tests()->run($this);
             // the value writes of the url workflows go through sandbox_multi::save_changes
             new value_write_url_tests()->run($this);
             //new signup_write_url_tests()->run($this);
@@ -793,7 +796,6 @@ class a_selected_test extends all_unit_tests
             $t_db->csv_leftover_check($sys_msg);
             //$t_db->update_files_with_not_yet_fixed_db_id($this, $sys_msg);
             //$t_db->type_list_check($this, $sys_msg);
-            // the html snapshots must not change by the replaced url_old links
             new coding_rule_tests()->run_html_snapshots($this);
 
             // cleanup - fallback delete

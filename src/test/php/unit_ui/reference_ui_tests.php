@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DOMDocument;
 
 class reference_ui_tests
 {
@@ -365,8 +366,102 @@ class reference_ui_tests
         $test_name = '... and a row without crud action is no change';
         $key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . $wd_row;
         $t->assert($test_name, url_var::ref_rows([$key_var => refs::MATH_KEY]), []);
+
+        // the edit form posts every stored reference and an empty add row, but only a real change is confirmed
+        $upd_rows = [$wd_row => [
+            url_var::ACTION => url_var::CRUD_UPDATE,
+            url_var::REF => refs::MATH_ID,
+            url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $test_name = 'an update row with all fields equal to their stored values is no change';
+        $same_pre = [$wd_row => [url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows, $same_pre)), []);
+        $test_name = '... but one changed field keeps the row';
+        $changed_pre = [$wd_row => [url_var::EXTERNAL_KEY => refs::CHANGE_NEW_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows, $changed_pre)), $upd_rows);
+        $test_name = '... and an update row without stored values is kept, like the rows of the confirmed post';
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows)), $upd_rows);
+        $test_name = 'an add row without external key is no change';
+        $empty_add = [$wd_row => [url_var::ACTION => url_var::CRUD_CREATE, url_var::EXTERNAL_KEY => '']];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($empty_add)), []);
+        $test_name = '... but an add row with an external key is kept';
+        $key_add = [$wd_row => [url_var::ACTION => url_var::CRUD_CREATE, url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($key_add)), $key_add);
+        $test_name = 'a delete row is kept even if its stored values are unchanged';
+        $del_rows = [$wd_row => [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => refs::MATH_ID]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($del_rows, $same_pre)), $del_rows);
+
         $test_name = 'a written row is removed from the url together with its stored values';
         $t->assert($test_name, url_var::without_ref_row($rows_url, $wd_row), []);
+
+        $t->subheader($ts . 'reference form rows');
+
+        // the edit form of a phrase shows its references as rows, so that the confirm of the phrase writes them too
+        $row_wrd = new word_ui($t_wrd->word_math()->api_json());
+        $row_wrd->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $rows_html = $sfm->form_ref_rows($row_wrd, views::WORD_EDIT, $msg, null, [], true);
+        $t->html_page_test($rows_html, 'reference form rows', 'reference_form_rows', $msg);
+        // the form shows the references in the order of the tab box, which form_ref_rows has set
+        $first_ref = $row_wrd->ref_lst->lst()[0];
+        $add_row = count($row_wrd->ref_lst->lst()) + 1;
+        $first_ref_var = url_var::REF_ROW . url_var::REF . 1;
+        $first_key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . 1;
+        $test_name = 'the edit form of a phrase changes its first reference in the first row';
+        $t->assert_text_contains($test_name, $rows_html, $html->form_hidden($first_ref_var, (string)$first_ref->id()));
+        $test_name = '... with the stored external key as the stored value of the row';
+        $pre_key_html = $html->form_hidden(url_var::PRE . $first_key_var, $first_ref->external_key());
+        $t->assert_text_contains($test_name, $rows_html, $pre_key_html);
+        $test_name = '... and adds a reference in the row after the stored references';
+        $add_act_var = url_var::REF_ROW . url_var::ACTION . $add_row;
+        $t->assert_text_contains($test_name, $rows_html, $html->form_hidden($add_act_var, url_var::CRUD_CREATE));
+        $test_name = '... where every html id of the rows is unique, because each field is shown in each row';
+        preg_match_all('/ id="([^"]+)"/', $rows_html, $id_matches);
+        $t->assert($test_name, count(array_unique($id_matches[1])), count($id_matches[1]));
+        // negative: only a word or triple has references as rows of its edit form
+        $test_name = 'an object that is not a phrase gets no reference rows';
+        $t->assert($test_name, $sfm->form_ref_rows($ref, views::WORD_EDIT, $msg, null, [], true), '');
+        $msg->reset();
+
+        $test_name = 'the form rows posted without a change are no reference change';
+        $posted = $this->posted_vars($rows_html);
+        $t->assert($test_name, url_var::ref_rows($posted), []);
+        $test_name = 'one changed key, one checked delete box and one filled add row are three reference changes';
+        $changed = $posted;
+        $changed[$first_key_var] = refs::CHANGE_NEW_KEY;
+        $changed[url_var::REF_ROW . url_var::ACTION . 2] = url_var::CRUD_DELETE;
+        $changed[url_var::REF_ROW . url_var::EXTERNAL_KEY . $add_row] = refs::MATH_KEY;
+        $t->assert($test_name, array_keys(url_var::ref_rows($changed)), [1, 2, $add_row]);
+    }
+
+    /**
+     * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
+     * if it is checked and a selector with its selected entry; a later field with the same name wins
+     *
+     * @param string $html the html code of the form fields
+     * @return array the posted url vars e.g. ['6a1' => 'u', '6ek1' => 'Q395']
+     */
+    private function posted_vars(string $html): array
+    {
+        $dom = new DOMDocument();
+        // the html5 tags are unknown to libxml, which reports them but reads the fields anyway
+        $use_errors = libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+        $result = [];
+        foreach ($dom->getElementsByTagName('input') as $input) {
+            $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
+            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))) {
+                $result[$input->getAttribute('name')] = $input->getAttribute('value');
+            }
+        }
+        foreach ($dom->getElementsByTagName('select') as $select) {
+            foreach ($select->getElementsByTagName('option') as $option) {
+                if ($option->hasAttribute('selected')) {
+                    $result[$select->getAttribute('name')] = $option->getAttribute('value');
+                }
+            }
+        }
+        return $result;
     }
 
 }
