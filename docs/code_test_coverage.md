@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1631 of 6491 public functions have at least 2 unit test calls; the 4644 functions below do not; the 216 functions of the last section are called nowhere
+1630 of 6477 public functions have at least 2 unit test calls; the 4635 functions below do not; the 212 functions of the last section are called nowhere
 
-## 1918 functions of main backend have no test at all
+## 1914 functions of main backend have no test at all
 
 ```
 \-- application
@@ -32,7 +32,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_by_user - 0 unit test calls shared by 6 classes
     \-- load_sql - 0 unit test calls shared by 45 classes
     \-- load_sql_by_user - 0 unit test calls shared by 4 classes
-    \-- load_sql_old - 0 unit test calls shared by 2 classes
     \-- sql_sub_type - 0 unit test calls shared by 2 classes
     \-- sql_type - 0 unit test calls shared by 4 classes
     \-- use_type_id - 0 unit test calls shared by 2 classes
@@ -75,7 +74,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time - 0 unit test calls shared by 3 classes
     \-- use_type_id - 0 unit test calls shared by 2 classes
 \-- change_log_link_list
-    \-- load_by_obj - 0 unit test calls shared by 2 classes
+    \-- load_by_obj - 0 unit test calls
 \-- change_log_list
     \-- first_msg - 0 unit test calls
     \-- load_by_fld_of_cmp - 0 unit test calls
@@ -831,12 +830,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- frm_upd_lst_usr - 0 unit test calls
     \-- import_obj - 0 unit test calls shared by 18 classes
     \-- load_by_formula - 0 unit test calls shared by 3 classes
-    \-- load_by_obj - 0 unit test calls shared by 2 classes
     \-- load_by_val - 0 unit test calls
     \-- load_sql_by_formula - 0 unit test calls
     \-- load_sql_by_frm - 0 unit test calls
     \-- load_sql_by_frm_single - 0 unit test calls
-    \-- load_sql_by_obj_old - 0 unit test calls
     \-- load_sql_by_src - 0 unit test calls
     \-- load_sql_by_src_grp - 0 unit test calls
 \-- sandbox
@@ -1252,7 +1249,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- par_name - 0 unit test calls shared by 2 classes
     \-- par_type_to_postgres - 0 unit test calls
     \-- par_types_to_postgres - 0 unit test calls shared by 2 classes
-    \-- par_value - 0 unit test calls shared by 2 classes
     \-- par_values - 0 unit test calls
     \-- prepare_sql - 0 unit test calls shared by 2 classes
     \-- select_by_id_not_owner - 0 unit test calls shared by 2 classes
@@ -1361,7 +1357,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- open_with_retry - 0 unit test calls
     \-- par_name - 0 unit test calls shared by 2 classes
     \-- par_types_to_postgres - 0 unit test calls shared by 2 classes
-    \-- par_value - 0 unit test calls shared by 2 classes
+    \-- par_value - 0 unit test calls
     \-- postgres_format - 0 unit test calls
     \-- prepare_sql - 0 unit test calls shared by 2 classes
     \-- remove_prefix - 0 unit test calls
@@ -1819,7 +1815,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- user_log
     \-- del_sql_by_user_without_log - 0 unit test calls shared by 2 classes
     \-- load_open - 0 unit test calls
-    \-- load_sql_old - 0 unit test calls shared by 2 classes
+    \-- load_sql_old - 0 unit test calls
     \-- load_sql_open - 0 unit test calls
     \-- log_request - 0 unit test calls
 \-- user_log_sum_list
@@ -2187,7 +2183,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 921 functions of frontend have no test at all
+## 916 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2341,7 +2337,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- need_all - 0 unit test calls shared by 2 classes
     \-- obj_url - 0 unit test calls
     \-- phrase_selector - 0 unit test calls shared by 6 classes
-    \-- phrase_selector_old - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls shared by 3 classes
     \-- plural_name - 0 unit test calls
     \-- plural_reverse - 0 unit test calls shared by 2 classes
@@ -2362,7 +2357,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- element_group
     \-- build_symbol - 0 unit test calls shared by 2 classes
     \-- dsp_names - 0 unit test calls
-    \-- dsp_values_old - 0 unit test calls
+    \-- dsp_values - 0 unit test calls
     \-- figures - 0 unit test calls shared by 2 classes
 \-- figure
     \-- display_linked - 0 unit test calls shared by 7 classes
@@ -2395,7 +2390,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_phrase_list - 0 unit test calls
     \-- load_by_formula_id - 0 unit test calls
 \-- formula_list
-    \-- display_old - 0 unit test calls shared by 2 classes
     \-- get_by_verb - 0 unit test calls shared by 2 classes
     \-- load_selectable - 0 unit test calls
 \-- frontend
@@ -2472,7 +2466,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_text_h2 - 0 unit test calls
     \-- dsp_text_h3 - 0 unit test calls
     \-- echo - 0 unit test calls shared by 2 classes
-    \-- edit_url - 0 unit test calls
     \-- form - 0 unit test calls
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field_id - 0 unit test calls
@@ -2494,7 +2487,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- label_lan - 0 unit test calls
     \-- label_no_for - 0 unit test calls
     \-- lf - 0 unit test calls
-    \-- list_sort - 0 unit test calls shared by 3 classes
     \-- list_unsorted - 0 unit test calls
     \-- logo - 0 unit test calls
     \-- logo_big - 0 unit test calls
@@ -2563,7 +2555,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- list_named
     \-- names_linked - 0 unit test calls shared by 3 classes
 \-- list_sort
-    \-- list_sort - 0 unit test calls shared by 3 classes
+    \-- list_sort - 0 unit test calls shared by 2 classes
 \-- log
     \-- set_status - 0 unit test calls shared by 3 classes
     \-- set_text - 0 unit test calls
@@ -2695,7 +2687,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_phrases_of_fields - 0 unit test calls shared by 2 classes
 \-- result_list
     \-- display_linked - 0 unit test calls shared by 7 classes
-    \-- display_old - 0 unit test calls shared by 2 classes
     \-- frm_links_html - 0 unit test calls
     \-- get_by_formula - 0 unit test calls
     \-- load_by - 0 unit test calls
@@ -3040,7 +3031,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- formulas_of_parents - 0 unit test calls
     \-- input_fields - 0 unit test calls
     \-- link_list_word - 0 unit test calls
-    \-- list_sort - 0 unit test calls shared by 3 classes
+    \-- list_sort - 0 unit test calls shared by 2 classes
     \-- num_list - 0 unit test calls
     \-- phrases_of_formula - 0 unit test calls
     \-- phrases_related - 0 unit test calls
@@ -5262,7 +5253,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- expected_total_import_time
     \-- get_value_by_names
 \-- expression
-    \-- element_part_list_old
     \-- load_verb
 \-- formula
     \-- calc_requests
@@ -5298,7 +5288,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_by_phr_vrb_and_type
     \-- one_positiv
     \-- sort_rev_by_id
-    \-- time_lst_old
 \-- qlever
     \-- import - maybe called by name
 \-- ref
@@ -5424,7 +5413,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_child_by_name
     \-- set_parent_by_name
 \-- word
-    \-- calc_usage_old
     \-- load_by_formula_name
     \-- phrase_list_down - maybe called by name
     \-- phrase_list_up - maybe called by name
@@ -5446,7 +5434,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sort_array_by_class - maybe called by name
     \-- sort_array_by_id - maybe called by name
     \-- str_diff_list_lcs
-    \-- str_diff_old
     \-- unescape
 \-- views
     \-- class_to_add

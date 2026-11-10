@@ -48,7 +48,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG . 'change_log.php';
-//include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -60,24 +59,18 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_LOG . 'change_log.php';
-//include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_message.php';
-//include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
-//include_once paths::MODEL_VIEW . 'view.php';
-//include_once paths::MODEL_WORD . 'word.php';
-include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -88,17 +81,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -320,79 +308,6 @@ class change extends change_log
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
-        return $qp;
-    }
-
-    function load_sql_old(string $type, int $limit = 0): sql_par
-    {
-        global $sys;
-        global $db_con;
-
-        $result = ''; // reset the html code var
-
-        $qp = new sql_par(self::class);
-
-        // set default values
-        if ($limit <= 0) {
-            $limit = sql_db::ROW_LIMIT;
-        }
-
-        // select the change table to use
-        $sql_where = '';
-        $sql_row = '';
-        $sql_user = '';
-        // the setting for most cases
-        $sql_row = ' s.row_id  = $2 ';
-        // the class specific settings
-        if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
-                   OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
-            $sql_row = '';
-            $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->get_user()->id . ' ';
-        } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD));
-            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR));
-            $sql_where = " s.change_field_id = $1 ";
-        } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE) . " 
-                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR) . ") AND ";
-        } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA) . " 
-                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_USR) . ") AND ";
-        } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW) . " 
-                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_USR) . ") AND ";
-        } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
-        }
-
-        if ($sql_where == '') {
-            log_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist");
-        } else {
-            // get word changes by the user that are not standard
-            $qp->sql = "SELECT s.change_id, 
-                     s.user_id, 
-                     s.change_time, 
-                     s.change_action_id, 
-                     s.change_field_id, 
-                     s.row_id, 
-                     s.old_value, 
-                     s.old_id, 
-                     s.new_value,
-                     s.new_id, 
-                     l.user_name,
-                     l2.table_id
-                FROM changes s 
-           LEFT JOIN users l ON s.user_id = l.user_id
-           LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
-               WHERE " . $sql_where . " AND " . $sql_row . " 
-            ORDER BY s.change_time DESC
-               LIMIT " . $limit . ";";
-            log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->get_user()->id;
-        }
         return $qp;
     }
 

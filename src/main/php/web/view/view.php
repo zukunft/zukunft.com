@@ -54,7 +54,6 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
-include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
@@ -80,7 +79,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -227,7 +225,6 @@ class view extends view_exe
      */
     private function dsp_navbar_bs(bool $show_view, user $usr, array $url_arr): string
     {
-        $lib = new library();
         $html = new html_base();
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
@@ -250,9 +247,7 @@ class view extends view_exe
         if ($show_view) {
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($url_arr);
-            $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr);
-            $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id());
             // TODO Prio 2 fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
@@ -261,7 +256,6 @@ class view extends view_exe
             // TODO Prio 2 fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url_back(views::VIEW_ADD_ID, 0, $url_arr);
-            $url_add = $html->url_old($class . rest_ctrl::CREATE);
             // TODO Prio 2 fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
             $result .= $this->btn_add($url_arr);
@@ -631,7 +625,7 @@ class view extends view_exe
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url_back(views::COMPONENT_LINK_ADD_ID, 0, $url_arr, url_var::VIEW . url_var::EQ . $this->id());
                 $result .= (new button($url, $url_arr))->add(msg_id::COMPONENT_ADD);
             }
         }

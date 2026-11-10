@@ -1108,7 +1108,7 @@ class html_base
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
-            $url = $this->url_old(rest_ctrl::URL_ABOUT);
+            $url = rest_ctrl::PATH_FIXED . rest_ctrl::URL_ABOUT . rest_ctrl::EXT;
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
@@ -1392,39 +1392,6 @@ class html_base
     /*
      * wrapper for internal references used in the html code
      */
-
-    /**
-     * build a url for link a zukunft.com element
-     * TODO Prio 0 deprecate and use url_new for all url creations if possible
-     *
-     * @param string $obj_name the object that is requested e.g. a view
-     * @param int|string $id the id of the parameter e.g. 1 for math const
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
-     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
-     * @return string the created url
-     */
-    function url_old(
-        string       $obj_name,
-        int|string   $id = 0,
-        array        $url_arr = [],
-        string|array $par = '',
-        string       $id_ext = ''
-    ): string
-    {
-        $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
-        if ($id <> 0) {
-            if ($par != '') {
-                $result .= '?' . $par . '=' . $id;
-            } else {
-                $result .= '?id=' . $id;
-            }
-            if ($id_ext != '') {
-                $result .= '&' . $id_ext;
-            }
-        }
-        return $this->url_with_back($result, $url_arr);
-    }
 
     /**
      * TODO Prio 1 deprecate and replace if the the url_arr based back var
@@ -2668,59 +2635,6 @@ class html_base
     private function line_small($line_text): string
     {
         return '<' . self::SMALL . '>' . $line_text . '</' . self::SMALL . '><' . self::BR . '>';
-    }
-
-    /**
-     * converts object class name to an edit php script name
-     *
-     */
-    function edit_url(string $class): string
-    {
-        return $class . rest_ctrl::UPDATE . rest_ctrl::EXT;
-    }
-
-    /**
-     * display a list that can be sorted using the fixed field "order_nbr"
-     * $sql_result - list of the query results
-     *
-     * @param array $item_lst a list of objects that have at least an id and a name
-     */
-    function list_sort(
-        array  $item_lst,
-        string $class,
-        string $script_parameter,
-        array  $url_arr = []): string
-    {
-        global $mtr;
-        $btn = new button();
-        $result = '';
-
-        $row_nbr = 0;
-        $num_rows = count($item_lst);
-        foreach ($item_lst as $key => $item) {
-            // list of all possible view entries
-            $row_nbr = $row_nbr + 1;
-            $edit_script = $this->edit_url($class);
-            $url = $this->url_old($edit_script, $key, $url_arr);
-            $result .= $this->ref($url, $item);
-            if ($row_nbr > 1) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_up=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::UP));
-            }
-            if ($row_nbr > 1 and $row_nbr < $num_rows) {
-                $result .= '/';
-            }
-            if ($row_nbr < $num_rows) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_down=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
-            }
-            $result .= ' ';
-            // TODO Prio 1 review
-            //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
-            $result .= '<' . self::BR . '>';
-        }
-
-        return $result;
     }
 
     /**

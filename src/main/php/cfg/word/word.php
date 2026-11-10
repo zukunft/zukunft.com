@@ -1794,25 +1794,6 @@ class word extends sandbox_code_id
         return $qp;
     }
 
-    /**
-     * calculates how many times a word is used, because this can be helpful for sorting
-     */
-    function calc_usage_old(): bool
-    {
-        global $db_con;
-
-        // TODO Prio 2 recreate based on the group
-        /*
-        $sql = 'UPDATE words t
-             SET ' . $db_con->sf("values") . ' = (
-          SELECT COUNT(group_id)
-            FROM group g
-           WHERE g.phrase_id = t.word_id);';
-        $db_con->exe_try('Calculate word usage', $sql);
-        */
-        return true;
-    }
-
 
     /*
      * related

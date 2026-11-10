@@ -2747,3 +2747,27 @@ setup does not create, so it now reports that the selection is not implemented (
    selection of the old sql did.
 3. **Tests:** a unit test of the builder and a write test that a formula change selects the results of a value
    with an assigned and a used phrase, and its negative: no result without a used phrase.
+
+## the median user of a group is selected without where
+
+`sql_creator::select_by_id_not_owner` adds the id, the owner and the excluded condition with `add_par` but
+without a where entry, so `sql_creator::where` leaves them out and the statement selects all user rows of the
+table. It is reached by `sandbox_multi::load_sql_median_user` for a group (`median_user`, used by `not_used` and
+`del`); values and results override the builder in `sandbox_value`.
+
+1. **Builder:** `load_sql_median_user` of `sandbox_multi` uses `add_where` for the id and the owner and the
+   excluded condition like the other builders, so `select_by_id_not_owner` of `sql_creator` has no caller left
+   and goes.
+2. **Tests:** a unit test with a fixture for Postgres and MySQL of the median user of a group, with and without
+   an owner.
+
+## the dead links of the verb list
+
+`web/verb/verb_list.php::dsp_list` builds the links `/http/link_type_edit.php?id=` itself, but `http/` has no
+such script, so every verb link of `verb_list.html` leads nowhere; its unused `$add_script` names the same kind of
+script.
+
+1. **Links:** the link of a verb uses the edit view of the verb, like the other lists, and `$add_script` goes,
+   because the add button is built by `btn_add`.
+2. **Tests:** the snapshot `object_pages/verb_list.html` is updated by the developer and a ui test checks that a verb
+   link names the verb edit view.

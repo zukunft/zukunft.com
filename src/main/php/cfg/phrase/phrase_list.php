@@ -2031,28 +2031,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * get all phrases of this phrase list that have at least one time term
-     * TODO Prio 2 to be replaced by time_lst
-     * @return array of time phrases
-     */
-    function time_lst_old(user_message $msg): array
-    {
-        global $sys;
-
-        log_debug($this->dsp_id());
-
-        $result = array();
-        $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
-        // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst() as $phr) {
-            if ($phr->type_id($msg) == $time_type) {
-                $result[] = $phr;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * get all words of this phrase list that have at least one time term
      * TODO Prio 2 use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)

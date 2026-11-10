@@ -4172,48 +4172,6 @@ class library
      */
 
     /**
-     * highlight the first difference between two string
-     * @param string|null $from the expected text
-     * @param string|null $to the text to compare
-     * @return string the first char that differs or an empty string
-     */
-    function str_diff_old(?string $from, ?string $to): string
-    {
-        $result = '';
-
-        if ($from != null and $to != null) {
-            if ($from != $to) {
-                $f = str_split($from);
-                $t = str_split($to);
-
-                // add message if just one string is shorter
-                if (count($f) < count($t)) {
-                    $result = '@' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
-                } elseif (count($t) < count($f)) {
-                    $result = '@' . count($t) . ' additional: ' . substr($from, count($t), count($f) - count($t));
-                }
-
-                // find the first diff
-                $i = 0;
-                while ($i < count($f) and $i < count($t) and $result == '') {
-                    if ($f[$i] != $t[$i]) {
-                        $result = '@' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
-                        $result .= ', near ' . substr($from, $i - 10, 20);
-                    }
-                    $i++;
-                }
-            }
-        } elseif ($from == null and $to != null) {
-            $result = 'less: ' . $to;
-        } elseif ($from != null and $to == null) {
-            $result = 'additional: ' . $from;
-        }
-
-
-        return $result;
-    }
-
-    /**
      * highlight the first differences between two string
      * @param string|null $from the text to compare
      * @param string|null $to the expected text

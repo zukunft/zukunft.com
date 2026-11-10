@@ -575,8 +575,6 @@
     \-- has_preload_type - section for function has_preload_type not yet defined that it should be preloaded in /word/wo
             rd.php
     \-- delta - section for function delta is expected to be del in /word/word.php
-    \-- calc_usage_old - section for function calc_usage_old not yet defined that it should be ui support in /word/word.
-            php
     \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be sandbox in /w
             ord/word.php
     \-- used_by_data - section for function used_by_data not yet defined that it should be sandbox in /word/word.php
@@ -1363,8 +1361,6 @@
             n of the table name in /db/sql_creator.php
     \-- par_name - section for function par_name not yet defined that it should be final exception correction of the tab
             le name in /db/sql_creator.php
-    \-- par_value - section for function par_value not yet defined that it should be final exception correction of the t
-            able name in /db/sql_creator.php
     \-- par_type_to_postgres - section for function par_type_to_postgres not yet defined that it should be final excepti
             on correction of the table name in /db/sql_creator.php
     \-- load_sql_not_changed_multi - section for function load_sql_not_changed_multi is expected to be load sql in /db/s
@@ -1912,8 +1908,6 @@
     \-- phr_id_lst_as_phr_lst - section for function phr_id_lst_as_phr_lst not yet defined that it should be internal in
              /formula/expression.php
     \-- get_usr_names - section for function get_usr_names is expected to be set and get in /formula/expression.php
-    \-- element_part_list_old - section for function element_part_list_old not yet defined that it should be extract hel
-            per in /formula/expression.php
     \-- get_ref_id - section for function get_ref_id is expected to be set and get in /formula/expression.php
     \-- phr_verb_lst - section for function phr_verb_lst not yet defined that it should be to review in /formula/express
             ion.php
@@ -2597,7 +2591,6 @@
             php
     \-- load_sql - section for function load_sql is expected to be load sql in /log/change.php
     \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /log/change.php
-    \-- load_sql_old - section for function load_sql_old is expected to be load sql in /log/change.php
     \-- use_type_id - section for function use_type_id not yet defined that it should be info in /log/change.php
     \-- sql_type - section for function sql_type not yet defined that it should be sql write in /log/change.php
     \-- sql_sub_type - section for function sql_sub_type not yet defined that it should be sql write in /log/change.php
@@ -2912,8 +2905,6 @@
             hp
     \-- has_percent - section for function has_percent not yet defined that it should be modify in /phrase/phrase_list.p
             hp
-    \-- time_lst_old - section for function time_lst_old not yet defined that it should be modify in /phrase/phrase_list
-            .php
     \-- time_word_list - section for function time_word_list not yet defined that it should be modify in /phrase/phrase_
             list.php
     \-- time_list - section for function time_list not yet defined that it should be modify in /phrase/phrase_list.php
@@ -3125,10 +3116,7 @@
     \-- load_sql_by_grp - section for function load_sql_by_grp is expected to be load sql in /result/result_list.php
     \-- load_sql_by_src_grp - section for function load_sql_by_src_grp is expected to be load sql in /result/result_list
             .php
-    \-- load_sql_by_obj_old - section for function load_sql_by_obj_old is expected to be load sql in /result/result_list
-            .php
     \-- load_by_grp - section for function load_by_grp is expected to be load in /result/result_list.php
-    \-- load_by_obj - section for function load_by_obj is expected to be load in /result/result_list.php
     \-- filter_within_phrases - section for function filter_within_phrases not yet defined that it should be modify in /
             result/result_list.php
     \-- name - section for function name is expected to be debug in /result/result_list.php
@@ -4805,11 +4793,6 @@
         \-- change - create an SQL statement to retrieve a change long entry by the changing user
     \-- load_by_user_sql
         \-- change - create the SQL statement to retrieve the parameters of the change log by name
-    \-- 2
-        \-- user_log - create the sql statement to select the open session of a user, the latest first
-    \-- load_sql_old
-        \-- change - create the SQL statement to retrieve the parameters of the change log by name
-        \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
     \-- load_by_field_row
         \-- change_log - load the last change of given user
     \-- load_sql_by_field_row
@@ -4871,6 +4854,12 @@
         \-- ip_range - load an ip range from the database selected by id
     \-- load_by_ip_addresses
         \-- ip_range - load an ip range from the database selected by the start and end ip address
+    \-- load_open
+        \-- user_log - load the session of the user whose last request has ended after the given time
+    \-- load_sql_open
+        \-- user_log - create the sql statement to select the open session of a user, the latest first
+    \-- load_sql_old
+        \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
     \-- load_dummy
         \-- view_sys_list - adding the system views used for unit tests to the dummy list
     \-- default_id
@@ -5610,8 +5599,6 @@
         \-- sql_creator - final exception correction of the table name
     \-- par_name
         \-- sql_creator - get the SQL parameter placeholder in the used SQL dialect
-    \-- par_value
-        \-- sql_creator - get the SQL parameter value of a parameter position
     \-- par_type_to_postgres
         \-- sql_creator - convert one internal sql parameter type to a postgres db parameter type
     \-- load_sql_not_changed_multi
@@ -6051,9 +6038,6 @@
         \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
     \-- get_all_messages
         \-- user_message - @return array with all the text messages
-\-- extract helper
-    \-- element_part_list_old
-        \-- expression - @return array of the term names used in the expression based on the user text
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
@@ -7244,10 +7228,10 @@
     \-- dsp_names - section for function dsp_names not yet defined that it should be display in /element/element_group.p
             hp
     \-- figures - section for function figures not yet defined that it should be display in /element/element_group.php
+    \-- dsp_values - section for function dsp_values not yet defined that it should be display in /element/element_group
+            .php
     \-- build_symbol - section for function build_symbol not yet defined that it should be repeat from backend in /eleme
             nt/element_group.php
-    \-- dsp_values_old - section for function dsp_values_old not yet defined that it should be deprecate in /element/ele
-            ment_group.php
 \-- figure
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /figure/figure.php
     \-- id - section for function id not yet defined that it should be set and get in /figure/figure.php
@@ -7367,8 +7351,6 @@
     \-- name_link - section for function name_link not yet defined that it should be display in /formula/formula_list.ph
             p
     \-- tbl - section for function tbl not yet defined that it should be display in /formula/formula_list.php
-    \-- display_old - section for function display_old not yet defined that it should be display in /formula/formula_lis
-            t.php
     \-- order error - order of section display has difference at name_link should be before name_tip
 \-- frontend
     \-- start - section for function start not yet defined that it should be session in /frontend.php
@@ -7678,8 +7660,6 @@
             ml/html_base.php
     \-- sub - section for function sub not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
-    \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in
-             the html code in /html/html_base.php
     \-- url_back - section for function url_back not yet defined that it should be wrapper for internal references used 
             in the html code in /html/html_base.php
     \-- pre_url_part - section for function pre_url_part not yet defined that it should be wrapper for internal referenc
@@ -7766,10 +7746,6 @@
             kunft.com in /html/html_base.php
     \-- docs_page - section for function docs_page not yet defined that it should be the form HTML elements used in zuku
             nft.com in /html/html_base.php
-    \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functi
-            ons for the pure HTML version in /html/html_base.php
-    \-- list_sort - section for function list_sort not yet defined that it should be output device specific support func
-            tions for the pure HTML version in /html/html_base.php
     \-- list - section for function list not yet defined that it should be output device specific support functions for 
             the pure HTML version in /html/html_base.php
     \-- dsp_tbl_width - section for function dsp_tbl_width not yet defined that it should be to dismiss / replace in /ht
@@ -8323,10 +8299,8 @@
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             _list.php
     \-- table - section for function table not yet defined that it should be display in /result/result_list.php
-    \-- display_old - section for function display_old not yet defined that it should be display in /result/result_list.
-            php
-    \-- frm_links_html - section for function frm_links_html not yet defined that it should be create the pure html (5) 
-            code for all formula links related to this value list in /result/result_list.php
+    \-- frm_links_html - section for function frm_links_html not yet defined that it should be display in /result/result
+            _list.php
 \-- ListBase
     \-- api_mapper_list - section for function api_mapper_list not yet defined that it should be construct and map in /s
             andbox/ListBase.php
@@ -9491,6 +9465,8 @@
     \-- figures
         \-- element_group - get a list of figures related to the formula element group and a context defined by a list o
                 f words
+    \-- dsp_values
+        \-- element_group - the HTML code to display a figure list
     \-- display
         \-- formula_link - @return string that best describes this object
         \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
@@ -9541,8 +9517,8 @@
     \-- table
         \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
                 t
-    \-- display_old
-        \-- result_list - create the html code to show the formula results to the user
+    \-- frm_links_html
+        \-- result_list - create the pure html (5) code for all formula links related to this value list
     \-- load_by_id_with_related
         \-- sandbox_link - load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
     \-- link_type
@@ -10849,9 +10825,6 @@
 \-- repeat from backend
     \-- build_symbol
         \-- element_group - recreate the element group symbol based on the element list ($this->lst)
-\-- deprecate
-    \-- dsp_values_old
-        \-- element_group - the HTML code to display a figure list
 \-- interface
     \-- api_array
         \-- figure - @return array the json message array to send the updated data to the backend
@@ -11207,8 +11180,6 @@
     \-- sub
         \-- html_base - @param string $text the subscript text e.g. the index "i"
 \-- wrapper for internal references used in the html code
-    \-- url_old
-        \-- html_base - build a url for link a zukunft.com element
     \-- url_back
         \-- html_base - the url of a view for an object with the calling page as the back part
     \-- pre_url_part
@@ -11309,10 +11280,6 @@
     \-- docs_page
         \-- html_base - a markdown document of /docs/ as a html page with the css of zukunft.com
 \-- output device specific support functions for the pure HTML version
-    \-- edit_url
-        \-- html_base - converts object class name to an edit php script name
-    \-- list_sort
-        \-- html_base - display a list that can be sorted using the fixed field "order_nbr"
     \-- list
         \-- html_base - display a paged, editable list of elements e.g. verbs
 \-- to dismiss / replace
@@ -11561,9 +11528,6 @@
 \-- repeat backend
     \-- get_grp_id
         \-- phrase_list - TODO Prio 1 review
-\-- create the pure html (5) code for all formula links related to this value list
-    \-- frm_links_html
-        \-- result_list - create the pure html (5) code for all formula links related to this value list
 \-- menu
     \-- menu_views_ui
         \-- sandbox - the views that the edit menu of the navbar suggests for this object, in the order of the menu:

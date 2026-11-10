@@ -285,6 +285,40 @@ class element_group extends ListBase
         return $fig_lst;
     }
 
+    /**
+     * the HTML code to display a figure list
+     * @param user_message $msg to report the problems of loading or mapping the figures
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the linked figures
+     */
+    function dsp_values(user_message $msg, array $url_arr = []): string
+    {
+        log_debug();
+
+        $result = '';
+
+        $fig_lst = $this->figures($msg);
+        log_debug('got figures');
+
+        // show the time if adjusted by a special formula element
+        // build the html code to display the value with the link
+        foreach ($fig_lst->lst() as $fig) {
+            log_debug('display figure');
+            $api_json = $fig->api_json([api_types::INCL_PHRASES], $msg);
+            $fig_ui = new figure();
+            $fig_ui->set_from_json($api_json, $msg);
+            $result .= $fig_ui->display_linked($msg, $url_arr);
+        }
+
+        // TODO Prio 3 show the time phrase only if it differs from the main time phrase
+
+        // display alternative values
+
+
+        log_debug('result "' . $result . '"');
+        return $result;
+    }
+
     /*
      * repeat from backend
      */
@@ -365,43 +399,5 @@ class element_group extends ListBase
 
         return $val_time_phr;
     }
-
-
-    /*
-     * deprecate
-     */
-
-    /**
-     * the HTML code to display a figure list
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    function dsp_values_old(user_message $msg, array $url_arr = []): string
-    {
-        log_debug();
-
-        $result = '';
-
-        $fig_lst = $this->figures($msg);
-        log_debug('got figures');
-
-        // show the time if adjusted by a special formula element
-        // build the html code to display the value with the link
-        foreach ($fig_lst->lst() as $fig) {
-            log_debug('display figure');
-            $api_json = $fig->api_json([api_types::INCL_PHRASES], $msg);
-            $fig_ui = new figure();
-            $fig_ui->set_from_json($api_json, $msg);
-            $result .= $fig_ui->display_linked($msg, $url_arr);
-        }
-
-        // TODO Prio 3 show the time phrase only if it differs from the main time phrase
-
-        // display alternative values
-
-
-        log_debug('result "' . $result . '"');
-        return $result;
-    }
-
 
 }

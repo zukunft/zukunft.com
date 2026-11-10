@@ -1,43 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## deprecate the *_old functions
-
-Rule 5 of docs/llm/coding.md: every write is one named prepared statement with its change log, created by the
-sql creator and covered by a fixture in `src/test/resources/db/<class>/` and a unit test. Do one step per commit,
-in this order, and ask the developer to run the unit and write tests after each step.
-
-### step 4: remove sql_creator::where_old
-
-`where()` falls back to `where_old` if no parameter has been added with `add_where_par`. Log the builders that
-still reach `where_old` during a full test run, switch them to `add_where_par` (the fixtures must not change),
-then remove `where_old` and the fallback.
-
-### step 5: remove the unused legacy functions
-
-Without a caller in src: `result_list::load_by_obj` with `load_sql_by_obj_old`, `change::load_sql_old`,
-`phrase_list::time_lst_old`, `expression::element_part_list_old`, `word::calc_usage_old` and
-`library::str_diff_old`. Check each again for a caller (also by a string or a dynamic call) before removing it.
-
-### step 6: the frontend *_old functions
-
-`html_base::url_old` (12 callers in web/ and base_ui_tests) moves to `html_base::url` or the `url()` of the
-object; `result_list::display_old` and `formula_list::display_old` (web), `element_group::dsp_values_old` and
-`db_object::phrase_selector_old` move to their current replacements. The html snapshots must not change.
-
-**full test run with /test/test.php**
-
-### not part of this plan
-
-These names mean the value before a change or an age, not legacy code, and stay:
-`sql_par_field_list::get_old`, `sandbox::sql_key_fields_text_old` and `sql_key_fields_id_old` (also in
-`sandbox_link`), `user_log::load_sql_old` (the ended sessions) and `job_db_cleanup::is_old`.
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
 ## confirm the reference changes together with the phrase
 
 the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
@@ -58,6 +20,17 @@ exists: the save carries the whole posted url to the confirm view (`frontend.php
 (`ui_preview::ref_rows_section`, `ui_preview.php:371`), `system_form::form_back` (`system_form.php:569`) carries
 them to the confirmed post and `frontend::action_crud` writes them with `phrase::save_ref_rows`
 (`frontend.php:2885`, `web/phrase/phrase.php:1118`). Three changes, each with its own log file and test run:
+- after step 1 a `test/test_part.php` run with `reference_ui_tests`, `ref_url_tests` and `ref_write_url_tests`
+  switched on: the change is one function of `url_var`, and the workflows show that the rows of the wikipedia
+  refresh are still written; no import and no id changes, so no full run is needed yet
+- after step 2 a `test/test_part.php` run with `reference_ui_tests`, `coding_rule_tests` (the new messages and
+  their translations) and `run_html_snapshots` (the duplicate html id check of the new rows): the new row of
+  `component_types.csv` reaches the database by the code link fill at the start of `a_selected_test::run`
+  (`a_selected_test.php:387`), so no reset is needed, and no view uses the new type yet
+- after step 3 the full run with re-pin of the end of this prompt (first `test/reset_db.php`, then at least twice
+  `test/test.php`), because the new component shifts the ids of the later components and component links
+- a step that is committed on its own needs a full `test/test.php` before its commit (`docs/llm/testing.md:187`),
+  so steps 1 and 2 are either committed each after a full run or together with step 3 after its re-pin run
 
 #### step 1: an unchanged row is no change
 

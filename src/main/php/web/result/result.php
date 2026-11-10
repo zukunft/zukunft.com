@@ -526,7 +526,7 @@ class result extends sandbox_value
                 log_debug('words set ' . $elm_grp->phrase_list()->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values_old($msg, $url_arr);
+                $result .= ' = ' . $elm_grp->dsp_values($msg, $url_arr);
                 $result .= '</br>';
                 log_debug('next element');
                 $elm_nbr++;

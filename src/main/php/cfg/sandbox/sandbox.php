@@ -4759,7 +4759,6 @@ class sandbox extends db_object_seq_id_user
         return new sql_par_field_list();
     }
 
-    // TODO Prio 2 deprecate
     function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         log_missing_overwrite_warning('sql_key_fields_id_old', $this::class);

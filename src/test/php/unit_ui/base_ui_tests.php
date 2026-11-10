@@ -1512,10 +1512,11 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, $page_arr), '9m=3&9id=123');
         $test_name = '... and an unknown calling page adds no back part';
         $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, []), '9');
-        $test_name = 'an old style script url carries the calling page as the back part';
-        $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
-        $test_name = '... and without an object and a calling page it has no parameter';
-        $t->assert($test_name, $html->url_old(rest_ctrl::VIEW), rest_ctrl::PATH_FIXED . rest_ctrl::VIEW . rest_ctrl::EXT);
+        $about_url = rest_ctrl::PATH_FIXED . rest_ctrl::URL_ABOUT . rest_ctrl::EXT;
+        $test_name = 'the page footer links to the about page';
+        $t->assert_text_contains($test_name, $html->footer(), '"' . $about_url . '"');
+        $test_name = '... and the footer of the about page does not link to itself';
+        $t->assert_text_not_contains($test_name, $html->footer(true), $about_url);
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
         // space, so a link writes the id in its short url form, which has a '_' instead of the '+'
         // (see group_id_url), because else the value page finds no value

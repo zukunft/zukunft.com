@@ -647,7 +647,7 @@ class view_exe extends view_base
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url_back(views::COMPONENT_LINK_ADD_ID, 0, $url_arr, url_var::VIEW . url_var::EQ . $this->id());
                 $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
             }
         }
