@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1632 of 6492 public functions have at least 2 unit test calls; the 4644 functions below do not; the 216 functions of the last section are called nowhere
+1631 of 6491 public functions have at least 2 unit test calls; the 4644 functions below do not; the 216 functions of the last section are called nowhere
 
-## 1919 functions of main backend have no test at all
+## 1918 functions of main backend have no test at all
 
 ```
 \-- application
@@ -1334,7 +1334,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_functions - 0 unit test calls
     \-- get_internal - 0 unit test calls
     \-- get_name_field - 0 unit test calls
-    \-- get_old - 0 unit test calls shared by 2 classes
     \-- get_prepared - 0 unit test calls
     \-- get_table_name - 0 unit test calls shared by 2 classes
     \-- get_table_name_esc - 0 unit test calls
@@ -1459,7 +1458,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_values - 0 unit test calls shared by 5 classes
     \-- get_diff - 0 unit test calls shared by 2 classes
     \-- get_intersect - 0 unit test calls
-    \-- get_old - 0 unit test calls shared by 2 classes
+    \-- get_old - 0 unit test calls
     \-- get_old_id - 0 unit test calls
     \-- get_par_name - 0 unit test calls
     \-- get_type - 0 unit test calls
@@ -3213,7 +3212,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1148 functions of main backend have incomplete tests
+## 1149 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3236,6 +3235,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_last - 3 unit test calls shared by 2 classes
     \-- field - 1 unit test calls shared by 2 classes
     \-- table - 4 unit test calls shared by 5 classes
+\-- change_log_link_list
+    \-- load_sql_by_obj - 1 unit test calls
 \-- change_log_list
     \-- load_sql_by_user_value - 1 unit test calls
 \-- change_table_list

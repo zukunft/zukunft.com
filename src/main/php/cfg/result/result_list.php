@@ -1251,10 +1251,10 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val = new group_list($this->get_user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($phr_frm);
-        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res);
-        $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res);
-        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res); // for predefined formulas ...
-        $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res); // ... such as "this"
+        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res, $msg);
+        $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res, $msg);
+        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res, $msg); // for predefined formulas ...
+        $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res, $msg); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
         // first calculate the standard results for all user and then the user-specific results

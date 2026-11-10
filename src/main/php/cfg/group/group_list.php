@@ -456,108 +456,41 @@ class group_list extends sandbox_list_named
     */
 
     /**
-     * query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
+     * get the value or formula result groups that contain at least one phrase of each of two lists
      * e.g. which value that have "sales" and "2016"?
+     * not implemented for the current group tables, whose group id contains the phrase ids
+     * (docs/llm/pending_prio_2.md), so it reports this and returns no rows
+     *
+     * @param string $type 'value' or 'formula result' to select the values or the results
+     * @param phrase_list $phr_linked the phrases that the formula is assigned to
+     * @param phrase_list $phr_used the phrases that the formula uses
+     * @param user_message $msg to report that the selection is not implemented
+     * @return array the database rows with the group id, always empty for now
      */
-    private function get_grp_by_phr($type, $phr_linked, $phr_used): array
+    private function get_grp_by_phr(string $type, phrase_list $phr_linked, phrase_list $phr_used, user_message $msg): array
     {
-        log_debug('get values because formula is assigned to phrases ' . $phr_linked->name() . ' and phrases ' . $phr_used->name() . ' are used in the formula');
-
-        global $db_con;
-
-        // separate the time words from the phrases
-        $time_linked = $phr_linked->time_lst();
-        log_debug('time words linked ' . $time_linked->name());
-        $time_used = $phr_used->time_lst();
-        log_debug('time words used ' . $time_used->name());
-        $phr_linked_ex = clone $phr_linked;
-        $phr_linked_ex->ex_time();
-        log_debug('linked ex time ' . $phr_linked_ex->name());
-        $phr_used_ex = clone $phr_used;
-        $phr_used_ex->ex_time();
-        log_debug('used ex time ' . $phr_used_ex->name());
-
-        // create the group selection
-        $sql_group = '';
-        if (count($phr_linked->ids) > 0 and count($phr_used->ids) > 0) {
-            $sql_group = 'SELECT l1.group_id
-                      FROM group_phrase_links l1
-                 LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->get_user()->id . ',
-                           group_phrase_links l2
-                 LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->get_user()->id . '
-                     WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
-                       AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
-                       AND l1.group_id = l2.group_id
-                       AND COALESCE(u1.excluded, 0) <> 1
-                       AND COALESCE(u2.excluded, 0) <> 1
-                  GROUP BY l1.group_id';
-        } else {
-            log_warning('Phrases missing while loading the phrase groups');
-            // e.g. if "sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
-            //   or if "sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
-            //   or if "sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
-            // in all these cases only value selected by time needs to be updated
-        }
-
-        // create the time selection
-        /*
-        $sql_time = '';
-        if (count($time_linked->ids) > 0 and count($time_used->ids) > 0) {
-            $sql_time = 'v.time_word_id IN (' . sql_array($time_linked->ids) . ')
-               AND v.time_word_id IN (' . sql_array($time_used->ids) . ')';
-        } else {
-            // dito group
-            log_warning('Phrases missing while loading the phrase groups');
-        }
-        */
-
-        // create the value or result selection
-        // TODO Prio 2 use sql builder
-        if ($type == 'value') {
-            $sql_select = 'SELECT v.group_id,
-                            v.group_id
-                       FROM values v';
-        } else {
-            $sql_select = 'SELECT v.group_id AS group_id,
-                            v.group_id
-                       FROM results v';
-        }
-
-        // combine the selections
-        $sql = '';
-        $sql_group_by = ' GROUP BY group_id, group_id LIMIT 500'; // limit is only set for testing: remove for release!
-        if ($sql_group <> '') {
-            // select values only by the group
-            $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.group_id = g.group_id' . $sql_group_by . ';';
-        }
-
-        log_debug('sql "' . $sql . '"');
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->get_user()->id;
-        $msg = new user_message(); // not reported, TODO Prio 1 deprecate
-        return $db_con->get_old($sql, $msg);
+        log_err_msg('the selection of the ' . $type . ' groups by the assigned phrases ' . $phr_linked->dsp_id()
+            . ' and the used phrases ' . $phr_used->dsp_id() . ' is not implemented for the current group tables', $msg);
+        return [];
     }
 
     // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
-    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
+    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res, user_message $msg): int
     {
         $lib = new library();
-        $msg = new user_message(); // not reported: a deprecated private helper without a caller message
 
         // check the parameters
         if ($type == '') {
-            log_err('Type is missing.', 'phr_grp_lst->add_grp_by_phr');
+            log_err_msg('Type is missing.', $msg);
         }
         if (!isset($frm_linked)) {
-            log_err('Linked formula is missing.', 'phr_grp_lst->add_grp_by_phr');
+            log_err_msg('Linked formula is missing.', $msg);
         }
         if (!isset($frm_used)) {
-            log_err('Used formula is missing.', 'phr_grp_lst->add_grp_by_phr');
+            log_err_msg('Used formula is missing.', $msg);
         }
         if (!isset($phr_frm)) {
-            log_err('Formula phrase is missing.', 'phr_grp_lst->add_grp_by_phr');
+            log_err_msg('Formula phrase is missing.', $msg);
         }
 
         log_debug($frm_linked->name() . ' related ' . $type . 's found for ' . $frm_used->name() . ' and user ' . $this->get_user()->name);
@@ -567,7 +500,7 @@ class group_list extends sandbox_list_named
         // select is using the phrase groups because this is faster than checking all values or formula result
         // and there cannot be any value or formula result without phrase group
         if (!empty($frm_linked->ids)) {
-            $val_rows = $this->get_grp_by_phr($type, $frm_linked, $frm_used);
+            $val_rows = $this->get_grp_by_phr($type, $frm_linked, $frm_used, $msg);
             foreach ($val_rows as $val_row) {
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
@@ -608,25 +541,25 @@ class group_list extends sandbox_list_named
         return $added;
     }
 
-    function get_by_val_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res): int
+    function get_by_val_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res, user_message $msg): int
     {
-        return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
+        return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_res, $msg);
     }
 
-    function get_by_val_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res): int
+    function get_by_val_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res, user_message $msg): int
     {
-        return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
+        return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res, $msg);
     }
 
-    function get_by_res_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res): int
+    function get_by_res_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res, user_message $msg): int
     {
-        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
+        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_res, $msg);
     }
 
     //
-    function get_by_res_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res): int
+    function get_by_res_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res, user_message $msg): int
     {
-        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
+        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res, $msg);
     }
 
     /*

@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -315,17 +317,18 @@ class change_log_tests
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');
         $cl_lst = new change_log_link_list();
-        $test_name = 'sql to load the link changes of a word selects the change_links table';
-        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $t->usr1);
-        $t->assert_text_contains($test_name, $sql_word, 'FROM change_links c');
-        $test_name = 'the link changes of a word are selected by the from and to id';
-        $t->assert_text_contains($test_name, $sql_word,
-            '(c.old_from_id = 123 OR c.old_to_id = 123 OR c.new_from_id = 123 OR c.new_to_id = 123)');
-        $test_name = 'the link changes of a component are selected by the to id only';
-        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $t->usr1);
-        $t->assert_text_contains($test_name, $sql_cmp, '(c.old_to_id = 45 OR c.new_to_id = 45)');
+        // the changes of the user itself, selected by the user and not by the id
+        $this->assert_sql_link_list_by_obj(user::class, 1, $cl_lst, $db_con, $t);
+        // a word is selected by the from and to id of the link
+        $this->assert_sql_link_list_by_obj(word::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(value::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(formula::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(view::class, 1, $cl_lst, $db_con, $t);
+        // a component is selected by the to id only
+        $this->assert_sql_link_list_by_obj(component::class, 1, $cl_lst, $db_con, $t);
         $test_name = 'an unknown object class creates no link change sql';
-        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $t->usr1), '');
+        $qp_unknown = $cl_lst->load_sql_by_obj($db_con->sql_creator(), change_table::class, 1, $t->usr1);
+        $t->assert($test_name, $qp_unknown->name, '');
 
         // a link change is sent to the frontend with the relevant side as old/new value
         $t->subheader($ts . 'link change api');
@@ -818,6 +821,38 @@ class change_log_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param change_log_list $log_lst the user sandbox object e.g. a word
      */
+    /**
+     * check the sql to load the link changes of one object for Postgres and MySQL
+     *
+     * @param string $class the class of the object whose link changes are loaded
+     * @param int|string $id the database id of the object
+     * @param change_log_link_list $cl_lst the link change list that creates the sql
+     * @param sql_db $db_con the unit test db connection that creates the sql creator
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    private function assert_sql_link_list_by_obj(
+        string               $class,
+        int|string           $id,
+        change_log_link_list $cl_lst,
+        sql_db               $db_con,
+        test_cleanup         $t): void
+    {
+        $sc = $db_con->sql_creator();
+
+        // check the Postgres query syntax
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $cl_lst->load_sql_by_obj($sc, $class, $id, $t->usr1);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $cl_lst->load_sql_by_obj($sc, $class, $id, $t->usr1);
+            $t->assert_qp($qp, $sc->db_type);
+        }
+    }
+
     private function assert_sql_list_last(
         string          $class,
         int|string      $id,

@@ -2732,3 +2732,18 @@ of the REST answer does not carry them. Before the REST call is activated:
    plain texts are replaced by message ids, as the TODO of the frontend `user_message::api_array` asks.
 4. **Tests:** a unit test that a backend message with a plain text keeps the text through `api_array` and
    `api_mapper` in both directions.
+
+## the value and result groups by phrase for the formula update
+
+`group_list::get_grp_by_phr` should select the value and result groups that contain at least one phrase that a
+formula is assigned to and one phrase that it uses, so that `result_list::frm_upd_lst` knows which results to
+recalculate after a formula change. The old raw sql read `group_phrase_links`, a table that the current database
+setup does not create, so it now reports that the selection is not implemented (`log_err_msg`) and returns no rows.
+`frm_upd_lst` has no caller yet. Before it gets one:
+
+1. **Builder:** a `load_sql_*` builder with the sql creator for the current value and result tables, whose
+   group id contains the phrase ids (`docs/llm/group_id.md`), with a fixture for Postgres and MySQL.
+2. **Time words:** decide whether the time words are still separated from the phrases, as the commented out time
+   selection of the old sql did.
+3. **Tests:** a unit test of the builder and a write test that a formula change selects the results of a value
+   with an assigned and a used phrase, and its negative: no result without a used phrase.

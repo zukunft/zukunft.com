@@ -3560,16 +3560,6 @@ class sql_db
     }
 
     /**
-     * TODO Prio 1 deprecate
-     * returns all values of an SQL query in an array
-     */
-    function get_old(string $sql, user_message $msg, string $sql_name = '', array $sql_array = array()): array
-    {
-        $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $msg, $sql_name, $sql_array);
-    }
-
-    /**
      * returns all values of an SQL query in an array
      *
      * @param sql_par $qp the sql statement to get the db rows

@@ -288,7 +288,8 @@ class a_selected_test extends all_unit_tests
         //new change_link_validation_tests()->run($this);
         //new sql_tests()->run($this);
         //new sys_log_tests()->run($this);
-        //new change_log_tests()->run($this);
+        // the prepared statements of the link change list by object
+        new change_log_tests()->run($this);
         //new job_tests()->run($this);
         //new pod_tests()->run($this);
         //new user_tests()->run($this);
@@ -625,7 +626,8 @@ class a_selected_test extends all_unit_tests
             //new use_case_ui_tests()->run($this);
             //new phrase_data_ui_tests()->run($this);
             //new language_ui_tests()->run($this);
-            //new change_log_ui_tests()->run($this);
+            // the link change list that is now loaded with a prepared statement
+            new change_log_ui_tests()->run($this);
             //new sys_log_ui_tests()->run($this);
             //new job_ui_tests()->run($this);
             //new config_tree_ui_tests()->run($this);
@@ -688,6 +690,7 @@ class a_selected_test extends all_unit_tests
             //new word_write_tests()->run($this);
             //new triple_write_tests()->run($this);
             // reads the test values of create_test_values on seed words e.g. the inhabitants of the canton Zurich
+            // and its cleanup loads the value link changes with the link change list
             new value_write_tests()->run($this);
             //new formula_write_tests()->run($this);
             //new job_write_tests()->run($this);
