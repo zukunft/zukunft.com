@@ -3530,7 +3530,8 @@ class sandbox extends db_object_seq_id_user
                             // set owner
                             if (!$this->set_owner($new_owner_id, $msg)) {
                                 $msg_txt .= 'Setting of owner while deleting ' . $class_name . ' failed';
-                                log_err($msg_txt, $class_name . '->del');
+                                // reported with $msg_txt at the end of del
+                                log_err_reported($msg_txt, $class_name . '->del');
 
                             }
 
@@ -4885,7 +4886,7 @@ class sandbox extends db_object_seq_id_user
     function set_code_id(?string $code_id, user_message $msg): bool
     {
         $txt = 'code id change has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4899,7 +4900,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4913,7 +4914,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend after message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4927,7 +4928,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend exception message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4941,7 +4942,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_value_exception(?float $ui_msg_value_exception, user_message $msg): bool
     {
         $txt = 'frontend exception message value has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }

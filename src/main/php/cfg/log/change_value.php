@@ -162,7 +162,6 @@ class change_value extends change_log
      */
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = '', ?user $usr = null): bool
     {
-        global $sys;
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -176,17 +175,7 @@ class change_value extends change_log
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
             $this->new_value = $db_row[change::FLD_NEW_VALUE];
 
-            $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
-            $tbl_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
-            if (is_numeric($tbl_id)) {
-                if (preg_match('/^\d+$/', $tbl_id) !== 1) {
-                    log_warning('table id "' . $tbl_id . '" extracted from "' . $fld_tbl->name . '" is numeric but not an integer');
-                } else {
-                    $this->table_id = $tbl_id;
-                }
-            } else {
-                log_warning('Cannot get table id from ' . $fld_tbl->name);
-            }
+            $this->set_table_by_field($msg);
             // TODO Prio 3 check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {

@@ -348,6 +348,10 @@ class type_lists
                     log_warning('cached types json rejected: ' . $msg_sys->all_message_text());
                     $msg->merge($msg_sys);
                     $result = false;
+                } elseif (!$this->cng_fld->has_table_ids()) {
+                    // e.g. a cache written before the change fields named their table, which a change log row needs
+                    log_warning('cached types json rejected, because a change field has no table id');
+                    $result = false;
                 }
             }
         }

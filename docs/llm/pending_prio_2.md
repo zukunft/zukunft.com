@@ -2636,15 +2636,19 @@ return, with the tests of `test_base::assert_row_mapper_guard` for a value, a re
 `group_list::rows_mapper` calls `rows_mapper_obj` with a group, which has no `row_mapper_sandbox`, so it would
 fail on its first row; the group lists are loaded by `load_by_phr` today, which maps the rows itself.
 
-## expected internal errors in tests only via `$sys->log_test_only`
+## expected internal errors in tests only via the test-only flag of the message
 
-A test that expects an internal error (`log_err`, `log_err_msg`) calls `test_base::assert_log_err`, which sets
-`$sys->log_test_only`, so that the error is neither written to the system log nor counted as an internal error
-of the run, and asserts the text of the error (first used by the csv row without id of `type_tests`). Align the
-other cases that handle an expected or an absent internal error in their own way:
+A test that expects an internal error calls `test_base::assert_log_err` with the message of the call, which sets
+`Message::log_test_only`, so that `log_err_msg` resp. `log_err_msg_ui` keep the text of the error in the message and
+neither write it to the system log nor count it as an internal error of the run, and the test asserts the text
+(first used by the csv row without id of `type_tests`). A bare `log_err` has no message and is always an error of
+the run, so a function whose error a test expects reports it with `log_err_msg`. Align the other cases that handle
+an expected or an absent internal error in their own way:
 
-1. `math_function_report::backend_result` saves and restores `$sys->errors` and sets `$sys->log_writing`, whose
-   purpose is to stop the log writer from calling itself; use `$sys->log_test_only` instead.
+1. `math_function_report::backend_result` saves and restores `$sys->errors`, `$sys->error_texts` and
+   `$sys->error_links` and sets `$sys->log_writing`, whose purpose is to stop the log writer from calling itself;
+   set `log_test_only` on the message it hands to `calc_internal::parse` instead, once the parser reports its
+   errors with `log_err_msg`.
 2. `term::row_has_ids` is public only "so that the check can be tested without the error log of the row
    mapper" (`term_tests` 233-238); test the corrupted row with `term::row_mapper_sandbox` and
    `assert_log_err` instead, so that the `TERM_ROW_ID_MISSING` and the logged text are checked too.

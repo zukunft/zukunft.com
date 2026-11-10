@@ -334,13 +334,18 @@ class math_function_report
         global $sys;
         $errors = $sys?->errors;
         $writing = $sys?->log_writing;
+        $error_texts = $sys?->error_texts;
+        $error_links = $sys?->error_links;
         if ($sys !== null) {
             $sys->log_writing = true;
         }
         $result = $this->without_output(fn() => new calc_internal()->parse($txt, new user_message())); // not reported, the report shows the result
+        // the expected errors of the edge case are neither listed in the summary of the run nor sent with an answer
         if ($sys !== null) {
             $sys->log_writing = $writing;
             $sys->errors = $errors;
+            $sys->error_texts = $error_texts;
+            $sys->error_links = $error_links;
         }
         return $result;
     }

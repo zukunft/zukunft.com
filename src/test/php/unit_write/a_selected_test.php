@@ -301,23 +301,24 @@ class a_selected_test extends all_unit_tests
         //new horizontal_tests()->run($this);
         //new permission_tests()->run($this);
         //new system_view_ui_tests()->run($this);
-        // the new user row update builder and the user row insert of assert_sql_save_fields
+        // assert_sql_update_user takes a sandbox_multi too, so check that it still works for a word
         new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
         //new word_list_tests()->run($this);
         //new verb_tests()->run($this);
-        // the user row insert of assert_sql_save_fields
-        new triple_tests()->run($this);
+        //new triple_tests()->run($this);
         //new triple_list_tests()->run($this);
         //new phrase_tests()->run($this);
         //new phrase_list_tests()->run($this);
-        //new group_tests()->run($this);
+        // the group save uses sandbox_multi::save_changes
+        new group_tests()->run($this);
         //new group_list_tests()->run($this);
         //new term_tests()->run($this);
         //new term_list_tests()->run($this);
         //new source_tests()->run($this);
         //new source_list_tests()->run($this);
         //new ref_tests()->run($this);
-        //new value_tests()->run($this);
+        // the user row builders of sandbox_multi for the value and the time series tables
+        new value_tests()->run($this);
         //new value_list_tests()->run($this);
         //new formula_tests()->run($this);
         //new formula_calc_tests()->run($this);
@@ -326,7 +327,8 @@ class a_selected_test extends all_unit_tests
         //new element_tests()->run($this);
         //new element_list_tests()->run($this);
         //new expression_tests()->run($this);
-        //new result_tests()->run($this);
+        // the user row builders of sandbox_multi for the result tables
+        new result_tests()->run($this);
         //new result_list_tests()->run($this);
         //new figure_tests()->run($this);
         //new figure_list_tests()->run($this);
@@ -657,7 +659,8 @@ class a_selected_test extends all_unit_tests
             //new view_write_url_tests()->run($this);
             //new component_write_url_tests()->run($this);
             //new ref_write_url_tests()->run($this);
-            //new value_write_url_tests()->run($this);
+            // the value writes of the url workflows go through sandbox_multi::save_changes
+            new value_write_url_tests()->run($this);
             //new signup_write_url_tests()->run($this);
             //new login_write_url_tests()->run($this);
 
@@ -670,30 +673,26 @@ class a_selected_test extends all_unit_tests
 
             // run the selected db write tests
             // the change and delete of a value given only by its id, as the update put does it
-            //new value_by_id_write_tests()->run($this);
+            // the change and the exclusion of a value given only by its id write the user row
+            new value_by_id_write_tests()->run($this);
             // the triple description change of the calculator editor and its undo
             //new update_put_write_tests()->run_use_case($this);
-            // the messages of the calculator editor on the Swiss NPP vote and the PV lifetime balance and their undo
-            //new update_put_write_tests()->run_npp_vote($this);
+            // the messages of the calculator editor on the Swiss NPP vote and the PV lifetime balance and their undo,
+            // which change and remove values as a user who does not own them
+            new update_put_write_tests()->run_npp_vote($this);
             //new update_put_write_tests()->run_notes_and_sources($this);
-            //new update_put_write_tests()->run_scenarios($this);
-            // the calculator editor messages with another link for a triple of the Swiss NPP vote, which are refused
-            // by the do not update a link guard, which keeps the user row now
-            new update_put_write_tests()->run_npp_links($this);
+            new update_put_write_tests()->run_scenarios($this);
+            //new update_put_write_tests()->run_npp_links($this);
             // the test entries for the write tests like in test.php (all_unit_write_tests)
             $t_db->create_test_db_entries($this);
-            // the word and triple write tests including run_del_used and the cleanup that removes the
-            // test rows as their owner (write_named_cleanup_force) also if the system user has excluded them
-            new word_write_tests()->run($this);
-            new triple_write_tests()->run($this);
+            //new word_write_tests()->run($this);
+            //new triple_write_tests()->run($this);
             // reads the test values of create_test_values on seed words e.g. the inhabitants of the canton Zurich
-            //new value_write_tests()->run($this);
-            // the formula word rename in save_related and the update after the insert in formula_map::add
-            new formula_write_tests()->run($this);
+            new value_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
-            // a view is saved with the sandbox save, too
-            new view_write_tests()->run($this);
+            //new view_write_tests()->run($this);
             // reads the seed values of 2019 and 2020 without changing them
             //new formula_trigger_tests()->run($this);
             // the db write tests in the order of all_unit_write_tests::run_db_write_tests
@@ -718,15 +717,14 @@ class a_selected_test extends all_unit_tests
             //new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
-            //new group_write_tests()->run($this);
+            // the group save uses sandbox_multi::save_changes
+            new group_write_tests()->run($this);
             //new group_list_write_tests()->run($t);
             //new graph_tests()->run($t);
             //new term_write_tests()->run($t);
             //new term_list_tests()->run($t);
-            // a source is saved with the sandbox save, too
-            new source_write_tests()->run($this);
-            // ref::save uses the parent save (docs/llm/log/save_fields_func_2026-11-09.md)
-            new ref_write_tests()->run($this);
+            //new source_write_tests()->run($this);
+            //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
@@ -745,14 +743,12 @@ class a_selected_test extends all_unit_tests
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            // a component is saved with the sandbox save, too
-            new component_write_tests()->run($this);
+            //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
-            // the import of a ref with the same phrase and type uses the duplicate check of the parent save
-            new import_write_tests()->run($this);
+            //new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             //new wikidata_write_tests()->run($this);
             //new update_put_write_tests()->run($this);

@@ -1908,7 +1908,7 @@ class sandbox_multi extends db_object_multi_user
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
                         $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
-                        // no statement if only the key fields differ, like in save_fields_func
+                        // no statement if only the key fields differ, like in save_standard_row
                         if ($qp != null) {
                             $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
                         } else {
@@ -3363,7 +3363,7 @@ class sandbox_multi extends db_object_multi_user
                     // the problem is shown to the user by the calling interactive script
                     // TODO Prio 2 add function based saving
                     if ($msg->is_ok()) {
-                        $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                        $this->save_changes($db_con, $db_rec, $std_rec, $msg);
                     }
                 }
             }
@@ -3511,7 +3511,8 @@ class sandbox_multi extends db_object_multi_user
                             // set owner
                             if (!$this->set_owner($new_owner_id, $msg, $must_exist)) {
                                 $msg_txt .= 'Setting of owner while deleting ' . $class_name . ' failed';
-                                log_err($msg_txt, $this::class . '->del');
+                                // reported with $msg_txt at the end of del
+                                log_err_reported($msg_txt, $this::class . '->del');
 
                             }
 
@@ -3565,7 +3566,19 @@ class sandbox_multi extends db_object_multi_user
                         }
                         if ($std_msg_txt == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                            // the exclusion is always a write of the user row, because another user uses the object
+                            $sc = $db_con->sql_creator();
+                            if ($db_rec->has_usr_cfg()) {
+                                $qp = $this->sql_update_user($sc, $db_rec, $msg);
+                                if ($qp != null) {
+                                    $db_con->update($qp, 'exclude ' . $this->dsp_id(), $msg);
+                                }
+                            } else {
+                                $qp = $this->sql_insert_user($sc, $db_rec, $msg);
+                                if ($qp != null) {
+                                    $db_con->insert($qp, 'exclude ' . $this->dsp_id(), $msg, new sql_message(), true, true);
+                                }
+                            }
                         }
                     }
                 }
@@ -3579,114 +3592,116 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * save all updated fields with one sql function
-     * for more than one table
-     * *
+     * write the changes of a value, result or group either to the standard row, if the user may change it
+     * e.g. because no other user has used it, or to the user row
+     *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_multi $db_obj the database record before the saving
-     * @param sandbox_multi $norm_obj the database record defined as standard because it is used by most users
+     * @param sandbox_multi $db_rec the database row as the user sees it before the saving
+     * @param sandbox_multi $std_rec the database row defined as standard because it is used by most users
      * @param user_message $msg with the description of any problems for the user and the suggested solution
-     * @return bool true if everything has been fine
      */
-    function save_fields_func(
+    protected function save_changes(
         sql_db        $db_con,
-        sandbox_multi $db_obj,
-        sandbox_multi $norm_obj,
+        sandbox_multi $db_rec,
+        sandbox_multi $std_rec,
         user_message  $msg
-    ): bool
+    ): void
     {
-        // the sql creator is used more than once, so create it upfront
-        $sc = $db_con->sql_creator();
-        // the sql function should include the log of the changes
-        $sc_par_lst = new sql_type_list([sql_type::LOG]);
-        // get a list of all fields that could potentially be updated
-        $all_fields = $this->db_fields_all();
-        // get the object name for the log messages
-        $lib = new library();
-        $obj_name = $lib->class_to_name($this::class);
-
-        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
-            // TODO Prio 1 check if the update of the standard db row will lead to unexpected changes for other users
-            // TODO Prio 1 get a list of all user that have used the standard more than the threshold
-            // TODO Prio 1 create a user db row for all these users that undo the expected changes of the standard db row
-            // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $msg)) {
-                if ($this->has_usr_cfg()) {
-                    // logged with the user row as stored, so that the log shows the number that the user had
-                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                }
-            } else {
-                // apply the changes directly to the norm db record
-                // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
-                $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
-                if (!$fvt_lst->is_empty_except_internal_fields()) {
-                    $sc_par_lst->add(sql_type::UPDATE);
-                    // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
-                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    // no statement if only the key fields differ, like in the user row branches below
-                    if ($qp != null) {
-                        $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
-                    } else {
-                        $this->report_empty_write('update', $msg);
-                    }
-                    if ($this->has_usr_cfg()) {
-                        $sc_par_lst->add(sql_type::USER);
-                        $qp = $this->sql_delete_user_row($sc, $msg, $sc_par_lst);
-                        $db_con->delete($qp, 'del user ' . $obj_name, $msg);
-                    }
-                }
-            }
-            if ($msg->is_ok()) {
-                // check if some user overwrites can be removed
-                $this->del_usr_cfg_if_not_needed($msg); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-            }
+            $this->save_standard_row($db_con, $db_rec, $std_rec, $msg);
         } else {
-            $sc_par_lst->add(sql_type::USER);
-            // TODO Prio 2 review if $this or $db_obj must be used here because in sandbox $this is used
-            if ($db_obj->has_usr_cfg()) {
-                if ($this->no_diff($norm_obj, $msg)) {
-                    // logged with the user row as stored, so that the log shows the number that the user had
-                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                } else {
-                    // update the user row only if it does not yet match the requested state
-                    // (e.g. a leftover user row of a previous test run can already match),
-                    // because an update without any changed field would be an invalid sql
-                    $this->set_user_table_source();
-                    $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
-                    if (!$fvt_lst->is_empty_except_internal_fields()) {
-                        $sc_par_lst->add(sql_type::UPDATE);
-                        // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
-                        // for a new user record compare with the norm db_row
-                        // TODO Prio 2 compare sql_write with sql_update_switch
-                        $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                        if ($qp != null) {
-                            $db_con->update($qp, 'update user ' . $obj_name, $msg);
-                        }
-                    }
-                }
+            $this->save_user_row($db_con, $db_rec, $std_rec, $msg);
+        }
+    }
+
+    /**
+     * write the changes to the standard row and remove the user row that is not needed any more
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox_multi $db_rec the database row as the user sees it before the saving
+     * @param sandbox_multi $std_rec the database row defined as standard because it is used by most users
+     * @param user_message $msg with the description of any problems for the user and the suggested solution
+     */
+    private function save_standard_row(
+        sql_db        $db_con,
+        sandbox_multi $db_rec,
+        sandbox_multi $std_rec,
+        user_message  $msg
+    ): void
+    {
+        $sc = $db_con->sql_creator();
+        $log_lst = new sql_type_list([sql_type::LOG]);
+        // TODO Prio 1 check if the update of the standard db row will lead to unexpected changes for other users
+        // TODO Prio 1 get a list of all user that have used the standard more than the threshold
+        // TODO Prio 1 create a user db row for all these users that undo the expected changes of the standard db row
+        $no_diff = $this->no_diff($std_rec, $msg);
+        $fvt_lst = $this->db_fields_changed($db_rec, $msg, $log_lst);
+        $is_changed = !$fvt_lst->is_empty_except_internal_fields();
+        if (!$no_diff and $is_changed) {
+            // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
+            $qp = $this->sql_update($sc, $db_rec, $msg, $log_lst);
+            // no statement if only the key fields differ, like in the user row branches
+            if ($qp != null) {
+                $obj_name = new library()->class_to_name($this::class);
+                $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
             } else {
-                if (!$this->no_diff($norm_obj, $msg)) {
-                    $sc_par_lst->add(sql_type::INSERT);
-                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    $this->set_user_table_source();
-                    // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
-                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    // TODO Prio 2 compare sql_write with sql_insert_switch
-                    // no statement if only the key fields differ e.g. the placeholder source of the user row
-                    if ($qp != null) {
-                        $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
-                    } else {
-                        $this->report_empty_write('user overwrite', $msg);
-                    }
-                }
+                $this->report_empty_write('update', $msg);
             }
         }
+        // the user row is not needed any more after the update of the standard row or if it has no difference
+        if ($this->has_usr_cfg() and ($no_diff or $is_changed)) {
+            // logged with the user row as stored, so that the log shows the number that the user had
+            $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
+            $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+        }
+        if ($msg->is_ok()) {
+            // check if some user overwrites can be removed
+            $this->del_usr_cfg_if_not_needed($msg); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+        }
+    }
 
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $msg->is_ok();
+    /**
+     * write the changes of a user, who may not change the standard row, to the user row
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox_multi $db_rec the database row as the user sees it before the saving
+     * @param sandbox_multi $std_rec the database row defined as standard because it is used by most users
+     * @param user_message $msg with the description of any problems for the user and the suggested solution
+     */
+    private function save_user_row(
+        sql_db        $db_con,
+        sandbox_multi $db_rec,
+        sandbox_multi $std_rec,
+        user_message  $msg
+    ): void
+    {
+        $sc = $db_con->sql_creator();
+        $obj_name = new library()->class_to_name($this::class);
+        $log_lst = new sql_type_list([sql_type::LOG]);
+        // TODO Prio 2 review if $this or $db_rec must be used here because in sandbox $this is used
+        if ($db_rec->has_usr_cfg()) {
+            if ($this->no_diff($std_rec, $msg)) {
+                // logged with the user row as stored, so that the log shows the number that the user had
+                $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
+                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+            } else {
+                // null e.g. if a leftover user row already matches the request
+                $qp = $this->sql_update_user($sc, $db_rec, $msg, $log_lst);
+                if ($qp != null) {
+                    $db_con->update($qp, 'update user ' . $obj_name, $msg);
+                }
+            }
+        } elseif (!$this->no_diff($std_rec, $msg)) {
+            // compared with the database row as the user sees it like the branch before the split, which has
+            // no user row here; if the standard row is the right one is open (docs/llm/log/save_fields_multi_2026-11-09.md)
+            $qp = $this->sql_insert_user($sc, $db_rec, $msg, $log_lst);
+            // no statement if only the key fields differ e.g. the placeholder source of the user row
+            if ($qp != null) {
+                $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+            } else {
+                $this->report_empty_write('user overwrite', $msg);
+            }
+        }
     }
 
     /**
@@ -3733,6 +3748,62 @@ class sandbox_multi extends db_object_multi_user
         $del_par_lst = clone $sc_par_lst;
         $del_par_lst->add(sql_type::USER);
         return $this->sql_delete($sc, $msg, $del_par_lst);
+    }
+
+    /**
+     * create the sql statement to update the user row of this value, result or group
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_multi $usr_db the user row as it is in the database
+     * @param user_message $msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if only the key fields differ
+     */
+    function sql_update_user(
+        sql_creator   $sc,
+        sandbox_multi $usr_db,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $this->set_user_table_source();
+        // cloned, because sql_write adds the table types to the given list
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        // e.g. a leftover user row of a previous test run can already match the request,
+        // and an update without any changed field would be an invalid sql
+        $fvt_lst = $this->db_fields_changed($usr_db, $msg, $par_lst);
+        $result = null;
+        if (!$fvt_lst->is_empty_except_internal_fields()) {
+            $par_lst->add(sql_type::UPDATE);
+            $result = $this->sql_write($sc, $usr_db, $this->db_fields_all(), $msg, $par_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * create the sql statement to insert the user row of this value, result or group
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_multi $db_row the row that the user row is compared with
+     * @param user_message $msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if only the key fields differ
+     */
+    function sql_insert_user(
+        sql_creator   $sc,
+        sandbox_multi $db_row,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $this->set_user_table_source();
+        // cloned, because sql_write adds the table types to the given list
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::INSERT);
+        $par_lst->add(sql_type::NO_ID_RETURN);
+        return $this->sql_write($sc, $db_row, $this->db_fields_all(), $msg, $par_lst);
     }
 
     /**

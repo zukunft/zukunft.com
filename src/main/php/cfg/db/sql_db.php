@@ -3479,7 +3479,7 @@ class sql_db
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
-                        $trace_link = log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
+                        $trace_link = log_fatal_reported($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
                         $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
                         $result = false;
                     }
@@ -3500,7 +3500,7 @@ class sql_db
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
-                        $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                        $trace_link = log_err_reported($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
                         $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
                         $result = false;
                     }
@@ -4785,7 +4785,7 @@ class sql_db
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
-                    log_err($sql_error . ' while executing ' . $qp->sql);
+                    log_err_reported($sql_error . ' while executing ' . $qp->sql);
                     $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
@@ -4801,7 +4801,7 @@ class sql_db
 
                 if ($db_id == 0 or $db_id == '') {
                     if (!$is_val) {
-                        log_err($err_msg);
+                        log_err_reported($err_msg);
                         $msg->add_message_text($err_msg);
                     }
                 } else {
@@ -4811,7 +4811,7 @@ class sql_db
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
@@ -4845,12 +4845,12 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
-                    log_err($err_msg);
+                    log_err_reported($err_msg);
                     $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
@@ -4888,12 +4888,12 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
-                    log_err($err_msg);
+                    log_err_reported($err_msg);
                     $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();

@@ -1769,6 +1769,19 @@
     \-- log_info - section for function log_info is expected to be log in /log_text/text_log_functions.php
     \-- log_warning - section for function log_warning is expected to be log in /log_text/text_log_functions.php
     \-- log_err - section for function log_err is expected to be log in /log_text/text_log_functions.php
+    \-- log_err_on_msg - section for function log_err_on_msg is expected to be log in /log_text/text_log_functions.php
+    \-- log_keep_error - section for function log_keep_error is expected to be log in /log_text/text_log_functions.php
+    \-- log_echo_errors - section for function log_echo_errors is expected to be log in /log_text/text_log_functions.php
+    \-- internal_error_line - section for function internal_error_line missing in /log_text/text_log_functions.php
+    \-- log_in_api_answer - section for function log_in_api_answer is expected to be log in /log_text/text_log_functions
+            .php
+    \-- log_err_reported - section for function log_err_reported is expected to be log in /log_text/text_log_functions.p
+            hp
+    \-- log_fatal_reported - section for function log_fatal_reported is expected to be log in /log_text/text_log_functio
+            ns.php
+    \-- log_link_count - section for function log_link_count is expected to be log in /log_text/text_log_functions.php
+    \-- log_take_reported - section for function log_take_reported is expected to be log in /log_text/text_log_functions
+            .php
     \-- log_err_msg - section for function log_err_msg is expected to be log in /log_text/text_log_functions.php
     \-- log_err_msg_ui - section for function log_err_msg_ui is expected to be log in /log_text/text_log_functions.php
     \-- log_warning_msg - section for function log_warning_msg is expected to be log in /log_text/text_log_functions.php
@@ -2601,6 +2614,12 @@
              in /log/change_field.php
     \-- load_sql_by_name_and_table_id - section for function load_sql_by_name_and_table_id is expected to be load sql in
              /log/change_field.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
+            j
+\-- change_field_list
+    \-- load_dummy - section for function load_dummy is expected to be load in /log/change_field_list.php
+    \-- default_id - section for function default_id missing in /log/change_field_list.php
+    \-- has_table_ids - section for function has_table_ids missing in /log/change_field_list.php
 \-- change_link
     \-- row_mapper - section for function row_mapper not yet defined that it should be database link in /log/change_link
             .php
@@ -2958,8 +2977,7 @@
     \-- get_code_id - section for function get_code_id is expected to be set and get in /phrase/phrase_type.php
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /phrase/phrase_type.php
-    \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
-            j
+    \-- order error - order of section construct and map has difference at api_mapper should be before get_code_id
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
@@ -3595,13 +3613,16 @@
     \-- get_similar - section for function get_similar is expected to be save in /sandbox/sandbox_multi.php
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_multi.php
     \-- del - section for function del is expected to be del in /sandbox/sandbox_multi.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox_multi.php
     \-- has_source - section for function has_source not yet defined that it should be delete in /sandbox/sandbox_multi.
             php
     \-- has_placeholder_source - section for function has_placeholder_source not yet defined that it should be delete in
              /sandbox/sandbox_multi.php
     \-- sql_delete_user_row - section for function sql_delete_user_row not yet defined that it should be delete in /sand
             box/sandbox_multi.php
+    \-- sql_update_user - section for function sql_update_user not yet defined that it should be delete in /sandbox/sand
+            box_multi.php
+    \-- sql_insert_user - section for function sql_insert_user not yet defined that it should be delete in /sandbox/sand
+            box_multi.php
     \-- sql_write - section for function sql_write not yet defined that it should be delete in /sandbox/sandbox_multi.ph
             p
     \-- sql_write_with_log - section for function sql_write_with_log not yet defined that it should be delete in /sandbo
@@ -4560,6 +4581,9 @@
                 a test resource file
     \-- store_text
         \-- import_wikidata - store the given json for the given wikidata id as a formatted test resource file
+    \-- has_table_ids
+        \-- change_field_list - @return bool true if each change field names its table,
+                 which the table of a change log row is taken from
     \-- echo_timestamped
         \--  - write the given text to the standard io with the runtime timestamp in front of every physical line
     \-- php_error_label
@@ -4578,6 +4602,31 @@
         \--  - log an info message to the text log and the log table depending on the log settings
     \-- log_err
         \--  - log an info message to the text log and the log table depending on the log settings
+    \-- log_err_on_msg
+        \--  - log an internal error that the caller reports on its message,
+                 or keep it in the message if a test expects it
+    \-- log_keep_error
+        \--  - count an internal or fatal error and keep it for the summary of a test run and for the api answer,
+                 because the
+    \-- log_echo_errors
+        \--  - @return bool true if an internal error is written at the moment it happens: not in prod (system_object::e
+                cho_errors_default)
+    \-- internal_error_line
+        \--  - @param string $function_name the function that has most likely caused the error
+    \-- log_in_api_answer
+        \--  - @return bool true in an api request,
+                 where an echo of an error would stand in front of the json of the answer,
+    \-- log_err_reported
+        \--  - log an internal error that the caller reports on its message itself,
+                 so that the api answer does not send it again
+    \-- log_fatal_reported
+        \--  - log a fatal error that the caller reports on its message itself,
+                 so that the api answer does not send it again
+    \-- log_link_count
+        \--  - @return int the number of the kept log links, to find the link that the next log call adds
+    \-- log_take_reported
+        \--  - take out the link that a log call has added after the given count,
+                 because the caller reports the error itself
     \-- log_err_msg
         \--  - log an error message and inform the user about the error
     \-- log_err_msg_ui
@@ -4762,10 +4811,6 @@
     \-- load_sql_old
         \-- change - create the SQL statement to retrieve the parameters of the change log by name
         \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
-    \-- load_by_name_and_table_id
-        \-- change_field - load the change log table field from the database selected by the table id and the field name
-    \-- load_sql_by_name_and_table_id
-        \-- change_field - create an SQL statement to retrieve a type object by code id from the database
     \-- load_by_field_row
         \-- change_log - load the last change of given user
     \-- load_sql_by_field_row
@@ -5100,7 +5145,6 @@
         \-- db_cache_page - get a list of database field names, values and types that have been updated
         \-- db_cache_status - 
         \-- change_action - 
-        \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- change_table - 
         \-- ip_range - get a list of database field names, values and types that have been updated
         \-- sys_log_function - 
@@ -5149,7 +5193,6 @@
         \-- combine_named - set the object vars of a phrase or term to the neutral initial value
         \-- db_cache - clear all cache object values e.g. to detect the changed fields
         \-- db_cache_page - clear all cache page object values e.g. to detect the changed fields
-        \-- change_field - set the vars of this change field object to the default values
         \-- ref_type - set the vars of this reference type object to the default values
         \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
@@ -5183,15 +5226,14 @@
         \-- user_log_sum - map one row of the summed sessions of a user
     \-- row_mapper_multi
         \-- db_object_multi - map the database fields to the object fields
-    \-- row_mapper_typ_obj
-        \-- change_field - fill the change field object vars based on an array of fields from the database
-        \-- ref_type - fill the reference type object vars based on an array of fields from the database
-        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
-                k csv
     \-- load_dummy
         \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
         \-- phrase_types - @return int the database id of the default word type
+    \-- row_mapper_typ_obj
+        \-- ref_type - fill the reference type object vars based on an array of fields from the database
+        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
+                k csv
     \-- import_mapper
         \-- ref_type - function to import the core reference type values from a json string
         \-- ip_range - set the vars of this ip range object based on the given json without writing to the database
@@ -5408,6 +5450,8 @@
         \-- value_geo - overwrite the sandbox_value value() function to return the geolocation value
         \-- value_text - overwrite the sandbox_value value() function to return the text string
         \-- value_time - overwrite the sandbox_value value() function to return the DateTime value
+        \-- value_time_series - a time series has no single value,
+                 because its numbers are the data rows (value_ts_data),
     \-- is_empty_text
         \-- value_text - @return bool true if the text is missing or empty, which is not saved (see value_base::save)
     \-- set_text_value
@@ -5906,7 +5950,6 @@
         \-- element - to get a list of all database fields that might be changed,
         \-- db_cache - get a list of all database fields that might be changed
         \-- db_cache_page - get a list of all database fields that might be changed
-        \-- change_field - get a list of all database fields that might be changed
         \-- ref_type - get a list of all database fields that might be changed
         \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
@@ -5916,7 +5959,6 @@
         \-- element - get a list of database field names, values and types that have been updated
         \-- db_cache - get a list of database field names, values and types that have been updated
         \-- db_cache_page - get a list of database field names, values and types that have been updated
-        \-- change_field - get a list of database field names, values and types that have been updated
         \-- ref_type - get a list of database field names, values and types that have been updated
         \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated

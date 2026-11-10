@@ -398,8 +398,14 @@ class value_write_tests
         $val_ids[] = $added_val2->id();
 
         // check if the value can be changed
+        // the user who has added the value owns it and has no user row, so a change goes to the standard row
+        $test_name = 'the added value is owned by the user who has added it';
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id, $msg);
+        $owner_id = $added_val->owner_id();
+        $t->assert($test_name, $owner_id, $t->usr1->id());
+        $test_name = '... and the user has no user row of it';
+        $t->assert_false($test_name, $added_val->has_usr_cfg());
         $added_val->set_number(self::NUMBER_ADD);
         $added_val->save($msg);
         $result = $msg->get_last_message();
@@ -410,13 +416,20 @@ class value_write_tests
         if ($added_val->is_id_set()) {
             $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
-        // TODO Prio 2 fix it
-        $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
-        if ($result != $target) {
-            $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
-        }
-        // TODO Prio 2 activate
-        //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
+        // the change of the owner is logged for the standard row, so without the user marker
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME
+            . ' changed to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_TEST . '"';
+        $test_name = '... and the change of the value is logged';
+        $t->assert($test_name, $result, $target);
+        // tell if the change has gone to the user row or only its log names the user table
+        $test_name = 'the change of the owner is written to the standard row';
+        $std_val = new value($t->usr1);
+        $std_val->load_standard($added_val_id, $msg);
+        $t->assert($test_name, $std_val->number(), self::NUMBER_ADD);
+        $test_name = '... and not to a user row of the owner';
+        $chg_val = new value($t->usr1);
+        $chg_val->load_by_id($added_val_id, $msg);
+        $t->assert_false($test_name, $chg_val->has_usr_cfg());
 
         // ... check if the value has really been updated
         $added_val = new value($t->usr1);

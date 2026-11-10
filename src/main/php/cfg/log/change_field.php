@@ -50,6 +50,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_field extends type_object
 {
@@ -131,6 +133,24 @@ class change_field extends type_object
             }
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * fill the change field from the api json e.g. of the types cache including its table,
+     * which the table of a change log row is taken from (docs/llm/architecture.md)
+     *
+     * @param array $api_json the api array of one change field e.g. of type_list::api_json_array
+     * @param user_message $msg to collect the mapping problems
+     * @param bool $trusted true for a source of the own pod e.g. the types cache, which may also set the code id
+     * @return bool true if the mapping has been fine
+     */
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
+    {
+        $result = parent::api_mapper($api_json, $msg, $trusted);
+        if (array_key_exists(json_fields::TABLE_ID, $api_json)) {
+            $this->tbl_id = $api_json[json_fields::TABLE_ID];
+        }
+        return $result;
     }
 
 

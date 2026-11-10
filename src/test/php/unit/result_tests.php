@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -196,6 +197,24 @@ class result_tests
         $t->assert_sql_update($sc, $res, $db_res);
         $t->assert_sql_update($sc, $res_big, $db_res_big);
         $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
+        // the user row of a prime, a main, a most and a big result table without log like the writes above;
+        // the big result as the exclusion that the delete writes, because its number change is tested above
+        $usr_res_big_ex = $t_res->result_big();
+        $usr_res_big_ex->exclude();
+        $usr_db_res_big = $t_res->result_big();
+        $t->assert_sql_update_user($sc, $res_prime_max, $db_res_prime_max, []);
+        $t->assert_sql_update_user($sc, $res_main, $db_res_main, []);
+        $t->assert_sql_update_user($sc, $res, $db_res, []);
+        $t->assert_sql_update_user($sc, $usr_res_big_ex, $usr_db_res_big, []);
+        $test_name = 'no user row update of a result if the user row has already all overwrites';
+        $qp = $usr_db_res_big->sql_update_user($sc, $usr_db_res_big, $msg, new sql_type_list());
+        $qp_name = $qp?->name;
+        $t->assert_null($test_name, $qp_name);
+        // the insert of the user row with the fields that differ from the standard row; the most table
+        // is covered by the insert of the user row above, which is the same prepared statement
+        $t->assert_sql_save_fields($sc, $res_prime_max, $db_res_prime_max);
+        $t->assert_sql_save_fields($sc, $res_main, $db_res_main);
+        $t->assert_sql_save_fields($sc, $res_big, $db_res_big);
         // TODO Prio 0 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);

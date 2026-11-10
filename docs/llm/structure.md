@@ -527,6 +527,62 @@ Two cases stay on the bare `log_err`, and both are recognisable:
 Before threading, check what the function reports on the happy path — turning a
 silent drop into user-visible noise is the failure mode this rule can cause.
 
+### `log_err`, `log_err_reported` or `log_err_msg` — who tells the user
+
+All three write the error to `sys_log`, count it as an internal error of the
+request (`$sys->errors`) and, outside prod, print the `ERROR internal` line. They
+differ only in who tells the user, and that decides what an api answer carries:
+every internal error that no message has reported is sent with the answer
+(`controller::with_internal_errors`), and the frontend shows a generic internal
+notice with the log link for it.
+
+| has `$msg` | adds its own text for this error to `$msg` right after the call | use | who tells the user |
+|---|---|---|---|
+| false | false | `log_err($txt)` | nobody yet — in an api request the answer sends the generic notice |
+| false | true | not possible — without `$msg` there is no message to add to; use `log_err($txt)` and give the function a `$msg` (above) | — |
+| true | false | `log_err_msg($txt, $msg)` | the function, with the generic `msg_id::INTERNAL` and the log link |
+| true | true | `log_err_reported($txt)` followed by the add, e.g. `$msg->add_message_text($err_msg)` or `$msg->add(msg_id::USER_MISSING, …)` | the code itself, with its specific text; without `_reported` the user sees the error twice |
+
+"Adds its own text for this error to `$msg` right after the call" means three things
+at once:
+
+- **its own text**: the code itself puts a message on `$msg` — a plain text or a
+  `msg_id` — that says more than the generic internal notice, e.g. which object or
+  which statement failed;
+- **for this error**: the message is about the same problem that has just been
+  logged, not about another check of the function;
+- **right after the call**: the add follows in the same block, so that a reader
+  sees the pair and no other step can end the function in between.
+
+Example from `sql_db::insert`: the technical text with the sql goes to the admin,
+the user gets "Insert of … failed." — so the error is reported and the answer must
+not send the generic notice again:
+
+```php
+if ($sql_error != '') {
+    log_err_reported($sql_error . ' while executing ' . $qp->sql);
+    $msg->add_message_text($err_msg);
+}
+```
+
+The same function without the second line has no own text for the user, so it is
+`log_err_msg($sql_error . ' while executing ' . $qp->sql, $msg)`. And
+`sandbox_multi::change_blocked` logs a missing requesting user and then adds
+`CHANGE_BLOCKED_FOR_IP_USER` — but only for a blocked user, which is another check,
+so it is not `log_err_reported`: the function has a `$msg` and no own text for the
+missing user, which is the row of `log_err_msg` (its bare `log_err` is still the
+transitional channel of the section above).
+
+`log_err_reported` without that add right after it is a silent drop: the error is
+neither on the message nor in the answer.
+`log_fatal` and `log_fatal_reported` are the same pair for a fatal error.
+
+A test that expects an internal error passes its message to
+`test_base::assert_log_err`, which sets `Message::log_test_only`; `log_err_msg`
+then keeps the text in the message and neither writes nor counts it. A bare
+`log_err` has no message, so its error is always an error of the run — a function
+whose error a test expects reports it with `log_err_msg`.
+
 ## Whatever happens, avoid an uncaught PHP fatal
 
 The general rule behind all the error-handling rules above: **whatever happens —

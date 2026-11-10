@@ -185,6 +185,7 @@ class all_tests extends all_unit_write_tests
 
         // init
         $sys->errors = 0;
+        $sys->error_texts = [];
         $t_db = new test_db_load($this);
         $msg = new user_message(); // for testing
         $map = new MapObject();

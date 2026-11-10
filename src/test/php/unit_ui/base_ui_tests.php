@@ -1735,6 +1735,34 @@ class base_ui_tests
         $t->assert($test_name, controller::json_with_time('{}', $steps), '{}');
         $test_name = 'a json list gets no steps, because it has no field for them';
         $t->assert($test_name, controller::json_with_time('[]', $steps), '[]');
+        // the backend sends the log links of the internal errors of an api request with its answer,
+        // which the frontend shows to the user and removes, so that the answer is passed on as created
+        $links = ['link of the first error', 'link of the second error'];
+        $err_json = controller::json_with_internal_errors($api_json, $links);
+        $test_name = 'the internal errors of an api answer are sent first';
+        $t->assert_text_contains($test_name, $err_json, rest_call::INTERNAL_ERRORS_START);
+        $msg_ui = new user_message_ui();
+        $test_name = '... which the frontend removes from the answer';
+        $t->assert($test_name, rest_call::without_internal_errors($err_json, $msg_ui), $api_json);
+        $test_name = '... and shows to the user with one notice per error';
+        $t->assert($test_name, count($msg_ui->get_all_var_messages()), count($links));
+        $test_name = '... as an error';
+        $t->assert_false($test_name, $msg_ui->is_ok());
+        // a list, an error message and an empty answer come back exactly, because the answer is sent as a string
+        $err_list = controller::json_with_internal_errors('[]', $links);
+        $test_name = 'a json list with internal errors comes back as it is';
+        $t->assert($test_name, rest_call::without_internal_errors($err_list, new user_message_ui()), '[]');
+        $err_empty = controller::json_with_internal_errors('', $links);
+        $test_name = 'an empty answer with internal errors comes back empty';
+        $t->assert($test_name, rest_call::without_internal_errors($err_empty, new user_message_ui()), '');
+        // negative: an answer without internal errors is not changed and adds no notice
+        $test_name = 'an api answer without internal errors stays as it is';
+        $t->assert($test_name, controller::json_with_internal_errors($api_json, []), $api_json);
+        $msg_ui = new user_message_ui();
+        $test_name = '... and the frontend leaves it as it is';
+        $t->assert($test_name, rest_call::without_internal_errors($api_json, $msg_ui), $api_json);
+        $test_name = '... without a notice for the user';
+        $t->assert_true($test_name, $msg_ui->is_ok());
         // the frontend sums the wait and the steps of the api calls until they are booked to the time report
         $dto_ui = new data_object();
         $dto_ui->api_wait += 1.5;

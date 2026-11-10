@@ -372,6 +372,22 @@ with the next free id if missing. Example: logged writes of
 new loggable column is added to any table: register it in `change_fields.csv`
 in the same change.
 
+**The change fields are preloaded, and a field id names its table**: the table
+`change_fields` is a special case in two ways.
+
+1. *Preloaded, read only in exceptions*: all rows are loaded upfront into the
+   system object (`$sys->typ_lst->cng_fld`), because the few rows change only
+   with a system upgrade. A read of the table `change_fields` during a request
+   is a rare exception (e.g. `change_log::set_field` adding a field that the
+   upgrade has missed), never the normal way to get a field.
+2. *One entry per table*: almost every loggable field has two entries, one for
+   the standard table and one for the user table, e.g. `283,numeric_value,47`
+   for `values` and `295,numeric_value,48` for `user_values`. So the
+   `change_field_id` is unique including the `table_id`: the table of a change
+   log row is the table id of the preloaded entry of its `change_field_id`,
+   taken from the cache; it is never parsed from the field name and never kept
+   from the table that the loading object has set before the query.
+
 1**The csv type files are internal resource files**: the files in
 `src/main/resources/db_code_links/` are written by the developers, shipped with
 the program and have very few rows (a few to some hundred). So a row that cannot

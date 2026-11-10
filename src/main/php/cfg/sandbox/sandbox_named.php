@@ -950,7 +950,7 @@ class sandbox_named extends sandbox
     protected function check_preserved(user_message $msg): bool
     {
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'check_preserved');
+            log_err_reported('user not set in user_message', 'check_preserved');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
             global $mtr;

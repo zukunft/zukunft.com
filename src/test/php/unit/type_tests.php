@@ -514,7 +514,7 @@ class type_tests
             fields::FLD_CODE_ID => sys_log_statuum::OPEN
         ];
         $map_row = fn() => $log_sta->row_mapper_typ_obj($csv_row, $msg, sys_log_statuum::class);
-        $t->assert_log_err($test_name, $map_row, 'id field is missing for ' . sys_log_statuum::class);
+        $t->assert_log_err($test_name, $map_row, 'id field is missing for ' . sys_log_statuum::class, $msg);
         $test_name = '... and the mapping is not ok';
         $t->assert_false($test_name, $msg->is_ok());
 

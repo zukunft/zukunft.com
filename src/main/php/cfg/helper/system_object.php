@@ -97,13 +97,8 @@ class system_object
     // itself (e.g. a failed sys_log insert or a permission check of the log function name) does
     // not call the log writer again, which would never end (see log_msg)
     public bool $log_writing = false;
-    // true only while a test calls a function whose internal error is the expected result: log_err then
-    // neither writes the error nor counts it, but keeps its text for the assert (see test_base::assert_log_err)
-    public bool $log_test_only = false;
-    // the text of the last internal error that log_err has kept while log_test_only is true
-    public string $log_test_txt = '';
     // the number of log entries dropped because they have been caused by the log writer itself;
-    // these errors are still counted in errors above (log_err counts before it writes), so a log
+    // these errors are still counted in errors below (log_keep_error counts also a dropped entry), so a log
     // loop is never hidden, and this counter tells how many of the errors the log writer caused
     public int $log_dropped = 0;
     // the log object for standard io logging
@@ -121,6 +116,17 @@ class system_object
 
     // the number of internal errors logged during the request (read e.g. by the test runner)
     public int $errors = 0;
+    // the function and the text of each counted internal error, so that the test runner can name them,
+    // because the system log rows of a test run are removed by the database recreation of the run
+    public array $error_texts = [];
+    // true if log_err writes each internal error at the moment it happens, which init.php and init_ui.php set
+    // except for prod once the environment is loaded (echo_errors_default); never into an api answer
+    public bool $echo_errors = false;
+    // the log link of each internal error that no message has reported, which the api answer sends to the frontend
+    public array $error_links = [];
+    // true in an api request: an internal error is sent with the answer (controller::with_internal_errors)
+    // and not echoed, because the echo would stand in front of the json
+    public bool $api_answer = false;
 
     // the id of the source "my estimates" of a value without external source, read once by its code id
     private ?int $no_src_id = null;
@@ -144,12 +150,19 @@ class system_object
         $this->times = new system_time_list();
         $this->log_msg_lst = array();
         $this->log_writing = false;
-        $this->log_test_only = false;
-        $this->log_test_txt = '';
         $this->log_dropped = 0;
         $this->typ_lst = new type_lists();
         $this->log_txt = new text_log();
         $this->sys_usr_lst = new user_list();
+    }
+
+    /**
+     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV)
+     * @return bool false for prod, where an internal error goes only to the system log, true for every other environment
+     */
+    static function echo_errors_default(string $env): bool
+    {
+        return $env != ENV_PROD;
     }
 
 

@@ -2325,7 +2325,7 @@ class frontend
                         $signed_up = true;
                         $this->send_signup_mail($usr_by_name, $key, $msg_ui);
                     } else {
-                        log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
+                        log_err_reported('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
                         $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
                     }
                 }
@@ -2505,7 +2505,7 @@ class frontend
                                 $usr_ui->set_from_json($usr_by_id->api_json([], $activate_msg), $msg_ui);
                                 $activated = true;
                             } else {
-                                log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
+                                log_err_reported('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
                                 $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
                             }
                         }
@@ -3433,7 +3433,7 @@ class frontend
             $data = array($id_fld => $ids);
         }
         $ctrl = new rest_call();
-        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg_ui));
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg_ui), $msg_ui);
     }
 
     /*

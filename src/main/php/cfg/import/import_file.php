@@ -143,7 +143,7 @@ class import_file
         $imp->step_main_end();
 
         if (!$json_str) {
-            log_err('import file ' . $filename . ' cannot be loaded');
+            log_err_reported('import file ' . $filename . ' cannot be loaded');
             $this->read_error($filename, file_types::JSOM, $msg);
         } else {
             if ($json_str == '') {

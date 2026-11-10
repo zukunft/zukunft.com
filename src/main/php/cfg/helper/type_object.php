@@ -1088,7 +1088,7 @@ class type_object extends db_object_seq_id
         $can_del = false;
 
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'can_delete');
+            log_err_reported('user not set in user_message', 'can_delete');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif (!$this->is_used()) {
             if ($this->code_id != null or $this->code_id != '') {

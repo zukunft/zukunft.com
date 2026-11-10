@@ -287,7 +287,7 @@ class verb extends type_object
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'import_mapper');
+                log_err_reported('user not set in user_message', 'import_mapper');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
@@ -710,7 +710,7 @@ class verb extends type_object
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($msg->usr === null) {
-                        log_err('user not set in user_message', 'import_obj');
+                        log_err_reported('user not set in user_message', 'import_obj');
                         $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
                     } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                         $this->code_id = $value;

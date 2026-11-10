@@ -479,7 +479,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
     ): bool
     {
         $msg_txt = 'import_mapper used but not overwritten in ' . $this::class;
-        log_err($msg_txt);
+        log_err_reported($msg_txt);
         $msg->add_message_text($msg_txt);
         return $msg->is_ok();
     }

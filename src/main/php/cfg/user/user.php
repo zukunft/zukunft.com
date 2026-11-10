@@ -589,7 +589,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code id
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'import_mapper');
+                log_err_reported('user not set in user_message', 'import_mapper');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
@@ -1939,7 +1939,7 @@ class user extends db_id_object_non_sandbox
         $can_change = false;
 
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'can_be_changed_by');
+            log_err_reported('user not set in user_message', 'can_be_changed_by');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
             // if the user who wants to change it, is the owner, he can do it

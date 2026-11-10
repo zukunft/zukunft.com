@@ -273,7 +273,7 @@ class job extends db_object
                 json_fields::ACTION => $action,
                 json_fields::USER_ID => $msg->usr->id()
             ];
-            $json_body = $rest->api_put(self::class, $data);
+            $json_body = $rest->api_put(self::class, $data, $msg);
             if (array_key_exists(json_fields::MSG, $json_body)) {
                 $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
             }
