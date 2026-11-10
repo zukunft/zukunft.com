@@ -74,6 +74,8 @@ class rest_call
 
     // the start of a slow answer that names the seconds of its backend steps (see controller::json_with_time)
     const string TIME_START = '{"' . json_fields::API_TIME . '":{';
+    // the start of an answer that names the internal errors of its creation (see controller::json_with_internal_errors)
+    const string INTERNAL_ERRORS_START = '{"' . json_fields::INTERNAL_ERRORS . '":[';
 
     // the step shown below the loading text of a slow page per frontend class of the api call;
     // only the class name is used to get its api route, so the classes are not included here
@@ -193,7 +195,7 @@ class rest_call
      */
     function api_get(string $class, array $data, user_message $msg, string $step_name = ''): array
     {
-        return $this->api_curl_call($class, $this->data_with_user($data, $msg), rest_ctrl::GET, $step_name);
+        return $this->api_curl_call($class, $this->data_with_user($data, $msg), rest_ctrl::GET, $msg, $step_name);
     }
 
     /**
@@ -220,11 +222,12 @@ class rest_call
      *
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @param user_message $msg to show the user the internal errors of the backend
      * @return array with the body json message from the backend
      */
-    function api_post(string $class, array $data): array
+    function api_post(string $class, array $data, user_message $msg): array
     {
-        return $this->api_curl_call($class, $data, rest_ctrl::POST);
+        return $this->api_curl_call($class, $data, rest_ctrl::POST, $msg);
     }
 
     /**
@@ -232,11 +235,12 @@ class rest_call
      *
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @param user_message $msg to show the user the internal errors of the backend
      * @return array with the body json message from the backend
      */
-    function api_put(string $class, array $data): array
+    function api_put(string $class, array $data, user_message $msg): array
     {
-        return $this->api_curl_call($class, $data, rest_ctrl::PUT);
+        return $this->api_curl_call($class, $data, rest_ctrl::PUT, $msg);
     }
 
     /**
@@ -244,11 +248,12 @@ class rest_call
      *
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @param user_message $msg to show the user the internal errors of the backend
      * @return array with the body json message from the backend
      */
-    function api_del(string $class, array $data): array
+    function api_del(string $class, array $data, user_message $msg): array
     {
-        return $this->api_curl_call($class, $data, rest_ctrl::DELETE);
+        return $this->api_curl_call($class, $data, rest_ctrl::DELETE, $msg);
     }
 
     /**
@@ -256,16 +261,17 @@ class rest_call
      *
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @param user_message $msg to show the user the internal errors of the backend
      * @param string $step_name the name of the loaded object shown below the loading text of a slow page; empty for the step of the api
      * @return array with the body json message from the backend
      */
-    function api_curl_call(string $class, array $data, string $method, string $step_name = ''): array
+    function api_curl_call(string $class, array $data, string $method, user_message $msg, string $step_name = ''): array
     {
         $html = new html_base();
         $ctrl = new controller();
         $api_name = $this->class_to_api_name($class);
         $url = $html->url_api($api_name, []);
-        $json_str = $this->api_call($method, $url, $data, [], $step_name);
+        $json_str = $this->api_call($method, $url, $data, $msg, [], $step_name);
         $json_msg = json_decode($json_str, true);
         return $ctrl->check_api_msg($json_msg);
     }
@@ -429,6 +435,42 @@ class rest_call
     }
 
     /**
+     * show the user the internal errors that the backend has logged while it has created the answer
+     *
+     * @param string $json the answer of the backend
+     * @param user_message $msg to which a notice with the log link is added per internal error
+     * @return string the answer as the backend has created it; unchanged if it names no internal error
+     */
+    static function without_internal_errors(string $json, user_message $msg): string
+    {
+        $result = $json;
+        if (str_starts_with($json, self::INTERNAL_ERRORS_START)) {
+            $wrap = json_decode($json, true);
+            // a wrap that cannot be read is passed on, so that the caller reports the answer it cannot read
+            if (self::is_internal_errors_wrap($wrap)) {
+                foreach ($wrap[json_fields::INTERNAL_ERRORS] as $log_lnk) {
+                    $msg->add(msg_id::INTERNAL, [msg_id::VAR_LOG_LINK => (string)$log_lnk]);
+                }
+                $result = $wrap[json_fields::API_ANSWER];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $wrap the decoded answer that starts with the internal errors
+     * @return bool true if it has the list of the log links and the answer as a string (controller::json_with_internal_errors)
+     */
+    private static function is_internal_errors_wrap(mixed $wrap): bool
+    {
+        $result = false;
+        if (is_array($wrap) and array_key_exists(json_fields::API_ANSWER, $wrap)) {
+            $result = (is_array($wrap[json_fields::INTERNAL_ERRORS]) and is_string($wrap[json_fields::API_ANSWER]));
+        }
+        return $result;
+    }
+
+    /**
      * @param string $json the json answer of the backend
      * @return string the json without the seconds of the backend steps, so that a slow answer is the same as a fast one
      */
@@ -463,13 +505,21 @@ class rest_call
      * @param string $method the REST method (GET, POST, PUT or DELETE)
      * @param string $url the url that should be called
      * @param array $data the data as a json array that should be included in the call
+     * @param user_message $msg to show the user the internal errors of the backend (see without_internal_errors)
      * @param array $extra_headers additional http headers e.g. a forward header so that
      *                             a test can simulate an external caller (see server_guard::from_own_pod)
      * @param string $step_name the name of the object that the call loads, shown below the loading text of a slow page;
      *                          empty to show the step of the api e.g. "Loading the values"
      * @return string the result from the backend
      */
-    function api_call(string $method, string $url, array $data, array $extra_headers = [], string $step_name = ''): string
+    function api_call(
+        string       $method,
+        string       $url,
+        array        $data,
+        user_message $msg,
+        array        $extra_headers = [],
+        string       $step_name = ''
+    ): string
     {
         global $ui_sys;
 
@@ -551,6 +601,7 @@ class rest_call
         $total = curl_getinfo($curl, CURLINFO_TOTAL_TIME);
         $answer = '';
         if (is_string($result)) {
+            $result = self::without_internal_errors($result, $msg);
             $answer = $result;
             $result = self::without_time($result);
         }

@@ -396,7 +396,7 @@ class db_object extends IdObject
 
         if (in_array($this::class, def::NO_DELETE_CLASSES)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'can_delete');
+                log_err_reported('user not set in user_message', 'can_delete');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if ($msg->usr->is_system()) {
@@ -405,7 +405,7 @@ class db_object extends IdObject
             }
         } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_DELETE_CLASSES)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'can_delete');
+                log_err_reported('user not set in user_message', 'can_delete');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if ($msg->usr->is_admin()) {
@@ -437,7 +437,7 @@ class db_object extends IdObject
 
         if (in_array($this::class, def::NO_UPDATE_CLASSES)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'can_update');
+                log_err_reported('user not set in user_message', 'can_update');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if ($msg->usr->is_system()) {
@@ -446,7 +446,7 @@ class db_object extends IdObject
             }
         } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_UPDATE_CLASSES)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'can_update');
+                log_err_reported('user not set in user_message', 'can_update');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if ($msg->usr->is_admin()) {

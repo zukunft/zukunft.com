@@ -355,7 +355,7 @@
       "description": "tendency of crystalline materials to split along definite crystallographic structural planes",
       "refs": [
         {
-          "name": "Cleavage (crystal)",
+          "name": "Cleavage_(crystal)",
           "type": "wikipedia"
         },
         {
@@ -369,7 +369,7 @@
       "description": "manner in which light interacts with a crystal, rock, or mineral's surface",
       "refs": [
         {
-          "name": "Lustre (mineralogy)",
+          "name": "Lustre_(mineralogy)",
           "type": "wikipedia"
         },
         {
@@ -383,7 +383,7 @@
       "description": "color of the powder produced when a mineral specimen is dragged across an un-weathered surface",
       "refs": [
         {
-          "name": "Streak (mineralogy)",
+          "name": "Streak_(mineralogy)",
           "type": "wikipedia"
         },
         {
@@ -411,7 +411,7 @@
       "description": "naturally occurring solid aggregate of one or more minerals or mineraloids",
       "refs": [
         {
-          "name": "Rock (geology)",
+          "name": "Rock_(geology)",
           "type": "wikipedia"
         },
         {
@@ -607,7 +607,7 @@
       "description": "fracture or discontinuity in rock across which there is displacement",
       "refs": [
         {
-          "name": "Fault (geology)",
+          "name": "Fault_(geology)",
           "type": "wikipedia"
         },
         {
@@ -621,7 +621,7 @@
       "description": "geological structure",
       "refs": [
         {
-          "name": "Fold (geology)",
+          "name": "Fold_(geology)",
           "type": "wikipedia"
         },
         {
@@ -691,7 +691,7 @@
       "description": "geological process in which sediments, soil and rocks are added to a landform or land mass",
       "refs": [
         {
-          "name": "Deposition (geology)",
+          "name": "Deposition_(geology)",
           "type": "wikipedia"
         },
         {
@@ -775,7 +775,7 @@
       "description": "geological process by which a sediment progressively loses its porosity due to the effects of pressure from loading",
       "refs": [
         {
-          "name": "Compaction (geology)",
+          "name": "Compaction_(geology)",
           "type": "wikipedia"
         },
         {
@@ -789,7 +789,7 @@
       "description": "term in geology",
       "refs": [
         {
-          "name": "Cementation (geology)",
+          "name": "Cementation_(geology)",
           "type": "wikipedia"
         },
         {
@@ -859,7 +859,7 @@
       "description": "volcanic region",
       "refs": [
         {
-          "name": "Hotspot (geology)",
+          "name": "Hotspot_(geology)",
           "type": "wikipedia"
         },
         {
@@ -929,7 +929,7 @@
       "description": "outermost solid shell of a rocky planet, dwarf planet or natural satellite, which is chemically distinct from the underlying mantle",
       "refs": [
         {
-          "name": "Crust (geology)",
+          "name": "Crust_(geology)",
           "type": "wikipedia"
         },
         {
@@ -943,7 +943,7 @@
       "description": "layer inside a planetary body",
       "refs": [
         {
-          "name": "Mantle (geology)",
+          "name": "Mantle_(geology)",
           "type": "wikipedia"
         },
         {
@@ -1055,7 +1055,7 @@
       "description": "volume of fluid which passes per time",
       "refs": [
         {
-          "name": "Volumetric flow rate",
+          "name": "Volumetric_flow_rate",
           "type": "wikipedia"
         },
         {
@@ -1359,7 +1359,7 @@
       "to": "structural",
       "refs": [
         {
-          "name": "Structural geology",
+          "name": "Structural_geology",
           "type": "wikipedia"
         },
         {
@@ -1376,7 +1376,7 @@
       "to": "economic",
       "refs": [
         {
-          "name": "Economic geology",
+          "name": "Economic_geology",
           "type": "wikipedia"
         },
         {
@@ -1393,7 +1393,7 @@
       "to": "silicate",
       "refs": [
         {
-          "name": "Silicate minerals",
+          "name": "Silicate_minerals",
           "type": "wikipedia"
         },
         {
@@ -1410,7 +1410,7 @@
       "to": "Mohs",
       "refs": [
         {
-          "name": "Mohs scale",
+          "name": "Mohs_scale",
           "type": "wikipedia"
         },
         {
@@ -1427,7 +1427,7 @@
       "to": "specific",
       "refs": [
         {
-          "name": "Relative density",
+          "name": "Relative_density",
           "type": "wikipedia"
         },
         {
@@ -1444,7 +1444,7 @@
       "to": "igneous",
       "refs": [
         {
-          "name": "Igneous rock",
+          "name": "Igneous_rock",
           "type": "wikipedia"
         },
         {
@@ -1461,7 +1461,7 @@
       "to": "sedimentary",
       "refs": [
         {
-          "name": "Sedimentary rock",
+          "name": "Sedimentary_rock",
           "type": "wikipedia"
         },
         {
@@ -1478,7 +1478,7 @@
       "to": "metamorphic",
       "refs": [
         {
-          "name": "Metamorphic rock",
+          "name": "Metamorphic_rock",
           "type": "wikipedia"
         },
         {
@@ -1495,7 +1495,7 @@
       "to": "rock",
       "refs": [
         {
-          "name": "Rock cycle",
+          "name": "Rock_cycle",
           "type": "wikipedia"
         },
         {
@@ -1511,7 +1511,7 @@
       "to": "dip",
       "refs": [
         {
-          "name": "Strike and dip",
+          "name": "Strike_and_dip",
           "type": "wikipedia"
         },
         {
@@ -1528,7 +1528,7 @@
       "to": "transform",
       "refs": [
         {
-          "name": "Transform fault",
+          "name": "Transform_fault",
           "type": "wikipedia"
         },
         {
@@ -1551,7 +1551,7 @@
       "to": "geologic",
       "refs": [
         {
-          "name": "Geologic time scale",
+          "name": "Geologic_time_scale",
           "type": "wikipedia"
         },
         {
@@ -1568,7 +1568,7 @@
       "to": "volcanic",
       "refs": [
         {
-          "name": "Volcanic eruption",
+          "name": "Volcanic_eruption",
           "type": "wikipedia"
         },
         {
@@ -1585,7 +1585,7 @@
       "to": "magma",
       "refs": [
         {
-          "name": "Magma chamber",
+          "name": "Magma_chamber",
           "type": "wikipedia"
         },
         {
@@ -1602,7 +1602,7 @@
       "to": "seismic",
       "refs": [
         {
-          "name": "Seismic wave",
+          "name": "Seismic_wave",
           "type": "wikipedia"
         },
         {
@@ -1619,7 +1619,7 @@
       "to": "P",
       "refs": [
         {
-          "name": "P wave",
+          "name": "P_wave",
           "type": "wikipedia"
         },
         {
@@ -1636,7 +1636,7 @@
       "to": "S",
       "refs": [
         {
-          "name": "S wave",
+          "name": "S_wave",
           "type": "wikipedia"
         },
         {
@@ -1660,7 +1660,7 @@
       "to": "moment magnitude",
       "refs": [
         {
-          "name": "Moment magnitude scale",
+          "name": "Moment_magnitude_scale",
           "type": "wikipedia"
         },
         {
@@ -1677,7 +1677,7 @@
       "to": "Richter",
       "refs": [
         {
-          "name": "Richter scale",
+          "name": "Richter_scale",
           "type": "wikipedia"
         },
         {
@@ -1694,7 +1694,7 @@
       "to": "seismic",
       "refs": [
         {
-          "name": "Seismic moment",
+          "name": "Seismic_moment",
           "type": "wikipedia"
         },
         {
@@ -1711,7 +1711,7 @@
       "to": "oceanic",
       "refs": [
         {
-          "name": "Oceanic crust",
+          "name": "Oceanic_crust",
           "type": "wikipedia"
         },
         {
@@ -1728,7 +1728,7 @@
       "to": "continental",
       "refs": [
         {
-          "name": "Continental crust",
+          "name": "Continental_crust",
           "type": "wikipedia"
         },
         {
@@ -1745,7 +1745,7 @@
       "to": "inner",
       "refs": [
         {
-          "name": "Earth's inner core",
+          "name": "Earth's_inner_core",
           "type": "wikipedia"
         },
         {
@@ -1762,7 +1762,7 @@
       "to": "outer",
       "refs": [
         {
-          "name": "Earth's outer core",
+          "name": "Earth's_outer_core",
           "type": "wikipedia"
         },
         {
@@ -1779,7 +1779,7 @@
       "to": "geothermal",
       "refs": [
         {
-          "name": "Geothermal gradient",
+          "name": "Geothermal_gradient",
           "type": "wikipedia"
         },
         {
@@ -1796,7 +1796,7 @@
       "to": "plate",
       "refs": [
         {
-          "name": "Plate tectonics",
+          "name": "Plate_tectonics",
           "type": "wikipedia"
         },
         {
@@ -1813,7 +1813,7 @@
       "to": "continental",
       "refs": [
         {
-          "name": "Continental drift",
+          "name": "Continental_drift",
           "type": "wikipedia"
         },
         {
@@ -1830,7 +1830,7 @@
       "to": "seafloor",
       "refs": [
         {
-          "name": "Seafloor spreading",
+          "name": "Seafloor_spreading",
           "type": "wikipedia"
         },
         {
@@ -1847,7 +1847,7 @@
       "to": "convergent",
       "refs": [
         {
-          "name": "Convergent boundary",
+          "name": "Convergent_boundary",
           "type": "wikipedia"
         },
         {
@@ -1864,7 +1864,7 @@
       "to": "divergent",
       "refs": [
         {
-          "name": "Divergent boundary",
+          "name": "Divergent_boundary",
           "type": "wikipedia"
         },
         {
@@ -1881,7 +1881,7 @@
       "to": "bulk",
       "refs": [
         {
-          "name": "Bulk modulus",
+          "name": "Bulk_modulus",
           "type": "wikipedia"
         },
         {
@@ -1897,7 +1897,7 @@
       "to": "shear",
       "refs": [
         {
-          "name": "Shear modulus",
+          "name": "Shear_modulus",
           "type": "wikipedia"
         },
         {
@@ -1914,7 +1914,7 @@
       "to": "water",
       "refs": [
         {
-          "name": "Water table",
+          "name": "Water_table",
           "type": "wikipedia"
         },
         {
@@ -1931,7 +1931,7 @@
       "to": "geology",
       "refs": [
         {
-          "name": "Permeability (earth sciences)",
+          "name": "Permeability_(earth_sciences)",
           "type": "wikipedia"
         },
         {
@@ -1948,7 +1948,7 @@
       "to": "hydraulic",
       "refs": [
         {
-          "name": "Hydraulic conductivity",
+          "name": "Hydraulic_conductivity",
           "type": "wikipedia"
         },
         {
@@ -1965,7 +1965,7 @@
       "to": "hydraulic",
       "refs": [
         {
-          "name": "Hydraulic head",
+          "name": "Hydraulic_head",
           "type": "wikipedia"
         },
         {
@@ -1982,7 +1982,7 @@
       "to": "radiometric",
       "refs": [
         {
-          "name": "Radiometric dating",
+          "name": "Radiometric_dating",
           "type": "wikipedia"
         },
         {
@@ -1999,7 +1999,7 @@
       "to": "fossil",
       "refs": [
         {
-          "name": "Fossil fuel",
+          "name": "Fossil_fuel",
           "type": "wikipedia"
         },
         {
@@ -2016,7 +2016,7 @@
       "to": "natural",
       "refs": [
         {
-          "name": "Natural gas",
+          "name": "Natural_gas",
           "type": "wikipedia"
         },
         {

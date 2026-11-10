@@ -55,7 +55,7 @@
       "description": "carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released",
       "refs": [
         {
-          "name": "Global warming potential",
+          "name": "Global_warming_potential",
           "type": "wikipedia"
         }
       ]
@@ -172,7 +172,7 @@
       "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
       "refs": [
         {
-          "name": "Life-cycle assessment",
+          "name": "Life-cycle_assessment",
           "type": "wikipedia"
         }
       ]

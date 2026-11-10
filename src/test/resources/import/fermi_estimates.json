@@ -396,7 +396,7 @@
       "description": "order-of-magnitude estimation that decomposes an unknown quantity into a product of roughly knowable factors",
       "refs": [
         {
-          "name": "Fermi problem",
+          "name": "Fermi_problem",
           "type": "wikipedia"
         },
         {

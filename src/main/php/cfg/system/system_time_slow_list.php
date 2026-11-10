@@ -99,8 +99,11 @@ class system_time_slow_list extends list_db_read
         if (is_array($db_rows)) {
             foreach ($db_rows as $db_row) {
                 $sys_tim = new system_time();
-                $sys_tim->row_mapper($db_row, $msg);
-                $this->add_obj($sys_tim);
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($sys_tim->row_mapper($db_row, $row_msg)) {
+                    $this->add_obj($sys_tim);
+                }
+                $msg->merge($row_msg);
             }
         }
         return !$this->is_empty();

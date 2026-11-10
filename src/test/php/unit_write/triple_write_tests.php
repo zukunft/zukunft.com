@@ -107,8 +107,9 @@ class triple_write_tests
         $trp_del->load_by_id($trp->id(), $msg);
         $trp_del->del($msg);
         $trp_del = new triple($t->usr2);
-        $trp_del->load_by_id($trp->id(), $msg2);
-        $trp_del->del($msg2);
+        $cln_msg = new user_message($t->usr2); // not reported, because the second user may have no leftover to remove
+        $trp_del->load_by_id($trp->id(), $cln_msg);
+        $trp_del->del($cln_msg);
 
         $trp = $t_db->test_triple($msg, word_names::TEST_RENAMED, verbs::IS, word_names::TEST_PARENT);
         $trp->set_user($t->usr1);
@@ -137,10 +138,14 @@ class triple_write_tests
         // $target = triples::TN_ADD;
         $target = word_names::TEST_RENAMED . ' (' . word_names::TEST_PARENT . ')';
         $t->assert($test_name, $result, $target);
+        $test_name = ' ... the second user "' . $t->usr2->name . '" can save the link';
+        // an own object of the second user, because the object above has the name cleared for the name test
+        $trp_usr2 = new triple($t->usr2);
+        $trp_usr2->load_by_link_id($wrd_from->id(), $msg2, $vrb_is_id, $wrd_to->id());
+        $trp_usr2->include();
+        $trp_usr2->save($msg2);
+        $t->assert_msg($test_name, $msg2);
         $test_name = ' ... check if the link is shown correctly also for the second user "' . $t->usr2->name . '"';
-        $trp->set_user($t->usr2);
-        $trp->include();
-        $trp->save($msg2);
         $lnk2 = new triple($t->usr2);
         $lnk2->load_by_link_id( $wrd_from->id(), $msg2, $vrb_is_id, $wrd_to->id() );
         $result = $lnk2->name();

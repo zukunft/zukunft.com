@@ -204,8 +204,7 @@ class change_link extends change_log
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->table_id = $db_row[self::FLD_TABLE_ID];
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];

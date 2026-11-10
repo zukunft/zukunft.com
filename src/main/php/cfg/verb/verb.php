@@ -287,7 +287,7 @@ class verb extends type_object
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'import_mapper');
+                log_err_reported('user not set in user_message', 'import_mapper');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
@@ -354,8 +354,7 @@ class verb extends type_object
         string       $name_fld = verb_db::FLD_NAME): bool
     {
         $result = parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 if ($db_row[fields::FLD_CODE_ID] != null) {
                     $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
@@ -711,7 +710,7 @@ class verb extends type_object
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($msg->usr === null) {
-                        log_err('user not set in user_message', 'import_obj');
+                        log_err_reported('user not set in user_message', 'import_obj');
                         $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
                     } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                         $this->code_id = $value;

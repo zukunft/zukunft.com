@@ -44,7 +44,7 @@ class files
      */
 
     CONST bool AUTO_UPDATE_TEST_FILES = false;
-CONST bool AUTO_RE_PIN_OBJECT_ID = false;
+    CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
     /*
@@ -511,6 +511,8 @@ CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
     // the summary of the Zurich page with a pronunciation in the lead text for the wikipedia refresh tests
     CONST string IMPORT_WIKIPEDIA_SUMMARY_ZURICH = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Zurich' . self::JSON;
+    // the summary of the Geneva page as wikipedia sent it on 2026-11-10, never updated by a run
+    CONST string IMPORT_WIKIPEDIA_SUMMARY_GENEVA = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Geneva' . self::JSON;
     // the description and the wikidata reference that the live wikipedia page gives the phrase of a
     // wikipedia refresh workflow, as an import json, so that a change of the live page is reported
     CONST string IMPORT_WIKIPEDIA_REFRESH_GENEVA = test_paths::IMPORT_WIKIPEDIA . 'refresh_geneva_city' . self::JSON;

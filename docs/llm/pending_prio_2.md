@@ -2574,16 +2574,14 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
    (`url_var::REF_ROW_SELECTED` as a row var) and one for the description, and adjust a value before it is written.
    The confirm form sends the rows by get, so many rows with long texts can exceed the url length of the server;
    the values are never cut, so such a confirm would need the post method.
-7. The external key of a wikipedia reference is written both as the page title ("Canton of Zurich") and as the
-   url part ("Canton_of_Zurich"): about 550 keys of the import json use spaces and about 160 underscores, e.g.
-   "Abraham_Maslow". The backend treats the two spellings as different keys, so the same page can get a second
-   reference and a key comparison misses the match; the link text shows the underscore, and `ref::name_link`
-   adds the key to the url without encoding, so e.g. "Zürich" or a key with `?` or `#` gives a wrong href.
-   Store only the page title with spaces, like the wikipedia title and the wikidata site links: map an underscore
-   to a space when a wikipedia reference is read from an import or a form, build the url (space to `_` and
-   `rawurlencode`) in one function used by the link and by `ref_link_wikipedia::summary`, change the underscore
-   keys of the import json (no reference is added or removed, so no id shifts) and add a unit test that both
-   spellings give the same key and the same url.
+7. The external key of a wikipedia reference is the slug of the direct url ("Canton_of_Zurich", see the one
+   external key rule in `docs/llm/json_structure.md`), and the import json uses only the slug. A key with spaces
+   from an import file or a form is still a different key for the backend, so the same page can get a second
+   reference and a key comparison misses the match; and `ref::name_link` adds the key to the url without
+   encoding, so e.g. "Zürich" or a key with `?` or `#` gives a wrong href. Map a space to `_` when a wikipedia
+   reference is read from an import or a form, build the url (`rawurlencode` of the slug) in one function used by
+   the link and by `ref_link_wikipedia::summary`, and add a unit test that both spellings give the same key and
+   the same url.
 8. A wikipedia refresh with the related data (`api/triple/?id=143&fr=frw&ir=1`, Bern (city) without wikipedia
    reference) ended in the fatal error `ref::get_predicate_code_id(): Return value must be of type string, null
    returned`, also after a complete rebuild of the database; the same call without `ir=1` and the call with `ir=1`
@@ -2610,3 +2608,182 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
     ref_row_confirm (wf44) moved the wikidata reference 277 of Zurich (canton) to the word with id 142 and changed
     its standard row; a database that has not been rebuilt since then still has these rows, which the cleanups
     cannot repair, because they only look at the references of the triple.
+
+## the sign of a phrase id in phrase::set_id
+
+`phrase::set_id()` takes a phrase id, whose sign says word (positive) or triple (negative), but sets only its
+absolute value on the object (`set_obj_id(abs($id))`). A new phrase holds a dummy word, so `set_id(-142)` makes
+the word 142 out of the triple 142 without any message. `ref::api_mapper`, `triple::phrase_from_api_json` and
+`formula_link::set_phrase_from_id` have been switched to `set_obj_from_id()`, but only after the write workflows
+ref_rows (wf43) and ref_row_confirm (wf44) had linked a reference of a triple to a word (see item 12 of the
+wikipedia refresh leftovers). Still calling `set_id()` with a phrase id that can be negative:
+`data_object::get_phrase_by_id` (the dto branch of `formula_link::set_phrase_from_id`), `data_object::set_phrase_id`
+and `phrase_list::add_id`. Make `set_id()` keep the sign like `set_obj_from_id()`, or remove it and switch every
+caller, with a unit test per caller that a negative id gives a triple and a positive id a word.
+
+## no mapping after an earlier error for the multi key objects
+
+The row mappers of the objects with a sequence id (`db_object_seq_id::row_mapper` and every child, `phrase`,
+`term` and `type_object`) do not start if `$msg` already carries an error and return true only if they have
+mapped the row (`docs/llm/dependent-errors.md`). The mappers of the objects with a group id or a text key do not
+have this guard yet: `db_object_key::row_mapper`, `db_object_multi::row_mapper_multi`,
+`sandbox_multi::row_mapper_sandbox_multi` with `value_base`, `value_time_series`, `sandbox_value` and `result`,
+`group::row_mapper` and `figure::row_mapper`. Their list loops already map each row with an own message, so a
+list is not affected; a single load after an earlier error still maps the row. Add the same guard and the same
+return, with the tests of `test_base::assert_row_mapper_guard` for a value, a result and a group.
+`group_list::rows_mapper` calls `rows_mapper_obj` with a group, which has no `row_mapper_sandbox`, so it would
+fail on its first row; the group lists are loaded by `load_by_phr` today, which maps the rows itself.
+
+## expected internal errors in tests only via the test-only flag of the message
+
+A test that expects an internal error calls `test_base::assert_log_err` with the message of the call, which sets
+`Message::log_test_only`, so that `log_err_msg` resp. `log_err_msg_ui` keep the text of the error in the message and
+neither write it to the system log nor count it as an internal error of the run, and the test asserts the text
+(first used by the csv row without id of `type_tests`). A bare `log_err` has no message and is always an error of
+the run, so a function whose error a test expects reports it with `log_err_msg`. Align the other cases that handle
+an expected or an absent internal error in their own way:
+
+1. `math_function_report::backend_result` saves and restores `$sys->errors`, `$sys->error_texts` and
+   `$sys->error_links` and sets `$sys->log_writing`, whose purpose is to stop the log writer from calling itself;
+   set `log_test_only` on the message it hands to `calc_internal::parse` instead, once the parser reports its
+   errors with `log_err_msg`.
+2. `term::row_has_ids` is public only "so that the check can be tested without the error log of the row
+   mapper" (`term_tests` 233-238); test the corrupted row with `term::row_mapper_sandbox` and
+   `assert_log_err` instead, so that the `TERM_ROW_ID_MISSING` and the logged text are checked too.
+3. `math_tests` (around line 179) says in a comment that "no cannot parse error is logged", but no assert
+   checks it; add an assert that no internal error is logged, e.g. a `test_base::assert_no_log_err`.
+
+These cases have been found by a search for the comments that name the error log; a test that triggers an
+internal error without saying so shows up as an internal error in the summary of a test run.
+
+## a triple whose own name is cleared is reported as a duplicate of itself
+
+If a user clears the own name of a triple (`set_name('')`, so that the generated name is used), `sandbox::save`
+reports "A triple that links … already exists" about the triple itself: `sandbox_link_named::is_key_updated`
+compares the raw `name` ('' against the stored name) and starts `get_similar`, which finds the same triple, but
+the rename branch of `save` compares `name()`, which falls back to the generated name, so both names are equal
+and the save ends in the last `else` with the duplicate message. Use the same name comparison in both places,
+so that clearing the own name is saved as a rename, with a write test for it; found by the second user test of
+`triple_write_tests`, which therefore saves an own object of the second user.
+
+## the reference write workflows change the change log of a seed triple
+
+`ref_write_url_tests` runs `ref_rows_workflow` and the six cases of `ref_row_confirm_workflow` on the seed triple
+"Zurich (canton)" (`triple_names::CANTON_ZURICH_ID`): each writes an overlay of `usr1` and removes it with the
+logged `del_usr_cfg`, so that every run adds "deleted user" and protection rows to the change log of the seed
+triple. The snapshots that show this change log therefore depend on the runs since the last `reset_db`:
+`views_by_object/triple/triple_default_triple_142.html` (since fbf6fa381 with the rows of one run) and the six
+confirmed pages of `workflow_write/ref_row_confirm_wf44/`. Move both workflows to a test triple:
+
+1. **Test triple:** `create_test_db_entries` creates a triple with a reserved test name (`System Test …`) of
+   another user than `usr1`, e.g. `usr2`, with a description, a wikipedia and a wikidata reference, so that the
+   changes of `usr1` stay overlays; the cleanup deletes the triple and its references through `del()`, and
+   `cleanup_change_log_deleted` removes the change log rows that carry the test name.
+2. **Fixed ids:** the snapshots contain the id of the triple and of both references (today 142, 276 and 277 in
+   the reference rows), but a created triple gets a new id each run and `wf_fixed_id` pins only the main
+   object; find how the reference ids of the rows are pinned in the snapshots before the move.
+3. **Workflow:** `ref_rows_workflow`, `ref_row_confirm_workflow`, `ref_row_confirm_url`, `ref_row_of_case`,
+   `assert_ref_row_written` and `cleanup_ref_rows` use the test triple and its references instead of
+   `CANTON_ZURICH_ID`, `ZURICH_CANTON_WIKIDATA_*` and `ZURICH_CANTON_WIKIPEDIA_*`; `ref_rows_form_workflow`
+   moves too and gets its write version in `ref_write_url_tests`, which checks the three references in the
+   database after the confirm, because today it only renders on Zurich (canton).
+4. **Snapshots:** the existing snapshots of `ref_row_confirm_wf44` (12 html and 12 url files each in `workflow/`
+   and `workflow_write/`) show triple 142 and are rewritten by the developer with a run with `test_files::AUTO_UPDATE_TEST_FILES`;
+   `triple_default_triple_142.html` goes back to the seed history only (as before fbf6fa381).
+5. **Check the other two:** `wikipedia_refresh_workflow` ("Geneva (city)") and `wikidata_refresh_workflow`
+   ("health") write overlays on seed objects too; move them as well if a snapshot shows the change log of
+   these objects.
+
+## one message for all steps of a workflow stops a later write after an earlier error
+
+`url_test_base::wf_start` creates one message and one `user_request` for all steps of a workflow, and the frontend
+`db_object::add_via_api`, `update` and `del` convert this whole message into the backend message
+(`MapObject::convertMsgToDb`). So an error of an earlier step, e.g. of a render, stops the row mappers of a later
+write step (`docs/llm/dependent-errors.md`): e.g. the reload at the start of `sandbox::del` maps nothing, and
+the delete only logs a warning and deletes nothing, without a message for the step. Found by
+`word_write_url_tests::url_to_action_write_tests`, where the add and the delete url shared one message; that test
+now runs the delete with an own request. Fix it for all workflows:
+
+1. **Per step:** each step of `assert_step` that sends a url (like a new http request) gets an own message,
+   and the message of each step is asserted, so that the step that has the problem is named.
+2. **Frontend writes:** check whether `db_object::add_via_api`, `update` and `del` should give the backend an
+   own message with only the requesting user and merge the result into the frontend message, so that a
+   message of an earlier step of the same request does not stop the write.
+3. **Tests:** a write test with a not ok message before a confirmed delete url, which deletes the object and
+   still reports the earlier message.
+
+## the plain message texts in the api json of a user message
+
+The backend `user_message::api_array` carries only the message ids (`json_fields::USER_MESSAGES`), the messages
+with vars and the status, so a plain text of `add_message_text`, e.g. "Delete of … failed due to …" of
+`sql_db::delete` or the texts of `sandbox::del`, is lost on the way to the frontend: the frontend message is not
+ok and has no text. Today the frontend writes call the backend directly (the REST call of `db_object::del`,
+`update` and `add_via_api` is still a TODO), so `MapObject::convertMsgToUi` copies the plain texts; the json
+of the REST answer does not carry them. Before the REST call is activated:
+
+1. **Json field:** add a json field for the plain texts, e.g. `json_fields::USER_MESSAGES_TEXT`, which the
+   backend `api_array` fills from `get_all_messages()` and the frontend `api_mapper` reads with
+   `add_message_text`; the backend `api_mapper` and the frontend `api_array` the same way, so that both
+   directions keep the texts.
+2. **Remove the workaround:** remove the copy of the plain texts in `MapObject::convertMsgToUi`, because the
+   api array then carries them.
+3. **Text:** the shared `Message::text()` ("TODO Prio 1 fill up") includes the last plain text if there is no
+   message id, so that `test_base::assert_msg` no longer needs its fallback to `get_last_message()`; or the
+   plain texts are replaced by message ids, as the TODO of the frontend `user_message::api_array` asks.
+4. **Tests:** a unit test that a backend message with a plain text keeps the text through `api_array` and
+   `api_mapper` in both directions.
+
+## the value and result groups by phrase for the formula update
+
+`group_list::get_grp_by_phr` should select the value and result groups that contain at least one phrase that a
+formula is assigned to and one phrase that it uses, so that `result_list::frm_upd_lst` knows which results to
+recalculate after a formula change. The old raw sql read `group_phrase_links`, a table that the current database
+setup does not create, so it now reports that the selection is not implemented (`log_err_msg`) and returns no rows.
+`frm_upd_lst` has no caller yet. Before it gets one:
+
+1. **Builder:** a `load_sql_*` builder with the sql creator for the current value and result tables, whose
+   group id contains the phrase ids (`docs/llm/group_id.md`), with a fixture for Postgres and MySQL.
+2. **Time words:** decide whether the time words are still separated from the phrases, as the commented out time
+   selection of the old sql did.
+3. **Tests:** a unit test of the builder and a write test that a formula change selects the results of a value
+   with an assigned and a used phrase, and its negative: no result without a used phrase.
+
+## the median user of a group is selected without where
+
+`sql_creator::select_by_id_not_owner` adds the id, the owner and the excluded condition with `add_par` but
+without a where entry, so `sql_creator::where` leaves them out and the statement selects all user rows of the
+table. It is reached by `sandbox_multi::load_sql_median_user` for a group (`median_user`, used by `not_used` and
+`del`); values and results override the builder in `sandbox_value`.
+
+1. **Builder:** `load_sql_median_user` of `sandbox_multi` uses `add_where` for the id and the owner and the
+   excluded condition like the other builders, so `select_by_id_not_owner` of `sql_creator` has no caller left
+   and goes.
+2. **Tests:** a unit test with a fixture for Postgres and MySQL of the median user of a group, with and without
+   an owner.
+
+## the dead links of the verb list
+
+`web/verb/verb_list.php::dsp_list` builds the links `/http/link_type_edit.php?id=` itself, but `http/` has no
+such script, so every verb link of `verb_list.html` leads nowhere; its unused `$add_script` names the same kind of
+script.
+
+1. **Links:** the link of a verb uses the edit view of the verb, like the other lists, and `$add_script` goes,
+   because the add button is built by `btn_add`.
+2. **Tests:** the snapshot `object_pages/verb_list.html` is updated by the developer and a ui test checks that a verb
+   link names the verb edit view.
+
+## the source selector of each reference row lists all sources
+
+The reference rows of the word and triple edit form (`system_form::form_ref_rows`, `system_form.php:2468`) write
+for each row a source selector with every source (`ref_row_source`, `:2600`), because the sources are loaded
+without a pattern (`source_list::load_for_selector`, `:2482`, `source_list.php:97`). In a write run these are about
+520 options per row: the edit page of a word with only the add row grows by 1612 lines
+(`workflow_write/change_word_wf2/wf2_show_edit.html`), and each stored reference adds the same list again, so
+every word and triple edit page carries a multiple of the source list.
+
+1. **Decide:** either all rows share one list of the sources that is written once per page, e.g. one datalist
+   that the source field of each row names, or each row shows only its stored source and a search field that
+   loads the matching sources by a pattern, like the phrase selector; the posted value stays the source id, so the
+   compare with the '86' value of `url_var::is_ref_row_change` is unchanged.
+2. **Tests:** the snapshot `object_pages/reference_form_rows.html` and the edit view snapshots are regenerated, and
+   a ui test checks that the number of source options of the form does not grow with the number of rows.

@@ -179,8 +179,11 @@ class sys_log_list extends list_db_read
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {
                 $log = new sys_log();
-                $log->row_mapper($db_row, $msg);
-                $this->add_obj($log);
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($log->row_mapper($db_row, $row_msg)) {
+                    $this->add_obj($log);
+                }
+                $msg->merge($row_msg);
             }
             $result = true;
         }

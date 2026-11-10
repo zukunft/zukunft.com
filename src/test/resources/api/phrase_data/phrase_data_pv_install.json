@@ -56,7 +56,7 @@
       "description": "carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released",
       "refs": [
         {
-          "name": "Global warming potential",
+          "name": "Global_warming_potential",
           "type": "wikipedia"
         }
       ]
@@ -176,7 +176,7 @@
       "description": "the share of the own consumption that is covered by the own production",
       "refs": [
         {
-          "name": "Energy independence",
+          "name": "Energy_independence",
           "type": "wikipedia"
         }
       ]
@@ -192,7 +192,7 @@
       "description": "an electrochemical store; here a stationary lithium-ion home storage system charged by the PV surplus",
       "refs": [
         {
-          "name": "Home energy storage",
+          "name": "Home_energy_storage",
           "type": "wikipedia"
         }
       ]
@@ -291,7 +291,7 @@
       "description": "built into a product during its making, for an emission the greenhouse gases released by the production, transport and disposal of the product",
       "refs": [
         {
-          "name": "Embodied carbon",
+          "name": "Embodied_carbon",
           "type": "wikipedia"
         }
       ]
@@ -403,7 +403,7 @@
       "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
       "refs": [
         {
-          "name": "Nominal power (photovoltaic)",
+          "name": "Nominal_power_(photovoltaic)",
           "type": "wikipedia"
         }
       ]
@@ -2461,7 +2461,7 @@
       "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
       "refs": [
         {
-          "name": "Life-cycle assessment",
+          "name": "Life-cycle_assessment",
           "type": "wikipedia"
         }
       ]

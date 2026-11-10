@@ -247,8 +247,7 @@ class job extends db_object_seq_id_user
             unset($row_ex_owner[user_db::FLD_ID]);
         }
         $result = parent::row_mapper($row_ex_owner, $msg, job_db::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(job_db::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[job_db::FLD_TYPE];
             }

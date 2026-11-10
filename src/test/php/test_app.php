@@ -114,6 +114,9 @@ class test_app
         $sys->pod_name = $code_name;
 
         $sys->errors = 0;
+        $sys->error_texts = [];
+        // a test run writes each internal error where it happens also on a prod pod
+        $sys->echo_errors = true;
 
         log_debug($code_name . ': session_start');
 

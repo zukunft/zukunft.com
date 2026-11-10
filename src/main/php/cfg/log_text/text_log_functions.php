@@ -49,6 +49,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -282,10 +284,6 @@ function log_err(string $msg_text,
                  string $trace = '',
                  ?user  $calling_usr = null): string
 {
-    global $sys;
-    if ($sys !== null) {
-        $sys->errors++;
-    }
     // TODO Prio 2 move the next lines to a class and a private function "get_function_name"
     $lib = new library();
     if ($trace == '') {
@@ -294,12 +292,147 @@ function log_err(string $msg_text,
     if ($function_name == '' or $function_name == null) {
         $function_name = library::php_function_from_exception($trace);
     }
-    return log_msg($msg_text,
+    // with the keyword of the test errors, also if log_msg writes nothing e.g. for a repeated text
+    if (log_echo_errors()) {
+        echo_timestamped(internal_error_line($function_name, $msg_text, PHP_SAPI != 'cli'));
+    }
+    $result = log_msg($msg_text,
         $msg_description,
         sys_log_levels::ERROR_ID,
         $function_name,
         $trace,
         $calling_usr);
+    log_keep_error($function_name, $msg_text, $result);
+    return $result;
+}
+
+/**
+ * log an internal error that the caller reports on its message, or keep it in the message if a test expects it
+ *
+ * @param string $msg_txt the error message text
+ * @param Message $msg the message of the caller, which carries the test-only flag (see test_base::assert_log_err)
+ * @return string the log link of the error, empty for the expected error of a test
+ */
+function log_err_on_msg(string $msg_txt, Message $msg): string
+{
+    $result = '';
+    if ($msg->log_test_only) {
+        // the expected result of a test is neither written to the system log nor counted as an error of the run
+        $msg->log_test_txt = $msg_txt;
+    } else {
+        $result = log_err_reported($msg_txt);
+    }
+    return $result;
+}
+
+/**
+ * count an internal or fatal error and keep it for the summary of a test run and for the api answer, because the
+ * system log rows of a test run are removed by its database recreation and the api runs in its own process
+ *
+ * @param string $function_name the function that has most likely caused the error
+ * @param string $msg_text the text of the error
+ * @param string $log_lnk the link to the system log entry of the error, empty if no entry has been written
+ * @return void
+ */
+function log_keep_error(string $function_name, string $msg_text, string $log_lnk): void
+{
+    global $sys;
+    if ($sys !== null) {
+        $sys->errors++;
+        $sys->error_texts[] = $function_name . ': ' . $msg_text;
+        // kept until a message reports it (log_take_reported), else the api answer sends it to the frontend
+        $sys->error_links[] = $log_lnk;
+    }
+}
+
+/**
+ * @return bool true if an internal error is written at the moment it happens: not in prod (system_object::echo_errors_default)
+ *              and not in an api request, which sends the error with the answer
+ */
+function log_echo_errors(): bool
+{
+    global $sys;
+    return ($sys !== null and $sys->echo_errors and !log_in_api_answer());
+}
+
+/**
+ * @param string $function_name the function that has most likely caused the error
+ * @param string $msg_text the text of the error
+ * @param bool $is_web true for a web page, where a request derived text could inject script (xss), so the line is escaped
+ * @return string the line of an internal error with the keyword of the test errors
+ */
+function internal_error_line(string $function_name, string $msg_text, bool $is_web): string
+{
+    $result = 'ERROR internal ' . $function_name . ': ' . $msg_text . "\n";
+    if ($is_web) {
+        $result = htmlspecialchars($result, ENT_QUOTES) . '<br>';
+    }
+    return $result;
+}
+
+/**
+ * @return bool true in an api request, where an echo of an error would stand in front of the json of the answer,
+ *              so the error is sent with the answer instead (controller::with_internal_errors)
+ */
+function log_in_api_answer(): bool
+{
+    global $sys;
+    return ($sys !== null and $sys->api_answer);
+}
+
+/**
+ * log an internal error that the caller reports on its message itself, so that the api answer does not send it again
+ * @param string $msg_txt the error message text
+ * @param string $function_name the function that has most likely caused the error, empty to take it from the trace
+ * @return string the log link of the error
+ */
+function log_err_reported(string $msg_txt, string $function_name = ''): string
+{
+    $link_count = log_link_count();
+    $result = log_err($msg_txt, $function_name);
+    log_take_reported($link_count);
+    return $result;
+}
+
+/**
+ * log a fatal error that the caller reports on its message itself, so that the api answer does not send it again
+ * @param string $msg_txt the error message text
+ * @param string $function_name the function that has most likely caused the error
+ * @return string the text of the error
+ */
+function log_fatal_reported(string $msg_txt, string $function_name): string
+{
+    $link_count = log_link_count();
+    $result = log_fatal($msg_txt, $function_name);
+    log_take_reported($link_count);
+    return $result;
+}
+
+/**
+ * @return int the number of the kept log links, to find the link that the next log call adds
+ */
+function log_link_count(): int
+{
+    global $sys;
+    $result = 0;
+    if ($sys !== null) {
+        $result = count($sys->error_links);
+    }
+    return $result;
+}
+
+/**
+ * take out the link that a log call has added after the given count, because the caller reports the error itself
+ * @param int $link_count the number of the kept log links before the log call
+ * @return void
+ */
+function log_take_reported(int $link_count): void
+{
+    global $sys;
+    // only a link that the log call has just added is taken out
+    if ($sys !== null and count($sys->error_links) > $link_count) {
+        array_pop($sys->error_links);
+    }
 }
 
 /**
@@ -312,7 +445,7 @@ function log_err(string $msg_text,
  */
 function log_err_msg(string $msg_txt, user_message $msg): void
 {
-    $log_lnk = log_err($msg_txt);
+    $log_lnk = log_err_on_msg($msg_txt, $msg);
     $msg->add(msg_id::INTERNAL, [msg_id::VAR_LOG_LINK => $log_lnk]);
 }
 
@@ -326,7 +459,7 @@ function log_err_msg(string $msg_txt, user_message $msg): void
  */
 function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
 {
-    $log_lnk = log_err($msg_txt);
+    $log_lnk = log_err_on_msg($msg_txt, $msg);
     $msg->add(msg_id::INTERNAL, [msg_id::VAR_LOG_LINK => $log_lnk]);
 }
 
@@ -430,20 +563,24 @@ function log_fatal_db(
     ?user  $calling_usr = null): string
 {
     // escape the (possibly request-derived) message before echoing it into the html response (xss)
-    echo 'FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES);
+    if (!log_in_api_answer()) {
+        echo 'FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES);
+    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
     }
     if ($function_name == '' or $function_name == null) {
         $function_name = library::php_function_from_exception($trace);
     }
-    return log_msg(
+    $result = log_msg(
         'FATAL ERROR! ' . $msg_text,
         $msg_description,
         sys_log_levels::FATAL_ID,
         $function_name,
         $trace,
         $calling_usr);
+    log_keep_error($function_name, 'FATAL ERROR! ' . $msg_text, $result);
+    return $result;
 }
 
 /**
@@ -465,7 +602,9 @@ function log_fatal(string $msg_text,
     $time = new DateTime()->format('c');
     // escape the browser echo (xss); the file log below keeps the raw text for the admin
     // route through the timestamped writer so the fatal line also starts with the runtime timestamp
-    echo_timestamped('FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES));
+    if (!log_in_api_answer()) {
+        echo_timestamped('FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES));
+    }
     // the file log must work even if the database is broken, but must never kill the response
     // itself: the fixed root path keeps the log out of the web request working directory and
     // if the web server user cannot write the file the entry goes to the server log instead
@@ -504,6 +643,8 @@ function log_fatal(string $msg_text,
     if ($log_file !== false) {
         fclose($log_file);
     }
+    // a fatal error has no system log entry, because the database may be the cause, so it is sent without link
+    log_keep_error($function_name, 'FATAL ERROR! ' . $msg_text, '');
     return $msg_text;
 }
 
@@ -705,14 +846,22 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                echo_timestamped(critical_error_html($msg_text));
+                $ref = '';
                 if ($sys_log->id > 0) {
                     $html = new html_base();
                     $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID
                         . url_var::ADD . url_var::ID . url_var::EQ . $sys_log->id;
                     $url = THIS_URL . $url_rel;
                     $ref = $html->ref($url_rel, $url);
-                    echo_timestamped('You can track the solving of the error with this link: ' . $ref . '<br>');
+                }
+                if (log_in_api_answer()) {
+                    // the echo would stand in front of the json, so the api answer sends the link (controller::with_internal_errors)
+                    $result = $ref;
+                } else {
+                    echo_timestamped(critical_error_html($msg_text));
+                    if ($ref != '') {
+                        echo_timestamped('You can track the solving of the error with this link: ' . $ref . '<br>');
+                    }
                 }
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {

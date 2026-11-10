@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
@@ -135,6 +137,19 @@ class sys_log_tests
         // it stays in the sys_log for the admin, so the user-facing html has no 'by <function>' part
         $test_name = 'the critical error html does not disclose an internal function or file name';
         $t->assert_text_not_contains($test_name, $err_html, ' by ');
+        // outside prod each internal error is also written where it happens, in a web page escaped like above
+        $test_name = 'the line of an internal error has the keyword of the test errors';
+        $t->assert_text_contains($test_name, \internal_error_line('fnc', $xss_payload, false), 'ERROR internal fnc: ');
+        $test_name = '... and in a web page it does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, \internal_error_line('fnc', $xss_payload, true), $xss_payload);
+        $test_name = 'the internal errors are not written where they happen in prod';
+        $t->assert_false($test_name, system_object::echo_errors_default(ENV_PROD));
+        $test_name = '... but in the test environment';
+        $t->assert_true($test_name, system_object::echo_errors_default(ENV_UA));
+        $test_name = '... in dev';
+        $t->assert_true($test_name, system_object::echo_errors_default(ENV_DEV));
+        $test_name = '... and if no environment is set';
+        $t->assert_true($test_name, system_object::echo_errors_default(''));
 
         $t->subheader($ts . 'debug step time');
 
@@ -520,6 +535,9 @@ class sys_log_tests
         $sys_tim = new system_time();
         $sys_tim->row_mapper(null, $msg);
         $t->assert_null($test_name, $sys_tim->url);
+        // the caller maps only a found row, so a missing row is a problem of the program
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $msg->is_ok());
         $msg->reset();
 
         // negative: a system time that has not been started sends no start time

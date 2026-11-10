@@ -1108,7 +1108,7 @@ class html_base
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
-            $url = $this->url_old(rest_ctrl::URL_ABOUT);
+            $url = rest_ctrl::PATH_FIXED . rest_ctrl::URL_ABOUT . rest_ctrl::EXT;
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
@@ -1392,39 +1392,6 @@ class html_base
     /*
      * wrapper for internal references used in the html code
      */
-
-    /**
-     * build a url for link a zukunft.com element
-     * TODO Prio 0 deprecate and use url_new for all url creations if possible
-     *
-     * @param string $obj_name the object that is requested e.g. a view
-     * @param int|string $id the id of the parameter e.g. 1 for math const
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
-     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
-     * @return string the created url
-     */
-    function url_old(
-        string       $obj_name,
-        int|string   $id = 0,
-        array        $url_arr = [],
-        string|array $par = '',
-        string       $id_ext = ''
-    ): string
-    {
-        $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
-        if ($id <> 0) {
-            if ($par != '') {
-                $result .= '?' . $par . '=' . $id;
-            } else {
-                $result .= '?id=' . $id;
-            }
-            if ($id_ext != '') {
-                $result .= '&' . $id_ext;
-            }
-        }
-        return $this->url_with_back($result, $url_arr);
-    }
 
     /**
      * TODO Prio 1 deprecate and replace if the the url_arr based back var
@@ -2671,59 +2638,6 @@ class html_base
     }
 
     /**
-     * converts object class name to an edit php script name
-     *
-     */
-    function edit_url(string $class): string
-    {
-        return $class . rest_ctrl::UPDATE . rest_ctrl::EXT;
-    }
-
-    /**
-     * display a list that can be sorted using the fixed field "order_nbr"
-     * $sql_result - list of the query results
-     *
-     * @param array $item_lst a list of objects that have at least an id and a name
-     */
-    function list_sort(
-        array  $item_lst,
-        string $class,
-        string $script_parameter,
-        array  $url_arr = []): string
-    {
-        global $mtr;
-        $btn = new button();
-        $result = '';
-
-        $row_nbr = 0;
-        $num_rows = count($item_lst);
-        foreach ($item_lst as $key => $item) {
-            // list of all possible view entries
-            $row_nbr = $row_nbr + 1;
-            $edit_script = $this->edit_url($class);
-            $url = $this->url_old($edit_script, $key, $url_arr);
-            $result .= $this->ref($url, $item);
-            if ($row_nbr > 1) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_up=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::UP));
-            }
-            if ($row_nbr > 1 and $row_nbr < $num_rows) {
-                $result .= '/';
-            }
-            if ($row_nbr < $num_rows) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_down=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
-            }
-            $result .= ' ';
-            // TODO Prio 1 review
-            //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
-            $result .= '<' . self::BR . '>';
-        }
-
-        return $result;
-    }
-
-    /**
      * display a paged, editable list of elements e.g. verbs
      *
      * @param array $item_lst a list of objects that have at least an id and a name
@@ -3285,17 +3199,18 @@ class html_base
     }
 
     /**
-     * a checkbox that sends the number 1 if it is checked; the id equals the name, so a label can point to it
+     * a checkbox that sends its value if it is checked; the id equals the name, so a label can point to it
      *
      * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
      * @param bool $checked true to show the checkbox checked
      * @param string $form_name the form that the input joins by its form attribute
+     * @param string $value the value that is sent if the checkbox is checked e.g. url_var::CRUD_DELETE for a delete box
      * @return string the html code of the checkbox
      */
-    function input_checkbox(string $name, bool $checked, string $form_name): string
+    function input_checkbox(string $name, bool $checked, string $form_name, string $value = '1'): string
     {
         $attr = ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
-        $form = ' ' . html_names::VALUE . '="1" ' . self::FORM . '="' . $this->esc($form_name) . '"';
+        $form = ' ' . html_names::VALUE . '="' . $this->esc($value) . '" ' . self::FORM . '="' . $this->esc($form_name) . '"';
         $state = $checked ? ' checked' : '';
         return '<' . self::INPUT . $attr . $form . $state . '>';
     }
@@ -3438,6 +3353,7 @@ class html_base
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field
      */
     function input(
@@ -3447,13 +3363,14 @@ class html_base
         string      $type = '',
         string      $class_add = '',
         string      $placeholder = '',
-        string      $form_name = ''): string
+        string      $form_name = '',
+        string      $id_ext = ''): string
     {
         $name = '';
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $id = $this->form_field_id($url_id, $msg_id);
+        $id = $this->form_field_id($url_id, $msg_id) . $id_ext;
         if ($value != '') {
             // escape the value so a name/description with " < > & cannot break out of the
             // attribute; the browser decodes it back so the resubmitted value is unchanged
@@ -3707,6 +3624,7 @@ class html_base
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -3716,7 +3634,8 @@ class html_base
         string                $type = html_base::INPUT_TEXT,
         string                $input_class = '',
         string                $style = view_styles::COL_SM_12,
-        string                $form_name = ''
+        string                $form_name = '',
+        string                $id_ext = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -3724,11 +3643,11 @@ class html_base
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
-            $text = $this->label($name, $this->field_id($url_id, $name));
-            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name);
+            $text = $this->label($name, $this->field_id($url_id, $name) . $id_ext);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name, $id_ext);
             return $this->div_form($text, $style);
         } else {
-            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name);
+            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name, $id_ext);
         }
     }
 

@@ -53,6 +53,10 @@ class json_fields
     const string BODY = 'body';
     // the seconds per backend step of a slow api answer, which the frontend may use or ignore (see controller::with_time)
     const string API_TIME = 'api_time';
+    // only if an internal error has been logged: the log link per error and the answer as a json string
+    // (see controller::json_with_internal_errors)
+    const string INTERNAL_ERRORS = 'internal_errors';
+    const string API_ANSWER = 'api_answer';
     // subarrays of the json url representation: the '7'-prefixed link vars (the link created with a new
     // object), the '8'-prefixed pre values (the db values when the edit view was opened) and the
     // '9'-prefixed back targets (where cancel / confirm return to)

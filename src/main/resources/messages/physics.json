@@ -105,7 +105,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Power (physics)",
+          "name": "Power_(physics)",
           "type": "wikipedia"
         },
         {
@@ -177,7 +177,7 @@
       "name": "displacement",
       "refs": [
         {
-          "name": "Displacement (geometry)",
+          "name": "Displacement_(geometry)",
           "type": "wikipedia"
         },
         {
@@ -205,7 +205,7 @@
       "description": "In classical mechanics, impulse is the change in momentum of an object; it equals the integral of force over the time interval for which it acts.",
       "refs": [
         {
-          "name": "Impulse (physics)",
+          "name": "Impulse_(physics)",
           "type": "wikipedia"
         },
         {
@@ -219,7 +219,7 @@
       "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
       "refs": [
         {
-          "name": "Work (physics)",
+          "name": "Work_(physics)",
           "type": "wikipedia"
         },
         {
@@ -359,7 +359,7 @@
       "description": "An electric current is a flow of charged particles, such as electrons or ions, moving through an electrical conductor or space.",
       "refs": [
         {
-          "name": "Electric current",
+          "name": "Electric_current",
           "type": "wikipedia"
         },
         {
@@ -373,7 +373,7 @@
       "description": "The electrical resistance of an object is a measure of its opposition to the flow of electric current.",
       "refs": [
         {
-          "name": "Electrical resistance and conductance",
+          "name": "Electrical_resistance_and_conductance",
           "type": "wikipedia"
         },
         {
@@ -429,7 +429,7 @@
       "description": "In electromagnetism, permeability is the measure of magnetization that a material obtains in response to an applied magnetic field.",
       "refs": [
         {
-          "name": "Permeability (electromagnetism)",
+          "name": "Permeability_(electromagnetism)",
           "type": "wikipedia"
         },
         {
@@ -541,7 +541,7 @@
       "description": "The atomic nucleus is the small, dense region consisting of protons and neutrons at the center of an atom.",
       "refs": [
         {
-          "name": "Atomic nucleus",
+          "name": "Atomic_nucleus",
           "type": "wikipedia"
         },
         {
@@ -555,7 +555,7 @@
       "description": "A spring is an elastic object that stores mechanical energy and is typically used as a mechanical component.",
       "refs": [
         {
-          "name": "Spring (device)",
+          "name": "Spring_(device)",
           "type": "wikipedia"
         },
         {
@@ -611,7 +611,7 @@
       "description": "Reflection is the change in direction of a wavefront at an interface between two different media so that the wavefront returns into the medium from which it originated.",
       "refs": [
         {
-          "name": "Reflection (physics)",
+          "name": "Reflection_(physics)",
           "type": "wikipedia"
         },
         {
@@ -739,7 +739,7 @@
       "description": "Charles-Augustin de Coulomb was a French officer, engineer, and physicist; the SI unit of electric charge and Coulomb's law are named after him.",
       "refs": [
         {
-          "name": "Charles-Augustin de Coulomb",
+          "name": "Charles-Augustin_de_Coulomb",
           "type": "wikipedia"
         },
         {
@@ -753,7 +753,7 @@
       "description": "Georg Simon Ohm was a German physicist and mathematician known for Ohm's law.",
       "refs": [
         {
-          "name": "Georg Ohm",
+          "name": "Georg_Ohm",
           "type": "wikipedia"
         },
         {
@@ -767,7 +767,7 @@
       "description": "Sir Isaac Newton was an English mathematician, physicist, astronomer and author widely recognised as one of the greatest mathematicians and most influential scientists of all time.",
       "refs": [
         {
-          "name": "Isaac Newton",
+          "name": "Isaac_Newton",
           "type": "wikipedia"
         },
         {
@@ -781,7 +781,7 @@
       "description": "Albert Einstein was a German-born theoretical physicist who is widely held to be one of the greatest and most influential scientists of all time.",
       "refs": [
         {
-          "name": "Albert Einstein",
+          "name": "Albert_Einstein",
           "type": "wikipedia"
         },
         {
@@ -795,7 +795,7 @@
       "description": "Robert Hooke was an English polymath who was active as a scientist, natural philosopher and architect, and Hooke's law is named after him.",
       "refs": [
         {
-          "name": "Robert Hooke",
+          "name": "Robert_Hooke",
           "type": "wikipedia"
         },
         {
@@ -809,7 +809,7 @@
       "description": "Daniel Bernoulli was a Swiss mathematician and physicist who made important contributions to fluid mechanics.",
       "refs": [
         {
-          "name": "Daniel Bernoulli",
+          "name": "Daniel_Bernoulli",
           "type": "wikipedia"
         },
         {
@@ -823,7 +823,7 @@
       "description": "Willebrord Snellius was a Dutch astronomer and mathematician; the law of refraction is named after him.",
       "refs": [
         {
-          "name": "Willebrord Snellius",
+          "name": "Willebrord_Snellius",
           "type": "wikipedia"
         },
         {
@@ -841,7 +841,7 @@
       "description": "Louis de Broglie was a French physicist and aristocrat known for his contributions to quantum theory.",
       "refs": [
         {
-          "name": "Louis de Broglie",
+          "name": "Louis_de_Broglie",
           "type": "wikipedia"
         },
         {
@@ -855,7 +855,7 @@
       "description": "Josef Stefan was a Slovene physicist, mathematician, and poet of the Austrian Empire; the Stefan-Boltzmann law is partly named after him.",
       "refs": [
         {
-          "name": "Josef Stefan",
+          "name": "Josef_Stefan",
           "type": "wikipedia"
         },
         {
@@ -869,7 +869,7 @@
       "description": "Wilhelm Wien was a German physicist who studied radiation and electromagnetism, winning the 1911 Nobel Prize in Physics.",
       "refs": [
         {
-          "name": "Wilhelm Wien",
+          "name": "Wilhelm_Wien",
           "type": "wikipedia"
         },
         {
@@ -883,7 +883,7 @@
       "description": "Erwin Schrödinger was an Austrian-Irish physicist who developed fundamental results in quantum theory.",
       "refs": [
         {
-          "name": "Erwin Schrödinger",
+          "name": "Erwin_Schrödinger",
           "type": "wikipedia"
         },
         {
@@ -897,7 +897,7 @@
       "description": "Werner Heisenberg was a German theoretical physicist and one of the main pioneers of the theory of quantum mechanics.",
       "refs": [
         {
-          "name": "Werner Heisenberg",
+          "name": "Werner_Heisenberg",
           "type": "wikipedia"
         },
         {
@@ -911,7 +911,7 @@
       "description": "Michael Faraday was an English scientist who contributed to the study of electromagnetism and electrochemistry.",
       "refs": [
         {
-          "name": "Michael Faraday",
+          "name": "Michael_Faraday",
           "type": "wikipedia"
         },
         {
@@ -925,7 +925,7 @@
       "description": "Hendrik Lorentz was a Dutch physicist who shared the 1902 Nobel Prize in Physics with Pieter Zeeman.",
       "refs": [
         {
-          "name": "Hendrik Lorentz",
+          "name": "Hendrik_Lorentz",
           "type": "wikipedia"
         },
         {
@@ -939,7 +939,7 @@
       "description": "André-Marie Ampère was a French physicist and mathematician who was one of the founders of the science of classical electromagnetism.",
       "refs": [
         {
-          "name": "André-Marie Ampère",
+          "name": "André-Marie_Ampère",
           "type": "wikipedia"
         },
         {
@@ -953,7 +953,7 @@
       "description": "Carl Friedrich Gauss was a German mathematician and physicist who made significant contributions to many fields.",
       "refs": [
         {
-          "name": "Carl Friedrich Gauss",
+          "name": "Carl_Friedrich_Gauss",
           "type": "wikipedia"
         },
         {
@@ -980,7 +980,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Gravitational constant",
+          "name": "Gravitational_constant",
           "type": "wikipedia"
         },
         {
@@ -994,7 +994,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Standard gravity",
+          "name": "Standard_gravity",
           "type": "wikipedia"
         },
         {
@@ -1009,7 +1009,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Speed of light",
+          "name": "Speed_of_light",
           "type": "wikipedia"
         },
         {
@@ -1024,7 +1024,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Planck constant",
+          "name": "Planck_constant",
           "type": "wikipedia"
         },
         {
@@ -1039,7 +1039,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Planck constant",
+          "name": "Planck_constant",
           "type": "wikipedia"
         }
       ]
@@ -1050,7 +1050,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Boltzmann constant",
+          "name": "Boltzmann_constant",
           "type": "wikipedia"
         },
         {
@@ -1064,7 +1064,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Gas constant",
+          "name": "Gas_constant",
           "type": "wikipedia"
         },
         {
@@ -1079,7 +1079,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Avogadro constant",
+          "name": "Avogadro_constant",
           "type": "wikipedia"
         },
         {
@@ -1094,7 +1094,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Stefan-Boltzmann constant",
+          "name": "Stefan-Boltzmann_constant",
           "type": "wikipedia"
         },
         {
@@ -1109,7 +1109,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Vacuum permittivity",
+          "name": "Vacuum_permittivity",
           "type": "wikipedia"
         },
         {
@@ -1124,7 +1124,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Vacuum permeability",
+          "name": "Vacuum_permeability",
           "type": "wikipedia"
         },
         {
@@ -1139,7 +1139,7 @@
       "type": "constant",
       "refs": [
         {
-          "name": "Coulomb constant",
+          "name": "Coulomb_constant",
           "type": "wikipedia"
         },
         {
@@ -1397,7 +1397,7 @@
       "to": "energy",
       "refs": [
         {
-          "name": "Kinetic energy",
+          "name": "Kinetic_energy",
           "type": "wikipedia"
         },
         {
@@ -1414,7 +1414,7 @@
       "to": "energy",
       "refs": [
         {
-          "name": "Potential energy",
+          "name": "Potential_energy",
           "type": "wikipedia"
         },
         {
@@ -1443,7 +1443,7 @@
       "to": "energy",
       "refs": [
         {
-          "name": "Internal energy",
+          "name": "Internal_energy",
           "type": "wikipedia"
         },
         {
@@ -1471,7 +1471,7 @@
       "to": "angle",
       "refs": [
         {
-          "name": "Angular velocity",
+          "name": "Angular_velocity",
           "type": "wikipedia"
         },
         {
@@ -1488,7 +1488,7 @@
       "to": "momentum",
       "refs": [
         {
-          "name": "Angular momentum",
+          "name": "Angular_momentum",
           "type": "wikipedia"
         },
         {
@@ -1511,7 +1511,7 @@
       "to": "acceleration",
       "refs": [
         {
-          "name": "Circular motion",
+          "name": "Circular_motion",
           "type": "wikipedia"
         }
       ]
@@ -1530,7 +1530,7 @@
       "to": "inertia",
       "refs": [
         {
-          "name": "Moment of inertia",
+          "name": "Moment_of_inertia",
           "type": "wikipedia"
         },
         {
@@ -1547,7 +1547,7 @@
       "to": "second law",
       "refs": [
         {
-          "name": "Newton's laws of motion",
+          "name": "Newton's_laws_of_motion",
           "type": "wikipedia"
         },
         {
@@ -1564,7 +1564,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Newton's law of universal gravitation",
+          "name": "Newton's_law_of_universal_gravitation",
           "type": "wikipedia"
         },
         {
@@ -1581,7 +1581,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Hooke's law",
+          "name": "Hooke's_law",
           "type": "wikipedia"
         },
         {
@@ -1598,7 +1598,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Coulomb's law",
+          "name": "Coulomb's_law",
           "type": "wikipedia"
         },
         {
@@ -1615,7 +1615,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Ohm's law",
+          "name": "Ohm's_law",
           "type": "wikipedia"
         },
         {
@@ -1632,7 +1632,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Snell's law",
+          "name": "Snell's_law",
           "type": "wikipedia"
         },
         {
@@ -1649,7 +1649,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Bernoulli's principle",
+          "name": "Bernoulli's_principle",
           "type": "wikipedia"
         },
         {
@@ -1666,7 +1666,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Stefan-Boltzmann law",
+          "name": "Stefan-Boltzmann_law",
           "type": "wikipedia"
         },
         {
@@ -1683,7 +1683,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Wien's displacement law",
+          "name": "Wien's_displacement_law",
           "type": "wikipedia"
         },
         {
@@ -1700,7 +1700,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Faraday's law of induction",
+          "name": "Faraday's_law_of_induction",
           "type": "wikipedia"
         },
         {
@@ -1717,7 +1717,7 @@
       "to": "force",
       "refs": [
         {
-          "name": "Lorentz force",
+          "name": "Lorentz_force",
           "type": "wikipedia"
         },
         {
@@ -1734,7 +1734,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Ampère's circuital law",
+          "name": "Ampère's_circuital_law",
           "type": "wikipedia"
         },
         {
@@ -1751,7 +1751,7 @@
       "to": "law",
       "refs": [
         {
-          "name": "Gauss's law",
+          "name": "Gauss's_law",
           "type": "wikipedia"
         },
         {
@@ -1768,7 +1768,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Matter wave",
+          "name": "Matter_wave",
           "type": "wikipedia"
         },
         {
@@ -1785,7 +1785,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Planck relation",
+          "name": "Planck_relation",
           "type": "wikipedia"
         },
         {
@@ -1802,7 +1802,7 @@
       "to": "principle",
       "refs": [
         {
-          "name": "Uncertainty principle",
+          "name": "Uncertainty_principle",
           "type": "wikipedia"
         },
         {
@@ -1819,7 +1819,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Schrödinger equation",
+          "name": "Schrödinger_equation",
           "type": "wikipedia"
         },
         {
@@ -1836,7 +1836,7 @@
       "to": "equation",
       "refs": [
         {
-          "name": "Mass-energy equivalence",
+          "name": "Mass-energy_equivalence",
           "type": "wikipedia"
         },
         {
@@ -1853,7 +1853,7 @@
       "to": "gas",
       "refs": [
         {
-          "name": "Ideal gas law",
+          "name": "Ideal_gas_law",
           "type": "wikipedia"
         },
         {
@@ -1870,7 +1870,7 @@
       "to": "thermodynamics",
       "refs": [
         {
-          "name": "First law of thermodynamics",
+          "name": "First_law_of_thermodynamics",
           "type": "wikipedia"
         },
         {
@@ -1887,7 +1887,7 @@
       "to": "thermodynamics",
       "refs": [
         {
-          "name": "Second law of thermodynamics",
+          "name": "Second_law_of_thermodynamics",
           "type": "wikipedia"
         },
         {
@@ -1904,7 +1904,7 @@
       "to": "heat",
       "refs": [
         {
-          "name": "Specific heat capacity",
+          "name": "Specific_heat_capacity",
           "type": "wikipedia"
         },
         {
@@ -1921,7 +1921,7 @@
       "to": "field",
       "refs": [
         {
-          "name": "Electric field",
+          "name": "Electric_field",
           "type": "wikipedia"
         },
         {
@@ -1938,7 +1938,7 @@
       "to": "field",
       "refs": [
         {
-          "name": "Magnetic field",
+          "name": "Magnetic_field",
           "type": "wikipedia"
         },
         {
@@ -1961,7 +1961,7 @@
       "to": "flux",
       "refs": [
         {
-          "name": "Magnetic flux",
+          "name": "Magnetic_flux",
           "type": "wikipedia"
         },
         {
@@ -1978,7 +1978,7 @@
       "to": "potential",
       "refs": [
         {
-          "name": "Electric potential",
+          "name": "Electric_potential",
           "type": "wikipedia"
         },
         {

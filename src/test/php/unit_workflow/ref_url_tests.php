@@ -49,6 +49,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -118,6 +120,8 @@ class ref_url_tests extends url_test_base
     ];
     const string CASE_DESCRIPTION = 'description';
     const int CASE_ROW = 1;
+    // the snapshot set of the ref_rows_form save without a change
+    const string CASE_UNCHANGED = 'unchanged';
 
     function run(test_cleanup $t): void
     {
@@ -145,6 +149,7 @@ class ref_url_tests extends url_test_base
         $this->change_ref_workflow(workflows::WF_CHANGE_REF_NBR);
         $this->del_ref_workflow(workflows::WF_DEL_REF_NBR);
         $this->ref_row_confirm_workflow(workflows::WF_REF_ROW_CONFIRM_NBR);
+        $this->ref_rows_form_workflow(workflows::WF_REF_ROWS_FORM_NBR);
     }
 
     /**
@@ -828,6 +833,20 @@ class ref_url_tests extends url_test_base
      */
     private function ref_row_confirm_url(string $action, bool $with_description): array
     {
+        $url_arr = $this->zh_canton_save_url($with_description);
+        [$fields, $pre_fields] = $this->ref_row_of_case($action);
+        $row = self::CASE_ROW;
+        $row_url = url_var::ref_row_url_array([$row => $fields], [$row => $pre_fields]);
+        return array_merge($url_arr, $row_url);
+    }
+
+    /**
+     * @param bool $with_description true to change the description with the same save
+     * @return array the url of the saved edit view of Zurich (canton) without reference rows, with the
+     *               stored values as '8' values and the triple page as the back target
+     */
+    private function zh_canton_save_url(bool $with_description): array
+    {
         // the fields of the base data, because the write must not change e.g. the given name
         $trp = new test_triples($this->t)->zh_canton();
         $url_arr = [
@@ -844,10 +863,7 @@ class ref_url_tests extends url_test_base
         }
         $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
         $url_arr[url_var::BACK . url_var::ID] = triple_names::CANTON_ZURICH_ID;
-        [$fields, $pre_fields] = $this->ref_row_of_case($action);
-        $row = self::CASE_ROW;
-        $row_url = url_var::ref_row_url_array([$row => $fields], [$row => $pre_fields]);
-        return array_merge($url_arr, $row_url);
+        return $url_arr;
     }
 
     /**
@@ -953,6 +969,110 @@ class ref_url_tests extends url_test_base
         $std_ref->load_standard($id, $msg);
         $this->t->assert($test_name, $std_ref->get_external_key(), $std_key);
         $this->t->assert_msg($test_name, $msg);
+    }
+
+    /**
+     * run the ref_rows_form workflow on the triple Zurich (canton): the edit view shows the references as
+     * rows of its form; the save with the changed key of the wikidata reference, the checked delete box of
+     * the wikipedia reference and the filled add row shows the three rows on the confirm page, and a save of
+     * the unchanged rows shows none; it only renders, because a write would change the change log of the
+     * seed triple (see docs/llm/pending_prio_2.md)
+     *
+     * @param int $wf_nbr the id of the current workflow version used as the file name prefix
+     */
+    protected function ref_rows_form_workflow(int $wf_nbr): void
+    {
+        global $mtr;
+        $trp_id = triple_names::CANTON_ZURICH_ID;
+        $this->wf_start($wf_nbr, workflows::WF_REF_ROWS_FORM, $this->t->usr1, $trp_id);
+        $this->wf_id = $trp_id;
+        $this->wf_fixed_id = $trp_id;
+        $trp = new test_triples($this->t)->zh_canton();
+        $phr_lst = new phrase_list($this->t->usr1);
+        $phr_lst->add($trp->get_from());
+        $phr_lst->add($trp->get_to());
+        $this->add_phrases_to_cache($phr_lst);
+        // a read run renders without backend calls, so the references of the rows come from the cache;
+        // the cache is shared by all workflows, so the stored list is set back at the end
+        $ui_msg = new user_message_ui($this->usr);
+        $cache_refs = $this->req->dto->ref_lst;
+        $refs = $this->req->dto->ref_list_cloned();
+        foreach (new test_refs($this->t)->ref_list_zh_canton_ui()->lst() as $ref) {
+            $refs->add($ref, $ui_msg);
+        }
+        $this->req->dto->set_ref_list($refs);
+        $wf_path = $this->step_path;
+        $refs_title = $mtr->txt(msg_id::INFO_CONFIRM_REFS);
+
+        // edit: the edit view shows a row with the delete box per reference and the add row
+        $edit_url = [
+            url_var::ID => $trp_id,
+            url_var::BACK . url_var::MASK => views::TRIPLE_ID,
+            url_var::BACK . url_var::ID => $trp_id,
+        ];
+        $html = $this->assert_step(workflows::EDIT, $edit_url, views::TRIPLE_EDIT_ID);
+        $test_name = 'the edit view of Zurich (canton) shows the wikidata reference as a row of its form';
+        $this->t->assert_text_contains($test_name, $html, refs::ZURICH_CANTON_WIKIDATA_KEY);
+        $test_name = '... with the delete box';
+        $this->t->assert_text_contains($test_name, $html, $mtr->txt(msg_id::FORM_FIELD_REF_DELETE));
+
+        // save: the confirm page shows the three changing rows
+        $save_url = array_merge($this->zh_canton_save_url(false), $this->ref_rows_form_rows(true));
+        $html = $this->assert_step(workflows::SAVE, $save_url, views::TRIPLE_EDIT_ID);
+        $test_name = 'the save of the reference rows shows them on the confirm page';
+        $this->t->assert_text_contains($test_name, $html, $refs_title);
+        $test_name = '... with the new key of the wikidata reference';
+        $this->t->assert_text_contains($test_name, $html, refs::CHANGE_NEW_KEY);
+        $test_name = '... and the key of the added reference';
+        $this->t->assert_text_contains($test_name, $html, refs::SYSTEM_TEST_ROW_ADD);
+
+        // confirmed: the confirm would write the rows (do_it false here, so nothing is written)
+        $this->assert_step(workflows::CONFIRMED, $save_url, views::CONFIRM_EDIT_ID);
+
+        // negative: the save of the unchanged rows and the empty add row shows no reference change
+        $this->step_path = $wf_path . workflows::NAME_SEP . self::CASE_UNCHANGED;
+        $save_url = array_merge($this->zh_canton_save_url(false), $this->ref_rows_form_rows(false));
+        $html = $this->assert_step(workflows::SAVE, $save_url, views::TRIPLE_EDIT_ID);
+        $test_name = 'the save of the unchanged reference rows shows no reference change';
+        $this->t->assert_text_not_contains($test_name, $html, $refs_title);
+
+        $this->req->dto->set_ref_list($cache_refs);
+    }
+
+    /**
+     * @param bool $with_change true for the rows of the change, false for the rows as the edit view shows them
+     * @return array the url vars of the reference rows of Zurich (canton) as the edit view posts them: the
+     *               wikidata reference, the wikipedia reference and the add row, each with its '86' values
+     */
+    private function ref_rows_form_rows(bool $with_change): array
+    {
+        global $sys;
+        $wd_key = $with_change ? refs::CHANGE_NEW_KEY : refs::ZURICH_CANTON_WIKIDATA_KEY;
+        // the checked delete box overwrites the update action of the row
+        $wp_action = $with_change ? url_var::CRUD_DELETE : url_var::CRUD_UPDATE;
+        $add_key = $with_change ? refs::SYSTEM_TEST_ROW_ADD : '';
+        $rows = [
+            self::ROW_CHANGE => [
+                url_var::ACTION => url_var::CRUD_UPDATE,
+                url_var::REF => refs::ZURICH_CANTON_WIKIDATA_ID,
+                url_var::EXTERNAL_KEY => $wd_key,
+            ],
+            self::ROW_DELETE => [
+                url_var::ACTION => $wp_action,
+                url_var::REF => refs::ZURICH_CANTON_WIKIPEDIA_ID,
+                url_var::EXTERNAL_KEY => refs::ZURICH_CANTON_WIKIPEDIA_KEY,
+            ],
+            self::ROW_ADD => [
+                url_var::ACTION => url_var::CRUD_CREATE,
+                url_var::REF_TYPE => $sys->typ_lst->ref_typ->id(ref_types::CONCEPTNET),
+                url_var::EXTERNAL_KEY => $add_key,
+            ],
+        ];
+        $pre_rows = [
+            self::ROW_CHANGE => [url_var::EXTERNAL_KEY => refs::ZURICH_CANTON_WIKIDATA_KEY],
+            self::ROW_DELETE => [url_var::EXTERNAL_KEY => refs::ZURICH_CANTON_WIKIPEDIA_KEY],
+        ];
+        return url_var::ref_row_url_array($rows, $pre_rows);
     }
 
     /**

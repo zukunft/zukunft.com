@@ -388,11 +388,13 @@ class change_log extends db_object_seq_id_user
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
                     } else {
-                        $tbl = new type_object(
+                        $tbl = new change_field(
                             $this->table_id . $field_name,
                             $this->table_id . $field_name,
                             $field_name,
                             $this->field_id);
+                        // the table of a change log row is taken from here (docs/llm/architecture.md)
+                        $tbl->tbl_id = $this->table_id;
                         $sys->typ_lst->cng_fld->add($tbl);
                         $db_changed = true;
                     }
@@ -404,6 +406,26 @@ class change_log extends db_object_seq_id_user
             log_err('Table not yet set when trying to set the field ' . $field_name);
         }
         return $db_changed;
+    }
+
+    /**
+     * set the table of this change log row to the table of its preloaded change field, because the change field id
+     * is unique including the table (docs/llm/architecture.md); called by the row mappers after the field id is set
+     *
+     * @param user_message $msg to report a change field that is not preloaded with its table
+     * @return void
+     */
+    protected function set_table_by_field(user_message $msg): void
+    {
+        global $sys;
+        $fld = $sys->typ_lst->cng_fld->get($this->field_id);
+        if ($fld instanceof change_field and $fld->tbl_id > 0) {
+            $this->table_id = $fld->tbl_id;
+        } else {
+            // never the table that the loading object has set before; the preload is complete, so this is a program error
+            $this->table_id = null;
+            log_err_msg('the change field ' . $this->field_id . ' of a change log row is not preloaded with its table', $msg);
+        }
     }
 
     /**

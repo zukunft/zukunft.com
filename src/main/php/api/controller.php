@@ -352,6 +352,39 @@ class controller
     }
 
     /**
+     * send the internal errors of this api request that no message has reported together with the answer,
+     * so that the frontend shows them to the user (see rest_call::without_internal_errors); added after the
+     * cache like the time, so that a cached answer never carries the errors of its creation
+     *
+     * @param string $api_json the answer as it has been created
+     * @return string the answer with the log links of the internal errors, unchanged without such an error
+     */
+    private function with_internal_errors(string $api_json): string
+    {
+        global $sys;
+        $links = [];
+        if (log_in_api_answer()) {
+            $links = $sys->error_links;
+        }
+        return self::json_with_internal_errors($api_json, $links);
+    }
+
+    /**
+     * @param string $api_json the answer as it has been created, which can also be a list, an error message or empty
+     * @param array $links the log link of each internal error, empty if no error has been logged
+     * @return string the answer as a json string next to the links, so that the frontend gets it back exactly; unchanged without links
+     */
+    static function json_with_internal_errors(string $api_json, array $links): string
+    {
+        $result = $api_json;
+        if ($links != []) {
+            $wrap = [json_fields::INTERNAL_ERRORS => $links, json_fields::API_ANSWER => $api_json];
+            $result = json_encode($wrap, JSON_INVALID_UTF8_SUBSTITUTE);
+        }
+        return $result;
+    }
+
+    /**
      * set the http response code only if the response headers have not been sent yet
      * during the test run the log writer may already have emitted output (e.g. a test header),
      * which sends the headers, so setting the response code afterwards would raise a php warning
@@ -406,7 +439,7 @@ class controller
                 array(json_fields::MSG => $msg)
             );
         }
-        echo $this->with_time(ob_get_clean());
+        echo $this->with_internal_errors($this->with_time(ob_get_clean()));
     }
 
     /**
@@ -535,7 +568,7 @@ class controller
                 }
                 break;
         }
-        echo $this->with_time(ob_get_clean());
+        echo $this->with_internal_errors($this->with_time(ob_get_clean()));
     }
 
     /**

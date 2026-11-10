@@ -894,7 +894,7 @@ class sandbox_link extends sandbox
                 $result = false;
             } else {
                 if ($this->fob == null or $obj_to_check->fob == null
-                    or $this->tob == null or $obj_to_check->tob == null) {
+                    or ($this->is_to_link_key() and ($this->tob == null or $obj_to_check->tob == null))) {
                     // TODO Prio 3 add error message that an object is missing
                     $result = false;
                 } else {
@@ -1025,9 +1025,11 @@ class sandbox_link extends sandbox
                 $result = true;
             }
         }
-        if ($this->tob->id() != 0) {
-            if ($this->tob->id() != $db_rec->tob->id()) {
-                $result = true;
+        if ($this->is_to_link_key()) {
+            if ($this->tob->id() != 0) {
+                if ($this->tob->id() != $db_rec->tob->id()) {
+                    $result = true;
+                }
             }
         }
         if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
@@ -1039,6 +1041,15 @@ class sandbox_link extends sandbox
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool true if the to of the link is an object that is part of what the link connects,
+     *              false e.g. for the external key of a ref, which is a value that a user can overwrite
+     */
+    function is_to_link_key(): bool
+    {
+        return in_array($this->to_field(), $this->link_key_fields());
     }
 
     /**
@@ -1344,7 +1355,13 @@ class sandbox_link extends sandbox
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        return 'A ' . $class_name . ' from ' . $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id() . ' already exists.';
+        if ($this->is_to_link_key()) {
+            $to_txt = $this->tob->dsp_id();
+        } else {
+            // e.g. the external key of a ref, which is a value and not an object
+            $to_txt = $this->to_value();
+        }
+        return 'A ' . $class_name . ' from ' . $this->fob->dsp_id() . ' to ' . $to_txt . ' already exists.';
     }
 
     /**
@@ -1356,7 +1373,14 @@ class sandbox_link extends sandbox
     {
         $result = false;
         if (parent::is_same_std($obj_to_check)) {
-            if (isset($this->fob)
+            if (!$this->is_to_link_key()) {
+                // e.g. a ref, whose to is a value, links the same if the from is the same (the type is compared by is_same)
+                if (isset($this->fob) and isset($obj_to_check->fob)) {
+                    if ($this->fob->id() == $obj_to_check->fob->id()) {
+                        $result = true;
+                    }
+                }
+            } elseif (isset($this->fob)
                 and isset($this->tob)
                 and isset($obj_to_check->fob)
                 and isset($obj_to_check->tob)) {

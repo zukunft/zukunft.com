@@ -2956,6 +2956,9 @@ enum messages: string
     // if a database row of a term misses the id that selects the word, triple, formula or verb
     case TERM_ROW_ID_MISSING = 'term_row_id_missing';
 
+    // if the row mapper gets no database row or a row without its id, so that it cannot map it (see db_object_seq_id::row_mapper)
+    case DB_ROW_ID_MISSING = 'db_row_id_missing';
+
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one
@@ -3009,6 +3012,7 @@ enum messages: string
     case FORM_FIELD_URL = 'form_field_url';
     case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
+    case FORM_FIELD_REF_DELETE = 'form_field_ref_delete';
 
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
@@ -3065,6 +3069,7 @@ enum messages: string
     case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
+    case FORM_REF_ROWS = 'form_ref_rows';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
 
     // value and result select fields

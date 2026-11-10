@@ -1,611 +1,197 @@
 # pending - list of planned llm prompts with prio 1
 
-## lesson learned from changes
+## the old `$back` url parameter
 
-for each non-trivial and non bug fix change create in docs/llm/log a file 
-with a one word (max 3 words) description of the change and the start date
-this file should contain 
-- the description / prompt of the change
-- a table of the wanted and expected changes e.g. in which file which old lines are replaced with which new lines and a short description to the target / reason
-- a table which changes might be caused with the filename, the range of old lines, the range of new lines and the reason why a change is expected (do not write every line, jsut the start and the end of the section either by the code line or a function name before and after the change)
-- once the change is done fill another table with the start and end of the lines of code parts that have been unexpectedly be changed 
-- and finally a description of the lessons learned from the difference between the original change request with the expected changes and the final result with the real changes
+The back target of a page is the `'9'`-prefixed part of its url (`url_var::BACK`), built from the url array of
+the calling page (`html_base::url_back`, `url_with_back`, `back_url_part`); `web/` is free of `$back` and of a
+literal `&back=`, which `coding_rule_tests::php_web_no_back_param_tests` keeps that way. The code lines below are
+what is left of the old parameter, found on 2026-11-10.
 
-Create this as an example for the last two commits if possible
+### the open issue descriptions
 
-## a fresh message for each row of a list mapping and no mapping after an earlier error
+- `docs/todo.md:97` — "TODO deprecate the old $back parameter and use instead back prefixed parameters"
+- `docs/llm/pending_prio_2.md:609` — section "after replacing the `$back` parameter by the url array of the calling
+  page": what the conversion found and left open; its item "the write only properties
+  `cfg/system/sys_log_list.php::$back` and `cfg/formula/formula_list.php::$back`" is done, both properties are gone
+- `docs/llm/pending_prio_2.md:1053` — `web/user/user.php::dsp_errors` (only its `string $back` became `array $url_arr`)
+- `docs/llm/pending.md` "more" — the agent buttons of the triage prompt names `$back`, and the items "review buttons"
+  and "review $back"; the note on `web/value/value_list.php:1352` and `:1360` is done: both calls pass `$url_arr`
+  (now `value_list.php:4132` and `:4140`)
 
-`docs/llm/dependent-errors.md`: a mapping does not start if `$msg` already carries an error, returns true only
-if it has mapped the row, and each try of an independent entry gets a fresh message that is merged afterwards
-and never reads the shared request message. The steps belong into one change, because the guard of step 2
-without step 1 would add the rows after a row with an error as empty objects to the list.
+### the code lines
 
-1. **Fresh message per row:** `sandbox_list::rows_mapper_obj` (and every other list loop that maps rows) maps
-   each row with its own message (with the buffer comment), merges it into `$msg` after the row and adds the
-   object to the list only if its mapping has returned true.
-2. **No mapping after an earlier error:** `db_object_seq_id::row_mapper` starts with a guard that returns false
-   without setting the id if `$msg` is not ok; `sandbox::row_mapper_sandbox` returns true only if a row has
-   been mapped (id set and `$msg` ok), so its docblock and the comment about the half mapped object change.
-3. **`if ($result)` in the child mappers:** `component.php`, `component_link.php`, `formula_link.php` and
-   `formula_map.php` continue with `if ($result)` after the parent mapper instead of `if ($this->id() != 0)`
-   and drop the "TODO Prio 1 can result be false" line.
-4. **Not saved, not added:** an entry whose mapping has returned false is neither saved nor added to a list of
-   objects that are saved; check the import and the save path for callers that continue with such an entry.
-5. **Tests:** add a test to `formula_link_tests`, `term_view_tests` and `formula_tests` that a row with an
-   earlier error on the message is not mapped at all (result false, id 0) and its negative with a clean
-   message; a list test checks that the row after a row with a mapping error is mapped completely and that
-   the row with the error is not added.
+backend, not reachable today:
+
+- `src/main/php/cfg/phrase/phrase.php:2001` — `function dsp_time_selector($type, $form_name, $pos, $back, user_message $msg): string`
+- `src/main/php/cfg/phrase/phrase.php:2005` — `return $wrd->dsp_time_selector($type, $form_name, $pos, $back, $msg);`
+  calls a `word::dsp_time_selector` that exists in neither layer; its only callers are the frontend calls
+  `src/main/php/web/value/value.php:1319` and `:1334` (`$time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr)`)
+  of `value::dsp_edit`, which call a frontend function that does not exist either
+- `src/main/php/cfg/word/word_list.php:10` — `TODO Prio 2 check the consistence usage of the parameter $back`
+  names a parameter that no longer exists
+- `src/main/php/web/html/html_base.php:1430` — `TODO Prio 1 deprecate and replace if the the url_arr based back var`
+  is a docblock without a function, directly above the docblock of the next function
+
+tests, live code:
+
+- `src/test/php/unit_write/element_write_tests.php:117`, `:121`, `:123` — the targets of `element::link` still end
+  with `&back=0`; the assert below is switched off (`TODO Prio 0 activate`)
+- `src/test/php/unit_ui/base_ui_tests.php:1400` — the target of `button::back` is the old `?words=1` page; the assert
+  is switched off
+- `src/test/php/unit/lib_tests.php:1518` to `:1522` — `&back=1` is only sample text of the `str_diff` test, no use of
+  the parameter
+- `src/test/php/unit_workflow/login_url_tests.php:128` — the local `$back` holds the `'9'`-prefixed
+  `START_PAGE_BACK`, so it is the new parameter with an old name
+
+tests, commented out (they call the retired `http/*_add.php`, `*_edit.php` and `*_del.php` pages):
+
+- `src/test/php/unit_write/formula_write_tests.php:375`, `:382`, `:391`, `:395`
+- `src/test/php/unit_write/test_word_display.php:174`
+- `src/test/php/unit_write/view_write_tests.php:112`
+- `src/test/php/unit_ui/formula_ui_tests.php:673`, `:680`, `:685`
+- `src/test/php/unit_write/value_write_tests.php:283`, `:292`
+- `src/test/php/unit_write/element_group_write_tests.php:168`
 
 if done remove this prompt from pending.md
 
 **next prompt**
 
-**full test run: /test/test.php**
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-## deprecate save_fields_func and the *_old functions
+## prime group id within 2^53
 
-Rule 5 of docs/llm/coding.md: every write is one named prepared statement with its change log, created by the
-sql creator and covered by a fixture in `src/test/resources/db/<class>/` and a unit test. Do one step per commit,
-in this order, and ask the developer to run the unit and write tests after each step.
-
-Each `save_fields_func` call is replaced by the decision (`can_change`, `has_usr_cfg`, `no_diff`) in the caller
-and one named builder per write, followed directly by the execution, like the change log insert:
-
-```php
-$qp = $this->sql_insert_log($sc, $msg);
-$db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $msg);
-```
-
-### save_fields_func locations, callers and replacements
-
-`$sc = $db_con->sql_creator()`, `$norm` is the standard row (`$std_rec`), `$db` the row before the change
-(`$db_rec`), `[LOG, USER]` is short for `new sql_type_list([sql_type::LOG, sql_type::USER])`.
-"new" marks a builder that does not exist yet; "test" names the unit test line with its fixture assert.
-
-| where in the code                                                    | planned change                                                       | called from                                                                     | `$qp = ...` replacement                                                                                                                                                                                                                        | sql tested in                                                                                                                                                                                                                                                                                                    |
-|----------------------------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `sandbox.php:2358` definition                                        | remove the function, the decision moves into `sandbox::save`         | update of an existing object after the permission, link and rename checks: `sandbox::save` (`sandbox.php:3296`); formula save or add: `formula_map::save_fields_func` (parent) | removed, the branches below move into `sandbox::save`                                                                                                                                                                                          | `assert_sql_save_fields` (`test_base.php:2349`) mirrors only the user row insert                                                                                                                                                                                                                                 |
-| `sandbox.php:2384` norm, no diff: delete user row                    | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);` then `$db_con->delete($qp, ...)`                                                                                                                                                            | word_tests:273, triple_tests:154, formula_tests:142, ref_tests:166 (`assert_sql_delete` with `[LOG, USER]`)                                                                                                                                                                                                      |
-| `sandbox.php:2393` norm: update standard row                         | use the existing `sql_update` with log instead of `sql_update_switch` | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_update($sc, $db, $msg, [LOG]);` then `if ($qp != null) $db_con->update($qp, ...)`; `sql_update` adds the `can_update` check that the direct `sql_update_switch` call skips                                                   | word_tests:171, 195, triple_tests:133, formula_tests:134, ref_tests:146 (`assert_sql_update` with `[LOG]`)                                                                                                                                                                                                       |
-| `sandbox.php:2401` norm updated: delete user row                     | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);` (check that the query name has no `UPDATE` left from the update before)                                                                                       | same as `sandbox.php:2384`                                                                                                                                                                                                                                                                                       |
-| `sandbox.php:2452` user, no diff: delete user row                    | use the existing `sql_delete` with log and user                      | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_delete($sc, $msg, [LOG, USER]);`                                                                                                                                                                                             | same as `sandbox.php:2384`                                                                                                                                                                                                                                                                                       |
-| `sandbox.php:2463` user row exists, excluded: update user row        | use the existing `sql_exclude`                                       | update of an existing object: `sandbox::save`                                   | `$qp = $this->sql_exclude($sc, $db, $msg);` (exists; compares with the user row, the branch compares with `$norm`: check which row gives the right fields)                                                                                                     | word_tests:277, triple_tests:158 (`assert_sql_exclude`); not for formula, ref, source, view, component                                                                                                                                                                                                           |
-| `sandbox.php:2477` user row exists: update user row with the delta   | add `sql_update_user`, the delta and the user row load stay in the caller | update of an existing object: `sandbox::save`                                   | new `$qp = $usr_chg->sql_update_user($sc, $usr_db, $msg);` with `$usr_chg = $this->delta($norm, $this->clone_reset(true))` and `$usr_db->load_user_changes(...)` in the caller (no db read inside a builder)                                   | word_tests:167, 190, triple_tests:132, 134, formula_tests:135, ref_tests:147 (`assert_sql_update` with `[LOG, USER]`, but without the delta step)                                                                                                                                                                |
-| `sandbox.php:2497` no user row: insert user row with the delta       | add `sql_insert_user` that writes the fields changed vs the standard row | update of an existing object: `sandbox::save`                                   | new `$qp = $this->sql_insert_user($sc, $norm, $msg);` (`[LOG, USER, INSERT, NO_ID_RETURN]`, fields changed vs `$norm`); then `$db_con->insert($qp, ..., new sql_message(), true)` and `set_uses_sandbox`                                       | word_tests:155, triple_tests:122 (`assert_sql_save_fields`); not tested for formula, ref, source, view, component (`assert_sql_insert` with `[LOG, USER]` compares with an empty object, not with `$norm`)                                                                                                       |
-| `formula_map.php:1722` override                                      | remove the override, the formula word rename moves to `save_related` | update of an existing formula: `sandbox::save` (`sandbox.php:3296`); new formula after its insert and its formula word: `formula_map::add` (`formula_map.php:1679`) | the rename of the formula word (`wrd_rename`) moves to `formula_map::save_related`, called by `sandbox::save` before the writes; no own sql                                                                                                                                  | no sql; the formula rename in formula_write_tests:449, the formula word name is not checked                                                                                                                                                                                                                                                         |
-| `formula_map.php:1679` call                                          | drop the call if the insert writes all fields, else `sql_update`     | new formula after its insert with log and its formula word: `formula_map::add`  | `$qp = $this->sql_update($sc, $db_rec, $msg, [LOG]);` with the empty `$db_rec`; first check if the insert at `formula_map.php:1660` already writes all fields, then the call can be dropped                                                    | formula_tests:134 (`[LOG]`), the insert in formula_tests:125                                                                                                                                                                                                                                                      |
-| `ref.php:1478` call                                                  | `ref::save` uses the parent `sandbox::save` for the update           | update of an existing ref: `ref::save`                                          | the same branches as `sandbox.php:2384` to `2497`, called from `sandbox::save` once `ref::save` uses the parent save                                                                                                                           | ref_tests:146, 147, 166; user row insert vs `$norm` not tested                                                                                                                                                                                                                                                   |
-| `sandbox_multi.php:3591` definition                                  | remove the function, the decision moves into the callers             | update of an existing group: `sandbox_multi::save` (`:3366`, result has its own save without this call); delete of a value or result that another user uses: `sandbox_multi::del` (`:3568`); update of an existing value: `value_base::save_for_user` (`value_base.php:2375`); update of an existing time series: `value_time_series::save` (`value_time_series.php:425`) | removed, the branches below move into the update callers, `del` writes only the user row                                                                                                                                                    | -                                                                                                                                                                                                                                                                                                                |
-| `sandbox_multi.php:3617` norm, no diff: delete user row              | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $db->sql_delete_user_row($sc, $msg, [LOG]);` (exists)                                                                                                                                                                                   | value_tests:1021, 1026, 1028 (`assert_sql_delete` `[LOG, USER]`), value_tests:573 (source key); result only without log (result_tests:201, 204)                                                                                                                                                                 |
-| `sandbox_multi.php:3627` norm: update standard row                   | use the existing `sql_update` with log instead of `sql_write`        | see definition                                                                  | `$qp = $this->sql_update($sc, $db, $msg, [LOG]);` (`sandbox_value::sql_update` wraps the same `sql_write`); then `report_empty_write` on null                                                                                                  | value_tests:846, 853, 855, 859 (`[LOG]`); result only without log (result_tests:189 to 197)                                                                                                                                                                                                                      |
-| `sandbox_multi.php:3636` norm updated: delete user row               | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $this->sql_delete_user_row($sc, $msg, [LOG]);`                                                                                                                                                                                          | same as `sandbox_multi.php:3617`                                                                                                                                                                                                                                                                                 |
-| `sandbox_multi.php:3651` user, no diff: delete user row              | use the existing `sql_delete_user_row` with log                      | see definition                                                                  | `$qp = $db->sql_delete_user_row($sc, $msg, [LOG]);`                                                                                                                                                                                            | same as `sandbox_multi.php:3617`                                                                                                                                                                                                                                                                                 |
-| `sandbox_multi.php:3664` user row exists: update user row            | add `sql_update_user` for values and results                         | see definition                                                                  | new `$qp = $this->sql_update_user($sc, $db, $msg);` (`set_user_table_source`, `[LOG, USER, UPDATE]`, null if only key fields differ)                                                                                                          | value_tests:847, 854, 856 (`[LOG, USER]`), value_tests:502 to 518 (no update without set clause); result only without log (result_tests:191, 198)                                                                                                                                                               |
-| `sandbox_multi.php:3676` no user row: insert user row                | add `sql_insert_user` for values and results                         | see definition                                                                  | new `$qp = $this->sql_insert_user($sc, $norm, $msg);` (`set_user_table_source`, `[LOG, USER, INSERT, NO_ID_RETURN]`); the branch passes `$db` to `sql_write` while its comment names the norm row: decide which one is right                           | not tested as such: value_tests:818, 822 (`assert_sql_insert` `[LOG, USER]`, without `NO_ID_RETURN` and vs an empty row), value_tests:494 (excluded field in the insert)                                                                                                                                       |
-| `sandbox_multi.php:3568` call in `del`                               | write the user row with `sql_update_user` or `sql_insert_user`      | delete of a value or result that another user uses: `sandbox_multi::del`        | `$qp = $this->sql_update_user($sc, $db, $msg);` if the user row exists, else `$qp = $this->sql_insert_user($sc, $db, $msg);`                                                                                                                 | value_tests:1022 (`assert_sql_delete` `[USER, EXCLUDE]`), value_tests:494; a test of the excluded user row update and insert is missing                                                                                                                                                                              |
-| `value_base.php:2375` call                                           | use the `sandbox_multi` branches directly                            | update of an existing value: `value_base::save_for_user` from `value_base::save` (`value_base.php:2258`) | the branches of `sandbox_multi.php:3617` to `3676`                                                                                                                                                                                             | see the `sandbox_multi` rows                                                                                                                                                                                                                                                                                     |
-| `value_time_series.php:425` call                                     | use the `sandbox_multi` branches directly and add a write test       | update of an existing time series: `value_time_series::save`                    | the branches of `sandbox_multi.php:3617` to `3676`                                                                                                                                                                                             | not tested: no sql write fixture for `value_time_series` (only the log delete in change_log_tests:486)                                                                                                                                                                                                           |
-
-#### sample code changes for `sandbox.php:2358` definition: remove the function, the decision moves into `sandbox::save`
-
-The line numbers are those of the file before the change.
-
-add at `sandbox.php:3830`, after `sql_exclude`:
-
-```php
-    /**
-     * create the sql statement to update the user row with the delta of this object to the standard row
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox $usr_db the user row as it is in the database
-     * @param user_message $msg the user message object that collects any issues during the sql creation
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
-     * @return sql_par|null the sql statement or null if no field of the user row has changed
-     */
-    function sql_update_user(
-        sql_creator   $sc,
-        sandbox       $usr_db,
-        user_message  $msg,
-        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
-    ): sql_par|null
-    {
-        $par_lst = clone $sc_par_lst;
-        $par_lst->add(sql_type::USER);
-        $par_lst->add(sql_type::UPDATE);
-        $fvt_lst = $this->db_fields_changed($usr_db, $msg, $par_lst);
-        if ($fvt_lst->is_empty_except_internal_fields()) {
-            return null;
-        }
-        return $usr_db->sql_update_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
-    }
-
-    /**
-     * create the sql statement to insert the user row with the fields that differ from the standard row
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox $norm the standard row
-     * @param user_message $msg the user message object that collects any issues during the sql creation
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
-     * @return sql_par the sql statement to insert the user row
-     */
-    function sql_insert_user(
-        sql_creator   $sc,
-        sandbox       $norm,
-        user_message  $msg,
-        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
-    ): sql_par
-    {
-        $par_lst = clone $sc_par_lst;
-        $par_lst->add(sql_type::USER);
-        $par_lst->add(sql_type::INSERT);
-        $par_lst->add(sql_type::NO_ID_RETURN);
-        $fvt_lst = $this->db_fields_changed($norm, $msg, $par_lst);
-        return $this->sql_insert_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
-    }
-```
-
-add at `sandbox.php:2348`, in place of `save_fields_func`: the code id sync of `sandbox.php:2419` to `2447`
-unchanged as `private function sync_code_ids(sandbox $norm): void` (`$norm_obj` renamed to `$norm`).
-
-add at `sandbox.php:3296`, in place of the `save_fields_func` call:
-
-```php
-                        $sc = $db_con->sql_creator();
-                        $obj_name = new library()->class_to_name($this::class);
-                        $usr_par_lst = clone $sc_par_lst;
-                        $usr_par_lst->add(sql_type::USER);
-                        if ($this->can_change($msg)) {
-                            // the user may change the standard row, so a user row is not needed
-                            $no_diff = $this->no_diff($std_rec, $msg, $sc_par_lst);
-                            // null e.g. if the do not update a link guard has refused the update
-                            $qp = $no_diff ? null : $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
-                            if ($qp != null) {
-                                $db_con->update($qp, 'update ' . $obj_name . ' ' . $this->dsp_id(), $msg);
-                            }
-                            if ($this->has_usr_cfg() and ($no_diff or $qp != null)) {
-                                $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
-                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                            }
-                        } else {
-                            $this->sync_code_ids($std_rec);
-                            if ($this->has_usr_cfg()) {
-                                if ($this->no_diff($std_rec, $msg, $usr_par_lst)) {
-                                    $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
-                                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                                } else {
-                                    if ($this->is_excluded()) {
-                                        $qp = $this->sql_exclude($sc, $db_rec, $msg);
-                                    } else {
-                                        $usr_db = $this->clone_reset(true);
-                                        $usr_db->load_user_changes($this->id(), $msg);
-                                        $usr_chg = $this->delta($std_rec, $this->clone_reset(true));
-                                        $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
-                                    }
-                                    if ($qp != null) {
-                                        $db_con->update($qp, 'update user ' . $obj_name, $msg);
-                                    }
-                                }
-                            } elseif (!$this->no_diff($std_rec, $msg, $usr_par_lst)) {
-                                $qp = $this->sql_insert_user($sc, $std_rec, $msg, $sc_par_lst);
-                                if ($db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true)) {
-                                    // the pages for this user must now be created from the user sandbox
-                                    $this->get_user()->set_uses_sandbox($msg);
-                                }
-                            }
-                        }
-                        if ($msg->is_ok()) {
-                            // remove the user rows that have no overwrite left
-                            $this->del_usr_cfg_if_not_needed($msg);
-                        }
-```
-## confirm the reference changes together with the phrase
-
-the edit view of a phrase should offer the add, the change and the delete of its references as '6'-prefixed rows
-of the same confirm (`url_var::REF_ROW`), so far only the wikipedia refresh creates rows. This needs a new form
-component in the phrase edit views of `base_views.json` (which shifts the ids of the later components) that writes
-per reference a hidden `6a<n>=u` and `6l<n>`, an input for each field of `url_var::REF_ROW_VARS` with its '86'
-value, a delete checkbox that sets the action to `d`, and one empty add row with a type selector;
-`url_var::ref_rows` then needs to drop an update row whose fields equal their '86' values and an add row without
-external key, so that an unchanged form writes no reference.
-
-## write tests of the calculator editor messages
-
-add at `test_base.php:2349`, in `assert_sql_save_fields` for both dialects:
-
-```php
-        $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, new sql_type_list($sc_par_lst_in));
-```
-
-del at `sandbox.php:2348` to `2509`: the doc block and the body of `save_fields_func`.
-
-del at `test_base.php:2357` to `2362`: the "prepare like in save_fields_func" lines of `assert_sql_save_fields`.
-
-Check after the change: the fixtures of word_tests:155 and triple_tests:122 are unchanged; the excluded user row
-uses `sql_exclude` with `$db_rec` (see the table); if the update is refused by the link guard, the user row is kept.
-
-#### sample code changes for `sandbox_multi.php:3591` definition: remove the function, the decision moves into the callers
-
-The line numbers are those of the file before the change. The two builders have the same signature as in
-`sandbox`, so `assert_sql_save_fields` works for both.
-
-add at `sandbox_multi.php:3738`, after `sql_delete_user_row`:
-
-```php
-    /**
-     * create the sql statement to update the user row of this value, result or group
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox_multi $usr_db the user row as it is in the database
-     * @param user_message $msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
-     * @return sql_par|null the sql statement or null if only the key fields differ
-     */
-    function sql_update_user(
-        sql_creator   $sc,
-        sandbox_multi $usr_db,
-        user_message  $msg,
-        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
-    ): sql_par|null
-    {
-        $this->set_user_table_source();
-        $par_lst = clone $sc_par_lst;
-        $par_lst->add(sql_type::USER);
-        // an update of only the key fields would be an sql without a set clause
-        if ($this->db_fields_changed($usr_db, $msg, $par_lst)->is_empty_except_internal_fields()) {
-            return null;
-        }
-        $par_lst->add(sql_type::UPDATE);
-        return $this->sql_write($sc, $usr_db, $this->db_fields_all(), $msg, $par_lst);
-    }
-
-    /**
-     * create the sql statement to insert the user row of this value, result or group
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox_multi $db_row the row that the user row is compared with
-     * @param user_message $msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
-     * @return sql_par|null the sql statement or null if only the key fields differ
-     */
-    function sql_insert_user(
-        sql_creator   $sc,
-        sandbox_multi $db_row,
-        user_message  $msg,
-        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
-    ): sql_par|null
-    {
-        $this->set_user_table_source();
-        $par_lst = clone $sc_par_lst;
-        $par_lst->add(sql_type::USER);
-        $par_lst->add(sql_type::INSERT);
-        $par_lst->add(sql_type::NO_ID_RETURN);
-        return $this->sql_write($sc, $db_row, $this->db_fields_all(), $msg, $par_lst);
-    }
-```
-
-add at `sandbox_multi.php:3366` (group), `value_base.php:2375` (value) and `value_time_series.php:425`
-(time series), each in place of the `save_fields_func` call:
-
-```php
-                        $sc = $db_con->sql_creator();
-                        $obj_name = new library()->class_to_name($this::class);
-                        $log_lst = new sql_type_list([sql_type::LOG]);
-                        if ($this->can_change()) {
-                            // the user may change the standard row, so a user row is not needed
-                            $no_diff = $this->no_diff($std_rec, $msg);
-                            $qp = $no_diff ? null : $this->sql_update($sc, $db_rec, $msg, $log_lst);
-                            if ($qp != null) {
-                                $db_con->update($qp, 'update ' . $obj_name . ' ' . $this->dsp_id(), $msg);
-                            } elseif (!$no_diff) {
-                                $this->report_empty_write('update', $msg);
-                            }
-                            if ($this->has_usr_cfg() and ($no_diff or $qp != null)) {
-                                // logged with the user row as stored, so that the log shows the number that the user had
-                                $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
-                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                            }
-                            if ($msg->is_ok()) {
-                                // remove the user rows that have no overwrite left
-                                $this->del_usr_cfg_if_not_needed($msg);
-                            }
-                        } elseif ($db_rec->has_usr_cfg()) {
-                            if ($this->no_diff($std_rec, $msg)) {
-                                $qp = $db_rec->sql_delete_user_row($sc, $msg, $log_lst);
-                                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                            } else {
-                                // null e.g. if a leftover user row already matches the request
-                                $qp = $this->sql_update_user($sc, $db_rec, $msg);
-                                if ($qp != null) {
-                                    $db_con->update($qp, 'update user ' . $obj_name, $msg);
-                                }
-                            }
-                        } elseif (!$this->no_diff($std_rec, $msg)) {
-                            $qp = $this->sql_insert_user($sc, $db_rec, $msg);
-                            if ($qp != null) {
-                                $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
-                            } else {
-                                $this->report_empty_write('user overwrite', $msg);
-                            }
-                        }
-```
-
-add at `sandbox_multi.php:3568`, in `del` in place of the `save_fields_func` call: the exclude is always a write
-of the user row, because the object is used by another user
-
-```php
-                            $sc = $db_con->sql_creator();
-                            if ($db_rec->has_usr_cfg()) {
-                                $qp = $this->sql_update_user($sc, $db_rec, $msg);
-                                if ($qp != null) {
-                                    $db_con->update($qp, 'exclude ' . $this->dsp_id(), $msg);
-                                }
-                            } else {
-                                $qp = $this->sql_insert_user($sc, $db_rec, $msg);
-                                if ($qp != null) {
-                                    $db_con->insert($qp, 'exclude ' . $this->dsp_id(), $msg, new sql_message(), true, true);
-                                }
-                            }
-```
-
-add at `sandbox_multi.php:3818`: `report_empty_write` becomes `protected`, because `value_base` and
-`value_time_series` call it.
-
-add at `value_tests.php:854`, with a new fixture for Postgres and MySQL:
-
-```php
-        $t->assert_sql_save_fields($sc, $val_16, $db_val_16, [sql_type::LOG]);
-```
-
-del at `sandbox_multi.php:3580` to `3690`: the doc block and the body of `save_fields_func`.
-
-Check after the change:
-- the block is written three times (group, value, time series); if `value_base::save_for_user` and
-  `value_time_series::save` can use `sandbox_multi::save` for the update, it is written once
-- the user row delete after the update of the standard row uses `$db_rec` like the no diff case, the function
-  uses `$this` there: check that the logged number is the one the user had
-- `del` writes only the user row; the function updates the standard row if no median user is found and the
-  deleting user is still the owner, check that this case is meant to exclude only for the user
-
-#### sample code changes for `formula_map.php:1722` override: remove the override, the formula word rename moves to `save_related`
-
-The line numbers are those of the file before the change. `formula` has no own `save`, so the rename uses the
-related object hook `sandbox::save_related` (`sandbox.php:3317`, so far not called): the formula word is the
-related object of the formula, and the hook gets the database row to see the old name.
-
-add at `sandbox.php:3317`, in place of the `save_related` signature:
-
-```php
-    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
-```
-
-add at `sandbox.php:3296`, before the writes of the `sandbox.php:2358` sample:
-
-```php
-                        // e.g. rename the formula word together with the formula
-                        $this->save_related($msg, $db_rec);
-```
-
-and wrap the writes in `if ($msg->is_ok()) { ... }`, so that a failed related save writes nothing.
-
-add at `formula_map.php:1712`, in place of the `save_fields_func` override:
-
-```php
-    /**
-     * rename the formula word if the formula has been renamed
-     *
-     * @param user_message $msg to enrich with warnings, problems and solutions
-     * @param sandbox|null $db_rec the formula as it is in the database before the change
-     * @return bool true if everything has been successful
-     */
-    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
-    {
-        if ($db_rec != null and $db_rec->name() <> $this->name()) {
-            if (!$this->wrd_rename($db_rec->name(), $msg)) {
-                $msg->add(msg_id::FORMULA_WORD_RENAME_FAILED, [
-                    msg_id::VAR_FORMULA => $db_rec->name(),
-                    msg_id::VAR_NAME => $this->name()
-                ]);
-            }
-        }
-        return $msg->is_ok();
-    }
-```
-
-add at `formula_map.php:1679`, in `add` in place of the `save_fields_func` call (the new formula has the name of
-`$db_rec`, so no rename is needed):
-
-```php
-                $qp = $this->sql_update($sc, $db_rec, $msg, new sql_type_list([sql_type::LOG]));
-                if ($qp != null) {
-                    $db_con->update($qp, 'update and log ' . $this->dsp_id(), $msg);
-                }
-```
-
-add at `formula_write_tests.php:464`: a check that the formula word has the new name after the rename.
-
-del at `formula_map.php:1712` to `1747`: the doc block and the body of the `save_fields_func` override.
-
-Check after the change:
-- the update in `add` compares with an empty formula, so it writes and logs the fields of the insert again;
-  if the insert at `formula_map.php:1659` already writes all fields, drop these lines instead (see the table)
-- the rename of the formula word runs before the formula writes, like in the override; if the formula write fails,
-  the word keeps the new name
-
-#### sample code changes for `ref.php:1478` call: `ref::save` uses the parent `sandbox::save` for the update
-
-The line numbers are those of the file before the change. `ref` extends `sandbox_link`, so `sandbox::save` with
-the writes of the `sandbox.php:2358` sample covers the check, the reload of the linked objects, the duplicate
-check, the add and the update; `ref::save` keeps only the check of the type that is part of the prime index.
-
-add at `ref.php:1409`, in place of the doc block of `save`:
-
-```php
-    /**
-     * add or update a ref in the database
-     * the type is checked upfront, because it is part of the prime index
-     *
-     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
-     * @return bool true if everything has been fine
-     */
-```
-
-add at `ref.php:1436`, after the type check, in place of the rest of the body:
-
-```php
-        return parent::save($msg, $sc_par_lst);
-```
-
-del at `ref.php:1436` to `1482`: from the preserved name check to the end of the update branch, including the
-`save_fields_func` call and the `global $db_con` that is no longer used.
-
-Check after the change:
-- a ref found by `get_similar` (e.g. the same external key of an import) was updated with its id; `sandbox::save`
-  updates it only if `is_same` (`sandbox_link.php:887`) is true and else reports the id as used: check with
-  ref_write_tests and import_write_tests
-- `sandbox::save` adds what `ref::save` skips: the permission check, the owner of the standard row, the do not
-  update a link guard (`refuse_link_change`), the protection check and the delete of the old key row; check that
-  ref_write_tests still passes with them
-- the standard row comes from `get_standard` instead of `load_standard`: check that the owner is set, which the
-  TODO in `ref::save` names as missing
-
-#### sample code changes for `value_time_series.php:425` call: use the `sandbox_multi` branches directly and add a write test
-
-The line numbers are those of the file before the change. `value_time_series` extends `sandbox_value`, so it uses
-the `sql_update`, `sql_update_user`, `sql_insert_user` and `sql_delete_user_row` builders of the
-`sandbox_multi.php:3591` sample; `library`, `sql_message`, `sql_type` and `sql_type_list` are already imported.
-
-add at `value_time_series.php:420`, in place of the `save_fields_func` call and its comments (`420` to `426`):
-
-```php
-            if ($msg->is_ok()) {
-                // the same lines as at sandbox_multi.php:3366 in the sandbox_multi.php:3591 sample,
-                // from $sc = $db_con->sql_creator(); to the insert of the user row
-            }
-```
-
-add at `value_tests.php:1220`, after the by group query, with new fixtures for Postgres and MySQL:
-
-```php
-        // sql to update the standard row and to insert the user row of a time series
-        $vts_excl = clone $vts;
-        $vts_excl->exclude();
-        $t->assert_sql_update($sc, $vts_excl, $vts, [sql_type::LOG]);
-        $t->assert_sql_save_fields($sc, $vts_excl, $vts, [sql_type::LOG]);
-```
-
-del at `value_time_series.php:416` to `418`: the commented out `save_id_if_updated` call and its TODO, because the
-id of a time series is the group and the key change is not part of this step.
-
-Check after the change:
-- the user table of the time series is listed in `def.php:849`, but `db_check.php:474` still names its creation
-  as TODO: check that `user_value_time_series` exists before the user row branches can be reached
-- `assert_sql_standard` of the time series is not yet active (value_tests:1214), so the load of `$std_rec` that
-  the decision uses is not tested either
-- the add (`value_time_series.php:345`) does not save the data list yet (TODO Prio 1), so a write test can only
-  check the time series row
-
-#### sample code changes for `value_base.php:2375` call: use the `sandbox_multi` branches directly
-
-The line numbers are those of the file before the change. `value_base` extends `sandbox_value`, so it uses the
-builders of the `sandbox_multi.php:3591` sample; `set_user_table_source` of `value_base` sets the source of the
-user row inside `sql_update_user`, `sql_insert_user` and `sql_delete_user_row`. `save_as_default`
-(`value_base.php:2418`) already writes this way with `sql_update` and `$db_con->update`.
-
-add at `value_base.php:2374`, in place of the `save_fields_func` call and its comment (`2374` to `2375`), after
-`check_protection_change`:
-
-```php
-                    // the same lines as at sandbox_multi.php:3366 in the sandbox_multi.php:3591 sample,
-                    // from $sc = $db_con->sql_creator(); to the insert of the user row
-```
-
-add at `value_tests.php:856`, after the user row updates, with new fixtures for Postgres and MySQL:
-
-```php
-        // the user row of a value without own source is written with the placeholder source
-        $val_no_src = $t_val->value_16();
-        $val_no_src->set_source(null);
-        $t->assert_sql_save_fields($sc, $val_no_src, $db_val_16, [sql_type::LOG]);
-```
-
-add at `value_write_tests.php:423` to `424`: activate the check that the change of the user row is logged, because the
-writes now always include the log.
-
-del at `value_base.php:2338`: the TODO to change the default value if no one else has changed it,
-because `can_change` in the decision does this.
-
-Check after the change:
-- the standard row is loaded with its own message `$std_msg` that is not merged, so a failed load lets the
-  decision compare with an empty standard row; merge `$std_msg` or stop if the standard row is missing
-- the open point of the `sandbox_multi.php:3676` row matters most here: the insert of the user row compares with
-  `$db_rec`, which for a value without source has the placeholder source (value_tests:508 to 518)
-- the write tests for the user row are value_write_tests:407 (insert of the overwrite of `usr2`) and :440 (the
-  undo deletes the user row)
-
-### step 1: split sandbox::save_fields_func into named writes
-
-Add the two new builders `sql_update_user` and `sql_insert_user` with a fixture for Postgres and MySQL
-and close the test gaps of the `sandbox` rows in the table. Then `sandbox::save`, `ref::save` and
-`formula_map::add` use the replacements of the table, the rename moves to `formula_map::save_related`, and
-`sandbox::save_fields_func` and its override are removed.
-
-### step 2: the same for sandbox_multi (values and results)
-
-Add `sql_update_user` and `sql_insert_user` to `sandbox_multi` with fixtures for each value
-and result table (`value_db::TBL_LIST`, `result_db::TBL_LIST`) and close the test gaps of the `sandbox_multi`
-rows in the table. Then the four callers use the replacements of the table and
-`sandbox_multi::save_fields_func` is removed. Check that no `*_fields_func` is left (docs/llm/coding.md rule 5).
-
-### step 3: replace sql_db::get_old by named prepared statements
-
-`get_old` runs a raw sql text. Its callers each get a `load_sql_*` builder with a fixture and use `get()`:
-`cfg/value/value_list.php`, `cfg/group/group_list.php`, `cfg/result/result.php`,
-`cfg/log/change_log_link_list.php` and `web/value/value.php` (the frontend reads through the api instead).
-Then remove `sql_db::get_old`.
-
-### step 4: remove sql_creator::where_old
-
-`where()` falls back to `where_old` if no parameter has been added with `add_where_par`. Log the builders that
-still reach `where_old` during a full test run, switch them to `add_where_par` (the fixtures must not change),
-then remove `where_old` and the fallback.
-
-### step 5: remove the unused legacy functions
-
-Without a caller in src: `result_list::load_by_obj` with `load_sql_by_obj_old`, `change::load_sql_old`,
-`phrase_list::time_lst_old`, `expression::element_part_list_old`, `word::calc_usage_old` and
-`library::str_diff_old`. Check each again for a caller (also by a string or a dynamic call) before removing it.
-
-### step 6: the frontend *_old functions
-
-`html_base::url_old` (12 callers in web/ and base_ui_tests) moves to `html_base::url` or the `url()` of the
-object; `result_list::display_old` and `formula_list::display_old` (web), `element_group::dsp_values_old` and
-`db_object::phrase_selector_old` move to their current replacements. The html snapshots must not change.
-
-### not part of this plan
-
-These names mean the value before a change or an age, not legacy code, and stay:
-`sql_par_field_list::get_old`, `sandbox::sql_key_fields_text_old` and `sql_key_fields_id_old` (also in
-`sandbox_link`), `user_log::load_sql_old` (the ended sessions) and `job_db_cleanup::is_old`.
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
 
 if done remove this prompt from pending.md
 
-## wikipedia link
+**next prompt**
 
-if a user is logged in and on a page like this http://localhost/http/view.php?m=4&id=139
-the refresh icon right of wikipedia is pressed the corresponding page from wikipedia should be 
-received and the first part of the description should be taken from wikipedia without pronouciation and links
-and used as the description . so the result should be that the change confirm page is shown with the adjusted 
-description.
-Additional to the description the wikidata link should be taken from the wikipedia page and if needed included in the update
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-create a unit test based on the city of geneva, so load the wikipedia page once and write it to a html file 
-that will not be changed any more and from this extract the description and the wikidata link as a unit test.
+**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
+"Other" are part of the admin dashboard prompt; step 1 is done.
+- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
+  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
+- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
+  step 5 and agent export import with step 7; stop for a run with re-pin
+- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
+  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
 
-check if the external key of a wikipedia ref should be the url slug e.g. `Canton_of_Zurich` or the title
-as shown on the screen e.g. `Canton of Zurich`. The import files use the title for now
-(see the one external key rule in docs/llm/json_structure.md), so check that the link built from the key opens
-the right page with both forms, decide on one, and update the rule and the import files to it.
+## deprecate http_old
+
+**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
+`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
+of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
+
+**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
+when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
+feature with it that is not written down.
+
+### http_old scripts and the functionality to move
+
+The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
+http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
+
+| script | generic replacement | functionality to move |
+|---|---|---|
+| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
+| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
+| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
+| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
+| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
+| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
+| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
+| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
+| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
+| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
+| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
+| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
+| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
+| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
+| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
+| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
+| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
+| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
+| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
+| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
+| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
+| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
+| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
+| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
+| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
+| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
+| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
+| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
+| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
+| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
+| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
+| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
+
+### bugs found while checking http_old
+
+All found by reading the code, none by a test run; confirm each with a failing test before the fix.
+
+#### Code
+
+1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
+   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
+2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
+   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
+3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
+   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
+   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
+   never-fail-silently violation.
+4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
+   about the verb, and it writes nothing (the update is commented out, the db field is missing).
+
+#### Documentation
+
+5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
+   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
+   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
+   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
+   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
+   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
+   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
+   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
+   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
+   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
+   seed view; m=20 is now even the value add view instead of the value del view.
+
+#### Other
+
+1. **List the functionality to move per script.** Done: see the table above.
+2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
+   by replacing the numbers with the consts.
+3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
+   `verb_edit` (appended component position, no new component), with the workflow snapshots.
+4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
+   test in `unit_ui/`.
+5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
+   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
+   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
+6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
+   formulas (replacing `calculate.php`), both shown on the job control view.
+7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
+   (`api/json`, the export views, the upload of the import view).
+8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
+   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
+   the order of their prio, one section per commit.
+9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
+   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
+   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
+   that might still define a class.
+10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
+    other than the scripts in `http/`, so a retired script cannot get a new caller.
+11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 ## language
 
@@ -648,36 +234,6 @@ e.g. test if the Calculator Editor can be used with translated data including wr
 
 and finally show the translated page if the url has something link =de
 
-## this document
-
-**How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
-prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
-- see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
-  removes it from this file, asks the developer the decisions that the sections name, starts the agents of a phase in
-  parallel and waits for all of them before the next phase
-- a phase that says "stop for a run" ends with the lead asking the developer for the named test run; the lead continues
-  with the next phase only after the developer has reported the result
-- each agent gets the prompt, the sections of its task and the result of the earlier phases as context, changes only
-  the files of its task (a change that another agent of the same phase owns goes as a note to the lead), uses
-  Edit/Write only, never commits, never runs a `/test/*` script and reports the changed files and the open points
-- in the end the lead reviews the whole change as one (one style, no doubled code, lint clean), keeps every open point
-  here or moves it to `docs/llm/pending_prio_2.md`, removes the done sections and reports the id shift, the tests to
-  run and a short commit message
-- the size is S (one agent, a few files), M (two or three agents) or L (four or more agents or several phases)
-- the marker after `**next prompt**` is the test run of the developer before the next prompt:
-  - `**full test run: /test/test.php**` if no seed data changes
-  - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
-    seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
-    `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
-
-**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
-gets the CO2-eq costs). One phase, four agents in parallel:
-- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
-- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
-  costs in the NPP use case json
-- agent share: the "Share assumptions and vote" button of the calculator page
-- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
-
 ## Calculator editor
 
 ### Swiss NPP
@@ -694,18 +250,6 @@ add costs of CO2-eq reduction to the npp
 
 add to the calculator a 'Share assumptions and vote' button
 and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
-
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
@@ -3020,131 +2564,6 @@ sees the difference and can empty the given name to fall back to the generated o
 (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable
 fields impact and inactive as display-only info in the edit view next to the existing usage component
 
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
-"Other" are part of the admin dashboard prompt; step 1 is done.
-- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
-  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
-- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
-  step 5 and agent export import with step 7; stop for a run with re-pin
-- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
-  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
-
-## deprecate http_old
-
-**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
-`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
-of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
-
-**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
-when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
-feature with it that is not written down.
-
-### http_old scripts and the functionality to move
-
-The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
-http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
-
-| script | generic replacement | functionality to move |
-|---|---|---|
-| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
-| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
-| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
-| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
-| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
-| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
-| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
-| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_js.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
-| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
-| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
-| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
-| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
-| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
-| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
-| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
-| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
-| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
-| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
-| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
-| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
-| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
-| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
-| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
-| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
-| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
-| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
-| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
-| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
-| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
-| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
-| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
-| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
-
-### bugs found while checking http_old
-
-All found by reading the code, none by a test run; confirm each with a failing test before the fix.
-
-#### Code
-
-1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
-   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
-2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
-   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
-3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
-   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
-   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
-   never-fail-silently violation.
-4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
-   about the verb, and it writes nothing (the update is commented out, the db field is missing).
-
-#### Documentation
-
-5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
-   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
-   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
-   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
-   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
-   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
-   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
-   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
-   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
-   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
-   seed view; m=20 is now even the value add view instead of the value del view.
-
-#### Other
-
-1. **List the functionality to move per script.** Done: see the table above.
-2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
-   by replacing the numbers with the consts.
-3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
-   `verb_edit` (appended component position, no new component), with the workflow snapshots.
-4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
-   test in `unit_ui/`.
-5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
-   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
-   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
-6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
-   formulas (replacing `calculate.php`), both shown on the job control view.
-7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
-   (`api/json`, the export views, the upload of the import view).
-8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
-   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
-   the order of their prio, one section per commit.
-9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
-   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
-   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
-   that might still define a class.
-10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
-    other than the scripts in `http/`, so a retired script cannot get a new caller.
-11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
-
-if done remove this prompt from pending.md
-
 **next prompt**
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
@@ -3225,4 +2644,134 @@ The write section of `test.php` is not expected to run without errors yet. Open 
 
 The next step is a `test_part.php` run with the active word, triple, value, formula, job and view write tests
 and to fix what it reports, starting with the formula write flow.
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+**Prompt:** the pinned ids of the production and user acceptance test environment (size L; about 180 files use a
+pinned id const, so split the replacement by class). One agent: "pinned ids per environment".
+
+## pinned ids per environment
+
+1. **Prod const:** for each id const listed in `src/test/php/create/test_pinned_ids.php::PINNED_IDS` add a const
+   with the id in the production and user acceptance test environment, e.g. `word_names::ONE_ID_PROD` next to
+   `word_names::ONE_ID`.
+2. **Pinned list:** add the prod const as third entry of each row, e.g. `[word_names::ONE, word_names::ONE_ID]`
+   becomes `[word_names::ONE, word_names::ONE_ID, word_names::ONE_ID_PROD]`.
+3. **Lookup function:** add a function e.g. `get_test_object_id(word::class, $env, word_names::ONE)` that gets the
+   class, the environment and the name or code id, finds the row in `PINNED_IDS` and returns the `*_ID_PROD` for
+   production (`ENV_PROD`) and user acceptance test (`ENV_UA`) and the `*_ID` in all other cases; an unknown class or
+   name is reported with an error message that names both.
+4. **No direct use:** replace each direct use of a pinned id const by a call of the lookup function, so that the id
+   const is only used in `PINNED_IDS`.
+5. **Re-pin:** the re-pin of `test_pinned_ids` rewrites only the `*_ID` consts, never a `*_ID_PROD` const.
+6. **Tests:** a unit test that the lookup returns the prod id for `ENV_PROD` and `ENV_UA`, the test id for `ENV_DEV`
+   and an error for an unknown name.
+
+Open before the start, ask the developer: where the `*_ID_PROD` values come from, and how the consts of
+`src/main/php/shared/const/` in `PINNED_IDS` (e.g. `words::POD_ID`, `views::START_ID`) that the production code
+uses are handled, because a test function should not be called from `src/main/`.
+
+if done remove this prompt from pending.md
+
+## coding rules that a php check can test
+
+The rules of `docs/llm/coding.md` that `coding_rule_tests` (run by `test/test_coding_rules.php`) does not check yet,
+easiest first. Each check is a function of `coding_rule_tests` like `php_path_const_tests`; a rule with accepted
+exceptions writes them to a generated `docs/code_*.md` that must shrink, like `docs/code_user_message_exceptions.md`.
+The hits are a rough grep count of `src/main/php` on 2026-11-10, not the result of the check.
+
+### a regex per line
+
+| # | rule | check | hits |
+|---|---|---|---|
+| 1 | pre-commit: the auto update switches are off | `AUTO_UPDATE_TEST_FILES`, `AUTO_UPDATE_HTML` and `AUTO_RE_PIN_OBJECT_ID` are `false` in `test/php/const/files.php` | 1 |
+| 2 | a condition uses `and` / `or` | `&&` or `\|\|` outside a string and a comment | 36 |
+| 3 | a `Throwable` never travels | no `@throws` in a docblock | 4 |
+| 4 | a spread const names its class | no `...self::` | 6 |
+| 5 | icons come from `web/const/icons.php` | no `fas fa-` in `web/` outside `icons.php` | 6 |
+| 6 | user-facing messages use a `msg_id` | no `->add_message(` with a string, only `->add(msg_id::` | 6 |
+| 7 | `web/` emits no JavaScript | no `<script` and no `on[a-z]+=` in `web/` except the calculator page and its editors | 7 |
+| 8 | test users from the test env | no `global $usr` in `src/test/php` | 1 |
+| 9 | sql keywords use the `sql::*` consts | no `'SELECT `, `'FROM `, `'WHERE `, `'GROUP BY`, `'ORDER BY` literal outside `cfg/db/sql.php` | 18 |
+| 10 | a part of a view is a component | no `element` in the user texts of `messages.php` and the translation files, except a formula element | 4 |
+
+### the php tokenizer
+
+These reuse the token helpers of `coding_rule_tests` (`brace_end`, `next_code_idx`, `msg_params_of`).
+
+| # | rule | check | hits |
+|---|---|---|---|
+| 11 | a function body fits on one screen page | body longer than 50 lines, listed in a generated `docs/code_long_functions.md` | — |
+| 12 | every parameter has a `@param` line | parameter of the signature without a `@param` with the same name in the docblock | — |
+| 13 | no superglobals in methods | `$_GET`, `$_POST`, `$_SESSION`, `$_REQUEST` only in the entry points and the listed bootstrap classes (`server_guard`, `application`, `frontend`) | 32 |
+| 14 | no `break` / `continue` in loops | `break` or `continue` whose next enclosing block is a `for`, `foreach` or `while`, not a `switch` | — |
+| 15 | an error reported on the message is not sent again with the api answer | a bare `log_err(` followed by an add to a message in the same function must be `log_err_reported` (a review of each hit is needed, because the later add can belong to another error; the reported hits are listed in the `log_err_reported` row of the unexpected changes of `docs/llm/log/save_fields_multi_2026-11-09.md`) | 13 to review |
+| 16 | a function with a message reports to the user | a bare `log_err(` in a function with a `user_message $msg` parameter, listed in a generated `docs/code_log_err_exceptions.md` that must shrink | — |
+| 17 | every class declares its suggested var name | the opening docblock of a class file names `$abbr` | — |
+| 18 | one `return` per function | a `return` that is neither the last statement nor in a guard clause at the top of the function | — |
+
+### the code and the data together
+
+| # | rule | check | hits |
+|---|---|---|---|
+| 19 | every logged field has a change field | each field of `db_fields_all()` of a class written with `sql_type::LOG` has a row in `db_code_links/change_fields.csv` with the table id of `change_tables.csv` | — |
+| 20 | every resource file is a `files.php` const | no string literal ending with `.csv`, `.json`, `.yaml` or `.sql` outside the three `files.php` | — |
+| 21 | a new url var has its human format | each field const of `url_var` has a `*_HUMAN` twin and a `HUMAN_TO_STD` row, each value const a `HUMAN_TO_STD_<FIELD>_VAL` entry | — |
+| 22 | every prepared statement has a fixture | each sql name of the `assert_sql_*` calls has a file in `src/test/resources/db/<class>/` and each fixture file is used by a test | — |
+
+## error message reporting
+
+### use $msg_txt for text and $msg for the message object
+
+rename all text message vars like this (in src/test/php/utils/test_base.php):
+
+$msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';
+log_err($msg);
+
+from $msg to $msg_txt to avoid confusion with the message object vars like this (in src/main/php/cfg/component/component_link.php):
+
+$msg_txt = 'unexpected component link json format';
+log_err_msg($msg_txt, $msg);
+
+so that the example look like
+
+$msg_txt = 'File ' . $file_name . ' with the expected SQL statement is missing.';
+log_err($msg_txt);
+
+### message reporting check script
+
+write a php script that checks if all error and warning messages at least can be shown to the user.
+The script should check the all text messages are unique 
+
+## this document
+
+**How to use this file:** each block from a `**Prompt:**` line to the next `**next prompt**` marker is one multi agent
+prompt together with the sections it names, which follow the block. Every prompt follows the same rules:
+- see `/docs/llm/coding.md`; the lead reads the sections of the prompt, checks first which part is already done and
+  removes it from this file, asks the developer the decisions that the sections name, starts the agents of a phase in
+  parallel and waits for all of them before the next phase
+- a phase that says "stop for a run" ends with the lead asking the developer for the named test run; the lead continues
+  with the next phase only after the developer has reported the result
+- each agent gets the prompt, the sections of its task and the result of the earlier phases as context, changes only
+  the files of its task (a change that another agent of the same phase owns goes as a note to the lead), uses
+  Edit/Write only, never commits, never runs a `/test/*` script and reports the changed files and the open points
+- in the end the lead reviews the whole change as one (one style, no doubled code, lint clean), keeps every open point
+  here or moves it to `docs/llm/pending_prio_2.md`, removes the done sections and reports the id shift, the tests to
+  run and a short commit message
+- the size is S (one agent, a few files), M (two or three agents) or L (four or more agents or several phases)
+- the marker after `**next prompt**` is the test run of the developer before the next prompt:
+    - `**full test run: /test/test.php**` if no seed data changes
+    - `**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**` if a json of the
+      seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
+      `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
+
+**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
+gets the CO2-eq costs). One phase, four agents in parallel:
+- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
+- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
+  costs in the NPP use case json
+- agent share: the "Share assumptions and vote" button of the calculator page
+- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
 

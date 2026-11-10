@@ -102,6 +102,8 @@ class value_write_tests
         $lib = new library();
         $msg = new user_message($t->usr1);
         $msg_ui = new user_message_ui();
+        // the values that this test adds, which it removes itself before its test words (see the cleanup at the end)
+        $val_ids = [];
 
         // start the test section (ts)
         $ts = 'db write value ';
@@ -324,6 +326,7 @@ class value_write_tests
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $t->test_val_ids[] = $add_val->id();
+        $val_ids[] = $add_val->id();
 
 
         // ... check if the value adding has been logged
@@ -349,6 +352,7 @@ class value_write_tests
         // remember the added value id to be able to remove the test
         $added_val_id = $added_val->id();
         $t->test_val_ids[] = $added_val->id();
+        $val_ids[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
         $phr_grp2 = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
@@ -391,10 +395,17 @@ class value_write_tests
         $t->assert(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $t->test_val_ids[] = $added_val2->id();
+        $val_ids[] = $added_val2->id();
 
         // check if the value can be changed
+        // the user who has added the value owns it and has no user row, so a change goes to the standard row
+        $test_name = 'the added value is owned by the user who has added it';
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id, $msg);
+        $owner_id = $added_val->owner_id();
+        $t->assert($test_name, $owner_id, $t->usr1->id());
+        $test_name = '... and the user has no user row of it';
+        $t->assert_false($test_name, $added_val->has_usr_cfg());
         $added_val->set_number(self::NUMBER_ADD);
         $added_val->save($msg);
         $result = $msg->get_last_message();
@@ -405,13 +416,20 @@ class value_write_tests
         if ($added_val->is_id_set()) {
             $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
-        // TODO Prio 2 fix it
-        $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
-        if ($result != $target) {
-            $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
-        }
-        // TODO Prio 2 activate
-        //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
+        // the change of the owner is logged for the standard row, so without the user marker
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME
+            . ' changed to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_TEST . '"';
+        $test_name = '... and the change of the value is logged';
+        $t->assert($test_name, $result, $target);
+        // tell if the change has gone to the user row or only its log names the user table
+        $test_name = 'the change of the owner is written to the standard row';
+        $std_val = new value($t->usr1);
+        $std_val->load_standard($added_val_id, $msg);
+        $t->assert($test_name, $std_val->number(), self::NUMBER_ADD);
+        $test_name = '... and not to a user row of the owner';
+        $chg_val = new value($t->usr1);
+        $chg_val->load_by_id($added_val_id, $msg);
+        $t->assert_false($test_name, $chg_val->has_usr_cfg());
 
         // ... check if the value has really been updated
         $added_val = new value($t->usr1);
@@ -550,6 +568,7 @@ class value_write_tests
         $named_val->set_number(values::SAMPLE_INT);
         $named_val->save($msg);
         $t->test_val_ids[] = $named_val->id();
+        $val_ids[] = $named_val->id();
         $t->assert_msg($test_name, $msg);
         $msg->reset();
         $test_name = '... and the group row has the given name';
@@ -601,6 +620,9 @@ class value_write_tests
         $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);
         $db_grp->del($msg);
 
+        // cleanup - the values of this test first, because a test word that a value uses is only excluded and not
+        // deleted by the word cleanup below (see word::used_by_data)
+        $t->cleanup_test_values($val_ids, $msg);
         // cleanup - fallback delete
         $t_val->cleanup($ts);
         $t_wrd->cleanup_without_created($ts);

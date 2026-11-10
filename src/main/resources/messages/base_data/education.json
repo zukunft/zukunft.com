@@ -358,7 +358,7 @@
       "description": "a measure of the amount of variation or dispersion of a set of values.",
       "refs": [
         {
-          "name": "Standard deviation",
+          "name": "Standard_deviation",
           "type": "wikipedia"
         }
       ]

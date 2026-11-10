@@ -174,7 +174,20 @@ log_debug   - write to the log only if a request contains the debug parameter or
 log_info    - write a message to the system log for later debugging (make sure that this is part of the round-robin clean-up process)
 log_warning - write a message to the system and user log so that the user can see the hist of the warning messages that he has created (and that he can flag some for an issue to be solved)
 log_err     - write a message to the system, admin and user log so that the issue can be solved either by an admin or even be a developer
+log_err_reported - like log_err, for an error that the code adds with its own text to $msg right after the call
+log_err_msg - like log_err, and the generic internal notice with the log link for the user on $msg
 log_fatal   - log a fatal error message, send a message to the admin and call a database clean-up
+
+which of the three error functions to use:
+
+| has $msg | adds its own text for this error to $msg right after the call | use                                                       |
+|----------|-----------------------------------------------------------------|-----------------------------------------------------------|
+| false    | false                                                           | log_err($txt)                                             |
+| false    | true                                                            | not possible: use log_err($txt) and give the function a $msg |
+| true     | false                                                           | log_err_msg($txt, $msg)                                   |
+| true     | true                                                            | log_err_reported($txt), then the add to $msg              |
+
+the reason and the examples are in docs/llm/structure.md "log_err, log_err_reported or log_err_msg"
 
 ## debug display functions
 

@@ -1424,7 +1424,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1459,7 +1459,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_chg_list($class, $id, $fld);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1498,7 +1498,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get($ui_cfg, $msg, [api_types::HEADER, api_types::INCL_COMPONENTS]);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the message timestamp before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1516,7 +1516,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get_list(type_lists::class);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the message timestamp before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1527,28 +1527,6 @@ class test_db_load
         }
 
         return $result;
-    }
-
-    /**
-     * true if the api response json can be used to update the expected test resource:
-     * the response must exist and must contain more than just a message,
-     * because e.g. the login rejection of the pod ("This pod does not allow changes
-     * without a login ...") or an unreachable deployment must never overwrite
-     * a type list resource with the error message
-     * the failure itself is already reported by the assert of the calling function
-     *
-     * @param array|null $created the decoded json of the api response or null if the call failed
-     * @return bool true if the json is a usable api object and not just an error message
-     */
-    private function api_json_usable(?array $created): bool
-    {
-        $usable = false;
-        if ($created !== null) {
-            if (array_keys($created) != [json_fields::MSG]) {
-                $usable = true;
-            }
-        }
-        return $usable;
     }
 
     /**

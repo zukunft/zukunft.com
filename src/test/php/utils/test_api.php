@@ -1183,7 +1183,7 @@ class test_api extends test_base
             // an expected file that does not exist yet is created from the api answer if the auto
             // update of the test files is on, like a missing csv or html expected file, and the
             // missing file is reported, so that the created file is checked before it is committed
-            if (test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+            if (test_files::AUTO_UPDATE_TEST_FILES and $this->api_json_usable($actual)) {
                 $this->update_path_file($path, library::json_for_humans($actual) . "\n");
             }
             $result = $this->assert_true($class . ' API GET and the expected file ' . $file
@@ -1202,12 +1202,34 @@ class test_api extends test_base
                 // run re-baselines all api files and the diff shows what the change has changed;
                 // only the exact compare of a file may do this, because a "contains" file is a
                 // subset of the api answer on purpose and writing the answer would lose that
-                if (!$result and $from_file and test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+                if (!$result and $from_file and test_files::AUTO_UPDATE_TEST_FILES and $this->api_json_usable($actual)) {
                     $this->update_path_file($path, library::json_for_humans($actual) . "\n");
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the api response json can be used to update the expected test resource:
+     * the response must exist and must contain more than just a message,
+     * because e.g. the login rejection of the pod ("This pod does not allow changes
+     * without a login ...") or an unreachable deployment must never overwrite
+     * a type list resource with the error message
+     * the failure itself is already reported by the assert of the calling function
+     *
+     * @param array|null $created the decoded json of the api response or null if the call failed
+     * @return bool true if the json is a usable api object and not just an error message
+     */
+    function api_json_usable(?array $created): bool
+    {
+        $usable = false;
+        if ($created !== null) {
+            if (array_keys($created) != [json_fields::MSG]) {
+                $usable = true;
+            }
+        }
+        return $usable;
     }
 
     /**

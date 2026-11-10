@@ -150,6 +150,35 @@ foreach ($frm_lst as $frm) {
 that makes the rest of the body meaningless. Everything else flows to the single
 return; loops have no equivalent exception.
 
+A guard placed after other statements is no top guard but an early return in the
+middle of the body; and where the condition and the return value are the same
+(`$msg->is_ok()`), the single return is reached without any guard by wrapping the
+body in the positive condition:
+
+```php
+// Wrong — the guard follows a statement, so it is an early return in the middle
+function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
+{
+    $this->id = 0;
+    if (!$msg->is_ok()) {
+        return false;
+    }
+    parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+    // ... map the type fields ...
+    return $msg->is_ok();
+}
+
+// Right — the work lives inside the positive condition and the function has one return
+function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
+{
+    if ($msg->is_ok()) {
+        parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+        // ... map the type fields ...
+    }
+    return $msg->is_ok();
+}
+```
+
 ## Validate inside the function, not before the call
 
 A function validates its own input — as a top-of-function guard clause (see the
@@ -406,6 +435,38 @@ facing* rejection visible to the user. A real regression this caught: a triple
 add was blocked by the reserved-name check, but the rejection message rendered
 empty and never reached the UI, so the confirmed save silently did nothing.
 
+### Every error is reported — no exception
+
+Every error is reported with a unique and self-explaining text, and this rule has no
+exception. When a caller hands a function an input that it cannot handle, the input is
+never declared a "normal case" so that the report can be skipped: the report stays, and
+the caller that produces the wrong input is fixed.
+
+- **Wrong** — the row mapper of a type excuses a row without its id, because the code
+  link csv fill builds its update row without the id column, so a row without id is
+  mapped silently for every caller:
+
+  ```php
+  if (array_key_exists($id_fld, $db_row)) {
+      parent::row_mapper($db_row, $msg, $id_fld);
+  } else {
+      // e.g. the update row of a code link csv has no id field, which the parent would report as an error
+      $this->unset_modified();
+      $this->id = 0;
+  }
+  ```
+
+- **Right** — the mapper always reports a row without id (`msg_id::DB_ROW_ID_MISSING`
+  names the class and the id field), and the csv fill builds a complete row:
+
+  ```php
+  // row_mapper_typ_obj: no special case
+  parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+
+  // sql_db::load_db_code_link_file: the update row carries its id like every database row
+  $upd_row = [$col_names[0] => $id];
+  ```
+
 ### Take `$msg` when the error is the user's to see
 
 The rule above covers functions that *already* carry `$msg`. A function that can
@@ -465,6 +526,62 @@ Two cases stay on the bare `log_err`, and both are recognisable:
 
 Before threading, check what the function reports on the happy path — turning a
 silent drop into user-visible noise is the failure mode this rule can cause.
+
+### `log_err`, `log_err_reported` or `log_err_msg` — who tells the user
+
+All three write the error to `sys_log`, count it as an internal error of the
+request (`$sys->errors`) and, outside prod, print the `ERROR internal` line. They
+differ only in who tells the user, and that decides what an api answer carries:
+every internal error that no message has reported is sent with the answer
+(`controller::with_internal_errors`), and the frontend shows a generic internal
+notice with the log link for it.
+
+| has `$msg` | adds its own text for this error to `$msg` right after the call | use | who tells the user |
+|---|---|---|---|
+| false | false | `log_err($txt)` | nobody yet — in an api request the answer sends the generic notice |
+| false | true | not possible — without `$msg` there is no message to add to; use `log_err($txt)` and give the function a `$msg` (above) | — |
+| true | false | `log_err_msg($txt, $msg)` | the function, with the generic `msg_id::INTERNAL` and the log link |
+| true | true | `log_err_reported($txt)` followed by the add, e.g. `$msg->add_message_text($err_msg)` or `$msg->add(msg_id::USER_MISSING, …)` | the code itself, with its specific text; without `_reported` the user sees the error twice |
+
+"Adds its own text for this error to `$msg` right after the call" means three things
+at once:
+
+- **its own text**: the code itself puts a message on `$msg` — a plain text or a
+  `msg_id` — that says more than the generic internal notice, e.g. which object or
+  which statement failed;
+- **for this error**: the message is about the same problem that has just been
+  logged, not about another check of the function;
+- **right after the call**: the add follows in the same block, so that a reader
+  sees the pair and no other step can end the function in between.
+
+Example from `sql_db::insert`: the technical text with the sql goes to the admin,
+the user gets "Insert of … failed." — so the error is reported and the answer must
+not send the generic notice again:
+
+```php
+if ($sql_error != '') {
+    log_err_reported($sql_error . ' while executing ' . $qp->sql);
+    $msg->add_message_text($err_msg);
+}
+```
+
+The same function without the second line has no own text for the user, so it is
+`log_err_msg($sql_error . ' while executing ' . $qp->sql, $msg)`. And
+`sandbox_multi::change_blocked` logs a missing requesting user and then adds
+`CHANGE_BLOCKED_FOR_IP_USER` — but only for a blocked user, which is another check,
+so it is not `log_err_reported`: the function has a `$msg` and no own text for the
+missing user, which is the row of `log_err_msg` (its bare `log_err` is still the
+transitional channel of the section above).
+
+`log_err_reported` without that add right after it is a silent drop: the error is
+neither on the message nor in the answer.
+`log_fatal` and `log_fatal_reported` are the same pair for a fatal error.
+
+A test that expects an internal error passes its message to
+`test_base::assert_log_err`, which sets `Message::log_test_only`; `log_err_msg`
+then keeps the text in the message and neither writes nor counts it. A bare
+`log_err` has no message, so its error is always an error of the run — a function
+whose error a test expects reports it with `log_err_msg`.
 
 ## Whatever happens, avoid an uncaught PHP fatal
 

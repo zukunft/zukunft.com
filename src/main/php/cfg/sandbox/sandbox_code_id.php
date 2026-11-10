@@ -147,8 +147,8 @@ class sandbox_code_id extends sandbox_typed
         string       $type_fld = ''
     ): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        if ($result) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }

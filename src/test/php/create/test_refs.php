@@ -331,6 +331,26 @@ class test_refs extends test_objects
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * @return ref_list_ui the wikidata and the wikipedia reference of Zurich (canton) of the base data
+     */
+    function ref_list_zh_canton_ui(): ref_list_ui
+    {
+        global $sys;
+        $tl = new test_lib();
+        $phr = new test_triples($this->env)->zh_canton()->phrase();
+        $wd_ref = new ref($this->env->usr1);
+        $wd_ref->set(refs::ZURICH_CANTON_WIKIDATA_ID, $phr,
+            $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::ZURICH_CANTON_WIKIDATA_KEY);
+        $wp_ref = new ref($this->env->usr1);
+        $wp_ref->set(refs::ZURICH_CANTON_WIKIPEDIA_ID, $phr,
+            $sys->typ_lst->ref_typ->id(ref_types::WIKIPEDIA), refs::ZURICH_CANTON_WIKIPEDIA_KEY);
+        $lst = new ref_list($this->env->usr1);
+        $lst->add_obj($wd_ref);
+        $lst->add_obj($wp_ref);
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
 
     /*
      * url

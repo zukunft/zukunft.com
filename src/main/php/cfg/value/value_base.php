@@ -2335,7 +2335,6 @@ class value_base extends sandbox_value
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value
-                // TODO Prio 2 if no one else has ever changed the value, change to default value, else create a user overwrite
 
                 // read the database value to be able to check if something has been changed
                 // done first, because it needs to be done for user and general values
@@ -2354,7 +2353,10 @@ class value_base extends sandbox_value
                 $std_rec->reset();
                 $std_rec->set_user($this->get_user()); // user must also be set to allow to take the ownership
                 $std_msg = $msg->clone_reset();
-                $std_rec->load_standard($this->id(), $std_msg);
+                // without the standard row the decision would compare with an empty value
+                if (!$std_rec->load_standard($this->id(), $std_msg)) {
+                    $msg->merge($std_msg);
+                }
                 log_debug("standard value settings loaded (" . $std_rec->get_value() . ")");
 
                 // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
@@ -2371,8 +2373,8 @@ class value_base extends sandbox_value
                 if ($msg->is_ok()) {
                     // make sure that only an admin user reduces or raises the protection level
                     $this->check_protection_change($db_rec, $msg);
-                    // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                    // the standard row if the user is the owner and no other user has adjusted the value, else the user row
+                    $this->save_changes($db_con, $db_rec, $std_rec, $msg);
                 } else {
                     log_warning('value ' . $this->dsp_id() . ' not saved');
                 }

@@ -445,9 +445,12 @@ class word_list extends sandbox_list_named
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $wrd = new word($this->get_user());
-                    $wrd->row_mapper_sandbox($db_row, $msg);
-                    $this->add_obj($wrd);
-                    $result = true;
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    if ($wrd->row_mapper_sandbox($db_row, $row_msg)) {
+                        $this->add_obj($wrd);
+                        $result = true;
+                    }
+                    $msg->merge($row_msg);
                 }
             }
         }
@@ -486,9 +489,12 @@ class word_list extends sandbox_list_named
                     if (is_null($db_wrd[fields::FLD_EXCLUDED]) or $db_wrd[fields::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word_fields::FLD_ID] > 0 and !in_array($db_wrd[word_fields::FLD_ID], $this->ids())) {
                             $new_word = new word($this->get_user());
-                            $new_word->row_mapper_sandbox($db_wrd, $msg);
-                            $additional_added->add($new_word);
-                            log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb_db::FLD_ID] . ')');
+                            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                            if ($new_word->row_mapper_sandbox($db_wrd, $row_msg)) {
+                                $additional_added->add($new_word);
+                                log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb_db::FLD_ID] . ')');
+                            }
+                            $msg->merge($row_msg);
                         }
                     }
                 }

@@ -38,9 +38,16 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -76,14 +83,21 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
@@ -92,6 +106,8 @@ use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -122,6 +138,7 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use DateTime;
+use DateTimeInterface;
 
 class system_tests
 {
@@ -333,6 +350,51 @@ class system_tests
         // the areas of the system times are loaded only to write a slow request
         $sys_tim_typ_lst = new system_time_type_list();
         $t->assert_sql_all($sc, $sys_tim_typ_lst);
+        // the change fields are read from the table change_fields with the table of each field
+        $cng_fld_lst = new change_field_list();
+        $t->assert_sql_all($sc, $cng_fld_lst);
+
+        // the table of a change log row is taken from the preloaded change field (docs/llm/architecture.md)
+        $t->subheader($ts . 'change field table');
+        $cng_fld_lst->load_dummy();
+        $val_tbl_id = $sys->typ_lst->cng_tbl->id(change_tables::VALUE);
+        $usr_val_tbl_id = $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR);
+        $val_fld_id = $cng_fld_lst->id($val_tbl_id . change_fields::FLD_NUMERIC_VALUE);
+        $usr_val_fld_id = $cng_fld_lst->id($usr_val_tbl_id . change_fields::FLD_NUMERIC_VALUE);
+        $test_name = 'the change field of the number of a value names the table values';
+        $t->assert($test_name, $cng_fld_lst->get($val_fld_id)?->tbl_id, $val_tbl_id);
+        $test_name = '... and the change field of the number of a user value the table user_values';
+        $t->assert($test_name, $cng_fld_lst->get($usr_val_fld_id)?->tbl_id, $usr_val_tbl_id);
+        // the types cache json keeps the table of each change field
+        $cac_fld_lst = new change_field_list();
+        $cac_fld_lst->fill_from_api_rows($cng_fld_lst->api_json_array([], $msg), $msg);
+        $test_name = 'the types cache json keeps the table of a change field';
+        $t->assert($test_name, $cac_fld_lst->get($val_fld_id)?->tbl_id, $val_tbl_id);
+        $test_name = '... also of a user table';
+        $t->assert($test_name, $cac_fld_lst->get($usr_val_fld_id)?->tbl_id, $usr_val_tbl_id);
+        // a change log row takes the table of its change field, also if the object has set the other table before,
+        // e.g. change_log::load_by_field_row queries the user table last
+        $chg_row = [
+            change_log::FLD_ID => $t_log->chg_log_seq(),
+            change_log::FLD_ACTION => $sys->typ_lst->cng_act->id(change_actions::UPDATE),
+            change_value::FLD_FIELD_ID => $val_fld_id,
+            change_log::FLD_TIME => new DateTime()->format(DateTimeInterface::ATOM),
+            change::FLD_OLD_VALUE => null,
+            change::FLD_NEW_VALUE => null,
+            user_db::FLD_ID => $t->usr1->id(),
+            user_db::FLD_NAME => $t->usr1->name()
+        ];
+        $chg_val = new change_values_prime($t->usr1);
+        $chg_val->set_class(value::class, $msg, true);
+        $chg_val->row_mapper($chg_row, $msg);
+        $test_name = 'the change of the number of a standard value names the table values after a user table query';
+        $t->assert($test_name, $chg_val->table_id, $val_tbl_id);
+        $chg_row[change_value::FLD_FIELD_ID] = $usr_val_fld_id;
+        $chg_usr_val = new change_values_prime($t->usr1);
+        $chg_usr_val->set_class(value::class, $msg);
+        $chg_usr_val->row_mapper($chg_row, $msg);
+        $test_name = '... and the change of a user value the table user_values after a standard table query';
+        $t->assert($test_name, $chg_usr_val->table_id, $usr_val_tbl_id);
 
         $t->subheader($ts . 'user message');
 

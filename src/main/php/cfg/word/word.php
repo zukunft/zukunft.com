@@ -362,10 +362,8 @@ class word extends sandbox_code_id
         string       $name_fld = word_fields::FLD_NAME,
         string       $type_fld = phrase::FLD_TYPE): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        // map the fields whenever the row has been mapped (id set), not based on the parent return,
-        // because an error left on $msg by an earlier operation must not lead to a half mapped word
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        if ($result) {
             if (array_key_exists(word_fields::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[word_fields::FLD_PLURAL];
             }
@@ -1794,25 +1792,6 @@ class word extends sandbox_code_id
         $qp->par = $db_con->get_par();
 
         return $qp;
-    }
-
-    /**
-     * calculates how many times a word is used, because this can be helpful for sorting
-     */
-    function calc_usage_old(): bool
-    {
-        global $db_con;
-
-        // TODO Prio 2 recreate based on the group
-        /*
-        $sql = 'UPDATE words t
-             SET ' . $db_con->sf("values") . ' = (
-          SELECT COUNT(group_id)
-            FROM group g
-           WHERE g.phrase_id = t.word_id);';
-        $db_con->exe_try('Calculate word usage', $sql);
-        */
-        return true;
     }
 
 

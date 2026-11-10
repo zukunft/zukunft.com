@@ -472,7 +472,7 @@ class sandbox_value extends sandbox_multi
      */
     function set_value(float|DateTime|string|null $val): void
     {
-        log_warning('set_value() function of sandbox_value object is expected to be overwritten');
+        log_missing_overwrite_warning('set_value', $this::class);
     }
 
     /**
@@ -481,7 +481,7 @@ class sandbox_value extends sandbox_multi
      */
     function get_value(): float|DateTime|string|null
     {
-        log_err('value() function of sandbox_value object is expected to be overwritten');
+        log_missing_overwrite('get_value', $this::class);
         return null;
     }
 
@@ -1157,7 +1157,7 @@ class sandbox_value extends sandbox_multi
         // the overlay row to load is the one of the user of this value, so set the user after
         // load_sql_multi, because set_class takes the requesting user of the database connection,
         // which would join the overlay row of another user and hide an existing user row
-        // (e.g. the exclude of a value would add a second user row, see save_fields_func)
+        // (e.g. the exclude of a value would add a second user row, see sandbox_multi::save_user_row)
         $sc->set_usr($this->get_user()->id());
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }

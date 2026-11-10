@@ -527,7 +527,11 @@ class config_numbers extends value_list
             // the snap time is taken before the read, so that a change during the read is never cached as included
             $snap_time = new DateTime();
             // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-            $this->load_by_phr($phr_sys_cfg, $load_msg);
+            // before the config is imported, e.g. during the initial setup, the config phrase does not exist,
+            // which is reported below as an empty config
+            if ($phr_sys_cfg->id() != 0) {
+                $this->load_by_phr($phr_sys_cfg, $load_msg);
+            }
             // all config values are sent to the frontend, also the values of the other config parts
             // and their phrases, because the additional context is expected to be useful
             // and the complete config is expected to stay small

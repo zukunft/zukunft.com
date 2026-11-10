@@ -930,6 +930,7 @@ class test_mappers
             case component_types::ODS_EXPORT:
             case component_types::FORM_SELECT_FILE:
             case component_types::FORM_SELECT_FORMAT_EXPORT:
+            case component_types::FORM_REF_ROWS:
                 $obj = $t_wrd->word_filled();
                 break;
             case component_types::VERB_NAME:

@@ -1512,10 +1512,11 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, $page_arr), '9m=3&9id=123');
         $test_name = '... and an unknown calling page adds no back part';
         $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, []), '9');
-        $test_name = 'an old style script url carries the calling page as the back part';
-        $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
-        $test_name = '... and without an object and a calling page it has no parameter';
-        $t->assert($test_name, $html->url_old(rest_ctrl::VIEW), rest_ctrl::PATH_FIXED . rest_ctrl::VIEW . rest_ctrl::EXT);
+        $about_url = rest_ctrl::PATH_FIXED . rest_ctrl::URL_ABOUT . rest_ctrl::EXT;
+        $test_name = 'the page footer links to the about page';
+        $t->assert_text_contains($test_name, $html->footer(), '"' . $about_url . '"');
+        $test_name = '... and the footer of the about page does not link to itself';
+        $t->assert_text_not_contains($test_name, $html->footer(true), $about_url);
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
         // space, so a link writes the id in its short url form, which has a '_' instead of the '+'
         // (see group_id_url), because else the value page finds no value
@@ -1735,6 +1736,34 @@ class base_ui_tests
         $t->assert($test_name, controller::json_with_time('{}', $steps), '{}');
         $test_name = 'a json list gets no steps, because it has no field for them';
         $t->assert($test_name, controller::json_with_time('[]', $steps), '[]');
+        // the backend sends the log links of the internal errors of an api request with its answer,
+        // which the frontend shows to the user and removes, so that the answer is passed on as created
+        $links = ['link of the first error', 'link of the second error'];
+        $err_json = controller::json_with_internal_errors($api_json, $links);
+        $test_name = 'the internal errors of an api answer are sent first';
+        $t->assert_text_contains($test_name, $err_json, rest_call::INTERNAL_ERRORS_START);
+        $msg_ui = new user_message_ui();
+        $test_name = '... which the frontend removes from the answer';
+        $t->assert($test_name, rest_call::without_internal_errors($err_json, $msg_ui), $api_json);
+        $test_name = '... and shows to the user with one notice per error';
+        $t->assert($test_name, count($msg_ui->get_all_var_messages()), count($links));
+        $test_name = '... as an error';
+        $t->assert_false($test_name, $msg_ui->is_ok());
+        // a list, an error message and an empty answer come back exactly, because the answer is sent as a string
+        $err_list = controller::json_with_internal_errors('[]', $links);
+        $test_name = 'a json list with internal errors comes back as it is';
+        $t->assert($test_name, rest_call::without_internal_errors($err_list, new user_message_ui()), '[]');
+        $err_empty = controller::json_with_internal_errors('', $links);
+        $test_name = 'an empty answer with internal errors comes back empty';
+        $t->assert($test_name, rest_call::without_internal_errors($err_empty, new user_message_ui()), '');
+        // negative: an answer without internal errors is not changed and adds no notice
+        $test_name = 'an api answer without internal errors stays as it is';
+        $t->assert($test_name, controller::json_with_internal_errors($api_json, []), $api_json);
+        $msg_ui = new user_message_ui();
+        $test_name = '... and the frontend leaves it as it is';
+        $t->assert($test_name, rest_call::without_internal_errors($api_json, $msg_ui), $api_json);
+        $test_name = '... without a notice for the user';
+        $t->assert_true($test_name, $msg_ui->is_ok());
         // the frontend sums the wait and the steps of the api calls until they are booked to the time report
         $dto_ui = new data_object();
         $dto_ui->api_wait += 1.5;

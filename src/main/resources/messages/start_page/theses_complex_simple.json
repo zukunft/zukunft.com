@@ -98,7 +98,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Human population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {

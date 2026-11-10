@@ -402,8 +402,7 @@ class user extends db_id_object_non_sandbox
     {
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->name = $db_row[user_db::FLD_NAME];
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
             $this->email = $db_row[user_db::FLD_EMAIL];
@@ -590,7 +589,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code id
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'import_mapper');
+                log_err_reported('user not set in user_message', 'import_mapper');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
@@ -1940,7 +1939,7 @@ class user extends db_id_object_non_sandbox
         $can_change = false;
 
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'can_be_changed_by');
+            log_err_reported('user not set in user_message', 'can_be_changed_by');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
             // if the user who wants to change it, is the owner, he can do it
@@ -3321,8 +3320,7 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * save all updated fields with one sql function
-     * similar to the sandbox save_fields_func function but for non-user sandbox objects like the user
+     * save all updated fields with one sql function for non-user sandbox objects like the user
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param user $db_usr the database record before saving the changes whereas $this is the record with the changes

@@ -111,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
@@ -414,6 +415,9 @@ class test_base
     const string TEST_TYPE_NOT = 'not';
     // the chars shown before and after an unexpected hit of assert_text_not_contains
     const int NOT_CONTAINS_CONTEXT = 100;
+    // the chars shown of the diff, the actual and the expected part of a failed test, so that a long json does not
+    // flood the console; only the display is cut, the test always compares the complete result
+    const int ERROR_PART_MAX_CHARS = 2000;
     const string FILE_EXT = '.sql';
     const string FILE_MYSQL = '_mysql';
 
@@ -957,6 +961,10 @@ class test_base
             $msg_txt = $usr_msg instanceof user_message
                 ? $usr_msg->all_message_text()
                 : $usr_msg->text();
+            // e.g. a plain text of the backend, which the shared text() does not include yet
+            if ($msg_txt == '' and $usr_msg instanceof user_message_ui) {
+                $msg_txt = $usr_msg->get_last_message();
+            }
             return $this->assert_dsp($msg, false, true, $msg_txt, '', $exe_max_time);
         }
     }
@@ -986,6 +994,25 @@ class test_base
         $msg_txt = $usr_msg->text();
         $usr_msg->reset();
         return $this->assert_text_contains($msg, $msg_txt, $expected, $exe_max_time);
+    }
+
+    /**
+     * check that a call reports the expected internal error on its message, which is then neither written to the
+     * system log nor counted as an internal error of the test run (see Message::log_test_only)
+     *
+     * @param string $test_name (unique) description of the test
+     * @param callable $call the call that is expected to report the internal error on the given message
+     * @param string $expected the text that the reported error is expected to contain
+     * @param user_message|user_message_ui $msg the message that the call reports to, which carries the test-only flag
+     * @return bool true if the expected error has been reported
+     */
+    function assert_log_err(string $test_name, callable $call, string $expected, user_message|user_message_ui $msg): bool
+    {
+        $msg->log_test_only = true;
+        $msg->log_test_txt = '';
+        $call();
+        $msg->log_test_only = false;
+        return $this->assert_text_contains($test_name, $msg->log_test_txt, $expected);
     }
 
     /**
@@ -2371,22 +2398,51 @@ class test_base
     ): bool
     {
         $msg = new user_message();
-        // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
-        $sc_par_lst->add(sql_type::INSERT);
-        $sc_par_lst->add(sql_type::NO_ID_RETURN);
-        $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the sql statement creation to update the user row with the delta to the user row in the database
+     * for all allowed sql database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_chg the user overwrites as they should be after the change
+     * @param sandbox|sandbox_multi $usr_db the user row as it is in the database before the change
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update_user(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_chg,
+        sandbox|sandbox_multi $usr_db,
+        array                 $sc_par_lst_in = [sql_type::LOG]
+    ): bool
+    {
+        $msg = new user_message($this->usr1);
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -6079,6 +6135,53 @@ class test_base
     }
 
     /**
+     * check that the row mapper does not start if the message already carries an error, so that not even
+     * the id is set, and that it maps the same row with a clean message (docs/llm/dependent-errors.md)
+     *
+     * @param sandbox $sbx an object of the class whose row mapper is tested
+     * @param array $db_row a database row of the object as the load returns it
+     * @return bool true if the row is mapped only with the clean message
+     */
+    function assert_row_mapper_guard(sandbox $sbx, array $db_row): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $msg_err = new user_message($this->usr1); // carries the earlier error that stops the mapping
+        $msg_err->add(msg_id::FAILED, []);
+        $sbx_err = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper does not start after an earlier error';
+        $mapped = $sbx_err->row_mapper_sandbox($db_row, $msg_err);
+        $result = $this->assert_false($test_name, $mapped);
+        $test_name = '... so not even the id of the ' . $class . ' is set';
+        $id_err = $sbx_err->id();
+        $result = ($this->assert($test_name, $id_err, 0) and $result);
+        $msg = new user_message($this->usr1); // the clean message of the negative test
+        $sbx_ok = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper maps the row with a clean message';
+        $mapped = $sbx_ok->row_mapper_sandbox($db_row, $msg);
+        $result = ($this->assert_true($test_name, $mapped) and $result);
+        $test_name = '... including the id of the ' . $class;
+        $id_ok = $sbx_ok->id();
+        return ($this->assert($test_name, $id_ok, $sbx->id()) and $result);
+    }
+
+    /**
+     * map database rows into a list like its load does, which only the protected rows mapper of the list can do
+     *
+     * @param sandbox_list $lst the list that is filled
+     * @param array $db_rows the database rows e.g. with a row that cannot be mapped
+     * @param user_message $msg collects the problems of all rows
+     * @return bool true if at least one object has been added
+     */
+    function map_list_rows(sandbox_list $lst, array $db_rows, user_message $msg): bool
+    {
+        $rows_mapper = function (array $rows, user_message $row_msg): bool {
+            return $this->rows_mapper($rows, $row_msg);
+        };
+        return $rows_mapper->call($lst, $db_rows, $msg);
+    }
+
+    /**
      * check if all mandatory vars of the given object are set so that it can be saved in the database
      * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with all vars
      * @return bool true if the test was successful
@@ -6293,10 +6396,10 @@ class test_base
                 $final_msg .= '<p>' . $test_name . ': ' . "\n";
             }
             if ($diff_msg != '') {
-                $final_msg .= 'diff: ' . $diff_msg . ', ' . "\n";
+                $final_msg .= 'diff: ' . $this->error_part($diff_msg) . ', ' . "\n";
             }
-            $final_msg .= 'actual: ' . $result . ', ' . "\n";
-            $final_msg .= 'expected: ' . $target . "\n";
+            $final_msg .= 'actual: ' . $this->error_part((string)$result) . ', ' . "\n";
+            $final_msg .= 'expected: ' . $this->error_part((string)$target) . "\n";
             $this->error_counter++;
             // TODO Prio 3 create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }
@@ -6312,6 +6415,21 @@ class test_base
         $this->section_start($new_start_time);
 
         return $test_result;
+    }
+
+    /**
+     * @param string $txt the diff, the actual or the expected part of a failed test
+     * @return string the part cut after ERROR_PART_MAX_CHARS with the number of the chars not shown
+     */
+    private function error_part(string $txt): string
+    {
+        $result = $txt;
+        $len = mb_strlen($txt);
+        if ($len > self::ERROR_PART_MAX_CHARS) {
+            $result = mb_substr($txt, 0, self::ERROR_PART_MAX_CHARS)
+                . ' ... (' . ($len - self::ERROR_PART_MAX_CHARS) . ' more chars)';
+        }
+        return $result;
     }
 
     /**
@@ -6532,8 +6650,13 @@ class test_base
 
         $sys->times->switch(system_time_type::API_WAIT);
         $ctrl = new rest_call();
-        $result = $ctrl->api_call($method, $url, $data, $extra_headers);
+        $msg_api = new user_message_ui(); // the internal errors of the answer, reported below as an error of the run
+        $result = $ctrl->api_call($method, $url, $data, $msg_api, $extra_headers);
         $sys->times->switch();
+        // the api has its own process, so its internal errors reach the run only with the answer
+        if (!$msg_api->is_ok()) {
+            log_err('the api ' . $url . ' has answered with: ' . $msg_api->var_message_text());
+        }
         return $result;
     }
 
@@ -6676,6 +6799,11 @@ class test_base
         echo "\n";
         echo $sys->errors . ' internal errors';
         echo "\n";
+        // the system log rows are removed by the database recreation of the run, so the texts are listed here,
+        // each with the keyword of the test errors, so that a search of the run output for ERROR finds them all
+        foreach ($sys->error_texts as $error_text) {
+            echo 'ERROR internal ' . $error_text . "\n";
+        }
     }
 
     /**

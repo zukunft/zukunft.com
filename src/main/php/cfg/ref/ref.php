@@ -1418,8 +1418,8 @@ class ref extends sandbox_link
     }
 
     /**
-     * update a ref in the database or update the existing
-     * TODO Prio 2 review by comparing with sandbox function
+     * add or update a ref in the database
+     * the type is checked upfront, because it is part of the prime index
      *
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
@@ -1430,11 +1430,6 @@ class ref extends sandbox_link
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
-        log_debug($this->dsp_id());
-
-        global $db_con;
-
         // the type is part of the prime index, so a reference without a type can neither be checked
         // for duplicates nor written; refuse it here instead of failing in the duplicate check
         if ($this->predicate_id() == null) {
@@ -1445,57 +1440,7 @@ class ref extends sandbox_link
             return false;
         }
 
-        // check e.g. if a preserved name is used and if yes add a message and solution to $msg;
-        // the refresh of the linked objects depends on this check only, like in sandbox::save
-        $chk_msg = new user_message($msg->usr); // the verdict of the save checks, merged into $msg right away
-        $this->check_save($chk_msg);
-        $msg->merge($chk_msg);
-        if ($chk_msg->is_ok()) {
-            $this->reload_objects($msg);
-        }
-
-        // check if the external reference is supposed to be added
-        if ($this->id() <= 0) {
-            // check possible duplicates before adding
-            log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $sim_msg = new user_message(); // not reported: the duplicate messages only steer the branch below
-            $similar = $this->get_similar($sim_msg);
-            if ($similar != null) {
-                if ($similar->id() != 0) {
-                    $this->id = $similar->id();
-                }
-            }
-        }
-
-        // create a new object or update an existing
-        if ($this->id() <= 0) {
-            log_debug('add ' . $this->dsp_id());
-            $this->add($msg);
-        } else {
-            log_debug('update ' . $this->dsp_id());
-
-            // read the database values to be able to check if something has been changed;
-            // done first, because it needs to be done for user and general object values
-            $db_rec = $this->clone_reset(true);
-            $db_rec->load_by_id($this->id(), $msg);
-            log_debug('ref->save reloaded from db');
-            $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership
-            $std_rec->load_standard($this->id(), $msg);
-            // a request object e.g. built from the api json of the frontend does not know the owner, and
-            // without one can_change would let any user change the standard row of another owner
-            if ($this->owner_id() <= 0) {
-                $this->set_owner_id($std_rec->owner_id());
-            }
-            log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
-
-            // if everything has been fine until here
-            // update the
-            if ($msg->is_ok()) {
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
-            }
-        }
-
-        return $msg->is_ok();
+        return parent::save($msg, $sc_par_lst);
     }
 
 

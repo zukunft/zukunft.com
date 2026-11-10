@@ -46,7 +46,6 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -101,7 +100,7 @@ if ($usr->id() > 0) {
             $result .= $msk_ui->dsp_navbar($dto, $back);
 
             $val->load_phrases();
-            $url = $html->url_old(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
+            $url = $html->url_back(views::VALUE_DEL_ID, $val_id);
             $result .= (new button($url, $back))->yes_no(
                 msg_id::VALUE_DEL->value, $val->number() . $mtr->txt(msg_id::FOR) . $val->phr_lst()->dsp_name() . '?');
         }

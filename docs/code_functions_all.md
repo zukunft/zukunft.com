@@ -153,7 +153,7 @@
             in /formula/formula_map.php
     \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be true if no other us
             er has modified the formula in /formula/formula_map.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /formula/formula_map.php
+    \-- save_related - section for function save_related is expected to be save in /formula/formula_map.php
     \-- element_refresh - section for function element_refresh not yet defined that it should be save helper in /formula
             /formula_map.php
     \-- delete_elements - section for function delete_elements is expected to be del in /formula/formula_map.php
@@ -575,8 +575,6 @@
     \-- has_preload_type - section for function has_preload_type not yet defined that it should be preloaded in /word/wo
             rd.php
     \-- delta - section for function delta is expected to be del in /word/word.php
-    \-- calc_usage_old - section for function calc_usage_old not yet defined that it should be ui support in /word/word.
-            php
     \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be sandbox in /w
             ord/word.php
     \-- used_by_data - section for function used_by_data not yet defined that it should be sandbox in /word/word.php
@@ -1170,8 +1168,8 @@
     \-- generate_ref_text
         \-- formula_map - dummy function that is supposed to be overwritten by the child class formula
 \-- save helper
-    \-- save_fields_func
-        \-- formula_map - save all updated fields with one sql function
+    \-- save_related
+        \-- formula_map - rename the formula word if the formula has been renamed
     \-- element_refresh
         \-- formula_map - update the database references to the formula elements
     \-- delete_elements
@@ -1363,8 +1361,6 @@
             n of the table name in /db/sql_creator.php
     \-- par_name - section for function par_name not yet defined that it should be final exception correction of the tab
             le name in /db/sql_creator.php
-    \-- par_value - section for function par_value not yet defined that it should be final exception correction of the t
-            able name in /db/sql_creator.php
     \-- par_type_to_postgres - section for function par_type_to_postgres not yet defined that it should be final excepti
             on correction of the table name in /db/sql_creator.php
     \-- load_sql_not_changed_multi - section for function load_sql_not_changed_multi is expected to be load sql in /db/s
@@ -1480,7 +1476,6 @@
             ctive if requested or needed in /db/sql_db.php
     \-- debug_msg - section for function debug_msg not yet defined that it should be TODO Prio 2 active if requested or 
             needed in /db/sql_db.php
-    \-- get_old - section for function get_old is expected to be set and get in /db/sql_db.php
     \-- get - section for function get not yet defined that it should be TODO Prio 2 active if requested or needed in /d
             b/sql_db.php
     \-- get_internal - section for function get_internal is expected to be set and get in /db/sql_db.php
@@ -1769,6 +1764,19 @@
     \-- log_info - section for function log_info is expected to be log in /log_text/text_log_functions.php
     \-- log_warning - section for function log_warning is expected to be log in /log_text/text_log_functions.php
     \-- log_err - section for function log_err is expected to be log in /log_text/text_log_functions.php
+    \-- log_err_on_msg - section for function log_err_on_msg is expected to be log in /log_text/text_log_functions.php
+    \-- log_keep_error - section for function log_keep_error is expected to be log in /log_text/text_log_functions.php
+    \-- log_echo_errors - section for function log_echo_errors is expected to be log in /log_text/text_log_functions.php
+    \-- internal_error_line - section for function internal_error_line missing in /log_text/text_log_functions.php
+    \-- log_in_api_answer - section for function log_in_api_answer is expected to be log in /log_text/text_log_functions
+            .php
+    \-- log_err_reported - section for function log_err_reported is expected to be log in /log_text/text_log_functions.p
+            hp
+    \-- log_fatal_reported - section for function log_fatal_reported is expected to be log in /log_text/text_log_functio
+            ns.php
+    \-- log_link_count - section for function log_link_count is expected to be log in /log_text/text_log_functions.php
+    \-- log_take_reported - section for function log_take_reported is expected to be log in /log_text/text_log_functions
+            .php
     \-- log_err_msg - section for function log_err_msg is expected to be log in /log_text/text_log_functions.php
     \-- log_err_msg_ui - section for function log_err_msg_ui is expected to be log in /log_text/text_log_functions.php
     \-- log_warning_msg - section for function log_warning_msg is expected to be log in /log_text/text_log_functions.php
@@ -1900,8 +1908,6 @@
     \-- phr_id_lst_as_phr_lst - section for function phr_id_lst_as_phr_lst not yet defined that it should be internal in
              /formula/expression.php
     \-- get_usr_names - section for function get_usr_names is expected to be set and get in /formula/expression.php
-    \-- element_part_list_old - section for function element_part_list_old not yet defined that it should be extract hel
-            per in /formula/expression.php
     \-- get_ref_id - section for function get_ref_id is expected to be set and get in /formula/expression.php
     \-- phr_verb_lst - section for function phr_verb_lst not yet defined that it should be to review in /formula/express
             ion.php
@@ -2585,7 +2591,6 @@
             php
     \-- load_sql - section for function load_sql is expected to be load sql in /log/change.php
     \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /log/change.php
-    \-- load_sql_old - section for function load_sql_old is expected to be load sql in /log/change.php
     \-- use_type_id - section for function use_type_id not yet defined that it should be info in /log/change.php
     \-- sql_type - section for function sql_type not yet defined that it should be sql write in /log/change.php
     \-- sql_sub_type - section for function sql_sub_type not yet defined that it should be sql write in /log/change.php
@@ -2601,6 +2606,12 @@
              in /log/change_field.php
     \-- load_sql_by_name_and_table_id - section for function load_sql_by_name_and_table_id is expected to be load sql in
              /log/change_field.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
+            j
+\-- change_field_list
+    \-- load_dummy - section for function load_dummy is expected to be load in /log/change_field_list.php
+    \-- default_id - section for function default_id missing in /log/change_field_list.php
+    \-- has_table_ids - section for function has_table_ids missing in /log/change_field_list.php
 \-- change_link
     \-- row_mapper - section for function row_mapper not yet defined that it should be database link in /log/change_link
             .php
@@ -2894,8 +2905,6 @@
             hp
     \-- has_percent - section for function has_percent not yet defined that it should be modify in /phrase/phrase_list.p
             hp
-    \-- time_lst_old - section for function time_lst_old not yet defined that it should be modify in /phrase/phrase_list
-            .php
     \-- time_word_list - section for function time_word_list not yet defined that it should be modify in /phrase/phrase_
             list.php
     \-- time_list - section for function time_list not yet defined that it should be modify in /phrase/phrase_list.php
@@ -2958,8 +2967,7 @@
     \-- get_code_id - section for function get_code_id is expected to be set and get in /phrase/phrase_type.php
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /phrase/phrase_type.php
-    \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
-            j
+    \-- order error - order of section construct and map has difference at api_mapper should be before get_code_id
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
@@ -3108,10 +3116,7 @@
     \-- load_sql_by_grp - section for function load_sql_by_grp is expected to be load sql in /result/result_list.php
     \-- load_sql_by_src_grp - section for function load_sql_by_src_grp is expected to be load sql in /result/result_list
             .php
-    \-- load_sql_by_obj_old - section for function load_sql_by_obj_old is expected to be load sql in /result/result_list
-            .php
     \-- load_by_grp - section for function load_by_grp is expected to be load in /result/result_list.php
-    \-- load_by_obj - section for function load_by_obj is expected to be load in /result/result_list.php
     \-- filter_within_phrases - section for function filter_within_phrases not yet defined that it should be modify in /
             result/result_list.php
     \-- name - section for function name is expected to be debug in /result/result_list.php
@@ -3219,7 +3224,6 @@
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /sandbox/sandbox.php
     \-- del_usr_cfg - section for function del_usr_cfg is expected to be del in /sandbox/sandbox.php
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox.php
     \-- fix_user_overwrites_after_rename - section for function fix_user_overwrites_after_rename not yet defined that it
              should be save fields in /sandbox/sandbox.php
     \-- update_standard_fields - section for function update_standard_fields not yet defined that it should be save fiel
@@ -3254,6 +3258,10 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_exclude - section for function sql_exclude not yet defined that it should be sql write in /sandbox/sandbox.p
             hp
+    \-- sql_update_user - section for function sql_update_user not yet defined that it should be sql write in /sandbox/s
+            andbox.php
+    \-- sql_insert_user - section for function sql_insert_user not yet defined that it should be sql write in /sandbox/s
+            andbox.php
     \-- sql_write_prepared - section for function sql_write_prepared not yet defined that it should be sql write in /san
             dbox/sandbox.php
     \-- db_fields_all_sandbox - section for function db_fields_all_sandbox not yet defined that it should be sql write f
@@ -3592,13 +3600,16 @@
     \-- get_similar - section for function get_similar is expected to be save in /sandbox/sandbox_multi.php
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_multi.php
     \-- del - section for function del is expected to be del in /sandbox/sandbox_multi.php
-    \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox_multi.php
     \-- has_source - section for function has_source not yet defined that it should be delete in /sandbox/sandbox_multi.
             php
     \-- has_placeholder_source - section for function has_placeholder_source not yet defined that it should be delete in
              /sandbox/sandbox_multi.php
     \-- sql_delete_user_row - section for function sql_delete_user_row not yet defined that it should be delete in /sand
             box/sandbox_multi.php
+    \-- sql_update_user - section for function sql_update_user not yet defined that it should be delete in /sandbox/sand
+            box_multi.php
+    \-- sql_insert_user - section for function sql_insert_user not yet defined that it should be delete in /sandbox/sand
+            box_multi.php
     \-- sql_write - section for function sql_write not yet defined that it should be delete in /sandbox/sandbox_multi.ph
             p
     \-- sql_write_with_log - section for function sql_write_with_log not yet defined that it should be delete in /sandbo
@@ -4557,6 +4568,9 @@
                 a test resource file
     \-- store_text
         \-- import_wikidata - store the given json for the given wikidata id as a formatted test resource file
+    \-- has_table_ids
+        \-- change_field_list - @return bool true if each change field names its table,
+                 which the table of a change log row is taken from
     \-- echo_timestamped
         \--  - write the given text to the standard io with the runtime timestamp in front of every physical line
     \-- php_error_label
@@ -4575,6 +4589,31 @@
         \--  - log an info message to the text log and the log table depending on the log settings
     \-- log_err
         \--  - log an info message to the text log and the log table depending on the log settings
+    \-- log_err_on_msg
+        \--  - log an internal error that the caller reports on its message,
+                 or keep it in the message if a test expects it
+    \-- log_keep_error
+        \--  - count an internal or fatal error and keep it for the summary of a test run and for the api answer,
+                 because the
+    \-- log_echo_errors
+        \--  - @return bool true if an internal error is written at the moment it happens: not in prod (system_object::e
+                cho_errors_default)
+    \-- internal_error_line
+        \--  - @param string $function_name the function that has most likely caused the error
+    \-- log_in_api_answer
+        \--  - @return bool true in an api request,
+                 where an echo of an error would stand in front of the json of the answer,
+    \-- log_err_reported
+        \--  - log an internal error that the caller reports on its message itself,
+                 so that the api answer does not send it again
+    \-- log_fatal_reported
+        \--  - log a fatal error that the caller reports on its message itself,
+                 so that the api answer does not send it again
+    \-- log_link_count
+        \--  - @return int the number of the kept log links, to find the link that the next log call adds
+    \-- log_take_reported
+        \--  - take out the link that a log call has added after the given count,
+                 because the caller reports the error itself
     \-- log_err_msg
         \--  - log an error message and inform the user about the error
     \-- log_err_msg_ui
@@ -4754,15 +4793,6 @@
         \-- change - create an SQL statement to retrieve a change long entry by the changing user
     \-- load_by_user_sql
         \-- change - create the SQL statement to retrieve the parameters of the change log by name
-    \-- 2
-        \-- user_log - create the sql statement to select the open session of a user, the latest first
-    \-- load_sql_old
-        \-- change - create the SQL statement to retrieve the parameters of the change log by name
-        \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
-    \-- load_by_name_and_table_id
-        \-- change_field - load the change log table field from the database selected by the table id and the field name
-    \-- load_sql_by_name_and_table_id
-        \-- change_field - create an SQL statement to retrieve a type object by code id from the database
     \-- load_by_field_row
         \-- change_log - load the last change of given user
     \-- load_sql_by_field_row
@@ -4771,7 +4801,7 @@
         \-- change_log_link_list - load the link changes related to one object e.g. all links added to or removed from a
                  word
     \-- load_sql_by_obj
-        \-- change_log_link_list - create the SQL statement to load the link changes related to one object from the chan
+        \-- change_log_link_list - create the sql statement to load the link changes related to one object from the chan
                 ge_links table
     \-- add
         \-- change_log_link_list - add one link change to the list
@@ -4824,6 +4854,12 @@
         \-- ip_range - load an ip range from the database selected by id
     \-- load_by_ip_addresses
         \-- ip_range - load an ip range from the database selected by the start and end ip address
+    \-- load_open
+        \-- user_log - load the session of the user whose last request has ended after the given time
+    \-- load_sql_open
+        \-- user_log - create the sql statement to select the open session of a user, the latest first
+    \-- load_sql_old
+        \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
     \-- load_dummy
         \-- view_sys_list - adding the system views used for unit tests to the dummy list
     \-- default_id
@@ -5097,7 +5133,6 @@
         \-- db_cache_page - get a list of database field names, values and types that have been updated
         \-- db_cache_status - 
         \-- change_action - 
-        \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- change_table - 
         \-- ip_range - get a list of database field names, values and types that have been updated
         \-- sys_log_function - 
@@ -5146,7 +5181,6 @@
         \-- combine_named - set the object vars of a phrase or term to the neutral initial value
         \-- db_cache - clear all cache object values e.g. to detect the changed fields
         \-- db_cache_page - clear all cache page object values e.g. to detect the changed fields
-        \-- change_field - set the vars of this change field object to the default values
         \-- ref_type - set the vars of this reference type object to the default values
         \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
@@ -5180,15 +5214,14 @@
         \-- user_log_sum - map one row of the summed sessions of a user
     \-- row_mapper_multi
         \-- db_object_multi - map the database fields to the object fields
-    \-- row_mapper_typ_obj
-        \-- change_field - fill the change field object vars based on an array of fields from the database
-        \-- ref_type - fill the reference type object vars based on an array of fields from the database
-        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
-                k csv
     \-- load_dummy
         \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
         \-- phrase_types - @return int the database id of the default word type
+    \-- row_mapper_typ_obj
+        \-- ref_type - fill the reference type object vars based on an array of fields from the database
+        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
+                k csv
     \-- import_mapper
         \-- ref_type - function to import the core reference type values from a json string
         \-- ip_range - set the vars of this ip range object based on the given json without writing to the database
@@ -5405,6 +5438,8 @@
         \-- value_geo - overwrite the sandbox_value value() function to return the geolocation value
         \-- value_text - overwrite the sandbox_value value() function to return the text string
         \-- value_time - overwrite the sandbox_value value() function to return the DateTime value
+        \-- value_time_series - a time series has no single value,
+                 because its numbers are the data rows (value_ts_data),
     \-- is_empty_text
         \-- value_text - @return bool true if the text is missing or empty, which is not saved (see value_base::save)
     \-- set_text_value
@@ -5564,8 +5599,6 @@
         \-- sql_creator - final exception correction of the table name
     \-- par_name
         \-- sql_creator - get the SQL parameter placeholder in the used SQL dialect
-    \-- par_value
-        \-- sql_creator - get the SQL parameter value of a parameter position
     \-- par_type_to_postgres
         \-- sql_creator - convert one internal sql parameter type to a postgres db parameter type
     \-- load_sql_not_changed_multi
@@ -5715,20 +5748,20 @@
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each
-        \-- group_list - query to get the value or formula result phrase groups and time words that contains at least on
-                e phrase of two lists based on the user sandbox
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_val_special
-        \-- group_list - query to get the value or formula result phrase groups and time words that contains at least on
-                e phrase of two lists based on the user sandbox
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_res_with_one_phr_each
-        \-- group_list - query to get the value or formula result phrase groups and time words that contains at least on
-                e phrase of two lists based on the user sandbox
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_res_special
-        \-- group_list - query to get the value or formula result phrase groups and time words that contains at least on
-                e phrase of two lists based on the user sandbox
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- remove_wrd_lst
-        \-- group_list - query to get the value or formula result phrase groups and time words that contains at least on
-                e phrase of two lists based on the user sandbox
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
 \-- get
     \-- is_ok
         \-- sql_message - @return bool true if user does not need to be informed
@@ -5903,7 +5936,6 @@
         \-- element - to get a list of all database fields that might be changed,
         \-- db_cache - get a list of all database fields that might be changed
         \-- db_cache_page - get a list of all database fields that might be changed
-        \-- change_field - get a list of all database fields that might be changed
         \-- ref_type - get a list of all database fields that might be changed
         \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
@@ -5913,7 +5945,6 @@
         \-- element - get a list of database field names, values and types that have been updated
         \-- db_cache - get a list of database field names, values and types that have been updated
         \-- db_cache_page - get a list of database field names, values and types that have been updated
-        \-- change_field - get a list of database field names, values and types that have been updated
         \-- ref_type - get a list of database field names, values and types that have been updated
         \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
@@ -6007,9 +6038,6 @@
         \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
     \-- get_all_messages
         \-- user_message - @return array with all the text messages
-\-- extract helper
-    \-- element_part_list_old
-        \-- expression - @return array of the term names used in the expression based on the user text
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
@@ -6849,6 +6877,8 @@
             ut auto fill in /component/execute/system_form.php
     \-- form_refs - section for function form_refs not yet defined that it should be optional with show password but wit
             hout auto fill in /component/execute/system_form.php
+    \-- form_ref_rows - section for function form_ref_rows not yet defined that it should be optional with show password
+             but without auto fill in /component/execute/system_form.php
     \-- form_value - section for function form_value not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- form_values - section for function form_values not yet defined that it should be optional with show password but
@@ -7069,6 +7099,7 @@
     \-- value_add_link - section for function value_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
+    \-- refs_of_phrase - section for function refs_of_phrase missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
     \-- view_tab_box - section for function view_tab_box missing in /component/execute/ui_list.php
     \-- view_terms - section for function view_terms missing in /component/execute/ui_list.php
@@ -7200,10 +7231,10 @@
     \-- dsp_names - section for function dsp_names not yet defined that it should be display in /element/element_group.p
             hp
     \-- figures - section for function figures not yet defined that it should be display in /element/element_group.php
+    \-- dsp_values - section for function dsp_values not yet defined that it should be display in /element/element_group
+            .php
     \-- build_symbol - section for function build_symbol not yet defined that it should be repeat from backend in /eleme
             nt/element_group.php
-    \-- dsp_values_old - section for function dsp_values_old not yet defined that it should be deprecate in /element/ele
-            ment_group.php
 \-- figure
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /figure/figure.php
     \-- id - section for function id not yet defined that it should be set and get in /figure/figure.php
@@ -7323,8 +7354,6 @@
     \-- name_link - section for function name_link not yet defined that it should be display in /formula/formula_list.ph
             p
     \-- tbl - section for function tbl not yet defined that it should be display in /formula/formula_list.php
-    \-- display_old - section for function display_old not yet defined that it should be display in /formula/formula_lis
-            t.php
     \-- order error - order of section display has difference at name_link should be before name_tip
 \-- frontend
     \-- start - section for function start not yet defined that it should be session in /frontend.php
@@ -7634,8 +7663,6 @@
             ml/html_base.php
     \-- sub - section for function sub not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
-    \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in
-             the html code in /html/html_base.php
     \-- url_back - section for function url_back not yet defined that it should be wrapper for internal references used 
             in the html code in /html/html_base.php
     \-- pre_url_part - section for function pre_url_part not yet defined that it should be wrapper for internal referenc
@@ -7722,10 +7749,6 @@
             kunft.com in /html/html_base.php
     \-- docs_page - section for function docs_page not yet defined that it should be the form HTML elements used in zuku
             nft.com in /html/html_base.php
-    \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functi
-            ons for the pure HTML version in /html/html_base.php
-    \-- list_sort - section for function list_sort not yet defined that it should be output device specific support func
-            tions for the pure HTML version in /html/html_base.php
     \-- list - section for function list not yet defined that it should be output device specific support functions for 
             the pure HTML version in /html/html_base.php
     \-- dsp_tbl_width - section for function dsp_tbl_width not yet defined that it should be to dismiss / replace in /ht
@@ -8279,10 +8302,8 @@
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             _list.php
     \-- table - section for function table not yet defined that it should be display in /result/result_list.php
-    \-- display_old - section for function display_old not yet defined that it should be display in /result/result_list.
-            php
-    \-- frm_links_html - section for function frm_links_html not yet defined that it should be create the pure html (5) 
-            code for all formula links related to this value list in /result/result_list.php
+    \-- frm_links_html - section for function frm_links_html not yet defined that it should be display in /result/result
+            _list.php
 \-- ListBase
     \-- api_mapper_list - section for function api_mapper_list not yet defined that it should be construct and map in /s
             andbox/ListBase.php
@@ -9447,6 +9468,8 @@
     \-- figures
         \-- element_group - get a list of figures related to the formula element group and a context defined by a list o
                 f words
+    \-- dsp_values
+        \-- element_group - the HTML code to display a figure list
     \-- display
         \-- formula_link - @return string that best describes this object
         \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
@@ -9497,8 +9520,8 @@
     \-- table
         \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
                 t
-    \-- display_old
-        \-- result_list - create the html code to show the formula results to the user
+    \-- frm_links_html
+        \-- result_list - create the pure html (5) code for all formula links related to this value list
     \-- load_by_id_with_related
         \-- sandbox_link - load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
     \-- link_type
@@ -9956,6 +9979,8 @@
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
         \-- ui_list - show a list of references related to the given object
+    \-- refs_of_phrase
+        \-- ui_list - the references of a word or triple, shown in the tab box and as the rows of its edit form
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
@@ -10644,6 +10669,9 @@
         \-- system_form - create the html code for the form element to select the reference
     \-- form_refs
         \-- system_form - create the html code for the form element to select one or many references
+    \-- form_ref_rows
+        \-- system_form - the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW),
+                 so that the
     \-- form_value
         \-- system_form - create the html code for the form element to select a value
     \-- form_values
@@ -10805,9 +10833,6 @@
 \-- repeat from backend
     \-- build_symbol
         \-- element_group - recreate the element group symbol based on the element list ($this->lst)
-\-- deprecate
-    \-- dsp_values_old
-        \-- element_group - the HTML code to display a figure list
 \-- interface
     \-- api_array
         \-- figure - @return array the json message array to send the updated data to the backend
@@ -11163,8 +11188,6 @@
     \-- sub
         \-- html_base - @param string $text the subscript text e.g. the index "i"
 \-- wrapper for internal references used in the html code
-    \-- url_old
-        \-- html_base - build a url for link a zukunft.com element
     \-- url_back
         \-- html_base - the url of a view for an object with the calling page as the back part
     \-- pre_url_part
@@ -11265,10 +11288,6 @@
     \-- docs_page
         \-- html_base - a markdown document of /docs/ as a html page with the css of zukunft.com
 \-- output device specific support functions for the pure HTML version
-    \-- edit_url
-        \-- html_base - converts object class name to an edit php script name
-    \-- list_sort
-        \-- html_base - display a list that can be sorted using the fixed field "order_nbr"
     \-- list
         \-- html_base - display a paged, editable list of elements e.g. verbs
 \-- to dismiss / replace
@@ -11336,7 +11355,7 @@
         \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
                 y number, or the text with the input that it wraps
     \-- input_checkbox
-        \-- html_base - a checkbox that sends the number 1 if it is checked; the id equals the name,
+        \-- html_base - a checkbox that sends its value if it is checked; the id equals the name,
                  so a label can point to it
     \-- label
         \-- html_base - create the html code for a label
@@ -11517,9 +11536,6 @@
 \-- repeat backend
     \-- get_grp_id
         \-- phrase_list - TODO Prio 1 review
-\-- create the pure html (5) code for all formula links related to this value list
-    \-- frm_links_html
-        \-- result_list - create the pure html (5) code for all formula links related to this value list
 \-- menu
     \-- menu_views_ui
         \-- sandbox - the views that the edit menu of the navbar suggests for this object, in the order of the menu:

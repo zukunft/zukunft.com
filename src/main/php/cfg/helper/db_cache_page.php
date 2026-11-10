@@ -192,8 +192,7 @@ class db_cache_page extends db_object_seq_id
     {
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(self::FLD_URL, $db_row)) {
                 $this->url = $db_row[self::FLD_URL];
             }

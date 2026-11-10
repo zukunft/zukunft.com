@@ -183,6 +183,9 @@ class term_view_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader($ts . 'term_view row mapper');
+        $t->assert_row_mapper_guard($t_msk->term_view(), $t_msk->term_view_row());
+
         $t->subheader($ts . 'term_view api mapping');
         // a page url and an api message carry only the term id, which encodes the class of the
         // term, so a term view of a triple must not be mapped back to the word of the same id

@@ -395,6 +395,8 @@ class type_list extends ListOfIdNamedCodeObjects
             $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID, ref_type_list::FLD_URL));
         } elseif ($class == language::class) {
             $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID, language::FLD_WIKI_CODE, language::FLD_LOCAL_NAME, fields::FLD_USAGE));
+        } elseif ($class == change_field::class) {
+            $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID, change_field::FLD_TABLE));
         } else {
             $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID));
         }
@@ -504,7 +506,8 @@ class type_list extends ListOfIdNamedCodeObjects
             user_status_list::class => user_status::class,
             change_action_list::class => change_action::class,
             change_table_list::class => change_table::class,
-            change_field_list::class => change_table_field::class,
+            // read from the table and not from the view change_table_fields, because the view has no table id
+            change_field_list::class => change_field::class,
             share_type_list::class => share_types::class,
             protection_type_list::class => protection_types::class,
             job_status_list::class => job_status::class,
@@ -550,8 +553,13 @@ class type_list extends ListOfIdNamedCodeObjects
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
                 } elseif ($class == change_table::class) {
                     $type_name = strval($db_row[type_object::FLD_TABLE]);
-                } elseif ($class == change_table_field::class) {
-                    $type_name = strval($db_row[type_object::FLD_FIELD]);
+                } elseif ($class == change_field::class) {
+                    // the name and the code id as the view change_table_fields creates them, because the field id is
+                    // looked up by the table id and the field name (e.g. change_log::set_field)
+                    $type_name = $db_row[change_field::FLD_TABLE] . $db_row[change_field::FLD_NAME];
+                    if ($type_code_id == '') {
+                        $type_code_id = $type_name;
+                    }
                 } elseif ($class == sys_log_function::class) {
                     $type_name = strval($db_row[sys_log_function::FLD_NAME]);
                 } elseif ($class == sys_log_level::class) {
@@ -600,6 +608,9 @@ class type_list extends ListOfIdNamedCodeObjects
                     if (array_key_exists(fields::FLD_USAGE, $db_row)) {
                         $type_obj->usage = strval($db_row[fields::FLD_USAGE]);
                     }
+                } elseif ($type_obj::class == change_field::class) {
+                    // the table of a change log row is taken from here (docs/llm/architecture.md)
+                    $type_obj->tbl_id = (int)$db_row[change_field::FLD_TABLE];
                 }
 
                 $this->add($type_obj);
@@ -693,6 +704,10 @@ class type_list extends ListOfIdNamedCodeObjects
                 $typ_vars[json_fields::CODE_ID] = $typ->get_code_id();
                 $typ_vars[json_fields::DESCRIPTION] = $typ->description;
                 $typ_vars[json_fields::ID] = $typ->id();
+                // the types cache json keeps the table of each change field (docs/llm/architecture.md)
+                if ($typ::class == change_field::class) {
+                    $typ_vars[json_fields::TABLE_ID] = $typ->tbl_id;
+                }
             }
             $vars[] = $typ_vars;
         }
@@ -802,6 +817,10 @@ class type_list extends ListOfIdNamedCodeObjects
                         // without a code id column the name (with the table prefix) is the code id
                         if ($table_col > 0) {
                             $typ_obj->set_code_id_db($data[$table_col] . $data[$name_col]);
+                            // the table of a change log row is taken from here (docs/llm/architecture.md)
+                            if ($typ_obj::class == change_field::class) {
+                                $typ_obj->tbl_id = (int)$data[$table_col];
+                            }
                         } else {
                             $typ_obj->set_code_id_db($data[$name_col]);
                         }

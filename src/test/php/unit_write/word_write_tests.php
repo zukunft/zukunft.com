@@ -397,6 +397,7 @@ class word_write_tests
         $result = $msg->text();
         $target = 'A word with the name "'.word_names::TEST_ADD.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $msg->reset();
 
         $t->subheader($ts . 'protection');
         $test_name = 'the owner can raise the protection of "' . word_names::TEST_ADD . '" to admin';

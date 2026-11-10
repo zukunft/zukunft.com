@@ -5,6 +5,6 @@
   "words": [
     {"name": "2021", "type": "time"},
     {"name": "Travel"},
-    {"name": "US dollar", "refs": [{"name": "United States dollar", "type": "wikipedia"}]}
+    {"name": "US dollar", "refs": [{"name": "United_States_dollar", "type": "wikipedia"}]}
   ]
 }

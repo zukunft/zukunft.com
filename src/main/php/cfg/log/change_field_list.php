@@ -71,11 +71,12 @@ class change_field_list extends type_list
         // TODO Prio 3 load from csv
         $table_id = $sys->typ_lst->cng_tbl->id(change_tables::WORD);
         $table_field_name = $table_id . change_fields::FLD_WORD_NAME;
-        $type = new type_object(
+        $type = new change_field(
             $table_field_name,
             change_fields::FLD_WORD_NAME,
             change_fields::FLD_WORD_NAME_DSP,
             change_field_list::TI_WORD_NAME);
+        $type->tbl_id = $table_id;
         $this->add($type);
 
     }
@@ -89,6 +90,21 @@ class change_field_list extends type_list
         $table_id = $sys->typ_lst->cng_tbl->id(change_tables::WORD);
         $table_field_name = $table_id . change_fields::FLD_WORD_NAME;
         return parent::id($table_field_name);
+    }
+
+    /**
+     * @return bool true if each change field names its table, which the table of a change log row is taken from
+     *              (docs/llm/architecture.md); false e.g. for a types cache json written without the table ids
+     */
+    function has_table_ids(): bool
+    {
+        $result = true;
+        foreach ($this->lst() as $fld) {
+            if (!($fld instanceof change_field) or $fld->tbl_id <= 0) {
+                $result = false;
+            }
+        }
+        return $result;
     }
 
 }

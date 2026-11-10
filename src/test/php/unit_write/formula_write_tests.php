@@ -462,6 +462,11 @@ class formula_write_tests
         $target = formula_names::SYSTEM_TEST_RENAMED;
         $t->assert('formula->load renamed formula "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
 
+        $test_name = '... and the formula word has been renamed with the formula';
+        $wrd_frm = new word($t->usr1);
+        $wrd_frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg);
+        $t->assert($test_name, $wrd_frm->name(), formula_names::SYSTEM_TEST_RENAMED);
+
         // ... and if the formula renaming has been logged (with 'user' after the action if the
         // rename landed in the user sandbox row, like the add above)
         $log_ui = $t->log_last_ui_by_field($frm_renamed, formula_fields::FLD_NAME, $frm_renamed->id(), $msg);

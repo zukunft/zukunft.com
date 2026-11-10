@@ -152,8 +152,7 @@ class sys_log extends db_object_seq_id
 
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, sys_log_db::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             $this->log_time = $lib->get_datetime($db_row[sys_log_db::FLD_TIME]);
             if ($db_row[user_db::FLD_ID] > 0) {
                 $usr = new user();
@@ -362,13 +361,13 @@ class sys_log extends db_object_seq_id
 
         // at the moment it is only possible to select the error by the id
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        $this->id = 0;
         $db_row = $db_con->get1($qp, $msg);
         // a false db row means that the query itself failed, which the db layer has already
-        // logged, so it is mapped like "no row found" to avoid a fatal in the row mapper
-        if ($db_row === false) {
-            $db_row = null;
+        // logged, so it is handled like "no row found", because the row mapper maps only a found row
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper($db_row, $msg);
         }
-        $this->row_mapper($db_row, $msg);
         return $this->id();
     }
 

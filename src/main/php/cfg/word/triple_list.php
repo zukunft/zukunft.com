@@ -248,29 +248,34 @@ class triple_list extends sandbox_list_named
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $db_trp = new triple($this->get_user());
-                    $db_trp->row_mapper_sandbox($db_row, $msg);
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    $mapped = $db_trp->row_mapper_sandbox($db_row, $row_msg);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
-                    if (!$db_trp->is_excluded() or $load_all) {
+                    $keep = (!$db_trp->is_excluded() or $load_all);
+                    if ($mapped and $keep) {
                         $this->add_obj($db_trp);
                         $result = true;
                         // fill verb
                         $db_trp->set_verb_id($db_row[verb_db::FLD_ID]);
-                        // fill from
+                        // fill from, which is null for a valid triple e.g. if a symbol is assigned to a triple
                         $db_trp->set_fob(new phrase($this->get_user()));
-                        $db_trp->fob()->row_mapper_sandbox($db_row, $msg, triple_fields::FLD_FROM, '1');
+                        if ($db_row[triple_fields::FLD_FROM] != 0) {
+                            $db_trp->fob()->row_mapper_sandbox($db_row, $row_msg, triple_fields::FLD_FROM, '1');
+                        }
                         // fill to
                         $db_trp->set_tob(new phrase($this->get_user()));
-                        $db_trp->tob()->row_mapper_sandbox($db_row, $msg, triple_fields::FLD_TO, '2');
+                        $db_trp->tob()->row_mapper_sandbox($db_row, $row_msg, triple_fields::FLD_TO, '2');
                         $trp = $this->get($db_trp->id());
                         if ($trp == null) {
                             $this->add_obj($db_trp);
                         } else {
                             $trp->fill($db_trp, $this->get_user());
                         }
-                    } else {
+                    } elseif ($mapped) {
                         log_info($db_trp->dsp_id() . ' is excluded');
                     }
+                    $msg->merge($row_msg);
                 }
             }
         }

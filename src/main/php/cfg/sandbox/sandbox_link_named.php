@@ -146,8 +146,8 @@ class sandbox_link_named extends sandbox_link
         string       $type_fld = ''
     ): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
+        if ($result) {
             if (array_key_exists($name_fld, $db_row)) {
                 if ($db_row[$name_fld] != null) {
                     $this->set_name($db_row[$name_fld]);

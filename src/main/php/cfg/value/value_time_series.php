@@ -162,6 +162,22 @@ class value_time_series extends sandbox_value
         $this->source = null;
     }
 
+
+    /*
+     * set and get
+     */
+
+    /**
+     * a time series has no single value, because its numbers are the data rows (value_ts_data),
+     * so the header row has no value field to compare or to write (see sandbox_value::db_fields_changed)
+     * @return null always
+     */
+    function get_value(): null
+    {
+        return null;
+    }
+
+
     /*
      * database load functions that reads the object from the database
      */
@@ -413,16 +429,11 @@ class value_time_series extends sandbox_value
                 $this->set_owner_id($std_rec->owner_id());
             }
 
-            // check if the id parameters are supposed to be changed
-            // TODO Prio 2 review
-            //$this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
-
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            // TODO Prio 2 add function based db saving
             if ($msg->is_ok()) {
-                // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                // the standard row if the user is the owner and no other user has adjusted the time series, else the user row
+                $this->save_changes($db_con, $db_rec, $std_rec, $msg);
             }
 
         }

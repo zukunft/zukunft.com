@@ -180,7 +180,12 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                // a delete by name gets its id from the name (see frontend::action_crud)
+                $is_del_by_name = (($url_array[url_var::ACTION] ?? '') == url_var::CRUD_DELETE
+                    and ($url_array[url_var::NAME] ?? '') != '');
+                if (!$is_del_by_name) {
+                    $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                }
             }
         }
         return $msg;
@@ -1237,29 +1242,6 @@ class db_object extends TextIdObject
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('protection_type_selector');
-    }
-
-    /**
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use country to narrow the selection
-     * @return string with the HTML code to show the phrase selector
-     */
-    public function phrase_selector_old(
-        string     $name,
-        string     $form,
-        string     $label = '',
-        string     $col_class = '',
-        int        $selected = 0,
-        string     $pattern = '',
-        ?phrase_ui $phr = null
-    ): string
-    {
-        return $this->selector_not_defined('phrase_selector_old');
     }
 
     /**

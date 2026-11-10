@@ -36,7 +36,7 @@ job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_hig
 language: $dbo, $dbo_ui, $lan_by_id, $lan_no_name, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_min, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_split, $phr_sym, $phr_sys_cfg, $phr_tbl, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
-ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $std_rec, $std_ref, $type, $usr_ref, $wd_ref
+ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $std_ref, $type, $usr_ref, $wd_ref, $wp_ref
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_chk, $src_db, $src_filled, $src_map, $src_no_url, $src_other, $src_plain, $src_std, $src_tab, $src_ui, $src_unused, $src_usr, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
@@ -45,21 +45,21 @@ system_time: $long_tim, $new, $short_tim, $sys_exe, $sys_tim_ui
 system_time_list: $answer_times, $lst, $refused_times, $result, $tim_lst, $times
 system_time_type_list: $sys_tim_typ_csv
 term: $frm, $msk, $result, $term, $trm_by_obj_id, $trm_case, $trm_dsp, $trm_map, $trm_other, $trm_start, $trm_wrd, $trm_zero, $trp, $vrb, $wrd
-triple: $bare_trp_ui, $base, $be, $cfg_trp, $colour, $db_trp, $dbo, $dbo_ui, $effort, $hint, $kw, $kw_hint, $lbl, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $old, $operand, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $sol, $std, $tbl_phr, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_code, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_left, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_std, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_usr2, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
+triple: $bare_trp_ui, $base, $be, $cfg_trp, $colour, $db_trp, $dbo, $dbo_ui, $effort, $hint, $kw, $kw_hint, $lbl, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $old, $operand, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $sol, $std, $tbl_phr, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_code, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_left, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_ok, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_std, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_usr2, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
 user: $adm_usr_ui, $cfm_usr, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $edit_usr, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_owner, $new_usr, $new_usr_ui, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sgn_usr, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_ip, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sgn_key, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_log_sum: $new, $sum, $sum_ui
 user_log_sum_list: $lst, $result, $sum_lst
-user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $all_msg, $anon_msg, $answer_msg, $api_msg, $base_msg, $be_msg, $cac_msg, $cache_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $colour_msg, $conv_msg, $db_msg, $del_msg, $done_msg, $dsp_msg, $elm_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fill_msg, $fld_msg, $font_msg, $form_msg, $frm_msg, $frm_usr_msg, $from_msg, $func_msg, $get_msg, $imp_msg, $info_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lim_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_be, $msg_chk, $msg_code, $msg_del, $msg_dev, $msg_err, $msg_exp, $msg_fail, $msg_imp, $msg_ins, $msg_ip, $msg_lnk, $msg_load, $msg_login, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_nok, $msg_ok, $msg_reload, $msg_same, $msg_signup_ui, $msg_stale, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $no_id_msg, $no_usr_msg, $nxt_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $page_msg, $phd_msg, $pod_msg, $put_msg, $pw_msg, $rdy_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $row_msg, $save_msg, $saved_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sql_msg, $std_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $typ_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr2_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning
+user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $all_msg, $anon_msg, $answer_msg, $api_msg, $base_msg, $be_msg, $cac_msg, $cache_msg, $cfg_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $cln_msg, $colour_msg, $conv_msg, $db_msg, $del_msg, $done_msg, $dsp_msg, $dto_msg, $elm_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fill_msg, $fld_msg, $font_msg, $form_msg, $frm_msg, $frm_usr_msg, $from_msg, $func_msg, $get_msg, $imp_msg, $info_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lim_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_api, $msg_be, $msg_chk, $msg_code, $msg_del, $msg_dev, $msg_err, $msg_exp, $msg_fail, $msg_imp, $msg_ins, $msg_ip, $msg_lnk, $msg_load, $msg_login, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_nok, $msg_ok, $msg_reload, $msg_same, $msg_signup_ui, $msg_stale, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $no_id_msg, $no_usr_msg, $nxt_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $page_msg, $phd_msg, $phr_msg, $pod_msg, $put_msg, $pw_msg, $rdy_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $row_msg, $save_msg, $saved_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sql_msg, $std_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $typ_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr2_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
-value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $db_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $named_val, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $src_ui, $std, $std_val, $std_val_missing, $val_added, $val_api, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_chk, $val_city, $val_city_ui, $val_db, $val_del, $val_grp, $val_id, $val_imported, $val_named, $val_no_src, $val_phr, $val_pi, $val_plain, $val_protected, $val_req, $val_tab, $val_ui, $val_ui_map, $val_unnamed, $val_upd, $val_usr2, $wrd_val
+value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chg_val, $chk_val, $db_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $named_val, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $src_ui, $std, $std_val, $std_val_missing, $val_added, $val_api, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_chk, $val_city, $val_city_ui, $val_db, $val_del, $val_grp, $val_id, $val_imported, $val_named, $val_no_src, $val_phr, $val_pi, $val_plain, $val_protected, $val_req, $val_tab, $val_ui, $val_ui_map, $val_unnamed, $val_upd, $val_usr2, $wrd_val
 verb: $dbo, $dbo_ui, $obj, $result, $vrb_alias, $vrb_empty, $vrb_filled, $vrb_id, $vrb_is, $vrb_map, $vrb_time_step, $vrb_unused
 view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_calc, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_line, $msk_map, $msk_new, $msk_no_ovr, $msk_old, $msk_owned, $msk_plain, $msk_posted, $msk_reloaded, $msk_renamed, $msk_tab, $msk_terms, $msk_uc, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $single_word, $trp_view, $view_obj, $wrd_view
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_map, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new, $new_word, $no_desc, $obj, $old, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_views, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new, $new_word, $no_desc, $obj, $old, $par_wrd, $result, $row_wrd, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_frm, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_ok, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_views, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -89,8 +89,8 @@ calculator: $btn_calc, $calc, $calc_base, $calc_be, $calc_empty, $calc_in, $calc
 calculator_definition_report: $def_rpt
 calculator_report: $rpt
 change_action: $act, $typ
-change_field: $fld, $typ
-change_field_list: $cng_fld_cac
+change_field: $fld, $tbl, $typ, $type
+change_field_list: $cac_fld_lst, $cng_fld_cac, $cng_fld_lst
 change_link: $chg, $log, $log_empty
 change_link_validation: $lnk_chk
 change_log_link_list: $cl_lst, $link_lst, $log_link_ui, $lst
@@ -103,7 +103,7 @@ change_values_geo_big: $chg, $log
 change_values_geo_norm: $chg, $log
 change_values_geo_prime: $chg, $log
 change_values_norm: $chg, $log, $log_named
-change_values_prime: $chg, $log, $log_named
+change_values_prime: $chg, $chg_usr_val, $chg_val, $log, $log_named
 change_values_text_big: $chg, $log
 change_values_text_norm: $chg, $log
 change_values_text_prime: $chg, $log
@@ -207,7 +207,7 @@ sql_par: $qp, $qp_log, $qp_tbl
 sql_par_field_list: $fvt_insert_list, $fvt_lst, $fvt_lst_log, $fvt_lst_out, $fvt_lst_write, $fvt_split_list, $lst, $par_fld_lst, $par_lst_out, $result, $update_fvt_lst
 sql_par_list: $par_lst, $result, $sql_list
 sql_sync_sequences: $sql_seq
-sql_type_list: $par_lst, $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_typ
+sql_type_list: $log_lst, $par_lst, $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_typ
 sql_where: $pwh, $whr
 sql_where_list: $whr_lst
 sys_log_function: $fnc, $log_fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
@@ -278,7 +278,7 @@ user_list: $result, $row_lst, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log_ui
 user_official_type: $usr_idt
 user_profile: $usr_prf
-user_request: $req
+user_request: $del_req, $req
 user_status: $usr_sta
 user_type: $usr_typ
 value_geo: $obj_to_add, $result, $val
@@ -286,7 +286,7 @@ value_list: $add_lst, $all_lst, $db_lst, $desc_lst, $empty_keep_lst, $empty_lst,
 value_list_dsp: $val_lst
 value_text: $obj_to_add, $result, $val
 value_time: $obj_to_add, $result, $val
-value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts
+value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts, $vts_db, $vts_excl
 value_ts_data: $ts
 value_type_list: $val_typ_lst
 verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $lst_one, $vrb_lst, $vrb_lst_ui
