@@ -213,6 +213,7 @@ class change_log_link_list extends list_db_read
      *
      * @param sql_par $qp the sql statement to load the link changes
      * @param user $usr the user who wants to see the changes
+     * @param user_message $msg to report a missing query, a failed read and the mapping problems of the rows
      * @param bool $use_from true to show the from side of the link instead of the to side (e.g. for components)
      * @return bool true if at least one link change has been loaded
      */

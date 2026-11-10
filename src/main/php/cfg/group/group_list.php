@@ -474,7 +474,17 @@ class group_list extends sandbox_list_named
         return [];
     }
 
-    // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
+    /**
+     * combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
+     *
+     * @param string $type 'value' or 'formula result' to select the values or the results
+     * @param phrase_list $frm_linked the phrases that the formula is assigned to
+     * @param phrase_list $frm_used the phrases that the formula uses
+     * @param phrase_list $phr_frm the phrase of the formula name, removed from the selected groups to avoid loops
+     * @param phrase_list|null $phr_lst_res the result phrases of the formula, removed like the formula phrase if set
+     * @param user_message $msg to report the missing parameters and that the selection is not implemented
+     * @return int the number of added groups
+     */
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res, user_message $msg): int
     {
         $lib = new library();

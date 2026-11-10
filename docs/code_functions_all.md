@@ -5761,15 +5761,20 @@
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each
-        \-- group_list - get the value or formula result groups that contain at least one phrase of each of two lists
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_val_special
-        \-- group_list - get the value or formula result groups that contain at least one phrase of each of two lists
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_res_with_one_phr_each
-        \-- group_list - get the value or formula result groups that contain at least one phrase of each of two lists
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- get_by_res_special
-        \-- group_list - get the value or formula result groups that contain at least one phrase of each of two lists
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
     \-- remove_wrd_lst
-        \-- group_list - get the value or formula result groups that contain at least one phrase of each of two lists
+        \-- group_list - combined code to add values assigned by a word or a predefined formula like "this",
+                 "prior" or "next"
 \-- get
     \-- is_ok
         \-- sql_message - @return bool true if user does not need to be informed

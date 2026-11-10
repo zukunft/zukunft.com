@@ -6,15 +6,6 @@ Rule 5 of docs/llm/coding.md: every write is one named prepared statement with i
 sql creator and covered by a fixture in `src/test/resources/db/<class>/` and a unit test. Do one step per commit,
 in this order, and ask the developer to run the unit and write tests after each step.
 
-### step 3: replace sql_db::get_old by named prepared statements
-
-`get_old` runs a raw sql text. Its callers each get a `load_sql_*` builder with a fixture and use `get()`:
-`cfg/value/value_list.php`, `cfg/group/group_list.php`, `cfg/result/result.php`,
-`cfg/log/change_log_link_list.php` and `web/value/value.php` (the frontend reads through the api instead).
-Then remove `sql_db::get_old`.
-
-**full test run with /test/test.php**
-
 ### step 4: remove sql_creator::where_old
 
 `where()` falls back to `where_old` if no parameter has been added with `add_where_par`. Log the builders that
