@@ -613,9 +613,8 @@ url parameters of the calling page as `array $url_arr` and derives the `9`-prefi
 from it (`html_base::url_back` / `url_with_back` / `back_url_array`), the transitional bridge
 `url_arr_from_back` and the `back_trace` class are deleted, and
 `coding_rule_tests::php_web_no_back_param_tests` keeps `$back` and the literal `&back=` out
-of `web/`. a repo wide check finds no `$back` in `web/` and none in a live test any more;
-what is left sits in the backend and in commented out test code (see the last item).
-what the conversion found and left open:
+of `web/`. a repo wide check finds no `$back` in the code and no `&back=` except the sample
+text of the `str_diff` test (`unit/lib_tests.php`). what the conversion found and left open:
 
 - check on the pages what the first working back links do: the cancel link of a form and
   `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
@@ -664,30 +663,12 @@ what the conversion found and left open:
   functions are not tested and `formula_list::display_old` still calls `dsp_result` (exists
   nowhere) and `btn_del` on the backend object `dsp_obj_old()` - decide whether the three
   are rebuilt on the frontend objects or removed
-- `value::dsp_edit` calls `dsp_time_selector`, `dsp_share` and `dsp_protection`, which name
-  functions that exist nowhere in the frontend, so the mask is dead code until they are
-  written - decide whether the value mask is rebuilt on the form components or `dsp_edit` is
-  removed, together with the backend `dsp_time_selector` of the last item
+- `value::dsp_edit` calls `dsp_share` and `dsp_protection`, which name functions that exist
+  nowhere in the frontend, so the legacy pages `http_old/value_edit.php` and `value_add.php`
+  end in an uncaught fatal - decide whether the value mask is rebuilt on the form components
+  or `dsp_edit` is removed
 - `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
   coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
-- the `$back` left outside `web/` after the conversion, all of it unreachable today:
-  - `cfg/phrase/phrase.php::dsp_time_selector($type, $form, $pos, $back, $msg)` is display
-    code in the backend that calls a `word::dsp_time_selector` existing in neither layer,
-    and its only callers are the equally missing frontend `phrase::dsp_time_selector` calls
-    of `value::dsp_edit` - it carries a `TODO Prio 1 review`, so decide it together with the
-    value mask above (move to the frontend with the url array or delete)
-  - the write only properties `cfg/system/sys_log_list.php::$back` and
-    `cfg/formula/formula_list.php::$back` ("the calling stack"): nothing reads them,
-    `formula_write_tests` ~663 is the only line that writes one - delete both with the write
-    or give them a reader
-  - the TODO of `cfg/word/word_list.php` (~10) "check the consistence usage of the parameter
-    $back" describes a parameter that no longer exists - drop the line when the file is
-    touched
-  - commented out test code still calls the retired `http/value_add.php` / `value_edit.php` /
-    `value_del.php` / `formula_add.php` endpoints with `?back=` (`value_ui_tests` ~296-319,
-    `formula_ui_tests` ~386-398, `test_word_display` ~174, `formula_write_tests` ~377-406,
-    `view_write_tests` ~107) and `base_ui_tests` ~558 keeps a `?words=1` target whose assert
-    is commented out - delete these blocks or rebuild them on the current views
 
 ## start page
 
@@ -1050,8 +1031,6 @@ each is a small standalone commit):
 - `web/user/user.php::dsp_errors` has no caller and would fatal if it got one: `$err_lst` is the
   **frontend** `sys_log_list`, which has `load_by_user()` but no `load()`; the page it once served
   is the user view rework further down in this file, so delete it there instead of repairing it
-  (only its `string $back` became `array $url_arr` so that the back url rule of
-  `coding_rule_tests` passes; the missing `load()` is untouched)
 - in `test_lib::ui_test_cache` the `$base_msg` of the base view import is also handed to
   `list_all_ui`, so its name no longer says what it collects - split it when that function is
   touched again; the two test runners also name the same web class differently
@@ -1536,6 +1515,8 @@ save the source of a value as the new default source of the user: the old contro
 the legacy controller http_old/value_edit.php has been replaced by the value_edit view called via /http/view.php?m=19 (views::VALUE_EDIT_ID), which the 'change value' button already uses (web/value/value.php::VIEW_EDIT_ID). The new form has the same fields as the value add view (value, description, source, value type, view style, default view, share and protection type) and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of the value tests (and in the meanwhile deleted dead class web/user/user_display_old.php). The missing parts are the same as for the value add view plus the check of an empty value.
 
 show and change the phrases of a value in the value edit view (m=19): the old controller loaded the value by id including its phrases and let the user add or remove a phrase ('phrase1', 'phrase2', ... with the matching 'type1', 'type2', ...), showing the form again after each change. The new view has only the free text field url_var::GROUP_NAME ('gn'), which is even empty in the rendered page, so the phrases of a value can neither be seen nor changed. Solve it together with the phrase selector of the value add view (see the section above)
+
+select the time of a value in the value edit view (m=19), which the old controller offered as a time selector next to the phrases: the default selection follows the time phrase of the value, e.g. for Q1 as the first quarter of a year the four quarters of that year, for the triple "Q1 of 2018" the triples of this year, and for a Q1 that is a wikidata qualifier a general time selector. Solve it together with the phrases of the value (see above)
 
 add web/value/value.php::input_valid, which does not exist today, so an empty number is saved without any warning: the old controller answered an empty value with 'An empty number should not be saved. Please delete/exclude the value instead.' and used the value from the database as a fallback if only the phrases had been changed. Add both, with a negative test for the empty value
 

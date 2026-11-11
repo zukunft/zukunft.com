@@ -1397,9 +1397,10 @@ class base_ui_tests
         $t->assert(", btn_yesno", $result, $target);
 
         $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
-        $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
+        // without the url of a calling page the back button leads to the start page
+        $target = '<a href="' . api::MAIN_SCRIPT . '" title="back"><img src="' . button::IMG_BACK . '" alt="back"></a>';
         $result = (new button($url, $url_arr))->back();
-        //$t->assert(", btn_back", $result, $target);
+        $t->assert(", btn_back", $result, $target);
 
         $t->subheader($ts . 'xss escaping');
         // a user-settable name is escaped at the display sink so a crafted name cannot inject script

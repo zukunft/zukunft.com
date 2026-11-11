@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1630 of 6479 public functions have at least 2 unit test calls; the 4638 functions below do not; the 211 functions of the last section are called nowhere
+1630 of 6478 public functions have at least 2 unit test calls; the 4637 functions below do not; the 211 functions of the last section are called nowhere
 
-## 1914 functions of main backend have no test at all
+## 1913 functions of main backend have no test at all
 
 ```
 \-- application
@@ -661,7 +661,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- all_related - 0 unit test calls
     \-- code_id - 0 unit test calls shared by 3 classes
     \-- db_ready - 0 unit test calls shared by 12 classes
-    \-- dsp_time_selector - 0 unit test calls
     \-- formula_selection - 0 unit test calls
     \-- from_empty - 0 unit test calls shared by 2 classes
     \-- get_or_add - 0 unit test calls

@@ -48,14 +48,12 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -105,27 +103,6 @@ class view_write_tests
             $target = $result;
         }
         $t->assert($test_name, $result, $target);
-
-        // test the complete view for one word
-        $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::CH, $msg);
-        //$result = $msk->display($wrd, $back);
-        // check if the view contains the word name
-        $target = words::CH;
-        // TODO Prio 2 review and activate
-        //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
-        // check if the view contains at least one value
-        $target = 'back=' . $wrd->id() . '">8.67</a>';
-        /* TODO Prio 2 fix the result display
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
-        // check if the view contains at least the main formulas
-        $target = 'System Test Word Increase';
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
-        */
-        /* TODO Prio 2 fix the result loading
-        $target = 'back='.$wrd->id.'">0.75%</a>';
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
-        */
 
         $test_name = 'add view with the name ' . views::TEST_ADD_NAME;
         $msk = new view($t->usr1);

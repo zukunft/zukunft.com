@@ -70,6 +70,7 @@ include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'ref_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'login_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_by_id_write_tests.php';
@@ -186,6 +187,7 @@ use Zukunft\ZukunftCom\test\php\unit_ui\result_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\word_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\login_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\ref_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\ref_write_url_tests;
@@ -321,26 +323,22 @@ class a_selected_test extends all_unit_tests
         //new horizontal_tests()->run($this);
         //new permission_tests()->run($this);
         //new system_view_ui_tests()->run($this);
-        // assert_sql_update_user takes a sandbox_multi too, so check that it still works for a word
-        new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
+        //new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
         //new word_list_tests()->run($this);
         //new verb_tests()->run($this);
         //new triple_tests()->run($this);
         //new triple_list_tests()->run($this);
         //new phrase_tests()->run($this);
         //new phrase_list_tests()->run($this);
-        // the group save uses sandbox_multi::save_changes
-        new group_tests()->run($this);
+        //new group_tests()->run($this);
         //new group_list_tests()->run($this);
         //new term_tests()->run($this);
         //new term_list_tests()->run($this);
         //new source_tests()->run($this);
         //new source_list_tests()->run($this);
         //new ref_tests()->run($this);
-        // the frozen summary of the Geneva page
-        new wikipedia_tests()->run($this);
-        // the user row builders of sandbox_multi for the value and the time series tables
-        new value_tests()->run($this);
+        //new wikipedia_tests()->run($this);
+        //new value_tests()->run($this);
         //new value_list_tests()->run($this);
         //new formula_tests()->run($this);
         //new formula_calc_tests()->run($this);
@@ -349,8 +347,7 @@ class a_selected_test extends all_unit_tests
         //new element_tests()->run($this);
         //new element_list_tests()->run($this);
         //new expression_tests()->run($this);
-        // the user row builders of sandbox_multi for the result tables
-        new result_tests()->run($this);
+        //new result_tests()->run($this);
         //new result_list_tests()->run($this);
         //new figure_tests()->run($this);
         //new figure_list_tests()->run($this);
@@ -612,7 +609,7 @@ class a_selected_test extends all_unit_tests
              */
 
             // the html ui tests in the order of all_ui_tests::run
-            //new base_ui_tests()->run($this);
+            new base_ui_tests()->run($this);
             //new user_ui_tests()->run($this);
             //new horizontal_ui_tests()->run($this, $ui);
             //new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
@@ -624,7 +621,7 @@ class a_selected_test extends all_unit_tests
             //new phrase_ui_tests()->run($this);
             //new phrase_list_ui_tests()->run($this);
             //new source_ui_tests()->run($this);
-            new reference_ui_tests()->run($this);
+            //new reference_ui_tests()->run($this);
             //new reference_list_ui_tests()->run($this);
             //new group_ui_tests()->run($this);
             //new value_ui_tests()->run($this);
@@ -670,19 +667,18 @@ class a_selected_test extends all_unit_tests
             //new source_url_tests()->run($this);
             //new view_url_tests()->run($this);
             //new component_url_tests()->run($this);
-            new ref_url_tests()->run($this);
+            //new ref_url_tests()->run($this);
             //new value_url_tests()->run($this);
             //new signup_url_tests()->run($this);
-            //new login_url_tests()->run($this);
+            new login_url_tests()->run($this);
             //new word_write_url_tests()->run($this);
             //new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
             //new source_write_url_tests()->run($this);
             //new view_write_url_tests()->run($this);
             //new component_write_url_tests()->run($this);
-            new ref_write_url_tests()->run($this);
-            // the value writes of the url workflows go through sandbox_multi::save_changes
-            new value_write_url_tests()->run($this);
+            //new ref_write_url_tests()->run($this);
+            //new value_write_url_tests()->run($this);
             //new signup_write_url_tests()->run($this);
             //new login_write_url_tests()->run($this);
 
@@ -694,24 +690,17 @@ class a_selected_test extends all_unit_tests
             //$this->cleanup_objects_ex_user();
 
             // run the selected db write tests
-            // the change and delete of a value given only by its id, as the update put does it
-            // the change and the exclusion of a value given only by its id write the user row
-            new value_by_id_write_tests()->run($this);
-            // the triple description change of the calculator editor and its undo
+            //new value_by_id_write_tests()->run($this);
             //new update_put_write_tests()->run_use_case($this);
-            // the messages of the calculator editor on the Swiss NPP vote and the PV lifetime balance and their undo,
-            // which change and remove values as a user who does not own them
-            new update_put_write_tests()->run_npp_vote($this);
+            //new update_put_write_tests()->run_npp_vote($this);
             //new update_put_write_tests()->run_notes_and_sources($this);
-            new update_put_write_tests()->run_scenarios($this);
+            //new update_put_write_tests()->run_scenarios($this);
             //new update_put_write_tests()->run_npp_links($this);
             // the test entries for the write tests like in test.php (all_unit_write_tests)
             $t_db->create_test_db_entries($this);
             //new word_write_tests()->run($this);
             //new triple_write_tests()->run($this);
-            // reads the test values of create_test_values on seed words e.g. the inhabitants of the canton Zurich
-            // and its cleanup loads the value link changes with the link change list
-            new value_write_tests()->run($this);
+            //new value_write_tests()->run($this);
             //new formula_write_tests()->run($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
@@ -740,8 +729,7 @@ class a_selected_test extends all_unit_tests
             //new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
-            // the group save uses sandbox_multi::save_changes
-            new group_write_tests()->run($this);
+            //new group_write_tests()->run($this);
             //new group_list_write_tests()->run($t);
             //new graph_tests()->run($t);
             //new term_write_tests()->run($t);
@@ -751,10 +739,10 @@ class a_selected_test extends all_unit_tests
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
-            //new element_write_tests()->run($this);
+            new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             //new element_group_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
+            new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);
@@ -763,7 +751,7 @@ class a_selected_test extends all_unit_tests
             //new result_write_tests()->run_list($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
-            //new view_write_tests()->run($this);
+            new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
