@@ -123,6 +123,7 @@ use Zukunft\ZukunftCom\test\php\unit\formula_tests;
 use Zukunft\ZukunftCom\test\php\unit\formula_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_tests;
+use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit\job_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_tests;
@@ -330,7 +331,7 @@ class a_selected_test extends all_unit_tests
         //new triple_list_tests()->run($this);
         //new phrase_tests()->run($this);
         //new phrase_list_tests()->run($this);
-        //new group_tests()->run($this);
+        new group_tests()->run($this);
         //new group_list_tests()->run($this);
         //new term_tests()->run($this);
         //new term_list_tests()->run($this);
@@ -338,7 +339,7 @@ class a_selected_test extends all_unit_tests
         //new source_list_tests()->run($this);
         //new ref_tests()->run($this);
         //new wikipedia_tests()->run($this);
-        //new value_tests()->run($this);
+        new value_tests()->run($this);
         //new value_list_tests()->run($this);
         //new formula_tests()->run($this);
         //new formula_calc_tests()->run($this);
@@ -347,7 +348,7 @@ class a_selected_test extends all_unit_tests
         //new element_tests()->run($this);
         //new element_list_tests()->run($this);
         //new expression_tests()->run($this);
-        //new result_tests()->run($this);
+        new result_tests()->run($this);
         //new result_list_tests()->run($this);
         //new figure_tests()->run($this);
         //new figure_list_tests()->run($this);
@@ -358,7 +359,7 @@ class a_selected_test extends all_unit_tests
         //new component_list_tests()->run($this);
         //new component_link_tests()->run($this);
         //new component_link_list_tests()->run($this);
-        //new import_tests()->run($this);
+        new import_tests()->run($this);
         //new wikidata_tests()->run($this);
         //new db_setup_tests()->run($this);
         //new api_tests()->run_openapi_test($this);
@@ -609,7 +610,7 @@ class a_selected_test extends all_unit_tests
              */
 
             // the html ui tests in the order of all_ui_tests::run
-            new base_ui_tests()->run($this);
+            //new base_ui_tests()->run($this);
             //new user_ui_tests()->run($this);
             //new horizontal_ui_tests()->run($this, $ui);
             //new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
@@ -670,7 +671,7 @@ class a_selected_test extends all_unit_tests
             //new ref_url_tests()->run($this);
             //new value_url_tests()->run($this);
             //new signup_url_tests()->run($this);
-            new login_url_tests()->run($this);
+            //new login_url_tests()->run($this);
             //new word_write_url_tests()->run($this);
             //new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
@@ -739,10 +740,10 @@ class a_selected_test extends all_unit_tests
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
-            new element_write_tests()->run($this);
+            //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             //new element_group_write_tests()->run($this);
-            new formula_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);
@@ -751,7 +752,7 @@ class a_selected_test extends all_unit_tests
             //new result_write_tests()->run_list($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
-            new view_write_tests()->run($this);
+            //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);

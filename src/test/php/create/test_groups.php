@@ -250,6 +250,17 @@ class test_groups extends test_objects
     }
 
     /**
+     * @return group of four prime phrases with the word mathematics (id 1), so that its key is a 64-bit
+     *         integer: a group of four is prime only with a positive id of at most group_id::FIRST_SLOT_MAX
+     */
+    function group_prime_4(): group
+    {
+        $t_phr = new test_phrases($this->env);
+        $lst = $t_phr->phrase_list_prime();
+        return $lst->get_grp_id(false);
+    }
+
+    /**
      * @return group with the max number of main phrases
      */
     function group_main_max(): group

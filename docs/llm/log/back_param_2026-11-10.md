@@ -64,7 +64,19 @@ Written after the unexpected changes are known.
 
 ## Lessons learned by llm
 
-Written after the unexpected changes are known.
+1. A prompt that lists every place with its reason makes the plan a check instead of a search: each place was
+   verified once (e.g. the docblock of `html_base.php`, listed at 1430, stood at 1396 after a commit of the same
+   day), and removed dead code changes nothing that a test or a snapshot shows, so both made the change smooth.
+2. A call that is removed because its function does not exist is checked together with the other calls of the
+   same function: the time selector of `value::dsp_edit` went, but `dsp_edit` still calls `dsp_share` and
+   `dsp_protection`, which do not exist either, so the legacy value pages keep their fatal; the plan had said that
+   the removal ends it.
+3. "Commented out tests" is no single case: each block is checked against the code before it is deleted; a test
+   of a function that still exists keeps its reactivation TODO and loses only its old target (`btn_edit`), an old
+   target above its active successor goes as a single line, and only the tests of functions that exist nowhere go
+   with their setup lines and their imports.
+4. A comment of a removed function that describes a design is moved to the pending task of the feature (the
+   default selection of the time selector to `### value edit view`), so that removing dead code loses no idea.
 
 ## Lessons learned by human
 

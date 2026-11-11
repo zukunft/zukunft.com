@@ -803,8 +803,12 @@ class value_tests
         $val_3 = $t_val->value_prime_3();
         $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
         $db_val_3_share = $t_val->value_shared($val_3);
-        $val_4 = $t_val->value_prime_max();
+        $val_4 = $t_val->value_prime_4();
         $db_val_4 = $val_4->cloned(values::SAMPLE_FLOAT);
+        $test_name = 'a value of four phrases with an id of at most 31 is saved in the prime table';
+        $t->assert_true($test_name, $val_4->is_prime());
+        $test_name = '... but not without such an id, e.g. Zurich, inhabitants, 2019 and million';
+        $t->assert_false($test_name, $t_val->value_prime_max()->is_prime());
         $val_main = $t_val->value_main();
         $db_val_main_share = $t_val->value_shared($val_3);
         $val_16 = $t_val->value_16();

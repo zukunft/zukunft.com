@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
