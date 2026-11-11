@@ -37,8 +37,8 @@ SELECT value_prime_p4_update_log_0210000
         283::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
-        64177205233451143::bigint,
-        228::smallint,
-        212::smallint,
-        158::smallint,
-        135::smallint);
+        281485714227205::bigint,
+        2::smallint,
+        1::smallint,
+        -1::smallint,
+        -5::smallint);

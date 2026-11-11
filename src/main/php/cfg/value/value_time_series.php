@@ -368,7 +368,8 @@ class value_time_series extends sandbox_value
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), false, true);
 
-        if ($this->id() > 0) {
+        // the id is the group id, an integer or a text key, so it is never compared with a number
+        if ($this->is_id_set()) {
             // create an empty db_rec element to force saving of all set fields
             $db_vts = new value_time_series($this->get_user());
             //$db_vts->id = $this->id();
@@ -401,17 +402,18 @@ class value_time_series extends sandbox_value
         $db_con->set_class(value_time_series::class);
         $db_con->set_usr($this->get_user()->id);
 
-        // check if a new time series is supposed to be added
-        if ($this->id() <= 0) {
+        // check if a new time series is supposed to be added; the id is the group id, an integer or a text
+        // key, so it is never compared with a number
+        if (!$this->is_id_set()) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->get_user());
             $db_chk->load_by_grp($this->grp(), $msg);
-            if ($db_chk->id() > 0) {
+            if ($db_chk->is_id_set()) {
                 $this->id = $db_chk->id();
             }
         }
 
-        if ($this->id() <= 0) {
+        if (!$this->is_id_set()) {
             $this->add($msg);
         } else {
             // update a value

@@ -37,7 +37,7 @@ language: $dbo, $dbo_ui, $lan_by_id, $lan_no_name, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_min, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_split, $phr_sym, $phr_sys_cfg, $phr_tbl, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $std_ref, $type, $usr_ref, $wd_ref, $wp_ref
-result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
+result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_added, $res_before, $res_canton, $res_check, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_chk, $src_db, $src_filled, $src_map, $src_no_url, $src_other, $src_plain, $src_std, $src_tab, $src_ui, $src_unused, $src_usr, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $slg_ui, $sys_log
@@ -192,7 +192,7 @@ ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
-result_list: $lst, $old_lst, $once_lst, $res_all_lst, $res_cell_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst, $row_res_lst
+result_list: $lst, $old_lst, $once_lst, $res_all_lst, $res_cell_lst, $res_del_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst, $row_res_lst
 sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst

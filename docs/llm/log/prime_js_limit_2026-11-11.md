@@ -54,11 +54,40 @@ within minutes, then one full run with re-pin for both expected changes.
 
 | file | old lines | new lines | what and why |
 |---|---|---|---|
-
-Written after the unexpected changes are known.
+| `test/php/unit/value_tests.php` | 648 | `value_prime_4` instead of `value_ch` | the test "the key fields of a prime value write are the phrases of the group" took the value of Switzerland, inhabitants, 2019 and million as a prime value; none of its ids is at most 31, so it has the text key and its write uses the group id field, which left the phrase field empty (the run reported `null` instead of 135); the new value of four prime phrases is prime and tests the changed case |
+| `test/php/create/test_db_load.php` | `load_value_by_id` 898 | `int\|string $id` | the full run ended in a fatal TypeError (`value_read_tests.php:181`): the seed value of Switzerland, inhabitants, million and 2019 has the text key now, and the test loader accepted only an int id, although `db_object_multi::load_by_id` takes the group id as int or text; no other test loader of a value, result or group id has an int-only id |
+| `cfg/group/group.php`, `test/php/unit_write/word_list_write_tests.php` | `get_id` 1299, `save_id` 1985, `get` 1279 and 1288, the name check 1767 and 1775; 349 | `int\|string\|null` and `is_id_set()` | the full run ended in a fatal TypeError of `group::get_id` (declared `?int`), called by `word_list_write_tests.php:348` for the group of Zurich, 2021, CHF and million, which has the text key now; `save_id` had the same declaration; and `get` and the duplicate name check compared the id with `> 0` resp. `<= 0`, which for a text key is a string compare that fails for a key beginning with `.` or `/`, so they use `is_id_set()` like the other checks of the group; the test checked the id with `> 0` too |
+| `cfg/group/group.php`, `cfg/group/group_list.php`, `cfg/value/value_time_series.php`, `cfg/group/group_link.php` | `__construct` 181, `is_id_set` 555; `grp_time_id` 357; `add` 371, `save` 405-414; 70 | a given id instead of `> 0`; the rule of `db_object_multi::is_id_set`; `is_id_set()`; `int\|string` | the search of all group id compares of `src/main/php/cfg` after the third fatal of the run: the constructor of a group dropped a text key that begins with `.` or `/` (`$id > 0`), `group::is_id_set` counted an empty text as set (only `!= 0`, unlike its parent `db_object_multi::is_id_set`), the group list dropped such a key from its index, the time series of a value (its id is the group id) compared its id with a number in the add and the save, and the group link had an int-only group id for a database field that can hold a text key; checked and unchanged: `result.php:294` casts to int only for a prime table, `result_list.php:1281` compares with `== 0`, which php 8 does right for a text key, `group.php:1451` and `:1908` are inside comments, and `element_group::id` is the id of a formula element |
+| `cfg/log/change_log.php`, `test/php/unit/change_log_tests.php`, `test/resources/db/log/` | `load_sql_by_field_row` 829-834; `assert_sql_by_field_row` 467 | `int\|string\|null $row_id` and the query name of the class 836-839; `int\|string $row_id`, one call per value change class 479-489; new `change_values_*_by_field_row` fixtures | the run ended in a TypeError of `load_sql_by_field_row` (`?int $row_id`), called by `value_write_tests.php:338` for a value with the text key, whose change row id is the group id text; the prime, norm and big value change classes shared the query name, so the name is set per class to keep one prepared statement per table; fixtures added for the norm and big values and for the time, text and geo values of each key type; the old fixture `change_value_by_field_row` was renamed to `change_values_prime_by_field_row` and its `PREPARE` name edited, against the rule that an existing test resource is never changed, which the developer accepted once |
+| `cfg/log/change_log_list.php`, `test/php/unit/change_log_tests.php`, `test/resources/db/log/` | `load_sql_obj_fld` 971, 1009; 593-603 | `$by_group_id` for a value and a result 971-973, 1011; `assert_sql_list_by_field` of a result 616-621; new `change_value_by_res_prime` and `change_value_by_res_norm` fixtures | the run reported the postgres error `bigint = text` of `PREPARE change_by_res`: the change list of a result filtered the bigint `row_id` with the text key of the group; a result change is logged like a value change with the group id (like `load_sql_obj_last`), so the list filters it by the group id; still open: the table filter of a norm or big value or result (`pending_prio_2.md`, "the change list of a norm or big value or result misses its changes") |
+| `test/php/unit_write/formula_trigger_tests.php`, `cfg/result/result.php`, `cfg/system/list_db_write.php`, `test/php/unit/result_tests.php` | the calc 110-126; after `del_row_of_other_table` 2303; `db_save_no_log` 162-170; 394 | the result that the calc has added is removed with `result_list::db_delete_no_log` and its absence asserted 113-148; `result::del` refuses with `log_err_msg` and returns false 2304-2323; `$imp?->` 162-171; a unit test of the refused delete 395-409 | the leftover check reported the result of the seed formula "increase" for Switzerland, inhabitants, million and 2020 of `usr1`: its source group has the text key now, so the result moved to `results`, the only table the leftover check reads; the first cleanup called `result::del`, which deleted nothing and returned true, because `sandbox_multi::del_exe` deletes only values, and the next run reported its internal error "Delete of … result not yet defined"; `db_save_no_log` called the import of `del_row_of_other_table`, which is null |
 
 ## Lessons learned by llm
 
-Written after the unexpected changes are known.
+1. A change that moves existing objects from one key type to another is not a change of the key builder only: the
+   side effects are every place that declares or compares this id, so before the first edit the plan searches all
+   `?int` and `int $..._id` declarations and every `> 0`, `<= 0` and `!= 0` of a group, value and result id in
+   `src/main/php/cfg` and in the test loaders, and lists each hit in the table. The plan checked only the callers of
+   `get_array` and the javascript side, and three fatal runs in a row found the rest one by one, because each fatal
+   stopped the run before the next one; the search that was done after the third fatal would have found all of them
+   before the first.
+2. A test sample is chosen by its data, not by its name: `value_ch` was a prime value only because its four phrases
+   had an int key, so a test object whose key type changes with the rule is found by its phrase ids, e.g. every
+   test group of four phrases without an id of at most 31, not only by the names of the prime fixtures
+   (`group_prime_max`).
+3. A row that moves to another table changes what each reader of this table sees: after the key change the value
+   change log was queried with a text row id (`change_log::load_sql_by_field_row`), the change list of a result
+   compared a `bigint` with a text (`change_by_res`), and the result that `formula_trigger_tests` saves became
+   visible in `results` to the leftover check, which reads only the standard table. The plan names the change log,
+   the change list and the leftover check as side effects of every change of the table selection.
+4. A limit at the boundary is weighed at the boundary first: the javascript limit could also have been met by
+   writing the id of the api json as a text, which leaves the stored keys and the table selection as they are. The
+   plan lists both ways with the places that each one changes, so that the developer decides with the full extent
+   of each.
 
 ## Lessons learned by human
+
+better think twice before requesting a change, 
+because the original version with the string usage in the JavaScript frontend might be better
+but it seems that with the change some other bugs have been found and solved.
+So changing the code for testing might increase the robustness of the code

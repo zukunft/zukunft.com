@@ -826,12 +826,17 @@ class change_log extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
-     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
+     * @param int|string|null $row_id the database id of the row of the changes, for a value the group id which is a string for a norm or big group
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, int|string|null $row_id = null): sql_par
     {
+        $lib = new library();
         $qp = $this->load_sql($sc, 'field_row');
+        // e.g. the prime, norm and big value change classes share the query base name but not the table,
+        // so the name is set from the class to keep one prepared statement name per table
+        $qp->name = $lib->class_to_name($this::class) . sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP . 'field_row';
+        $sc->set_name($qp->name);
         if ($field_id != null) {
             $sc->add_where(change::FLD_FIELD_ID, $field_id);
         }

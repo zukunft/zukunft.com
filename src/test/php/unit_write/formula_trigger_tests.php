@@ -32,10 +32,13 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -107,11 +110,14 @@ class formula_trigger_tests
         $t->assert('value->check best value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
+        // the calc saves the result of the seed formula, which is no seed row, so the test removes it again
+        $res_before = new result($t->usr1);
+        $res_existed = $res_before->load_by_grp($phr_lst2->get_grp_id(), $msg);
         $res_lst = $frm->calc($phr_lst2, $msg);
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $res_ui = new result($res->api_json([api_types::INCL_PHRASES]));
+                $res_ui = new result_ui($res->api_json([api_types::INCL_PHRASES]));
                 $result = trim($res_ui->val_formatted($msg_ui));
             } else {
                 $result = '';
@@ -123,10 +129,23 @@ class formula_trigger_tests
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = '0.75' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
+            $target = '0.75' . result_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         }
         // TODO Prio 0 activate
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+        // a result is derived data without change log, so it is removed like formula::delete_results does
+        // and not by result::del, which deletes only values (see sandbox_multi::del_exe)
+        if (!$res_existed) {
+            $res_added = new result($t->usr1);
+            if ($res_added->load_by_grp($phr_lst2->get_grp_id(), $msg)) {
+                $res_del_lst = new result_list($t->usr1);
+                $res_del_lst->add($res_added);
+                $res_del_lst->db_delete_no_log($msg, new import(), result::class);
+            }
+            $res_check = new result($t->usr1);
+            $test_name = 'the result that the calc of ' . $frm->dsp_id() . ' has added is removed';
+            $t->assert_false($test_name, $res_check->load_by_grp($phr_lst2->get_grp_id(), $msg));
+        }
 
         // TODO Prio 1 remove the previous added numbers
 

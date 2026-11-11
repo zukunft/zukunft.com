@@ -178,7 +178,8 @@ class group extends sandbox_multi
 
         $this->reset();
 
-        if ($id > 0) {
+        // the id is an integer or a text key, so it is checked for being given and not by a number compare
+        if ($id != 0 and $id != '') {
             $this->set_id($id);
         }
         $this->add_phrase_names($prh_names);
@@ -550,15 +551,12 @@ class group extends sandbox_multi
     }
 
     /**
-     * @return bool if the id of the group is valid
+     * @return bool if the id of the group is valid: the 64-bit integer of a prime group or a not empty text key,
+     *              which is never compared with a number (see db_object_multi::is_id_set)
      */
     function is_id_set(): bool
     {
-        if ($this->id() != 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($this->id() != 0 and $this->id() != '');
     }
 
     /**
@@ -1275,8 +1273,9 @@ class group extends sandbox_multi
             $test_load->set_id(1);
         }
 
-        // use the loaded group or create the word group if it is missing
-        if ($test_load->id() > 0) {
+        // use the loaded group or create the word group if it is missing; the id is an integer or a text key,
+        // so the group checks it and not a number compare
+        if ($test_load->is_id_set()) {
             $this->id = $test_load->id();
         } else {
             log_debug('save ' . $this->dsp_id());
@@ -1285,7 +1284,7 @@ class group extends sandbox_multi
         }
 
         // update the database for correct selection references
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
             $result .= $this->generic_name($msg, $do_save); // update the generic name if needed
         }
 
@@ -1294,9 +1293,10 @@ class group extends sandbox_multi
     }
 
     /**
-     * @return int|null the group id generated from the previous set phrase list
+     * @return int|string|null the group id generated from the previous set phrase list: the 64-bit integer of a
+     *                         prime group or the text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
-    function get_id(user_message $msg): ?int
+    function get_id(user_message $msg): int|string|null
     {
         if (!$this->is_id_set()) {
             // if the id has not yet been set, try to create it, but actually this should never happen
@@ -1762,7 +1762,8 @@ class group extends sandbox_multi
         if ($sim == null and $this->name_given() != '') {
             // check with the standard namespace
             if ($db_chk->load_standard_by_name($this->name_given(), $msg)) {
-                if ($db_chk->id() > 0) {
+                // the id is an integer or a text key, so the group checks it and not a number compare
+                if ($db_chk->is_id_set()) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $sim = $db_chk;
                 }
@@ -1770,7 +1771,7 @@ class group extends sandbox_multi
             // check with the user namespace
             $db_chk->set_user($this->get_user());
             if ($db_chk->load_by_name($this->name_given(), $msg)) {
-                if ($db_chk->id() > 0) {
+                if ($db_chk->is_id_set()) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                     $sim = $db_chk;
                 }
@@ -1980,12 +1981,15 @@ class group extends sandbox_multi
 
     /**
      * create a new phrase group
+     * @param user_message $msg to report the problem of the generic name
+     * @return int|string|null the group id: the 64-bit integer of a prime group or the text key
      */
-    private function save_id(user_message $msg): ?int
+    private function save_id(user_message $msg): int|string|null
     {
         log_debug($this->dsp_id());
 
-        if ($this->id() <= 0) {
+        // the id is an integer or a text key, so the group checks it and not a number compare
+        if (!$this->is_id_set()) {
             $this->generic_name($msg);
 
             // write new group

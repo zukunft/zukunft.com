@@ -645,7 +645,7 @@ class value_tests
         $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
         // a prime value is not selected by the group id but by the phrase ids of the group
         $test_name = '... and the key fields of a prime value write are the phrases of the group';
-        $val_prime = $t_val->value_ch();
+        $val_prime = $t_val->value_prime_4();
         $val_prime->id = 0;
         $fvt_lst = $val_prime->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
         $t->assert($test_name, $fvt_lst->get_value($val_prime->id_fields_prime()[0]),

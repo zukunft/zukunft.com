@@ -1,5 +1,69 @@
 # pending prio 2
 
+## recalc jobs update
+
+### value update
+
+if a value is updated a  'value update' job should be started in the backend that collects all results 
+depending on this value and if the number of results is bigger than a threshold of e.g. 256 (a config.yaml value)
+create sub-jobs of which each one updates 256 values
+
+### result update
+
+... suggest a recalc job similar to the value update job 
+
+### formula update
+
+... suggest a recalc job similar to the value update job
+
+### formula add
+
+... suggest a recalc job similar to the value update job
+
+### word delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### triple delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### verb delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### user monitor
+
+if jobs are running triggered by the logged in user show in the navbar user menu an entry 'job status' with 
+the aktive jobs where the jobs with the longest estimated remaining time is on the top 
+
+if the user has only finished jobs show in the navbar user menu an entry 'past jobs' with
+the last finished job on the top
+
+## frontend messages
+
+move the messages in the frontend from the button of the page to the top below the navbar
+
+### suggested code changes
+
+... to be added
+
+## Calculator
+
+if in a calculator view e.g. http://localhost/http/view.php?m=16&id=-3738 save is pressed
+the values are saved in the database and if the database save is confirmed by the backend
+instead of reloading all data from the backend, just show the backend confirmation message
+which is probably already done
+
+### request recalc and compare
+
+with the save a backend job should be started that calculates the values in the backend 
+and refreshes the data cache and the page cache
+if the job is done the frontend should get a message and if the results of the frontend calculation 
+and the backend calculation does not match a error log message with the diff should be added to the log
+and shown to the user.
+
+
 ## test factory inconsistencies
 
 The create classes in `src/test/php/create/` build the test objects with the same function names per class
@@ -2768,3 +2832,57 @@ every word and triple edit page carries a multiple of the source list.
    compare with the '86' value of `url_var::is_ref_row_change` is unchanged.
 2. **Tests:** the snapshot `object_pages/reference_form_rows.html` and the edit view snapshots are regenerated, and
    a ui test checks that the number of source options of the form does not grow with the number of rows.
+
+## the change list of a norm or big value or result misses its changes
+
+`change_log_list::load_sql_obj_fld` filters the changes of a value or result by the change table and field of
+`values` resp. `results` (`change_table_id`), but a norm or big value or result writes its changes with the table
+`values_norm`, `values_big`, `results_norm` or `results_big` (`sandbox_multi::log_norm` and `log_big`), so the
+query finds none of them; and both `load_sql_obj_fld` and `load_sql_obj_last` read only the numeric value change
+tables, never `change_values_time_*`, `change_values_text_*` or `change_values_geo_*`.
+
+1. **Table:** the table filter of a value or result uses the table that the log object of its key type sets, e.g.
+   one named function that returns the change table name of a class and a group id, used by the write and the
+   read, so that both can no longer differ.
+2. **Value type:** the change class of a value is chosen from its value type as well as from its key type, which
+   the list load needs as a parameter, because the group id alone does not say if a value is a number or a text.
+3. **Tests:** a write test reads the change list of a norm value and of a big value and finds the change it has
+   written; the sql fixtures of the changed queries are regenerated.
+
+## the leftover check of the write tests reads only the standard table of a class
+
+`test_db_load::csv_leftover_check` compares the rows of each class of `def::MAIN_CLASSES` after the write tests with
+the rows after the reset, but it reads each class with `sql_creator::sql_all`, which selects only the standard table
+of the class, e.g. `results`, `values` and `groups`. A row that a write test leaves in another table of the same
+class is never reported: the prime, main and big tables of the results, the prime and big tables of the values, the
+time, text and geo value tables of each key type, the prime and big tables of the groups, and the user overlay
+tables, e.g. `user_words` or `user_values`. E.g. the result of the seed formula "increase" that
+`formula_trigger_tests` saved stayed unseen in the main result table until its group got a text key and the result
+moved to `results`.
+
+1. **Tables:** the check reads every table of a class, e.g. one named function per class that lists the tables
+   with their key type and value type, the same list that the reset and the table creation use, so that a new table
+   is checked without a change of the check.
+2. **Report:** a leftover row names its table as well as its class, because the same key can be in several tables.
+3. **Tests:** a unit test checks that the table list of value, result and group contains every table of the
+   database setup of the class; the expected csv files of the added tables are created from the reset database.
+
+## the cleanup of an unnamed test triple fails without a report
+
+`test_db_load::del_triple` returns `true` as soon as it has found the triple, ignores the result of `triple::del`,
+and deletes always as `usr1`, because its message is a new `user_message($this->env->usr1)` and not a
+`clone_reset()` of the given message. It finds the triple by the ids of its two words, which `load_word` loads for the
+user of the message, so it finds nothing once one of the words is excluded for that user, e.g. after a word that a
+triple still uses has been excluded instead of deleted. `test_cleanup::cleanup_unnamed_test_triples` ignores the
+result of each call. E.g. "mathematics (System Test Word Parent)" (math is test parent), which `word_write_tests`
+adds with `add_child`, stays in the database after a write test run that has stopped before the final cleanup, and the
+next run neither removes it nor reports it, until the phrase list api test of the read phase finds the extra triple.
+
+1. **User:** `del_triple` uses a `clone_reset()` of the given message, so that each run of `write_named_cleanup`
+   deletes as its own user, and returns the result of `triple::del` and the state of its message.
+2. **Load:** the triple is found even if one of its words is excluded for the user, e.g. by the standard words or by
+   the generated triple name, and a triple that is not found is no error, because most runs have nothing to remove.
+3. **Report:** `cleanup_unnamed_test_triples` checks each found triple with `assert_true` like the named cleanups
+   above it, so a failed delete names the triple in the test run.
+4. **Tests:** a write test adds the test parent triple, excludes the test parent word for the user and checks that
+   the cleanup removes the triple; `del_triple_by_name` gets the same message and result handling.

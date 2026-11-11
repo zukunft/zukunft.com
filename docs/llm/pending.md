@@ -1,88 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
-### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). A prime group id
-is four slots of 16 bits, each a sign bit and a 15 bit phrase id (`group_id::PRIME_ID_MAX` 32767,
-`cfg/group/id.php::id_lst_to_int` 67, `id_lst_to_bin` 83), filled from the left with empty slots and sorted with
-the highest id first (`group_id::get_id_by_ids`, `group_id.php:110-135`). So the id is at most 2^53 - 1 exactly if
-the first slot is below 32, i.e. if the group has fewer than four phrases or its highest id is at most 31;
-`9007199254740991` is `31 * 2^48 + (2^48 - 1)`. Any other prime id is rounded by javascript: the api json writes
-the value id as a number (`sandbox_value.php:1650`) and `calculator_json.js:172` (values) and `:175` (results)
-read it with `JSON.parse` before `String(v.id)`. A real case is the value id of the calculator editor
-`import_tests::TV_GROUP_ID` 81495585085949938 (`unit/import_tests.php:101`): word 289 and the triples 1997, 1999
-and 2034, above the limit. The table is chosen from the key type alone (`group_id::is_prime`, `:271`, an integer
-key is prime), so a group whose int key would be too big gets the text key and with it the standard tables
-(`values`, `results`, ...) without a change of the table selection, except for the results (step 2). The two
-steps are done as one change with one log file (its two expected changes), because each needs the full run with
-re-pin, which takes much longer than the code, so one re-pin run covers both:
-
-#### step 1: the value key within 2^53
-
-Decided by the developer: a group of up to three phrases stays prime with its id of today, and a group of four
-phrases stays prime only if one of its positive ids is at most 31, because this id goes into the first slot.
-
-The sort rule of the slots, so that the same set of phrases always gives the same key, because a group is a set
-and the order in which the phrases have been added is not stored:
-- up to three phrases: unchanged, all ids sorted with the highest first (`rsort`), the first slot stays empty
-- four phrases: the first slot gets the smallest positive id, which must be at most 31; the other three ids follow
-  in the order of today, the highest first; the first slot needs a positive id, because its sign bit is the sign
-  bit of the 64-bit integer, which replaces the rule of today that a group of four needs one positive id
-- four phrases without a positive id of at most 31 get the text key of `ids_to_alpha_num`
-
-So the id of every prime group of four phrases changes, also of those that stay prime (e.g. `[1,32765,32766,32767]`
-has 32767 in the first slot today and 1 with the new rule), and every key of such a group stays at most
-`JS_INT_MAX`. The decoding of a key (`group_id::int_array`, `group_id.php:294`) returns the ids in the order of the
-slots, so check the callers that compare the decoded ids with a phrase list and sort both, because the first
-slot no longer holds the highest id.
-
-Add to `group_id` the const `JS_INT_MAX = 9007199254740991` (the javascript `Number.MAX_SAFE_INTEGER`) as the
-documented reason of the rule, and in `get_id_by_ids` a named check of up to three parameters, e.g.
-`fits_js_int(array $id_lst)` (fewer than four ids, or a positive id of at most 31), as a condition of the prime
-branch, and the order of the slots by the rule above. Update `docs/llm/group_id.md:12` (the row of the prime key)
-and the description of the slots with the rule.
-
-Tests (`unit/group_tests.php:95-135`), each with its negative:
-- the cases of up to three phrases keep their ids (e.g. `[32765,32766,32767]` 140735340773373)
-- the cases of four phrases with a positive id of at most 31 get the new id with this id in the first slot (e.g.
-  `[1,32765,32766,32767]`, `[1234,32765,32766,32767]` with 1234 above 31 gives the text key)
-- the cases of four phrases without such an id give the text key (e.g. `[32767,32766,32765,32764]` and
-  `[15678,32765,32766,32767]`, today 9223231292923805692 and 9223231292923788606)
-- the boundary: `[31,32765,32766,32767]` gives an int key of at most `JS_INT_MAX`, `[32,32765,32766,32767]` the
-  text key; a group with a negative id of a small number, e.g. `[-5,40,41,42]`, gives the text key, because only a
-  positive id may go into the first slot
-- the decoding of each new int key gives the same set of ids
-- `import_tests::TV_GROUP_ID` and `TV_GROUP_ID_TEXT` become the text key of word 289 and the triples 1997, 1999
-  and 2034, because 289 is the only positive id and above 31
-
-#### step 2: the result key within 2^53
-
-`result_id::get_id` (`result_id.php:119-150`) builds the prime key from the formula id in the first slot and up
-to three phrase ids (`int_group_id`, `:158`), so a result with three phrases is above the limit if its formula id
-is above 31: the prime branch gets the same check. The table of a result is not chosen from the key type but from
-the number of phrases (`sandbox_value::is_prime`, `sandbox_value.php:670-682`, and `is_main`, `:684-698`), so a
-result with a text key would still be read from and written to the prime table: both check the key type like a
-value does. The two int key of the main tables (`two_int_group_id`, `:177`) is joined to a text by `implode`, so it
-is no javascript number. Tests next to the `result_id` tests of `unit/group_tests.php`: a result with three
-phrases and a formula id above 31 gets the text key and the standard table, and with a formula id of at most 31
-the int key and the prime table.
-
-No pod with data exists (decided by the developer), so no upgrade of the stored keys is needed:
-`test/reset_db.php` sets the database up again and the import writes every value and result with the new key.
-
-Test runs: first a `test/test_part.php` run with only the unit tests of the keys (`group_tests` with the
-`result_id` tests), which shows a wrong slot rule within minutes; then one full run with re-pin for both steps
-(first `test/reset_db.php`, then at least twice `test/test.php`), because steps 1 and 2 change the id and the table
-of the seed values and results with four phrases resp. a formula id above 31:
-the snapshots and the api messages with such a value id, `unit/value/list.csv` and `unit/result/list.csv` (the
-moved rows), and the pinned group ids.
-
 ## wikipedia link
 
 if the sync with wikipedia does not suggest any update write a message like
@@ -148,8 +65,200 @@ if done remove this prompt from pending.md
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
+## wikidata link
+
+The numeric values of a phrase are imported from wikidata the way the description is taken from wikipedia
+(`ref_link_wikipedia`): the refresh icon of the wikidata reference of a phrase asks the backend to read the entity
+json, the backend converts it in memory to an import json, the user sees the words, triples and values that would be
+added on a confirm page, and only the confirmed import writes them, as the user and with the source wikidata
+(`sources::WIKIDATA`). The base is the converter `cfg/import/import_wikidata.php::convert` with its offline tests
+(`unit/wikidata_tests.php`) on the two examples in `test/resources/import/wikidata/cache/unit/`: the target
+`import_Q72.json` stays the expected result, and the target of Q4917 gets the currency pair of step 4 as a new
+fixture next to `import_Q4917.json`, which the developer retires:
+
+- **Q72, the population (P1082) of Zurich:** the unit "1" gives a value of the entity phrase itself; the point in
+  time (P585, precision 11 = day) gives the year words 1900 and 2021; the criterion used (P1013) gives a word of its
+  own (resident population, population present), which keeps the two values of 2021 apart; the determination method
+  (P459) is no word (the census Q39825 of 1900 is dropped, in 2021 it repeats the criterion).
+- **Q4917, the price (P2284) of the US dollar:** the unit Q4916 (euro) of the price of a currency gives the
+  currency pair "euro per United States dollar" (step 4); the point in time with precision 9 (= year) gives 2016; a claim without point in time gives a
+  value without time; a unit or a criterion without label (Q0) is not imported and reported
+  (`WIKIDATA_UNIT_LABEL_MISSING`, `WIKIDATA_CRITERION_LABEL_MISSING`); a claim of the snak type somevalue has no value.
+
+Each step below is one change with but all will use the same file in docs/llm/log, in this order.
+
+1. **Reader without test paths:** `import_wikidata` reads wikidata only through one reader object that the caller
+   passes: the http reader of the pod (`request_json`) and a fixture reader of the tests that reads only
+   `cache/unit/` and reports a missing fixture as a failed test, so the backend never reads a `test_paths` folder
+   and an offline unit test never sends a live request. `convert_to_file` and `store_text` get their folder from
+   the caller. The labels that the two examples need (Q4916, Q56229488, Q56229478 and Q0) get their own fixtures in
+   `cache/unit/`, so the unit test does not depend on the cache files that `wikidata_write_tests` refreshes.
+2. **Every claim imported or reported:** no claim is skipped without a message (`docs/llm/coding.md` rule 3).
+- a claim of the snak type somevalue or novalue is reported as a value that wikidata does not know;
+- a deprecated claim is not imported and reported;
+- the year is read from the complete time text, incl. the sign and a year of more than four digits; a precision
+  of 9, 10 or 11 gives the year word, a coarser one (decade, century, ...) is not imported and reported;
+- a qualifier other than P585, P1013 and P459 (e.g. P518 "applies to part") changes what the number means, so
+  the claim is not imported and reported;
+- two claims that give the same words (e.g. two dates of one year, or two determination methods) are both
+  reported and none of them is imported, because the import cannot know which one is meant;
+- the amount is passed on as the complete text of wikidata.
+
+**Tests:** a hand-made unit fixture with one claim per rule; the two example targets are unchanged by this step.
+3. **The names of the pod:** `convert` gets the phrases that already hold a wikidata reference as a map of wikidata
+   id to phrase name, loaded by one prepared query of the references of the type wikidata with the ids of the
+   entity, the property, the units and the criteria. So the entity Q72 is the phrase whose wikidata reference the
+   user has confirmed (e.g. a triple "Zurich (city)"), and a property is the phrase of the pod with this reference;
+   only an id without phrase becomes a new word with its label and its reference. **Decide:** which seed words get
+   a property reference, e.g. inhabitants with P1082 and price with P2284. **Tests:** a unit test with a map gives the
+   import json with the names of the pod; with an empty map the result is the two example targets.
+4. **Currency pairs:** a unit is a phrase of its own in the value, e.g. "area, Zurich, square kilometre", except
+   for the price of a currency in another currency: that value gets the measure unit triple "unit per entity" of
+   the type `measure_unit`, e.g. "euro per United States dollar" (or "EUR per USD" with the names of the pod), like
+   the seed triple "CHF per USD" of `use_cases/share_buy_sell_abb.json`. The unit as a phrase of its own ("price,
+   United States dollar, euro") is not used for a currency, because it does not define whether the number is the
+   euros for one dollar or the dollars for one euro. The currency pairs are triples of the type `measure_unit` in
+   the seed json `system_unit_test_data/currencies.json` (`files::CURRENCIES`, part of `files::SYSTEM_DATA_FILES`)
+   next to the currencies, written like "CHF per USD", so the seed import creates them and every pod has the same
+   pairs from its start. They are listed and not derived by a rule, because which currency of a pair is the base
+   follows a market convention with exceptions that can change from time to time (e.g. whether the default quote
+   is CHF/SEK or SEK/CHF), so a changed convention is a change of the seed file, not of the code. A reverse pair
+   exists only if it is listed too. The import never creates a pair of its own: entity and unit are a pair if the
+   triple "unit per entity" of the seed exists (the phrases by their wikidata reference, the map of step 3, so
+   without a further wikidata read), and a price of a currency in a currency without listed pair is not imported
+   and reported. **Decide:** whether a price that matches only the reverse pair is reported, or imported as 1/x
+   with the reverse pair, which stores a rounded number instead of the number of wikidata. **Tests:** a db read
+   test that each listed pair is a `measure_unit` triple of two currencies; the new Q4917 target with "euro per
+   United States dollar"; a price of a currency in a currency without listed pair is reported.
+5. **Refresh and confirm:** the refresh icon of a wikidata reference (`web/ref/ref.php::refresh_job_link`) gets its
+   own `url_var::REFRESH_WIKIDATA` with its human name, like `wikipedia_refresh_link`. The frontend asks the
+   backend, like `frontend::url_with_wikipedia_refresh`, for the import json of the phrase: the backend reads the
+   entity json of the external key and converts the claims of the properties that the pod knows (the map of step
+   3), so that not the hundreds of statements of e.g. Q72 are offered and no property label has to be read. The
+   import preview (`views::IMPORT_PREVIEW_ID`) shows the new words and triples, the new values, the values that
+   exist with the same number and, as a conflict that is never overwritten without the user, the values that exist
+   with another number. The confirm writes them with `import::put_json` as the user with the source wikidata. Without
+   login the icon is grey like the one of wikipedia. The admin view "Import from Wikidata" (`views::IMPORT_WIKIDATA_ID`)
+   uses the same backend function with a wikidata id that the admin enters. If the label reads of the units and
+   criteria make the page wait longer than `import_wikidata::READ_TIMEOUT`, the read becomes a job.
+6. **Tests:** a workflow `wikidata_import` like `wikidata_refresh`: the user presses the refresh icon of the
+   wikidata reference of Zurich, sees the preview and confirms; the values are in the database with the source
+   wikidata, and the test removes them again through the logged `del()`. Because the live data of wikidata
+   changes, only the page before the refresh is a snapshot, and a write test compares the live convert of Q72 and
+   Q4917 with the last run, like `ref_write_url_tests` does for wikipedia
+
+### suggested code changes
+
+The line numbers are those of the files when this suggestion was written (commit `b98d0ccd1`); `import_wikidata`
+means `cfg/import/import_wikidata.php`. One block per step of the plan above.
+
+#### step 1: reader without test paths
+
+- `import_wikidata`: a constructor parameter `string $fixture_path = ''`: empty reads wikidata by http
+  (`request_json`, `:150`), a path reads only the files of this folder and never sends a request; one private
+  `read_json(string $id, user_message $msg): string` decides it and reports a missing fixture file with a new
+  `msg_id`, and `item_label` (`:462-478`) calls it with a `user_message $msg` parameter instead of reading
+  `test_paths::IMPORT_WIKIDATA_CACHE` (`:469`)
+- `store_text` (`:185-189`) and `convert_to_file` (`:280-284`) get the folder as a required parameter, so the
+  `use ... paths as test_paths` (`:55`) goes; the callers in `unit_write/wikidata_write_tests.php` pass
+  `test_paths::IMPORT_WIKIDATA_CACHE` resp. `IMPORT_WIKIDATA_TO_IMPORT`
+- new fixtures `cache/unit/Q4916.json`, `Q56229488.json`, `Q56229478.json` and `Q0.json` with their
+  `test_files` consts next to `IMPORT_WIKIDATA_UNIT_*` (`test/php/const/files.php:534-540`)
+- tests in `unit/wikidata_tests.php` (`:67`): the converter is created with `test_paths::IMPORT_WIKIDATA_UNIT`;
+  the two example targets are unchanged; negative: an item without fixture file is reported and nothing is read
+  from wikidata
+
+#### step 2: every claim imported or reported
+
+- `import_wikidata`: the consts `WD_SNAKTYPE`, `WD_SNAKTYPE_VALUE`, `WD_RANK`, `WD_RANK_DEPRECATED`, `WD_PRECISION`
+  and `WD_DETERMINATION_METHOD = 'P459'` next to `WD_POINT_IN_TIME` and `WD_CRITERION_USED` (`:96-99`), and the
+  lowest precision of a year `WD_PRECISION_YEAR = 9`
+- `claim_import` (`:405-455`) checks each rule with a named function before the value is built, e.g.
+  `has_value($claim)`, `is_deprecated($claim)` and `has_unknown_qualifier($claim)`, each with its message on
+  `$msg`; `claim_year` (`:520-528`) reads the year with its sign and all its digits from the time text and
+  reports a precision below `WD_PRECISION_YEAR`, so it gets a `user_message $msg` parameter
+- `convert` (`:234-275`) removes the values with the same words after the claim loop in a named
+  `values_without_doubles(array $values, user_message $msg): array`, which reports each of them
+- the messages next to `WIKIDATA_UNIT_LABEL_MISSING` and `WIKIDATA_CRITERION_LABEL_MISSING`
+  (`shared/enum/messages.php:979-988`), e.g. `WIKIDATA_NO_VALUE`, `WIKIDATA_DEPRECATED`,
+  `WIKIDATA_TIME_PRECISION`, `WIKIDATA_QUALIFIER_UNKNOWN` and `WIKIDATA_SAME_WORDS`, each naming the entity, the
+  property and the wikidata id of the claim
+- tests: a hand-made entity fixture in `cache/unit/` with one claim per rule and its target; each rule is checked
+  by its message, and the claims next to it that follow the rules are imported
+
+#### step 3: the names of the pod
+
+- `cfg/ref/ref_list.php`: `load_by_type_and_keys(int $typ_id, array $keys, user_message $msg): bool` with its
+  `load_sql_by_type_and_keys` next to `load_by_ids` and `load_sql_by_ids` (`:176`, `:240`), one prepared query
+  with the sql fixtures for postgres and mysql and a unit test that compares them
+- `import_wikidata::convert` (`:234`) gets the map `array $phr_names` of wikidata id to phrase name, built by the
+  caller from this ref list; `convert` takes the entity and the property name from the map before `label`
+  (`:372`), and `item_label` (`:462`) the names of the units and criteria
+- one wikidata id with more than one phrase is reported and its values are not imported, never one phrase
+  guessed: e.g. Q4917 is the reference of the two seed triples "US dollar" and "U.S. dollar"
+  (`system_unit_test_data/currencies.json:792-822`). **Decide:** whether the seed keeps one wikidata reference per
+  wikidata id, e.g. without Q4917 for "U.S. dollar"
+- tests: `convert` with a map gives the import json with the names of the pod, with an empty map the two example
+  targets; negative: an id with two phrases in the map is reported
+
+#### step 4: currency pairs
+
+- seed: the listed pairs as triples of the type `measure_unit` in the triples of `currencies.json` (`:766`),
+  written like "CHF per USD" (`use_cases/share_buy_sell_abb.json:879-885`), whose from and to are the codes of the
+  currencies; a code is linked to its named currency with its wikidata reference by "is symbol for" (e.g. "USD is
+  symbol for US dollar", `currencies.json:1582-1585`); the new triples shift the seed ids after them, which the
+  re-pin run takes up
+- `import_wikidata`: `convert` gets the pairs as a second map, of the wikidata id of the entity and of the unit to
+  the name of the pair triple, built by the caller from the pair triples, the "is symbol for" triples and the
+  ref list of step 3; `unit_phrase_name` (`:505-516`) gives the pair for the price of a currency in a currency and
+  reports a missing pair with a new `WIKIDATA_CURRENCY_PAIR_MISSING`, and any other unit becomes a phrase of the
+  value; so `import_json` (`:320-350`) writes no triples any more, and `PART_TRIPLE_UNITS` (`:103`) and `IN_VERB`
+  (`:106`) go
+- tests: the new target of Q4917 with the pair "EUR per USD" as a new fixture next to `import_Q4917.json`; a price
+  of a currency in a currency without pair is reported; a db read test that each pair of the seed is a
+  `measure_unit` triple of two ISO 4217 codes
+
+#### step 5: refresh and confirm
+
+- `shared/url_var.php`: `REFRESH_WIKIDATA` next to `REFRESH_WIKIPEDIA` (`:167`) with its human name next to
+  `REFRESH_WIKIPEDIA_HUMAN` (`:671`) and the entry of the url map (`:1043`)
+- `web/ref/ref.php`: the refresh link of a wikidata reference (the branch at `:545`) is a `wikidata_refresh_link`
+  like `wikipedia_refresh_link` (`:559-566`), instead of `refresh_job_link` (`:574`)
+- backend: a new api controller `api/wikidataImport/index.php` that answers a GET with the phrase id with the
+  import json of `convert` and its messages, because the answer is an import and no changed phrase like the
+  wikipedia refresh of `api/word/index.php:127` and `api/triple/index.php:87`; the caller builds the two maps of
+  steps 3 and 4
+- frontend: `frontend::url_with_wikidata_refresh` next to `url_with_wikipedia_refresh` (`web/frontend.php:3262`,
+  called at `:1164`) opens the import preview (`views::IMPORT_PREVIEW_ID`, `shared/const/views.php:459`), whose
+  body is not yet available (`messages/system_views.json`, "Import preview"): it gets a component that lists the
+  new words, the new values, the unchanged values and the conflicts, and its confirm sends the import json with
+  PUT to `api/json/index.php`, which imports it as the requesting user (`:67-75`); the value of the import json
+  gets the source wikidata (`json_fields::SOURCE_NAME`, read by `value_base.php:526`)
+- the admin view "Import from Wikidata" (`views::IMPORT_WIKIDATA_ID`, `:465`) gets a wikidata id field and uses
+  the same controller
+- tests: the url of the refresh icon in the ref ui tests; the preview page as a new `object_pages` snapshot with
+  the Q72 example in test mode, so without wikidata
+
+#### step 6: tests
+
+- `unit_write_workflow`: the workflow `wikidata_import` with its const and number next to
+  `WF_WIKIDATA_REFRESH` (`test/php/const/workflows.php:380-381`), like `wikidata_refresh`; the cleanup removes the
+  imported values, words and references with the logged `del()`
+- `unit_write/wikidata_write_tests.php`: the live convert of Q72 and Q4917 with the two maps of the seed, compared
+  with the last run like `ref_write_url_tests`
+
+Test runs: steps 1 to 3 change no seed and no id, so a `test/test_part.php` run with `wikidata_tests` and the ref
+list tests is enough; step 4 changes the seed, so it needs the re-pin run; steps 5 and 6 with the ui, workflow and
+write tests, and the full `test/test.php` before the commit.
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
 **Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
-"Other" are part of the admin dashboard prompt; step 1 is done.
+"Other" are part of the admin dashboard prompt; the table above lists the functionality to move per script.
 - phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
   consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
 - phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
@@ -219,7 +328,7 @@ rewritten with it (prio 2).
 
 ##### suggested code changes
 
-... to be filled
+just delete
 
 #### error_log.php
 
@@ -913,7 +1022,6 @@ All found by reading the code, none by a test run; confirm each with a failing t
 
 #### Other
 
-1. **List the functionality to move per script.** Done: see the table above.
 2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
    by replacing the numbers with the consts.
 3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
@@ -3512,11 +3620,10 @@ prompt together with the sections it names, which follow the block. Every prompt
       seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
       `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
 
-**Prompt:** calculator editor JSON tab, Swiss NPP and the prime group id limit (size L; re-pin, because the NPP data
-gets the CO2-eq costs). One phase, four agents in parallel:
+**Prompt:** calculator editor JSON tab and Swiss NPP (size L; re-pin, because the NPP data gets the CO2-eq costs).
+One phase, three agents in parallel:
 - agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
 - agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
   costs in the NPP use case json
 - agent share: the "Share assumptions and vote" button of the calculator page
-- agent prime: "prime group id within 2^53" in the group id and value table selection, with a test at the limit
 

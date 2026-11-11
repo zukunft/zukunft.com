@@ -4,7 +4,10 @@ Change the generated page portfolio_split_calculator_no_js.html so that it shows
 
 ## Missing in the generated page (0)
 
-## Different (0)
+## Different (2)
+
+- row: Target / Target value, cells: the sample shows "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
 
 ## Only in the generated page (0)
 
