@@ -159,24 +159,6 @@ function run_word_display_test(all_tests $t): void
     //$t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    // the value table for company
-    /*
-    $wrd_company = New word_ui;
-    $wrd_company->name = "TEST_WORD";
-    $wrd_company->set_user($t->usr1);
-    $wrd_company->load();
-    $wrd_ratios = New word_ui;
-    $wrd_ratios->name = "company main ratio";
-    $wrd_ratios->set_user($t->usr1);
-    $wrd_ratios->load();
-    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $t->usr1->id());
-    $target = substr($target,0,200);
-    $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
-    $result = substr($result,0,200);
-    $t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $result, $target);
-    */
-
-
     $t->subheader($ts . 'selector');
 
     // for testing the selector display a company selector and select ABB

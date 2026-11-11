@@ -4,18 +4,19 @@ Change the generated page portfolio_split_calculator_js.html#differ so that it s
 
 ## Missing in the generated page (0)
 
-## Different (58)
+## Different (59)
 
 - field: Exchange rate, tag: the sample shows "measured" and the generated page ""
 - field: Exchange rate, unit: the sample shows "CHF per DKK" and the generated page ""
 - field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report"
 - field: Exchange rate, value: the sample shows "0.1304" and the generated page ""
+- row: Target / Target value, cells: the sample shows "5'883'270 | 5'883'270 | 7'844'360 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
 - row: Realised / Stocks, cells: the sample shows "2'930'550 | 2'930'550 | 3'907'400 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
 - row: Realised / Bonds, cells: the sample shows "1'801'350 | 1'801'350 | 2'401'800 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
 - row: Realised / Cash, cells: the sample shows "1'151'370 | 1'151'370 | 1'535'160 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
 - row: Realised / Portfolio value, cells: the sample shows "5'883'270 | 5'883'270 | 7'844'360 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
 - row: Realised / Realised weight, cells: the sample shows "30.000 % | 30.000 % | 40.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | +980'545.00 | -980'545.00 | 0.00"
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
 - row: Value / LISN share, parent portfolio, cells: the sample shows "22 | 12 | differs" and the generated page "22 | 16 | differs"
 - row: Value / LISN share, second child portfolio, cells: the sample shows "9 | 16 | differs" and the generated page "9 | 12 | differs"
 - row: Value / LISP share, parent portfolio, cells: the sample shows "2 | 3 | differs" and the generated page "2 | 4 | differs"

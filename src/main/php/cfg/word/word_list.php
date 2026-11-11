@@ -7,7 +7,6 @@
 
     actually only used for phrase splitting; in most other cases phrase_list is used
 
-    TODO Prio 2 check the consistence usage of the parameter $back
     TODO Prio 2 add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
     TODO Prio 2 add bool $incl_alias to include all alias words that are of the ids
     TODO Prio 3 look at a word list and remove the general word, if there is a more specific word also part of the list

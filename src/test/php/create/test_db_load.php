@@ -895,7 +895,12 @@ class test_db_load
         return $phr_grp->del($msg);
     }
 
-    function load_value_by_id(user $usr, int $id): value
+    /**
+     * @param user $usr the user for whom the value is loaded
+     * @param int|string $id the group id of the value: the 64-bit integer of a prime group or the text key
+     * @return value the loaded value
+     */
+    function load_value_by_id(user $usr, int|string $id): value
     {
         $msg = new user_message();
         $val = new value($this->env->usr1);

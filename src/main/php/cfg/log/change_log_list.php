@@ -968,7 +968,9 @@ class change_log_list extends list_db_read
             // and a shared name with different parameter types is rejected by the database
             $query_ext .= sql::NAME_SEP . 'with_usr';
         }
-        if ($class == value::class) {
+        // a result change is logged like a value change (see load_sql_obj_last)
+        $by_group_id = ($class == value::class or $class == result::class);
+        if ($by_group_id) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
             if ($typ == sql_type::PRIME) {
@@ -1006,7 +1008,7 @@ class change_log_list extends list_db_read
                 $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
             }
         }
-        if ($class == value::class) {
+        if ($by_group_id) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
             $sc->add_where(change_log::FLD_ROW_ID, $id);

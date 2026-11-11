@@ -848,6 +848,22 @@ Data that needs a code id belongs in `files::SYSTEM_DATA_FILES`, which
 `import_file::import_system_data()` imports as the system user. Keep it out of the full
 load, and if a sample file mixes both, split the code-id part into the system data.
 
+## Two seed phrases miss data on purpose — the live samples of the refresh workflows
+
+Two seed phrases have a wikipedia reference but lack what the wikipedia page would give, so
+that a workflow can take it over from the live page:
+
+- the triple **Geneva (city)** (`triple_names::CITY_GE`) has **no description**, so that the
+  `wikipedia_refresh` workflow (`workflows::WF_WIKIPEDIA_REFRESH`) takes the description from
+  the wikipedia page Geneva;
+- the word **health** has **no wikidata reference**, so that the `wikidata_refresh` workflow
+  (`workflows::WF_WIKIDATA_REFRESH`) takes the wikidata id that the wikipedia page Health names.
+
+Never add the description of Geneva (city) or the wikidata reference of health to a seed
+file (e.g. `system_unit_test_data/country.json`, `base_phrases.json`, `base_data/health.json`,
+`solution_prio.json`), not even when a review or an import fills the descriptions and the
+wikidata ids of all other phrases: without the gap the workflow has nothing to take over.
+
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 
 `src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**

@@ -1394,24 +1394,6 @@ class html_base
      */
 
     /**
-     * TODO Prio 1 deprecate and replace if the the url_arr based back var
-     * build a zukunft.com internal url based on the html one-page setup
-     * o for the main object that should be shown to the user
-     * v for view which contains the main object type
-     * i for the database id of the main object
-     * r for the related phrase (the phrases used for all components)
-     * c for the related terms (the term used for all components)
-     * other related phrases or term are set in the components
-     *
-     * @param int|string $view the code_id or the database id of the view
-     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
-     * @param string $obj_name the object that should be shown e.g. a value
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
-     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
-     * @return string the created url
-     */
-    /**
      * remove the trailing slash of a base url, because the script path already starts with one
      * @param string $base_url the absolut html path for urls or an empty string for a relative url
      * @return string the base url ready to be followed by the script path

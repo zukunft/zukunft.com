@@ -352,6 +352,7 @@
     \-- save - section for function save is expected to be save in /result/result.php
     \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
              if a value without time is already saved in /result/result.php
+    \-- del - section for function del is expected to be del in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /user/user
@@ -2795,8 +2796,6 @@
     \-- formula_ancestors - section for function formula_ancestors not yet defined that it should be display functions i
             n /phrase/phrase.php
     \-- phrases - section for function phrases not yet defined that it should be display functions in /phrase/phrase.php
-    \-- dsp_time_selector - section for function dsp_time_selector not yet defined that it should be display functions i
-            n /phrase/phrase.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be display functions in /phrase/
             phrase.php
     \-- order error - order of section construct and map has difference at row_mapper_sandbox should be before clone_res
@@ -6088,7 +6087,7 @@
     \-- is_big
         \-- group_id - @param int|string $grp_id
     \-- int_array
-        \-- group_id - @param int|string $grp_id
+        \-- group_id - @param int $grp_id the 64-bit integer id of a prime group
     \-- int2key
         \-- group_id - the 16 slot text key of a prime group, e.g. for a result that is saved in the standard result
     \-- row_mapper

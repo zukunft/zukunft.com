@@ -1305,40 +1305,6 @@ class value extends sandbox_value
                 }
             }
 
-            // show the time phrase
-            log_debug('show time');
-            $time_lst = $this->grp->phr_lst()->time_word_list();
-            $has_time = false;
-            foreach ($time_lst->lst() as $time_phr) {
-                $result .= '  <tr>';
-                if ($time_phr->id() <> 0) {
-                    $has_time = true;
-                    $result .= '    <td colspan="2">';
-
-                    log_debug('show time selector');
-                    $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
-                    $url_pos++;
-
-                    $result .= '    </td>';
-                    $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
-                }
-                $result .= '  </tr>';
-            }
-            // show an empty time selector
-            if (!$has_time) {
-                $time_phr = new phrase($this->user());
-                $result .= '  <tr>';
-                $result .= '    <td colspan="2">';
-
-                log_debug('show time selector');
-                $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
-                $url_pos++;
-
-                $result .= '    </td>';
-                $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
-                $result .= '  </tr>';
-            }
-
             // show the new phrases
             log_debug('show new phrases');
             foreach ($this->ids() as $phr_id) {

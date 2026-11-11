@@ -353,9 +353,9 @@ class group_list extends sandbox_list_named
     {
         $id = '';
         if (isset($grp)) {
-            $grp_id = $grp->id();
-            if ($grp_id > 0) {
-                $id = $grp_id;
+            // the id is an integer or a text key, so the group checks it and not a number compare
+            if ($grp->is_id_set()) {
+                $id = $grp->id();
             }
         }
         if (isset($time)) {

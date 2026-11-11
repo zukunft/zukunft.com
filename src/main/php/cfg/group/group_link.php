@@ -67,7 +67,7 @@ class group_link extends db_object_seq_id
     );
 
     // database fields
-    public int $grp_id;    // the phrase group id and not the object to reduce the memory usage
+    public int|string $grp_id;    // the phrase group id (an integer or a text key) and not the object to reduce the memory usage
     public int $trp_id;    // the triple id and not the object to reduce the memory usage
 
     function __construct()

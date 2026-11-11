@@ -125,8 +125,8 @@ class login_url_tests extends url_test_base
      */
     private function signup_link_part(): string
     {
-        $back = http_build_query(self::START_PAGE_BACK);
-        return url_var::MASK . url_var::EQ . views::SIGNUP_ID . htmlspecialchars(url_var::ADD) . $back;
+        $back_part = http_build_query(self::START_PAGE_BACK);
+        return url_var::MASK . url_var::EQ . views::SIGNUP_ID . htmlspecialchars(url_var::ADD) . $back_part;
     }
 
 }

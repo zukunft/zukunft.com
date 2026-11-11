@@ -80,11 +80,18 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
@@ -307,6 +314,9 @@ class change_log_tests
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value($msg)->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
+        // a result change is logged like a value change, so a result is also selected by its group id
+        $this->assert_sql_list_by_field(result::class, '', 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(result::class, '', $t_grp->group_16()->id(), $log_lst, $db_con, $t);
         // a type row e.g. a sys log function logs to the changes table like the named objects,
         // so the test cleanup can remove the change log of a type test row via the same list load
         $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
@@ -463,8 +473,20 @@ class change_log_tests
 
         // sql to load a log entry by field and row id
         // TODO Prio 2 check that user-specific changes are included in the list of changes
-        // TODO Prio 2 add tests for all value types
+        // each value change table has its own query name, and a norm or big group has a text id
+        $grp_id = 'system_test_group_id';
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_big($t->usr1), $grp_id);
 
         // sql to load a field by field name and table id
         $tbl = new change_table();
@@ -589,18 +611,24 @@ class change_log_tests
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
      * @param change|change_value $log the user sandbox object e.g. a word
+     * @param int|string $row_id the row id for the query, a text group id for a norm value
      */
-    private function assert_sql_by_field_row(test_cleanup $t, sql_db $db_con, change|change_value $log): void
+    private function assert_sql_by_field_row(
+        test_cleanup $t,
+        sql_db       $db_con,
+        change|change_value $log,
+        int|string   $row_id = 2
+    ): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+        $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, $row_id);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+            $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, $row_id);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

@@ -253,7 +253,7 @@ class test_values extends test_objects
     function text_value_prime(): value_text
     {
         $t_grp = new test_groups($this->env);
-        $grp = $t_grp->group_prime_max();
+        $grp = $t_grp->group_prime_4();
         return new value_text($this->env->usr1, values::TEXT, $grp);
     }
 
@@ -285,12 +285,23 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value with the maximal number of prime phrase
+     * @return value of the four phrases of Zurich, inhabitants, 2019 and million, which is no prime value,
+     *         because none of its phrase ids is at most group_id::FIRST_SLOT_MAX
      */
     function value_prime_max(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_prime_max();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * @return value with the maximal number of prime phrases, saved in the prime table of four phrases
+     */
+    function value_prime_4(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_prime_4();
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 

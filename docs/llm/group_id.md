@@ -9,13 +9,31 @@ needs no own database row unless a user gives it a name.
 
 | phrases                                   | key                    | table e.g.     | column         |
 |-------------------------------------------|------------------------|----------------|----------------|
-| up to 4 prime phrases (id < 32'768)       | 64-bit integer         | `values_prime` | `bigint`       |
+| up to 3 prime phrases (id < 32'768), or 4 with a positive id up to 31 | 64-bit integer | `values_prime` | `bigint` |
 | up to 16 phrases and up to 112 key chars  | compact text key       | `values`       | `char(112)`    |
 | more than 16 phrases or a longer key      | the same compact key   | `values_big`   | `text`         |
 
 Postgres returns a `char(112)` key padded with spaces to 112 chars, so
 `sql_db::pg_unpadded` removes the trailing spaces of every `char` field when a
 row is read; a key never contains a space, and mysql removes the padding itself.
+
+## The 64-bit integer key
+
+The integer key has four slots of 16 bits, each a sign bit (set for a triple)
+and a 15 bit phrase id. The api json sends the key as a number, which
+javascript reads exactly only up to `group_id::JS_INT_MAX` (2^53 - 1), so the
+first slot is below 32 (`group_id::FIRST_SLOT_MAX` 31). The order of the slots
+makes the same set of phrases always give the same key
+(`group_id::prime_slot_order`):
+
+- up to three phrases: the ids with the highest first, the first slot stays empty
+- four phrases: the smallest positive id of at most 31 in the first slot,
+  because its sign bit is the sign bit of the 64-bit integer, then the other
+  three ids with the highest first
+- four phrases without a positive id of at most 31: the text key
+
+The decoding (`group_id::get_array`) returns the ids with the highest first,
+independent of the order of the slots.
 
 `group_id::table_type()` selects the table from the key alone: an integer is
 prime, a text key is big if `group_id::is_big()` counts more than 16 phrases or

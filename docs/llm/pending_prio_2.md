@@ -1,5 +1,69 @@
 # pending prio 2
 
+## recalc jobs update
+
+### value update
+
+if a value is updated a  'value update' job should be started in the backend that collects all results 
+depending on this value and if the number of results is bigger than a threshold of e.g. 256 (a config.yaml value)
+create sub-jobs of which each one updates 256 values
+
+### result update
+
+... suggest a recalc job similar to the value update job 
+
+### formula update
+
+... suggest a recalc job similar to the value update job
+
+### formula add
+
+... suggest a recalc job similar to the value update job
+
+### word delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### triple delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### verb delete / exclude
+
+... suggest a recalc job similar to the value update job
+
+### user monitor
+
+if jobs are running triggered by the logged in user show in the navbar user menu an entry 'job status' with 
+the aktive jobs where the jobs with the longest estimated remaining time is on the top 
+
+if the user has only finished jobs show in the navbar user menu an entry 'past jobs' with
+the last finished job on the top
+
+## frontend messages
+
+move the messages in the frontend from the button of the page to the top below the navbar
+
+### suggested code changes
+
+... to be added
+
+## Calculator
+
+if in a calculator view e.g. http://localhost/http/view.php?m=16&id=-3738 save is pressed
+the values are saved in the database and if the database save is confirmed by the backend
+instead of reloading all data from the backend, just show the backend confirmation message
+which is probably already done
+
+### request recalc and compare
+
+with the save a backend job should be started that calculates the values in the backend 
+and refreshes the data cache and the page cache
+if the job is done the frontend should get a message and if the results of the frontend calculation 
+and the backend calculation does not match a error log message with the diff should be added to the log
+and shown to the user.
+
+
 ## test factory inconsistencies
 
 The create classes in `src/test/php/create/` build the test objects with the same function names per class
@@ -613,9 +677,8 @@ url parameters of the calling page as `array $url_arr` and derives the `9`-prefi
 from it (`html_base::url_back` / `url_with_back` / `back_url_array`), the transitional bridge
 `url_arr_from_back` and the `back_trace` class are deleted, and
 `coding_rule_tests::php_web_no_back_param_tests` keeps `$back` and the literal `&back=` out
-of `web/`. a repo wide check finds no `$back` in `web/` and none in a live test any more;
-what is left sits in the backend and in commented out test code (see the last item).
-what the conversion found and left open:
+of `web/`. a repo wide check finds no `$back` in the code and no `&back=` except the sample
+text of the `str_diff` test (`unit/lib_tests.php`). what the conversion found and left open:
 
 - check on the pages what the first working back links do: the cancel link of a form and
   `button::back` lead to the phrase default view (`m=110&id=<phrase>`) where the old code
@@ -664,30 +727,12 @@ what the conversion found and left open:
   functions are not tested and `formula_list::display_old` still calls `dsp_result` (exists
   nowhere) and `btn_del` on the backend object `dsp_obj_old()` - decide whether the three
   are rebuilt on the frontend objects or removed
-- `value::dsp_edit` calls `dsp_time_selector`, `dsp_share` and `dsp_protection`, which name
-  functions that exist nowhere in the frontend, so the mask is dead code until they are
-  written - decide whether the value mask is rebuilt on the form components or `dsp_edit` is
-  removed, together with the backend `dsp_time_selector` of the last item
+- `value::dsp_edit` calls `dsp_share` and `dsp_protection`, which name functions that exist
+  nowhere in the frontend, so the legacy pages `http_old/value_edit.php` and `value_add.php`
+  end in an uncaught fatal - decide whether the value mask is rebuilt on the form components
+  or `dsp_edit` is removed
 - `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
   coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
-- the `$back` left outside `web/` after the conversion, all of it unreachable today:
-  - `cfg/phrase/phrase.php::dsp_time_selector($type, $form, $pos, $back, $msg)` is display
-    code in the backend that calls a `word::dsp_time_selector` existing in neither layer,
-    and its only callers are the equally missing frontend `phrase::dsp_time_selector` calls
-    of `value::dsp_edit` - it carries a `TODO Prio 1 review`, so decide it together with the
-    value mask above (move to the frontend with the url array or delete)
-  - the write only properties `cfg/system/sys_log_list.php::$back` and
-    `cfg/formula/formula_list.php::$back` ("the calling stack"): nothing reads them,
-    `formula_write_tests` ~663 is the only line that writes one - delete both with the write
-    or give them a reader
-  - the TODO of `cfg/word/word_list.php` (~10) "check the consistence usage of the parameter
-    $back" describes a parameter that no longer exists - drop the line when the file is
-    touched
-  - commented out test code still calls the retired `http/value_add.php` / `value_edit.php` /
-    `value_del.php` / `formula_add.php` endpoints with `?back=` (`value_ui_tests` ~296-319,
-    `formula_ui_tests` ~386-398, `test_word_display` ~174, `formula_write_tests` ~377-406,
-    `view_write_tests` ~107) and `base_ui_tests` ~558 keeps a `?words=1` target whose assert
-    is commented out - delete these blocks or rebuild them on the current views
 
 ## start page
 
@@ -1050,8 +1095,6 @@ each is a small standalone commit):
 - `web/user/user.php::dsp_errors` has no caller and would fatal if it got one: `$err_lst` is the
   **frontend** `sys_log_list`, which has `load_by_user()` but no `load()`; the page it once served
   is the user view rework further down in this file, so delete it there instead of repairing it
-  (only its `string $back` became `array $url_arr` so that the back url rule of
-  `coding_rule_tests` passes; the missing `load()` is untouched)
 - in `test_lib::ui_test_cache` the `$base_msg` of the base view import is also handed to
   `list_all_ui`, so its name no longer says what it collects - split it when that function is
   touched again; the two test runners also name the same web class differently
@@ -1536,6 +1579,8 @@ save the source of a value as the new default source of the user: the old contro
 the legacy controller http_old/value_edit.php has been replaced by the value_edit view called via /http/view.php?m=19 (views::VALUE_EDIT_ID), which the 'change value' button already uses (web/value/value.php::VIEW_EDIT_ID). The new form has the same fields as the value add view (value, description, source, value type, view style, default view, share and protection type) and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of the value tests (and in the meanwhile deleted dead class web/user/user_display_old.php). The missing parts are the same as for the value add view plus the check of an empty value.
 
 show and change the phrases of a value in the value edit view (m=19): the old controller loaded the value by id including its phrases and let the user add or remove a phrase ('phrase1', 'phrase2', ... with the matching 'type1', 'type2', ...), showing the form again after each change. The new view has only the free text field url_var::GROUP_NAME ('gn'), which is even empty in the rendered page, so the phrases of a value can neither be seen nor changed. Solve it together with the phrase selector of the value add view (see the section above)
+
+select the time of a value in the value edit view (m=19), which the old controller offered as a time selector next to the phrases: the default selection follows the time phrase of the value, e.g. for Q1 as the first quarter of a year the four quarters of that year, for the triple "Q1 of 2018" the triples of this year, and for a Q1 that is a wikidata qualifier a general time selector. Solve it together with the phrases of the value (see above)
 
 add web/value/value.php::input_valid, which does not exist today, so an empty number is saved without any warning: the old controller answered an empty value with 'An empty number should not be saved. Please delete/exclude the value instead.' and used the value from the database as a fallback if only the phrases had been changed. Add both, with a negative test for the empty value
 
@@ -2787,3 +2832,57 @@ every word and triple edit page carries a multiple of the source list.
    compare with the '86' value of `url_var::is_ref_row_change` is unchanged.
 2. **Tests:** the snapshot `object_pages/reference_form_rows.html` and the edit view snapshots are regenerated, and
    a ui test checks that the number of source options of the form does not grow with the number of rows.
+
+## the change list of a norm or big value or result misses its changes
+
+`change_log_list::load_sql_obj_fld` filters the changes of a value or result by the change table and field of
+`values` resp. `results` (`change_table_id`), but a norm or big value or result writes its changes with the table
+`values_norm`, `values_big`, `results_norm` or `results_big` (`sandbox_multi::log_norm` and `log_big`), so the
+query finds none of them; and both `load_sql_obj_fld` and `load_sql_obj_last` read only the numeric value change
+tables, never `change_values_time_*`, `change_values_text_*` or `change_values_geo_*`.
+
+1. **Table:** the table filter of a value or result uses the table that the log object of its key type sets, e.g.
+   one named function that returns the change table name of a class and a group id, used by the write and the
+   read, so that both can no longer differ.
+2. **Value type:** the change class of a value is chosen from its value type as well as from its key type, which
+   the list load needs as a parameter, because the group id alone does not say if a value is a number or a text.
+3. **Tests:** a write test reads the change list of a norm value and of a big value and finds the change it has
+   written; the sql fixtures of the changed queries are regenerated.
+
+## the leftover check of the write tests reads only the standard table of a class
+
+`test_db_load::csv_leftover_check` compares the rows of each class of `def::MAIN_CLASSES` after the write tests with
+the rows after the reset, but it reads each class with `sql_creator::sql_all`, which selects only the standard table
+of the class, e.g. `results`, `values` and `groups`. A row that a write test leaves in another table of the same
+class is never reported: the prime, main and big tables of the results, the prime and big tables of the values, the
+time, text and geo value tables of each key type, the prime and big tables of the groups, and the user overlay
+tables, e.g. `user_words` or `user_values`. E.g. the result of the seed formula "increase" that
+`formula_trigger_tests` saved stayed unseen in the main result table until its group got a text key and the result
+moved to `results`.
+
+1. **Tables:** the check reads every table of a class, e.g. one named function per class that lists the tables
+   with their key type and value type, the same list that the reset and the table creation use, so that a new table
+   is checked without a change of the check.
+2. **Report:** a leftover row names its table as well as its class, because the same key can be in several tables.
+3. **Tests:** a unit test checks that the table list of value, result and group contains every table of the
+   database setup of the class; the expected csv files of the added tables are created from the reset database.
+
+## the cleanup of an unnamed test triple fails without a report
+
+`test_db_load::del_triple` returns `true` as soon as it has found the triple, ignores the result of `triple::del`,
+and deletes always as `usr1`, because its message is a new `user_message($this->env->usr1)` and not a
+`clone_reset()` of the given message. It finds the triple by the ids of its two words, which `load_word` loads for the
+user of the message, so it finds nothing once one of the words is excluded for that user, e.g. after a word that a
+triple still uses has been excluded instead of deleted. `test_cleanup::cleanup_unnamed_test_triples` ignores the
+result of each call. E.g. "mathematics (System Test Word Parent)" (math is test parent), which `word_write_tests`
+adds with `add_child`, stays in the database after a write test run that has stopped before the final cleanup, and the
+next run neither removes it nor reports it, until the phrase list api test of the read phase finds the extra triple.
+
+1. **User:** `del_triple` uses a `clone_reset()` of the given message, so that each run of `write_named_cleanup`
+   deletes as its own user, and returns the result of `triple::del` and the state of its message.
+2. **Load:** the triple is found even if one of its words is excluded for the user, e.g. by the standard words or by
+   the generated triple name, and a triple that is not found is no error, because most runs have nothing to remove.
+3. **Report:** `cleanup_unnamed_test_triples` checks each found triple with `assert_true` like the named cleanups
+   above it, so a failed delete names the triple in the test run.
+4. **Tests:** a write test adds the test parent triple, excludes the test parent word for the user and checks that
+   the cleanup removes the triple; `del_triple_by_name` gets the same message and result handling.

@@ -1,4 +1,4 @@
-PREPARE change_value_by_field_row (bigint, bigint, bigint, bigint) AS
+PREPARE change_values_geo_norm_by_field_row (bigint, text, bigint, bigint) AS
     SELECT     s.change_id,
                s.user_id,
                s.change_time,
@@ -11,7 +11,7 @@ PREPARE change_value_by_field_row (bigint, bigint, bigint, bigint) AS
                s.new_id,
                l.user_name,
                l2.table_id
-          FROM change_values_prime s
+          FROM change_values_geo_norm s
      LEFT JOIN users l          ON s.user_id         = l.user_id
      LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
          WHERE s.change_field_id = $1

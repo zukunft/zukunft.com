@@ -392,6 +392,21 @@ class result_tests
         $test_name = 'a row in the table that fits the source group is updated in place';
         $t->assert_false($test_name, $t_res->result_prime()->row_in_other_table($t_res->result_prime()));
 
+        // a result is removed without change log by result_list::db_delete_no_log,
+        // so the delete of a single result is refused instead of reporting a delete that has not been done
+        $t->subheader($ts . 'delete of a single result');
+        $del_msg = new user_message();
+        $del_ok = true;
+        $del_call = function () use ($t_res, $del_msg, &$del_ok) {
+            $del_ok = $t_res->result_prime()->del($del_msg);
+        };
+        $test_name = 'the delete of a single result reports that it is refused';
+        $t->assert_log_err($test_name, $del_call, 'result_list::db_delete_no_log', $del_msg);
+        $test_name = '... and returns false';
+        $t->assert_false($test_name, $del_ok);
+        $test_name = '... and the message is not ok';
+        $t->assert_false($test_name, $del_msg->is_ok());
+
         // the text key of a prime group names the same phrases in the order of the text keys
         $t->subheader($ts . 'text key of a prime group');
         $prime_id = $t_res->result_prime()->grp()->id();

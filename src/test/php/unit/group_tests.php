@@ -98,9 +98,10 @@ class group_tests
             1114113);
         $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(1114113),
             $t_wrd->word_list_short()->phrase_list()->ids());
+        // the four words 1, 2, 5 and 6 with the smallest positive id in the first slot
         $t->assert('64 bit group_id word list', $grp_id->get_id($t_wrd->word_list()->phrase_list()),
-            1688871335231489);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688871335231489),
+            281500746842114);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(281500746842114),
             $t_wrd->word_list()->phrase_list()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
@@ -123,15 +124,27 @@ class group_tests
         $this->check_64_bit_key($t, [-32767,-1,32767], 140735341002751);
         $this->check_64_bit_key($t, [-1,-32767,32767], 140735341002751);
         $this->check_64_bit_key($t, [32765,32766,32767], 140735340773373);
-        $this->check_64_bit_key($t, [1,32765,32766,32767], 9223231292923772929);
-        $this->check_64_bit_key($t, [1234,32765,32766,32767], 9223231292923774162);
-        $this->check_64_bit_key($t, [15678,32765,32766,32767], 9223231292923788606);
-        $this->check_64_bit_key($t, [-15677,32767,-15676,32766], 9223231293951360317);
-        $this->check_64_bit_key($t, [32767,32766,32765,32764], 9223231292923805692);
-        $this->check_64_bit_key($t, [-15678,32767,-32766,32766], 9223231293951508478);
-        $this->check_64_bit_key($t, [-32765,32767,-32766,32766], 9223231295071322110);
-        $this->check_64_bit_key($t, [-32767,-32766,-32765,32767], 9223372028264775679);
-        // these are not "prime" anymore because at least one id must be positiv to avoid exeeding PHP_INT_MAX
+        // four phrases are prime only with a positive id of at most 31 in the first slot, so that javascript
+        // reads the key exactly (group_id::JS_INT_MAX), and the order of the input does not change the key
+        $this->check_64_bit_key($t, [1,32765,32766,32767], 422210317484029);
+        $this->check_64_bit_key($t, [32767,32766,32765,1], 422210317484029);
+        $this->check_64_bit_key($t, [31,32765,32766,32767], 8866459618803709);
+        $this->check_64_bit_key($t, [3,-32767,-32766,-32765], 1125891316842495);
+        $test_name = 'the prime key with the highest first slot is still read exactly by javascript';
+        $t->assert_true($test_name, $grp_id->get_id_by_ids([31,32765,32766,32767]) <= group_id::JS_INT_MAX);
+        // negatives: without a positive id of at most 31 four phrases get the text key
+        $this->check_64_bit_key($t, [32,32765,32766,32767], $this->text_key($grp_id, [32,32765,32766,32767]));
+        $this->check_64_bit_key($t, [1234,32765,32766,32767], $this->text_key($grp_id, [1234,32765,32766,32767]));
+        $this->check_64_bit_key($t, [15678,32765,32766,32767], $this->text_key($grp_id, [15678,32765,32766,32767]));
+        $this->check_64_bit_key($t, [-15677,32767,-15676,32766], $this->text_key($grp_id, [-15677,32767,-15676,32766]));
+        $this->check_64_bit_key($t, [32767,32766,32765,32764], $this->text_key($grp_id, [32767,32766,32765,32764]));
+        $this->check_64_bit_key($t, [-15678,32767,-32766,32766], $this->text_key($grp_id, [-15678,32767,-32766,32766]));
+        $this->check_64_bit_key($t, [-32765,32767,-32766,32766], $this->text_key($grp_id, [-32765,32767,-32766,32766]));
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,32767], $this->text_key($grp_id, [-32767,-32766,-32765,32767]));
+        // a small negative id is no first slot id, because its sign bit would be the sign of the 64-bit key
+        $this->check_64_bit_key($t, [-5,40,41,42], $this->text_key($grp_id, [-5,40,41,42]));
+        // the value of the calculator editor with word 289 and three triples, which javascript could not read as a number
+        $this->check_64_bit_key($t, [289,-1997,-1999,-2034], $this->text_key($grp_id, [289,-1997,-1999,-2034]));
         $this->check_64_bit_key($t, [-1,-2,-3,-4], '2-1-0-/-');
         $this->check_64_bit_key($t, [-32767,-32766,-32765,-1], '5zz-5zy-5zx-/-');
 
@@ -656,6 +669,17 @@ class group_tests
             $qp = $grp->load_sql_by_phrase_list($sc, $t_phr->phrase_list_17_plus());
             $t->assert_qp($qp, $sc->db_type);
         }
+    }
+
+    /**
+     * @param group_id $grp_id the group id creator
+     * @param array $ids the phrase ids of a group that is not prime
+     * @return string the expected text key of the ids, which are sorted with the lowest first
+     */
+    private function text_key(group_id $grp_id, array $ids): string
+    {
+        sort($ids);
+        return implode('', array_map(fn(int $id) => $grp_id->int2alpha_num($id), $ids));
     }
 
     private function check_64_bit_key(test_cleanup $t, array $ids, int|string $id): void
