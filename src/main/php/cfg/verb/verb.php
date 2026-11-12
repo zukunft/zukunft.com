@@ -1087,21 +1087,24 @@ class verb extends type_object
     }
 
     /**
-     * check if the user has requested a verb with a preserved name
+     * check if the requesting user of the message has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg with the requesting user and enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
     protected function check_preserved(user_message $msg): bool
     {
-        $usr = $this->get_user();
+        // a verb is no user sandbox object, so the requesting user is the user of the message
+        $usr = $msg->usr;
 
         // init
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        if (!$usr->is_system()) {
+        if ($usr === null) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif (!$usr->is_system()) {
             if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
@@ -1174,6 +1177,10 @@ class verb extends type_object
                 // get similar database row but ignore the duplicate messages for the moment
                 $sim = $this->get_similar($sim_msg);
                 $this->similar_message($sim, $sim_msg);
+                // without a similar verb the buffer holds e.g. the name used by a word, which stops the add
+                if ($sim == null) {
+                    $msg->merge($sim_msg);
+                }
             }
         }
 

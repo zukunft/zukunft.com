@@ -2721,9 +2721,8 @@ class frontend
     }
 
     /**
-     * apply a sys_log status update on behalf of an admin; mirrors the action portion of
-     * the legacy /http/error_update.php script: when an admin clicks "close" on a sys_log row
-     * the id + status arrive as URL parameters and the matching entry is saved with the new
+     * apply a sys_log status update on behalf of an admin: when an admin clicks "close" on a
+     * sys_log row the id + status arrive as URL parameters and the matching entry is saved with the new
      * status; non-admins and incomplete parameters are ignored — the page is just re-rendered
      *
      * @param array $url_array the normalised URL params; expects ID (log id) and

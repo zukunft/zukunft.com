@@ -1515,11 +1515,11 @@ class lib_tests
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_FILE);
 
         $test_name = $tb . 'with position in long html string';
-        $test_result = '<a href="/http/result_edit.php?id=12&back=1" title="1.55">1.55</a>';
-        $test_target = '<a href="/http/value_edit.php?id=12&back=1" title="1.55">1.55</a>';
+        $test_result = '<a href="/http/view.php?m=result_edit&id=12&back=1" title="1.55">1.55</a>';
+        $test_target = '<a href="/http/view.php?m=value_edit&id=12&back=1" title="1.55">1.55</a>';
         $result = $lib->str_diff($test_result, $test_target);
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '<a href="/http///-value////+result//_edit.php?id=12&back=1" title="1.55">1.55</a>';
+        $target = '<a href="/http/view.php?m=//-value////+result//_edit&id=12&back=1" title="1.55">1.55</a>';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'with position in short json string';

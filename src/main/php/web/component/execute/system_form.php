@@ -1668,66 +1668,39 @@ class system_form extends component
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE,
-            msg_id::FORM_FIELD_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE, msg_id::FORM_FIELD_REVERSE, $dbo->reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed plural reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_plural_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->plural_reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE_PLURAL,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE_PLURAL, msg_id::FORM_FIELD_PLURAL_REVERSE, $dbo->plural_reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used in a formula
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed name in formulas
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used in a formula
      */
     function form_field_name_in_formulas(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $frm_name = $dbo->formula_name();
-        if ($frm_name == null) {
-            $frm_name = '';
-        }
-        return $html->form_field(
-            url_var::NAME_IN_FORMULA,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $frm_name,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::NAME_IN_FORMULA, msg_id::FORM_FIELD_NAME_IN_FORMULAS, $dbo->formula_name(), $style_text, $dbo);
     }
 
     /**

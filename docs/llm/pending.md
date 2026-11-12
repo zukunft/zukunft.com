@@ -4,10 +4,8 @@
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
+**Prompt:** deprecate http_old (size L, phases 2 and 3; re-pin, because the verb gets a db field). Steps 4 and 6 of
 "Other" are part of the admin dashboard prompt; the table above lists the functionality to move per script.
-- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
-  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
 - phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
   step 5 and agent export import with step 7; stop for a run with re-pin
 - phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
@@ -17,7 +15,7 @@
 
 **Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
 `system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
-of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
+of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` (checked by `coding_rule_tests::retired_script_link_tests`).
 
 **Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
 when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
@@ -44,8 +42,8 @@ below the table follow the same order.
 | `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
 | `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
 | `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
-| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
-| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
+| `verb_add.php` | `views::VERB_ADD_ID` | nothing; the add view has the field "name in formulas" and refuses a verb name that is already used by a word, triple or formula: **can be removed** |
+| `verb_edit.php` | `views::VERB_EDIT_ID` | remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
 | `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
 | `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
 | `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
@@ -178,56 +176,19 @@ commit. After both steps `http_old/source_add.php`, `source_edit.php` and `sourc
 
 #### verb_add.php, verb_edit.php, verb_del.php and verbs.php
 
-The add and the edit view of a verb get the field "name in formulas" (`url_var::NAME_IN_FORMULA`, the component
-`system form field name in formulas` exists but is no part of the views); the add refuses a verb name that is
-already used by a word, triple or formula like the old page (`term::load_by_name`, see the defect in step 2); the
-edit remembers the verb as the last used verb of the user, which needs a db field, because `user::set_verb` is a
+The edit remembers the verb as the last used verb of the user, which needs a db field, because `user::set_verb` is a
 stub (re-pin); the verb list view (`views::VERBS_ID`) lists all verbs with an edit, a delete and an add button for
-an admin (prio 2, `### verb list view`). The del view covers the old page already.
+an admin (prio 2, `### verb list view`). The add view and the del view cover the old pages already.
 
 ##### suggested code changes
 
 The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The verb views are
 `verb_add` (`messages/system_views.json:7089`), `verb_edit` (`:7156`), `verb_del` (`:7262`) and `verbs`
-(`:10848`, no component at all, so the page is empty). The component `system form field name in formulas`
-(`:1695`) exists, but no view uses it. The four bugs 1 to 4 of "bugs found while checking http_old" are still in
-the code. No workflow test covers a verb, only the snapshots `views_by_id/verb/70_verb_add_1.html`,
-`71_verb_update_2.html`, `72_verb_del_2.html`, `170_verb_2.html` and `object_pages/verb_list.html`. Four changes,
-each with its own log file:
+(`:10848`, no component at all, so the page is empty). The workflow `change_verb` (wf48) covers the edit view, and
+the snapshots `views_by_id/verb/70_verb_add_1.html`, `71_verb_update_2.html`, `72_verb_del_2.html`,
+`170_verb_2.html` and `object_pages/verb_list.html` cover the other views. Two changes, each with its own log file:
 
-###### step 1: the four bugs
-
-- bug 1: `web/verb/verb.php::url_mapper` (`:152-156`) sets `frm_name` from `url_var::IMPACT`; it takes
-  `url_var::NAME_IN_FORMULA`
-- bug 2: `system_form::form_field_name_in_formulas` (`system_form.php:1717-1731`) shows the label
-  `msg_id::FORM_FIELD_PLURAL_REVERSE`, so its html id would also be the one of the plural reverse field; it takes
-  `msg_id::FORM_FIELD_NAME_IN_FORMULAS` (`messages.php:3038`, `en.yaml:411`)
-- bug 3: `verb::save` (`cfg/verb/verb.php:1169-1198`) collects the message of a name that is already used by a
-  word, triple or formula (`get_similar`, `term::id_used_msg`, `:1233-1237`) in `$sim_msg` and merges it only if a
-  similar verb is found, so a verb with the name of a word is added: without a similar verb the message of the used
-  term reaches `$msg` and stops the add
-- bug 4: the comment of `user::set_verb` (`cfg/user/user.php:2835`) names the source; it names the verb, and the
-  function is finished in step 3
-
-Tests: a unit test of `verb::url_mapper` with a name in formulas and an impact, each with its own value; the field
-label in the snapshot of step 2; a write test that refuses a verb with the name of a word with the message of the
-used term, and its negative, a verb with an unused name is added and removed again.
-
-###### step 2: the field "name in formulas" in the add and the edit view
-
-Add the existing component to `verb_add` and `verb_edit` after `system form field plural reverse` with the next
-position; the positions of the later components of the two views move by one, and the two view entries shift the
-component link ids of the later views, so this step needs the re-pin of a full run. The fields plural, reverse and
-plural reverse are written with `form_field` without their stored '8' value, unlike the tracked fields of the
-other edit views (`form_field_tracked`, `system_form.php:1483`); check whether the confirm of a verb change sees a
-changed field without it, else the four fields become tracked (the same defect in all four).
-
-Tests: the snapshots `70_verb_add_1.html` and `71_verb_update_2.html` show the field; a new workflow `change_verb`
-in `unit_workflow` (and its write version on a test verb, never on a seed verb) shows the edit view, changes the
-name in formulas, saves, confirms with the preview of the field and checks the database; its negative: a save
-without a change shows no field change.
-
-###### step 3: remember the last used verb
+###### step 1: remember the last used verb
 
 The user has no db field for it (`user::set_verb` is a stub, `user.php:2837-2846`). Decide with the developer
 when the default is set, the same question as for the source (after the add or edit of a verb, after a triple
@@ -240,7 +201,7 @@ Tests: the write test of the default after a confirmed verb change resp. triple 
 user is unchanged; the snapshot of the triple add form of a user with a last used verb; `reset_db` for the new
 field.
 
-###### step 4: the verb list view
+###### step 2: the verb list view
 
 The verbs view (`views::VERBS_ID`) gets a component that lists all verbs with the name, the reverse name, the
 description and the usage, an edit and a delete button per row and one add button, shown only for an admin,
@@ -252,9 +213,8 @@ rewritten for it. A new component type shifts the component ids, so this step ne
 Tests: the snapshot of the verbs view (`views_by_id/verb/170_verb_2.html`) for an admin with the buttons and for a
 user without them; `object_pages/verb_list.html` with links to the verb views.
 
-Test runs: step 1 changes no import and no id, so a `test/test_part.php` run with the verb unit, ui and write tests
-is enough; steps 2 and 4 need the full run with re-pin, step 3 a `test/reset_db.php` for the new field. After the
-four steps `http_old/verb_add.php`, `verb_edit.php`, `verb_del.php` and `verbs.php` are deleted.
+Test runs: step 1 needs a `test/reset_db.php` for the new field, step 2 the full run with re-pin. After the two
+steps `http_old/verb_edit.php` and `verbs.php` are deleted, together with `verb_add.php` and `verb_del.php`.
 
 #### json_save.php, get_csv.php, get_json.php and get_xml.php
 
@@ -736,43 +696,8 @@ Test runs: step 1 changes no import and no id, so a `test/test_part.php` run wit
 run; the full `test/test.php` before each commit. After the steps `http_old/async_process.php` and
 `calculate.php` are deleted.
 
-### bugs found while checking http_old
+### Other
 
-All found by reading the code, none by a test run; confirm each with a failing test before the fix.
-
-#### Code
-
-1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
-   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
-2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
-   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
-3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
-   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
-   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
-   never-fail-silently violation.
-4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
-   about the verb, and it writes nothing (the update is commented out, the db field is missing).
-
-#### Documentation
-
-5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
-   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
-   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
-   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
-   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
-   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
-   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
-   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
-   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
-   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
-   seed view; m=20 is now even the value add view instead of the value del view.
-
-#### Other
-
-2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
-   by replacing the numbers with the consts.
-3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
-   `verb_edit` (appended component position, no new component), with the workflow snapshots.
 4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
    test in `unit_ui/`.
 5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
@@ -789,8 +714,6 @@ All found by reading the code, none by a test run; confirm each with a failing t
    row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
    `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
    that might still define a class.
-10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
-    other than the scripts in `http/`, so a retired script cannot get a new caller.
 11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
 
 if done remove this prompt from pending.md

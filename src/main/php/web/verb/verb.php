@@ -151,7 +151,7 @@ class verb extends sandbox_named
             }
             if (array_key_exists(url_var::NAME_IN_FORMULA, $url_array)) {
                 if ($url_array[url_var::NAME_IN_FORMULA] != null) {
-                    $this->frm_name = $url_array[url_var::IMPACT];
+                    $this->frm_name = $url_array[url_var::NAME_IN_FORMULA];
                 }
             }
             if (array_key_exists(url_var::IMPACT, $url_array)) {

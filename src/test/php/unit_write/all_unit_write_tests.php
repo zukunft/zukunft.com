@@ -156,8 +156,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t_db->create_test_db_entries($t);
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
-                // TODO Prio 1 activate
-                //new verb_write_tests()->run($t);
+                new verb_write_tests()->run($t);
                 new triple_write_tests()->run($t);
                 new phrase_write_tests()->run($t);
                 new phrase_list_write_tests()->run($t);

@@ -277,10 +277,8 @@ class triple_write_tests
         $msg = new user_message($t->usr1);
         $vrb->save($msg);
         $result = $msg->text();
-        $target = 'A triple with the name "System Test Triple" already exists. '
-            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
-        // TODO Prio 0 fix it
-        $target = '';
+        // the message names the class of the term that already uses the name, like for the word above
+        $target = 'A triple with the name "' . triple_names::SYSTEM_TEST_ADD_AUTO . '" already exists. Please use another triple name.';
         $t->assert('verb cannot have a standard triple name', $result, $target);
 
         // ... and no formula either

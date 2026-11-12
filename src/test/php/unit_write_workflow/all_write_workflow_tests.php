@@ -51,6 +51,7 @@ include_once test_paths::UNIT_WRITE_WORKFLOW . 'ref_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'value_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'signup_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'login_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'verb_write_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -87,6 +88,7 @@ class all_write_workflow_tests
             new value_write_url_tests()->run($t);
             new signup_write_url_tests()->run($t);
             new login_write_url_tests()->run($t);
+            new verb_write_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow

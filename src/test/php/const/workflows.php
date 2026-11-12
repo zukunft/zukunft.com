@@ -394,6 +394,16 @@ class workflows
     const string WF_WIKIDATA_IMPORT = 'wikidata_import';
     const int WF_WIKIDATA_IMPORT_NBR = 47;
 
+    // the change_verb workflow name used for the snapshot folder and the test subheader: the user changes
+    // the name in formulas of the test verb in the edit view and confirms it; a save without a change
+    // shows no field change
+    const string WF_CHANGE_VERB = 'change_verb';
+    const int WF_CHANGE_VERB_NBR = 48;
+
+    // snapshot file name marker for a save without a change, e.g. the 'unchanged' in
+    // 'wf48_edit_unchanged_save' where save is pressed on the edit view without changing a field
+    const string STEP_UNCHANGED = 'unchanged';
+
     /**
      * the user process step that a user reaction action triggers
      *

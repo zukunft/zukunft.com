@@ -1,0 +1,22 @@
+GET
+http://localhost/http/view.php?k=System+Test+Verb&lr=System+Test+Verb+reverse&bn=&id=991&8k=System+Test+Verb&8lr=System+Test+Verb+reverse&8bn=&8id=991&9m=10&9id=991&m=71&z=0
+/http/view.php?k=System+Test+Verb&lr=System+Test+Verb+reverse&bn=&id=991&8k=System+Test+Verb&8lr=System+Test+Verb+reverse&8bn=&8id=991&9m=10&9id=991&m=71&z=0
+/http/view.php?name=System+Test+Verb&reverse=System+Test+Verb+reverse&id=991&8name=System+Test+Verb&8reverse=System+Test+Verb+reverse&8id=991&9mask_id=verb_default&9id=991&mask_id=verb_edit&step=no&
+{
+    "name": "System Test Verb",
+    "reverse": "System Test Verb reverse",
+    "name_in_formula": "",
+    "id": "991",
+    "mask_id": "verb_edit",
+    "step": "no",
+    "url_part_original_data": {
+        "name": "System Test Verb",
+        "reverse": "System Test Verb reverse",
+        "name_in_formula": "",
+        "id": "991"
+    },
+    "url_part_back": {
+        "mask_id": "verb_default",
+        "id": "991"
+    }
+}

@@ -2832,7 +2832,7 @@ class user extends db_id_object_non_sandbox
         $this->name = 'standard user view for all users';
     }
 
-    // remember the last source that the user has used
+    // remember the last verb that the user has used
     // TODO Prio 2 add the database field
     function set_verb($vrb_id): bool
     {

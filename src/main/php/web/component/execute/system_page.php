@@ -823,16 +823,15 @@ class system_page extends component
 
     /**
      * render the admin error-update page body: a table of unresolved program issues an admin can
-     * review and re-status; mirrors the display path of /http/error_update.php — the actual sys_log
-     * status change is dispatched by the URL action handler so this body only renders the data
+     * review and re-status; the actual sys_log status change is dispatched by the URL action handler
+     * so this body only renders the data
      *
      * @param sys_log_list|null $errors pre-loaded list of unresolved program issues; when null or
      *                                  empty the "no open errors" notice is shown
      * @param user_dsp|null $usr the session user; when null or not an admin a permission notice is
-     *                           rendered instead of the issue list — default-deny matches the
-     *                           legacy /http/error_update.php behaviour where anyone but an admin
-     *                           saw the permission notice; the same user is forwarded to the
-     *                           per-row renderer so each status-change link carries the right context
+     *                           rendered instead of the issue list (default-deny); the same user is
+     *                           forwarded to the per-row renderer so each status-change link carries
+     *                           the right context
      * @param array $url_arr the url vars of the calling page, forwarded to each row's
      *                       status-change link so navigation is preserved
      * @return string the HTML body for the error_update page
