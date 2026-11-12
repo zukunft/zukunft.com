@@ -2645,14 +2645,6 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
     the standard row of an object without owner (`save_fields_func`). `ref::save` now takes over the owner of the
     loaded standard row; the generic `sandbox::save` should do the same for every class, and the api answer could
     name the owner, so that no request object can change the standard row of another owner.
-11. The user overlay row of a reference keeps its external key, because `ref::link_key_fields` names only the
-    phrase (see `sandbox::sql_insert_with_log`). The insert without log in `sandbox::sql_insert_switch` has no
-    check whether the key is a real change, so the overlay row of an exclusion written this way also gets the
-    stored key; `save_fields_func` always writes with the log, so only a direct `sql_insert` call is affected.
-12. Before the sign fix of the phrase id and the owner fix of `ref::save`, the write workflows ref_rows (wf43) and
-    ref_row_confirm (wf44) moved the wikidata reference 277 of Zurich (canton) to the word with id 142 and changed
-    its standard row; a database that has not been rebuilt since then still has these rows, which the cleanups
-    cannot repair, because they only look at the references of the triple.
 
 ## the sign of a phrase id in phrase::set_id
 
@@ -2660,8 +2652,9 @@ The refresh icon of a wikipedia reference (`url_var::REFRESH_WIKIPEDIA`, `cfg/re
 absolute value on the object (`set_obj_id(abs($id))`). A new phrase holds a dummy word, so `set_id(-142)` makes
 the word 142 out of the triple 142 without any message. `ref::api_mapper`, `triple::phrase_from_api_json` and
 `formula_link::set_phrase_from_id` have been switched to `set_obj_from_id()`, but only after the write workflows
-ref_rows (wf43) and ref_row_confirm (wf44) had linked a reference of a triple to a word (see item 12 of the
-wikipedia refresh leftovers). Still calling `set_id()` with a phrase id that can be negative:
+ref_rows (wf43) and ref_row_confirm (wf44) had linked a reference of a triple to a word (see "the wikidata
+reference of Zurich (canton) moved by the write workflows" below). Still calling `set_id()` with a phrase id that can
+be negative:
 `data_object::get_phrase_by_id` (the dto branch of `formula_link::set_phrase_from_id`), `data_object::set_phrase_id`
 and `phrase_list::add_id`. Make `set_id()` keep the sign like `set_obj_from_id()`, or remove it and switch every
 caller, with a unit test per caller that a negative id gives a triple and a positive id a word.
@@ -2886,3 +2879,57 @@ next run neither removes it nor reports it, until the phrase list api test of th
    above it, so a failed delete names the triple in the test run.
 4. **Tests:** a write test adds the test parent triple, excludes the test parent word for the user and checks that
    the cleanup removes the triple; `del_triple_by_name` gets the same message and result handling.
+
+## the external key of a reference in the user overlay row without log
+
+The user overlay row of a reference keeps its external key, because `ref::link_key_fields` names only the phrase
+(see `sandbox::sql_insert_with_log`). The insert without log in `sandbox::sql_insert_switch` has no check whether the
+key is a real change, so the overlay row of an exclusion written this way also gets the stored key;
+`save_fields_func` always writes with the log, so only a direct `sql_insert` call is affected.
+
+## the wikidata reference of Zurich (canton) moved by the write workflows
+
+Before the sign fix of the phrase id and the owner fix of `ref::save`, the write workflows ref_rows (wf43) and
+ref_row_confirm (wf44) moved the wikidata reference 277 of Zurich (canton) to the word with id 142 and changed its
+standard row; a database that has not been rebuilt since then still has these rows, which the cleanups cannot
+repair, because they only look at the references of the triple.
+
+## wikidata ids that are the reference of more than one seed phrase
+
+The wikidata import never guesses a phrase for an id with more than one phrase (`import_wikidata::phrase_of`,
+`WIKIDATA_ID_TWICE`), so the values of these ids are not imported until the seed keeps the reference at one phrase
+only. Step 3 of the wikidata import has removed Q4917 from "U.S. dollar"; the other 33 ids of the seed
+(`src/main/resources/messages`) need a review, because some look like synonyms or symbols and some like wrong ids:
+
+- probably a symbol or a synonym, which keeps the reference only at the named phrase: Q25344 (Swiss franc, CHF),
+  Q8146 (Japanese yen, Yen), Q25224 (Pound (sterling), Sterling), Q82435 (Euler's number, e), Q122894 (Planck
+  constant, h), Q325519 (acid dissociation constant, pKa), Q901344 (global warming potential, CO2eq), Q8134
+  (economic, economics), Q39297 (volume, volumetric), Q83147 (chemical formula, molecular formula), Q58702 (death
+  rate, mortality rate), Q76005 (tensile strength, ultimate strength), Q216320 (fluid flow, flow), Q1134348 (flow
+  rate, volumetric flow rate, discharge), Q186509 (mathematical constant, constant), Q179179 (interest rate,
+  interest), Q11188 (world population, world), Q35852 (are, hectare), Q180618 (genetic code, codon)
+- probably a wrong id at one of the phrases: Q44432 (heat, sine), Q41509 (cylinder, mole), Q9021 (Planck,
+  Schrödinger), Q170804 (NA, Weber), Q175854 (ideal gas law, phobia), Q331769 (complexity, mood), Q173817
+  (perimeter, radius), Q11570 (gigatonne, kilogram), Q11408 (electric field, magnetic field), Q13048280
+  (heterozygous, homozygous), Q19615136 (dominant allele, recessive allele), Q515905 (gross primary production, net
+  primary production), Q159375 (standard deviation, fraction), Q11412 (Newton's law of gravitation, gravity)
+
+## wikidata import preview as a job
+
+The import preview of the values of wikidata (`cfg/import/import_wikidata_preview.php`, decided by the developer on
+2026-11-11 as a later step) reads the entity json and, for each unit and criterion without a phrase of the pod, its
+label while the user waits for the page. If these reads make the page wait longer than
+`import_wikidata::READ_TIMEOUT`, the read should become a job: the refresh icon creates the job, the user sees it in
+the own jobs, and the preview is opened from the job result. Until then a label that cannot be read is reported per
+claim and the claim is not imported.
+
+## the job buttons write through an api put without the token of the session
+
+Found 2026-11-11 with the wikidata import: `web/system/job.php::change` sends the priority change or the cancel of a
+job as an api put to `api/job`, whose `controller::change_permitted` requires the anti csrf token of the session
+(`server_guard::csrf_token_valid`). The frontend calls the api server to server, and `rest_call` sends a token only
+in a test run (`test_base::api_login`), so in production the change is probably always refused with
+`msg_id::CHANGE_BLOCKED_SESSION_TOKEN`. The wikidata import confirm had the same problem and now writes in the process
+of the frontend like `db_object::update` (`frontend::import_confirmed`). To decide: the job change does the same, or
+the api accepts a server to server call of the own pod (`server_guard::from_own_pod`) without the token, which needs a
+security review.

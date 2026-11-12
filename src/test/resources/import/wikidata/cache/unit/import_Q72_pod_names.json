@@ -1,0 +1,77 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "words": [
+        {
+            "name": "population"
+        },
+        {
+            "name": "Zurich"
+        },
+        {
+            "name": "city"
+        },
+        {
+            "name": "1900",
+            "type": "time"
+        },
+        {
+            "name": "2021",
+            "type": "time"
+        },
+        {
+            "name": "resident population",
+            "refs": [
+                {
+                    "name": "Q56229488",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "population present",
+            "refs": [
+                {
+                    "name": "Q56229478",
+                    "type": "wikidata"
+                }
+            ]
+        }
+    ],
+    "triples": [
+        {
+            "name": "Zurich (city)",
+            "from": "Zurich",
+            "verb": "is a",
+            "to": "city"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1900"
+            ],
+            "number": "150703"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2021",
+                "resident population"
+            ],
+            "number": "423193"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2021",
+                "population present"
+            ],
+            "number": "436332"
+        }
+    ]
+}

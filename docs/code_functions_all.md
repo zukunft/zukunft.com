@@ -258,6 +258,7 @@
     \-- has_type - section for function has_type not yet defined that it should be set and get in /ref/ref.php
     \-- type_name - section for function type_name is expected to be preloaded in /ref/ref.php
     \-- last_update - section for function last_update not yet defined that it should be set and get in /ref/ref.php
+    \-- page_time - section for function page_time not yet defined that it should be set and get in /ref/ref.php
     \-- source_id - section for function source_id not yet defined that it should be set and get in /ref/ref.php
     \-- source_name - section for function source_name not yet defined that it should be set and get in /ref/ref.php
     \-- cloned_linked - section for function cloned_linked not yet defined that it should be set and get in /ref/ref.php
@@ -2562,6 +2563,8 @@
              set and get in /import/import_file.php
     \-- echo - section for function echo not yet defined that it should be set and get in /import/import_file.php
 \-- import_wikidata
+    \-- __construct - section for function __construct is expected to be construct and map in /import/import_wikidata.ph
+            p
     \-- get_entity_json - section for function get_entity_json is expected to be set and get in /import/import_wikidata.
             php
     \-- get_property_json - section for function get_property_json is expected to be set and get in /import/import_wikid
@@ -2569,10 +2572,25 @@
     \-- store_json - section for function store_json missing in /import/import_wikidata.php
     \-- store_text - section for function store_text missing in /import/import_wikidata.php
     \-- convert - section for function convert not yet defined that it should be convert in /import/import_wikidata.php
+    \-- entity_id - section for function entity_id not yet defined that it should be convert in /import/import_wikidata.
+            php
+    \-- property_ids - section for function property_ids not yet defined that it should be convert in /import/import_wik
+            idata.php
+    \-- item_ids - section for function item_ids not yet defined that it should be convert in /import/import_wikidata.ph
+            p
     \-- convert_to_file - section for function convert_to_file not yet defined that it should be convert in /import/impo
             rt_wikidata.php
     \-- cleanup_file - section for function cleanup_file not yet defined that it should be convert in /import/import_wik
             idata.php
+\-- import_wikidata_preview
+    \-- __construct - section for function __construct is expected to be construct and map in /import/import_wikidata_pr
+            eview.php
+    \-- preview_of_phrase - section for function preview_of_phrase not yet defined that it should be preview in /import/
+            import_wikidata_preview.php
+    \-- preview_of_key - section for function preview_of_key not yet defined that it should be preview in /import/import
+            _wikidata_preview.php
+    \-- import_of_entity - section for function import_of_entity not yet defined that it should be preview in /import/im
+            port_wikidata_preview.php
 \-- update_put
     \-- api_json - section for function api_json not yet defined that it should be put in /import/update_put.php
     \-- put - section for function put not yet defined that it should be put in /import/update_put.php
@@ -3063,6 +3081,7 @@
     \-- description - section for function description missing in /ref/ref_link_wikipedia.php
     \-- without_pronunciation - section for function without_pronunciation missing in /ref/ref_link_wikipedia.php
     \-- wikidata_id - section for function wikidata_id missing in /ref/ref_link_wikipedia.php
+    \-- page_time - section for function page_time missing in /ref/ref_link_wikipedia.php
     \-- summary - section for function summary missing in /ref/ref_link_wikipedia.php
 \-- ref_list
     \-- key_list - section for function key_list not yet defined that it should be set and get in /ref/ref_list.php
@@ -4502,6 +4521,9 @@
         \-- group_link - 
         \-- import - 
         \-- import_file - 
+        \-- import_wikidata - @param string $fixture_path empty for the pod, which reads wikidata by http,
+                 or the folder of the wikidata
+        \-- import_wikidata_preview - @param user $usr the user who sees the preview and who would write the import
         \-- user_message - assumes that normally everything is fine
         \-- view_sys_list - 
     \-- reset
@@ -4648,6 +4670,8 @@
         \-- ref_link_wikipedia - @param string $txt a lead text of wikipedia e.g. "Zürich (German: [ˈtsyːrɪç]) is t
                 he largest city"
     \-- wikidata_id
+        \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
+    \-- page_time
         \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
     \-- summary
         \-- ref_link_wikipedia - read the summary of a wikipedia page; public,
@@ -4837,6 +4861,9 @@
         \-- term_list - add the terms based on the given list of term id to this list
     \-- load_by_phr_id
         \-- ref_list - load all references of one phrase (e.g. the wikidata and wikipedia link of a word)
+    \-- load_by_type_and_keys
+        \-- ref_list - load the references of one type with one of the given external keys,
+                 e.g. the wikidata references of the
     \-- load_names_related
         \-- sandbox_list - load whatever the name() of the loaded objects needs beyond the object row itself, so that
     \-- load_sql_names
@@ -4892,10 +4919,15 @@
         \-- term_list - create an SQL statement to retrieve a list of terms from the database
     \-- load_sql_by_phr_id
         \-- ref_list - set the SQL query parameters to load the references of one phrase
+    \-- load_sql_by_type_and_keys
+        \-- ref_list - set the SQL query parameters to load the references of one type with one of the given external ke
+                ys
     \-- load_sql_by_names
-        \-- ref_list - set the SQL query parameters to load the references of one phrase
+        \-- ref_list - set the SQL query parameters to load the references of one type with one of the given external ke
+                ys
     \-- load_sql_by_source
-        \-- ref_list - set the SQL query parameters to load the references of one phrase
+        \-- ref_list - set the SQL query parameters to load the references of one type with one of the given external ke
+                ys
     \-- load_dummy
         \-- ref_list - adding the refs used for unit tests to the dummy list
     \-- load_sql_by_ip_addresses
@@ -6145,6 +6177,13 @@
     \-- convert
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
+    \-- entity_id
+        \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
+    \-- property_ids
+        \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
+    \-- item_ids
+        \-- import_wikidata - the wikidata ids that the convert of the given properties names,
+                 so that the caller loads the phrases of
     \-- convert_to_file
         \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
                  it to the cache folder
@@ -6318,6 +6357,16 @@
         \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
+\-- preview
+    \-- preview_of_phrase
+        \-- import_wikidata_preview - the preview of the wikidata import of a phrase by its wikidata reference e.g. the 
+                values of Q72 for the
+    \-- preview_of_key
+        \-- import_wikidata_preview - the preview of the wikidata import of an entity e.g. the values of Q72,
+                 which is also the base of the admin
+    \-- import_of_entity
+        \-- import_wikidata_preview - the import json of the claims of all properties of the entity that the pod knows,
+                 so that not the hundreds of
 \-- put
     \-- api_json
         \-- update_put - save the changes of an update put message and create the answer for the api
@@ -6996,6 +7045,8 @@
     \-- error_update - section for function error_update missing in /component/execute/system_page.php
     \-- not_yet_available - section for function not_yet_available missing in /component/execute/system_page.php
     \-- config_tree - section for function config_tree missing in /component/execute/system_page.php
+    \-- import_preview - section for function import_preview missing in /component/execute/system_page.php
+    \-- wikidata_key_form - section for function wikidata_key_form missing in /component/execute/system_page.php
     \-- user_jobs - section for function user_jobs missing in /component/execute/system_page.php
     \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
@@ -7399,6 +7450,8 @@
             te in /frontend.php
     \-- url_with_wikipedia_refresh - section for function url_with_wikipedia_refresh not yet defined that it should be e
             xecute in /frontend.php
+    \-- url_with_wikidata_refresh - section for function url_with_wikidata_refresh not yet defined that it should be exe
+            cute in /frontend.php
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
 \-- group
     \-- unset_name_tip_dirty - section for function unset_name_tip_dirty not yet defined that it should be set and get i
@@ -8022,6 +8075,7 @@
     \-- name_link_with_tip - section for function name_link_with_tip not yet defined that it should be base in /phrase/p
             hrase.php
     \-- own_view_id - section for function own_view_id not yet defined that it should be base in /phrase/phrase.php
+    \-- view_id - section for function view_id not yet defined that it should be base in /phrase/phrase.php
     \-- edit_view_id - section for function edit_view_id not yet defined that it should be base in /phrase/phrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
     \-- is_or_can_be - section for function is_or_can_be is expected to be info in /phrase/phrase.php
@@ -8221,6 +8275,8 @@
     \-- used_url - section for function used_url not yet defined that it should be set and get in /ref/ref.php
     \-- external_key - section for function external_key not yet defined that it should be set and get in /ref/ref.php
     \-- url - section for function url not yet defined that it should be set and get in /ref/ref.php
+    \-- page_time_text - section for function page_time_text not yet defined that it should be set and get in /ref/ref.p
+            hp
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /ref/ref.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /ref/ref.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be api in /ref/ref.php
@@ -8649,6 +8705,15 @@
             p
     \-- head - section for function head not yet defined that it should be select in /system/system_time_list.php
     \-- display - section for function display not yet defined that it should be display in /system/system_time_list.php
+\-- wikidata_import
+    \-- __construct - section for function __construct is expected to be construct and map in /system/wikidata_import.ph
+            p
+    \-- load - section for function load not yet defined that it should be api in /system/wikidata_import.php
+    \-- confirmed_import - section for function confirmed_import not yet defined that it should be api in /system/wikida
+            ta_import.php
+    \-- checksum - section for function checksum not yet defined that it should be api in /system/wikidata_import.php
+    \-- html - section for function html not yet defined that it should be html in /system/wikidata_import.php
+    \-- key_form - section for function key_form not yet defined that it should be html in /system/wikidata_import.php
 \-- type_list
     \-- reset - section for function reset is expected to be construct and map in /types/type_list.php
     \-- set_from_json_array - section for function set_from_json_array is expected to be set and get in /types/type_list
@@ -9169,6 +9234,14 @@
         \-- component - load the component by id AND ask the backend to include the owner, the change log and the
     \-- api_get
         \-- frontend - get an api json as a string from the backend
+    \-- load
+        \-- wikidata_import - ask the backend for the preview of the phrase (url_var::PHRASE) or of the wikidata id
+    \-- confirmed_import
+        \-- wikidata_import - the import json of the preview that the user has confirmed,
+                 but only if the preview of the backend is still
+    \-- checksum
+        \-- wikidata_import - @return string the checksum of the import json,
+                 so that the confirm imports only what the user has seen
 \-- base
     \-- name_link
         \-- component - create the html code to show the component name with the link to change the component parameters
@@ -9783,6 +9856,8 @@
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
+        \-- wikidata_import - @param array $preview the preview of the backend,
+                 which a unit test sets without a backend call
         \-- table_model - 
     \-- pdf
         \-- calculator_definition_report - @param array $doc the data of the page as the calculator editor exports it (t
@@ -9879,6 +9954,12 @@
                  but whose data and actions are not yet
     \-- config_tree
         \-- system_page - the tree of the system configuration with the search and the scope of the url,
+    \-- import_preview
+        \-- system_page - the preview of the import of the values of wikidata with the confirm that writes them,
+                 for the phrase of the
+    \-- wikidata_key_form
+        \-- system_page - @return string the html code of the form of the admin view "Import from Wikidata" with the wik
+                idata id field,
     \-- user_jobs
         \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
                 ancel a job
@@ -10829,6 +10910,11 @@
         \-- element - create an api json array for the backend based on this frontend object
     \-- link
         \-- element - return the HTML code for the element name including a link to inspect the element
+    \-- html
+        \-- wikidata_import - @param array $url_arr the url vars of the preview page, which the confirm form repeats
+    \-- key_form
+        \-- wikidata_import - the form of the admin view "Import from Wikidata": the wikidata id of the entity whose val
+                ues are imported,
 \-- repeat from backend
     \-- build_symbol
         \-- element_group - recreate the element group symbol based on the element list ($this->lst)
@@ -11006,6 +11092,9 @@
         \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
     \-- url_with_wikipedia_refresh
         \-- frontend - the confirm page of the description and the wikidata id that the backend takes from the
+    \-- url_with_wikidata_refresh
+        \-- frontend - the import preview of the values that wikidata would add to a phrase,
+                 because the refresh icon of a wikidata
     \-- show
         \-- view_exe - create the html code to view a sandbox object
     \-- add_page_cache

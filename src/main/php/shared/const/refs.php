@@ -66,6 +66,12 @@ class refs
     const int SYSTEM_TEST_ADD_ID = 992; // fixed snapshot id of the add workflow reference (like word_names::TEST_ADD_ID)
     // the wikipedia and the wikidata reference of Geneva (city) used by the wikipedia refresh workflow,
     // whose lead text starts with a pronunciation to remove
+    // the wikidata item of the triple Zurich (city) of the base data, whose population the wikidata import reads
+    const string ZURICH_CITY_WIKIDATA_KEY = 'Q72';
+    // the wikidata properties of the population and of the price, which the base data words population and price
+    // have as their reference of the type wikidata property, so that a wikidata import uses these words
+    const string POPULATION_WIKIDATA_PROPERTY_KEY = 'P1082';
+    const string PRICE_WIKIDATA_PROPERTY_KEY = 'P2284';
     const string GENEVA_WIKIPEDIA_KEY = 'Geneva';
     const string GENEVA_KEY = 'Q71';
     const int GENEVA_ID = 279;
@@ -85,6 +91,7 @@ class refs
     const string SYSTEM_TEST_RENAMED = 'System Test Reference External Key Changed';
     // the external key of the reference that the reference rows write test adds with the confirm of a phrase change
     const string SYSTEM_TEST_ROW_ADD = 'System Test Reference Row Added';
+    const int SYSTEM_TEST_ROW_ADD_ID = 993; // fixed snapshot id of the reference that the confirm of a row adds (like SYSTEM_TEST_ADD_ID)
 
     // must be the same as in /resource/api/source/source_put.json
     const string SYSTEM_TEST_API_ADD_KEY = 'System Test Reference API added';

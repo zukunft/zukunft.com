@@ -195,9 +195,20 @@
                     Import from Wikidata
                 </h4>
             </div>
-            <h5>
-                this page is not yet available
-            </h5>
+            <form action="http://localhost/http/view.php" id="import_preview">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <div class="form-group ">
+                    <label for="wikidata_id_e_g_q72">
+                        wikidata id e.g. Q72
+                    </label>
+                    <input class="form-control" type="text" name="ek" id="wikidata_id_e_g_q72" form="import_preview">
+                </div>
+                <input type="hidden" name="m" value="146" form="import_preview">
+                <input type="hidden" name="9m" value="149" form="import_preview">
+                <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    Show what would be imported
+                </button>
+            </form>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

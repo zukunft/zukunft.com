@@ -294,3 +294,5 @@ component_type_id, type_name, description, code_id
 293, 'formula result compare', 'the results of the page of the phrase until now against the results after the save of the formula editor and its changes, filled by the script of the formula editor', 'formula_result_compare'
 294, 'child triples', 'show the children of the given phrase that are triples e.g. Swiss franc and US Dollar for currency', 'list_child_triples'
 295, 'form reference rows', 'the references of a phrase as rows of its edit form, which the confirm of the phrase change writes too', 'system_form_ref_rows'
+296, 'system body import preview', 'the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them', 'system_body_import_preview'
+297, 'system form wikidata id', 'the wikidata id of the entity whose values the admin imports, which opens the import preview', 'system_form_wikidata_id'

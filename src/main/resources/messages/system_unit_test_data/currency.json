@@ -145,6 +145,10 @@
         {
           "name": "Price",
           "type": "wikipedia"
+        },
+        {
+          "name": "P2284",
+          "type": "wikidata_property"
         }
       ]
     },

@@ -1,0 +1,83 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "words": [
+        {
+            "name": "price",
+            "refs": [
+                {
+                    "name": "P2284",
+                    "type": "wikidata_property"
+                }
+            ]
+        },
+        {
+            "name": "United States dollar",
+            "refs": [
+                {
+                    "name": "Q4917",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "euro",
+            "refs": [
+                {
+                    "name": "Q4916",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "2016",
+            "type": "time"
+        },
+        {
+            "name": "resident population",
+            "refs": [
+                {
+                    "name": "Q56229488",
+                    "type": "wikidata"
+                }
+            ]
+        }
+    ],
+    "triples": [],
+    "values": [
+        {
+            "words": [
+                "price",
+                "United States dollar",
+                "euro",
+                "2016"
+            ],
+            "number": "0.92"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar",
+                "euro"
+            ],
+            "number": "0.95"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar",
+                "euro",
+                "2016",
+                "resident population"
+            ],
+            "number": "0.93"
+        }
+    ]
+}

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -51,11 +52,14 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
+use DateTimeZone;
 use DOMDocument;
 
 class reference_ui_tests
@@ -65,6 +69,8 @@ class reference_ui_tests
     const string MATH_WIKIPEDIA_COM = 'Mathematics is a field of study that discovers and organizes methods, theories and theorems.';
     // the description that the backend has taken from the wikipedia page of geneva
     const string GENEVA_WIKIPEDIA_COM = 'Geneva is the second-most populous city in Switzerland.';
+    // a page time that the backend has not sent in the api format
+    const string INVALID_PAGE_TIME = '07.11.2026 14:48';
 
     function run(test_cleanup $t): void
     {
@@ -239,6 +245,15 @@ class reference_ui_tests
         $lnk_html = $ref->name_link();
         $t->assert_text_not_contains($test_name, $lnk_html, $refresh_par);
 
+        // the refresh icon of a wikidata reference opens the import preview of the values instead of a refresh job
+        $test_name = 'a wikidata reference links to the import preview of the values of wikidata';
+        $wikidata_par = url_var::REFRESH . '=' . url_var::REFRESH_WIKIDATA;
+        $t->assert_text_contains($test_name, $lnk_html, $wikidata_par);
+
+        // negative: the wikipedia refresh stays the refresh of the description
+        $test_name = '... and a wikipedia reference has no wikidata refresh';
+        $t->assert_text_not_contains($test_name, $wiki_ref->name_link(), $wikidata_par);
+
         $test_name = 'an empty reference list has no wikipedia reference';
         $no_ref = new ref_list_ui()->get_by_type_code_id(ref_types::WIKIPEDIA);
         $t->assert_null($test_name, $no_ref?->external_key());
@@ -276,9 +291,75 @@ class reference_ui_tests
         $t->assert($test_name, $add_url[url_var::MASK], views::CONFIRM_EDIT_ID);
         $msg->reset();
 
+        // the answer of the backend that differs from the stored phrase only in the description
+        $new_com = clone $old;
+        $new_com->description = self::MATH_WIKIPEDIA_COM;
+
         $test_name = 'an unchanged wikidata id is not confirmed again';
-        $same_url = $phr->confirm_url_of_refresh($edit_url, $old, $old, $msg);
+        $same_url = $phr->confirm_url_of_refresh($edit_url, $old, $new_com, $msg);
         $t->assert($test_name, url_var::ref_rows($same_url), []);
+
+        $test_name = '... but the changed description is';
+        $mask = $same_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::CONFIRM_EDIT_ID);
+        $msg->reset();
+
+        // the answer of the backend that differs from the stored phrase only in the wikidata id
+        $new_wd = clone $old;
+        $new_wd->ref_lst = $new->ref_lst;
+
+        $test_name = 'a changed wikidata id alone is confirmed as a reference row';
+        $wd_url = $phr->confirm_url_of_refresh($edit_url, $old, $new_wd, $msg);
+        $wd_rows = url_var::ref_rows($wd_url);
+        $wd_key = $wd_rows[$wd_row][url_var::EXTERNAL_KEY] ?? '';
+        $t->assert($test_name, $wd_key, refs::CHANGE_NEW_KEY);
+
+        $test_name = '... on the confirm page with the stored description';
+        $description = $wd_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, word_names::MATH_COM);
+        $msg->reset();
+
+        $lib = new library();
+        $test_name = 'a phrase in line with wikipedia shows the page of the phrase again';
+        $in_line_url = $phr->confirm_url_of_refresh($edit_url, $old, $old, $msg);
+        $mask = $in_line_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::WORD_ID);
+
+        $test_name = '... with the message that no update is needed';
+        $in_line_txt = $lib->msg_var_text([[msg_id::WIKIPEDIA_IN_LINE_NO_TIME, [msg_id::VAR_NAME => word_names::MATH]]], $mtr);
+        $t->assert($test_name, $msg->text(), $in_line_txt);
+
+        $test_name = '... which is an info and no warning';
+        $t->assert_true($test_name, $msg->is_ok());
+        $msg->reset();
+
+        // the answer of the backend with the time of the wikipedia page, which is shown in the time zone of the pod
+        global $ui_sys;
+        $timed = clone $old;
+        $timed->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $timed_wiki_ref = $timed->ref_lst->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $timed_wiki_ref->page_time = test_const::DUMMY_DATETIME;
+        $pod_time = new DateTime(test_const::DUMMY_DATETIME)->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        $time_txt = $pod_time->format($ui_sys->cfg->date_time_format());
+
+        $test_name = 'the message of a phrase in line with wikipedia names the time of the page';
+        $phr->confirm_url_of_refresh($edit_url, $old, $timed, $msg);
+        $timed_vars = [msg_id::VAR_NAME => word_names::MATH, msg_id::VAR_TIME => $time_txt];
+        $timed_txt = $lib->msg_var_text([[msg_id::WIKIPEDIA_IN_LINE, $timed_vars]], $mtr);
+        $t->assert($test_name, $msg->text(), $timed_txt);
+        $msg->reset();
+
+        // negative: a page time that is not in the api format is a program error, which is reported
+        $test_name = 'a page time in another format is reported as an internal error';
+        $timed_wiki_ref->page_time = self::INVALID_PAGE_TIME;
+        $page_time_txt = null;
+        $call = function () use ($timed_wiki_ref, $msg, &$page_time_txt) {
+            $page_time_txt = $timed_wiki_ref->page_time_text($msg);
+        };
+        $t->assert_log_err($test_name, $call, self::INVALID_PAGE_TIME, $msg);
+
+        $test_name = '... and names no time';
+        $t->assert($test_name, $page_time_txt, '');
         $msg->reset();
 
         // negative: without any wikidata item the refresh changes nothing
@@ -330,9 +411,7 @@ class reference_ui_tests
         $msg->reset();
 
         $test_name = 'a confirm that changes only a reference still shows the impact of the change';
-        $only_ref_url = $phr->confirm_url_of_refresh($edit_url, $old, $old, $msg);
-        $only_ref_url = array_merge($only_ref_url, url_var::ref_row_url_array(url_var::ref_rows($cnf_url)));
-        $t->assert_text_contains($test_name, $preview->popup_impact($only_ref_url), $mtr->txt(msg_id::POPUP_IMPACT));
+        $t->assert_text_contains($test_name, $preview->popup_impact($wd_url), $mtr->txt(msg_id::POPUP_IMPACT));
 
         $test_name = 'the confirm form carries the reference rows to the confirmed write';
         $wd_key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . $wd_row;

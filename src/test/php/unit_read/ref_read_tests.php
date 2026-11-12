@@ -35,14 +35,20 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_CONST . 'refs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_read_tests
@@ -83,6 +89,39 @@ class ref_read_tests
         $test_name = 'an unknown external key finds no reference';
         $ref = new ref($t->usr1);
         $t->assert($test_name, $ref->load_by_name(refs::SYSTEM_TEST_ADD, $msg), 0);
+
+        // the wikidata import uses the phrases of the pod with the wikidata reference of the item or property
+        $t->subheader($ts . 'load by type and keys');
+        $wd_type_id = $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA);
+        $test_name = 'only the known one of two wikidata keys finds a reference';
+        $ref_lst = new ref_list($t->usr1);
+        $ref_lst->load_by_type_and_keys($wd_type_id, [refs::ZURICH_CITY_WIKIDATA_KEY, refs::CHANGE_NEW_KEY], $msg);
+        $t->assert($test_name, $ref_lst->count(), 1);
+
+        $test_name = '... the reference of the triple Zurich (city)';
+        $wd_ref = $ref_lst->lst()[0] ?? null;
+        $phr_id = $wd_ref?->phrase_id() ?? 0;
+        $t->assert($test_name, $phr_id, triple_names::CITY_ZH_ID * -1);
+
+        $test_name = 'an unknown wikidata key finds no reference';
+        $ref_lst = new ref_list($t->usr1);
+        $found = $ref_lst->load_by_type_and_keys($wd_type_id, [refs::CHANGE_NEW_KEY], $msg);
+        $t->assert_false($test_name, $found);
+
+        $test_name = 'the wikidata property of the population is the reference of the word population';
+        $wd_prp_type_id = $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA_PROPERTY);
+        $ref_lst = new ref_list($t->usr1);
+        $ref_lst->load_by_type_and_keys($wd_prp_type_id, [refs::POPULATION_WIKIDATA_PROPERTY_KEY], $msg);
+        $prp_ref = $ref_lst->lst()[0] ?? null;
+        $phr_id = $prp_ref?->phrase_id() ?? 0;
+        $t->assert($test_name, $phr_id, word_names::POPULATION_ID);
+
+        $test_name = '... but not a reference of the type wikidata, whose key is an item';
+        $ref_lst = new ref_list($t->usr1);
+        $found = $ref_lst->load_by_type_and_keys($wd_type_id, [refs::POPULATION_WIKIDATA_PROPERTY_KEY], $msg);
+        $t->assert_false($test_name, $found);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
 
         $t->subheader($ts . 'apis');
 

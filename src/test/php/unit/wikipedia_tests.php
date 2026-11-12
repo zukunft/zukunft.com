@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTimeInterface;
 
 class wikipedia_tests
 {
@@ -67,6 +68,9 @@ class wikipedia_tests
     // the lead paragraph of test_files::IMPORT_WIKIPEDIA_SUMMARY_GENEVA, which the summary api sends already
     // without the pronunciation of the page
     const string GENEVA_DESCRIPTION = 'Geneva is the second-most populous city in Switzerland and the most populous in French-speaking Romandy. Situated in the southwest of the country, where the Rhône leaves Lake Geneva, it is the capital of the Republic and Canton of Geneva. Geneva is a global city, an international financial centre, and a worldwide centre for diplomacy, which has led to it being called the "Peace Capital".';
+    // the timestamp of test_files::IMPORT_WIKIPEDIA_SUMMARY_GENEVA, which wikipedia sends in UTC
+    const string GENEVA_PAGE_TIME = '2026-11-07T14:48:15+00:00';
+    const string INVALID_MONTH_PAGE_TIME = '2026-13-07T14:48:15Z';
 
     /**
      * the offline tests of the description and the wikidata id that the refresh icon of a
@@ -165,6 +169,21 @@ class wikipedia_tests
         unset($page[ref_link_wikipedia::WP_WIKIDATA_ID]);
         $result = $wik->wikidata_id($page);
         $t->assert($test_name, $result, '');
+
+        $test_name = 'the time of the frozen Geneva page is its last revision in UTC';
+        $page_time = $wik->page_time($geneva)?->format(DateTimeInterface::ATOM);
+        $t->assert($test_name, $page_time, self::GENEVA_PAGE_TIME);
+
+        $test_name = '... but the same page without its timestamp has no time';
+        $page = $geneva;
+        unset($page[ref_link_wikipedia::WP_TIMESTAMP]);
+        $page_time = $wik->page_time($page)?->format(DateTimeInterface::ATOM);
+        $t->assert_null($test_name, $page_time);
+
+        $test_name = '... and a timestamp with an invalid month is not rolled over into the next year';
+        $page[ref_link_wikipedia::WP_TIMESTAMP] = self::INVALID_MONTH_PAGE_TIME;
+        $page_time = $wik->page_time($page)?->format(DateTimeInterface::ATOM);
+        $t->assert_null($test_name, $page_time);
 
         $t->subheader($ts . 'reference');
         $t_ref = new test_refs($t);

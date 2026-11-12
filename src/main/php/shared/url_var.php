@@ -165,6 +165,8 @@ class url_var
     const string REFRESH_PHRASES = 'frp'; // add the phrases that match the typed chars to the selector
     // the refresh icon of a wikipedia reference takes over the description and the wikidata id of the phrase
     const string REFRESH_WIKIPEDIA = 'frw';
+    // the refresh icon of a wikidata reference opens the preview of the values that wikidata would add
+    const string REFRESH_WIKIDATA = 'frd';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -185,6 +187,8 @@ class url_var
     const string SYS_LOG = 'hs'; // history of a system event
     const string LOG_TIME = 'ht'; // the time of the creation of the log event
     const string FIGURE = 'i';
+    // the checksum of the import json of a preview, so that the confirm imports only what the user has seen
+    const string IMPORT_CHECKSUM = 'ic';
     const string ID = 'id'; // the internal database id of the main view object
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
@@ -344,6 +348,7 @@ class url_var
     const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
     const string ACTION_CLEAR_CACHE = 'acc'; // an admin removes all cached data on the settings page
+    const string ACTION_IMPORT = 'aim'; // the confirm of an import preview writes the import e.g. from wikidata
 
     // the actions of the job list buttons that change a batch job directly without a confirm view
     const array JOB_ACTIONS = [
@@ -536,6 +541,7 @@ class url_var
     const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
     const string ACTION_CLEAR_CACHE_HUMAN = 'clear_cache'; // an admin removes all cached data
+    const string ACTION_IMPORT_HUMAN = 'import_confirmed'; // the confirm of an import preview writes the import
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -640,6 +646,7 @@ class url_var
     const string REF_HUMAN = 'ref_id';
     const string REF_TYPE_HUMAN = 'ref_type';
     const string EX_KEY_HUMAN = 'external_key';
+    const string IMPORT_CHECKSUM_HUMAN = 'import_checksum';
 
     // group
     const string GROUP_HUMAN = 'group_ig';
@@ -669,6 +676,7 @@ class url_var
     const string REFRESH_TERMS_HUMAN = 'terms_only';
     const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
     const string REFRESH_WIKIPEDIA_HUMAN = 'description_from_wikipedia';
+    const string REFRESH_WIKIDATA_HUMAN = 'values_from_wikidata';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -910,6 +918,7 @@ class url_var
         [self::REF_HUMAN, self::REF],
         [self::REF_TYPE_HUMAN, self::REF_TYPE],
         [self::EX_KEY_HUMAN, self::EXTERNAL_KEY],
+        [self::IMPORT_CHECKSUM_HUMAN, self::IMPORT_CHECKSUM],
 
         // group
         [self::GROUP_HUMAN, self::GROUP],
@@ -1032,6 +1041,7 @@ class url_var
         self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
         self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
         self::ACTION_CLEAR_CACHE => self::ACTION_CLEAR_CACHE_HUMAN,
+        self::ACTION_IMPORT => self::ACTION_IMPORT_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1041,6 +1051,7 @@ class url_var
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
         self::REFRESH_WIKIPEDIA => self::REFRESH_WIKIPEDIA_HUMAN,
+        self::REFRESH_WIKIDATA => self::REFRESH_WIKIDATA_HUMAN,
     ];
 
     // map human-readable url values to standard url values

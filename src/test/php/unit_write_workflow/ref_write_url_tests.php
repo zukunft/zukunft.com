@@ -79,6 +79,11 @@ class ref_write_url_tests extends ref_url_tests
         $this->wikidata_refresh_workflow(workflows::WF_WIKIDATA_REFRESH_NBR);
         $this->cleanup_wikidata_refresh();
 
+        // the refresh icon of a wikidata reference imports the values of the live wikidata entity
+        $this->cleanup_wikidata_import();
+        $this->wikidata_import_workflow(workflows::WF_WIKIDATA_IMPORT_NBR);
+        $this->cleanup_wikidata_import();
+
         // the confirm of a description with the change, the delete and the add of a reference writes
         // overlays of usr1 on the base data, so it runs only here and is undone before and after
         $this->cleanup_ref_rows();

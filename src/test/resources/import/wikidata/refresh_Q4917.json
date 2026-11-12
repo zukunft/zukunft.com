@@ -1,0 +1,193 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "words": [
+        {
+            "name": "price"
+        },
+        {
+            "name": "dollar"
+        },
+        {
+            "name": "US"
+        },
+        {
+            "name": "EUR"
+        },
+        {
+            "name": "USD"
+        },
+        {
+            "name": "2016",
+            "type": "time"
+        },
+        {
+            "name": "2015",
+            "type": "time"
+        },
+        {
+            "name": "2014",
+            "type": "time"
+        },
+        {
+            "name": "2013",
+            "type": "time"
+        },
+        {
+            "name": "2012",
+            "type": "time"
+        },
+        {
+            "name": "2011",
+            "type": "time"
+        },
+        {
+            "name": "2010",
+            "type": "time"
+        },
+        {
+            "name": "2009",
+            "type": "time"
+        },
+        {
+            "name": "2008",
+            "type": "time"
+        },
+        {
+            "name": "2007",
+            "type": "time"
+        },
+        {
+            "name": "2006",
+            "type": "time"
+        },
+        {
+            "name": "2005",
+            "type": "time"
+        },
+        {
+            "name": "2020",
+            "type": "time"
+        }
+    ],
+    "triples": [
+        {
+            "name": "US dollar",
+            "from": "dollar",
+            "verb": "of",
+            "to": "US"
+        },
+        {
+            "from": "EUR",
+            "verb": "per",
+            "to": "USD",
+            "type": "measure_unit"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2016"
+            ],
+            "number": "0.888375605"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2015"
+            ],
+            "number": "0.918273646"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2014"
+            ],
+            "number": "0.826377985"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2013"
+            ],
+            "number": "0.725742071"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2012"
+            ],
+            "number": "0.7583801"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2011"
+            ],
+            "number": "0.771010023130301"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2010"
+            ],
+            "number": "0.753636295123973"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2009"
+            ],
+            "number": "0.697739324588334"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2008"
+            ],
+            "number": "0.71844241684029"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2007"
+            ],
+            "number": "0.684790796411696"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2006"
+            ],
+            "number": "0.757747973024172"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2005"
+            ],
+            "number": "0.844451950684006"
+        },
+        {
+            "words": [
+                "price",
+                "EUR per USD",
+                "2020"
+            ],
+            "number": "0.8403"
+        }
+    ]
+}

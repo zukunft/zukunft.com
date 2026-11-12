@@ -55,6 +55,7 @@ the object structure is:
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
 ├── import_wikidata - retrieve and capture wikidata entity data
+├── import_wikidata_preview - what the wikidata import of a phrase would add to this pod
 ├── update_put - $upd - save the changes of an update put message with the database ids
 ├── change_table_field - helper class to create the database view with the log table and field name
 ├── text_log - object to handle standard io logging
@@ -454,6 +455,7 @@ the object structure is:
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard
+├── wikidata_importUi - the preview and the confirm of the import of the values of wikidata
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend
 │   ├── change_field_listUi - the preloaded change log fields used for the html frontend

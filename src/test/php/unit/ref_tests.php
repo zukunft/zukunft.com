@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
+use DateTimeInterface;
 
 class ref_tests
 {
@@ -127,6 +128,12 @@ class ref_tests
         $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::POSTGRES);
         $sc->reset(sql_db::MYSQL);
         $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::MYSQL);
+        // the wikidata references of the items that a wikidata import names, by the key that the user sees
+        $wd_keys = [refs::ZURICH_CITY_WIKIDATA_KEY, refs::GENEVA_KEY];
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_type_and_keys($sc, ref_types::WIKIDATA_ID, $wd_keys), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_type_and_keys($sc, ref_types::WIKIDATA_ID, $wd_keys), sql_db::MYSQL);
 
         $t->subheader($ts . 'sql write insert');
         $ref = $t_ref->reference();
@@ -352,6 +359,28 @@ class ref_tests
         $t->assert_key_not_exists($test_name, json_fields::IMPACT, $vars);
         $msg->reset();
 
+        // the time of the external page is sent with its time zone, so that the frontend can convert it
+        $test_name = 'the page time of a refreshed wikipedia reference';
+        $ref = $t_ref->reference_math_wikipedia();
+        $ref->set_page_time(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $ref->api_json_array([], $msg);
+        $page_time = $vars[json_fields::PAGE_TIME] ?? '';
+        $t->assert($test_name, $page_time, test_const::DUMMY_DATETIME);
+        $msg->reset();
+
+        // a reused reference must not keep the time of an earlier refresh
+        $test_name = 'a reset reference has no page time';
+        $ref->reset(true);
+        $page_time = $ref->page_time()?->format(DateTimeInterface::ATOM);
+        $t->assert_null($test_name, $page_time);
+
+        // negative: a reference that has not been refreshed sends no page time
+        $test_name = 'no page time of a reference without refresh';
+        $ref = $t_ref->reference_math_wikipedia();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PAGE_TIME, $vars);
+        $msg->reset();
+
         // a reference list sends one entry per reference
         $test_name = 'one entry per reference of a list';
         $ref_lst = $t_ref->ref_list_math();
@@ -386,6 +415,17 @@ class ref_tests
         $t->subheader($ts . 'frontend');
         $ref = $t_ref->reference_plus();
         $t->assert_api_to_ui($ref, new ref_ui());
+
+        $test_name = 'the frontend reference reads the page time of the refresh';
+        $ref = $t_ref->reference_math_wikipedia();
+        $ref->set_page_time(new DateTime(test_const::DUMMY_DATETIME));
+        $ref_ui = new ref_ui($ref->api_json([api_types::TEST_MODE]));
+        $t->assert($test_name, $ref_ui->page_time, test_const::DUMMY_DATETIME);
+
+        // negative: a reference without refresh has no page time in the frontend
+        $test_name = 'a frontend reference without refresh has no page time';
+        $ref_ui = new ref_ui($t_ref->reference_math_wikipedia()->api_json([api_types::TEST_MODE]));
+        $t->assert_null($test_name, $ref_ui->page_time);
 
         // the ref edit view shows the last update time and the system calculated impact as
         // display only info, because the user can never change these two db fields

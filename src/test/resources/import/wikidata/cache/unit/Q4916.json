@@ -1,0 +1,13 @@
+{
+    "entities": {
+        "Q4916": {
+            "id": "Q4916",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "euro"
+                }
+            }
+        }
+    }
+}

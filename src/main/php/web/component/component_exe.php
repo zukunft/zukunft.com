@@ -331,6 +331,8 @@ class component_exe extends component
             component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),
             component_types::SYSTEM_BODY_ALL_JOBS => $page->all_jobs($msg, $msk_id, $test_mode),
             component_types::SYSTEM_BODY_CONFIG_TREE => $page->config_tree($msg, $url_arr, $test_mode),
+            component_types::SYSTEM_BODY_IMPORT_PREVIEW => $page->import_preview($msg, $url_arr, $test_mode),
+            component_types::FORM_WIKIDATA_ID => $page->wikidata_key_form(),
             component_types::FORM_WORD_ADD_SIMPLE => $form->form_word_add_simple($style),
             component_types::FORM_TRIPLE_ADD_SIMPLE => $form->form_triple_add_simple($style),
 

@@ -1167,7 +1167,8 @@ class sql_creator
             if ($spt == sql_par_type::INT_LIST
                 or $spt == sql_par_type::INT_LIST_OR) {
                 $this->add_par($spt, $this->int_array_to_sql_string($fld_val), $name);
-            } elseif ($spt == sql_par_type::TEXT_LIST) {
+            } elseif ($spt == sql_par_type::TEXT_LIST
+                or $spt == sql_par_type::TEXT_USR_LIST) {
                 $this->add_par($spt, $this->str_array_to_sql_string($fld_val), $name);
             } elseif ($spt == sql_par_type::INT
                 or $spt == sql_par_type::INT_SMALL
@@ -3887,16 +3888,16 @@ class sql_creator
             $sql_where .= $fld . " = " . $par->name;
             $sql_where .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.';
             $sql_where .= $fld . " IS NULL))";
+        } elseif ($typ == sql_par_type::TEXT_USR_LIST) {
+            // the same as for one user-specific text, but with one of the texts of the list
+            $sql_where .= '(' . $this->list_match(sql_db::USR_TBL . '.' . $fld, $par->name);
+            $sql_where .= ' ' . sql::OR . ' (' . $this->list_match(sql_db::STD_TBL . '.' . $fld, $par->name);
+            $sql_where .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.';
+            $sql_where .= $fld . " IS NULL))";
         } else {
             // add the other fields
             if ($typ->is_list()) {
-                if ($this->db_type == sql_db::POSTGRES) {
-                    $sql_where .= $tbl . $fld
-                        . ' = ANY (' . $par->name . ')';
-                } else {
-                    $sql_where .= $tbl . $fld
-                        . ' IN (' . $par->name . ')';
-                }
+                $sql_where .= $this->list_match($tbl . $fld, $par->name);
             } elseif ($typ == sql_par_type::INT_SUB and $this->sub_query) {
                 $sql_where .= $tbl . $fld
                     . ' = ' . $par->name;
@@ -5414,6 +5415,20 @@ class sql_creator
     }
 
     /**
+     * @param string $tbl_fld the field with its table prefix e.g. "s.ref_id"
+     * @param string $par_name the placeholder of the list parameter e.g. "$2"
+     * @return string the condition that the field is one of the list in the SQL dialect e.g. "s.ref_id = ANY ($2)"
+     */
+    private function list_match(string $tbl_fld, string $par_name): string
+    {
+        $result = $tbl_fld . ' ' . sql::IN . ' (' . $par_name . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = $tbl_fld . ' ' . sql::ANY . ' (' . $par_name . ')';
+        }
+        return $result;
+    }
+
+    /**
      * convert the parameter type list to make valid for postgres
      * TODO Prio 2 move postgres const to a separate class sql_pg
      * @return array with the postgres parameter types
@@ -5468,6 +5483,7 @@ class sql_creator
                 $result = sql_par_type::TIME->value;
                 break;
             case sql_par_type::TEXT_LIST:
+            case sql_par_type::TEXT_USR_LIST:
                 $result = sql::PG_PAR_TEXT . sql::PG_PAR_LIST;
                 break;
             case sql_field_type::NAME:

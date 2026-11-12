@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -519,6 +519,10 @@ class files
     CONST string IMPORT_WIKIPEDIA_REFRESH_HEALTH = test_paths::IMPORT_WIKIPEDIA . 'refresh_health' . self::JSON;
     // the json converted from the wikidata cache that can be imported into the database
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
+    // the import json that the live wikidata entity gives with the phrases of the pod, as the refresh of a wikidata
+    // reference offers it, written by the last run, so that a change of the live data is reported as such
+    CONST string IMPORT_WIKIDATA_REFRESH_Q72 = test_paths::IMPORT_WIKIDATA . 'refresh_Q72' . self::JSON;
+    CONST string IMPORT_WIKIDATA_REFRESH_Q4917 = test_paths::IMPORT_WIKIDATA . 'refresh_Q4917' . self::JSON;
 
     // the raw wikidata api responses used by the wikidata converter tests, so not import json
     CONST string IMPORT_WIKIDATA_P1082 = test_paths::IMPORT_WIKIDATA_CACHE . 'P1082' . self::JSON;
@@ -538,8 +542,28 @@ class files
     CONST string IMPORT_WIKIDATA_UNIT_P1082 = test_paths::IMPORT_WIKIDATA_UNIT . 'P1082' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q72' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72' . self::JSON;
-    // a hand made item without a name used as unit and as criterion in the cache folder, where the
-    // converter reads the units and criteria from; Q0 is no wikidata id, so no live capture overwrites it
+    // the targets of the two examples since the property has the reference type wikidata property, which replace
+    // IMPORT_WIKIDATA_UNIT_TARGET_Q72 and IMPORT_WIKIDATA_UNIT_TARGET_Q4917, and the population of Zurich with the
+    // names of the pod: the triple "Zurich (city)" for Q72 and the word "population" for P1082
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72_PROPERTY_TYPE = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72_property_type' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_PROPERTY_TYPE = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_property_type' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72_POD_NAMES = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72_pod_names' . self::JSON;
+    // a hand made Zurich with one population claim per rule of the converter and its expected import json
+    CONST string IMPORT_WIKIDATA_UNIT_CLAIM_RULES = test_paths::IMPORT_WIKIDATA_UNIT . 'claim_rules' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_CLAIM_RULES = test_paths::IMPORT_WIKIDATA_UNIT . 'import_claim_rules' . self::JSON;
+    // the euro prices of the US dollar as values of the listed pair "EUR per USD" and as the inverse of the
+    // listed reverse pair "USD per EUR", and a hand made US dollar with a price of zero that has no inverse
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_CURRENCY_PAIR = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_currency_pair' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_REVERSE_PAIR = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_reverse_pair' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_CURRENCY_PRICE_ZERO = test_paths::IMPORT_WIKIDATA_UNIT . 'currency_price_zero' . self::JSON;
+    // the units and criteria of the two examples, which the converter of the unit tests reads by their id
+    // from test_paths::IMPORT_WIKIDATA_UNIT, so that a live capture of the cache folder does not change them
+    CONST string IMPORT_WIKIDATA_UNIT_Q4916 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q4916' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q56229478 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q56229478' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q56229488 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q56229488' . self::JSON;
+    // a hand made item without a name used as unit and as criterion; Q0 is no wikidata id
+    CONST string IMPORT_WIKIDATA_UNIT_Q0 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q0' . self::JSON;
+    // no longer read by the converter, which reads IMPORT_WIKIDATA_UNIT_Q0 instead; kept until the developer retires it
     CONST string IMPORT_WIKIDATA_Q0 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q0' . self::JSON;
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)

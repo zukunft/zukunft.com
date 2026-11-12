@@ -119,6 +119,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
+include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
@@ -135,6 +136,7 @@ include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
+include_once html_paths::SHARED_HELPER . 'MapObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED_TYPES . 'system_time_type.php';
@@ -204,6 +206,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -234,6 +237,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -995,6 +999,9 @@ class frontend
             // the button of an admin on the settings page removes all cached data without a confirm view
             $action == url_var::ACTION_CLEAR_CACHE and $step == url_var::STEP_CONFIRMED => $url = $this->action_clear_cache(
                 $msg_ui, $do_it),
+            // the confirm of an import preview writes the import that the user has seen on the preview
+            $action == url_var::ACTION_IMPORT and $step == url_var::STEP_CONFIRMED => $url = $this->action_import(
+                $url_array, $msg_ui, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
@@ -1162,6 +1169,8 @@ class frontend
         $url_array = $url_map->url_to_standard($url_array, $msg_ui);
         // the refresh icon of a wikipedia reference leads to the confirm page or the reference add page
         $url_array = $this->url_with_wikipedia_refresh($url_array, $msg_ui, $test_mode);
+        // the refresh icon of a wikidata reference leads to the preview of the values that wikidata would add
+        $url_array = $this->url_with_wikidata_refresh($url_array, $msg_ui, $test_mode);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -3121,6 +3130,68 @@ class frontend
     }
 
     /**
+     * write the import of the preview that the user has confirmed e.g. the values of wikidata for a phrase, and then
+     * show the page of the phrase; if nothing is written, e.g. because wikidata has changed since the preview, the
+     * user sees the preview again with the message why
+     *
+     * @param array $url_array the confirm url with the phrase or the wikidata id, the checksum and the back target
+     * @param user_message_ui $msg_ui with the requesting user, who writes the import, and to tell the result
+     * @param bool $do_it false to simulate the import e.g. in a unit test
+     * @return array the url of the page of the phrase, of the admin import view or of the preview again
+     */
+    private function action_import(array $url_array, user_message_ui $msg_ui, bool $do_it): array
+    {
+        $done = true;
+        if ($do_it) {
+            $done = $this->import_confirmed($url_array, $msg_ui);
+        }
+        $back_mask = $url_array[url_var::BACK . url_var::MASK] ?? views::IMPORT_WIKIDATA_ID;
+        if ($done) {
+            $result = [url_var::MASK => $back_mask];
+            if (array_key_exists(url_var::BACK . url_var::ID, $url_array)) {
+                $result[url_var::ID] = $url_array[url_var::BACK . url_var::ID];
+            }
+        } else {
+            $result = $url_array;
+            $result[url_var::MASK] = views::IMPORT_PREVIEW_ID;
+            unset($result[url_var::ACTION], $result[url_var::STEP], $result[url_var::IMPORT_CHECKSUM]);
+            unset($result[url_var::POST_SUBMIT]);
+        }
+        return $result;
+    }
+
+    /**
+     * write the import of a confirmed preview as the browsing user in this process, like db_object::update writes a
+     * confirmed change, because the api write guard refuses a call of the frontend without the token of the session
+     *
+     * @param array $url_array the confirm url with the phrase or the wikidata id and the checksum
+     * @param user_message_ui $msg_ui with the requesting user, who writes the import, and to tell the result
+     * @return bool true if the import has been written
+     */
+    private function import_confirmed(array $url_array, user_message_ui $msg_ui): bool
+    {
+        $result = false;
+        $json = new wikidata_import()->confirmed_import($url_array, $msg_ui);
+        if ($json != []) {
+            $map = new MapObject();
+            $usr_db = $map->convertMsgToDb($msg_ui)->usr;
+            $msg_db = new backend_user_message($usr_db); // a buffer of the backend import that is merged back into the message of the page
+            $imp = new import();
+            $imp->usr = $usr_db;
+            // the import writes its progress for the console, which is no part of the page
+            ob_start();
+            $imp->put_json(json_encode($json), $msg_db);
+            ob_end_clean();
+            $msg_ui->merge($map->convertMsgToUi($msg_db));
+            if ($msg_db->is_ok()) {
+                $msg_ui->add(msg_id::WIKIDATA_IMPORTED, [], true);
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * true if the back target of a confirmed change is the page of the changed object itself, i.e. its
      * own view with its id before the write (none for an add), so the id of the write may replace it
      *
@@ -3272,6 +3343,40 @@ class frontend
                 $result = $dbo->phrase()->wikipedia_confirm_url($url_array, $msg_ui);
             } else {
                 log_err_msg_ui('the wikipedia refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the import preview of the values that wikidata would add to a phrase, because the refresh icon of a wikidata
+     * reference writes nothing before the user has confirmed it (see system_page::import_preview)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell why nothing is imported from wikidata
+     * @param bool $test_mode true to render without a backend call, so without reading wikidata
+     * @return array the url of the import preview with the phrase, unchanged if no wikidata refresh is requested
+     */
+    function url_with_wikidata_refresh(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_WIKIDATA and !$test_mode) {
+            unset($result[url_var::REFRESH]);
+            $view = (int)($url_array[url_var::MASK] ?? 0);
+            $dbo = $this->dbo_for_url($view, $url_array);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif ($dbo instanceof word_ui or $dbo instanceof triple_ui) {
+                $phr = $dbo->phrase();
+                // the preview shows no object of its own, so the phrase is named by its own url var and
+                // the back mask and id lead to the page of the phrase after the confirm or the cancel
+                unset($result[url_var::ID]);
+                $result[url_var::MASK] = views::IMPORT_PREVIEW_ID;
+                $result[url_var::PHRASE] = $phr->id();
+                $result[url_var::BACK . url_var::MASK] = $phr->view_id();
+                $result[url_var::BACK . url_var::ID] = $phr->obj_id();
+            } else {
+                log_err_msg_ui('the wikidata refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
             }
         }
         return $result;
