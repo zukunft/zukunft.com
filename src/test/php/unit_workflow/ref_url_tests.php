@@ -39,23 +39,29 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_IMPORT . 'import_wikidata.php';
+include_once paths::MODEL_IMPORT . 'import_wikidata_preview.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_link_wikipedia.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -68,23 +74,29 @@ include_once test_paths::CREATE . 'test_triples.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata_preview;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_link_wikipedia;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
@@ -105,6 +117,8 @@ class ref_url_tests extends url_test_base
     const string WIKIPEDIA_PRONUNCIATION_PART = '[';
     // the description of the import json that the live wikipedia page of a refresh workflow gives
     const string WIKIPEDIA_IMPORT_COM = 'the description and the wikidata reference that the refresh takes from the wikipedia page ';
+    // stands for the time of the live wikipedia page in the expected message, which is unknown upfront
+    const string WIKIPEDIA_TIME_MARK = 'System Test Wikipedia Time';
     // the row of the reference that a typed confirm url tries to delete
     const int TYPED_ROW = 1;
     // the description and the reference rows that the ref_rows workflow confirms on Zurich (canton)
@@ -478,6 +492,19 @@ class ref_url_tests extends url_test_base
         $this->t->assert($test_name, $db_key, refs::GENEVA_KEY);
         $msg->reset();
 
+        // refresh again: the triple is now in line with the wikipedia page, so nothing is to confirm
+        $test_name = 'a second refresh shows the page of the triple again';
+        $in_line_url = $this->ui->url_with_wikipedia_refresh($edit_url, $ui_msg, false);
+        $mask = $in_line_url[url_var::MASK];
+        $this->t->assert($test_name, $mask, views::TRIPLE_ID);
+
+        // the time of the live page is unknown upfront, so the message is checked by the text before it
+        $test_name = '... with the message that no update is needed since the time of the page';
+        $msg_txt = $ui_msg->text();
+        $in_line_start = $this->in_line_message_start(triple_names::CITY_GE);
+        $this->t->assert_text_contains($test_name, $msg_txt, $in_line_start);
+        $ui_msg->reset();
+
         // negative: a typed confirm url cannot delete the reference of another phrase
         $test_name = 'a reference row of another phrase is refused with a message';
         $other_row = [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => refs::MATH_ID];
@@ -495,6 +522,19 @@ class ref_url_tests extends url_test_base
     }
 
     /**
+     * @param string $name the name of the phrase that is in line with its wikipedia page
+     * @return string the message of a refresh without update until the time of the page, which the live page sets
+     */
+    private function in_line_message_start(string $name): string
+    {
+        global $mtr;
+        $vars = [msg_id::VAR_NAME => $name, msg_id::VAR_TIME => self::WIKIPEDIA_TIME_MARK];
+        $in_line_txt = new library()->msg_var_text([[msg_id::WIKIPEDIA_IN_LINE, $vars]], $mtr);
+        // the complete text if the message names no time, which then fails the assert
+        return explode(self::WIKIPEDIA_TIME_MARK, $in_line_txt)[0];
+    }
+
+    /**
      * remove the description of Geneva (city) that the wikipedia refresh workflow has confirmed, which
      * is a user overlay of usr1, so that the standard row of the base data has never been changed
      */
@@ -505,6 +545,8 @@ class ref_url_tests extends url_test_base
         $trp->load_by_id(triple_names::CITY_GE_ID, $msg);
         if ($trp->has_usr_cfg()) {
             $trp->del_usr_cfg($msg);
+            // else the change log tab of the snapshot shows the overlay of every earlier run
+            $this->t->cleanup_change_log_of_user(triple::class, triple_names::CITY_GE_ID, $this->t->usr1);
         }
         $test_name = 'the cleanup of the wikipedia refresh has removed the description of usr1';
         $this->t->assert_msg($test_name, $msg);
@@ -640,10 +682,198 @@ class ref_url_tests extends url_test_base
         $wrd->load_by_id(word_names::HEALTH_ID, $msg);
         if ($wrd->has_usr_cfg()) {
             $wrd->del_usr_cfg($msg);
+            // else the change log tab of the snapshot shows the overlay of every earlier run
+            $this->t->cleanup_change_log_of_user(word::class, word_names::HEALTH_ID, $this->t->usr1);
         }
         $this->t->cleanup_ref_rows_of($wrd->phrase(), refs::HEALTH_WIKIDATA_KEY, $msg);
         $test_name = 'the cleanup of the wikidata refresh has removed the changes of usr1 on health';
         $this->t->assert_msg($test_name, $msg);
+    }
+
+    /**
+     * run the wikidata_import workflow on the triple Zurich (city) of the base data, which has the wikidata
+     * reference Q72: the refresh icon of the reference shows the import preview of the values of wikidata, and
+     * the confirm writes them as usr1 with the source wikidata; the backend reads the live wikidata entity, so
+     * this workflow runs only in the write tests and only the triple page before the refresh is a snapshot
+     * (see workflows::WF_WIKIDATA_IMPORT), and cleanup_wikidata_import removes the import again
+     *
+     * @param int $wf_nbr the id of the current workflow version used as the file name prefix
+     */
+    protected function wikidata_import_workflow(int $wf_nbr): void
+    {
+        global $mtr;
+        $msg = new user_message($this->t->usr1);
+        $trp_id = triple_names::CITY_ZH_ID;
+        $this->wf_start($wf_nbr, workflows::WF_WIKIDATA_IMPORT, $this->t->usr1, $trp_id, true);
+        // the frontend reads the session user from the request cache, e.g. to block a user without login
+        $this->req->dto->usr = $this->usr;
+        $ui_msg = new user_message_ui($this->usr);
+        $this->wf_id = $trp_id;
+        $this->wf_fixed_id = $trp_id;
+        $refresh_url = [
+            url_var::MASK => views::TRIPLE_EDIT_ID,
+            url_var::ID => $trp_id,
+            url_var::REFRESH => url_var::REFRESH_WIKIDATA,
+        ];
+
+        // show: the triple page lists the wikidata reference with its refresh icon
+        $html = $this->assert_step(workflows::SHOW, [url_var::ID => $this->wf_id], views::TRIPLE_ID);
+
+        $test_name = 'the wikidata reference on the triple page links to the import preview';
+        $this->t->assert_text_contains($test_name, $html, url_var::REFRESH . '=' . url_var::REFRESH_WIKIDATA);
+
+        // refresh: the user presses the refresh icon, which shows the import preview
+        $test_name = 'the refresh shows the import preview';
+        $pv_url = $this->ui->url_with_wikidata_refresh($refresh_url, $ui_msg, false);
+        $mask = $pv_url[url_var::MASK];
+        $this->t->assert($test_name, $mask, views::IMPORT_PREVIEW_ID);
+
+        $test_name = '... without a message';
+        $this->t->assert_msg($test_name, $ui_msg);
+        $ui_msg->reset();
+
+        $test_name = 'the import preview reads the values of the triple from wikidata';
+        $imp_ui = new wikidata_import();
+        $imp_ui->load($pv_url, $ui_msg);
+        $pv_name = $imp_ui->preview[json_fields::NAME] ?? '';
+        $this->t->assert($test_name, $pv_name, triple_names::CITY_ZH);
+
+        // the converter adds an unknown item as a word, so that the cleanup has no triple to remove
+        $test_name = '... without a new triple';
+        $new_triples = $imp_ui->preview[json_fields::PREVIEW_TRIPLES_NEW] ?? [];
+        $this->t->assert($test_name, $new_triples, []);
+
+        $test_name = '... without a message';
+        $this->t->assert_msg($test_name, $ui_msg);
+        $ui_msg->reset();
+
+        // confirmed: the user confirms the preview, whose checksum the confirm form carries
+        $test_name = 'the confirmed import shows the page of the triple again';
+        $import = $imp_ui->preview[json_fields::PREVIEW_IMPORT] ?? [];
+        $cnf_url = $pv_url;
+        $cnf_url[url_var::ACTION] = url_var::ACTION_IMPORT;
+        $cnf_url[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $cnf_url[url_var::IMPORT_CHECKSUM] = $imp_ui->checksum();
+        $cnf_url[url_var::POST_SUBMIT] = '';
+        $next_url = $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $back_id = $next_url[url_var::ID] ?? 0;
+        $this->t->assert($test_name, $back_id, $trp_id);
+
+        $test_name = '... with the message that the values are imported';
+        $this->t->assert_text_contains($test_name, $ui_msg->text(), $mtr->txt(msg_id::WIKIDATA_IMPORTED));
+        $ui_msg->reset();
+
+        $test_name = 'every imported value is in the database with the source wikidata';
+        $sources = [];
+        $expected = [];
+        foreach ($import[json_fields::VALUES] ?? [] as $val_json) {
+            $names = $val_json[json_fields::WORDS];
+            $key = implode(wikidata_import::WORD_SEPARATOR, $names);
+            $val = $this->value_of_names($names, $msg);
+            $sources[$key] = $val?->source_name($msg);
+            $expected[$key] = sources::WIKIDATA;
+        }
+        $this->t->assert($test_name, $sources, $expected);
+        $this->t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // the seed has no population of Zurich (city) of most years, so a preview without value is a failure
+        $test_name = '... and at least one value is imported';
+        $this->t->assert_greater_zero($test_name, count($sources));
+
+        // refresh again: the values are now in line with wikidata, so nothing is to confirm
+        $test_name = 'a second preview has no value to import';
+        $imp_ui->load($pv_url, $ui_msg);
+        $again = $imp_ui->preview[json_fields::PREVIEW_IMPORT] ?? [];
+        $again_values = $again[json_fields::VALUES] ?? [];
+        $this->t->assert($test_name, $again_values, []);
+
+        $test_name = '... without a message';
+        $this->t->assert_msg($test_name, $ui_msg);
+        $ui_msg->reset();
+    }
+
+    /**
+     * undo the wikidata_import workflow on Zurich (city): the values and the words that usr1 has imported are
+     * deleted and the overlays of usr1 on a value or a word of the base data are removed, found by the live convert of the
+     * entity, which gives the same values as the import before, so that the base data has never been changed
+     */
+    protected function cleanup_wikidata_import(): void
+    {
+        $msg = new user_message($this->t->usr1);
+        $claim_msg = new user_message($this->t->usr1); // not reported, because wikidata_write_tests compares the live claims
+        $entity_json = new import_wikidata()->get_entity_json(refs::ZURICH_CITY_WIKIDATA_KEY);
+        $preview = new import_wikidata_preview($this->t->usr1);
+        $import = $preview->import_of_entity($entity_json, triple_names::CITY_ZH, $msg, $claim_msg);
+        $deleted = [];
+        foreach ($import[json_fields::VALUES] ?? [] as $val_json) {
+            $names = $val_json[json_fields::WORDS];
+            // a value that is kept apart from an own value of the user by the word "wikidata" (see import_wikidata_preview::conflict)
+            $wd_names = array_merge($names, [import_wikidata_preview::CONFLICT_WORD]);
+            $deleted = array_merge($deleted, $this->cleanup_imported_value($names, $msg));
+            $deleted = array_merge($deleted, $this->cleanup_imported_value($wd_names, $msg));
+        }
+        // after the values, because a word that a value uses cannot be deleted
+        $wrd_names = array_column($import[json_fields::WORDS] ?? [], json_fields::NAME);
+        $wrd_names[] = import_wikidata_preview::CONFLICT_WORD;
+        foreach ($wrd_names as $name) {
+            $wrd = new word($this->t->usr1);
+            $wrd->load_by_name((string)$name, $msg);
+            // a word of the base data is owned by the system user
+            if ($wrd->id() != 0 and $wrd->owner_id() == $this->t->usr1->id()) {
+                $this->t->cleanup_leftover_refs($wrd->phrase(), $msg);
+                $wrd->del($msg);
+                $deleted[] = $wrd;
+            } elseif ($wrd->has_usr_cfg()) {
+                // e.g. the type time that an earlier import has given the year and postal code "1950" of the base data
+                $wrd->del_usr_cfg($msg);
+                $this->t->cleanup_change_log_of_user(word::class, $wrd->id(), $this->t->usr1);
+            }
+        }
+        $this->t->cleanup_change_log_of_deleted($deleted);
+        $test_name = 'the cleanup of the wikidata import has removed the values and the words of usr1';
+        $this->t->assert_msg($test_name, $msg);
+    }
+
+    /**
+     * @param array $names the phrase names of a value of the wikidata import e.g. ["population", "Zurich (city)", "2021"]
+     * @param user_message $msg to collect the problems of the delete
+     * @return array the value if usr1 has added it and it is deleted now, or none for a value of the base data,
+     *               whose overlay of usr1 is removed
+     */
+    private function cleanup_imported_value(array $names, user_message $msg): array
+    {
+        $result = [];
+        $val = $this->value_of_names($names, $msg);
+        if ($val?->owner_id() == $this->t->usr1->id()) {
+            $this->t->del_value($val, $msg);
+            $result[] = $val;
+        } elseif ($val?->has_usr_cfg()) {
+            $val->del_usr_cfg($msg);
+            // else the change log of the value of the base data shows the overlay of every earlier run
+            $this->t->cleanup_change_log_of_user(value::class, $val->id(), $this->t->usr1);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $names the phrase names of a value e.g. ["population", "Zurich (city)", "2021"]
+     * @param user_message $msg to collect the load warnings
+     * @return value|null the value of usr1 with exactly these phrases or null if a phrase or the value does not exist
+     */
+    private function value_of_names(array $names, user_message $msg): ?value
+    {
+        $result = null;
+        $phr_lst = new phrase_list($this->t->usr1);
+        $phr_lst->load_by_names($names, $msg);
+        // without a missing phrase, because the group of the other phrases names another value
+        if ($phr_lst->count() == count($names)) {
+            $val = new value($this->t->usr1);
+            if ($val->load_by_grp($phr_lst->get_grp_id(), $msg)) {
+                $result = $val;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -756,6 +986,27 @@ class ref_url_tests extends url_test_base
         $this->ui->url_to_action($dup_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
         $this->t->assert_text_contains($test_name, $ui_msg->var_message_text(), triple_names::CANTON_ZURICH);
         $ui_msg->reset();
+    }
+
+    /**
+     * learn the id of the reference that a confirmed reference row has just added, because each run
+     * gives it a new id, so that already the snapshot of this step shows the fixed test id
+     *
+     * @param string $step the user reaction action const of the step e.g. workflows::CONFIRMED
+     */
+    protected function after_action(string $step): void
+    {
+        if ($this->req->do_it and $step == workflows::CONFIRMED) {
+            // the backend read needs a backend message, because $this->msg is the message of the frontend
+            $msg = new user_message($this->t->usr1);
+            $added_ref = new ref($this->t->usr1);
+            $added_id = $added_ref->load_by_ex_key(refs::SYSTEM_TEST_ROW_ADD, $msg);
+            if ($added_id > 0) {
+                $this->wf_norm_ids[$added_id] = refs::SYSTEM_TEST_ROW_ADD_ID;
+            }
+            $test_name = 'the reference that a confirmed row may have added can be read';
+            $this->t->assert_msg($test_name, $msg);
+        }
     }
 
     /**
@@ -1087,6 +1338,8 @@ class ref_url_tests extends url_test_base
         $trp->load_by_id(triple_names::CANTON_ZURICH_ID, $msg);
         if ($trp->has_usr_cfg()) {
             $trp->del_usr_cfg($msg);
+            // else the change log tab of the snapshot shows the overlay of every earlier run
+            $this->t->cleanup_change_log_of_user(triple::class, triple_names::CANTON_ZURICH_ID, $this->t->usr1);
         }
         $this->t->cleanup_ref_rows_of($trp->phrase(), refs::SYSTEM_TEST_ROW_ADD, $msg);
         $test_name = 'the cleanup of the reference rows has removed the changes of usr1 on Zurich (canton)';

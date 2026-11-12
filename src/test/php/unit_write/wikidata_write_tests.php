@@ -39,19 +39,27 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
+include_once paths::MODEL_IMPORT . 'import_wikidata_preview.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::UNIT . 'wikidata_tests.php';
 include_once test_paths::UTILS . 'test_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata_preview;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\unit\wikidata_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class wikidata_write_tests
@@ -67,7 +75,6 @@ class wikidata_write_tests
     const string EURO_KEY = 'Q4916';
     const string PRICE_NAME = 'price';
     const string USD_NAME = 'United States dollar';
-    const string EURO_NAME = 'euro';
     // the wikidata id of the city of Zurich and its population property, whose values have no unit
     const string ZH_KEY = 'Q72';
     const string POPULATION_PROPERTY = 'P1082';
@@ -76,6 +83,8 @@ class wikidata_write_tests
     // the labels of the two "criterion used" items that separate the Zurich population values of the same year
     const string POPULATION_PRESENT_NAME = 'population present';
     const string RESIDENT_POPULATION_NAME = 'resident population';
+    // stands for the id of any unit in the expected message that the name of a unit cannot be read
+    const string UNIT_ID_MARK = 'System Test Wikidata Unit Id';
 
     function run(test_cleanup $t): void
     {
@@ -101,15 +110,19 @@ class wikidata_write_tests
         $this->assert_capture($t, $imp, self::ZH_KEY);
         $this->assert_convert_population($t, $imp);
 
+        // the values that the refresh of a wikidata reference offers, converted with the phrases of the pod
+        $this->assert_refresh_convert($t, self::ZH_KEY, wikidata_tests::ZURICH_CITY, test_files::IMPORT_WIKIDATA_REFRESH_Q72);
+        $this->assert_refresh_convert($t, self::USD_KEY, wikidata_tests::USD_NAME, test_files::IMPORT_WIKIDATA_REFRESH_Q4917);
+
         // negative: an unknown wikidata id returns a failure message and stores nothing
         $test_name = 'store of an unknown wikidata id (' . refs::CHANGE_NEW_KEY . ') fails';
-        $bad_msg = $imp->store_json(refs::CHANGE_NEW_KEY);
+        $bad_msg = $imp->store_json(refs::CHANGE_NEW_KEY, test_paths::IMPORT_WIKIDATA_CACHE);
         $t->assert_true($test_name, !$bad_msg->is_ok());
     }
 
     /**
      * convert the captured population of Zurich (Q72) and the population property (P1082): the values have
-     * no unit, so each value is assigned to the city word itself and no entity-in-unit triple is created
+     * no unit, so each value is assigned to the city word itself and no unit word is created
      * @param test_cleanup $t the test environment with the assert functions
      * @param import_wikidata $imp the importer with the convert function
      * @return void
@@ -117,11 +130,12 @@ class wikidata_write_tests
     private function assert_convert_population(test_cleanup $t, import_wikidata $imp): void
     {
         $test_name = 'every population value of ' . self::ZH_NAME . ' is converted';
-        $imp->store_json(self::POPULATION_PROPERTY);
+        $imp->store_json(self::POPULATION_PROPERTY, test_paths::IMPORT_WIKIDATA_CACHE);
         $entity_json = file_get_contents(test_files::IMPORT_WIKIDATA_Q72);
         $property_json = file_get_contents(test_files::IMPORT_WIKIDATA_P1082);
         $msg = new user_message();
-        $result = $imp->convert($entity_json, $property_json, $msg);
+        // without the phrases of the pod, so that the live data is converted to the wikidata labels
+        $result = $imp->convert($entity_json, $property_json, [], [], $msg);
         $t->assert_msg($test_name, $msg);
         $msg->reset();
 
@@ -136,6 +150,30 @@ class wikidata_write_tests
 
         $test_name = 'no two population values of ' . self::ZH_NAME . ' have the same words';
         $t->assert($test_name, $this->value_words_used_twice($result), []);
+    }
+
+    /**
+     * convert the live entity, which the capture above has stored, with the phrases of the pod like the refresh of
+     * a wikidata reference and compare the import json with the last run, so that a change of the live data is
+     * reported as such and not only as a failed assert of the wikidata_import workflow (ref_write_url_tests)
+     *
+     * @param test_cleanup $t the test environment with the assert functions
+     * @param string $wikidata_id the wikidata id of the captured entity e.g. "Q72"
+     * @param string $name the name of the phrase of the pod with this wikidata reference e.g. "Zurich (city)"
+     * @param string $file the import json of the last run e.g. test_files::IMPORT_WIKIDATA_REFRESH_Q72
+     * @return void
+     */
+    private function assert_refresh_convert(test_cleanup $t, string $wikidata_id, string $name, string $file): void
+    {
+        $msg = new user_message($t->usr1);
+        $claim_msg = new user_message($t->usr1); // not reported, because the live claims may be reported for another reason e.g. the qualifier P31
+        $entity_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . $wikidata_id . import_wikidata::JSON_EXTENSION);
+        $preview = new import_wikidata_preview($t->usr1);
+        $import = $preview->import_of_entity($entity_json, $name, $msg, $claim_msg);
+        $json = json_encode($import, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $test_name = 'the live wikidata entity ' . $wikidata_id . ' gives the import json of the last run with the phrases of the pod';
+        $t->assert_file($test_name, $json, $file, test_files::JSON);
+        $t->assert_msg($test_name, $msg);
     }
 
     /**
@@ -182,11 +220,11 @@ class wikidata_write_tests
         // get the property json via the general property getter and store it in the same way as the entities
         $test_name = 'store the wikidata property json for ' . self::PRICE_PROPERTY;
         $json = $imp->get_property_json(self::PRICE_PROPERTY);
-        $msg = $imp->store_text(self::PRICE_PROPERTY, $json);
+        $msg = $imp->store_text(self::PRICE_PROPERTY, $json, test_paths::IMPORT_WIKIDATA_CACHE);
         $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         $test_name = 'store of an empty wikidata json fails';
-        $bad_msg = $imp->store_text(self::UNKNOWN_PROPERTY, '');
+        $bad_msg = $imp->store_text(self::UNKNOWN_PROPERTY, '', test_paths::IMPORT_WIKIDATA_CACHE);
         $t->assert_msg_false($test_name, $bad_msg, self::UNKNOWN_PROPERTY);
 
         // and the captured json file contains the requested property id
@@ -205,41 +243,63 @@ class wikidata_write_tests
 
     /**
      * convert the captured US dollar price (Q4917) and the price property (P2284) into a zukunft.com
-     * import json and check that the price word and the "United States dollar in euro" triple are created
+     * import json and check that the price word and the values of the currency pair "EUR per USD" are created
      * @param test_cleanup $t the test environment with the assert functions
      * @param import_wikidata $imp the importer with the convert function
      * @return void
      */
     private function assert_convert(test_cleanup $t, import_wikidata $imp): void
     {
-        // capture the euro unit so that its name resolves when the entity-in-unit triple is built
-        $imp->store_json(self::EURO_KEY);
+        // capture the euro unit as a fixture; the importer without fixture folder reads its name live from wikidata
+        $imp->store_json(self::EURO_KEY, test_paths::IMPORT_WIKIDATA_CACHE);
         $entity_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . self::USD_KEY . import_wikidata::JSON_EXTENSION);
         $property_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION);
 
         // convert and write the zukunft.com import json to the wikidata to import folder
         $test_name = 'the converted import json is written to the wikidata to import folder';
         $msg = new user_message();
-        $file = $imp->convert_to_file(self::USD_KEY, $entity_json, $property_json, $msg);
+        // with the listed pair "EUR per USD" of the seed, so that the euro prices are values of the pair
+        $pairs = wikidata_tests::PAIRS_EUR_PER_USD;
+        $file = $imp->convert_to_file(self::USD_KEY, $entity_json, $property_json, [], $pairs, $msg, test_paths::IMPORT_WIKIDATA_TO_IMPORT);
         $t->assert_text_contains($test_name, $file, test_paths::IMPORT_WIKIDATA_TO_IMPORT . import_wikidata::IMPORT_PREFIX . self::USD_KEY);
 
+        // only the unit, because the live claims may be reported for another reason e.g. the qualifier P31
         $test_name = 'the name of the unit of every US dollar price can be read from wikidata';
-        $t->assert_msg($test_name, $msg);
+        $msg_txt = $msg->all_message_text();
+        $t->assert_text_not_contains($test_name, $msg_txt, $this->unit_missing_start(self::USD_NAME));
         $msg->reset();
 
-        // the written import file contains the price word and the United States dollar in euro triple
+        // the written import file contains the price word and the values of the currency pair
         if ($file != '') {
             $json = file_get_contents($file);
             $test_name = 'the import file contains the "' . self::PRICE_NAME . '" word';
             $t->assert_text_contains($test_name, $json, self::PRICE_NAME);
-            $test_name = 'the import file contains the "' . self::USD_NAME . ' ' . import_wikidata::IN_VERB . ' ' . self::EURO_NAME . '" triple';
-            $t->assert_text_contains($test_name, $json, self::USD_NAME . ' ' . import_wikidata::IN_VERB . ' ' . self::EURO_NAME);
+            $test_name = 'the import file contains the values of the currency pair "' . wikidata_tests::EUR_PER_USD . '"';
+            $t->assert_text_contains($test_name, $json, wikidata_tests::EUR_PER_USD);
             $test_name = 'the import file contains the wikidata reference (' . self::USD_KEY . ') of the words';
             $t->assert_text_contains($test_name, $json, self::USD_KEY);
         }
 
         // the cleanup is switched off for the test so that the converted import file can be inspected
         // (in an import pipeline call $imp->cleanup_file($file) after the import to remove the file)
+    }
+
+    /**
+     * @param string $entity_name the name of the entity e.g. "United States dollar"
+     * @return string the message that a value of the entity is not imported until the id of its unit, which any unit fills
+     */
+    private function unit_missing_start(string $entity_name): string
+    {
+        global $mtr;
+        $vars = [msg_id::VAR_NAME => $entity_name, msg_id::VAR_ID => self::UNIT_ID_MARK];
+        $unit_missing = new library()->msg_var_text([[msg_id::WIKIDATA_UNIT_LABEL_MISSING, $vars]], $mtr);
+        $result = strstr($unit_missing, self::UNIT_ID_MARK, true);
+        // empty if the message names no unit id, because an empty text is found in every message, so the
+        // "not contains" assert fails instead of passing by mistake
+        if ($result === false) {
+            $result = '';
+        }
+        return $result;
     }
 
     /**
@@ -253,7 +313,7 @@ class wikidata_write_tests
     {
         // store the wikidata json as a test fixture
         $test_name = 'store the wikidata json for ' . $wikidata_id;
-        $msg = $imp->store_json($wikidata_id);
+        $msg = $imp->store_json($wikidata_id, test_paths::IMPORT_WIKIDATA_CACHE);
         $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         // and the captured json file contains the requested entity id

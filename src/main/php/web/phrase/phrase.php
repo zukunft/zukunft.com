@@ -777,9 +777,9 @@ class phrase extends combine_named
     }
 
     /**
-     * @return int the view id that name_link uses for this phrase class
+     * @return int the view id that name_link uses for this phrase class, also the back target of a page that the phrase opens
      */
-    private function view_id(): int
+    function view_id(): int
     {
         if ($this->is_triple()) {
             return views::TRIPLE_ID;
@@ -1017,12 +1017,13 @@ class phrase extends combine_named
      * one confirm page for all that the wikipedia refresh takes over: the description and, as a
      * reference row, the add of the missing or the change of the different wikidata reference;
      * if neither wikipedia nor the phrase names a wikidata item, the user stays on the page of the
-     * phrase and is told that no wikidata link has been found
+     * phrase and is told that no wikidata link has been found, and if the description and the
+     * wikidata id are already those of wikipedia, the user stays there and is told so
      *
      * @param array $url_array the url of the edit view of this phrase without the refresh
      * @param word|triple $old the phrase as stored
      * @param word|triple $new the phrase with the description and the references taken from wikipedia
-     * @param user_message $msg to report a problem of the url mapping or that wikipedia names no wikidata item
+     * @param user_message $msg to report a problem of the url mapping, that wikipedia names no wikidata item or that nothing is to update
      * @return array the url of the confirm page with the description and the reference rows, or of the page of the phrase
      */
     function confirm_url_of_refresh(array $url_array, word|triple $old, word|triple $new, user_message $msg): array
@@ -1030,6 +1031,9 @@ class phrase extends combine_named
         $new_key = $this->wikidata_id($new);
         if ($new_key == '') {
             $msg->add_warning_with_vars(msg_id::WIKIPEDIA_NO_WIKIDATA, [msg_id::VAR_NAME => $old->name()]);
+            $result = $this->url_of_page($url_array);
+        } elseif ($this->is_in_line_with_wikipedia($old, $new)) {
+            $this->add_in_line_message($old, $new, $msg);
             $result = $this->url_of_page($url_array);
         } else {
             $result = $this->description_url_of_refresh($url_array, $old, $new, $msg);
@@ -1042,6 +1046,37 @@ class phrase extends combine_named
             }
         }
         return $result;
+    }
+
+    /**
+     * @param word|triple $old the phrase as stored
+     * @param word|triple $new the phrase with the description and the references taken from wikipedia
+     * @return bool true if the stored description and wikidata id are those of wikipedia, so that nothing is to confirm
+     */
+    private function is_in_line_with_wikipedia(word|triple $old, word|triple $new): bool
+    {
+        // === because == would compare two numeric texts as numbers
+        $same_description = ($old->get_description() === $new->get_description());
+        $same_wikidata_id = ($this->wikidata_id($old) === $this->wikidata_id($new));
+        return ($same_description and $same_wikidata_id);
+    }
+
+    /**
+     * @param word|triple $old the phrase as stored to name it in the message
+     * @param word|triple $new the phrase as the backend answers the refresh with the time of the wikipedia page
+     * @param user_message $msg to tell the user that nothing is to update, which is an info and no warning
+     * @return void
+     */
+    private function add_in_line_message(word|triple $old, word|triple $new, user_message $msg): void
+    {
+        $wiki_ref = $new->ref_lst?->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $time = $wiki_ref?->page_time_text($msg) ?? '';
+        if ($time == '') {
+            $msg->add(msg_id::WIKIPEDIA_IN_LINE_NO_TIME, [msg_id::VAR_NAME => $old->name()], true);
+        } else {
+            $vars = [msg_id::VAR_NAME => $old->name(), msg_id::VAR_TIME => $time];
+            $msg->add(msg_id::WIKIPEDIA_IN_LINE, $vars, true);
+        }
     }
 
     /**

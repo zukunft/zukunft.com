@@ -55,6 +55,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
+use DateTimeZone;
 
 /**
  * $abbr $wik
@@ -71,6 +73,10 @@ class ref_link_wikipedia
     const string WP_TYPE = 'type';
     const string WP_EXTRACT = 'extract';
     const string WP_WIKIDATA_ID = 'wikibase_item';
+    // the time of the last revision of the page e.g. "2026-11-07T14:48:15Z", always in utc
+    const string WP_TIMESTAMP = 'timestamp';
+    const string WP_TIME_FORMAT = 'Y-m-d\TH:i:s\Z';
+    const string WP_TIME_ZONE = 'UTC';
     // only a standard page describes one thing, whereas e.g. a disambiguation page lists several
     const string WP_TYPE_STANDARD = 'standard';
     // the lead text is plain text, in which the paragraphs are separated by a new line
@@ -104,7 +110,7 @@ class ref_link_wikipedia
                 $page = $wiki_ref->get_external_key() ?? '';
                 $summary = $this->summary($page, $msg);
                 if ($summary != []) {
-                    $this->take_over($phr_obj, $summary, $page, $msg);
+                    $this->take_over($phr_obj, $wiki_ref, $summary, $page, $msg);
                 }
             }
         }
@@ -150,6 +156,22 @@ class ref_link_wikipedia
     }
 
     /**
+     * @param array $summary the summary json of a wikipedia page
+     * @return DateTime|null the time of the last revision of the page, null if the page names no valid time
+     */
+    function page_time(array $summary): ?DateTime
+    {
+        $txt = (string)($summary[self::WP_TIMESTAMP] ?? '');
+        $time = DateTime::createFromFormat(self::WP_TIME_FORMAT, $txt, new DateTimeZone(self::WP_TIME_ZONE));
+        $result = null;
+        // the format back refuses e.g. the month 13, which php would roll over into the next year
+        if ($time !== false and $time->format(self::WP_TIME_FORMAT) === $txt) {
+            $result = $time;
+        }
+        return $result;
+    }
+
+    /**
      * @param array $match the bracket found by BRACKET_PATTERN incl. the spaces before it
      * @return string empty if the bracket is a pronunciation, else the unchanged bracket
      */
@@ -190,14 +212,16 @@ class ref_link_wikipedia
 
     /**
      * set the description and the wikidata reference of the phrase based on the wikipedia summary
+     * and the time of the page on the wikipedia reference, so that the frontend can name it
      *
      * @param word|triple $phr_obj the phrase that gets the description of the wikipedia page
+     * @param ref $wiki_ref the wikipedia reference of the phrase that gets the time of the page
      * @param array $summary the summary json of the wikipedia page
      * @param string $page the name of the wikipedia page to name it in the message
      * @param user_message $msg to tell the user that the page has no lead text
      * @return void
      */
-    private function take_over(word|triple $phr_obj, array $summary, string $page, user_message $msg): void
+    private function take_over(word|triple $phr_obj, ref $wiki_ref, array $summary, string $page, user_message $msg): void
     {
         $description = $this->description($summary);
         if ($description == '') {
@@ -205,6 +229,7 @@ class ref_link_wikipedia
         } else {
             $phr_obj->set_description($description);
             $this->set_wikidata_id($phr_obj, $this->wikidata_id($summary));
+            $wiki_ref->set_page_time($this->page_time($summary));
         }
     }
 

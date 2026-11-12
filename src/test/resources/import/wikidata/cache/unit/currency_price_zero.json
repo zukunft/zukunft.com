@@ -1,0 +1,26 @@
+{
+    "entities": {
+        "Q4917": {
+            "id": "Q4917",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "United States dollar"
+                }
+            },
+            "claims": {
+                "P2284": [
+                    {
+                        "id": "Q4917$zero",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2284",
+                            "datavalue": {"value": {"amount": "+0", "unit": "http://www.wikidata.org/entity/Q4916"}, "type": "quantity"}
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

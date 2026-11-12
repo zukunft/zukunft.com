@@ -109,6 +109,8 @@ class json_fields
     const string GEO_VALUE = 'geo_value'; // a geolocation value or result
 
     const string LAST_UPDATE = 'last_update';
+    // the time of the last change of an external page e.g. of wikipedia, which only a refresh sends
+    const string PAGE_TIME = 'page_time';
 
     // the code id of the view style of a view, component or component_link
     const string STYLE = 'style';
@@ -456,6 +458,21 @@ class json_fields
 
     // the name of the value source
     const string SOURCE_NAME = 'source';
+
+    // the preview of an import e.g. from wikidata (see cfg/import/import_wikidata_preview.php):
+    // the names of the new words and triples, the new values, the values that are already in line,
+    // the values with another number with their old number and the word that keeps them apart,
+    // the claims that are not imported and the import json that the confirm writes
+    const string PREVIEW_WORDS_NEW = 'words_new';
+    const string PREVIEW_TRIPLES_NEW = 'triples_new';
+    const string PREVIEW_VALUES_NEW = 'values_new';
+    const string PREVIEW_VALUES_SAME = 'values_same';
+    const string PREVIEW_VALUES_CONFLICT = 'values_conflict';
+    const string PREVIEW_NUMBER_OLD = 'number_old';
+    const string PREVIEW_CONFLICT_WORD = 'conflict_word';
+    const string PREVIEW_IMPORT_VALUE = 'import_value';
+    const string PREVIEW_PROBLEMS = 'problems';
+    const string PREVIEW_IMPORT = 'import_json';
 
     // to assign e.g. words, triples or formulas to a view
     const string ASSIGNED = 'assigned';

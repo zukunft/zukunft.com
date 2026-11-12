@@ -38,8 +38,13 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::MODEL_CONST . 'files.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -49,6 +54,9 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_read_tests
 {
+
+    // the seed triple of the currency codes e.g. "EUR is a ISO 4217 code"
+    const string ISO_4217_CODE = 'ISO 4217 code';
 
     function run(test_cleanup $t): void
     {
@@ -94,6 +102,23 @@ class triple_read_tests
         $test_name = '... and a triple without a type is no measure';
         $t->assert_false($test_name, $trp_by_id->is_measure());
 
+        $t->subheader($ts . 'currency pairs');
+        // the wikidata import gives the price of a currency in another currency only to a listed pair,
+        // so each pair of the seed must be a measure unit of two currency codes e.g. "EUR per USD"
+        $iso_code = new triple($t->usr1);
+        $iso_code->load_by_name(self::ISO_4217_CODE, $msg);
+        $test_name = 'each currency pair of the seed is a measure unit of two ' . self::ISO_4217_CODE . 's';
+        $pairs = $this->seed_currency_pairs();
+        $t->assert($test_name, $this->no_currency_pairs($t, $pairs, $iso_code->phrase(), $msg), []);
+
+        $test_name = '... and the seed lists the pairs';
+        $t->assert_true($test_name, count($pairs) > 0);
+
+        // negative: a measure unit of two other words is no currency pair
+        $test_name = '... and ' . triple_names::GRAM_PER_KWH . ' is no currency pair';
+        $result = $this->no_currency_pairs($t, [triple_names::GRAM_PER_KWH], $iso_code->phrase(), $msg);
+        $t->assert($test_name, $result, [triple_names::GRAM_PER_KWH]);
+
         $t->subheader($ts . 'views tab');
         // assigned_views.json assigns the view of all mathematical constants to the triple as its default view
         $test_name = 'the view directly assigned to ' . triple_names::MATH_CONST . ' is on top of its views tab';
@@ -130,6 +155,69 @@ class triple_read_tests
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);
 
+    }
+
+    /**
+     * @return array the names of the currency pairs of the seed e.g. "EUR per USD", which are the triples of the
+     *               currencies json with the verb "per" and without a name, because the import derives it
+     */
+    private function seed_currency_pairs(): array
+    {
+        $seed = json_decode(file_get_contents(files::MESSAGE_PATH . files::CURRENCIES), true);
+        $result = [];
+        foreach ($seed[json_fields::TRIPLES] ?? [] as $trp) {
+            if ($trp[json_fields::EX_VERB] == verbs::PER_NAME) {
+                $result[] = implode(' ', [$trp[json_fields::EX_FROM], verbs::PER_NAME, $trp[json_fields::EX_TO]]);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the user that reads the triples
+     * @param array $names the names of the triples to check e.g. the pairs of the seed
+     * @param phrase $iso_code the phrase "ISO 4217 code" of the seed
+     * @param user_message $msg to collect what the database read reports
+     * @return array the names of the triples that are no measure unit of two currency codes, empty if all are pairs
+     */
+    private function no_currency_pairs(test_cleanup $t, array $names, phrase $iso_code, user_message $msg): array
+    {
+        $result = [];
+        foreach ($names as $name) {
+            $pair = new triple($t->usr1);
+            $pair->load_by_name($name, $msg);
+            if (!$this->is_currency_pair($pair, $iso_code, $msg)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple $pair a triple loaded from the database e.g. "EUR per USD"
+     * @param phrase $iso_code the phrase "ISO 4217 code" of the seed
+     * @param user_message $msg to collect what the database read reports
+     * @return bool true if the triple is a measure unit whose from and to are each an ISO 4217 code
+     */
+    private function is_currency_pair(triple $pair, phrase $iso_code, user_message $msg): bool
+    {
+        return $pair->is_measure()
+            and $this->is_iso_code($pair->get_from()->id(), $iso_code, $msg)
+            and $this->is_iso_code($pair->get_to()->id(), $iso_code, $msg);
+    }
+
+    /**
+     * @param int $code_id the phrase id of the from or the to of a currency pair e.g. the word "EUR"
+     * @param phrase $iso_code the phrase "ISO 4217 code" of the seed, which gives the user that reads the link
+     * @param user_message $msg to collect what the database read reports
+     * @return bool true if the seed links the code with "is a" to the ISO 4217 code e.g. "EUR is a ISO 4217 code"
+     */
+    private function is_iso_code(int $code_id, phrase $iso_code, user_message $msg): bool
+    {
+        global $sys;
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
+        $lnk = new triple($iso_code->get_user());
+        return $lnk->load_by_link_id($code_id, $msg, $is_id, $iso_code->id()) > 0;
     }
 }
 

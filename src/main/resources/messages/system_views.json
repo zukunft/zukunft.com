@@ -2640,6 +2640,18 @@
       "type": "system_form_ref_rows",
       "code_id": "form_ref_rows",
       "ui_msg_code_id": "form_ref_rows"
+    },
+    {
+      "name": "system body import preview",
+      "description": "the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them",
+      "type": "system_body_import_preview",
+      "code_id": "system_body_import_preview"
+    },
+    {
+      "name": "system form wikidata id",
+      "description": "the wikidata id of the entity whose values the admin imports, which opens the import preview",
+      "type": "system_form_wikidata_id",
+      "code_id": "system_form_wikidata_id"
     }
   ],
   "views": [
@@ -10157,7 +10169,7 @@
         },
         {
           "position": "2",
-          "name": "system body not yet available"
+          "name": "system body import preview"
         }
       ]
     },
@@ -10208,7 +10220,7 @@
         },
         {
           "position": "2",
-          "name": "system body not yet available"
+          "name": "system form wikidata id"
         }
       ]
     },

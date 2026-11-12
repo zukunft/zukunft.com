@@ -88,12 +88,12 @@
         "class": "word"
     },
     {
-        "id": 666,
+        "id": 677,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 669,
+        "id": 680,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
@@ -106,7 +106,7 @@
         "class": "word"
     },
     {
-        "id": 500,
+        "id": 511,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -299,7 +299,7 @@
         "class": "word"
     },
     {
-        "id": 667,
+        "id": 678,
         "name": "income taxes",
         "class": "triple"
     },

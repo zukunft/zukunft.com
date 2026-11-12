@@ -815,10 +815,6 @@
         {
           "name": "United_States_dollar",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q4917",
-          "type": "wikidata"
         }
       ]
     },
@@ -2584,6 +2580,83 @@
       "verb": "is alias of",
       "to": "US dollar",
       "description": "The dollar sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it."
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "EUR",
+      "description": "the exchange rate: US dollars paid for one euro",
+      "type": "measure_unit"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "USD",
+      "description": "the reverse of the EUR/USD exchange rate: how many euros one US dollar buys, the unit of the wikidata price of the US dollar in euro",
+      "type": "measure_unit"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "GBP",
+      "description": "the unit of the GBP/USD exchange rate: how many US dollars one pound sterling buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "JPY",
+      "verb": "per",
+      "to": "USD",
+      "description": "the unit of the USD/JPY exchange rate: how many Japanese yen one US dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "CHF",
+      "verb": "per",
+      "to": "USD",
+      "description": "the unit of the USD/CHF exchange rate: how many Swiss francs one US dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "AUD",
+      "description": "the unit of the AUD/USD exchange rate: how many US dollars one Australian dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "CAD",
+      "verb": "per",
+      "to": "USD",
+      "description": "the unit of the USD/CAD exchange rate: how many Canadian dollars one US dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "NZD",
+      "description": "the unit of the NZD/USD exchange rate: how many US dollars one New Zealand dollar buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "CHF",
+      "verb": "per",
+      "to": "EUR",
+      "description": "the unit of the EUR/CHF exchange rate: how many Swiss francs one euro buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "GBP",
+      "verb": "per",
+      "to": "EUR",
+      "description": "the unit of the EUR/GBP exchange rate: how many pounds sterling one euro buys",
+      "type": "measure_unit"
+    },
+    {
+      "from": "JPY",
+      "verb": "per",
+      "to": "EUR",
+      "description": "the unit of the EUR/JPY exchange rate: how many Japanese yen one euro buys",
+      "type": "measure_unit"
     }
   ],
   "sources": [

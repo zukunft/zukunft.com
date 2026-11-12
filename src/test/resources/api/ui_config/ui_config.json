@@ -8806,6 +8806,13 @@
                 "description": "conceptnet",
                 "url": "http:\/\/api.conceptnet.io\/",
                 "id": 3
+            },
+            {
+                "name": "wikidata property",
+                "code_id": "wikidata_property",
+                "description": "a property of wikidata e.g. P1082 for the population, which wikidata links on another page than an item",
+                "url": "https:\/\/www.wikidata.org\/wiki\/Property:",
+                "id": 4
             }
         ],
         "source_types": [
@@ -11108,6 +11115,18 @@
                 "code_id": "system_form_ref_rows",
                 "description": "the references of a phrase as rows of its edit form, which the confirm of the phrase change writes too",
                 "id": 295
+            },
+            {
+                "name": "system body import preview",
+                "code_id": "system_body_import_preview",
+                "description": "the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them",
+                "id": 296
+            },
+            {
+                "name": "system form wikidata id",
+                "code_id": "system_form_wikidata_id",
+                "description": "the wikidata id of the entity whose values the admin imports, which opens the import preview",
+                "id": 297
             }
         ],
         "component_link_types": [
@@ -12443,7 +12462,7 @@
                 "components": [
                     {
                         "link_id": 1622,
-                        "id": 481,
+                        "id": 483,
                         "name": "title calculator",
                         "description": "the calculator label of the phrase as the title, else the phrase name, and the calculator hint as the lead text",
                         "type_id": 287,
@@ -12453,7 +12472,7 @@
                     },
                     {
                         "link_id": 1623,
-                        "id": 482,
+                        "id": 484,
                         "name": "calculator input",
                         "description": "the input fields and the assumptions that the calculator triples of the phrase select, in their order, with the save button",
                         "type_id": 288,
@@ -12463,7 +12482,7 @@
                     },
                     {
                         "link_id": 1624,
-                        "id": 483,
+                        "id": 485,
                         "name": "calculation result",
                         "description": "the result table and the detail tables that the calculator triples of the phrase select, with the notes of the formulas and the sources of the values",
                         "type_id": 289,
@@ -27427,11 +27446,11 @@
                     },
                     {
                         "link_id": 1414,
-                        "id": 388,
-                        "name": "system body not yet available",
-                        "description": "the hint that the data and actions of the shown system view are not yet available",
-                        "type_id": 253,
-                        "code_id": "system_body_not_yet_available",
+                        "id": 404,
+                        "name": "system body import preview",
+                        "description": "the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them",
+                        "type_id": 296,
+                        "code_id": "system_body_import_preview",
                         "position": 2,
                         "position_type": 1
                     }
@@ -27520,11 +27539,11 @@
                     },
                     {
                         "link_id": 1420,
-                        "id": 388,
-                        "name": "system body not yet available",
-                        "description": "the hint that the data and actions of the shown system view are not yet available",
-                        "type_id": 253,
-                        "code_id": "system_body_not_yet_available",
+                        "id": 405,
+                        "name": "system form wikidata id",
+                        "description": "the wikidata id of the entity whose values the admin imports, which opens the import preview",
+                        "type_id": 297,
+                        "code_id": "system_form_wikidata_id",
                         "position": 2,
                         "position_type": 1
                     }
@@ -29147,7 +29166,7 @@
                 "components": [
                     {
                         "link_id": 1550,
-                        "id": 404,
+                        "id": 406,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
                         "type_id": 32,
@@ -29156,7 +29175,7 @@
                     },
                     {
                         "link_id": 1551,
-                        "id": 405,
+                        "id": 407,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
                         "type_id": 230,
@@ -29165,7 +29184,7 @@
                     },
                     {
                         "link_id": 1552,
-                        "id": 406,
+                        "id": 408,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
                         "type_id": 229,
@@ -29258,7 +29277,7 @@
                     },
                     {
                         "link_id": 1555,
-                        "id": 428,
+                        "id": 430,
                         "name": "related phrases",
                         "description": "show all words and triples that are a this phrase e.g. all mathematical constants",
                         "type_id": 46,
@@ -29267,7 +29286,7 @@
                     },
                     {
                         "link_id": 1556,
-                        "id": 422,
+                        "id": 424,
                         "name": "formulas",
                         "description": "simply show all related formulas",
                         "type_id": 81,
@@ -29294,7 +29313,7 @@
                     },
                     {
                         "link_id": 1558,
-                        "id": 413,
+                        "id": 415,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
                         "type_id": 44,
@@ -29303,7 +29322,7 @@
                     },
                     {
                         "link_id": 1559,
-                        "id": 414,
+                        "id": 416,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
                         "type_id": 44,
@@ -29312,7 +29331,7 @@
                     },
                     {
                         "link_id": 1560,
-                        "id": 415,
+                        "id": 417,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
                         "type_id": 44,
@@ -29339,7 +29358,7 @@
                     },
                     {
                         "link_id": 1562,
-                        "id": 416,
+                        "id": 418,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
                         "type_id": 44,
@@ -29357,7 +29376,7 @@
                     },
                     {
                         "link_id": 1564,
-                        "id": 417,
+                        "id": 419,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
                         "type_id": 44,
@@ -29375,7 +29394,7 @@
                 "components": [
                     {
                         "link_id": 1565,
-                        "id": 429,
+                        "id": 431,
                         "protection": 3,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -29387,7 +29406,7 @@
                     },
                     {
                         "link_id": 1566,
-                        "id": 430,
+                        "id": 432,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 55,
@@ -29407,7 +29426,7 @@
                 "components": [
                     {
                         "link_id": 1579,
-                        "id": 438,
+                        "id": 440,
                         "name": "system title table editor",
                         "description": "show the language specific title of the table editor",
                         "type_id": 268,
@@ -29418,7 +29437,7 @@
                     },
                     {
                         "link_id": 1580,
-                        "id": 440,
+                        "id": 442,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",
                         "type_id": 146,
@@ -29428,7 +29447,7 @@
                     },
                     {
                         "link_id": 1581,
-                        "id": 443,
+                        "id": 445,
                         "name": "button show editor phrase",
                         "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
                         "type_id": 275,
@@ -29438,7 +29457,7 @@
                     },
                     {
                         "link_id": 1582,
-                        "id": 441,
+                        "id": 443,
                         "name": "column tiers",
                         "description": "the columns of each column tier that are related to the phrase of the table",
                         "type_id": 269,
@@ -29448,7 +29467,7 @@
                     },
                     {
                         "link_id": 1583,
-                        "id": 442,
+                        "id": 444,
                         "name": "table editor table",
                         "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
                         "type_id": 55,
@@ -29466,7 +29485,7 @@
                 "components": [
                     {
                         "link_id": 1584,
-                        "id": 444,
+                        "id": 446,
                         "name": "calculator editor",
                         "description": "the editor of the calculator page of the phrase with its own phrase selector, built by a script from the phrase data of the phrase",
                         "type_id": 290,
@@ -29484,7 +29503,7 @@
                 "components": [
                     {
                         "link_id": 1585,
-                        "id": 445,
+                        "id": 447,
                         "name": "title process catch start",
                         "description": "the translated title of the start page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29494,7 +29513,7 @@
                     },
                     {
                         "link_id": 1586,
-                        "id": 446,
+                        "id": 448,
                         "name": "text explain process catch start",
                         "description": "the translated text that explains the start page of a process catch",
                         "type_id": 270,
@@ -29504,7 +29523,7 @@
                     },
                     {
                         "link_id": 1587,
-                        "id": 447,
+                        "id": 449,
                         "name": "process catch initial input fields",
                         "description": "the one easy to answer question of the start page, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -29513,7 +29532,7 @@
                     },
                     {
                         "link_id": 1588,
-                        "id": 448,
+                        "id": 450,
                         "name": "button next process catch start",
                         "description": "opens the main page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29531,7 +29550,7 @@
                 "components": [
                     {
                         "link_id": 1589,
-                        "id": 449,
+                        "id": 451,
                         "name": "title process catch main",
                         "description": "the translated title of the main page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29541,7 +29560,7 @@
                     },
                     {
                         "link_id": 1590,
-                        "id": 450,
+                        "id": 452,
                         "name": "text explain process catch main",
                         "description": "the translated text that explains the main page of a process catch",
                         "type_id": 270,
@@ -29551,7 +29570,7 @@
                     },
                     {
                         "link_id": 1591,
-                        "id": 451,
+                        "id": 453,
                         "name": "process catch main input fields",
                         "description": "the about three input fields that are most relevant for the result, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -29560,7 +29579,7 @@
                     },
                     {
                         "link_id": 1592,
-                        "id": 452,
+                        "id": 454,
                         "name": "button next process catch main",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29578,7 +29597,7 @@
                 "components": [
                     {
                         "link_id": 1593,
-                        "id": 453,
+                        "id": 455,
                         "name": "title process catch detail",
                         "description": "the translated title of the detail page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29588,7 +29607,7 @@
                     },
                     {
                         "link_id": 1594,
-                        "id": 454,
+                        "id": 456,
                         "name": "text explain process catch detail",
                         "description": "the translated text that explains the detail page of a process catch",
                         "type_id": 270,
@@ -29598,7 +29617,7 @@
                     },
                     {
                         "link_id": 1595,
-                        "id": 455,
+                        "id": 457,
                         "name": "process catch detail tab one",
                         "description": "tab 1 of the detail page of a process catch",
                         "type_id": 272,
@@ -29608,7 +29627,7 @@
                     },
                     {
                         "link_id": 1596,
-                        "id": 456,
+                        "id": 458,
                         "name": "process catch detail tab two",
                         "description": "tab 2 of the detail page of a process catch",
                         "type_id": 272,
@@ -29618,7 +29637,7 @@
                     },
                     {
                         "link_id": 1597,
-                        "id": 457,
+                        "id": 459,
                         "name": "process catch detail tab three",
                         "description": "tab 3 of the detail page of a process catch",
                         "type_id": 272,
@@ -29628,7 +29647,7 @@
                     },
                     {
                         "link_id": 1598,
-                        "id": 458,
+                        "id": 460,
                         "name": "process catch detail tab four",
                         "description": "tab 4 of the detail page of a process catch",
                         "type_id": 272,
@@ -29638,7 +29657,7 @@
                     },
                     {
                         "link_id": 1599,
-                        "id": 459,
+                        "id": 461,
                         "name": "process catch detail tab five",
                         "description": "tab 5 of the detail page of a process catch",
                         "type_id": 272,
@@ -29648,7 +29667,7 @@
                     },
                     {
                         "link_id": 1600,
-                        "id": 460,
+                        "id": 462,
                         "name": "process catch detail tab one fields",
                         "description": "the input fields of tab 1 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29658,7 +29677,7 @@
                     },
                     {
                         "link_id": 1601,
-                        "id": 461,
+                        "id": 463,
                         "name": "process catch detail tab two fields",
                         "description": "the input fields of tab 2 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29668,7 +29687,7 @@
                     },
                     {
                         "link_id": 1602,
-                        "id": 462,
+                        "id": 464,
                         "name": "process catch detail tab three fields",
                         "description": "the input fields of tab 3 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29678,7 +29697,7 @@
                     },
                     {
                         "link_id": 1603,
-                        "id": 463,
+                        "id": 465,
                         "name": "process catch detail tab four fields",
                         "description": "the input fields of tab 4 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29688,7 +29707,7 @@
                     },
                     {
                         "link_id": 1604,
-                        "id": 464,
+                        "id": 466,
                         "name": "process catch detail tab five fields",
                         "description": "the input fields of tab 5 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29698,7 +29717,7 @@
                     },
                     {
                         "link_id": 1605,
-                        "id": 479,
+                        "id": 481,
                         "name": "button refresh process catch detail",
                         "description": "shows the detail page of the process catch again with the changed assumptions",
                         "type_id": 275,
@@ -29708,7 +29727,7 @@
                     },
                     {
                         "link_id": 1606,
-                        "id": 465,
+                        "id": 467,
                         "name": "button next process catch detail",
                         "description": "opens the result page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29726,7 +29745,7 @@
                 "components": [
                     {
                         "link_id": 1607,
-                        "id": 466,
+                        "id": 468,
                         "name": "title process catch result",
                         "description": "the translated title of the result page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29736,7 +29755,7 @@
                     },
                     {
                         "link_id": 1608,
-                        "id": 467,
+                        "id": 469,
                         "name": "text explain process catch result",
                         "description": "the translated text that explains the result page of a process catch",
                         "type_id": 270,
@@ -29746,7 +29765,7 @@
                     },
                     {
                         "link_id": 1609,
-                        "id": 468,
+                        "id": 470,
                         "name": "process catch result tab one",
                         "description": "tab 1 of the result page of a process catch",
                         "type_id": 272,
@@ -29756,7 +29775,7 @@
                     },
                     {
                         "link_id": 1610,
-                        "id": 469,
+                        "id": 471,
                         "name": "process catch result tab two",
                         "description": "tab 2 of the result page of a process catch",
                         "type_id": 272,
@@ -29766,7 +29785,7 @@
                     },
                     {
                         "link_id": 1611,
-                        "id": 470,
+                        "id": 472,
                         "name": "process catch result tab three",
                         "description": "tab 3 of the result page of a process catch",
                         "type_id": 272,
@@ -29776,7 +29795,7 @@
                     },
                     {
                         "link_id": 1612,
-                        "id": 471,
+                        "id": 473,
                         "name": "process catch result tab four",
                         "description": "tab 4 of the result page of a process catch",
                         "type_id": 272,
@@ -29786,7 +29805,7 @@
                     },
                     {
                         "link_id": 1613,
-                        "id": 472,
+                        "id": 474,
                         "name": "process catch result tab five",
                         "description": "tab 5 of the result page of a process catch",
                         "type_id": 272,
@@ -29796,7 +29815,7 @@
                     },
                     {
                         "link_id": 1614,
-                        "id": 473,
+                        "id": 475,
                         "name": "process catch result tab one fields",
                         "description": "the input fields of tab 1 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29806,7 +29825,7 @@
                     },
                     {
                         "link_id": 1615,
-                        "id": 474,
+                        "id": 476,
                         "name": "process catch result tab two fields",
                         "description": "the input fields of tab 2 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29816,7 +29835,7 @@
                     },
                     {
                         "link_id": 1616,
-                        "id": 475,
+                        "id": 477,
                         "name": "process catch result tab three fields",
                         "description": "the input fields of tab 3 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29826,7 +29845,7 @@
                     },
                     {
                         "link_id": 1617,
-                        "id": 476,
+                        "id": 478,
                         "name": "process catch result tab four fields",
                         "description": "the input fields of tab 4 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29836,7 +29855,7 @@
                     },
                     {
                         "link_id": 1618,
-                        "id": 477,
+                        "id": 479,
                         "name": "process catch result tab five fields",
                         "description": "the input fields of tab 5 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29846,7 +29865,7 @@
                     },
                     {
                         "link_id": 1619,
-                        "id": 478,
+                        "id": 480,
                         "name": "button back process catch result",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 274,
@@ -29893,7 +29912,7 @@
                 "components": [
                     {
                         "link_id": 1625,
-                        "id": 485,
+                        "id": 487,
                         "name": "formula selector",
                         "description": "the formulas of the page of the phrase to select the formula that the formula editor shows",
                         "type_id": 292,
@@ -29903,7 +29922,7 @@
                     },
                     {
                         "link_id": 1626,
-                        "id": 484,
+                        "id": 486,
                         "name": "formula editor",
                         "description": "the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase",
                         "type_id": 291,
@@ -29913,7 +29932,7 @@
                     },
                     {
                         "link_id": 1627,
-                        "id": 486,
+                        "id": 488,
                         "name": "formula result compare",
                         "description": "the results of the page of the phrase until now against the results after the save of the formula editor",
                         "type_id": 293,
@@ -29926,7 +29945,7 @@
         ],
         "system_phrases": [
             {
-                "id": 469,
+                "id": 480,
                 "name": "$ is symbol for US dollar",
                 "description": "The dollar sign $ is most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",
                 "from_id": 472,
@@ -29964,7 +29983,7 @@
                 "class": "triple"
             },
             {
-                "id": 664,
+                "id": 675,
                 "name": "\u00a3 is symbol for Pound (sterling)",
                 "from_id": 478,
                 "from_phrase": {
@@ -30038,7 +30057,7 @@
                 "class": "triple"
             },
             {
-                "id": 468,
+                "id": 479,
                 "name": "\u00a5 is symbol for Japanese yen",
                 "description": "The \u00a5 symbol is used to denote the Japanese yen, although the same glyph is also used for the Chinese yuan.",
                 "from_id": 469,
@@ -30076,7 +30095,7 @@
                 "class": "triple"
             },
             {
-                "id": 487,
+                "id": 498,
                 "name": "\u00a5 \/ \u5143 is symbol for Renminbi",
                 "from_id": -439,
                 "from_phrase": {
@@ -30113,7 +30132,7 @@
                 "class": "triple"
             },
             {
-                "id": 482,
+                "id": 493,
                 "name": "\u00a5 \/ \u5186 is symbol for Japanese yen",
                 "from_id": -438,
                 "from_phrase": {
@@ -30150,7 +30169,7 @@
                 "class": "triple"
             },
             {
-                "id": 566,
+                "id": 577,
                 "name": "\u0e3f is symbol for Thai baht",
                 "from_id": 509,
                 "from_phrase": {
@@ -30187,7 +30206,7 @@
                 "class": "triple"
             },
             {
-                "id": 521,
+                "id": 532,
                 "name": "\u20a9 \/ \uc6d0 is symbol for South Korean won",
                 "from_id": -440,
                 "from_phrase": {
@@ -30224,7 +30243,7 @@
                 "class": "triple"
             },
             {
-                "id": 661,
+                "id": 672,
                 "name": "\u20aa is symbol for Israeli new shekel",
                 "from_id": 511,
                 "from_phrase": {
@@ -30248,9 +30267,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -463,
+                "to_id": -474,
                 "to_phrase": {
-                    "id": 463,
+                    "id": 474,
                     "name": "Israeli new shekel",
                     "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                     "type_id": null,
@@ -30298,7 +30317,7 @@
                 "class": "triple"
             },
             {
-                "id": 608,
+                "id": 619,
                 "name": "\u20b1 is symbol for Philippine peso",
                 "from_id": 527,
                 "from_phrase": {
@@ -30335,7 +30354,7 @@
                 "class": "triple"
             },
             {
-                "id": 535,
+                "id": 546,
                 "name": "\u20b9 is symbol for Indian rupee",
                 "from_id": 496,
                 "from_phrase": {
@@ -30372,7 +30391,7 @@
                 "class": "triple"
             },
             {
-                "id": 588,
+                "id": 599,
                 "name": "\u20ba is symbol for Turkish lira",
                 "from_id": 519,
                 "from_phrase": {
@@ -30409,7 +30428,7 @@
                 "class": "triple"
             },
             {
-                "id": 623,
+                "id": 634,
                 "name": "\u20bd is symbol for Russian ruble",
                 "from_id": 533,
                 "from_phrase": {
@@ -30446,7 +30465,7 @@
                 "class": "triple"
             },
             {
-                "id": 2992,
+                "id": 3002,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
                 "from_id": 2045,
                 "from_phrase": {
@@ -30470,9 +30489,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2988,
+                "to_id": -2998,
                 "to_phrase": {
-                    "id": 2988,
+                    "id": 2998,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -30483,7 +30502,7 @@
                 "class": "triple"
             },
             {
-                "id": 2991,
+                "id": 3001,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
                 "from_id": 2044,
                 "from_phrase": {
@@ -30507,9 +30526,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2988,
+                "to_id": -2998,
                 "to_phrase": {
-                    "id": 2988,
+                    "id": 2998,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -30520,7 +30539,7 @@
                 "class": "triple"
             },
             {
-                "id": 2981,
+                "id": 2991,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
                 "from_id": 2042,
                 "from_phrase": {
@@ -30557,7 +30576,7 @@
                 "class": "triple"
             },
             {
-                "id": 2983,
+                "id": 2993,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
                 "from_id": 2043,
                 "from_phrase": {
@@ -30594,7 +30613,7 @@
                 "class": "triple"
             },
             {
-                "id": 492,
+                "id": 503,
                 "name": "A$ is symbol for Australian dollar",
                 "from_id": 481,
                 "from_phrase": {
@@ -30631,7 +30650,7 @@
                 "class": "triple"
             },
             {
-                "id": 5208,
+                "id": 5216,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
                 "from_id": 2578,
@@ -30766,7 +30785,7 @@
                 "class": "word"
             },
             {
-                "id": 463,
+                "id": 474,
                 "name": "Israeli new shekel",
                 "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                 "class": "triple"
@@ -30844,7 +30863,7 @@
                 "class": "word"
             },
             {
-                "id": 2988,
+                "id": 2998,
                 "name": "A Theory of Justice, revised edition",
                 "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                 "class": "triple"
@@ -30909,7 +30928,7 @@
                 "class": "word"
             },
             {
-                "id": 581,
+                "id": 592,
                 "name": "AED is symbol for UAE dirham",
                 "from_id": 516,
                 "from_phrase": {
@@ -30983,7 +31002,7 @@
                 "class": "triple"
             },
             {
-                "id": 3827,
+                "id": 3837,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1186,
                 "from_phrase": {
@@ -31007,9 +31026,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3784,
+                "to_id": -3794,
                 "to_phrase": {
-                    "id": 3784,
+                    "id": 3794,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -31020,7 +31039,7 @@
                 "class": "triple"
             },
             {
-                "id": 647,
+                "id": 658,
                 "name": "ARG$ is symbol for Argentine peso",
                 "from_id": 542,
                 "from_phrase": {
@@ -31057,7 +31076,7 @@
                 "class": "triple"
             },
             {
-                "id": 645,
+                "id": 656,
                 "name": "ARS is symbol for Argentine peso",
                 "from_id": 541,
                 "from_phrase": {
@@ -31094,7 +31113,7 @@
                 "class": "triple"
             },
             {
-                "id": 490,
+                "id": 501,
                 "name": "AUD is symbol for Australian dollar",
                 "from_id": 480,
                 "from_phrase": {
@@ -31170,7 +31189,7 @@
                 "class": "triple"
             },
             {
-                "id": 641,
+                "id": 652,
                 "name": "BGN is symbol for Bulgarian lev",
                 "from_id": 540,
                 "from_phrase": {
@@ -31207,7 +31226,7 @@
                 "class": "triple"
             },
             {
-                "id": 636,
+                "id": 647,
                 "name": "BHD is symbol for Bahraini dinar",
                 "from_id": 538,
                 "from_phrase": {
@@ -31320,7 +31339,7 @@
                 "class": "triple"
             },
             {
-                "id": 550,
+                "id": 561,
                 "name": "BRL is symbol for Brazilian real",
                 "from_id": 503,
                 "from_phrase": {
@@ -31357,7 +31376,7 @@
                 "class": "triple"
             },
             {
-                "id": 497,
+                "id": 508,
                 "name": "C$ is symbol for Canadian dollar",
                 "from_id": 483,
                 "from_phrase": {
@@ -31394,7 +31413,7 @@
                 "class": "triple"
             },
             {
-                "id": 495,
+                "id": 506,
                 "name": "CAD is symbol for Canadian dollar",
                 "from_id": 482,
                 "from_phrase": {
@@ -31470,7 +31489,7 @@
                 "class": "triple"
             },
             {
-                "id": 2993,
+                "id": 3003,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
                 "from_id": 2047,
                 "from_phrase": {
@@ -31494,9 +31513,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2989,
+                "to_id": -2999,
                 "to_phrase": {
-                    "id": 2989,
+                    "id": 2999,
                     "name": "Nestl\u00e9 registered share",
                     "description": "the registered share of Nestl\u00e9 S.A.",
                     "type_id": null,
@@ -31507,7 +31526,7 @@
                 "class": "triple"
             },
             {
-                "id": 500,
+                "id": 511,
                 "name": "CHF is symbol for Swiss franc",
                 "from_id": 484,
                 "from_phrase": {
@@ -31544,7 +31563,7 @@
                 "class": "triple"
             },
             {
-                "id": 598,
+                "id": 609,
                 "name": "CLP$ is symbol for Chilean peso",
                 "from_id": 523,
                 "from_phrase": {
@@ -31581,7 +31600,7 @@
                 "class": "triple"
             },
             {
-                "id": 596,
+                "id": 607,
                 "name": "CLP is symbol for Chilean peso",
                 "from_id": 522,
                 "from_phrase": {
@@ -31687,7 +31706,7 @@
                 "class": "word"
             },
             {
-                "id": 3784,
+                "id": 3794,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -31840,7 +31859,7 @@
                 "class": "word"
             },
             {
-                "id": 2989,
+                "id": 2999,
                 "name": "Nestl\u00e9 registered share",
                 "description": "the registered share of Nestl\u00e9 S.A.",
                 "class": "triple"
@@ -31886,7 +31905,7 @@
                 "class": "word"
             },
             {
-                "id": 618,
+                "id": 629,
                 "name": "COL$ is symbol for Colombian peso",
                 "from_id": 531,
                 "from_phrase": {
@@ -31923,7 +31942,7 @@
                 "class": "triple"
             },
             {
-                "id": 616,
+                "id": 627,
                 "name": "COP is symbol for Colombian peso",
                 "from_id": 530,
                 "from_phrase": {
@@ -31960,7 +31979,7 @@
                 "class": "triple"
             },
             {
-                "id": 576,
+                "id": 587,
                 "name": "CZK is symbol for Czech koruna",
                 "from_id": 514,
                 "from_phrase": {
@@ -31997,7 +32016,7 @@
                 "class": "triple"
             },
             {
-                "id": 2990,
+                "id": 3000,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
                 "from_id": 2046,
                 "from_phrase": {
@@ -32021,9 +32040,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2978,
+                "to_id": -2988,
                 "to_phrase": {
-                    "id": 2978,
+                    "id": 2988,
                     "name": "Mercedes-Benz Group share",
                     "description": "the registered share of Mercedes-Benz Group AG",
                     "type_id": null,
@@ -32034,7 +32053,7 @@
                 "class": "triple"
             },
             {
-                "id": 555,
+                "id": 566,
                 "name": "DKK is symbol for Danish krone",
                 "from_id": 505,
                 "from_phrase": {
@@ -32149,7 +32168,7 @@
                 "class": "triple"
             },
             {
-                "id": 593,
+                "id": 604,
                 "name": "Ft is symbol for Hungarian forint",
                 "from_id": 521,
                 "from_phrase": {
@@ -32223,7 +32242,7 @@
                 "class": "triple"
             },
             {
-                "id": 967,
+                "id": 978,
                 "name": "GDP is symbol for gross domestic product",
                 "from_id": 304,
                 "from_phrase": {
@@ -32247,9 +32266,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -952,
+                "to_id": -963,
                 "to_phrase": {
-                    "id": 952,
+                    "id": 963,
                     "name": "gross domestic product",
                     "description": "total market value of goods and services produced",
                     "type_id": null,
@@ -32260,7 +32279,7 @@
                 "class": "triple"
             },
             {
-                "id": 3734,
+                "id": 3744,
                 "name": "g\/kWh is symbol for gram per kWh",
                 "from_id": 2395,
                 "from_phrase": {
@@ -32284,9 +32303,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2973,
+                "to_id": -2983,
                 "to_phrase": {
-                    "id": 2973,
+                    "id": 2983,
                     "name": "gram per kWh",
                     "description": "the unit of the emission intensity of electricity",
                     "type_id": 2,
@@ -32335,7 +32354,7 @@
                 "class": "triple"
             },
             {
-                "id": 506,
+                "id": 517,
                 "name": "HK$ is symbol for Hong Kong dollar",
                 "from_id": 486,
                 "from_phrase": {
@@ -32372,7 +32391,7 @@
                 "class": "triple"
             },
             {
-                "id": 504,
+                "id": 515,
                 "name": "HKD is symbol for Hong Kong dollar",
                 "from_id": 485,
                 "from_phrase": {
@@ -32446,7 +32465,7 @@
                 "class": "triple"
             },
             {
-                "id": 591,
+                "id": 602,
                 "name": "HUF is symbol for Hungarian forint",
                 "from_id": 520,
                 "from_phrase": {
@@ -32483,7 +32502,7 @@
                 "class": "triple"
             },
             {
-                "id": 571,
+                "id": 582,
                 "name": "IDR is symbol for Indonesian rupiah",
                 "from_id": 512,
                 "from_phrase": {
@@ -32520,7 +32539,7 @@
                 "class": "triple"
             },
             {
-                "id": 660,
+                "id": 671,
                 "name": "ILS is symbol for Israeli new shekel",
                 "from_id": 510,
                 "from_phrase": {
@@ -32544,9 +32563,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -463,
+                "to_id": -474,
                 "to_phrase": {
-                    "id": 463,
+                    "id": 474,
                     "name": "Israeli new shekel",
                     "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                     "type_id": null,
@@ -32557,7 +32576,7 @@
                 "class": "triple"
             },
             {
-                "id": 533,
+                "id": 544,
                 "name": "INR is symbol for Indian rupee",
                 "from_id": 495,
                 "from_phrase": {
@@ -32671,7 +32690,7 @@
                 "class": "word"
             },
             {
-                "id": 2978,
+                "id": 2988,
                 "name": "Mercedes-Benz Group share",
                 "description": "the registered share of Mercedes-Benz Group AG",
                 "class": "triple"
@@ -32740,7 +32759,7 @@
                 "class": "word"
             },
             {
-                "id": 952,
+                "id": 963,
                 "name": "gross domestic product",
                 "description": "total market value of goods and services produced",
                 "class": "triple"
@@ -32752,7 +32771,7 @@
                 "class": "word"
             },
             {
-                "id": 2973,
+                "id": 2983,
                 "name": "gram per kWh",
                 "description": "the unit of the emission intensity of electricity",
                 "type_id": 2,
@@ -32854,7 +32873,7 @@
                 "class": "word"
             },
             {
-                "id": 480,
+                "id": 491,
                 "name": "JPY is symbol for Japanese yen",
                 "from_id": 475,
                 "from_phrase": {
@@ -32891,7 +32910,7 @@
                 "class": "triple"
             },
             {
-                "id": 578,
+                "id": 589,
                 "name": "K\u010d is symbol for Czech koruna",
                 "from_id": 515,
                 "from_phrase": {
@@ -32928,7 +32947,7 @@
                 "class": "triple"
             },
             {
-                "id": 3786,
+                "id": 3796,
                 "name": "kg\/kWh is symbol for kg per kWh",
                 "from_id": 2396,
                 "from_phrase": {
@@ -32952,9 +32971,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3699,
+                "to_id": -3709,
                 "to_phrase": {
-                    "id": 3699,
+                    "id": 3709,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -33043,7 +33062,7 @@
                 "class": "triple"
             },
             {
-                "id": 556,
+                "id": 567,
                 "name": "kr is symbol for Danish krone",
                 "from_id": 490,
                 "from_phrase": {
@@ -33080,7 +33099,7 @@
                 "class": "triple"
             },
             {
-                "id": 525,
+                "id": 536,
                 "name": "kr is symbol for Norwegian krone",
                 "from_id": 490,
                 "from_phrase": {
@@ -33117,7 +33136,7 @@
                 "class": "triple"
             },
             {
-                "id": 516,
+                "id": 527,
                 "name": "kr is symbol for Swedish krona",
                 "from_id": 490,
                 "from_phrase": {
@@ -33154,7 +33173,7 @@
                 "class": "triple"
             },
             {
-                "id": 519,
+                "id": 530,
                 "name": "KRW is symbol for South Korean won",
                 "from_id": 491,
                 "from_phrase": {
@@ -33230,7 +33249,7 @@
                 "class": "triple"
             },
             {
-                "id": 3782,
+                "id": 3792,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 2393,
                 "from_phrase": {
@@ -33254,9 +33273,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3730,
+                "to_id": -3740,
                 "to_phrase": {
-                    "id": 3730,
+                    "id": 3740,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -33267,7 +33286,7 @@
                 "class": "triple"
             },
             {
-                "id": 3783,
+                "id": 3793,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
                 "from_id": 2394,
                 "from_phrase": {
@@ -33291,9 +33310,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3731,
+                "to_id": -3741,
                 "to_phrase": {
-                    "id": 3731,
+                    "id": 3741,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -33304,7 +33323,7 @@
                 "class": "triple"
             },
             {
-                "id": 628,
+                "id": 639,
                 "name": "L is symbol for Romanian leu",
                 "from_id": 535,
                 "from_phrase": {
@@ -33565,7 +33584,7 @@
                 "class": "triple"
             },
             {
-                "id": 540,
+                "id": 551,
                 "name": "MX$ is symbol for Mexican peso",
                 "from_id": 498,
                 "from_phrase": {
@@ -33622,7 +33641,7 @@
                 "class": "word"
             },
             {
-                "id": 3699,
+                "id": 3709,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -33707,7 +33726,7 @@
                 "class": "word"
             },
             {
-                "id": 3730,
+                "id": 3740,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
@@ -33720,7 +33739,7 @@
                 "class": "word"
             },
             {
-                "id": 3731,
+                "id": 3741,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33821,7 +33840,7 @@
                 "class": "triple"
             },
             {
-                "id": 538,
+                "id": 549,
                 "name": "MXN is symbol for Mexican peso",
                 "from_id": 497,
                 "from_phrase": {
@@ -33858,7 +33877,7 @@
                 "class": "triple"
             },
             {
-                "id": 611,
+                "id": 622,
                 "name": "MYR is symbol for Malaysian ringgit",
                 "from_id": 528,
                 "from_phrase": {
@@ -33895,7 +33914,7 @@
                 "class": "triple"
             },
             {
-                "id": 524,
+                "id": 535,
                 "name": "NOK is symbol for Norwegian krone",
                 "from_id": 492,
                 "from_phrase": {
@@ -33932,7 +33951,7 @@
                 "class": "triple"
             },
             {
-                "id": 658,
+                "id": 669,
                 "name": "NT$ is symbol for New Taiwan dollar",
                 "from_id": 500,
                 "from_phrase": {
@@ -33956,9 +33975,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -462,
+                "to_id": -473,
                 "to_phrase": {
-                    "id": 462,
+                    "id": 473,
                     "name": "New Taiwan dollar",
                     "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                     "type_id": null,
@@ -33969,7 +33988,7 @@
                 "class": "triple"
             },
             {
-                "id": 530,
+                "id": 541,
                 "name": "NZ$ is symbol for New Zealand dollar",
                 "from_id": 494,
                 "from_phrase": {
@@ -34006,7 +34025,7 @@
                 "class": "triple"
             },
             {
-                "id": 528,
+                "id": 539,
                 "name": "NZD is symbol for New Zealand dollar",
                 "from_id": 493,
                 "from_phrase": {
@@ -34080,7 +34099,7 @@
                 "class": "triple"
             },
             {
-                "id": 631,
+                "id": 642,
                 "name": "PEN is symbol for Peruvian sol",
                 "from_id": 536,
                 "from_phrase": {
@@ -34117,7 +34136,7 @@
                 "class": "triple"
             },
             {
-                "id": 606,
+                "id": 617,
                 "name": "PHP is symbol for Philippine peso",
                 "from_id": 526,
                 "from_phrase": {
@@ -34154,7 +34173,7 @@
                 "class": "triple"
             },
             {
-                "id": 665,
+                "id": 676,
                 "name": "p is symbol for pence",
                 "from_id": 622,
                 "from_phrase": {
@@ -34191,7 +34210,7 @@
                 "class": "triple"
             },
             {
-                "id": 559,
+                "id": 570,
                 "name": "PLN is symbol for Polish z\u0142oty",
                 "from_id": 506,
                 "from_phrase": {
@@ -34228,7 +34247,7 @@
                 "class": "triple"
             },
             {
-                "id": 552,
+                "id": 563,
                 "name": "R$ is symbol for Brazilian real",
                 "from_id": 504,
                 "from_phrase": {
@@ -34265,7 +34284,7 @@
                 "class": "triple"
             },
             {
-                "id": 547,
+                "id": 558,
                 "name": "R is symbol for South African rand",
                 "from_id": 502,
                 "from_phrase": {
@@ -34302,7 +34321,7 @@
                 "class": "triple"
             },
             {
-                "id": 613,
+                "id": 624,
                 "name": "RM is symbol for Malaysian ringgit",
                 "from_id": 529,
                 "from_phrase": {
@@ -34339,7 +34358,7 @@
                 "class": "triple"
             },
             {
-                "id": 626,
+                "id": 637,
                 "name": "RON is symbol for Romanian leu",
                 "from_id": 534,
                 "from_phrase": {
@@ -34376,7 +34395,7 @@
                 "class": "triple"
             },
             {
-                "id": 573,
+                "id": 584,
                 "name": "Rp is symbol for Indonesian rupiah",
                 "from_id": 513,
                 "from_phrase": {
@@ -34413,7 +34432,7 @@
                 "class": "triple"
             },
             {
-                "id": 621,
+                "id": 632,
                 "name": "RUB is symbol for Russian ruble",
                 "from_id": 532,
                 "from_phrase": {
@@ -34450,7 +34469,7 @@
                 "class": "triple"
             },
             {
-                "id": 511,
+                "id": 522,
                 "name": "S$ is symbol for Singapore dollar",
                 "from_id": 488,
                 "from_phrase": {
@@ -34487,7 +34506,7 @@
                 "class": "triple"
             },
             {
-                "id": 601,
+                "id": 612,
                 "name": "SAR is symbol for Saudi riyal",
                 "from_id": 524,
                 "from_phrase": {
@@ -34524,7 +34543,7 @@
                 "class": "triple"
             },
             {
-                "id": 514,
+                "id": 525,
                 "name": "SEK is symbol for Swedish krona",
                 "from_id": 489,
                 "from_phrase": {
@@ -34595,7 +34614,7 @@
                 "class": "word"
             },
             {
-                "id": 462,
+                "id": 473,
                 "name": "New Taiwan dollar",
                 "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                 "class": "triple"
@@ -34761,7 +34780,7 @@
                 "class": "word"
             },
             {
-                "id": 509,
+                "id": 520,
                 "name": "SGD is symbol for Singapore dollar",
                 "from_id": 487,
                 "from_phrase": {
@@ -34798,7 +34817,7 @@
                 "class": "triple"
             },
             {
-                "id": 3785,
+                "id": 3795,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -34822,9 +34841,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3733,
+                "to_id": -3743,
                 "to_phrase": {
-                    "id": 3733,
+                    "id": 3743,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34835,7 +34854,7 @@
                 "class": "triple"
             },
             {
-                "id": 633,
+                "id": 644,
                 "name": "S\/ is symbol for Peruvian sol",
                 "from_id": 537,
                 "from_phrase": {
@@ -34910,7 +34929,7 @@
                 "class": "triple"
             },
             {
-                "id": 564,
+                "id": 575,
                 "name": "THB is symbol for Thai baht",
                 "from_id": 508,
                 "from_phrase": {
@@ -35061,7 +35080,7 @@
                 "class": "triple"
             },
             {
-                "id": 586,
+                "id": 597,
                 "name": "TRY is symbol for Turkish lira",
                 "from_id": 518,
                 "from_phrase": {
@@ -35137,7 +35156,7 @@
                 "class": "triple"
             },
             {
-                "id": 657,
+                "id": 668,
                 "name": "TWD is symbol for New Taiwan dollar",
                 "from_id": 499,
                 "from_phrase": {
@@ -35161,9 +35180,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -462,
+                "to_id": -473,
                 "to_phrase": {
-                    "id": 462,
+                    "id": 473,
                     "name": "New Taiwan dollar",
                     "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                     "type_id": null,
@@ -35174,7 +35193,7 @@
                 "class": "triple"
             },
             {
-                "id": 475,
+                "id": 486,
                 "name": "US$ is symbol for US dollar",
                 "from_id": 471,
                 "from_phrase": {
@@ -35211,7 +35230,7 @@
                 "class": "triple"
             },
             {
-                "id": 473,
+                "id": 484,
                 "name": "USD is symbol for US dollar",
                 "from_id": 470,
                 "from_phrase": {
@@ -35285,7 +35304,7 @@
                 "class": "triple"
             },
             {
-                "id": 545,
+                "id": 556,
                 "name": "ZAR is symbol for South African rand",
                 "from_id": 501,
                 "from_phrase": {
@@ -35322,7 +35341,7 @@
                 "class": "triple"
             },
             {
-                "id": 561,
+                "id": 572,
                 "name": "z\u0142 is symbol for Polish z\u0142oty",
                 "from_id": 507,
                 "from_phrase": {
@@ -35399,7 +35418,7 @@
                 "class": "triple"
             },
             {
-                "id": 583,
+                "id": 594,
                 "name": "\u062f.\u0625 is symbol for UAE dirham",
                 "from_id": 517,
                 "from_phrase": {
@@ -35436,7 +35455,7 @@
                 "class": "triple"
             },
             {
-                "id": 638,
+                "id": 649,
                 "name": ".\u062f.\u0628 is symbol for Bahraini dinar",
                 "from_id": 539,
                 "from_phrase": {
@@ -35473,7 +35492,7 @@
                 "class": "triple"
             },
             {
-                "id": 603,
+                "id": 614,
                 "name": "\ufdfc is symbol for Saudi riyal",
                 "from_id": 525,
                 "from_phrase": {
@@ -35524,7 +35543,7 @@
                 "class": "word"
             },
             {
-                "id": 3733,
+                "id": 3743,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,
@@ -35690,7 +35709,7 @@
                 "class": "word"
             },
             {
-                "id": 653,
+                "id": 664,
                 "name": "$ is alias of US dollar",
                 "description": "The dollar sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it.",
                 "from_id": 472,
@@ -35766,7 +35785,7 @@
                 "class": "triple"
             },
             {
-                "id": 1051,
+                "id": 1061,
                 "name": "global warming is alias of climate change",
                 "from_id": -167,
                 "from_phrase": {
@@ -35790,9 +35809,9 @@
                     "impact": null,
                     "id": 19
                 },
-                "to_id": -1045,
+                "to_id": -1055,
                 "to_phrase": {
-                    "id": 1045,
+                    "id": 1055,
                     "name": "climate change",
                     "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                     "type_id": null,
@@ -35960,7 +35979,7 @@
                 "class": "triple"
             },
             {
-                "id": 710,
+                "id": 721,
                 "name": "Nestle is alias of Nestl\u00e9",
                 "from_id": 648,
                 "from_phrase": {
@@ -36057,7 +36076,7 @@
                 "class": "triple"
             },
             {
-                "id": 651,
+                "id": 662,
                 "name": "Sterling is alias of Pound (sterling)",
                 "description": "The new file uses 'Sterling' while the original enriched dataset uses 'Pound (sterling)'. Both names refer to the same currency (GBP).",
                 "from_id": 476,
@@ -36133,7 +36152,7 @@
                 "class": "triple"
             },
             {
-                "id": 470,
+                "id": 481,
                 "name": "U.S. dollar is alias of US dollar",
                 "from_id": -401,
                 "from_phrase": {
@@ -36170,7 +36189,7 @@
                 "class": "triple"
             },
             {
-                "id": 650,
+                "id": 661,
                 "name": "US-Dollar is alias of US dollar",
                 "description": "The new file uses 'US-Dollar' while the original enriched dataset uses 'US dollar'. Both names refer to the same currency (USD).",
                 "from_id": 473,
@@ -36208,7 +36227,7 @@
                 "class": "triple"
             },
             {
-                "id": 652,
+                "id": 663,
                 "name": "Yen is alias of Japanese yen",
                 "description": "'Yen' (used in the original dataset) and 'Japanese yen' (used in the new file) refer to the same currency (JPY).",
                 "from_id": 459,
@@ -36252,7 +36271,7 @@
                 "class": "triple"
             },
             {
-                "id": 1045,
+                "id": 1055,
                 "name": "climate change",
                 "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                 "class": "triple"
@@ -37079,7 +37098,7 @@
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1250},{w163}={t206},{t208}\/(({t206},{w1249}+{t206},{w1246})\/2)",
+                "ref_text": "{t1260},{w163}={t206},{t208}\/(({t206},{w1249}+{t206},{w1246})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]

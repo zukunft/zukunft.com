@@ -1,0 +1,2275 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "words": [
+        {
+            "name": "population"
+        },
+        {
+            "name": "Zurich"
+        },
+        {
+            "name": "city"
+        },
+        {
+            "name": "1408",
+            "type": "time"
+        },
+        {
+            "name": "1467",
+            "type": "time"
+        },
+        {
+            "name": "1529",
+            "type": "time"
+        },
+        {
+            "name": "1637",
+            "type": "time"
+        },
+        {
+            "name": "1671",
+            "type": "time"
+        },
+        {
+            "name": "1682",
+            "type": "time"
+        },
+        {
+            "name": "1762",
+            "type": "time"
+        },
+        {
+            "name": "1792",
+            "type": "time"
+        },
+        {
+            "name": "1812",
+            "type": "time"
+        },
+        {
+            "name": "1836",
+            "type": "time"
+        },
+        {
+            "name": "1850",
+            "type": "time"
+        },
+        {
+            "name": "1860",
+            "type": "time"
+        },
+        {
+            "name": "1870",
+            "type": "time"
+        },
+        {
+            "name": "1880",
+            "type": "time"
+        },
+        {
+            "name": "1888",
+            "type": "time"
+        },
+        {
+            "name": "1894",
+            "type": "time"
+        },
+        {
+            "name": "1900",
+            "type": "time"
+        },
+        {
+            "name": "2021",
+            "type": "time"
+        },
+        {
+            "name": "resident population",
+            "refs": [
+                {
+                    "name": "Q56229488",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "2020",
+            "type": "time"
+        },
+        {
+            "name": "2019",
+            "type": "time"
+        },
+        {
+            "name": "2018",
+            "type": "time"
+        },
+        {
+            "name": "2017",
+            "type": "time"
+        },
+        {
+            "name": "2016",
+            "type": "time"
+        },
+        {
+            "name": "2015",
+            "type": "time"
+        },
+        {
+            "name": "2014",
+            "type": "time"
+        },
+        {
+            "name": "2013",
+            "type": "time"
+        },
+        {
+            "name": "2012",
+            "type": "time"
+        },
+        {
+            "name": "2011",
+            "type": "time"
+        },
+        {
+            "name": "2010",
+            "type": "time"
+        },
+        {
+            "name": "2009",
+            "type": "time"
+        },
+        {
+            "name": "2008",
+            "type": "time"
+        },
+        {
+            "name": "2007",
+            "type": "time"
+        },
+        {
+            "name": "2006",
+            "type": "time"
+        },
+        {
+            "name": "2005",
+            "type": "time"
+        },
+        {
+            "name": "2004",
+            "type": "time"
+        },
+        {
+            "name": "2003",
+            "type": "time"
+        },
+        {
+            "name": "2002",
+            "type": "time"
+        },
+        {
+            "name": "2001",
+            "type": "time"
+        },
+        {
+            "name": "2000",
+            "type": "time"
+        },
+        {
+            "name": "1999",
+            "type": "time"
+        },
+        {
+            "name": "1998",
+            "type": "time"
+        },
+        {
+            "name": "1997",
+            "type": "time"
+        },
+        {
+            "name": "1996",
+            "type": "time"
+        },
+        {
+            "name": "1995",
+            "type": "time"
+        },
+        {
+            "name": "1994",
+            "type": "time"
+        },
+        {
+            "name": "1993",
+            "type": "time"
+        },
+        {
+            "name": "1992",
+            "type": "time"
+        },
+        {
+            "name": "1991",
+            "type": "time"
+        },
+        {
+            "name": "1990",
+            "type": "time"
+        },
+        {
+            "name": "1989",
+            "type": "time"
+        },
+        {
+            "name": "1988",
+            "type": "time"
+        },
+        {
+            "name": "1987",
+            "type": "time"
+        },
+        {
+            "name": "1986",
+            "type": "time"
+        },
+        {
+            "name": "1985",
+            "type": "time"
+        },
+        {
+            "name": "1984",
+            "type": "time"
+        },
+        {
+            "name": "1983",
+            "type": "time"
+        },
+        {
+            "name": "1982",
+            "type": "time"
+        },
+        {
+            "name": "1981",
+            "type": "time"
+        },
+        {
+            "name": "2022",
+            "type": "time"
+        },
+        {
+            "name": "population present",
+            "refs": [
+                {
+                    "name": "Q56229478",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "1980",
+            "type": "time"
+        },
+        {
+            "name": "1979",
+            "type": "time"
+        },
+        {
+            "name": "1978",
+            "type": "time"
+        },
+        {
+            "name": "1977",
+            "type": "time"
+        },
+        {
+            "name": "1976",
+            "type": "time"
+        },
+        {
+            "name": "1975",
+            "type": "time"
+        },
+        {
+            "name": "1974",
+            "type": "time"
+        },
+        {
+            "name": "1973",
+            "type": "time"
+        },
+        {
+            "name": "1972",
+            "type": "time"
+        },
+        {
+            "name": "1971",
+            "type": "time"
+        },
+        {
+            "name": "1970",
+            "type": "time"
+        },
+        {
+            "name": "1969",
+            "type": "time"
+        },
+        {
+            "name": "1968",
+            "type": "time"
+        },
+        {
+            "name": "1967",
+            "type": "time"
+        },
+        {
+            "name": "1966",
+            "type": "time"
+        },
+        {
+            "name": "1965",
+            "type": "time"
+        },
+        {
+            "name": "1964",
+            "type": "time"
+        },
+        {
+            "name": "1963",
+            "type": "time"
+        },
+        {
+            "name": "1962",
+            "type": "time"
+        },
+        {
+            "name": "1961",
+            "type": "time"
+        },
+        {
+            "name": "1960",
+            "type": "time"
+        },
+        {
+            "name": "1959",
+            "type": "time"
+        },
+        {
+            "name": "1958",
+            "type": "time"
+        },
+        {
+            "name": "1957",
+            "type": "time"
+        },
+        {
+            "name": "1956",
+            "type": "time"
+        },
+        {
+            "name": "1955",
+            "type": "time"
+        },
+        {
+            "name": "1954",
+            "type": "time"
+        },
+        {
+            "name": "1953",
+            "type": "time"
+        },
+        {
+            "name": "1952",
+            "type": "time"
+        },
+        {
+            "name": "1951",
+            "type": "time"
+        },
+        {
+            "name": "1950",
+            "type": "time"
+        },
+        {
+            "name": "1949",
+            "type": "time"
+        },
+        {
+            "name": "1948",
+            "type": "time"
+        },
+        {
+            "name": "1947",
+            "type": "time"
+        },
+        {
+            "name": "1946",
+            "type": "time"
+        },
+        {
+            "name": "1945",
+            "type": "time"
+        },
+        {
+            "name": "1944",
+            "type": "time"
+        },
+        {
+            "name": "1943",
+            "type": "time"
+        },
+        {
+            "name": "1942",
+            "type": "time"
+        },
+        {
+            "name": "1941",
+            "type": "time"
+        },
+        {
+            "name": "1940",
+            "type": "time"
+        },
+        {
+            "name": "1939",
+            "type": "time"
+        },
+        {
+            "name": "1938",
+            "type": "time"
+        },
+        {
+            "name": "1937",
+            "type": "time"
+        },
+        {
+            "name": "1936",
+            "type": "time"
+        },
+        {
+            "name": "1935",
+            "type": "time"
+        },
+        {
+            "name": "1934",
+            "type": "time"
+        },
+        {
+            "name": "1933",
+            "type": "time"
+        },
+        {
+            "name": "1932",
+            "type": "time"
+        },
+        {
+            "name": "1931",
+            "type": "time"
+        },
+        {
+            "name": "1930",
+            "type": "time"
+        },
+        {
+            "name": "1929",
+            "type": "time"
+        },
+        {
+            "name": "1928",
+            "type": "time"
+        },
+        {
+            "name": "1927",
+            "type": "time"
+        },
+        {
+            "name": "1926",
+            "type": "time"
+        },
+        {
+            "name": "1925",
+            "type": "time"
+        },
+        {
+            "name": "1924",
+            "type": "time"
+        },
+        {
+            "name": "1923",
+            "type": "time"
+        },
+        {
+            "name": "1922",
+            "type": "time"
+        },
+        {
+            "name": "1921",
+            "type": "time"
+        },
+        {
+            "name": "1920",
+            "type": "time"
+        },
+        {
+            "name": "1919",
+            "type": "time"
+        },
+        {
+            "name": "1918",
+            "type": "time"
+        },
+        {
+            "name": "1917",
+            "type": "time"
+        },
+        {
+            "name": "1916",
+            "type": "time"
+        },
+        {
+            "name": "1915",
+            "type": "time"
+        },
+        {
+            "name": "1914",
+            "type": "time"
+        },
+        {
+            "name": "1913",
+            "type": "time"
+        },
+        {
+            "name": "1912",
+            "type": "time"
+        },
+        {
+            "name": "1911",
+            "type": "time"
+        },
+        {
+            "name": "1910",
+            "type": "time"
+        },
+        {
+            "name": "1909",
+            "type": "time"
+        },
+        {
+            "name": "1908",
+            "type": "time"
+        },
+        {
+            "name": "1907",
+            "type": "time"
+        },
+        {
+            "name": "1906",
+            "type": "time"
+        },
+        {
+            "name": "1905",
+            "type": "time"
+        },
+        {
+            "name": "1904",
+            "type": "time"
+        },
+        {
+            "name": "1903",
+            "type": "time"
+        },
+        {
+            "name": "1902",
+            "type": "time"
+        },
+        {
+            "name": "1901",
+            "type": "time"
+        },
+        {
+            "name": "2023",
+            "type": "time"
+        },
+        {
+            "name": "2024",
+            "type": "time"
+        },
+        {
+            "name": "2025",
+            "type": "time"
+        }
+    ],
+    "triples": [
+        {
+            "from": "Zurich",
+            "verb": "is a",
+            "to": "city"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1408"
+            ],
+            "number": "5675"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1467"
+            ],
+            "number": "4750"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1529"
+            ],
+            "number": "5080"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1637"
+            ],
+            "number": "8621"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1671"
+            ],
+            "number": "9590"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1682"
+            ],
+            "number": "11110"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1762"
+            ],
+            "number": "11452"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1792"
+            ],
+            "number": "10734"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1812"
+            ],
+            "number": "9715"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1836"
+            ],
+            "number": "14243"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1850"
+            ],
+            "number": "17040"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1860"
+            ],
+            "number": "19758"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1870"
+            ],
+            "number": "20760"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1880"
+            ],
+            "number": "24453"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1888"
+            ],
+            "number": "27644"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1894"
+            ],
+            "number": "121057"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1900"
+            ],
+            "number": "150703"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2021",
+                "resident population"
+            ],
+            "number": "423193"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2020",
+                "resident population"
+            ],
+            "number": "421878"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2019",
+                "resident population"
+            ],
+            "number": "420217"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2018",
+                "resident population"
+            ],
+            "number": "415367"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2017",
+                "resident population"
+            ],
+            "number": "409241"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2016",
+                "resident population"
+            ],
+            "number": "402762"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2015",
+                "resident population"
+            ],
+            "number": "396955"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2014",
+                "resident population"
+            ],
+            "number": "391359"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2013",
+                "resident population"
+            ],
+            "number": "384786"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2012",
+                "resident population"
+            ],
+            "number": "380777"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2011",
+                "resident population"
+            ],
+            "number": "376990"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2010",
+                "resident population"
+            ],
+            "number": "371633"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2009",
+                "resident population"
+            ],
+            "number": "368677"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2008",
+                "resident population"
+            ],
+            "number": "365132"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2007",
+                "resident population"
+            ],
+            "number": "358540"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2006",
+                "resident population"
+            ],
+            "number": "350125"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2005",
+                "resident population"
+            ],
+            "number": "347517"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2004",
+                "resident population"
+            ],
+            "number": "345236"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2003",
+                "resident population"
+            ],
+            "number": "342853"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2002",
+                "resident population"
+            ],
+            "number": "342116"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2001",
+                "resident population"
+            ],
+            "number": "340197"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2000",
+                "resident population"
+            ],
+            "number": "337900"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1999",
+                "resident population"
+            ],
+            "number": "336822"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1998",
+                "resident population"
+            ],
+            "number": "336821"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1997",
+                "resident population"
+            ],
+            "number": "338594"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1996",
+                "resident population"
+            ],
+            "number": "341250"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1995",
+                "resident population"
+            ],
+            "number": "343869"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1994",
+                "resident population"
+            ],
+            "number": "342872"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1993",
+                "resident population"
+            ],
+            "number": "343045"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1992",
+                "resident population"
+            ],
+            "number": "345235"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1991",
+                "resident population"
+            ],
+            "number": "343267"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1990",
+                "resident population"
+            ],
+            "number": "341276"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1989",
+                "resident population"
+            ],
+            "number": "342861"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1988",
+                "resident population"
+            ],
+            "number": "345159"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1987",
+                "resident population"
+            ],
+            "number": "346879"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1986",
+                "resident population"
+            ],
+            "number": "349549"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1985",
+                "resident population"
+            ],
+            "number": "351545"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1984",
+                "resident population"
+            ],
+            "number": "354525"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1983",
+                "resident population"
+            ],
+            "number": "356665"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1982",
+                "resident population"
+            ],
+            "number": "363449"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1981",
+                "resident population"
+            ],
+            "number": "366040"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2022",
+                "population present"
+            ],
+            "number": "443037"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2021",
+                "population present"
+            ],
+            "number": "436332"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2020",
+                "population present"
+            ],
+            "number": "434736"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2019",
+                "population present"
+            ],
+            "number": "434008"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2018",
+                "population present"
+            ],
+            "number": "428737"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2017",
+                "population present"
+            ],
+            "number": "423310"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2016",
+                "population present"
+            ],
+            "number": "415682"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2015",
+                "population present"
+            ],
+            "number": "410404"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2014",
+                "population present"
+            ],
+            "number": "404783"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2013",
+                "population present"
+            ],
+            "number": "398575"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2012",
+                "population present"
+            ],
+            "number": "394012"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2011",
+                "population present"
+            ],
+            "number": "390082"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2010",
+                "population present"
+            ],
+            "number": "385468"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2009",
+                "population present"
+            ],
+            "number": "382906"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2008",
+                "population present"
+            ],
+            "number": "380499"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2007",
+                "population present"
+            ],
+            "number": "376815"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2006",
+                "population present"
+            ],
+            "number": "370062"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2005",
+                "population present"
+            ],
+            "number": "366809"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2004",
+                "population present"
+            ],
+            "number": "364977"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2003",
+                "population present"
+            ],
+            "number": "364528"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2002",
+                "population present"
+            ],
+            "number": "364558"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2001",
+                "population present"
+            ],
+            "number": "362042"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2000",
+                "population present"
+            ],
+            "number": "360980"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1999",
+                "population present"
+            ],
+            "number": "360704"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1998",
+                "population present"
+            ],
+            "number": "359073"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1997",
+                "population present"
+            ],
+            "number": "358594"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1996",
+                "population present"
+            ],
+            "number": "359648"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1995",
+                "population present"
+            ],
+            "number": "360826"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1994",
+                "population present"
+            ],
+            "number": "360848"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1993",
+                "population present"
+            ],
+            "number": "360898"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1992",
+                "population present"
+            ],
+            "number": "361488"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1991",
+                "population present"
+            ],
+            "number": "360875"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1990",
+                "population present"
+            ],
+            "number": "356352"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1989",
+                "population present"
+            ],
+            "number": "355901"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1988",
+                "population present"
+            ],
+            "number": "357360"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1987",
+                "population present"
+            ],
+            "number": "358042"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1986",
+                "population present"
+            ],
+            "number": "358873"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1985",
+                "population present"
+            ],
+            "number": "359084"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1984",
+                "population present"
+            ],
+            "number": "361493"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1983",
+                "population present"
+            ],
+            "number": "363652"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1982",
+                "population present"
+            ],
+            "number": "366340"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1981",
+                "population present"
+            ],
+            "number": "368171"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1980",
+                "population present"
+            ],
+            "number": "370618"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1979",
+                "population present"
+            ],
+            "number": "374221"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1978",
+                "population present"
+            ],
+            "number": "376447"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1977",
+                "population present"
+            ],
+            "number": "379635"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1976",
+                "population present"
+            ],
+            "number": "382999"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1975",
+                "population present"
+            ],
+            "number": "389613"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1974",
+                "population present"
+            ],
+            "number": "396261"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1973",
+                "population present"
+            ],
+            "number": "401577"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1972",
+                "population present"
+            ],
+            "number": "407647"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1971",
+                "population present"
+            ],
+            "number": "412169"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1970",
+                "population present"
+            ],
+            "number": "417972"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1969",
+                "population present"
+            ],
+            "number": "425117"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1968",
+                "population present"
+            ],
+            "number": "430155"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1967",
+                "population present"
+            ],
+            "number": "430594"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1966",
+                "population present"
+            ],
+            "number": "431533"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1965",
+                "population present"
+            ],
+            "number": "433865"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1964",
+                "population present"
+            ],
+            "number": "437630"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1963",
+                "population present"
+            ],
+            "number": "439090"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1962",
+                "population present"
+            ],
+            "number": "440180"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1961",
+                "population present"
+            ],
+            "number": "439322"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1960",
+                "population present"
+            ],
+            "number": "437273"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1959",
+                "population present"
+            ],
+            "number": "434080"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1958",
+                "population present"
+            ],
+            "number": "431242"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1957",
+                "population present"
+            ],
+            "number": "426349"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1956",
+                "population present"
+            ],
+            "number": "420489"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1955",
+                "population present"
+            ],
+            "number": "417351"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1954",
+                "population present"
+            ],
+            "number": "413044"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1953",
+                "population present"
+            ],
+            "number": "408544"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1952",
+                "population present"
+            ],
+            "number": "403625"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1951",
+                "population present"
+            ],
+            "number": "396260"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1950",
+                "population present"
+            ],
+            "number": "389573"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1949",
+                "population present"
+            ],
+            "number": "386003"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1948",
+                "population present"
+            ],
+            "number": "383568"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1947",
+                "population present"
+            ],
+            "number": "377087"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1946",
+                "population present"
+            ],
+            "number": "367171"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1945",
+                "population present"
+            ],
+            "number": "357381"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1944",
+                "population present"
+            ],
+            "number": "351679"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1943",
+                "population present"
+            ],
+            "number": "345819"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1942",
+                "population present"
+            ],
+            "number": "339721"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1941",
+                "population present"
+            ],
+            "number": "336531"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1940",
+                "population present"
+            ],
+            "number": "334026"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1939",
+                "population present"
+            ],
+            "number": "333984"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1938",
+                "population present"
+            ],
+            "number": "326979"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1937",
+                "population present"
+            ],
+            "number": "318926"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1936",
+                "population present"
+            ],
+            "number": "317712"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1935",
+                "population present"
+            ],
+            "number": "317157"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1934",
+                "population present"
+            ],
+            "number": "315864"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1933",
+                "population present"
+            ],
+            "number": "264043"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1932",
+                "population present"
+            ],
+            "number": "260694"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1931",
+                "population present"
+            ],
+            "number": "257478"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1930",
+                "population present"
+            ],
+            "number": "249067"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1929",
+                "population present"
+            ],
+            "number": "240202"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1928",
+                "population present"
+            ],
+            "number": "230476"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1927",
+                "population present"
+            ],
+            "number": "220613"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1926",
+                "population present"
+            ],
+            "number": "214959"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1925",
+                "population present"
+            ],
+            "number": "209327"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1924",
+                "population present"
+            ],
+            "number": "206719"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1923",
+                "population present"
+            ],
+            "number": "204049"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1922",
+                "population present"
+            ],
+            "number": "200289"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1921",
+                "population present"
+            ],
+            "number": "201242"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1920",
+                "population present"
+            ],
+            "number": "206299"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1919",
+                "population present"
+            ],
+            "number": "210151"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1918",
+                "population present"
+            ],
+            "number": "211421"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1917",
+                "population present"
+            ],
+            "number": "213193"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1916",
+                "population present"
+            ],
+            "number": "206073"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1915",
+                "population present"
+            ],
+            "number": "199726"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1914",
+                "population present"
+            ],
+            "number": "195867"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1913",
+                "population present"
+            ],
+            "number": "200632"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1912",
+                "population present"
+            ],
+            "number": "200462"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1911",
+                "population present"
+            ],
+            "number": "195525"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1910",
+                "population present"
+            ],
+            "number": "190092"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1909",
+                "population present"
+            ],
+            "number": "185041"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1908",
+                "population present"
+            ],
+            "number": "180722"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1907",
+                "population present"
+            ],
+            "number": "177899"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1906",
+                "population present"
+            ],
+            "number": "173283"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1905",
+                "population present"
+            ],
+            "number": "168877"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1904",
+                "population present"
+            ],
+            "number": "164060"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1903",
+                "population present"
+            ],
+            "number": "158719"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1902",
+                "population present"
+            ],
+            "number": "153741"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "1901",
+                "population present"
+            ],
+            "number": "150301"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2023",
+                "population present"
+            ],
+            "number": "447082"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2022",
+                "resident population"
+            ],
+            "number": "427721"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2024",
+                "population present"
+            ],
+            "number": "448664"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2023",
+                "resident population"
+            ],
+            "number": "433989"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2025",
+                "population present"
+            ],
+            "number": "452421"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2024",
+                "resident population"
+            ],
+            "number": "436551"
+        },
+        {
+            "words": [
+                "population",
+                "Zurich (city)",
+                "2025"
+            ],
+            "number": "440935"
+        }
+    ]
+}
