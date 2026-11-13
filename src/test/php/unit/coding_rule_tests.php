@@ -43,6 +43,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -72,6 +73,7 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -155,6 +157,13 @@ class coding_rule_tests
         sandbox_typed_ui::class,
         sandbox_value_ui::class,
     ];
+
+    // a script that is not in the repo folder http/, for the positive test of the retired script links
+    const string RETIRED_SCRIPT_SAMPLE = 'view_select';
+    // the file types of src/ that can link to a script
+    const array RETIRED_SCRIPT_FILE_TYPES = [test_files::PHP, test_files::JS, test_files::HTML, test_files::JSON];
+    // the generated resources are never edited by hand: their links come from the code that the check reads
+    const array RETIRED_SCRIPT_SKIP_PATHS = [test_paths::RESOURCE];
 
     function run(test_cleanup $t): void
     {
@@ -399,6 +408,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
+
+        $t->subheader($ts . 'retired scripts');
+        $this->retired_script_link_tests($t);
 
     }
 
@@ -1469,7 +1481,6 @@ class coding_rule_tests
         $this->php_global_vars(TEST_PHP_PATH, $glb_lst, $glb_area_lst, $glb_add_lst);
         $this->php_global_vars(paths::API, $glb_lst, $glb_area_lst, $glb_add_lst);
         $this->php_global_vars(html_paths::HTTP, $glb_lst, $glb_area_lst, $glb_add_lst);
-        $this->php_global_vars(html_paths::HTTP_OLD, $glb_lst, $glb_area_lst, $glb_add_lst);
         ksort($glb_lst, SORT_STRING);
 
         $suggested = $this->php_suggested_var_names(paths::PHP_LIB);
@@ -1635,8 +1646,7 @@ class coding_rule_tests
             or str_starts_with($path, paths::API_OBJECT)) {
             $result = self::AREA_BACKEND;
         } elseif (str_starts_with($path, html_paths::WEB)
-            or str_starts_with($path, html_paths::HTTP)
-            or str_starts_with($path, html_paths::HTTP_OLD)) {
+            or str_starts_with($path, html_paths::HTTP)) {
             $result = self::AREA_FRONTEND;
         } elseif (str_starts_with($path, TEST_PHP_PATH)) {
             $result = '';
@@ -2671,6 +2681,93 @@ class coding_rule_tests
         // so a generous timeout is used to avoid a false timeout as the codebase grows
         $test_name = 'path consts checked in ' . $files_checked . ' files of ' . $base_path;
         $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * check that no file of src/ links to a /http/<name>.php whose script is not in the repo folder
+     * http/, so that a retired script cannot get a new caller; comments are read too, because a
+     * docblock that names a retired script points the reader to a page that does not exist
+     *
+     * each file with such a link produces one failing assertion that names the file and the scripts;
+     * a clean tree produces the summary assertion only, which checks that at least one file has been read
+     *
+     * positive (test fires when it should): a text with a link to a script that is not in http/
+     * negative (test tolerates good code): a text with a link to the main script view of http/
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function retired_script_link_tests(test_cleanup $t): void
+    {
+        $test_name = 'a link to a script of http/ is no retired script';
+        $scripts = $this->http_scripts();
+        $text = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT;
+        $found = $this->retired_scripts($text, $scripts);
+        $t->assert($test_name, $found, []);
+        $test_name = 'a link to a script that is not in http/ is found';
+        $text = rest_ctrl::PATH_FIXED . self::RETIRED_SCRIPT_SAMPLE . rest_ctrl::EXT;
+        $found = $this->retired_scripts($text, $scripts);
+        $t->assert($test_name, $found, [self::RETIRED_SCRIPT_SAMPLE]);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(paths::SRC) as $code_file) {
+            if ($this->is_retired_script_source($code_file)) {
+                $files_checked++;
+                $found = $this->retired_scripts(file_get_contents($code_file), $scripts);
+                if ($found != []) {
+                    $test_name = 'no link to a retired http script in ' . $code_file;
+                    $t->assert($test_name, implode(', ', $found), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass;
+        // reading the whole source tree takes clearly longer than a normal unit function
+        $test_name = 'retired script links checked in ' . $files_checked . ' files of ' . paths::SRC;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * @param string $text the code of a file or a part of it
+     * @param array $scripts the names of the scripts in the repo folder http/ without the extension e.g. view
+     * @return array the sorted names of the scripts that the text links as /http/<name>.php and that are not in $scripts
+     */
+    function retired_scripts(string $text, array $scripts): array
+    {
+        $path = preg_quote(rest_ctrl::PATH_FIXED, '#');
+        $ext = preg_quote(rest_ctrl::EXT, '#');
+        preg_match_all('#' . $path . '([\w/-]+)' . $ext . '#', $text, $matches);
+        $linked = array_unique($matches[1]);
+        $result = array_diff($linked, $scripts);
+        sort($result);
+        return $result;
+    }
+
+    /**
+     * @return array the names of the scripts in the repo folder http/ without the extension e.g. view
+     */
+    private function http_scripts(): array
+    {
+        $result = [];
+        foreach (glob(html_paths::HTTP . '*' . test_files::PHP) as $script_file) {
+            $result[] = basename($script_file, test_files::PHP);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $code_file the path of a file of src/
+     * @return bool true if the file is a php, js, html or json file outside the folders that the retired script check skips
+     */
+    private function is_retired_script_source(string $code_file): bool
+    {
+        $ext = '.' . pathinfo($code_file, PATHINFO_EXTENSION);
+        $result = in_array($ext, self::RETIRED_SCRIPT_FILE_TYPES);
+        foreach (self::RETIRED_SCRIPT_SKIP_PATHS as $skip_path) {
+            if (str_starts_with($code_file, $skip_path)) {
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     /**

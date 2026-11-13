@@ -741,12 +741,13 @@ class ListBase extends ListOfIdObjects
         global $mtr;
         $html = new html_base();
         $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
-        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str = $html->form_field(url_var::IMPORT_FILE, $msg_id, $name, html_base::INPUT_FILE);
         $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
         $result = '<' . html_base::FORM
             . ' ' . html_base::ACTION . '="' . $action . '"'
             . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
             . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $html->form_session_token()
             . $html->form_user()
             . $frm_str
             . '</' . html_base::FORM . '>';

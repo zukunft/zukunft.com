@@ -40,6 +40,9 @@ class ref_types
     const int WIKIDATA_ID = 2;
     const string WIKIDATA_NAME = "wikidata";
     const string WIKIDATA_COM = "wikidata";
+    // a property of wikidata e.g. "P1082" for the population, which needs its own type, because wikidata
+    // links a property on another page than an item, and a phrase can have an item and a property
+    const string WIKIDATA_PROPERTY = "wikidata_property";
     const string WIKIPEDIA = "wikipedia";
     // e.g. for the reference that the reference rows write test adds to a phrase without one
     const string CONCEPTNET = "conceptnet";

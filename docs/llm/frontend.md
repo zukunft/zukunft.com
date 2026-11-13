@@ -701,6 +701,17 @@ The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
 view `d`) already emit the url var as `name` directly — follow that when adding a
 new form element.
 
+## The user never sees a database id if it can be avoided
+
+A database id is an internal number: it differs from pod to pod, it moves with the
+import order and it tells the user nothing. So a page, a message, a title, a label
+or a tooltip names the object (its name, its phrases, its code id for a system
+object) and never its id; a feature that only works if the user reads or types an
+id is not built, but solved by a name, a selector or a link. The id stays where
+the user does not read it: in the hidden fields and the urls of forms and links,
+and a url that the user is meant to read, keep or share uses the human readable
+form (`?words=Pi`, see `docs/llm/json_views.md`) wherever the view supports it.
+
 ## Behaviour shared by word and triple belongs on the phrase
 
 `web/word/word.php` and `web/word/triple.php` are siblings — both extend

@@ -1,0 +1,13 @@
+{
+    "entities": {
+        "Q56229478": {
+            "id": "Q56229478",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "population present"
+                }
+            }
+        }
+    }
+}

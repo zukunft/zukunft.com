@@ -341,6 +341,7 @@ include_once test_paths::UNIT_READ . 'component_read_tests.php';
 include_once test_paths::UNIT_READ . 'component_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'source_read_tests.php';
 include_once test_paths::UNIT_READ . 'ref_read_tests.php';
+include_once test_paths::UNIT_READ . 'wikidata_read_tests.php';
 include_once test_paths::UNIT_READ . 'share_read_tests.php';
 include_once test_paths::UNIT_READ . 'protection_read_tests.php';
 include_once test_paths::UNIT_READ . 'language_read_tests.php';
@@ -381,6 +382,8 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_upload_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'export_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';
@@ -1337,7 +1340,9 @@ class test_base
             $needles = $needle;
         }
         // the array keys are not relevant if only a few elements should be checked
-        $haystack = array_values(array_intersect($haystack, $needles));
+        $found = array_intersect($haystack, $needles);
+        // a needle that the haystack holds several times is contained once
+        $haystack = array_values(array_unique($found));
         return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
@@ -4704,14 +4709,34 @@ class test_base
     }
 
     /**
-     * delete all change log entries of one test object using the change log entry ids
+     * remove the change log entries that a test user has written on a row of the base data, after the cleanup has
+     * removed the user overlay of this user, so that the change log of the row shows no earlier test run
+     *
+     * @param string $class the class of the row of the base data e.g. triple::class
+     * @param int|string $id the database id of the row of the base data e.g. of the triple Geneva (city), or the group id of a value
+     * @param user $usr the test user whose overlay has been removed e.g. $this->usr1
+     * @return void
+     */
+    function cleanup_change_log_of_user(string $class, int|string $id, user $usr): void
+    {
+        if ($usr->id() == $this->usr_system->id()) {
+            log_err('the change log of the system user on ' . $class . ' ' . $id
+                . ' is the history of the base data, so a test cleanup never removes it');
+        } else {
+            $this->delete_change_log_of_obj($class, $id, $usr);
+        }
+    }
+
+    /**
+     * delete the change log entries of one test object using the change log entry ids
      * the entries are loaded via the model so they are correctly filtered by the object's table and row
      *
      * @param string $class the class of the test object e.g. word::class, ref::class or group::class
      * @param int|string $id the database (or group) id of the test object whose change log to remove
+     * @param user|null $chg_usr null to remove the entries of every user, or only those of this test user
      * @return void
      */
-    private function delete_change_log_of_obj(string $class, int|string $id): void
+    private function delete_change_log_of_obj(string $class, int|string $id, ?user $chg_usr = null): void
     {
         global $db_con;
         $msg = new user_message();
@@ -4723,7 +4748,7 @@ class test_base
         // change log ids by their change log class and delete each group from its own table
         $ids_by_class = [];
         foreach ($log_lst->lst() as $chg) {
-            if ($chg->id() != 0) {
+            if ($chg->id() != 0 and $this->is_change_of($chg, $chg_usr)) {
                 $ids_by_class[$chg::class][] = $chg->id();
             }
         }
@@ -4732,6 +4757,20 @@ class test_base
             $qp = $db_con->sql_creator()->del_sql_list_without_log($chg_class, change_log::FLD_ID, $ids);
             $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $msg);
         }
+    }
+
+    /**
+     * @param change_log $chg a change log entry of the row that the cleanup removes
+     * @param user|null $chg_usr null for the entries of every user, or the test user whose entries are removed
+     * @return bool true if the entry has been written by the given user or no user is given
+     */
+    private function is_change_of(change_log $chg, ?user $chg_usr): bool
+    {
+        $result = true;
+        if ($chg_usr != null) {
+            $result = ($chg->get_user_id() == $chg_usr->id());
+        }
+        return $result;
     }
 
     /**
@@ -5101,6 +5140,8 @@ class test_base
             $usr_ref->load_by_id($id, $usr_msg);
             if ($usr_ref->has_usr_cfg()) {
                 $usr_ref->del_usr_cfg($usr_msg);
+                // the overlay and its removal must not stay in the change log of the reference of the base data
+                $this->cleanup_change_log_of_user(ref::class, $id, $usr);
             }
             $msg->merge($usr_msg);
         }
@@ -6995,18 +7036,18 @@ class test_base
     }
 
     /**
-     * short text description of the last change of the given user
-     * @param user|null $usr the user for whom the log entries should be selected
+     * short text description of the last change of the given user with the fixed time of the test mode
+     * @param user|null $usr the user for whom the log entries should be selected, by default the first test user
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_user(?user $usr = null): string
     {
-        $msg = new user_message();
         if ($usr == null) {
             $usr = $this->usr1;
         }
-        $log = new change($this->usr1);
-        $log->load_by_user($this->usr1, $msg);
+        $msg = new user_message($usr);
+        $log = new change($usr);
+        $log->load_by_user($usr, $msg);
         $log_ui = new change_log_ui($log->api_json());
         return $log_ui->dsp(true);
     }

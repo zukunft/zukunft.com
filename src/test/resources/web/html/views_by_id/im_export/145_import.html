@@ -197,11 +197,12 @@
             </div>
             <div class="row col-md-12">
                 <form action="http://localhost/http/view.php?m=import" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                     <div class="form-group col-md-12">
                         <label for="file">
                             File
                         </label>
-                        <input class="form-control" type="file" name="fileToUpload" id="file">
+                        <input class="form-control" type="file" name="if" id="file">
                     </div>
                     <input type="submit" name="submit" value="import" class="submit-input">
                 </form>
@@ -212,7 +213,7 @@
                     cancel
                 </a>
                 <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
-                    Import
+                    import
                 </button>
             </div>
         </main>

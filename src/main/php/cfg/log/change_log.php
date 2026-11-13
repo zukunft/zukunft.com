@@ -576,7 +576,8 @@ class change_log extends db_object_seq_id_user
             $db_changed = $this->set_table($table_name, $msg);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
-                foreach (user_db::FLD_NAMES as $field_name) {
+                $usr_fld_lst = array_diff(user_db::FLD_NAMES, user_db::FLD_NAMES_HELPER);
+                foreach ($usr_fld_lst as $field_name) {
                     $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD) {

@@ -444,6 +444,10 @@
         {
           "name": "Q33829",
           "type": "wikidata"
+        },
+        {
+          "name": "P1082",
+          "type": "wikidata_property"
         }
       ]
     },

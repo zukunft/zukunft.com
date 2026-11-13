@@ -87,6 +87,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use DateTime;
+use DateTimeInterface;
+use DateTimeZone;
 
 class ref extends sandbox
 {
@@ -136,6 +139,8 @@ class ref extends sandbox
     public ?float $impact = null;
     // timestamp of the last successful update of the reference (as the api formatted text)
     public ?string $last_update = null;
+    // the time of the last change of the external page that a refresh has read (as the api formatted text)
+    public ?string $page_time = null;
 
 
     /*
@@ -303,6 +308,11 @@ class ref extends sandbox
         } else {
             $this->last_update = null;
         }
+        if (array_key_exists(json_fields::PAGE_TIME, $json_array)) {
+            $this->page_time = $json_array[json_fields::PAGE_TIME];
+        } else {
+            $this->page_time = null;
+        }
         return $msg->is_ok();
     }
 
@@ -415,6 +425,27 @@ class ref extends sandbox
     function url(): ?string
     {
         return $this->url;
+    }
+
+    /**
+     * @param user_message $msg to report a page time that the backend has not sent in the api format
+     * @return string the time of the external page in the time zone of the pod and the format of the frontend config, empty if not known
+     */
+    function page_time_text(user_message $msg): string
+    {
+        global $ui_sys;
+        $result = '';
+        if ($this->page_time != null) {
+            $time = DateTime::createFromFormat(DateTimeInterface::ATOM, $this->page_time);
+            if ($time === false) {
+                log_err_msg_ui('the page time "' . $this->page_time . '" of ' . $this->dsp_id()
+                    . ' is not in the api format ' . DateTimeInterface::ATOM, $msg);
+            } else {
+                $time->setTimezone(new DateTimeZone(date_default_timezone_get()));
+                $result = $time->format($ui_sys->cfg->date_time_format());
+            }
+        }
+        return $result;
     }
 
     function set_predicate_id(?int $type_id = null): void
@@ -544,6 +575,8 @@ class ref extends sandbox
     {
         if ($this->is_type(ref_types::WIKIPEDIA)) {
             $result = $this->wikipedia_refresh_link($html);
+        } elseif ($this->is_type(ref_types::WIKIDATA)) {
+            $result = $this->wikidata_refresh_link($html);
         } else {
             $result = $this->refresh_job_link($html);
         }
@@ -563,6 +596,21 @@ class ref extends sandbox
         $refresh = url_var::REFRESH . '=' . url_var::REFRESH_WIKIPEDIA;
         $url = $html->url_back($phr->edit_view_id(), $phr->obj_id() ?? 0, [], $refresh);
         return $html->change_icon($url, icons::REFRESH, $mtr->txt(msg_id::WIKIPEDIA_REFRESH));
+    }
+
+    /**
+     * the refresh icon of a wikidata reference opens the preview of the values that wikidata would add to the
+     * phrase, which writes nothing before the user has confirmed it (see frontend::url_with_wikidata_refresh)
+     * @param html_base $html the html creator passed in to avoid creating it twice
+     * @returns string the html code of the refresh icon, grey for a user without login
+     */
+    private function wikidata_refresh_link(html_base $html): string
+    {
+        global $mtr;
+        $phr = $this->phrase();
+        $refresh = url_var::REFRESH . '=' . url_var::REFRESH_WIKIDATA;
+        $url = $html->url_back($phr->edit_view_id(), $phr->obj_id() ?? 0, [], $refresh);
+        return $html->change_icon($url, icons::REFRESH, $mtr->txt(msg_id::WIKIDATA_REFRESH));
     }
 
     /**

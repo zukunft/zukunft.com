@@ -34,9 +34,13 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -69,15 +73,31 @@ class verb_write_tests
         $vrb->load_by_id($sys->typ_lst->vrb->id(verbs::IS), $msg);
         $t->assert($test_name, $vrb->name(), verbs::IS_NAME);
 
+        // a verb shares the term namespace with the words, triples and formulas
+        $test_name = 'a verb with the name of a word is refused';
+        $vrb = new verb;
+        $vrb->set_user($t->usr1);
+        $vrb->set_name(word_names::ZH);
+        $t->assert_false($test_name, $vrb->save($msg));
+
+        $test_name = '... with the message that a word uses the name';
+        $target = 'A word with the name "' . word_names::ZH . '" already exists';
+        $t->assert_text_contains($test_name, $msg->text(), $target);
+        $msg->reset();
+
+        // the negative case: a verb with an unused name is added and removed again
         $test_name = 'test the creation of a new verb with name "' . verbs::TEST_ADD_NAME . ')" verb';
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->set_name(verbs::TEST_ADD_NAME);
         $t->assert_true($test_name, $vrb->save($msg));
 
+        // the change log text starts with the fixed time of the test mode (change_log_named::dsp)
+        $log_time = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i');
         $test_name = '... test if adding the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert($test_name, $result, 'zukunft.com system test added "System Test Verb"');
+        $target = $log_time . ' ' . users::SYSTEM_TEST_NAME . ' added "' . verbs::TEST_ADD_NAME . '"';
+        $t->assert($test_name, $result, $target);
 
         $test_name = 'test verb not yet used can be deleted';
         $vrb = new verb;
@@ -88,7 +108,8 @@ class verb_write_tests
 
         $test_name = '... test if deleting the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert($test_name, $result, 'zukunft.com system test deleted "System Test Verb"');
+        $target = $log_time . ' ' . users::SYSTEM_TEST_NAME . ' deleted "' . verbs::TEST_ADD_NAME . '"';
+        $t->assert($test_name, $result, $target);
 
         // TODO Prio 2 add more tests e.g. that a verb name cannot be used for a word any more
 

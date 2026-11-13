@@ -39,13 +39,19 @@ namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::UNIT_WORKFLOW . 'source_url_tests.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\unit_workflow\source_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -65,15 +71,69 @@ class source_write_url_tests extends source_url_tests
         // run the same workflows as source_url_tests but with do_it true
         // so each confirmed step is persisted and check if the database is actually updated
         // the add must run first because the change and delete workflows load the source it created
+        $chg_id = $t->last_user_change_id($t->usr1);
         $this->add_source_workflow(workflows::WF_ADD_SOURCE_NBR, true);
+        $src_id = $this->last_used_after_add($t, $chg_id);
+        // the change sets the source again, so the default of the add is removed before
+        $t->cleanup_last_used();
         $this->change_source_workflow(workflows::WF_CHANGE_SOURCE_NBR, true);
+        $test_name = 'the changed source is the last used source of the user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->source_id(), $src_id);
         $this->del_source_workflow(workflows::WF_DEL_SOURCE_NBR, true);
+        $test_name = 'the deleted source is no longer the last used source of the user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert_null($test_name, $usr_db->source_id());
 
         $t->subheader($this->ts . 'cleanup');
 
         // cleanup - fallback delete in case the workflow did not persist as expected
         $this->cleanup_test_sources($t);
+        $t->cleanup_last_used();
 
+    }
+
+    /**
+     * the confirmed add of a source makes it the last used source of the requesting user only and
+     * without a change log row, and an import of another source leaves this default unchanged,
+     * because the import saves each source but is no write of a user request (see user::save_last_used)
+     *
+     * @param test_cleanup $t the test environment
+     * @param int $chg_id the newest change log row of the user row of usr1 before the add
+     * @return int the database id of the added test source
+     */
+    private function last_used_after_add(test_cleanup $t, int $chg_id): int
+    {
+        $msg = new user_message($t->usr1);
+        $t->subheader($this->ts . 'last used source');
+        $src = new source($t->usr1);
+        $src_id = $src->load_by_name(sources::SYSTEM_TEST_ADD, $msg);
+        $test_name = 'the added source is the last used source of the user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->source_id(), $src_id);
+        $test_name = '... without a change log row of the user';
+        $usr_chg_id = $t->last_user_change_id($t->usr1);
+        $t->assert($test_name, $usr_chg_id, $chg_id);
+        $test_name = '... and not of another user';
+        $usr2_db = $t->user_from_db($t->usr2);
+        $t->assert_null($test_name, $usr2_db->source_id());
+
+        // negative: an import of another source keeps the default of the importing user
+        $test_name = 'an import of a source writes the source';
+        $json = [json_fields::SOURCES => [[
+            json_fields::NAME => sources::SYSTEM_TEST_ADD_API,
+            json_fields::URL => sources::SYSTEM_TEST_ADD_API_URL
+        ]]];
+        $imp = new import();
+        $imp->put_json_direct(json_encode($json), $msg);
+        $src_imp = new source($t->usr1);
+        $imp_id = $src_imp->load_by_name(sources::SYSTEM_TEST_ADD_API, $msg);
+        $t->assert_greater_zero($test_name, $imp_id);
+        $test_name = '... but keeps the last used source of the importing user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->source_id(), $src_id);
+        $t->assert_msg($test_name, $msg);
+        return $src_id;
     }
 
     /**

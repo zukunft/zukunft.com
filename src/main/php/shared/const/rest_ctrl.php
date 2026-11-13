@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 class rest_ctrl
 {
 
@@ -51,6 +53,23 @@ class rest_ctrl
 
     // to get the json body included in the request
     const string REQUEST_BODY_FILENAME = 'php://input';
+
+    // the content type and the file extension of an export answer or download by its format
+    const array EXPORT_MIME_TYPES = [
+        url_var::EXPORT_FORMAT_JSON => 'application/json; charset=utf-8',
+        url_var::EXPORT_FORMAT_XML => 'text/xml; charset=utf-8',
+        url_var::EXPORT_FORMAT_CSV => 'text/csv; charset=utf-8',
+    ];
+    const array EXPORT_FILE_EXTENSIONS = [
+        url_var::EXPORT_FORMAT_JSON => files::JSON,
+        url_var::EXPORT_FORMAT_XML => files::XML,
+        url_var::EXPORT_FORMAT_CSV => files::CSV,
+    ];
+
+    // the keys of the entry of an uploaded file as php gives it in $_FILES
+    const string UPLOAD_NAME = 'name';
+    const string UPLOAD_TMP_NAME = 'tmp_name';
+    const string UPLOAD_SIZE = 'size';
 
     // url path of the api
     const string PATH = 'api/';
@@ -72,6 +91,7 @@ class rest_ctrl
     const string LINK = 'link';
     const string SOURCE = 'source';
     const string LANGUAGE = 'language';
+    const string JSON = 'json'; // the im- and export api
 
     // class extensions of all possible the fixed views
     const string CREATE = '_add';

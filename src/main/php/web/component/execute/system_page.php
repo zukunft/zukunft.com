@@ -58,6 +58,7 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
+include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
@@ -103,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -821,16 +823,15 @@ class system_page extends component
 
     /**
      * render the admin error-update page body: a table of unresolved program issues an admin can
-     * review and re-status; mirrors the display path of /http/error_update.php — the actual sys_log
-     * status change is dispatched by the URL action handler so this body only renders the data
+     * review and re-status; the actual sys_log status change is dispatched by the URL action handler
+     * so this body only renders the data
      *
      * @param sys_log_list|null $errors pre-loaded list of unresolved program issues; when null or
      *                                  empty the "no open errors" notice is shown
      * @param user_dsp|null $usr the session user; when null or not an admin a permission notice is
-     *                           rendered instead of the issue list — default-deny matches the
-     *                           legacy /http/error_update.php behaviour where anyone but an admin
-     *                           saw the permission notice; the same user is forwarded to the
-     *                           per-row renderer so each status-change link carries the right context
+     *                           rendered instead of the issue list (default-deny); the same user is
+     *                           forwarded to the per-row renderer so each status-change link carries
+     *                           the right context
      * @param array $url_arr the url vars of the calling page, forwarded to each row's
      *                       status-change link so navigation is preserved
      * @return string the HTML body for the error_update page
@@ -893,6 +894,38 @@ class system_page extends component
         $cft->can_edit = frontend::shows_personal_page($msg);
         $cft->is_admin = $this->is_admin($msg);
         return $cft->html($pattern, $scope);
+    }
+
+    /**
+     * the preview of the import of the values of wikidata with the confirm that writes them, for the phrase of the
+     * refresh icon of a wikidata reference (url_var::PHRASE) or for the wikidata id of the admin (url_var::EXTERNAL_KEY)
+     *
+     * @param user_message $msg with the requesting user to report why nothing can be imported
+     * @param array $url_arr the url vars of the page with the phrase or the wikidata id and the back target
+     * @param bool $test_mode true to show the given preview without a backend call, so without reading wikidata
+     * @param wikidata_import $imp the preview to show in the test mode
+     * @return string the html code of the preview with the confirm
+     */
+    function import_preview(
+        user_message    $msg,
+        array           $url_arr,
+        bool            $test_mode,
+        wikidata_import $imp = new wikidata_import()
+    ): string
+    {
+        if (!$test_mode) {
+            $imp->load($url_arr, $msg);
+        }
+        return $imp->html($url_arr, $msg);
+    }
+
+    /**
+     * @return string the html code of the form of the admin view "Import from Wikidata" with the wikidata id field,
+     *                which opens the import preview of the entity
+     */
+    function wikidata_key_form(): string
+    {
+        return new wikidata_import()->key_form();
     }
 
     /**

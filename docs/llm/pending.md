@@ -1,1050 +1,141 @@
 # pending - list of planned llm prompts with prio 1
 
-## wikipedia link
-
-if the sync with wikipedia does not suggest any update write a message like
-'description and wikidata link are in line with wikipedia page from year-mm-dd hh-mm. No update needed'
-
-### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The refresh icon
-calls `frontend::url_with_wikipedia_refresh` (`frontend.php:3262`), which loads the stored phrase and the backend
-answer with the description and the references taken from wikipedia (`phrase::wikipedia_confirm_url`,
-`web/phrase/phrase.php:982`) and builds the confirm page in `phrase::confirm_url_of_refresh` (`:1028`): it stays on
-the page of the phrase only if wikipedia names no wikidata item (`msg_id::WIKIPEDIA_NO_WIKIDATA`), else it always
-returns the confirm page with the description of wikipedia (`description_url_of_refresh`, `:1079`) and adds the
-reference row only for another wikidata id. So a refresh without any difference shows a confirm page without a
-change. The time of the page is the `timestamp` of the summary json (the time of the last revision of the page,
-e.g. `2026-11-07T14:48:15Z` in `import/wikipedia/cache/summary_Geneva.json`), which the backend reads
-(`ref_link_wikipedia::take_over`, `cfg/ref/ref_link_wikipedia.php:200-209`) but does not pass on. Two changes,
-each with its own log file:
-
-#### step 1: the time of the wikipedia page in the answer of the refresh
-
-- `ref_link_wikipedia`: the const `WP_TIMESTAMP = 'timestamp'` next to the other fields of the summary (`:70-75`)
-  and a public `page_time(array $summary): ?DateTime`, null if the summary has no valid time; `take_over` sets it
-  on the wikipedia reference of `references_related`
-- the reference gets a field for this time that is not stored, e.g. `page_time`, because `ref::last_update`
-  (`cfg/ref/ref.php:203`) is the time of the last refresh by zukunft.com, which triggers the next refresh job, and
-  not the time of the external page: the backend `ref` writes it to the api json only if it is set (like
-  `last_update`, `:490-495`, with a new `json_fields::PAGE_TIME`), and the frontend `ref` reads it
-  (`web/ref/ref.php:138`, `:301`)
-- tests: `unit/wikipedia_tests.php` "frozen page": `page_time` of the frozen Geneva summary is
-  `2026-11-07 14:48:15` UTC, and a summary without `timestamp` gives null; the api json round trip of a reference
-  with and without the page time in the ref unit tests
-
-#### step 2: the message instead of an empty confirm page
-
-`confirm_url_of_refresh` compares the description of wikipedia with the stored one and the wikidata id of
-wikipedia with the stored one; if both are equal, it returns the page of the phrase (`url_of_page`) with the info
-message instead of the confirm page, like the case without wikidata item. A named check of up to three
-parameters says it, e.g. `is_in_line_with_wikipedia($old, $new)`.
-
-- the message `msg_id::WIKIPEDIA_IN_LINE` with the en and de texts (`shared/enum/messages.php:240-244`,
-  `translations/en.yaml:455-459`, `de.yaml`), e.g. en "The description and the wikidata link are in line with the
-  wikipedia page from z$VarTime$z. No update needed." with `msg_id::VAR_TIME`; the frontend message has
-  `add_warning_with_vars` but no info with vars (`web/user/user_message.php:223`), so it gets an
-  `add_info_with_vars` like it, because the message is no warning
-- the time is shown in the date time format of the frontend config (`$ui_sys->cfg->date_time_format()`,
-  `web/helper/config.php:155`, today `d-m-Y H:i`) like the other times of a page; the prompt names `year-mm-dd
-  hh-mm`, so ask the developer if the message gets its own format, and whether the UTC time of wikipedia is shown
-  as UTC or in the time zone of the pod; without a page time the message names no time
-- tests in `unit_ui/reference_ui_tests.php`: the case "an unchanged wikidata id is not confirmed again" (`:279-282`,
-  the stored phrase as both sides) now gives the page of the phrase with the message; its negatives: only the
-  description differs gives the confirm page with the description, only the wikidata id differs gives the confirm
-  page with the reference row; the write workflow `wikipedia_refresh` (wf42, `ref_url_tests.php:399`) gets a second
-  refresh after the confirmed step, which shows the message, because the page of Geneva (city) is then in line
-
-Test runs: step 1 changes no import and no id, so a `test/test_part.php` run with `wikipedia_tests` and the ref
-unit tests is enough; step 2 with `reference_ui_tests` and `ref_write_url_tests` (the live wikipedia page), and the
-full `test/test.php` before the commit.
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-## wikidata link
-
-The numeric values of a phrase are imported from wikidata the way the description is taken from wikipedia
-(`ref_link_wikipedia`): the refresh icon of the wikidata reference of a phrase asks the backend to read the entity
-json, the backend converts it in memory to an import json, the user sees the words, triples and values that would be
-added on a confirm page, and only the confirmed import writes them, as the user and with the source wikidata
-(`sources::WIKIDATA`). The base is the converter `cfg/import/import_wikidata.php::convert` with its offline tests
-(`unit/wikidata_tests.php`) on the two examples in `test/resources/import/wikidata/cache/unit/`: the target
-`import_Q72.json` stays the expected result, and the target of Q4917 gets the currency pair of step 4 as a new
-fixture next to `import_Q4917.json`, which the developer retires:
-
-- **Q72, the population (P1082) of Zurich:** the unit "1" gives a value of the entity phrase itself; the point in
-  time (P585, precision 11 = day) gives the year words 1900 and 2021; the criterion used (P1013) gives a word of its
-  own (resident population, population present), which keeps the two values of 2021 apart; the determination method
-  (P459) is no word (the census Q39825 of 1900 is dropped, in 2021 it repeats the criterion).
-- **Q4917, the price (P2284) of the US dollar:** the unit Q4916 (euro) of the price of a currency gives the
-  currency pair "euro per United States dollar" (step 4); the point in time with precision 9 (= year) gives 2016; a claim without point in time gives a
-  value without time; a unit or a criterion without label (Q0) is not imported and reported
-  (`WIKIDATA_UNIT_LABEL_MISSING`, `WIKIDATA_CRITERION_LABEL_MISSING`); a claim of the snak type somevalue has no value.
-
-Each step below is one change with but all will use the same file in docs/llm/log, in this order.
-
-1. **Reader without test paths:** `import_wikidata` reads wikidata only through one reader object that the caller
-   passes: the http reader of the pod (`request_json`) and a fixture reader of the tests that reads only
-   `cache/unit/` and reports a missing fixture as a failed test, so the backend never reads a `test_paths` folder
-   and an offline unit test never sends a live request. `convert_to_file` and `store_text` get their folder from
-   the caller. The labels that the two examples need (Q4916, Q56229488, Q56229478 and Q0) get their own fixtures in
-   `cache/unit/`, so the unit test does not depend on the cache files that `wikidata_write_tests` refreshes.
-2. **Every claim imported or reported:** no claim is skipped without a message (`docs/llm/coding.md` rule 3).
-- a claim of the snak type somevalue or novalue is reported as a value that wikidata does not know;
-- a deprecated claim is not imported and reported;
-- the year is read from the complete time text, incl. the sign and a year of more than four digits; a precision
-  of 9, 10 or 11 gives the year word, a coarser one (decade, century, ...) is not imported and reported;
-- a qualifier other than P585, P1013 and P459 (e.g. P518 "applies to part") changes what the number means, so
-  the claim is not imported and reported;
-- two claims that give the same words (e.g. two dates of one year, or two determination methods) are both
-  reported and none of them is imported, because the import cannot know which one is meant;
-- the amount is passed on as the complete text of wikidata.
-
-**Tests:** a hand-made unit fixture with one claim per rule; the two example targets are unchanged by this step.
-3. **The names of the pod:** `convert` gets the phrases that already hold a wikidata reference as a map of wikidata
-   id to phrase name, loaded by one prepared query of the references of the type wikidata with the ids of the
-   entity, the property, the units and the criteria. So the entity Q72 is the phrase whose wikidata reference the
-   user has confirmed (e.g. a triple "Zurich (city)"), and a property is the phrase of the pod with this reference;
-   only an id without phrase becomes a new word with its label and its reference. **Decide:** which seed words get
-   a property reference, e.g. inhabitants with P1082 and price with P2284. **Tests:** a unit test with a map gives the
-   import json with the names of the pod; with an empty map the result is the two example targets.
-4. **Currency pairs:** a unit is a phrase of its own in the value, e.g. "area, Zurich, square kilometre", except
-   for the price of a currency in another currency: that value gets the measure unit triple "unit per entity" of
-   the type `measure_unit`, e.g. "euro per United States dollar" (or "EUR per USD" with the names of the pod), like
-   the seed triple "CHF per USD" of `use_cases/share_buy_sell_abb.json`. The unit as a phrase of its own ("price,
-   United States dollar, euro") is not used for a currency, because it does not define whether the number is the
-   euros for one dollar or the dollars for one euro. The currency pairs are triples of the type `measure_unit` in
-   the seed json `system_unit_test_data/currencies.json` (`files::CURRENCIES`, part of `files::SYSTEM_DATA_FILES`)
-   next to the currencies, written like "CHF per USD", so the seed import creates them and every pod has the same
-   pairs from its start. They are listed and not derived by a rule, because which currency of a pair is the base
-   follows a market convention with exceptions that can change from time to time (e.g. whether the default quote
-   is CHF/SEK or SEK/CHF), so a changed convention is a change of the seed file, not of the code. A reverse pair
-   exists only if it is listed too. The import never creates a pair of its own: entity and unit are a pair if the
-   triple "unit per entity" of the seed exists (the phrases by their wikidata reference, the map of step 3, so
-   without a further wikidata read), and a price of a currency in a currency without listed pair is not imported
-   and reported. **Decide:** whether a price that matches only the reverse pair is reported, or imported as 1/x
-   with the reverse pair, which stores a rounded number instead of the number of wikidata. **Tests:** a db read
-   test that each listed pair is a `measure_unit` triple of two currencies; the new Q4917 target with "euro per
-   United States dollar"; a price of a currency in a currency without listed pair is reported.
-5. **Refresh and confirm:** the refresh icon of a wikidata reference (`web/ref/ref.php::refresh_job_link`) gets its
-   own `url_var::REFRESH_WIKIDATA` with its human name, like `wikipedia_refresh_link`. The frontend asks the
-   backend, like `frontend::url_with_wikipedia_refresh`, for the import json of the phrase: the backend reads the
-   entity json of the external key and converts the claims of the properties that the pod knows (the map of step
-   3), so that not the hundreds of statements of e.g. Q72 are offered and no property label has to be read. The
-   import preview (`views::IMPORT_PREVIEW_ID`) shows the new words and triples, the new values, the values that
-   exist with the same number and, as a conflict that is never overwritten without the user, the values that exist
-   with another number. The confirm writes them with `import::put_json` as the user with the source wikidata. Without
-   login the icon is grey like the one of wikipedia. The admin view "Import from Wikidata" (`views::IMPORT_WIKIDATA_ID`)
-   uses the same backend function with a wikidata id that the admin enters. If the label reads of the units and
-   criteria make the page wait longer than `import_wikidata::READ_TIMEOUT`, the read becomes a job.
-6. **Tests:** a workflow `wikidata_import` like `wikidata_refresh`: the user presses the refresh icon of the
-   wikidata reference of Zurich, sees the preview and confirms; the values are in the database with the source
-   wikidata, and the test removes them again through the logged `del()`. Because the live data of wikidata
-   changes, only the page before the refresh is a snapshot, and a write test compares the live convert of Q72 and
-   Q4917 with the last run, like `ref_write_url_tests` does for wikipedia
-
-### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `b98d0ccd1`); `import_wikidata`
-means `cfg/import/import_wikidata.php`. One block per step of the plan above.
-
-#### step 1: reader without test paths
-
-- `import_wikidata`: a constructor parameter `string $fixture_path = ''`: empty reads wikidata by http
-  (`request_json`, `:150`), a path reads only the files of this folder and never sends a request; one private
-  `read_json(string $id, user_message $msg): string` decides it and reports a missing fixture file with a new
-  `msg_id`, and `item_label` (`:462-478`) calls it with a `user_message $msg` parameter instead of reading
-  `test_paths::IMPORT_WIKIDATA_CACHE` (`:469`)
-- `store_text` (`:185-189`) and `convert_to_file` (`:280-284`) get the folder as a required parameter, so the
-  `use ... paths as test_paths` (`:55`) goes; the callers in `unit_write/wikidata_write_tests.php` pass
-  `test_paths::IMPORT_WIKIDATA_CACHE` resp. `IMPORT_WIKIDATA_TO_IMPORT`
-- new fixtures `cache/unit/Q4916.json`, `Q56229488.json`, `Q56229478.json` and `Q0.json` with their
-  `test_files` consts next to `IMPORT_WIKIDATA_UNIT_*` (`test/php/const/files.php:534-540`)
-- tests in `unit/wikidata_tests.php` (`:67`): the converter is created with `test_paths::IMPORT_WIKIDATA_UNIT`;
-  the two example targets are unchanged; negative: an item without fixture file is reported and nothing is read
-  from wikidata
-
-#### step 2: every claim imported or reported
-
-- `import_wikidata`: the consts `WD_SNAKTYPE`, `WD_SNAKTYPE_VALUE`, `WD_RANK`, `WD_RANK_DEPRECATED`, `WD_PRECISION`
-  and `WD_DETERMINATION_METHOD = 'P459'` next to `WD_POINT_IN_TIME` and `WD_CRITERION_USED` (`:96-99`), and the
-  lowest precision of a year `WD_PRECISION_YEAR = 9`
-- `claim_import` (`:405-455`) checks each rule with a named function before the value is built, e.g.
-  `has_value($claim)`, `is_deprecated($claim)` and `has_unknown_qualifier($claim)`, each with its message on
-  `$msg`; `claim_year` (`:520-528`) reads the year with its sign and all its digits from the time text and
-  reports a precision below `WD_PRECISION_YEAR`, so it gets a `user_message $msg` parameter
-- `convert` (`:234-275`) removes the values with the same words after the claim loop in a named
-  `values_without_doubles(array $values, user_message $msg): array`, which reports each of them
-- the messages next to `WIKIDATA_UNIT_LABEL_MISSING` and `WIKIDATA_CRITERION_LABEL_MISSING`
-  (`shared/enum/messages.php:979-988`), e.g. `WIKIDATA_NO_VALUE`, `WIKIDATA_DEPRECATED`,
-  `WIKIDATA_TIME_PRECISION`, `WIKIDATA_QUALIFIER_UNKNOWN` and `WIKIDATA_SAME_WORDS`, each naming the entity, the
-  property and the wikidata id of the claim
-- tests: a hand-made entity fixture in `cache/unit/` with one claim per rule and its target; each rule is checked
-  by its message, and the claims next to it that follow the rules are imported
-
-#### step 3: the names of the pod
-
-- `cfg/ref/ref_list.php`: `load_by_type_and_keys(int $typ_id, array $keys, user_message $msg): bool` with its
-  `load_sql_by_type_and_keys` next to `load_by_ids` and `load_sql_by_ids` (`:176`, `:240`), one prepared query
-  with the sql fixtures for postgres and mysql and a unit test that compares them
-- `import_wikidata::convert` (`:234`) gets the map `array $phr_names` of wikidata id to phrase name, built by the
-  caller from this ref list; `convert` takes the entity and the property name from the map before `label`
-  (`:372`), and `item_label` (`:462`) the names of the units and criteria
-- one wikidata id with more than one phrase is reported and its values are not imported, never one phrase
-  guessed: e.g. Q4917 is the reference of the two seed triples "US dollar" and "U.S. dollar"
-  (`system_unit_test_data/currencies.json:792-822`). **Decide:** whether the seed keeps one wikidata reference per
-  wikidata id, e.g. without Q4917 for "U.S. dollar"
-- tests: `convert` with a map gives the import json with the names of the pod, with an empty map the two example
-  targets; negative: an id with two phrases in the map is reported
-
-#### step 4: currency pairs
-
-- seed: the listed pairs as triples of the type `measure_unit` in the triples of `currencies.json` (`:766`),
-  written like "CHF per USD" (`use_cases/share_buy_sell_abb.json:879-885`), whose from and to are the codes of the
-  currencies; a code is linked to its named currency with its wikidata reference by "is symbol for" (e.g. "USD is
-  symbol for US dollar", `currencies.json:1582-1585`); the new triples shift the seed ids after them, which the
-  re-pin run takes up
-- `import_wikidata`: `convert` gets the pairs as a second map, of the wikidata id of the entity and of the unit to
-  the name of the pair triple, built by the caller from the pair triples, the "is symbol for" triples and the
-  ref list of step 3; `unit_phrase_name` (`:505-516`) gives the pair for the price of a currency in a currency and
-  reports a missing pair with a new `WIKIDATA_CURRENCY_PAIR_MISSING`, and any other unit becomes a phrase of the
-  value; so `import_json` (`:320-350`) writes no triples any more, and `PART_TRIPLE_UNITS` (`:103`) and `IN_VERB`
-  (`:106`) go
-- tests: the new target of Q4917 with the pair "EUR per USD" as a new fixture next to `import_Q4917.json`; a price
-  of a currency in a currency without pair is reported; a db read test that each pair of the seed is a
-  `measure_unit` triple of two ISO 4217 codes
-
-#### step 5: refresh and confirm
-
-- `shared/url_var.php`: `REFRESH_WIKIDATA` next to `REFRESH_WIKIPEDIA` (`:167`) with its human name next to
-  `REFRESH_WIKIPEDIA_HUMAN` (`:671`) and the entry of the url map (`:1043`)
-- `web/ref/ref.php`: the refresh link of a wikidata reference (the branch at `:545`) is a `wikidata_refresh_link`
-  like `wikipedia_refresh_link` (`:559-566`), instead of `refresh_job_link` (`:574`)
-- backend: a new api controller `api/wikidataImport/index.php` that answers a GET with the phrase id with the
-  import json of `convert` and its messages, because the answer is an import and no changed phrase like the
-  wikipedia refresh of `api/word/index.php:127` and `api/triple/index.php:87`; the caller builds the two maps of
-  steps 3 and 4
-- frontend: `frontend::url_with_wikidata_refresh` next to `url_with_wikipedia_refresh` (`web/frontend.php:3262`,
-  called at `:1164`) opens the import preview (`views::IMPORT_PREVIEW_ID`, `shared/const/views.php:459`), whose
-  body is not yet available (`messages/system_views.json`, "Import preview"): it gets a component that lists the
-  new words, the new values, the unchanged values and the conflicts, and its confirm sends the import json with
-  PUT to `api/json/index.php`, which imports it as the requesting user (`:67-75`); the value of the import json
-  gets the source wikidata (`json_fields::SOURCE_NAME`, read by `value_base.php:526`)
-- the admin view "Import from Wikidata" (`views::IMPORT_WIKIDATA_ID`, `:465`) gets a wikidata id field and uses
-  the same controller
-- tests: the url of the refresh icon in the ref ui tests; the preview page as a new `object_pages` snapshot with
-  the Q72 example in test mode, so without wikidata
-
-#### step 6: tests
-
-- `unit_write_workflow`: the workflow `wikidata_import` with its const and number next to
-  `WF_WIKIDATA_REFRESH` (`test/php/const/workflows.php:380-381`), like `wikidata_refresh`; the cleanup removes the
-  imported values, words and references with the logged `del()`
-- `unit_write/wikidata_write_tests.php`: the live convert of Q72 and Q4917 with the two maps of the seed, compared
-  with the last run like `ref_write_url_tests`
-
-Test runs: steps 1 to 3 change no seed and no id, so a `test/test_part.php` run with `wikidata_tests` and the ref
-list tests is enough; step 4 changes the seed, so it needs the re-pin run; steps 5 and 6 with the ui, workflow and
-write tests, and the full `test/test.php` before the commit.
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-**Prompt:** deprecate http_old (size L, three phases; re-pin, because the verb gets a db field). Steps 4 and 6 of
-"Other" are part of the admin dashboard prompt; the table above lists the functionality to move per script.
-- phase 1, three agents in parallel: agent bugs with step 2 (the code bugs 1 to 4 with their tests and the view
-  consts of bug 5), agent fields with step 3 and agent guard with step 10; stop for a run: `/test/test.php`
-- phase 2, the lead asks the developer the decision of step 5 first; two agents in parallel: agent defaults with
-  step 5 and agent export import with step 7; stop for a run with re-pin
-- phase 3, up to four agents in parallel: step 8 with one agent per section of `pending_prio_2.md` in the order of
-  their prio; then the lead does step 9 (delete the scripts in batches) and step 11
-
-## deprecate http_old
-
-**Target:** `http_old/` is empty and removed, every feature of its scripts is part of a generic view of
-`system_views.json` called via `/http/view.php`, or is recorded as an open gap, and the `TODO clean up http_old` line
-of `docs/todo.md` is gone. No script of `http_old/` has a caller in `src/` any more (checked: none has one today).
-
-**Rule for every script:** a script is deleted only when its row in the table below says that it can be removed, or
-when every functionality of its row is done or accepted as a gap by the developer. A deleted script never takes a
-feature with it that is not written down.
-
-### http_old scripts and the functionality to move
-
-The detailed description of the rows marked with "prio 2" is the section `### <view> (missing parts of the retired
-http_old/<script>.php)` in `docs/llm/pending_prio_2.md`.
-
-The rows are sorted by the expected effort to move the missing part, from easy on the top to hard; the groups
-below the table follow the same order.
-
-| script | generic replacement | functionality to move |
-|---|---|---|
-| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_jquery.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
-| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
-| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
-| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
-| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
-| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
-| `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
-| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
-| `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
-| `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
-| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
-| `verb_add.php` | `views::VERB_ADD_ID` | the field "name in formulas" (`url_var::NAME_IN_FORMULA`; the component `system form field name in formulas` exists but is not part of the view); refuse a verb name that is already used by a word, triple or formula as the old page did with `term::load_by_name` (see the defect in step 2) |
-| `verb_edit.php` | `views::VERB_EDIT_ID` | the field "name in formulas" as for `verb_add.php`; remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
-| `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
-| `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
-| `get_csv.php` | csv export of the value tables, `views::EXPORT_CSV_ID` | a csv of the results of the formulas given by name (`url_var::WORDS`) with the `ref_text` of each formula as the column head; check if the new csv export of the value tables covers it, else add it to the export views |
-| `get_json.php` | `api/json`, `views::EXPORT_JSON_ID` | prio 2 (`### json export`): the json export of a phrase list with all related phrases (`phrase_list::are` + `json_io::export`); `api/json` is hard coded to the word id 1 and the export views do not export |
-| `get_xml.php` | `views::EXPORT_XML_ID` | the xml export of a phrase list with all related phrases (`phrase_list::are` + `xml::export_by_phrase_list`); the export views do not export yet (see `### json export` in prio 2) |
-| `value_del.php` | `views::VALUE_DEL_ID` | prio 2: show the phrases of the value in the delete question |
-| `value.php` | `views::VALUE_DEFAULT_ID` | prio 2: show the number instead of `'main_value placeholder'` and maybe open a value by the names of its phrases (`t=zurich,inhabitants`) |
-| `value_edit.php` | `views::VALUE_EDIT_ID` | prio 2: show and change the phrases of the value and refuse an empty number (`web/value/value.php::input_valid`) |
-| `value_add.php` | `views::VALUE_ADD_ID` | prio 2: the phrases of the new value from the calling page, the conversion of the user entry (`value_base::convert`) and the selected source as the default source of the user |
-| `user.php` | `views::USER_ID` | prio 2: the settings form instead of `'user_setting placeholder'`, the latest changes of the user, the import link for `user::can_import` and all open issues for an admin |
-| `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
-| `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
-| `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
-| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
-| `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
-| `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
-| `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
-| `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
-| `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
-
-#### get_json_test.php, link_del.php, phrase_list.php, value, values_paste.php and view_pur.php
-
-Nothing to move: each script is replaced by a generic view or was an experiment that never worked, so it is only
-deleted. Before the delete check that no file of `src/` names the script, e.g. `src/test/php/dev/test_jquery.php`
-calls `get_json_test.php`, so the autocomplete experiments of `test_jquery.php` and `test_js.php` are removed or
-rewritten with it (prio 2).
-
-##### suggested code changes
-
-just delete
-
-#### error_log.php
-
-The error log view (`views::ERROR_LOG_ID`) shows the sys_log entry of the id of the url with
-`sys_log_ui::page_view` instead of the text `'error_log placeholder'` of `system_page::error_log`, and tells the
-user if the id is missing or unknown; then the script is deleted.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The view is opened
-by the link that every logged error gives the user (`view.php?m=133&id=<sys_log id>`,
-`cfg/log_text/text_log_functions.php:852`). The frontend already creates a `sys_log_ui` for it, because
-`views::ERROR_LOG_ID` is in `views::SYSTEM_LOG_VIEW_IDS` (`frontend.php:3499`), so the later branch for
-`ERROR_LOG_ID` and `ERROR_UPDATE_ID` (`:3508-3510`) is never reached. The component calls
-`system_page::error_log()` without parameters (`component_exe.php:461`), which returns the placeholder
-(`system_page.php:816-820`), and `sys_log_ui::page_view` (`web/system/sys_log.php:258`) exists, but no api answers
-one entry: `sys_log_ui` inherits `db_object::load_by_id`, which calls the api of its class, and only
-`api/sysLogList` exists, which is admin only because an entry holds the internal code trace. The old script showed
-the full entry, including the trace, to every logged-in user who knew an id. One change with one log file:
-
-Decide first with the developer who sees what; the suggestion is that an admin sees the full entry with the trace,
-the user who caused the entry (`cfg/system/sys_log.php:109`, `$usr`) sees the status, the text and the description
-without the trace, because the trace is internal, and any other user gets the same not found message as for an id
-that does not exist, so that the answer does not tell that the entry exists.
-
-- `api/sysLog/index.php`: load one entry by the id of the url (`sys_log::load_by_id`, `:356`) with the data user
-  check of `api/sysLogList` (`user::data_user` with `server_guard::from_own_pod`), and answer by the rule above;
-  add the endpoint to `src/main/resources/openapi/zukunft_com_api.yaml`
-- `system_page::error_log(db_object_ui $dbo, user_message $msg)`, called with the `$dbo` of the view: the
-  `page_view` of the loaded entry, or the message that the entry cannot be found, e.g. for a url without id;
-  `page_view` leaves out the trace if the api answer has none
-- `frontend.php`: remove the unreachable branch `:3508-3510`, because `views::SYSTEM_LOG_VIEW_IDS` covers both views
-- delete `http_old/error_log.php`
-
-Tests:
-- the snapshot `views_by_id/sys_log/133_sys_log_2.html` shows the entry 2 instead of `error_log placeholder`,
-  regenerated by the run and reviewed by the developer
-- a ui test of `system_page::error_log`: an entry shows its status, its text and the trace for an admin, and
-  without the trace for the user who caused it; its negative: an unknown or missing id shows the not found message
-- an api test of `api/sysLog`: an admin gets the entry with the trace, the user who caused it gets it without the
-  trace, another user and an anonymous visitor get the not found message
-
-Test runs: no import and no id changes, so a `test/test_part.php` run with the ui and the api tests and
-`run_html_snapshots`, then the full `test/test.php` before the commit.
-
-#### source_add.php, source_edit.php and source_del.php
-
-The add and the edit view remember the added or changed source as the last used source of the user (`user::src`,
-`user_db::FLD_SOURCE`), and the source selector of the value (`web/value/value.php::source_selector`) preselects
-it; check that the source edit view without an id or with an unknown id tells the user that the source is missing,
-as the old page did. The del view covers the old page already; then the three scripts are deleted.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The old pages
-remembered the source after a successful save with `$usr->src = $src; $usr->save()` (`http_old/source_add.php:119`,
-`source_edit.php:106`). The backend user has this field already: `user::$src` (`cfg/user/user.php:263`), the db
-field `user_db::FLD_SOURCE` (`source_id`, `user_db.php:148`), the api json `json_fields::SOURCE_ID` (`:777`), which
-the frontend user reads (`web/user/user.php:387-393`), and the change log of the user field (`:4128-4140`). But
-nothing writes it any more, and the source selector of the value form selects only the source of the value itself
-(`web/value/value.php::source_selector`, `:728`), so a new value starts without a source. Two changes, each with
-its own log file:
-
-###### step 1: remember the source of a confirmed add or change
-
-- after a successful add or update of a source by the requesting user, set `user::src` and save the user, like the
-  old pages; the place is the write of a user request (`controller::post_json` and `put_json`,
-  `api/controller.php:124`, `:168`, for a `source`), not `source::save`, because the imports call it for each
-  source and would change the source of the importing user hundreds of times
-- the user save writes a change log row of the user field each time; ask the developer whether the last used
-  source is logged like the other user fields or written without a log, because it is a convenience and not a
-  change of the user
-- the value add view preselects the source of the session user if the new value has no source yet
-  (`source_selector` with the user of the request cache); a value that has a source keeps it
-- the same for a value: the source of a saved value becomes the last used source (`docs/llm/pending_prio_2.md`
-  "value add view", "save the source of a value as the new default source of the user"), done with the value group
-  above or here, if the developer prefers one place for the rule
-
-Tests: the write workflows `add_source` (wf19) and `change_source` (wf20) of `source_write_url_tests` check the
-source of `usr1` in the database after the confirmed step, and that the source of `usr2` is unchanged; an import
-of sources leaves the source of the importing user unchanged (negative); the snapshot of the value add view of a
-user with a last used source shows it selected.
-
-###### step 2: the source edit and del view without an id
-
-An unknown id already gives the message `msg_id::OBJECT_NOT_FOUND` (`db_object::load_by_id`, checked for a word
-in `unit_write/word_write_tests.php:674`), but an edit view without an id renders an empty form
-(`frontend.php:1258`, the object is only filled from the url), where the old page said "No source found to change
-because the id is missing" (`http_old/source_edit.php:83`). The edit and the del view of a source without an id
-show this message instead of the form. The empty form is the same for every edit and del view of a db object,
-so ask the developer whether the check is generic for all edit and del views (e.g. by the view type, with one
-message that names the object) or only for the source as the old page did.
-
-Tests: a unit ui test of the source edit view without an id and with an unknown id, each shows its message;
-the negative: with a known id the form is shown; the snapshot of the edit view without an id.
-
-Test runs: step 1 adds no import and no id, so a `test/test_part.php` run with `source_write_url_tests` and the
-import tests is enough; step 2 with the ui tests and `run_html_snapshots`; the full `test/test.php` before each
-commit. After both steps `http_old/source_add.php`, `source_edit.php` and `source_del.php` are deleted.
-
-#### verb_add.php, verb_edit.php, verb_del.php and verbs.php
-
-The add and the edit view of a verb get the field "name in formulas" (`url_var::NAME_IN_FORMULA`, the component
-`system form field name in formulas` exists but is no part of the views); the add refuses a verb name that is
-already used by a word, triple or formula like the old page (`term::load_by_name`, see the defect in step 2); the
-edit remembers the verb as the last used verb of the user, which needs a db field, because `user::set_verb` is a
-stub (re-pin); the verb list view (`views::VERBS_ID`) lists all verbs with an edit, a delete and an add button for
-an admin (prio 2, `### verb list view`). The del view covers the old page already.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The verb views are
-`verb_add` (`messages/system_views.json:7089`), `verb_edit` (`:7156`), `verb_del` (`:7262`) and `verbs`
-(`:10848`, no component at all, so the page is empty). The component `system form field name in formulas`
-(`:1695`) exists, but no view uses it. The four bugs 1 to 4 of "bugs found while checking http_old" are still in
-the code. No workflow test covers a verb, only the snapshots `views_by_id/verb/70_verb_add_1.html`,
-`71_verb_update_2.html`, `72_verb_del_2.html`, `170_verb_2.html` and `object_pages/verb_list.html`. Four changes,
-each with its own log file:
-
-###### step 1: the four bugs
-
-- bug 1: `web/verb/verb.php::url_mapper` (`:152-156`) sets `frm_name` from `url_var::IMPACT`; it takes
-  `url_var::NAME_IN_FORMULA`
-- bug 2: `system_form::form_field_name_in_formulas` (`system_form.php:1717-1731`) shows the label
-  `msg_id::FORM_FIELD_PLURAL_REVERSE`, so its html id would also be the one of the plural reverse field; it takes
-  `msg_id::FORM_FIELD_NAME_IN_FORMULAS` (`messages.php:3038`, `en.yaml:411`)
-- bug 3: `verb::save` (`cfg/verb/verb.php:1169-1198`) collects the message of a name that is already used by a
-  word, triple or formula (`get_similar`, `term::id_used_msg`, `:1233-1237`) in `$sim_msg` and merges it only if a
-  similar verb is found, so a verb with the name of a word is added: without a similar verb the message of the used
-  term reaches `$msg` and stops the add
-- bug 4: the comment of `user::set_verb` (`cfg/user/user.php:2835`) names the source; it names the verb, and the
-  function is finished in step 3
-
-Tests: a unit test of `verb::url_mapper` with a name in formulas and an impact, each with its own value; the field
-label in the snapshot of step 2; a write test that refuses a verb with the name of a word with the message of the
-used term, and its negative, a verb with an unused name is added and removed again.
-
-###### step 2: the field "name in formulas" in the add and the edit view
-
-Add the existing component to `verb_add` and `verb_edit` after `system form field plural reverse` with the next
-position; the positions of the later components of the two views move by one, and the two view entries shift the
-component link ids of the later views, so this step needs the re-pin of a full run. The fields plural, reverse and
-plural reverse are written with `form_field` without their stored '8' value, unlike the tracked fields of the
-other edit views (`form_field_tracked`, `system_form.php:1483`); check whether the confirm of a verb change sees a
-changed field without it, else the four fields become tracked (the same defect in all four).
-
-Tests: the snapshots `70_verb_add_1.html` and `71_verb_update_2.html` show the field; a new workflow `change_verb`
-in `unit_workflow` (and its write version on a test verb, never on a seed verb) shows the edit view, changes the
-name in formulas, saves, confirms with the preview of the field and checks the database; its negative: a save
-without a change shows no field change.
-
-###### step 3: remember the last used verb
-
-The user has no db field for it (`user::set_verb` is a stub, `user.php:2837-2846`). Decide with the developer
-when the default is set, the same question as for the source (after the add or edit of a verb, after a triple
-saved with a verb, or both) and whether it is logged like the other user fields; then add the field `verb_id` to
-the users table (`user_db`, like `FLD_SOURCE`) with the minor version raise and the upgrade of `db_check`, set it
-like the source (the write of a user request, not `verb::save`, which the imports call), and preselect it in the
-verb selector of the triple add form if the new triple has no verb yet.
-
-Tests: the write test of the default after a confirmed verb change resp. triple save, and that the verb of another
-user is unchanged; the snapshot of the triple add form of a user with a last used verb; `reset_db` for the new
-field.
-
-###### step 4: the verb list view
-
-The verbs view (`views::VERBS_ID`) gets a component that lists all verbs with the name, the reverse name, the
-description and the usage, an edit and a delete button per row and one add button, shown only for an admin,
-because only an admin may change a verb (prio 2, `### verb list view`). `web/verb/verb_list.php::dsp_list`
-(`:137`) has no caller and builds dead links to `link_type_edit.php` (prio 2, "the dead links of the verb list"):
-the new component builds its urls with `html_base::url_new` and the view consts, and `dsp_list` is removed or
-rewritten for it. A new component type shifts the component ids, so this step needs the re-pin of a full run.
-
-Tests: the snapshot of the verbs view (`views_by_id/verb/170_verb_2.html`) for an admin with the buttons and for a
-user without them; `object_pages/verb_list.html` with links to the verb views.
-
-Test runs: step 1 changes no import and no id, so a `test/test_part.php` run with the verb unit, ui and write tests
-is enough; steps 2 and 4 need the full run with re-pin, step 3 a `test/reset_db.php` for the new field. After the
-four steps `http_old/verb_add.php`, `verb_edit.php`, `verb_del.php` and `verbs.php` are deleted.
-
-#### json_save.php, get_csv.php, get_json.php and get_xml.php
-
-The export views (`views::EXPORT_JSON_ID`, `EXPORT_XML_ID`, `EXPORT_CSV_ID`) export a phrase list with all its
-related phrases (`phrase_list::are` with `json_io::export` resp. `xml::export_by_phrase_list`) instead of the word
-id 1 that `api/json` uses today (prio 2, `### json export`); `json_save.php` needs nothing more than `get_json.php`;
-check whether the csv export of the value tables covers the csv of the results of the formulas given by name
-(`url_var::WORDS`) with the `ref_text` of each formula as the column head, else add it to the csv export.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The old scripts
-were api calls, not pages: `get_json.php` and `json_save.php` loaded the phrases given by name
-(`url_var::WORDS`, e.g. `t=Nestlé,country,weight`), added all related phrases (`phrase_list::are`) and answered
-with `json_io::export` (`service/export/json_io.php:54`, `:63`); `get_xml.php` did the same with
-`xml::export_by_phrase_list` (`cfg/export/xml.php:63`); `get_csv.php` listed for each formula given by name the
-results with the `ref_text` of the formula as the column head. Today:
-- `api/json/index.php` imports with PUT (the calculator editor) and answers a GET with the word id 1 only, because
-  `$wrd_id = 1` overwrites the url parameter, and exports only this word (`word::export_json`), not a phrase list
-  with its related phrases; the "no PUT branch" of prio 2 (`### json export`) is done
-- the export views (`views::EXPORT_ID`, `EXPORT_JSON_ID`, `EXPORT_XML_ID`, `EXPORT_CSV_ID`, `EXPORT_ODS_ID`,
-  `messages/system_views.json:10275`, `:10379`, ...) show the name, the description, a phrase selector and an
-  export button, but the button is a plain bootstrap button with the untranslated text 'Export' and no action
-  (`system_form::button_export`, `system_form.php:3161`), and the export components only show their name
-  (`ui_im_export::json_export`, `xml_export`, `csv_export`, `ods_export`, `:113-143`)
-- a page with value tables already downloads them as csv (`url_var::is_csv_export`, `value_list::table_to_csv`,
-  `web/value/value_list.php:779`, `:797`; `http/view.php:275` sends the csv of `data_object::table_csv`), and the
-  calculator report sends a pdf through the session (`calculator_report::attachment_header`)
-
-Three changes, each with its own log file:
-
-###### step 1: the export api
-
-`api/json` answers a GET with the json of the phrases given by name (`url_var::WORDS`) or by id, with all related
-phrases (`phrase_list::are` and `json_io::export`), for the user of the request, and without the line
-`$wrd_id = 1`; a request without phrases gets a message instead of the word 1. The xml export needs an api too:
-ask the developer whether it is `api/xml` next to `api/json` or one export api with the format as a url var. The
-answer contains only what the user may read, like the other apis (`is_readable_by`). Add the GET to
-`src/main/resources/openapi/zukunft_com_api.yaml`.
-
-Tests: an api test of the json and the xml export of a phrase with its related phrases (e.g. a seed word with a
-triple), compared with a fixture; the negatives: no phrase gives the message, and a private phrase of another user
-is not part of the answer; `unit_read/export_read_tests.php` covers `json_io::export` and
-`xml::export_by_phrase_list` already, so only the api part is new.
-
-###### step 2: the export views offer the file as a download
-
-The export button submits the form of the export view; the frontend asks the backend api of step 1 for the
-selected phrases and sends the answer as a download with the file name of the selection name, like the csv of the
-value tables (`http/view.php:275`), generalized from the csv to a file with its name and mime type in the request
-cache; the view `EXPORT_ID` takes the format of its format selector (`ui_im_export::select_export_format`, `:89`).
-The button gets its text from a `msg_id` with the en and de texts. The four placeholder components are removed
-from the views, if the download replaces them, or show the summary of the export (e.g. the number of phrases,
-values and formulas); ask the developer. The ods export stays a gap, because nothing exports ods today.
-
-Tests: a ui test of the json, the xml and the csv export view: the submit with a selected phrase gives the file
-with its name and mime type; the negative: the submit without phrase shows the message and no file; the snapshots
-of the export views.
-
-###### step 3: the csv of formula results
-
-Check whether the csv of a value table already covers the old `get_csv.php`: a page whose table shows the results
-of the formulas of the selected phrases downloads them as csv with the formula name as the column head. If so,
-the csv export view uses the same table csv (`value_list::table_to_csv`) for its selected phrases; else the csv
-export adds the results of the formulas given by name with the `ref_text` of each formula as the column head.
-
-Tests: the csv of the results of a seed formula, compared with a fixture; the negative: a formula without results
-gives a csv with the head only.
-
-Test runs: no import and no id changes, so each step needs a `test/test_part.php` run with its api and ui tests and
-`run_html_snapshots`, then the full `test/test.php` before its commit. After the steps `http_old/json_save.php`,
-`get_json.php`, `get_xml.php` and `get_csv.php` are deleted; the prio 2 section `### json export` is updated with
-what is done, and its point on `test_js.php` and `test_jquery.php` stays with the scripts without functionality.
-
-#### value_del.php, value.php, value_edit.php and value_add.php
-
-The value views get what the old pages did (prio 2, `### value del view`, `### value page`, `### value edit view`,
-`### value add view`): the del view shows the phrases of the value in its question; the value page shows the
-number instead of `'main_value placeholder'` and maybe opens a value by the names of its phrases
-(`t=zurich,inhabitants`); the edit view shows and changes the phrases of the value and refuses an empty number
-(`web/value/value.php::input_valid`) and the time selector; the add view takes the phrases of the new value from
-the calling page, converts the user entry (`value_base::convert`) and remembers the selected source as the default
-source of the user (as the source group). The phrase selector of the edit and the add view is the main effort.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The four prio 2
-sections are partly older than the code:
-- done: the value del view (`views::VALUE_DEL_ID`) asks with the phrases of the value (snapshot
-  `views_by_id/value/55_value_del_*.html`: "mathematics, triple1, ... 3.14"), and the value page
-  (`views::VALUE_DEFAULT_ID`) shows the number with its source, the related values, the results and the changes
-  instead of `'main_value placeholder'` (`5_value_*.html`)
-- done: a new value gets its phrases: the simple add view (`views::VALUE_ADD_ID`, `value_add_simple`) adds them
-  step by step (workflows `add_value` wf31 to `add_value_details` wf34), and its 'more details' link opens the
-  detail add view (`views::VALUE_ADD_DETAIL_ID`) with the chosen phrases (`url_var::PHRASE_LIST`,
-  `ui_select.php:510-513`)
-- open: the add button of the old value tables (`button::add_value`, `web/html/button.php:270-296`, called by
-  `value_list.php:4081`, `:4114`) still has the prefill switched off (`// TODO Prio 2 activate`), so its title
-  "add new value similar to ..." opens the add view without these phrases
-- open: a typed number like `1'000` is refused as not numeric (`web/sandbox/sandbox_value.php:192-199`,
-  `msg_id::URL_VALUE_NOT_NUMERIC`), and `value_base::convert` (`cfg/value/value_base.php:1786`), which removed the
-  spaces and the thousand separators for the old pages, has no caller; an empty number is ignored by the url
-  mapping (`$number != null`), and the frontend value has no own `input_valid`
-- open: the edit view (`views::VALUE_EDIT_ID`) shows the phrases in its title, but only the group name field
-  (`url_var::GROUP_NAME`) can be changed, not the phrases; the time selector is noted in prio 2
-  (`### value edit view`)
-- open: a value opened by the names of its phrases (`t=zurich,inhabitants`) is not possible
-- the default source of the user is done with the source group above
-
-Four changes, each with its own log file:
-
-###### step 1: the add button with the phrases of the table
-
-`button::add_value` builds its url with the phrase ids of the table row as `url_var::PHRASE_LIST`, like the
-'more details' link (`ui_select.php:510`), instead of the switched off `id_url_long`. Update the four prio 2
-sections: the done parts go, what stays open is named with the steps below.
-
-Tests: a ui test of `button::add_value` with a phrase list gives the url with the phrase ids and its title, and
-without a phrase list the url without them; the snapshot of a value table with the add button.
-
-###### step 2: the number as the user types it
-
-The url mapping of a value (`sandbox_value.php:192`) accepts the number in the format of the user: the thousand
-separator and the decimal point of the frontend config (`$ui_sys->cfg`, like the display of a number) are taken
-out before the check, so `1'000` gives 1000, and a text that is still no number gets the message as today. An empty
-number of the edit view gives the message of the old page ("An empty number should not be saved. Please
-delete/exclude the value instead.") instead of a save, in a frontend `value::input_valid` (the input check of the
-other objects is `input_valid`, e.g. `web/word/word.php:246`). `value_base::convert` is removed, because the
-conversion is done before the backend, or it is used by the backend api for a number sent as text; ask the
-developer which.
-
-Tests: a unit test of the url mapping with `1'000`, `1'000.5` and ` 12 ` (the number) and `abc` (the message); a
-ui test of the edit view with an empty number (the message, no confirm page) and its negative with a number; the
-workflow `add_value` with a number with a thousand separator.
-
-###### step 3: change the phrases of a value
-
-Decide first with the developer what a change of the phrases means: the phrases are the key of a value (the
-group id), so a value with other phrases is another value, like a triple with another from, verb or to is another
-triple. The suggestion is the same rule: the edit view shows the phrases with a selector to add and remove one,
-and the confirm excludes the value of the old phrases for the user and creates or updates the value of the new
-ones, never a change of the key of the old value. The time selector of the value (prio 2 `### value edit view`)
-is a part of the same selector.
-
-Tests: a workflow `change_value_phrases` (and its write version on the value of the `add_value` workflow, never
-on a seed value): show the edit view, remove one phrase and add another, save, confirm with the preview of the old
-and the new phrases, confirmed, and check that the old value is excluded and the new one exists; its negative: a
-change to the phrases of an existing other value tells the user that this value exists instead of overwriting it.
-
-###### step 4: open a value by the names of its phrases
-
-Ask the developer whether the url `t=zurich,inhabitants` of the old page is still wanted (it is the natural url
-for "calc with words"); if yes, the url mapping of the value page reads the phrase names, loads the phrases and
-the value of their group, and shows the value page, or the add view with these phrases if the value does not
-exist yet.
-
-Tests: a ui test of the value page by phrase names, and its negatives: an unknown name gives a message, and names
-of a group without value open the add view with the phrases.
-
-Test runs: no import and no id changes, so each step needs a `test/test_part.php` run with its ui, unit and
-workflow tests and `run_html_snapshots`, then the full `test/test.php` before its commit. After the steps that the
-developer wants, `http_old/value_del.php`, `value.php`, `value_edit.php` and `value_add.php` are deleted.
-
-#### user.php and import.php
-
-The user view (`views::USER_ID`) gets the settings form instead of `'user_setting placeholder'`, the latest changes
-of the user, the import link for a user with `user::can_import` and all open issues for an admin (prio 2,
-`### user settings view`); the import view (`views::IMPORT_ID`) processes the uploaded json file with the checks of
-the type, the size and `is_uploaded_file`, shows the counters per object type and allows it only for
-`user::can_import`, because today the upload reaches only `log_ignored_write_step` (prio 2, `### import view`).
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The view numbers of
-prio 2 are outdated: the user view is `views::USER_ID` (123, snapshot `views_by_id/user/123_user_9.html`), the
-import views are `IMPORT_ID` (145), `IMPORT_PREVIEW_ID` (146) and `IMPORT_RESULT_ID` (147, snapshots
-`views_by_id/im_export/145_import.html` to `147_import_result.html`). Today:
-- the user view shows the title, the placeholder `'user_setting placeholder'` (`system_page::user_setting`,
-  `system_page.php:805-808`), the issues of the user (`user system errors`) and the overwrites of the user with
-  their undo (`all user overwrites`, which covers the sandbox list of the old page); the settings form exists
-  (`web/user/user.php::form_edit`, `:933-958`), but has no caller and posts to the view `views::USER_EDIT`, which is
-  only a code id of "views to be created" (`shared/const/views.php:605-612`); `dsp_changes` (`:965`) and
-  `dsp_errors` (`:975`) exist; the "own changes" view (`views::CHANGE_LOG_USER_ID`, 119) shows "this page is not
-  yet available"
-- the import view shows the upload form, which posts to `view.php?m=import` (the code id, not the view id), and no
-  code reads `$_FILES`; the preview and the result view show "this page is not yet available"; `api/json` imports a
-  json body with PUT for the calculator editor (`api/json/index.php`), with the check of the login and of
-  `change_permitted`, but not of `user::can_import` (`cfg/user/user.php:2794`), which allows only an admin, a test
-  and the system user
-
-Three changes, each with its own log file:
-
-###### step 1: the settings form of the user view
-
-`system_page::user_setting` gets the user of the view and shows `form_edit`; the form posts to the user view with
-the confirm step like the edit views of the other objects, and the confirm writes the change of the own user (an
-admin may change any user) the way the signup writes a new user (`frontend.php:2317`); `views::USER_EDIT` goes from
-the list of the views to be created, or becomes a real view if the form needs its own page (ask the developer).
-The changed email needs the confirmation of the new address before it is used for a login, like the signup; ask
-the developer whether this is part of this step or a gap of its own.
-
-Tests: the snapshot `123_user_9.html` with the form; a ui test of the form for the own user and its negative, the
-form of another user for a user who is no admin is not shown; a write workflow that changes the first name of a
-test user (never of a seed user), confirms and checks the database.
-
-###### step 2: the latest changes, the import link and the issues for an admin
-
-- the user view shows the latest changes of the user (`dsp_changes` with a small size) with a link to the "own
-  changes" view, and the "own changes" view (`CHANGE_LOG_USER_ID`) shows the change log of the user with paging
-  instead of its placeholder
-- the user view shows the link to the import view (`views::IMPORT_ID`, not `http/import.php` as prio 2 says) for a
-  user with `user::can_import`
-- the issues component shows all open program issues for an admin (as the old `dsp_errors` with the type 'other')
-  and the own issues for any other user
-
-Tests: the snapshot of the user view for a normal user (no import link, own issues) and for an admin (import link,
-all issues); the snapshot of the "own changes" view with the changes of a test user.
-
-###### step 3: the upload of the import view
-
-- `http/view.php` reads `$_FILES` once at the top and passes the file to a new import action of
-  `frontend::url_to_action` (never `$_FILES` inside a method, `docs/llm/state-and-messages.md`); the form posts to
-  the import view by its view id, unless the frontend maps the code id of `m=import`
-- the checks of the old page: only `.json`, not empty, not bigger than a new config value for the upload limit
-  (instead of the hard coded 10 MB) and `is_uploaded_file`, each with its `msg_id` in en and de
-- the import itself uses the backend import of `api/json` with PUT, the same as the calculator editor, and only
-  for a user with `user::can_import`; `api/json` has no such check today: ask the developer whether the PUT of
-  `api/json` gets the check too (then the import of the calculator editor is limited to these users) or whether a
-  normal user may import, e.g. only into his own sandbox
-- the result view (`IMPORT_RESULT_ID`) shows the counters per object type of the import (words, verbs, triples,
-  formulas, sources, references, values, views, components, ... and for an admin the users and the system objects)
-  with translated names; the preview view (`IMPORT_PREVIEW_ID`) stays a gap unless the developer wants the counters
-  before the write
-
-Tests: a ui test of the upload action with a small json file of test objects (the result view with its counters,
-and the objects in the database, removed again by the cleanup); the negatives: a file that is no json, an empty
-file, a file above the limit and a user without `can_import` each get their message and import nothing.
-
-Test runs: steps 1 and 2 change no import and no id, so a `test/test_part.php` run with the user ui and write tests
-and `run_html_snapshots`; step 3 adds a config value to `config.yaml`, which the selected run imports again
-(`a_selected_test::run`), so also a `test/test_part.php` run with the import ui tests; the full `test/test.php`
-before each commit. After the steps `http_old/user.php` and `import.php` are deleted.
-
-#### formula_result.php and formula_test.php
-
-The result explain view (`views::RESULT_EXPLAIN_ID`) explains a result with `web/result/result.php::explain` and
-the leading and the time phrase of the url (prio 2, `### result explain view`); the formula test view
-(`views::FORMULA_TEST_ID`) shows the calculation step by step with the 'more details' level and the response time
-limit, the 'refresh results' button and maybe the admin only 'user' parameter (prio 2, `### formula test view`);
-today both are placeholders of `system_page`.
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The view numbers of
-prio 2 are outdated: the result explain view is `views::RESULT_EXPLAIN_ID` (63, snapshot
-`views_by_id/result/63_result_*.html`), the formula test view `views::FORMULA_TEST_ID` (59, snapshot
-`views_by_id/formula/59_formula_formula_test.html`). Both components return their placeholder
-(`system_page::result_explain` and `formula_test`, `system_page.php:781-790`), and no page links to the two views.
-The frontend `result::explain` (`web/result/result.php:441-538`) cannot be used as it is: it calls `api_obj()`
-and `dsp_obj()`, which exist nowhere, and `element_grp_lst`, which exists only in the backend
-(`cfg/formula/expression.php`), so it would end in a fatal; the backend has the data (`result::$src_grp`,
-`cfg/result/result.php:198`, the formula, its element groups and `phrase_list::assume_time`). The old formula test
-(`http_old/formula_test.php`) calculated a formula with `formula::calc` (`cfg/formula/formula.php:1573`) for the
-given phrases or for its whole calculation queue in the request, with a debug level per 'more details' link and the
-frontend response time (`triples::RESPONSE_TIME`) as the limit, and its 'refresh' deleted all results of the
-formula (`res_del`) and calculated them again in the request. The job type `job_types::FORMULA_UPDATE` exists.
-Two changes, each with its own log file:
-
-###### step 1: the result explain view
-
-- the backend api of a result (`api/result`) answers on request (a new url var, e.g. `url_var::EXPLAIN`) with the
-  explanation: the formula with its expression, the source phrases of the result, and per element group of the
-  expression its names, the assumed time and the values used, each with its id for a link
-- `result::explain` is rewritten to show this answer: the title with the phrases and the number of the result, the
-  formula with a link, and per element group the names and the values with a link; the leading and the time phrase
-  of the old url sort and limit the explanation, ask the developer whether they are still wanted
-- `system_page::result_explain` gets the result of the view from the url id and shows the explanation, or a
-  message if the id is missing, unknown or names a result without explanation
-- the result page gets a link to the explain view
-
-Tests: an api test of the explanation of a seed result with its element groups and values; a ui test of the
-explain view with the explanation of a test result (in test mode without a backend call) and its negative, an
-unknown id gives the message; the snapshot `63_result_*.html`.
-
-###### step 2: the formula test view
-
-- the backend api of a formula calculates on request (e.g. `url_var::CALC_TEST`) the formula for the given
-  phrases without saving and answers with the steps: the phrases used, the values found and the result, with the
-  details of the given debug level; without phrases it calculates only the first entries of the calculation queue
-  that fit into the response time and says how many are left, because the whole queue is a job, never a long
-  running request (the same rule as for `calculate.php`)
-- `system_page::formula_test` shows these steps for the formula of the url with the 'more details' link to the
-  next debug level, or a message if the formula is missing or unknown
-- the 'refresh results' button creates a `job_types::FORMULA_UPDATE` job for the formula through the confirm flow,
-  and the job control view shows its progress, instead of deleting and calculating all results in the request
-- the 'user' url parameter of the old page (the calculation as another user sees it): ask the developer whether it
-  is still wanted; if yes, only for an admin
-- the formula page gets a 'test' link to the view, and the dead formula edit render path goes, which had the old
-  buttons (`web/formula/formula.php::dsp_edit` with `dsp_test_and_samples`, `dsp_used4words`, `dsp_hist` and
-  `dsp_hist_links`, prio 2 `### formula test view`)
-
-Tests: an api test of the calculation steps of a seed formula for given phrases, compared with the stored result,
-and that nothing is written; a ui test of the test view with the steps and of the 'more details' link; a write test
-that the refresh button creates one formula update job and its negative, a user without the right to change the
-formula gets the message; the snapshot `59_formula_formula_test.html`.
-
-Test runs: no import and no id changes, so each step needs a `test/test_part.php` run with its api, ui and write
-tests and `run_html_snapshots`, then the full `test/test.php` before its commit. After the steps
-`http_old/formula_result.php` and `formula_test.php` are deleted.
-
-#### view_del.php, view_add.php, view_select.php and view_edit.php
-
-The view add view opens the view edit view after the add and takes the sample word and the view type from the url
-(prio 2, `### view add view`); the alternative views of the edit icon menu get the 'design the view' and the
-'delete the view' button per view and the 'switch' button that saves the choice (prio 2, `### view select page`);
-the view edit view becomes the view designer, which links, creates, unlinks and moves the components and shows the
-sample word (prio 2, `### view edit view`). The view del view covers the old page; its missing in-use check stays
-in prio 2 (`### view del view`).
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The view numbers of
-prio 2 are outdated: the views are `views::VIEW_ADD_ID` (84), `VIEW_EDIT_ID` (85, snapshot
-`views_by_id/view/85_view_update_1.html`) and `VIEW_DEL_ID` (86). The four prio 2 sections are partly older than the
-code:
-- done: the view edit view shows the components of the view with a link to change the component link (m=93, with
-  the order number, `views::COMPONENT_LINK_EDIT_ID`), to remove the component (m=94) and the selector "select to
-  add" of the component link add form, so a view can get, lose and reorder its components
-- done: the switch icon of an alternative view in the edit menu (`view::switch_link`, `web/view/view.php:783`)
-  opens the edit view of the object with this view preset (`url_var::VIEW`), and its save writes the default view
-  through the confirm step, which was the main purpose of the old view select page
-- done: the link `?m=view_change&id=2` of the navbar is gone (`html_base::view_change_list` builds its urls with
-  the view consts)
-- open: no button creates a new component from the view edit view and links it to the view, and moving a component
-  up or down is only possible by its order number
-- open: the add of a view goes back to the calling page instead of opening the view edit view of the new view; the
-  sample word ('word' url var of the old pages) and the type preset via the url (blocked by
-  `frontend::url_has_object_values`) are missing
-- open: the frontend view has no `input_valid`, so a view that is the default view of a word or a triple can be
-  deleted (the check of a word: `web/word/word.php:246-270`, `msg_id::DELETE_IN_USE`)
-- open: the edit menu (`sandbox::menu_view_items_ui`, `web/sandbox/sandbox.php:314`) has no 'design the view' and no
-  'delete the view' entry per alternative view, and the snapshots of `views_by_object/` show no alternative view,
-  because the test render does not pass the type cache and the page object to the menu
-- open: the description of the component type "view tab box" still names the related views and their buttons
-  (`component_types::VIEW_TAB_BOX_COM`, `shared/types/component_types.php:495`, `db_code_links/component_types.csv:26`,
-  `messages/base_views.json:48`, `system_views.json:1098`), but the tab box shows only the change log
-- open: the legacy designer code has no caller of the frontend: `view::dsp_edit` (`view.php:475`) and
-  `view_exe::dsp_edit` (`view_exe.php:491`), the two nearly identical private `linked_components` (`view.php:585`,
-  `view_exe.php:604`), `selector_page` (`view.php:691`, `view_exe.php:713`) and `dsp_navbar_no_view` (`view.php:301`),
-  whose buttons link to the retired `api::DSP_COMPONENT_*` pages (`shared/api.php:183-187`); `dsp_navbar_html`
-  and `dsp_navbar_html_no_view` (`view.php:354`, `:452`) are reached only if `html_base::UI_USE_BOOTSTRAP` is false
-  (`view.php:213`, `:313`)
-
-Four changes, each with its own log file:
-
-###### step 1: the delete of a view in use and the entries of the edit menu
-
-- the frontend view gets `input_valid` like the word: the delete of a view that is the default view of a word or
-  a triple of another user is refused with `msg_id::DELETE_IN_USE`; ask the developer whether the components
-  linked to the view also block the delete or are unlinked with it
-- the edit menu gets per alternative view a 'design the view' entry (`views::VIEW_EDIT_ID`) and a 'delete the view'
-  entry (`views::VIEW_DEL_ID`), the delete only for a user who may delete the view; the test render
-  (`test_base::assert_view_html`) passes the type cache and the page object, so that the snapshots show the menu
-- the description of the "view tab box" says that it shows the change log, in all four places
-
-Tests: a ui test of the delete of a view used by a word (the message) and its negative, an unused view gives the
-confirm page; the snapshots of `views_by_object/` with the alternative views and their entries, and for a user
-who may not delete a view without the delete entry.
-
-###### step 2: the view add and the sample word
-
-- after the confirmed add of a view the view edit view of the new view is shown, so that the user adds the
-  components right away
-- ask the developer whether the sample word is still wanted: if yes, the view edit view gets a term selector and a
-  preview of the view for this term below the form, and the 'word' url var presets it; the type preset via the url
-  is solved together with the same gap of the word add view (`frontend::url_has_object_values`, prio 2
-  `### word edit view`)
-
-Tests: the workflow `add_view` (wf22) ends on the edit view of the new view; with the sample word a ui test of the
-preview for a seed word, and its negative without a word shows no preview.
-
-###### step 3: create a component from the view and move it
-
-- the component list of the view edit view gets an add button that opens the component add view
-  (`views::COMPONENT_ADD_ID`) with the view preset, and the confirmed add links the new component to the view at
-  the last position
-- each component row gets a move up and a move down button, which write the order number of the two component
-  links through the confirm step (the old `view::entry_up` and `entry_down`); ask the developer whether the order
-  number of the link edit view is enough instead
-
-Tests: a workflow that creates a component from the edit view of a test view and finds it at the end of the list,
-and one that moves a component up and checks the order; the negatives: the first component cannot move up, the
-last one not down.
-
-###### step 4: remove the legacy designer code
-
-Remove `dsp_edit`, `linked_components`, `selector_page` and `dsp_navbar_no_view` of `view` and `view_exe` and the
-`api::DSP_COMPONENT_*` consts, if no caller is left after step 3; ask the developer whether the render without
-bootstrap (`UI_USE_BOOTSTRAP` false, `dsp_navbar_html`) is kept, else it goes too.
-
-Tests: the coding rule tests (the generated function list) and a full run show that nothing calls the removed
-functions.
-
-Test runs: no import and no id changes, so each step needs a `test/test_part.php` run with its ui and workflow
-tests and `run_html_snapshots`, step 1 with the snapshots of `views_by_object/`, then the full `test/test.php` before
-its commit; of the description change of step 1 the code link fill writes the csv row at the start of the
-selected run, the component description of `base_views.json` and `system_views.json` reaches the database only
-with their import (the full run or `a_selected_test::SELECTED_IMPORT_FILES`). After the steps `http_old/view_del.php`, `view_add.php`, `view_select.php` and `view_edit.php` are
-deleted.
-
-#### async_process.php and calculate.php
-
-An admin starts the import of the system data and the recalculation of all results as jobs and sees the progress
-on the job control view (`views::JOB_CONTROL_ID`), never as a long running request: an admin button creates the
-existing `job_types::BASE_IMPORT` job (`import_file::import_system_data`), and a new job type recalculates the
-results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config).
-
-##### suggested code changes
-
-The line numbers are those of the files when this suggestion was written (commit `8b60ac85d`). The old scripts ran
-in the request: `async_process.php` imported the system data for an admin (`import_file::import_system_data`),
-`calculate.php` loaded all formulas in blocks (`formula_list::calc_blocks`, `cfg/formula/formula_list.php:778`),
-built the calculation queue per formula (`result_list::frm_upd_lst`), calculated it (`formula::calc`) and printed
-the progress every response time. Today:
-- the jobs run in `bin/job_runner.php` (`cfg/system/job_runner.php`), started once per minute by systemd: it takes
-  the new jobs in the order of priority and request time and runs one after the other within a time budget
-  (`run`, `:109`), but each job runs to its end (`run_job`, `:197`)
-- `job::exe` (`cfg/system/job.php:675-698`) runs only `VALUE_UPDATE`, `CACHE_REFRESH` and `DB_CLEANUP`; a job of
-  any other type, e.g. `BASE_IMPORT` (`job_types::BASE_IMPORT_ID` 11) or `FORMULA_UPDATE`, ends with
-  `msg_id::JOB_TYPE_INVALID`
-- the setup creates a `BASE_IMPORT` job and then imports the system data itself (`cfg/db/sql_db.php:1251-1260`),
-  so this job stays new; as soon as `job::exe` can run it, the runner would import the system data a second time
-- a job has no field for its progress (`job.php:171-190`: status, request, start and end time, parameter, row id)
-- `api/job` changes the priority of a job or cancels it (PUT), but creates none
-- the job control view (`views::JOB_CONTROL_ID`, 142) shows only the placeholders `process_list` and
-  `process_progress` (`web/component/execute/system_page.php:954-963`); the all jobs view (`views::ALL_JOBS_ID`,
-  138) lists the jobs for an admin (`system_page::all_jobs`, `:925`)
-
-Two changes, each with its own log file:
-
-###### step 1: the import of the system data as a job of an admin
-
-- `job::exe` gets the `BASE_IMPORT` branch, which imports the system data as the system user like the setup
-  (`import_file::import_system_data`), in its own handler class like `job_cache_refresh`
-- the setup sets its `BASE_IMPORT` job to done after its own import (or creates none, ask the developer), so that
-  the runner never imports a second time
-- `api/job` creates a job with POST, only for an admin and only for the job types that an admin may start, with
-  the request user as the owner; add it to `src/main/resources/openapi/zukunft_com_api.yaml`
-- the job control view shows an admin button that creates the import job and the list of the jobs with their
-  status, start and end time instead of the two placeholders (reusing the list of `all_jobs`); a user who is no
-  admin sees neither
-
-Tests: a write test that the button resp. the api creates one `BASE_IMPORT` job for an admin and that the
-runner runs it (`job_runner::run_job`) without a second import of the setup job; the negatives: a user who is no
-admin gets the message and no job, and a job type that an admin may not start is refused; the snapshot of the job
-control view for an admin and for a user.
-
-###### step 2: the recalculation of all results as a job in blocks
-
-- a new job type, e.g. `job_types::RESULTS_UPDATE` ("recalculate the results of all formulas"), in
-  `job_types`, `job_type_list` and `db_code_links`
-- its handler takes the formulas block by block (`calc_blocks`, `formula_list::load_all` with the page), builds and
-  calculates the queue of each formula, and stops before the time budget of the runner is spent; it saves the
-  position and the total on the job and leaves the job working, so that the next run continues it, and sets it to
-  done after the last block; the same handler runs a `FORMULA_UPDATE` job for one formula (the 'refresh results'
-  button of the formula test view)
-- the job gets the progress fields, e.g. `progress_done` and `progress_total`, with the minor version raise and
-  the upgrade of `db_check`; the runner continues a working job of this type that it has stopped (today it takes
-  only new jobs, `run`, `:115`)
-- the job control view shows the progress of a running job in percent and an admin button that creates the job
-
-Tests: a unit test of the block handler with a small formula list and a short budget: the first run stops with
-the position saved, the next run continues and ends with done; a write test that the results of a seed formula are
-the same after the recalculation; the negative: a second request while a recalculation job is working gives the
-message that one is running and creates no second job; `test/reset_db.php` for the new fields.
-
-Test runs: step 1 changes no import and no id, so a `test/test_part.php` run with the job write and ui tests and
-`run_html_snapshots`; step 2 adds a job type (code link row) and db fields, so a `test/reset_db.php` and the full
-run; the full `test/test.php` before each commit. After the steps `http_old/async_process.php` and
-`calculate.php` are deleted.
-
-### bugs found while checking http_old
-
-All found by reading the code, none by a test run; confirm each with a failing test before the fix.
-
-#### Code
-
-1. `web/verb/verb.php::url_mapper` (line 154) sets `frm_name` from `url_var::IMPACT` instead of
-   `url_var::NAME_IN_FORMULA`, so the name in formulas of a verb is taken from the impact field of the url.
-2. `web/component/execute/system_form.php::form_field_name_in_formulas` shows the label
-   `msg_id::FORM_FIELD_PLURAL_REVERSE` instead of `msg_id::FORM_FIELD_NAME_IN_FORMULAS`.
-3. `cfg/verb/verb.php::get_similar` reports a name that is already used by a word, triple or formula
-   (`term::id_used_msg`) only to the local `$sim_msg` buffer of `verb::save`, which is dropped if no similar verb is
-   found, so a verb with the name of a word is added; the old `verb_add.php` refused it. A dropped message is also a
-   never-fail-silently violation.
-4. `cfg/user/user.php::set_verb` carries the comment "remember the last source that the user has used", but it is
-   about the verb, and it writes nothing (the update is commented out, the db field is missing).
-
-#### Documentation
-
-5. Every `/http/view.php?m=<number>` in the `http_old` sections of `docs/llm/pending_prio_2.md` names an outdated
-   view id; the consts behind the numbers are right, the numbers are not, e.g. (as in the doc → current const):
-   `WORD_ADD_ID` m=2 → 21, `WORD_EDIT_ID` m=3 → 48, `TRIPLE_ID` m=92 → 4, `TRIPLE_ADD_ID` m=9 → 22,
-   `TRIPLE_EDIT_ID` m=10 → 51, `TRIPLE_DEL_ID` m=11 → 52, `VALUE_ADD_ID` m=18 → 20, `VALUE_EDIT_ID` m=19 → 54,
-   `VALUE_DEL_ID` m=20 → 55, `VALUE_DEFAULT_ID` m=96 → 5, `FORMULA_ADD_ID` m=24 → 56, `FORMULA_EDIT_ID` m=25 → 57,
-   `FORMULA_DEL_ID` m=26 → 58, `VIEW_ADD_ID` m=30 → 84, `VIEW_EDIT_ID` m=31 → 85, `VIEW_DEL_ID` m=32 → 86,
-   `COMPONENT_DEL_ID` m=35 → 90, `RESULT_EXPLAIN_ID` m=70 → 63, `FORMULA_TEST_ID` m=71 → 59, `UNDO_ID` 73 → 104,
-   `USER_ID` m=74 → 123, `IMPORT_ID` m=76 → 145, `EXPORT_ID` … `EXPORT_ODS_ID` m=77 … m=81 → 150 … 154,
-   `VERBS_ID` m=86 → 170, `VERB_ADD_ID` / `VERB_EDIT_ID` / `VERB_DEL_ID` m=6 / 7 / 8 → 70 / 71 / 72 (m=6 is now the
-   source view), `PHRASE_ID` m=110 → 112. Name the view by its const only, because a number shifts with every new
-   seed view; m=20 is now even the value add view instead of the value del view.
-
-#### Other
-
-2. **Fix the code bugs 1 to 4 above,** each with a positive and a negative unit test, and fix the documentation bug 5
-   by replacing the numbers with the consts.
-3. **Add the missing form fields** that need no new concept: the "name in formulas" field to `verb_add` and
-   `verb_edit` (appended component position, no new component), with the workflow snapshots.
-4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
-   test in `unit_ui/`.
-5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
-   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
-   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
-6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
-   formulas (replacing `calculate.php`), both shown on the job control view.
-7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
-   (`api/json`, the export views, the upload of the import view).
-8. **Work off the other sections** of `pending_prio_2.md` that name a retired `http_old` script (e.g. the view
-   designer of `view_edit.php`, the phrase links of `word_add.php`, the formula assignments of `formula_edit.php`), in
-   the order of their prio, one section per commit.
-9. **Delete the scripts** in batches: first those marked **can be removed** in the table, then each script when its
-   row is done or accepted. Each batch also removes the legacy code that only these scripts used (e.g. `dsp_edit`,
-   `linked_components`, `btn_yesno`, `dsp_go_back`, after a search for every caller), and keeps every `include_once`
-   that might still define a class.
-10. **Guard it:** add a check to `unit/coding_rule_tests.php` that no file in `src/` links to a `/http/<name>.php`
-    other than the scripts in `http/`, so a retired script cannot get a new caller.
-11. **Finish:** remove `http_old/` and the `TODO clean up http_old` line of `docs/todo.md`.
+## fix Prio 0
+
+**Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
+(the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
+3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-13: 151 left (158 when the
+file lists of "### TODO" were written).
+
+**Overview:** the 151 by kind, with the step of "### TODO" (prompt "no `TODO Prio 0` left and the test clean up" below)
+that holds the file list:
+
+| kind | about | where | step |
+|---|---|---|---|
+| a bare "review" without a reason (done by the human developer) | 11 | backend, `system_form`, `frontend`, write tests | 1 |
+| a failure that is not reported (`key_exists`, "switch back to error", the message status, a missing `$msg`) | 20 | backend, `ListBase`, `about.php` | 2 |
+| security and data correctness (setup flag, user fields, DateTime as ATOM, the usage field, the type cache) | 20 | backend | 3 |
+| a disabled test ("activate", "activate db write") | 25 | `unit`, `unit_write`, `unit_read`, `unit_api` | 4 |
+| a frontend stub ("fill with real code") | 25 | `web/component/execute`, `web/value`, `web/formula` | 5 |
+| a missing unit test | 15 | `shared/helper`, backend lists, test utils | 6 |
+| deprecate | 9 | `frontend`, `user`, `formula_map`, `formula_list`, `html_base` | 7 (deprecate) |
+| merge, one way, const, rename, the test factories | 26 | everywhere | 7 (the rest) |
+
+**Order:** the tests first (the disabled tests, then the stubs with their missing tests), then the deprecated code is
+deleted, so that no later fix is spent on code that goes; then the fixes of the top rules of `docs/llm/coding.md`
+(never fail silently, data correctness), which the tests cover, and the clean up last; each line is one prompt:
+
+1. **activate the disabled tests** (size L): step 4, one agent per test file; an activated test that fails is not
+   switched off again: the cause is fixed, or the TODO becomes a Prio 1 with the reported diff; stop for a run
+2. **stubs and missing tests** (size L): steps 5 and 6; a stub that only a retired page needed is removed instead of
+   filled, and its gap written down in `pending_prio_2.md`; each filled page gets its html snapshot; stop for a run
+   with re-pin if the stubs add system views or components
+3. **deprecate** (size M): the "deprecate" part of step 7; "deprecate" means delete (fewer lines): the deprecated
+   function, var or class goes together with its callers, which use the replacement, and a feature that goes without a
+   replacement is written down as a gap in `pending_prio_2.md`, never rebuilt unasked; every delete of a database row
+   stays the logged `del()`; stop for a run
+4. **ratchet and inventory** (size S, lead): a check in `unit/coding_rule_tests.php` counts the `TODO Prio 0` of the
+   four folders and fails if the count is higher than the const `TODO_PRIO_0_MAX` (the count after prompt 3), so that
+   a new Prio 0 TODO can only be added if another one is solved; every later prompt lowers the const by the number it
+   has solved. The lead rewrites the file lists of "### TODO" from line numbers to file and function name, because the
+   line numbers are outdated (e.g. the TODOs of `system_form.php` moved by about 150 lines, those of `frontend.php`
+   by 60), and adds the Prio 0 TODOs that no step names yet.
+5. **triage and silent failures** (size M): step 1, the bare "review" TODOs, is done by the human developer, because
+   only the developer knows what was meant to be reviewed: the lead lists them with file and function, and the
+   developer replaces each by a concrete TODO with a Prio or by a fix; a triaged "review" can move into another step.
+   Then step 2 with one agent per group of its list; stop for a run: `/test/test.php`
+6. **backend correctness** (size L): step 3, one agent per bullet; a new or changed db field goes into the setup sql
+   and `db_check::db_upgrade_0_0_4`, never a version raise; stop for a run, with re-pin if the database structure
+   changes
+7. **merge, rename and the rest of the clean up** (size L): step 7 without its "deprecate" part, and "clean up"; a
+   merge or a rename includes all callers in the same prompt; stop for a run
+
+**Rules for every prompt** (`docs/llm/coding.md`):
+- the smallest diff that solves the TODO; never tidy up code that the TODO does not name
+- the test comes first, with a positive and a negative case; a fix that needs the database goes to `unit_read` or
+  `unit_write`, test objects only from the `/test/create/` factories and the test users of the test env
+- Edit/Write only, never a shell edit; the agents never commit and never run a `/test/*` script; the developer runs
+  the tests and reports the result
+- a log file in `docs/llm/log/` only if the developer asks for it
+- the lead reports per prompt the number of solved and re-prioritised TODOs, the new `TODO_PRIO_0_MAX`, the line
+  balance, the tests to run and a short commit message
+
+### suggested code changes for activate the disabled tests
+
+... to be filled
+
+### suggested code changes for stubs and missing tests
+
+... to be filled
+
+### suggested code changes for deprecate
+
+... to be filled
+
+## bug fixing
+
+### word
+
+replacing the description with an empty string does not work,
+1. a user changes the description, so that a user word entry is created
+2. if the user removes his description, that original text is shown, but actually it would be more correct if the user_word entry contains an empty string for the description
+
+create a workflow test for this using e.g. something like http://localhost/http/view.php?m=101&id=2072&9m=3&9id=2072&z=2&k=Basel&8k=Basel&py=1&8py=1&o=&8o=Basel+or+Basle+is+a+city+in+northwestern+Switzerland+on+the+river+Rhine%2C+at+the+transition+from+the+High+Rhine+to+the+Upper+Rhine.+Basel+is+Switzerland%27s+third+most+populous+city%2C+with+177%2C595+inhabitants+within+the+city+municipality+limits.&lp=&8lp=&d=3&8d=3&s=1&8s=1&sp=1&8sp=1&6a1=u&6l1=801&6ek1=Q78&86ek1=Q78&6ur1=&86ur1=&6o1=&86o1=&6so1=0&86so1=0&6a2=u&6l2=684&6ek2=Basel&86ek2=Basel&6ur2=&86ur2=&6o2=&86o2=&6so2=0&86so2=0&6a3=a&6lt3=2&6ek3=&6ur3=&6o3=&6so3=0&mo=48&u=11
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### triple
+
+edit triple does not set the from and to phrase
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### add ref
+
+the add ref view called from a new word is not filled with the word to be referenced
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### add word
+
+when adding a new word conceptnet should be used to suggest triples
+and wikipedia should be used to suggest a description and a wikidata link
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### conceptnet.io link
+
+get the phrases of 'is a type of' from conceptnet.io and use them to create a triple
+use add Hamburg as a sample
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### figure link
+
+the link of a figure opens the edit view of the other object type: a value links to the result edit view and a
+result to the value edit view, because the two branches of `web/figure/figure.php::display_linked` (227-236) are
+swapped (`is_result()` gives `views::VALUE_EDIT_ID`)
+
+#### suggested code changes
+
+- `display_linked`: a result links to `views::RESULT_EDIT_ID`, a value to `views::VALUE_EDIT_ID`
+- the tests that expect the swapped view, both with the figure of a value: `unit/figure_tests.php:189` and
+  `unit_write/value_write_tests.php:273` expect `VALUE_EDIT_ID`; the active assert of
+  `unit_write/element_group_write_tests.php:170` checks which object its first figure has and expects the view of
+  that type; the snapshot of `unit_ui/figure_ui_tests.php` (figure of a value) is regenerated by the run
+- add the negative: the figure of a result links to `RESULT_EDIT_ID` (`test_figures::figure_result`)
+- the `element_group::dsp_values` link (`web/element/element_group.php:310`) uses the same function and changes
+  with it
 
 if done remove this prompt from pending.md
 
@@ -1096,14 +187,6 @@ and finally show the translated page if the url has something link =de
 ## Calculator editor
 
 ### Swiss NPP
-
-in the Calculator editor e.g. http://localhost/http/view.php?m=195&id=-3321&9m=16&9id=-3321&u=11
-in 'Page preview' the same view should be shown as e.g. http://localhost/http/view.php?m=calculator&id=-3321
-For the 'new CH npp' case e.g. the 'Undecided on cost - decide on the other arguments' and the 
-'Arguments for lifting the ban (yes)' and 'Arguments for keeping the ban (no)' seems to be missing
-done: the preview is built by `calculator_json.js` from the edited data (docs/llm/frontend.md) and compared by
-`system_views_read_tests::run_npp_ch_vote_editor`; the only difference left in
-`src/test/resources/web/html/use_cases/npp_ch_vote_editor_diff.md` should be the save, which the preview leaves out
 
 add costs of CO2-eq reduction to the npp
 
@@ -1251,7 +334,7 @@ and the page needs the remove button per field. The button stays without a funct
 
 #### step 7: the buttons (13)
 
-- the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the buttons "Download", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
 - the icons of the sample
 
 #### step 8: decide what the generated page keeps
@@ -1304,7 +387,8 @@ possibility to set the weight of the targets and combine them with the personal 
 
 #### config yaml
 
-add these to the config.yaml at 'pinned views'
+add the AHV vat vote, the ABB share and the table editor to the config.yaml at 'pinned views' (the PV, the NPP vote
+and the portfolio split are pinned)
 
 #### selection calculator and editor
 
@@ -1317,7 +401,9 @@ a generated file exists and is generated
 
 ## pure HTML and JavaScript views
 
-add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
+the url parameter `url_var::JAVASCRIPT` ('sc') selects the pure HTML or the JavaScript version of the views of
+`views::JAVASCRIPT_PAGES` (calculator, table editor); it still needs its `*_HUMAN` twin and has to cover every view
+that gets a JavaScript version
 
 create a JavaScript version of the formula editor view
 
@@ -1395,7 +481,9 @@ a failed formula calculation overwrites the stored result with nothing (`docs/js
 
 ### compare
 
-add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare (ahv_vat_vote,
+CBAM_tree_calculator, share_buy_sell_abb, calculator_editor and formula_editor; pv_lifetime_balance,
+portfolio_split, npp_ch_vote and table_editor are compared with `assert_sample_diff`) and add a check script that
 all *_sample.html files are part of the compare and generation build
 
 ### base on json
@@ -1487,9 +575,8 @@ search in wikipedia for all words and triples and suggest to include these as re
 
 ### power sign
 
-in the formula editor and all other places add the power sign '^' as an operator.
-
-add other usual math operators that are missing
+add other usual math operators that are missing (e.g. tan, mod, floor, ceil, factorial), next to the power sign '^'
+(`chars::POW` and the operator button of the formula editor)
 
 ## external links
 
@@ -1542,32 +629,21 @@ if done remove this prompt from pending.md
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 **Prompt:** calculation editor messages, code rules and api security (size M). The save of the calculator editor sends
-its message to the existing `api/updatePut` (`update_put_write_tests`), so "update json message" and "test case" mean
-`updatePut` where they name `/api/updateDrop`, and `unitNames` is read from the seed (`typeUnits()`) already. One
-phase, four agents in parallel:
+its message to the existing `api/updatePut` (`update_put_write_tests`), and `unitNames` is read from the seed
+(`typeUnits()`) already. One phase, four agents in parallel:
 - agent rules: "general" and "javascript" as rules in `docs/llm/`, and the documented options of "unitNames"
 - agent verbs: "verb names", the verb names of `script/calculator_editor.js` written by a php script
-- agent save cases: the open points of "test case": the deleted rows of a cleared limit, a removed and a moved input,
-  the new triples in `triple_names::TEST_TRIPLES`, the sub-item scenarios and the write test with an undo per message
+- agent save cases: the open points of "test case": the new triples in `triple_names::TEST_TRIPLES` and the sub-item
+  scenarios
 - agent security: "api security" and "relogin": the test that an api request without a session is rejected and the
   login link in the message of the calculator editor
 
 ## calculation editor
 
-### update json message
-
-if in the 'Calculator editor' save is pressed a json should be created and send to the api endpoint /api/updateDrop, which needs to be created
-The json should be similar to the import json that is described in docs/llm/json_structure.md, but the 'api_json' differs in some ways
-1. it uses the api header including the execution time report if needed
-2. it contains the database id which is used as the prime key if given
-3. also for types the database id is preferred used  
-
-create some tests that adds / updates / compares message files in src/test/resources/api/calculator_editor
-
 ### test case
 
 create test cased for all possible change types in the calculation editor.
-For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
+For each change type do the change in the frontend and write / compare the message that is sent to /api/updatePut
 
 `src/test/js/calculator_editor_scenarios.js` acts like a user in a copy of the calculator editor snapshot in a
 headless LibreWolf, Firefox or chromium, the first one found, and `use_case_ui_tests` compares the sent message with `src/test/resources/web/calculator_editor/`
@@ -1578,8 +654,6 @@ row and row group. Open:
 - the triples of a new input field are not in `triple_names::TEST_TRIPLES`, so the global cleanup does not remove
   them if a run stops before the undo
 - scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector
-
-for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
 
 
 ### general
@@ -1597,13 +671,10 @@ this implies that all js files must be written by a php script
 
 #### unitNames
 
-src/main/resources/script/calculator_editor.js contains unitNames (e.g. 'const unitNames = new Set(["kWh", "kWp", "kg", "gram", "t", "percent", "a", "kWh/a"]);')
-there should be no specific const in the js file. the unitNames should be taken either from the seed json 
-or if this takes too long by execution time a units json should be included
-or the script should be updated automatically by a php script every time a unit is updated 
-which can be detected by a parent phrase with a code_id
-for the moment the preferred option is to use the exists seed json, which might need to be extended
-but all other options with the pros and cons should be documented in /docs/*
+the unitNames of src/main/resources/script/calculator_editor.js are taken from the seed json (`typeUnits()`); the
+other options with the pros and cons should be documented in /docs/*: a units json that is included if the seed
+takes too long, or the script updated automatically by a php script every time a unit is updated, which can be
+detected by a parent phrase with a code_id
 
 #### verb names
 
@@ -1632,7 +703,7 @@ if done remove this prompt from pending.md
 
 **Prompt:** system triple ids in production and the view and component editor (size L, three phases like the table
 editor; re-pin, because the editor adds system views). The table editor is the prompt at the top, and the process
-editor is part of the process catch prompt of "PV installation calculator" below.
+editor is part of the process catch prompt ("process catch views and the process editor") below.
 - phase 1, lead: the solution concept of "other editors" for system triples whose id differs in production, as a
   section of `docs/llm/architecture.md`, and a hand made `use_cases/view_editor_sample.html` with its use case json,
   built like `calculator_editor_sample.html`
@@ -1670,8 +741,6 @@ four agents in parallel:
 ## phrase data api
 
 ### speed up user data creations
-
-include the phraseData calls in the api cache handling 
 
 if the phraseData for a user is requested and the cache contains the standard data already 
 get the standard data from the cache, read the user overwrites from the database 
@@ -1784,14 +853,9 @@ if done remove this prompt from pending.md
 
 **full test run: /test/test.php**
 
-**Prompt:** no `TODO Prio 0` left and the test clean up (size L, three phases). The rules of "TODO" stay; a file that
-two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
-- phase 1, three agents in parallel: agent triage with step 1, agent report with step 2 and agent backend with step 3;
-  stop for a run: `/test/test.php`
-- phase 2, up to five agents in parallel: step 4 with one agent per group of test files, agent stubs with step 5 and
-  agent tests with step 6; stop for a run: `/test/test.php`
-- phase 3, three agents in parallel: agent deprecate with the deprecate and merge parts of step 7, agent rename with
-  the rest of step 7 and agent clean up with the items 1 to 6 of "clean up"; item 7 is decided by the lead
+**Prompt:** no `TODO Prio 0` left and the test clean up (size L). The order of the prompts and their rules are in
+"## fix Prio 0" at the top of this file; this block keeps the file list of each step. The rules of "TODO" stay; a file
+that two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
 
 ### TODO
 
@@ -1813,8 +877,9 @@ rules for every step:
   a `TODO Prio 1` with the reported diff
 - the LLM never runs the tests; the developer runs them and reports the result
 
-1. triage the bare "review" TODOs, because they do not say what is wrong: read the code, then
-   replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a one-line fix:
+1. triage the bare "review" TODOs, because they do not say what is wrong; this step is done by the human developer,
+   not by an agent: read the code, then replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a
+   one-line fix:
    `cfg/db/sql_db.php:1282`, `cfg/phrase/phrase.php:931`, `cfg/phrase/term.php:1418`,
    `cfg/result/result.php:2021` and `:2049`, `cfg/user/user.php:2213`,
    `web/component/execute/system_form.php:2826`, `web/frontend.php:701`,
@@ -1833,8 +898,7 @@ rules for every step:
      `shared/calc/expression.php:214` (the ref text check with the user message)
    - log a missing mapper overwrite: `web/sandbox/ListBase.php:121`, `utils/test_lib.php:311`
    - one message per request: `http/about.php:45` (all frontend calls),
-     `cfg/component/component_link_list.php:479` (the reset of all lists),
-     `utils/test_cleanup.php:290` (a local message for each del call), and the shared message
+     `cfg/component/component_link_list.php:479` (the reset of all lists), and the shared message
      status const of `cfg/db/sql_message.php:232` and `cfg/user/user_message.php:238`
 3. close the gaps in security and data correctness of the backend:
    - `cfg/db/db_check.php:126`: in prod and test the setup runs only if the setup flag is on
@@ -1859,10 +923,10 @@ rules for every step:
    - the unit tests that only need a db write: `unit/group_tests.php:378`,
      `unit/result_tests.php:179`, `:188`, `:199`, `unit/triple_tests.php:121`,
      `unit/value_tests.php:580`
-   - `unit_write/triple_write_tests.php` (`:163`, `:208`, `:240`, `:262` "fix it" and `:364`),
+   - `unit_write/triple_write_tests.php` (the Prio 0 TODO left after the "fix it" ones),
      `all_unit_write_tests.php:152`, `api_write_tests.php:88`, `element_group_write_tests.php:197`,
      `element_write_tests.php:125`, `expression_write_tests.php:157`,
-     `formula_trigger_tests.php:137`, `formula_write_tests.php:110`, `import_write_tests.php:339`,
+     `formula_trigger_tests.php:137`, `import_write_tests.php:339`,
      `term_write_tests.php:95`, `view_relation_write_tests.php:57` and `:76`,
      `xbrl_write_tests.php:88` and `:95`
    - `unit_read/formula_list_read_tests.php:83`, `unit_read/value_list_read_tests.php:79` (load
@@ -1888,7 +952,7 @@ rules for every step:
 7. deprecate, merge and rename, each with the callers in the same prompt:
    - deprecate: `web/frontend.php:839` (`$usr_backend`), `web/user/user.php:148`,
      `cfg/formula/formula_map.php:224`, `cfg/formula/formula_list.php:847` (remove),
-     `web/html/html_base.php:939` (use `url_new`), `:2527`
+     `web/html/html_base.php:2527`
    - merge: `cfg/application.php:337` with `frontend.php`, `cfg/user/user.php:1586`
    - one way for all: `web/html/html_base.php:1911` (all input fields),
      `web/html/html_selector.php:118`, `web/types/type_list.php:529` (the var order of all
@@ -1915,7 +979,6 @@ rules for every step:
 4. The new helpers have no $exe_max_time parameter, unlike assert_text_contains and the other helpers. So they always use the default timeout, which is fine for array lookups but differs from their siblings. Low priority.
 5. Two consts hold the same text: test_const::TERM_VIEW_COM and VIEW_RELATION_COM are both 'add usage and log of a word'. Keeping them separate is right as long as the two fixtures are meant to be independent; just be aware of it.
 6. A second message is created mid-test in user_ui_tests.php ("the api url of the system user…"): $sys_msg = new user_message($sys_ui). This only names what was already inline before. The test needs a message for the system user, but the rule says to create $msg once.
-7. docs/llm/pending.md has a new "view edit" entry (move the "main + variance" entries to the navbar edit menu). It isn't part of this work; I assume it's yours. Commit it separately or name it in the message.
 
 if done remove this prompt from pending.md
 
@@ -1925,11 +988,10 @@ if done remove this prompt from pending.md
 
 **Prompt:** the calculator page in less than 3 seconds (size L, two phases). The rules of "calculator" stay; the
 developer measures the debug=9 url before the prompt and in each stop, and the lead writes the times into the report.
-- phase 1, four agents in parallel: agent values with step 1 and 1c (step 1b only if the developer's `EXPLAIN` shows
-  the regex scans as the bigger part, because it needs a database upgrade), agent names with step 2, agent bootstrap
-  with step 6 and agent page cache with step 8; stop for a run: `/test/test.php` and the debug=9 url
-- phase 2, three agents in parallel: agent cells with step 3 and then step 4 (both extend the same api calls), agent
-  php with step 5 and agent tree with step 7
+- phase 1, three agents in parallel: agent values with step 1 and 1c (step 1b only if the developer's `EXPLAIN` shows
+  the regex scans as the bigger part, because it needs a database upgrade), agent bootstrap with step 6 and agent
+  page cache with step 8; stop for a run: `/test/test.php` and the debug=9 url
+- phase 2, one agent: agent php with step 5
 
 ### calculator
 
@@ -1969,8 +1031,11 @@ rules for every step:
   test with a positive and a negative case
 - the LLM never runs the tests; the developer runs them and the debug=9 url
 
-done: request cache for the values of a phrase id set (`data_object::load_values_of`, key: the
-sorted ids), so each of the 40 sets is loaded once: 77 s → 59 s
+the times above were measured before the page was filled from one phraseData answer (commit
+`a91b57529`, `phrase_data::load_from_walk` in `view_exe.php`, which sets
+`data_object::page_data_complete`, so the cells, the input names and the phrase tree are no
+longer loaded with their own api calls); the developer measures the debug=9 url again before
+step 1
 
 analysed: the value query (`api/valueList/index.php` → `value_list::load_by_phr_lst` with
 `$or = true` → `sandbox_value_list::load_sql_by_phr_lst_multi`, fixture
@@ -1993,22 +1058,12 @@ so the split between query, phrase names, json and cache insert is not visible y
    `289,-2573,807,-2529,-2542` and the row count of the result; expected: 34 s → about 10 s
    1b. if the regex scans stay the bigger part of the plan: a trigram index
    (`CREATE EXTENSION pg_trgm; CREATE INDEX … USING gin (group_id gin_trgm_ops)`) on the three
-   group id tables and their `user_values*` twins, which postgres uses for `~`; needs a database
-   upgrade script and the minor version raise (`docs/llm/versions.md`)
+   group id tables and their `user_values*` twins, which postgres uses for `~`; goes into the setup
+   sql and into `db_check::db_upgrade_0_0_4` (`docs/llm/versions.md`)
    1c. api timing: `log_debug(…, url_var::DEBUG_LEVEL_MAIN_STEP)` after the load, the phrase
    names, the json and the cache insert of `api/valueList/index.php`, so that
-   `api/valueList/?phrase_ids=…&debug=9` shows the split like `view.php` does
-2. request cache for the related phrases of a name: `data_object` keeps the phrase list of each
-   `phrase_list::load_related_by_name` call (key: the name, the direction and the levels, like
-   `load_values_of` for the values), and `ui_list::add_field_links` asks the cache first, so
-   the 13 input names are looked up once instead of three times; expected: 11 s → 4 s
-3. load all cells in one call: the calculation plan collects every phrase id set of the page
-   first and `api/valueList` gets a new parameter for a list of phrase id sets, so the 40
-   remaining calls become one; expected: the call overhead of 40 × 0.13 s is gone and the
-   query time of step 1 is paid once
-4. load the input names in one call: `api/phraseList` takes a list of names (`k`) instead of
-   one name per call, and the values of the found phrases come with the call of step 3;
-   expected: 4 s → 0.5 s
+   `api/valueList/?phrase_ids=…&debug=9` shows the split like `view.php` does; `api/valueList`
+   already books its steps into the time sections (`system_time_type::API_CACHE` …)
 5. frontend php: find out what the 3.6 s between "calculator input" rendered and the first
    call of "calculation result" do (probably `calculator_numbers` and `calculation_table`
    repeating the page calculation for the cells, `formula_calc::result` per cell) and the
@@ -2017,9 +1072,6 @@ so the split between query, phrase names, json and cache insert is not visible y
 6. frontend bootstrap: load the components of the system view of the request only, not of all
    195 system views, and find out why `api/config/?1=frontend` and `api/triple/?ir=1` take more
    than 1 s each (the other calls take 0.13 s); expected: 4.1 s → 1 s
-7. load the phrase tree of the page in one call: `api/phraseList/?il=…&pd=up` takes the
-   levels (`px`) like the name lookup, so the 6 calls of the tree become one or two;
-   expected: 2.5 s → 0.5 s
 8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
    request of the same url gets the page from the cache; if not, fix the insert, so that a
    second request takes less than 0.2 s
@@ -2031,12 +1083,11 @@ if done remove this prompt from pending.md
 **full test run: /test/test.php**
 
 **Prompt:** PV lifetime balance page matches its sample (size L, two phases; re-pin, because `pv_lifetime_balance.json`
-changes). The steps of "general" are partly done (the calculator editor exists): the lead checks them first, and asks
-the developer the decision of step 2 of "general" (retire or keep the component types).
+changes). The lead asks the developer the decision of step 2 of "general" (retire or keep the component types)
+first.
 - phase 1, four agents in parallel:
   - agent save: step 1 of "remaining" and step 4 of "general"
-  - agent data: steps 2, 3 and 6 of "remaining" and the monthly table, the replacement mix and the context load of
-    "open for the calculator page"
+  - agent data: step 6 of "remaining" and the replacement mix and the context load of "open for the calculator page"
   - agent texts: steps 4 and 5 of "remaining" (the formula sample and the notes)
   - agent checks: the value ranking and the repeated loads of "open for the calculator page"
   - stop for a run with re-pin
@@ -2052,56 +1103,28 @@ renderer, never by adapting the sample
 
 1. save - the parts after the save of the changed numbers (docs/llm/frontend.md "The save of a
    calculator page"):
-    - write test: a unit_write test that saves one changed calculator number of the pv page as
-      the overwrite of `$t->usr1`, checks the shown number, the "changes saved" info and the
-      change log, and removes the overwrite again by the logged `del()`
+    - write test: `value_write_url_tests::calculator_save_write` saves a calculator number of test
+      words; a test on the pv page as the overwrite of `$t->usr1` also checks the change log and
+      removes the overwrite again by the logged `del()`
     - api: the save writes through `db_object::update`, which converts the frontend value to the
       backend object; the PUT api call is the open TODO of `db_object::update` for every edit
-    - user without login: the save is refused by the backend and the page shows the message; the
-      save button could instead say "login to save" before the user enters numbers
+    - user without login: the save button could say "login to save" before the user enters numbers
     - the selected option of a phrase selector (e.g. the replacement mix) is not saved, because a
       selector names a phrase and not a value; saving it needs a value or a triple of the user
-    - the confirmation names only the number of saved values, not which numbers have changed
-      from what, as the settings page does (`frontend::setting_saved_text`)
-2. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
-   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
-   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
-3. assumptions - the parts that the json cannot solve:
-    - the tags "assumed 0.5" of the battery production emissions and "assumed 0.6" of the
-      battery lifetime: the confidence value has the phrases of the value without its unit (a
-      value has one unit only), so the lookup of the confidence must ignore the unit phrase
-    - the source numbers in a hint: "Swiss 3 kWp mono-Si pitched roof, 2023 update [1];
-      converted to a fixed amount per kWp" with the number inside the hint, and the two sources
-      "[5][6]" of the battery production emissions
-    - replacement mix: the option labels with the number and the source ("European residual mix
-      — 523 g/kWh [4]", "ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]")
-      and the residual mix as the first option: the triple "production mix order" (production
-      mix is follower of residual mix) is in the json, but the selector does not use it
-    - the three derived assumptions (production mix 395, residual mix 523, east-west yield
-      factor 0.85) are not shown, because they are options of the selectors already
-    - the input of the load share during PV hours has no `step="0.05" min="0" max="1"`, although
-      the json has the field step and both field limits of "day share"; the field steps of the
-      other inputs are shown, so the property lookup fails for the value group of the day share
-4. formula sample - add parameter 'show formula sample' to the field 
-   and create a sample based on the formula and the database values -   
-   table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
-   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
-   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
-   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
+4. formula sample - the sub texts of the table are shown; add the parameter 'show formula sample'
+   to the field (`calculator_keywords.json`) so that the sample is created from the formula and
+   the database values by this keyword, and the third saving row shows "payback 3.0 a" as the
+   sample (today "2.97 a")
 5. notes: only the three notes of the page with their own titles and sources ("How the CO₂
    saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
    instead of the description of every formula (19 notes with the formula name in `b`)
-6. sources - just add sources - more sources is an excepted difference:   
-   the seven sources of the sample in the order of their first use ([1] IEA PVPS,
-   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
-   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
-   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
-   the two battery sources missing
-7. the comparison: let the use case test assert the generated page against the sample with
-   a normalisation of the differences that are design and not content: the html ids and
-   names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
-   attributes and the save form, the cell ids, and the calculator data with `calculator.js`
-   instead of the inline script of the sample
+6. sources - more sources is an excepted difference: the seven sources with their full citation
+   are shown; open are the order of the sample ([3] treeze before [4] Swissolar) and
+   `target="_blank" rel="noopener"` on the source links
+7. the comparison: `system_views_read_tests::run_pv_lifetime_balance_diff` compares the normalised
+   page with the sample and writes `pv_lifetime_balance_diff.md` (one difference left: the
+   hydropower "8.3" against "8.30"); when no difference is left, the test asserts zero
+   differences instead of the report file
 
 ### general
 
@@ -2117,52 +1140,28 @@ calculator triples of `pv_lifetime_balance.json` (guide: `docs/llm/new_view_samp
 run the steps one at a time, each as its own commit with the tests written first, and ask for
 the test run after each step (an llm never runs test/*, docs/llm/coding.md).
 
-1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`:
-   when the page is created, all values and results of the page are already in the database
-   (imported from `pv_lifetime_balance.json` and calculated), so the page shows the numbers of
-   the input fields, the main result table, the detail tables and "PV life-cycle emissions"
-   from the database; each number in the html carries the database id or group id of its
-   value or result, so that the save action (step 4) knows which value to update and which
-   result to compare; the numbers, the hidden group id of each input and the cell ids are on
-   the page, still empty are the rows "Self-consumption rate", "Autarky" and "vs. replacement
-   mix" (the residual mix net avoided emission 113'805) and the assumption "PV life-cycle
-   emissions"; the lifetime column shows kg, the sample t
 2. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
    and of `docs/llm/json_views.md` to `calculator_keywords.json` and
    `pv_lifetime_balance.json`; decide whether the component types that only the old view used
    (`view_title`, `name_sub_title`, `details_start`, `details_end`, `assumption_fields`,
    `formula_notes`, `sources_used`, `table_with_own_columns`) are retired or kept for other
    use case views, because retiring them shifts the component type ids
-3. the `Calculator editor` view with the components of section 6 of the guide and a snapshot
-   test of the editor for `example PV installation`
-4. the save: write the inputs as values by the ids of step 1, use the entered numbers as the
-   inputs of the page calculation, start the backend calculation job, compare the job results
-   with the frontend results and show every difference as a message
-5. when the generated page matches the sample up to the numbers, let the use case test assert
-   the generated page against the sample
+4. the save: the inputs are written as values by their group id and a stored result that differs
+   from the page is shown (`msg_id::RESULT_DIFFERS_FROM_PAGE`); open are the start of the backend
+   calculation job after the save and the comparison of the job results with the frontend
+   results, each difference shown as a message
+5. see step 7 of "remaining"
 
 open for the calculator page:
 
 - judge the page only after a database recreation: `test_part.php` imports into the existing
   database and never removes an object that a newer json left out
 - inputs: the maximum of the three number fields
-- monthly table, column "CH mix g/kWh", month rows: the monthly Swiss consumption mix values
-  (e.g. 150.8 for January) have no page phrase, so a month cell (page phrase, month, `consumption
-  mix`, `gram per kWh`) selects none of them; the column needs a way to select a general value,
-  e.g. a calculator keyword for a column without the page phrase
-- replacement mix selector: the options come from the `is a` triples instead of the values of
-  the selector phrase, and the gross formula uses the selected mix
-- context load: the derived assumptions and the sources are loaded by any phrase of a result,
-  so values and sources of other files show up (PVGIS 5.3, BEA US GDP 2023) and the field
-  definition values need a filter; e.g. the assumption "Swiss consumer mix, annual" shows the
-  79.2 of `pv_switzerland_co2.json` instead of the 128 (BAFU 2018) of `pv_lifetime_balance.json`,
-  and "PV life-cycle emissions" stays empty although the file has 35.8 (IEA PVPS 2023); a result whose values the page has not loaded keeps its
-  stored number; an api that answers with the values within a phrase set would be leaner
-- monthly table: the months in their order (January … December, not by number) and the short
-  names "Jan" … "Dec" (open point of the guide)
+- replacement mix selector: check that the gross formula uses the selected mix
+- context load: an api that answers with the values within a phrase set would be leaner than
+  loading the derived assumptions and the sources by any phrase of a result
 - notes: only the notes meant for the page, with their own titles (open point of the guide:
   a `calculator note` list or notes as descriptions of the row groups)
-- sources: numbered in the order of the first use and cited as [n] in the hints and notes
 - value ranking: `ui_list::context_count` has no unit test, only the `run_pv_lifetime_balance`
   snapshot covers it; add a case in `use_case_ui_tests`: a general value against a value with a
   place phrase
@@ -2214,105 +1213,12 @@ if done remove this prompt from pending.md
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-**Prompt:** process catch views and the process editor (size L, three phases; re-pin, because system phrases, views
-and the PV calculator use case are added). "LLM KI prompt suggestion" is the plan, "PV installation calculator" the
-background; the "process editor" of "other editors" is phase 3.
-- phase 1, lead: step 1, the system phrases of a field definition; stop for a run with re-pin
-- phase 2, two agents in parallel: agent model with step 2 and agent components with step 3; stop for a run:
+**Prompt:** process catch views and the process editor (size L, two phases; re-pin, because the PV calculator use
+case is added). "LLM KI prompt suggestion" is the plan; the "process editor" of "other editors" is phase 2.
+- phase 1, two agents in parallel: agent model with step 2 and agent components with step 3; stop for a run:
   `/test/test.php`
-- phase 3, three agents in parallel: agent views with step 4, agent use case with step 5 and agent editor with the
+- phase 2, three agents in parallel: agent views with step 4, agent use case with step 5 and agent editor with the
   process editor built on the calculator editor; the lead writes step 6, the docs, after the three
-
-### PV installation calculator
-
-Catch process forms
-
-create a 'process catch start page' view that has the components 
-'title process catch start', 'text explain process catch start', 
-'process catch initial input fields' and 'button next process catch start'. 
-The 'process catch start page' has one easy to answer question 
-with a next button that leads to the 'process catch main page'.
-
-create a 'process catch main page' view that has the components 
-'title process catch main', 'text explain process catch main', 
-'process catch main input fields' and 'button next process catch main'. 
-The 'process catch main page' has around three input fields that
-are most relevant for the result calculation and 
-for complex answers offer a limited number of pre-selection options.  
-The next button leads to the 'process catch detail page'.
-
-create a 'process catch detail page' view that has the components 
-'title process catch detail', 'text explain process catch detail', 
-'process catch detail tab one', 'process catch detail tab two', 
-'process catch detail tab three', 'process catch detail tab four' and 'process catch detail tab five'
-and 'process catch detail tab one fields', (and '... two, three, ... five)
-with a next button that leads to the 'process catch result page'.
-
-create a 'process catch result page' view that has the components 
-'title process catch result', 'text explain process catch result',
-'process catch result tab one', 'process catch result tab two',
-'process catch result tab three', 'process catch result tab four' and 'process catch result tab five'
-and 'process catch result tab one fields', (and '... two, three, ... five)
-with a back button that leads to the 'process catch detail page'.
-
-for each field these triples should be created:
-
-- '... field label phrase' e.g. 'place of the PV installation' for the place / sun intensity
-- '... field value phrases' e.g. 'PV installation location' to store the field input value in the database
-- '... field type' e.g. location selector
-- '... field unit' e.g. kWh
-- '... field limit up' 
-- '... field limit down'
-- '... field limit steps'
-- '... field limit suggestion'
-- '... field phrase selector label' to describe what the selected phrase will be used for e.g. if the parent is 'main column (system)' the label could be 'Main table columns:' 
-- '... field phrase selector parent' to preselect the phrases that can be selected e.g. if the parent is 'column (system)' all columns related to the phrase are shown so that one can be selected to define the default sorting 
-- '... field phrase selector value based' to preselect the phrases that can be selected e.g. if the phrase for the table is 'global warming solution' the phrases of all values related to it are shown 
-- '... selection label' to describe what a sorted list of phrases mean e.g. if the parent is 'main column (system)' the label could be 'Main table columns:'
-- '... selection parent' to show the table columns of a phrase e.g. if the parent is ''
-- '... button next tooltip' with the text for the tooltip (the text in the button is a msg_id defined by the component not a triple)
-- '... button next view' with the view id for the step 
-- '... button refresh tooltip' with the view id for the
-- '... button refresh label' with the view id for the
-- '... button refresh view' with the view id for the step
-- '... button back tooltip' with the view id for the
-- '... button back view' with the view id for the step
-
-For each phrase e.g. "PV Calculator" each field tripel a phrase or a list of phrases can be assigned via triples
-
-
-Unsorted notes:
-
-based on the start phrase the title text, the label and type of the input field and the phrases for the input field 
-are assigned to the start phrase via triples
-
-e.g. if the catch phrase is called with the phrase "PV Calculator" the Place / PO Box selector is shown
-
-the next page contains the up to 3 fields with a preselection that are most relevant for the calculation and a next button
-
-e.g. for the phrase "PV Calculator" it is the type or size of the panels and the electricity consumption per year
-
-depending on the selection e.g. 10 qm sub-fields are shown e.g. the vertikal and horizontal orientation
-
-the third page shows some calculated values with tabs to fine tune the assumptions but not yet the final report and a button 'calculate'
-
-the fourth page shows the earnings in EUR 
-
-This means that these system phrases with a code_id are needed:
-
-'process catch field label phrase (system)' e.g. place of the PV installation 
-catch values phrases (system) e.g. PV installation location  
-catch fields type (system) e.g. locator
-main values phrases (system) e.g. PV installation size
-
-
-create a component type 'geolocator by place name / post code' with the parameters: 'label' (which is a translatable 'place name / post code') and the value phrases (which are 'place of user')
-
-Horizontal angle
-
-Vertical angle
-
-Eigenverbrauch
 
 ### LLM KI prompt suggestion
 
@@ -2325,18 +1231,9 @@ and the numbers are calculated by the formulas of pv_yield.json. the entered num
 values of the user with the existing value save, so the result page is the calculator view of the
 question phrase and every page is url state without javascript (docs/llm/frontend.md). run the
 steps one at a time, each as its own commit with the tests written first, and ask for the test run
-after each step (an llm never runs test/*, docs/llm/coding.md).
-
-1. the system phrases of a field definition: add to the system word and triple data the phrase
-   'process catch field (system)' and the properties of a field as triples with a code_id in
-   shared/const/triples.php (like triples::SYSTEM_COLUMN_MAIN): 'field label', 'field value
-   phrases', 'field type', 'field unit', 'field limit up', 'field limit down', 'field step' and
-   'field suggestion', plus the field types 'location selector', 'number with limits' and
-   'pre-selection' linked with "can be" to 'field type' like the column tiers. use only the
-   verbs of docs/llm/json_structure.md "Allowed verbs"; a property that fits no verb gets one by
-   "Adding a new verb", never a free text. add the triple_names const and the test factory of
-   each phrase, a unit test that the import creates them with the code id and re-baseline the
-   pinned ids from list.csv (docs/llm/testing.md). document the pattern in json_structure.md.
+after each step (an llm never runs test/*, docs/llm/coding.md). the system phrases of a field
+definition (`process_catch_fields.json`, `triples.php`), the four views (`process_catch_views.json`,
+`views.php`) with the fields, tab, next, back and refresh component types and the geolocator exist.
 
 2. the field model of the frontend: a class web/component/catch_field.php that is built from
    the request cache only (docs/llm/frontend.md "The frontend never accesses the database"): for
@@ -2346,27 +1243,17 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
    unit tests with a test_phrases factory list for every property, a missing property and a
    field assigned to two steps (shown on both).
 
-3. the component types: add to shared/types/component_types.php and the system component data
-   'process catch fields' (the fields of the step named by the component code id as form
-   inputs: a text input with the postal codes of the cache as datalist for the location
-   selector, a number input with min, max and step for the number with limits and a select of
-   the option phrases for the pre-selection, the suggestion as the preset value), 'process catch
-   tabs' (the tab names of the detail and the result step as links that carry the selected tab
-   as a new url var with its human twin and the url_mapper branches, docs/llm/state-and-
-   messages.md) and 'process catch results' (the results of the question phrase as the table
-   with related columns of the calculator view). every renderer gets its object_pages snapshot
-   (docs/llm/testing.md "Every HTML-returning function ... contributes to an object_pages
-   snapshot"); a label is the phrase name, so it is translated like every phrase.
+3. the component type 'process catch results' (the results of the question phrase as the table
+   with related columns of the calculator view) in shared/types/component_types.php and the
+   system component data, with its object_pages snapshot (docs/llm/testing.md "Every
+   HTML-returning function ... contributes to an object_pages snapshot").
 
-4. the four views in system_views.json with the code ids process_catch_start, process_catch_main,
-   process_catch_detail and process_catch_result (views.php consts and views::TEST_VIEW_IDS, so
-   the views_by_id snapshots cover them): title, explain text, the fields component of the step,
-   the tabs where the step has tabs and the next button, the result page with a back button. the
-   next button submits the form: the frontend saves each entered number as a value with the
-   value phrases of the field plus the question phrase for the logged in user (the existing
-   value save api, docs/llm/frontend.md "Form field name is the url var"), reports a rejected
-   number on the $msg of the request and redirects to the next view with the question phrase
-   as id. an anonymous user gets the ip user rules like every other change.
+4. the next button of the four process catch views submits the form (today it is a link,
+   docs/llm/json_views.md): the frontend saves each entered number as a value with the value
+   phrases of the field plus the question phrase for the logged in user (the existing value save
+   api, docs/llm/frontend.md "Form field name is the url var"), reports a rejected number on the
+   $msg of the request and redirects to the next view with the question phrase as id. an
+   anonymous user gets the ip user rules like every other change.
 
 5. the PV calculator use case: a new use_cases/pv_calculator.json appended to
    files::USE_CASE_FILES with the question word 'PV calculator' and its fields: start 'place of
@@ -2383,8 +1270,8 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
    snapshots every page (docs/llm/testing.md "Unit workflow tests snapshot every step"), plus
    the write workflow that checks the saved values of the user.
 
-6. docs: json_views.md gets the component types and the four views, json_structure.md the field
-   triples with the pv_calculator.json example and frontend.md the catch process rule: one easy
+6. docs: json_structure.md gets the pv_calculator.json example of the field triples and
+   frontend.md the catch process rule: one easy
    question on the start page, at most three fields on the main page, the fine tuning in tabs
    on the detail page and the money on the result page; pending.md loses this section.
 
@@ -2395,30 +1282,24 @@ if done remove this prompt from pending.md
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 **Prompt:** new use cases, the code id rule, the calculator data, config value 0, the import time, the job list and
-the phrase default view (size L; re-pin, because new use case files are imported). "to recheck" are review notes of
-an old change: the lead checks each, fixes point 3 and 4 if still open and removes the rest. One phase, six agents in
-parallel:
-- agent use cases: "use cases", the CBAM and the company sheet use case and the pinned views in `config.yaml`
-  (portfolio split is pinned already)
+the phrase default view (size L; re-pin, because new use case files are imported). "to recheck" is a review note of
+an old change: the lead fixes it if still open. One phase, five agents in parallel:
+- agent use cases: "use cases", the company sheet use case and the pinned views of CBAM and the company sheet in
+  `config.yaml` (portfolio split is pinned already)
 - agent code id: the first part of "clean up", the coding rule test that production code selects a db row by its
   code id only
-- agent calc data: "calculator data only with the numbers the page uses"
 - agent config: "config value 0 is treated as missing", backend and frontend
 - agent import time: "unlink import chain time measurement", the counters reset per import file
 - agent pages: "job list" and "phrase default view" (the jobs entry of the user menu and the pie chart)
 
 ## use cases
 
-add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+add the company sheet use case and pin it and the CBAM calculation (`use_cases/cbam_calculator.json`) on the start
+page; the two pins of `config.yaml` (startup > pinned views) have an empty view and phrase name
 
 ## clean up
 
 db row identification should not be based on the database id instead the code_id should be used. *_ID pinned db rows e.g. words should only be used for tests.
-
-### calculator data only with the numbers the page uses
-
-`ui_list::calculator_number_plan` writes every number of the request cache into the `calc-data` json of a calculator page, also the values of other use cases (e.g. solution priorities, city values). The PV lifetime balance page carries 467 numbers, but shows about 30 cells and has 75 inputs, which adds about 15 KB to each page.
-Suggestion: write only the numbers that a cell, an input or a result token of the page references (`cells`, `inputs`, `results`), and the results that a cell shows or another result uses. Test positive (a referenced number is in the data) and negative (a value of another phrase is not), then regenerate `pv_lifetime_balance_no_js.html`.
 
 ### config value 0 is treated as missing
 
@@ -2455,10 +1336,7 @@ As the log below shown it seems that at the moment the elapse time is nor resett
 
 ## to recheck
 
-1. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
-2. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
-3. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
-4. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
+Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
 
 ## job list
 
@@ -2474,9 +1352,9 @@ if done remove this prompt from pending.md
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-**Prompt:** admin dashboard (size L, two phases; re-pin, because new job types and statuses are seeded). The error
-log view and the admin jobs of "deprecate http_old" (its steps 4 and 6) and the `sys_log_detail` view of "fill the
-language, log, import, ..." are done here. All agents add their own functions to
+**Prompt:** admin dashboard (size L, two phases; re-pin, because new job types and statuses are seeded). The admin
+jobs of the retired http_old scripts (`pending_prio_2.md` "### the import of the system data and the recalculation
+of all results as admin jobs") and the `sys_log_detail` view of "fill the language, log, import, ..." are done here. All agents add their own functions to
 `web/component/execute/system_page.php`; the lead merges the dashboard layout.
 - phase 1, five agents in parallel:
   - agent health: "system health", the read only button, the ip and email lists, the health section and the sanity api
@@ -2516,9 +1394,6 @@ use the same data for an admin only sanity api that monitor tools like checkMK c
 add to the admin dashboard the number of user sandbox rows that are equal to the standard value and can be removed (the del_usr_cfg() cleanup of the dsp_sandbox_* family that belongs to the system consistency checks, see pending_prio_2.md) and the number of possible duplicates (input of find_duplicates), each with a link to the cleanup job resp. the list
 
 ### errors
-
-show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved
-show it on the top of the list and below not yet solved errors followed by warnings
 
 move the selection of the unassigned errors and the pending error fixes from the frontend to the backend: add to cfg/system/sys_log_list::load_sql a filter by status and by solver (none = unassigned), let api/sysLogList use the requested type instead of ignoring it, add the sql fixture for each new query and replace in web/component/execute/system_page.php::admin_errors_unassigned() and admin_errors_delayed_fix() the client side filtered() on the newest sys_log_list::ADMIN_READ_SIZE entries by the backend selection, so that an older open error of a pod with many open errors is also shown
 
@@ -2564,7 +1439,7 @@ if done remove this prompt from pending.md
 
 **Prompt:** group id follow ups, email accounts, the value and word edit views and two import and triple details (size
 L; re-pin, because the value line component is split into new system components). "todo from group id change" are
-review notes: points 6 to 9 are checked and removed by the lead, points 1 to 5 are fixed. One phase, six agents in
+review notes: points 6 to 9 are checked and removed by the lead, points 1 to 5 are fixed. One phase, five agents in
 parallel:
 - agent group id: points 1 to 5 of "todo from group id change"
 - agent email: "email accounts", the two accounts in `.env.example` and the error mail limit of `config.yaml`
@@ -2572,7 +1447,6 @@ parallel:
 - agent edit mode: "word default view", the edit mode url vars with their numeric prefix, the inline edit and add of
   values, the formula unlink and the triple list with its add icon
 - agent names: "json import: word and triple names", the import check with its exceptions
-- agent triple view: "triple view", the add value and add formula icons
 
 ## todo from group id change
 
@@ -2612,35 +1486,25 @@ add a list with the triples and a plus sign to add a new triple
 
 add to the JSON import check that word and triple names in English start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
 
-## triple view
-
-add values icon and add formula icon
-
 if done remove this prompt from pending.md
 
 **next prompt**
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-**Prompt:** every number of the start page is a result (size L, two phases; re-pin, because the problem files change).
-The global warming row is the pattern; each problem file is owned by one agent, and a shared building block is
-declared verbatim as the section says.
-- phase 1, six agents in parallel, each with two of the twelve other problem files: the chain of the row as results
-  by the four rules, the calc validations target first, and the open points of its files as notes for the lead
-- phase 2, three agents in parallel: agent percent with the '%' format of a percent column with an empty cell, agent
-  reasons with the 'reasons' column extension and agent meanings with the qualifier triples of `power` and
-  `displacement`, if the developer accepts the changed phrase groups
+**Prompt:** the open points of the start page results (size M; re-pin, because the problem files change). Every
+problem file follows the pattern of the global warming row. One phase, three agents in parallel: agent percent with
+the '%' format of a percent column with an empty cell, agent reasons with the 'reasons' column extension and agent
+meanings with the qualifier triples of `power` and `displacement`, if the developer accepts the changed phrase groups
 
 ## start page
-
-each number of the start page should be a result of a calculation not a value
 
 if in the component 'table with related columns' all values of the column are in 'percent' the values of this column are formatted with '%', but if one cell is empty, that default format is used. Change it, so that all 'percent' values use the '%' format independent from the other values of the table.
 
 add column 'reasons' with sub column to start page as a second column extensions option so click ... once add the 'reason' column and the next time it will add the minor columns
 
-the global warming row of `start_page/problem_global_warming.json` is done and is the pattern for
-the other twelve problem files: seventeen of the eighteen numbers of the row are results, five target
+the global warming row of `start_page/problem_global_warming.json` is the pattern of all problem
+files: seventeen of the eighteen numbers of the row are results, five target
 values and their twelve bounds, and the file states only the inputs behind them; the loss reduction
 of the public CBAM calculation is an assumed input. a calc validation may use a
 result that the same file has reproduced before it, so the entries are ordered target first, range
@@ -2826,14 +1690,13 @@ notes: the lead asks the developer the decisions they name ("Worth a decision" 1
 "temp") and removes what is done or declined. One phase, three agents in parallel:
 - agent triple fixtures: the not found triple 998 of `del_triple_wf6` and `change_triple_wf5` in "add formula", the
   cause first, with a test
-- agent messages: "Nice to have" of "add formula": the object neutral formula message, the error workflows that
-  assert the reason and the word name of `SYSTEM_TEST_INVALID_EXP`
-- agent result page: "start page temp" 1, 2 and 4: the tests of the three loaders, the result page snapshot with data
-  and the include order
+- agent messages: "Nice to have" of "add formula": the error workflows that assert the reason and the word name of
+  `SYSTEM_TEST_INVALID_EXP`
+- agent result page: "start page temp" 1 and 4: the tests of the three loaders and the include order
 
 ## temp
 
-One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
+One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. If you disagree, that is the place to say so.
 
 ## add formula
 
@@ -2841,7 +1704,7 @@ Nine triple fixtures gained a warning that needs your judgement. workflow_write/
 
 Worth a decision
 
-1. Per-user caching has no invalidation. db_cache_page::html_by_url() returns the stored row regardless of age, nothing deletes it on a write, and the refresh job is still a TODO. That gap existed for the shared page, but it now applies to a user's own page: after their own change the redirect is live, yet the next plain view of that url can serve their pre-change page. The coding rules ask for is_outdated() on a cache — this one has none. I would add a max age or an invalidation on write before this reaches a real deployment.
+1. The page cache has no age check: a write deletes the cached pages of the user (frontend::drop_cached_pages), but db_cache_page::html_by_url() still returns the stored row regardless of age, unlike json_by_key. The coding rules ask for is_outdated() on a cache.
 
 2. end_api() no longer writes a NOK message to sys_log. That is the fix for the corrupted json and the false "end_api error" rows, but a backend rejection that is not an error now leaves no admin trace at all. If you want to keep the trace, a log_warning on the non-error branch would do it without touching the response.
 
@@ -2853,20 +1716,15 @@ Nice to have
 
 - frontend::session_user_id() reads $_SESSION inside a function. It follows the documented boundary pattern of session_token() right above it, but
 
-1. A formula message in a generic class. msg_id::FORMULA_VALIDATION_FAILED is added inside web/sandbox/db_object.php, so a word or value load carrying a refresh would tell the user "the entered formula cannot be used". Either the text becomes object-neutral or the branch moves to the formula class.
 2. The error workflows cannot fail. They only snapshot, so the silent no-message state above passes as "correct". Once the message works, each error workflow should assert the reason (assert_text_contains), which is also what makes them a regression test rather than a recording.
 3. url_var::REFRESH_TERMS now has no producer in the frontend (only refresh_from_url still accepts it). It is a url contract, so I left it — your call whether to retire it.
 4. formula_names::SYSTEM_TEST_INVALID_EXP names a word ("System Test Word Never Added") from formula_names; a reserved-but-never-added name would sit better in word_names.
-5. docs/llm/pending.md still carries your temp notes and the item on line 21 that this change implements.
-6. Process slip on my side: I removed the dead form_button_refresh line from both yaml files with a python one-liner instead of the Edit tool. The result is one clean line per file, but it broke your "Edit/Write only" rule.
 
 ## start page temp
 
 The new snapshot does not actually show a longer list. 1_start_page_more.html is line-for-line identical to 1_start_page.html apart from the 9dls=20 back targets and the dls=20 carried into the full-table link — same six table rows. So the test pins the url and mapping contract, which is the regression, but not the "more rows" behaviour, because the test cache's value list is shorter than the short limit. The _more name may mislead a later reader; making it a real witness needs a start-page fixture with more rows than the short limit.
 
 1. Should fix — the three backend loaders are untested. The regenerated coverage doc lists load_values_used, load_results_used and load_formulas_used each with 0 unit test calls (code_test_coverage.md:1512-1523). The three renderers and name_link are covered (2 → 4 calls), but the new selection rule — source-group phrases matched with and, fallback to the result phrases matched with or — is the core behaviour of this change and nothing exercises it. The project's pattern for a db loader is an sql-creation test (result_list_tests::assert_sql_by_val), which would fit here.
-
-2. Should fix — no snapshot shows the page with data. system_views_read_tests renders only views::RESULT_OVERWRITE by factory, and views_by_id/result/9_… is built from an url, so its three columns are empty. The committed baseline therefore never shows a filled Values/Formulas/Results column, and a regression in the api emit or the mapping would not change any snapshot. An assert_view_by_factory(views::RESULT, …) case would close that.
 
 3. Nice to have — the result changes query has no table filter. The new fixture change_value_by_res_prime_last.sql selects change_values_prime by group_id alone (inherited from the value path), so a value change with the same id would show up in a result's changes tab. Result ids carry the formula id, so the id spaces do not collide today — worth a comment or an explicit table filter if that ever changes.
 
@@ -2885,34 +1743,30 @@ if done remove this prompt from pending.md
 **Prompt:** fill the configuration, job and skeleton views (size L, two phases; re-pin, because the view ids are pinned
 after the reset). `sys_log_detail` is part of the admin dashboard prompt; quarantine stays postponed. Each agent adds
 its own functions to `web/component/execute/system_page.php` and a page test per view.
-- phase 1, five agents in parallel: agent config with the three configuration views and the config change request
-  job, agent language, agent log with the change log views, agent import export and agent find lists with the find
+- phase 1, five agents in parallel: agent config with the user and the admin configuration view and the config change
+  request job, agent language, agent log with the change log views, agent import export and agent find lists with the find
   and object list views of "fill the language, log, ..."
 - phase 2, two agents in parallel: agent jobs with `job_detail`, `calc_status` and the job placeholders, and agent
-  placeholders with `word_find`, `search_full`, `undo`, `error_update`, `system_log` and `verbs` (fill or remove); the
-  lead pins the view ids and the `views::ADMIN_MASK_IDS` after the re-pin run
+  placeholders with `search_full`, `undo`, `error_log` and `system_log` (fill or remove); the lead pins the view ids
+  after the re-pin run
 
 ## fill the configuration and quarantine views
 
-the views user_config, system_config, admin_config, user_quarantine and all_quarantine still show only the "system body
-not yet available" hint; the user_jobs and all_jobs views are filled
-
-pin the view ids of user_config, system_config, admin_config, user_quarantine, all_quarantine, user_jobs and all_jobs
-after the next reset and add admin_config, all_quarantine and all_jobs to views::ADMIN_MASK_IDS
+the views user_config, admin_config, user_quarantine and all_quarantine still show only the "system body not yet
+available" hint
 
 user configuration - show the standard user configuration and the overwrites of the user (config_numbers::load_usr_cfg via api/config)
 
-system configuration - show the system configuration read only with the possibility to request changes; a change request
-is saved as a job of a new job type 'config change request' with the config phrase and the requested value as parameter,
-so that the admin sees and handles it in the all jobs view
+system configuration - the system configuration is shown read only (`config_tree`); add the possibility to request
+changes: a change request is saved as a job of a new job type 'config change request' with the config phrase and the
+requested value as parameter, so that the admin sees and handles it in the all jobs view
 
 admin system configuration - show the full system configuration to an admin with the possibility to adjust it (api/config
 has no write path yet)
 
 user quarantine and all quarantine - postponed until it is defined what quarantine is and how data is moved there
 
-the existing job views job_async, job_control and job_check and the admin delayed jobs component still show placeholders
-or no data
+the existing job views job_async, job_control and job_check still show placeholders
 
 ## fill the language, log, import, export, process, find and list skeleton views
 
@@ -2921,8 +1775,7 @@ these system views show only the "system body not yet available" hint:
 - system log: sys_log_detail (link target of error_log, error_update and the admin dashboard)
 - change log: change_log_user (with undo per row), change_log_recent, object_history (incl. api/changeLogLinkList),
   change_detail (old and new value with revert)
-- import: import_preview (like confirm_add), import_result (linked from user_jobs), import_url, import_wikidata
-  (import_wikidata.php)
+- import: import_result (linked from user_jobs, today only its title), import_url
 - export: export_selections (the saved selections of the export forms), export_object, export_ready (download of a job)
 - process: job_detail (link target of user_jobs and all_jobs), calc_status (outdated results and calculation progress)
 - find: value_find (api/valueList), ref_find (by external id), find_duplicates (admin, input for quarantine)
@@ -2931,12 +1784,9 @@ these system views show only the "system body not yet available" hint:
 job_detail and calc_status use a user as the main object in the view mapping, because the unit test url mapper has no
 show url for a job yet
 
-adding the 28 views and their title components at the end of system_views.json shifted the ids of all base views by 28
-(views.php) and of the components after them by 28 (components::SOLUTION_PRIO_TITLE_ID); confirm the view ids from
-unit/view/list.csv and the component ids from unit/component/list.csv after the next reset
-
-also fill or remove the existing placeholder views word_find, search_full, undo, error_log, error_update, system_log
-(no components) and verbs (no components)
+also fill or remove the existing placeholder views search_full, undo, error_log (the entry by its id is declined, see
+the end of `pending_prio_2.md`) and system_log (no components); the verbs view is noted at the end of
+`pending_prio_2.md`
 
 if done remove this prompt from pending.md
 
@@ -2991,8 +1841,8 @@ add to the admin menu a page that shows the system errors
 
 ## main pages
 
-in the logout page add an OK button that calls the back page from the url without token and make the "you have been
-logged out" bigger
+in the logout page (`system_page::logout_body`) label the back button 'OK' instead of `FORM_FIELD_BACK` and make the
+"you have been logged out" bigger than a plain `p`
 
 ## maybe to fix:
 
@@ -3006,14 +1856,14 @@ if done remove this prompt from pending.md
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
-**Prompt:** cleanup scripts, value_base abstract and the open points of the object pages (size L). "value page tabs" and
-"component page tabs" are notes: the lead keeps only their open points. One phase, six agents in parallel:
+**Prompt:** cleanup scripts, value_base abstract and the open points of the object pages (size L). One phase, six
+agents in parallel:
 - agent scripts: the check scripts of "cleanup" (default page of each main class, the shown fields, the queries
   without a limit) and the open API check in `/test/test.php`
 - agent docs speed: why the diff of `docs/code_functions_all.md` takes long
 - agent views menu: the edit link of each alternative view in the edit icon menu and the view selector link of the
   word default page
-- agent value: `value_base` abstract and the undo and apply icons of a text, time and geo value
+- agent value: `value_base` abstract
 - agent counts: the count query of "verb default view" and "user page", and whether the triple name fields are needed
 - agent change log: the empty field name of `change_log_list::table_field_to_query_name` for all branches, with the
   renamed prepared statements and their fixtures
@@ -3030,12 +1880,14 @@ except the fields that are explicitly excluded
 create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not
 have a unique db id in the where condition.
 
-add the check of the open_api specification to /test/test.php
+complete the check of the open_api specification in /test/test.php: `api_tests::run_openapi_test` checks only that a
+controller exists for each tag, the reverse check is a `TODO Prio 2`
 
 in the edit icon menu add after the name of each alternative view a link to edit the view and make the view name a
 link to the view default page
 
-fix the view selector link in the word_default page
+remove the component of the view selector link (`RELATED_SYSTEM_VIEW_SELECTOR`) from the word_default view: it renders
+nothing since the view versions are part of the edit menu of the navbar
 
 make value_base abstract: value_base is only the shared parent of value, value_time, value_text, value_geo and
 value_time_series, but it can still be created, and because the table name is derived from the class a value_base
@@ -3057,23 +1909,6 @@ sets a name for each of them: the generated name lands in triple_name only, so a
 user has given an own name cannot tell. check if the import should fill name_generated and if the two fields are needed
 at all beside triple_name
 
-### value page tabs
-
-the value default view now has the 'value tab box' component, so the value page shows the views that can show a value
-(all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
-
-the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::
-db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the
-apply icon of the 'others' tab
-
-the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new
-cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no
-common parent and the value needs the same code; a third hierarchy would use the same helper
-
-adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two
-components of company.json and companies.json move from 347/348 to 348/349 in
-src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
-
 ## user page
 
 a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that
@@ -3084,25 +1919,11 @@ already builds that union per user and would only have to keep the per-table cou
 
 ## component page tabs
 
-the component default view now has the 'component tab box' component with the changes and the my tab; it has no views
-tab, because the views that use the component are listed by the separate 'component views' component of the same page
-
-api/component/index.php did not read the url flags at all, so it always sent api_json ([]) and the owner of a component
-was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses
-api_type_list::from_url_array like the triple and formula endpoint
-
-web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and
-source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source
-page, which are separate pending items
-
 change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs
-'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the
-formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty
-field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs
-its own change
-
-adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the
-value tab box did before
+it although an empty field name is the normal case of load_obj_last; the same wart exists for the triple, verb, group,
+value, formula ('_of_frm'), source, view and component branches, whereas the word, result, ref, user and type branches
+handle the empty field name properly - fixing all of them renames the prepared statements and churns the committed
+fixtures, so it needs its own change
 
 if done remove this prompt from pending.md
 
@@ -3115,10 +1936,9 @@ if done remove this prompt from pending.md
   groups of phase 2; ask the developer the items of "Worth deciding"
 - phase 2, up to five agents in parallel, each with one group: agent reset (the silent not-ok of the forced reset,
   `Message::add_err`, the type of a no update import and the dropped fill results), agent buttons (the button review,
-  `dsp_edit`, the tooltips with the object name, the dead code and the test constants in `web/`), agent
-  lists (the verb list add button, `type_list::get`, the docblocks, `text_h4`, the sort test), agent fixtures (the
-  volatile change time, the half regenerated fixtures, the untracked files) and agent views (the last component
-  without `div_row`, the owner field, the view relation position, the empty changes tab, the missing translations)
+  `dsp_edit`, the tooltips with the object name and the dead code in `web/`), agent lists (the verb list add button,
+  the docblocks, `text_h4`, the sort test), agent fixtures (the snapshot that was never regenerated) and agent views
+  (the last component without `div_row`, the owner field, the view relation position, the empty changes tab)
 
 ### more
 
@@ -3147,8 +1967,6 @@ review buttons
 
 deprecate dsp_edit
 
-deprecate http_old
-
 review $msg
 
 repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs,
@@ -3157,9 +1975,6 @@ term_views and any missing main or link class
 Worth fixing
 formula button tooltips lost their object name
 button is now btn_edit () with no $url_arr at view.php:171 and word.php:751.
-Production web/ code now includes and reads test constants. web/view/view.php:67 and web/word/triple_list.php:51 add a real include_once test_paths::CONST . 'word_names.php' and hardcode word_names::ZH_ID as the back target. list_sort.php extends the same pattern to triple_names::GLOBAL_PROBLEM_ID — and there the include_once is commented out while the use is active, so it only works via the autoloader. triple_list.php:147 has a TODO Prio 0 admitting the $
-url_arr is a placeholder; view.php:145 has none. Either way "Zurich" as the back link on a generic view navbar is a
-placeholder, not behaviour.
 Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back (...) but no longer
 used, since btn_edit ()/btn_del () build their own url. The buttons also lost the word= and back context those urls
 carried.
@@ -3182,10 +1997,6 @@ allow_duplicates, $msg), which matches ListOfIdObjects and sandbox_list_named bu
 obj, $msg, $allow_duplicates). The new order is the one the rules actually require (a user_message parameter must be
 required, so it cannot follow an optional one) — the two older siblings still have
 Message $msg = new Message (). The doc should either not name an order or say the new one is the target.
-type_list::get () now has a false alarm. It logs log_err ('probably ... are duplicate code_id') whenever count ($this->
-hash) != count
-($this->lst) — which is exactly the state a legitimately duplicated list is in, since hash is keyed by code_id. It only fires if someone calls get () on such a list, but the check contradicts the feature just added.
-url_back () lost its docblock (html_base.php:730-760). base_url_clean () was inserted between the existing /** … @return string the created url */ block and function url_back (, so that block now documents the private helper (which has its own docblock right below it) and url_back () is undocumented. Moving base_url_clean () above the docblock fixes it.
 sort_by_name ()'s docblock is now false (type_list.php:403). It justifies returning a copy with "because get () maps the position in the hash to the position in the list" — but get () no longer does that, it was changed in this same diff. Returning a copy is still right (a preloaded type list is shared for the whole request and must not be reordered under other holders), but the stated reason has to be the new one.
 text_h4 () breaks the pattern of its siblings. text_h1/2/3 pass the matching level as the non-bootstrap tag (H2,H1 / H4,H2 / H5,H3); text_h4 passes self::H6, self::H3, so with UI_USE_BOOTSTRAP = false an h4 renders as <h3>. Invisible today because bootstrap is on — the snapshot correctly shows <h6>.
 The snapshot does not actually exercise sort_by_impact (). Every verb from load_dummy () has impact 0.0, so the short and more versions fall through to the name tie-break and render alphabetically — identical to what sort_by_name () would produce. The new sort is unproven by the committed test; a fixture with distinct impacts (or an assert on sort_by_impact () directly) would close that.
@@ -3193,9 +2004,6 @@ $url_arr is unused in both verb_list_ui_tests.php:64 and word_list_ui_tests.php:
 word_list_ui_tests.php / word_list.html are unrelated to this change. The only effect is that the three stylesheet hrefs
 became absolute (http://localhost/…) because $base_url, $lan were added to its html_page_test call. Fine in itself, but
 it is a separate concern riding along — worth a glance that you want it in this commit.
-src/test/resources/import/carbon_leakage_effect.json is staged and unrelated — 244 new lines, referenced by no test and
-no PHP file, and nothing in this change set produces it. It looks like it wandered in from other work. Either it belongs
-to a different commit or its consumer is still missing.
 The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system
 title user settings, which lands it at component id 98 and shifts every later component id by one:
 unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end
@@ -3217,15 +2025,6 @@ The cause is pre-existing, not introduced here: view_exe::show () wraps a row on
 bare $result .= $row; with no div_row (). So the last component of any view has always been unwrapped — in the committed
 snapshot it was user system errors that lacked the div, and now it is the new one. Fixing the flush to use div_row ()
 with the same style resolution would wrap both, and would change the tail of many view snapshots.
-The two change-log api fixtures now carry a per-run change_time. change_log_list_word_1_word_name.json gained
-"change_time": "2026-08-18T09:10:19+00:00", which the committed baseline did not have. assert_api_compare () strips it
-before comparing (json_remove_volatile → change_log::FLD_TIME), so tests still pass — but the stored file now holds a
-timestamp that differs on every reset, so these two files will churn on each run.
-Cause: the update_files_with_not_yet_fixed_db_id () helpers I added last commit write the raw api response
-($lib->json_for_dev ($created)) without passing it through json_remove_volatile () first. The type_list_check () pattern
-I copied has the same property (its header timestamp also moves each run), so this is consistent with the existing
-code — but for the change log it bakes a volatile value per row where there was none. Stripping volatile fields before
-writing would make these fixtures stable.
 The files also switched from 2-space to 4-space indentation, confirming a different writer than whatever produced the
 committed versions.
 rest_call::api_call ()
@@ -3256,7 +2055,6 @@ drops null values,
 so $obj->get_user ()->name () is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
 view_relation start position is now an empty field. Removing the 'position missing missing' placeholder was right, but test_mappers::view_relation_url doesn't carry url_var::POSITION (and view_relation has no to_url_array override), so 43_view_relation_update_1.html renders the field with no value. Component link works (value="1"), formula link is fully wired. That is exactly the "unexplained asymmetry" the fix-the-pattern rule warns about — one of the three is wired, one reads from an existing url var, one can't.
 Empty "Changes" tab on the formula link page. change_log_table_pure returns a table with when / who / what headers even with zero rows, so tab_box doesn't drop it. 116_formula_link_1.html shows a Changes tab containing only headers.
-form_field_formula_link_prio has no German translation. I changed the en text to "Priority"; de.yaml has no entry for it at all (nor for form_field_view_term_link_prio / form_field_component_link). Pre-existing, but the rule is en and de.
 Seed component ids shifted. The three new components in base_views.json pushed Cash Flow Statement 344→347 and company with ratios 345→348. list.csv is regenerated and no *_ID const pins either, so nothing broke — reporting it rather than absorbing it silently, as the json rules require.
 Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list (). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
 Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php).
@@ -3305,26 +2103,8 @@ ames_one_line () / the sort closures type the entries as verb|type_object while 
 ref_type extends type_object, so it works, but the two unions should read the same.
 name_tip () entries without a description render as a bare <span>name</span> — a wrapper with neither class nor title.
 Only "is a" carries a tooltip in the snapshot, since load_dummy () sets no descriptions.
-Still open from earlier: get () opens with count ($this->hash) != count ($this->lst) and logs probably … are duplicate
-code_id, which is a false alarm on a duplicates-allowed list and fires on every call. It is the last consumer of the
-parallel-arrays assumption the rest of this diff removed.
 
-Fixtures are half-regenerated — rerun before committing. Two regeneration runs are mixed in the tree (28-08 22:25 and
-29-08 10:05):
-
-- api/type_lists/type_lists.json is from the older run: its 13 system sub title usage number entries lack
-  ui_msg_value_exception: 0, while ui_config.json has all 13.
-- views_by_id/component/34_component_update_1.html (older run) still renders Used 0 times, while its sibling
-  views_by_object/component/component_edit_component_1.html renders Not used.
-- views_by_object/formula/formula_default_formula_21.html / _26.html still carry the live 29-08-2026 10:31; they pick up
-  the fixed test time only on the next run.
-- Two snapshots from July still show Used 0 times and were never regenerated:
-  workflow/change_triple_by_name_wf8/wf8_show_edit.html and
-  workflow_write/change_word_wf2/wf2_show_edit_back_edit_save_cancel_edit_save_confirmed_edit.html (the second is one of
-  the orphaned wf snapshots already listed in pending_prio_2.md).
-
-api/result/ is untracked — needs git add, and the served copy in /var/www/html needs the new endpoint plus the backend
-changes before the http api tests run.
+- workflow/change_triple_by_name_wf8/wf8_show_edit.html still shows Used 0 times and was never regenerated.
 
 api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_all_val. Nothing in this batch removes
 either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the
@@ -3336,9 +2116,7 @@ if done remove this prompt from pending.md
 
 **full test run: /test/test.php**
 
-**Prompt:** alias direction check and the test data set (size M). "start page" below lists the basic steps of the start
-page, which are done (the start page shows the global issues by impact with the column tiers): the lead checks and
-removes it. One phase, two agents in parallel:
+**Prompt:** alias direction check and the test data set (size M). One phase, two agents in parallel:
 - agent alias: `triple_list::validate_alias_direction` with a positive and a negative test
 - agent test data: the filled `$dto` of `solution_prio.json` from the `/test/create/` factories
 
@@ -3348,17 +2126,10 @@ create in triple list a 'validate_alias_direction' function that checks if the a
 phrase
 
 based on the /test/create/ class function and the solution_prio.json create a set of test data (a filled $dto object
-where the database id is taken from the /test/create/ class functions and the rest e.g. the val)
-
-## start page
-
-the basic steps to show the start page are
-
-- table with 'global issues'
-- sort global issues by impact which is htp
-- get mayor, main and minor columns linked to 'global issues' via triple
-- the order of the column may differ and is relative e.g. 'per cent is after number'
-- the number of rows to show is taken from the config but can be overwritten
+where the database id is taken from the /test/create/ class functions and the rest e.g. the val); the factories of the
+parts exist (`test_values::value_list_solution_prio`, `test_results::result_list_solution_prio*`,
+`test_terms::term_list_solution_prio`, `test_formulas::list_solution_prio`), one factory that returns the filled `$dto`
+is missing
 
 if done remove this prompt from pending.md
 
@@ -3369,7 +2140,7 @@ if done remove this prompt from pending.md
 # move to Prio 2
 
 **Prompt:** the condition formula of a word and a triple, the user picture and the language fields (size L, two phases;
-re-pin, because the database structure changes with a minor version raise and a `db_check` upgrade).
+re-pin, because the database structure changes in the setup sql and in `db_check::db_upgrade_0_0_4`).
 - phase 1, one agent: "word db table" and "triple db table", the field `condition_formula_id` of both tables with the
   rename, the sql fixtures and the upgrade; stop for a run with re-pin
 - phase 2, four agents in parallel: agent triple view ("triple add and edit view" and "triple" of "language"), agent
@@ -3595,8 +2366,8 @@ log_err($msg_txt);
 
 ### message reporting check script
 
-write a php script that checks if all error and warning messages at least can be shown to the user.
-The script should check the all text messages are unique 
+write a php check that all text messages are unique; that every msg_id has a text in each main language is checked
+by `coding_rule_tests::translation_file_tests`
 
 ## this document
 
@@ -3620,10 +2391,9 @@ prompt together with the sections it names, which follow the block. Every prompt
       seed data or the database structure changes, so that the ids shift; the first `/test/test.php` with
       `files::AUTO_RE_PIN_OBJECT_ID` and `files::AUTO_UPDATE_TEST_FILES` true, the last with both false
 
-**Prompt:** calculator editor JSON tab and Swiss NPP (size L; re-pin, because the NPP data gets the CO2-eq costs).
-One phase, three agents in parallel:
-- agent editor: "JSON tab" and the share button of the calculator editor in `script/calculator_editor.js`
-- agent npp: "Swiss NPP": the rest of `npp_ch_vote_editor_diff.md` in the editor preview and the CO2-eq reduction
-  costs in the NPP use case json
+**Prompt:** Swiss NPP and the share buttons (size L; re-pin, because the NPP data gets the CO2-eq costs). One phase,
+three agents in parallel:
+- agent editor: the share button of the calculator editor in `script/calculator_editor.js`
+- agent npp: "Swiss NPP": the CO2-eq reduction costs in the NPP use case json
 - agent share: the "Share assumptions and vote" button of the calculator page
 

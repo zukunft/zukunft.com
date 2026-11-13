@@ -182,11 +182,7 @@ class value_list extends ListBase
     public array $tier_names = [];
     // the csv of the table of this list if the url asks for the export, which the entry point sends as a download
     public string $table_csv = '';
-    const string CSV_MIME_TYPE = 'text/csv; charset=utf-8';
-    const string CSV_FILE_EXTENSION = '.csv';
     const string CSV_NUMBER_SEPARATOR = '; ';
-    // the first chars with which a spreadsheet starts a formula
-    const string CSV_FORMULA_START = '/^[=+\-@\t\r]/';
     // the entries of the column menu per table design (def::TABLE_DESIGNS)
     const array TABLE_DESIGN_NAMES = [
         words::PLAIN => msg_id::TABLE_DESIGN_PLAIN,
@@ -821,7 +817,7 @@ class value_list extends ListBase
             }
             $rows[] = $row;
         }
-        return $this->csv_text($rows);
+        return $lib->csv_text($rows);
     }
 
     /**
@@ -855,33 +851,6 @@ class value_list extends ListBase
             $numbers[] = (string)($val->number() ?? $val->text_value() ?? '');
         }
         return implode(self::CSV_NUMBER_SEPARATOR, $numbers);
-    }
-
-    /**
-     * @param array $rows per row the texts of the cells
-     * @return string the csv text, where a text that a spreadsheet would run as a formula is marked as text
-     */
-    private function csv_text(array $rows): string
-    {
-        $stream = fopen('php://memory', 'r+');
-        foreach ($rows as $row) {
-            fputcsv($stream, array_map(fn($txt) => $this->csv_safe_text($txt), $row),
-                library::CSV_DELIMITER, library::CSV_ENCLOSURE, '');
-        }
-        rewind($stream);
-        $result = stream_get_contents($stream);
-        fclose($stream);
-        return $result;
-    }
-
-    /**
-     * @param string $txt the text of a cell e.g. a user given phrase name
-     * @return string the text, with a leading apostrophe if it is no number and a spreadsheet would run it as a formula
-     */
-    private function csv_safe_text(string $txt): string
-    {
-        $is_formula = (!is_numeric($txt) and preg_match(self::CSV_FORMULA_START, $txt) === 1);
-        return $is_formula ? "'" . $txt : $txt;
     }
 
     /**

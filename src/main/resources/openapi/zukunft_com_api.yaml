@@ -1487,8 +1487,28 @@ paths:
     get:
       tags:
         - export
-      description: for the json based import to a zukunft.com pod
+      description: the export of the phrases given by name or by id with all related phrases that the user may read, as json for the import to a zukunft.com pod or as xml, or the csv of the results of the formulas given by name
       operationId: exportJson
+      parameters:
+        - name: wl
+          in: query
+          description: the names of the phrases as one csv line e.g. Pi,"one, two"; for the csv format the names of the formulas
+          required: false
+          schema:
+            type: string
+        - name: pl
+          in: query
+          description: the comma separated ids of the phrases, negative for a triple
+          required: false
+          schema:
+            type: string
+        - name: ef
+          in: query
+          description: the format, efj for json (default), efx for xml or efc for the csv of the formula results
+          required: false
+          schema:
+            type: string
+            enum: [efj, efx, efc]
       responses:
         "200":
           description: |-
@@ -2747,6 +2767,14 @@ components:
             - dev
             - test
             - system
+        source_id:
+          type: integer
+          description: the source that the user has used last, preselected for a new value without a source
+          example: 3
+        verb_id:
+          type: integer
+          description: the verb that the user has used last, preselected for a new triple without a verb
+          example: 2
     ChangeLog:
       type: object
       required:

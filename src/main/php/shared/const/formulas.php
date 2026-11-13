@@ -64,7 +64,8 @@ class formulas
         formula_names::SYSTEM_TEST_SCALE_K,
         formula_names::SYSTEM_TEST_SCALE_TO_K,
         formula_names::SYSTEM_TEST_SCALE_MIO,
-        formula_names::SYSTEM_TEST_SCALE_BIL
+        formula_names::SYSTEM_TEST_SCALE_BIL,
+        formula_names::SYSTEM_TEST_NO_RESULT
     );
 
     // array of formula names that used for db read testing and that should not be renamed

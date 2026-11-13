@@ -272,7 +272,7 @@ class view extends view_exe
         // $result .= '      <li><a href="' . $html->url_with_back(api::FIND_SCRIPT, $url_arr) . '"><span class="glyphicon glyphicon-search"></span></a></li>';
         $result .= '      <li class="nav-item dropdown">';
         $result .= '        <a class="nav-link dropdown-toggle" ';
-        $result .= '          href="' . $html->url_with_back('/http/view_select.php?id=' . $this->id, $url_arr) . '"';
+        $result .= '          href="#"';
         $result .= '          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         $result .= '          '.$this->name.'';
         $result .= '        </a>';

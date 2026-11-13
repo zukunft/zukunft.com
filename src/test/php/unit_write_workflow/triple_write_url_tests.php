@@ -96,6 +96,15 @@ class triple_write_url_tests extends triple_url_tests
         // persisted: add creates the test triple, change modifies it and del removes it again - the add
         // must run first because the change and delete workflows load the triple it created by name
         $this->add_triple_workflow(workflows::WF_ADD_TRIPLE_NBR, true);
+        // the confirmed add makes the verb of the triple the default of the next triple (see user::save_last_used)
+        $test_name = 'the verb of the added triple is the last used verb of the user';
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->verb_id(), $trp->get_verb_id());
+        $test_name = '... but not of another user';
+        $usr2_db = $t->user_from_db($t->usr2);
+        $t->assert_null($test_name, $usr2_db->verb_id());
         $this->change_triple_workflow(workflows::WF_CHANGE_TRIPLE_NBR, true);
         $this->del_triple_workflow(workflows::WF_DEL_TRIPLE_NBR, true);
 
@@ -109,6 +118,8 @@ class triple_write_url_tests extends triple_url_tests
 
         // cleanup - fallback delete in case a workflow did not persist as expected
         $this->cleanup_test_triples($t);
+        // the workflows and the rename by user 2 have set the verb of the test triple as default
+        $t->cleanup_last_used();
 
     }
 

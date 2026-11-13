@@ -46,22 +46,37 @@ namespace Zukunft\ZukunftCom\main\php\cfg\export;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::EXPORT . 'xml.php';
 include_once paths::SERVICE . 'config.php';
+include_once paths::SERVICE_EXPORT . 'json_io.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\service\export\json_io;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class export
 {
@@ -127,6 +142,8 @@ class export
                         $phr_lst = $full_lst;
                     }
                 }
+                // the expansion reads the triples of every user, so a non-public phrase of another user goes
+                $phr_lst->filter_readable_by($usr);
 
                 // 1.1. collect all personal values - value that cannot be seen by other user
 
@@ -134,11 +151,13 @@ class export
                 //    e.g. if carrots are selected get the climate gas emissions per weight percent
                 log_debug('export->get values');
                 $val_lst = $phr_lst->val_lst($msg);
+                $val_lst->filter_readable_by($usr);
 
                 // 3. get all words and triples needed for the values that should be exported
                 //    e.g. carrots, climate gas emission (CO2, methane), weight, percent
                 log_debug('export->get words and triples');
                 $phr_lst->merge($val_lst->phr_lst_all($msg));
+                $phr_lst->filter_readable_by($usr);
                 $wrd_lst = $phr_lst->wrd_lst_all($msg);
 
                 // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
@@ -171,7 +190,7 @@ class export
                 $exp_sources = array();
                 if ($source_lst != null) {
                     foreach ($source_lst as $src) {
-                        if (isset($src)) {
+                        if (isset($src) and $src->is_readable_by($usr)) {
                             $exp_src = $src->export_json($msg, []);
                             if (isset($exp_src)) {
                                 $exp_sources[] = $exp_src;
@@ -200,6 +219,7 @@ class export
                 //    after the values so that the export matches the import file order
                 log_debug('export->get formulas');
                 $frm_lst = $phr_lst->frm_lst($msg);
+                $frm_lst->filter_readable_by($usr);
                 $exp_formulas = array();
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
@@ -218,17 +238,19 @@ class export
                 $view_lst = $wrd_lst->view_lst($msg);
                 $exp_view_lst = array();
                 foreach ($view_lst as $view) {
-                    $exp_view_lst[] = $view->export_json($msg, []);
+                    if ($view->is_readable_by($usr)) {
+                        $exp_view_lst[] = $view->export_json($msg, []);
+                    }
                 }
                 $export_obj->views = $exp_view_lst;
 
                 // 10. just for validating the import: add all formula results to the export
                 log_debug('export->get formula results');
                 $exp_results = array();
-                $frm_lst = $phr_lst->frm_lst($msg);
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
                         $res_lst = $frm->get_res_lst($msg);
+                        $res_lst->filter_readable_by($usr);
                         if ($res_lst->lst() != null) {
                             foreach ($res_lst->lst() as $res) {
                                 $exp_res = $res->export_json($msg, []);
@@ -248,6 +270,117 @@ class export
 
         log_debug('export->get ... done');
         return $export_obj;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * the export of the phrases of an api request in the requested format e.g. for the download of an export view
+     *
+     * @param array $phr_names the names of the selected phrases (url_var::WORDS); for the csv the names of the formulas
+     * @param array $phr_ids the ids of the selected phrases (url_var::PHRASE_LIST), a triple with its negative id
+     * @param string $format one of the url_var::EXPORT_FORMAT_* values
+     * @param user_message $msg with the requesting user, whose readable data is exported, and to report why nothing is exported
+     * @return string the json, the xml or the csv; empty if nothing has been exported, which $msg explains
+     */
+    function file_text(array $phr_names, array $phr_ids, string $format, user_message $msg): string
+    {
+        $result = '';
+        if (!array_key_exists($format, rest_ctrl::EXPORT_MIME_TYPES)) {
+            $msg->add(msg_id::EXPORT_FORMAT_UNKNOWN, [msg_id::VAR_VALUE => $format]);
+        } elseif ($format == url_var::EXPORT_FORMAT_CSV) {
+            $result = $this->formula_result_csv($phr_names, $msg);
+        } else {
+            $phr_lst = $this->phrase_list_by_request($phr_names, $phr_ids, $msg);
+            if ($phr_lst->is_empty()) {
+                $msg->add(msg_id::EXPORT_PHRASE_MISSING, []);
+            } elseif ($format == url_var::EXPORT_FORMAT_XML) {
+                $result = new xml($msg->usr)->export_by_phrase_list($phr_lst, $msg);
+            } else {
+                $result = new json_io($msg->usr, $phr_lst)->export($msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the csv of the results of the formulas given by name: per formula a block with the formula name as the head of
+     * the number column and one row per result named by its phrases, the blocks separated by an empty line like the
+     * csv of the value tables of a page
+     *
+     * @param array $frm_names the names of the formulas whose results are exported
+     * @param user_message $msg with the requesting user, whose readable results are exported, and to report a name that is no formula
+     * @return string the csv text; empty if a name is no formula, which $msg explains
+     */
+    function formula_result_csv(array $frm_names, user_message $msg): string
+    {
+        $lib = new library();
+        $frm_lst = new formula_list($msg->usr);
+        if ($frm_names == []) {
+            $msg->add(msg_id::EXPORT_FORMULA_NAME_MISSING, []);
+        } else {
+            $frm_lst->load_by_names($frm_names, $msg);
+            $frm_lst->filter_readable_by($msg->usr);
+        }
+        $blocks = [];
+        foreach ($frm_names as $frm_name) {
+            $frm = $frm_lst->get_by_name($frm_name, $msg);
+            if ($frm == null) {
+                $msg->add(msg_id::EXPORT_FORMULA_MISSING, [msg_id::VAR_FORMULA_NAME => $frm_name]);
+            } else {
+                $blocks[] = $lib->csv_text($this->formula_result_rows($frm, $msg));
+            }
+        }
+        $result = '';
+        if ($msg->is_ok()) {
+            $result = implode("\n", $blocks);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $phr_names the names of the selected phrases
+     * @param array $phr_ids the ids of the selected phrases, a triple with its negative id
+     * @param user_message $msg with the requesting user for whom the phrases are loaded
+     * @return phrase_list the selected phrases with all related phrases (phrase_list::are) that the requesting user may read
+     */
+    private function phrase_list_by_request(array $phr_names, array $phr_ids, user_message $msg): phrase_list
+    {
+        $phr_lst = new phrase_list($msg->usr);
+        if ($phr_names != []) {
+            $phr_lst->load_by_names($phr_names, $msg);
+        }
+        if ($phr_ids != []) {
+            $id_lst = new phrase_list($msg->usr);
+            $id_lst->load_by_ids(new phr_ids($phr_ids), $msg);
+            $phr_lst->merge($id_lst);
+        }
+        if (!$phr_lst->is_empty()) {
+            $phr_lst = $phr_lst->are($msg);
+        }
+        // the related phrases are read for every user, so the readable phrases are selected after the expansion
+        $phr_lst->filter_readable_by($msg->usr);
+        return $phr_lst;
+    }
+
+    /**
+     * @param formula $frm the formula whose results are exported
+     * @param user_message $msg with the requesting user, whose readable results are exported
+     * @return array the csv rows: the head with an empty corner and the formula name, then per result its phrase names and its number, sorted by the phrase names
+     */
+    private function formula_result_rows(formula $frm, user_message $msg): array
+    {
+        $res_lst = $frm->get_res_lst($msg);
+        $res_lst->filter_readable_by($msg->usr);
+        $rows = [];
+        foreach ($res_lst->lst() as $res) {
+            $rows[] = [$res->name(), (string)$res->number()];
+        }
+        sort($rows);
+        return array_merge([['', $frm->name()]], $rows);
     }
 
 

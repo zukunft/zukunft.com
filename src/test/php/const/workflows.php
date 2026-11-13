@@ -387,6 +387,23 @@ class workflows
     const string WF_REF_ROWS_FORM = 'ref_rows_form';
     const int WF_REF_ROWS_FORM_NBR = 46;
 
+    // the wikidata_import workflow name used for the snapshot folder and the test subheader: the user presses
+    // the refresh icon of the wikidata reference of the triple Zurich (city), sees the import preview and
+    // confirms it; the backend reads the live wikidata entity, so only the triple page before the refresh is a
+    // snapshot, because the values of wikidata can change (see wikidata_write_tests)
+    const string WF_WIKIDATA_IMPORT = 'wikidata_import';
+    const int WF_WIKIDATA_IMPORT_NBR = 47;
+
+    // the change_verb workflow name used for the snapshot folder and the test subheader: the user changes
+    // the name in formulas of the test verb in the edit view and confirms it; a save without a change
+    // shows no field change
+    const string WF_CHANGE_VERB = 'change_verb';
+    const int WF_CHANGE_VERB_NBR = 48;
+
+    // snapshot file name marker for a save without a change, e.g. the 'unchanged' in
+    // 'wf48_edit_unchanged_save' where save is pressed on the edit view without changing a field
+    const string STEP_UNCHANGED = 'unchanged';
+
     /**
      * the user process step that a user reaction action triggers
      *

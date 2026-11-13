@@ -1668,66 +1668,39 @@ class system_form extends component
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE,
-            msg_id::FORM_FIELD_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE, msg_id::FORM_FIELD_REVERSE, $dbo->reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed plural reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_plural_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->plural_reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE_PLURAL,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE_PLURAL, msg_id::FORM_FIELD_PLURAL_REVERSE, $dbo->plural_reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used in a formula
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed name in formulas
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used in a formula
      */
     function form_field_name_in_formulas(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $frm_name = $dbo->formula_name();
-        if ($frm_name == null) {
-            $frm_name = '';
-        }
-        return $html->form_field(
-            url_var::NAME_IN_FORMULA,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $frm_name,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::NAME_IN_FORMULA, msg_id::FORM_FIELD_NAME_IN_FORMULAS, $dbo->formula_name(), $style_text, $dbo);
     }
 
     /**
@@ -2368,24 +2341,26 @@ class system_form extends component
      * create the html code for the form element to select the phrase type
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verb(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verb(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select one or more verbs
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verbs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verbs(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -3151,17 +3126,29 @@ class system_form extends component
      */
     function button_import(): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Import', html_base::BS_BTN_IMPORT);
+        return $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT), html_base::BS_BTN_IMPORT);
     }
 
     /**
-     * @return string the html code for a form save button
+     * the export button of an export view, which shows the same view again with the request to download the export
+     * of the selected phrases (see frontend::export_file)
+     *
+     * @param int $msk_id the id of the export view, so that the submit returns to it
+     * @return string the html code of the export button with the hidden view and, for a view with a fixed format, the hidden format
      */
-    function button_export(): string
+    function button_export(int $msk_id): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Export', html_base::BS_BTN_EXPORT);
+        $result = $html->form_hidden(url_var::MASK, (string)$msk_id);
+        if (array_key_exists($msk_id, views::EXPORT_FORMATS)) {
+            $result .= $html->form_hidden(url_var::EXPORT_FORMAT, views::EXPORT_FORMATS[$msk_id]);
+        }
+        $txt = $mtr->txt(msg_id::SYSTEM_BUTTON_EXPORT);
+        $result .= $html->button_bs($txt, html_base::BS_BTN_EXPORT, '', url_var::EXPORT_FILE, '', url_var::TRUE);
+        return $result;
     }
 
     /**

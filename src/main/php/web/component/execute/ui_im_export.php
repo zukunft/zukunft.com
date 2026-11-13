@@ -35,12 +35,16 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -79,31 +83,20 @@ class ui_im_export extends ui_base
     }
 
     /**
-     * the html code to select a filename e.g. to upload the file
-     * TODO Prio 1 review
-     * @param db_object|sandbox_list $dbo the word, triple or formula object that should be shown to the user
+     * the html code to select the format of the export view that exports in the selected format
      * @param string $form the name of the view which is also used for the html form name
-     * @param data_object|null $cfg the context used to create the view
-     * @return string with the html code to select a view
+     * @param array $url_arr the url of the page, so that the format selected before stays selected e.g. after a message
+     * @return string the html code of the select of the export formats, json by default
      */
-    function select_export_format(
-        db_object|sandbox_list $dbo,
-        string                 $form,
-        user_message           $msg,
-        ?data_object           $cfg = null
-    ): string
+    function select_export_format(string $form, array $url_arr): string
     {
-        $msk_lst = null;
-        // over
-        if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
-            }
-        }
-        if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list($msg);
-        }
-        return $dbo->view_selector($form, $msk_lst, $msg);
+        $sel = new html_selector();
+        $sel->name = url_var::EXPORT_FORMAT;
+        $sel->form = $form;
+        $sel->label_id = msg_id::FORM_SELECT_EXPORT_FORMAT;
+        $sel->lst = url_var::HUMAN_TO_STD_EXPORT_FORMAT_VAL;
+        $sel->selected = $url_arr[url_var::EXPORT_FORMAT] ?? url_var::EXPORT_FORMAT_JSON;
+        return $sel->display();
     }
 
     /**

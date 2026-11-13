@@ -344,6 +344,10 @@ class verbs
     const string TEST_ADD_CODE_ID = "System Test Verb code id";
     const string TEST_ADD_COM = "test description if it can be added to the verb via import";
     const string TEST_ADD_RENAMED = "System Test Verb Renamed";
+    const int TEST_ADD_ID = 991; // fixed snapshot id of the change workflow verb (like word_names::TEST_ADD_ID)
+    // the stored reverse of the change workflow verb, which a save without a change must not show as changed
+    const string TEST_ADD_REVERSE = "System Test Verb reverse";
+    const string TEST_ADD_FORMULA_NAME = "System Test Verb in formulas";
 
     // search directions to get related words (phrases)
     const string DIRECTION_NO = '';

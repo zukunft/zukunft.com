@@ -91,7 +91,7 @@ class triple_ui_tests
         $test_page .= 'del button: ' . $trp->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $msg, $ui->dto->typ_lst_cache) . '<br>';
-        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $msg, $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_FROM,views::TRIPLE_EDIT, $trp->get_from()->id()) . '<br>';
         $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_TO, views::TRIPLE_EDIT, $trp->get_to()->id()) . '<br>';
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
@@ -146,6 +146,25 @@ class triple_ui_tests
         $trp_no_verb = new triple($t_trp->triple()->api_json([api_types::INCL_PHRASES]));
         $trp_no_verb->verb = null;
         $t->assert_text_not_contains($test_name, $form->title_triple($trp_no_verb, $msg), '>' . verbs::PART_NAME . '</a>');
+
+        $t->subheader($ts . 'verb selector');
+        // a triple without a verb preselects the last used verb of the user (see user::save_last_used)
+        $t_usr = new test_users();
+        $msg_last = new user_message($t_usr->user_last_used_ui());
+        $last_selected = '<option value="' . verbs::IS_ID . '"  selected >';
+        $test_name = 'a new triple preselects the last used verb of the user';
+        $sel_new = new triple()->verb_selector(views::TRIPLE_ADD, $msg_last, $ui->dto->typ_lst_cache);
+        $t->assert_text_contains($test_name, $sel_new, $last_selected);
+        // negative: a triple with its own verb keeps it
+        $test_name = 'a triple with a verb keeps its verb instead of the last used one';
+        $sel_own = $trp->verb_selector(views::TRIPLE_EDIT, $msg_last, $ui->dto->typ_lst_cache);
+        $t->assert_text_contains($test_name, $sel_own, '<option value="' . verbs::PART_ID . '"  selected >');
+        $test_name = '... and does not select the last used verb';
+        $t->assert_text_not_contains($test_name, $sel_own, $last_selected);
+        // negative: a user without a last used verb gets no verb preselected
+        $test_name = 'a user without a last used verb gets the please select entry';
+        $sel_none = new triple()->verb_selector(views::TRIPLE_ADD, $msg, $ui->dto->typ_lst_cache);
+        $t->assert_text_not_contains($test_name, $sel_none, $last_selected);
 
         $t->subheader($ts . 'api mapper');
 

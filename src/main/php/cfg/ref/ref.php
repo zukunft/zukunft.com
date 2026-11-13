@@ -149,6 +149,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use DateTime;
+use DateTimeInterface;
 
 class ref extends sandbox_link
 {
@@ -202,6 +203,9 @@ class ref extends sandbox_link
     public ?float $impact = null;          // a cached number used for the default sorting and as an importance indicator
     private ?DateTime $last_update = null; // timestamp of the last successful update used to trigger the next refresh job
 
+    // not stored: the time of the last change of the external page, which a refresh has read e.g. from wikipedia
+    private ?DateTime $page_time = null;
+
     // TODO Prio 2 deprecate
     public ?string $name = null;
 
@@ -238,6 +242,7 @@ class ref extends sandbox_link
         $this->source = null;
         $this->url = null;
         $this->description = null;
+        $this->page_time = null;
     }
 
     private function create_objects(user $usr): void
@@ -492,6 +497,10 @@ class ref extends sandbox_link
             }
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format('Y-m-d H:i:s');
+            }
+            // with the time zone, because the frontend shows the utc time of wikipedia in the time zone of the pod
+            if ($this->page_time() != null) {
+                $vars[json_fields::PAGE_TIME] = $this->page_time()->format(DateTimeInterface::ATOM);
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -765,6 +774,22 @@ class ref extends sandbox_link
     function last_update(): ?DateTime
     {
         return $this->last_update;
+    }
+
+    /**
+     * @param DateTime|null $page_time the time of the last change of the external page e.g. of the wikipedia page
+     */
+    function set_page_time(?DateTime $page_time): void
+    {
+        $this->page_time = $page_time;
+    }
+
+    /**
+     * @return DateTime|null the time of the last change of the external page, null if no refresh has read it
+     */
+    function page_time(): ?DateTime
+    {
+        return $this->page_time;
     }
 
     /**

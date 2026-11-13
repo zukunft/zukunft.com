@@ -1,0 +1,24 @@
+{
+  "version": "0.0.3",
+  "time": "2026-11-12 12:00:00",
+  "user": "zukunft.com system test",
+  "selection": [
+    "unit test file for the upload of the import view"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To"
+    }
+  ]
+}

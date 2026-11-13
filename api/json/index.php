@@ -6,6 +6,8 @@
     ------------------
 
     use GET to retrieve a JSON that can be imported into another zukunft.com pod
+    of the phrases given by name (wl) or by id (pl) with all related phrases, or the same as xml (ef=efx),
+    or the csv of the results of the formulas given by name (ef=efc)
     use PUT to import data from a JSON in the zukunft.com exchange format
 
     This file is part of zukunft.com - calc with words
@@ -37,16 +39,20 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::EXPORT . 'export.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\export\export;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -83,28 +89,33 @@ if ($db_con->is_open()) {
         }
     } else {
 
-        $result = ''; // reset the json message string
-
-        // get the parameters
-        $wrd_id = $_GET[url_var::WORD] ?? 0;
-
-        $wrd_id = 1;
-
-        $result = ''; // reset the json string
+        // the phrases by name as a csv line, so that a name may contain a comma, the phrases by id and the format
+        $lib = new library();
+        $names_txt = $_GET[url_var::WORDS] ?? '';
+        $ids_txt = $_GET[url_var::PHRASE_LIST] ?? '';
+        $format = $_GET[url_var::EXPORT_FORMAT] ?? url_var::EXPORT_FORMAT_JSON;
+        $phr_names = $lib->array_trim($lib->csv_line_to_array($names_txt));
+        $phr_ids = $lib->array_trim(explode(',', $ids_txt));
 
         // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+        $result = '';
         if ($usr->id > 0) {
-
-            if ($wrd_id != 0) {
-                $wrd = new word($usr);
-                $wrd->load_by_id($wrd_id, $msg);
-                $result = json_encode($wrd->export_json($msg, []));
-            } else {
-                $msg->add_message_text('word id missing');
-            }
+            // e.g. the export view of the own pod asks for the data of the browsing user (url_var::USER)
+            $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
+            $exp_msg = new user_message($load_usr); // the export of the data user, merged into the message of the request
+            $result = new export()->file_text($phr_names, $phr_ids, $format, $exp_msg);
+            $msg->merge($exp_msg);
         }
 
-        $ctrl->get_json($result, $msg);
+        // a json answer goes through the controller, an xml or csv answer is sent with its own content type
+        if ($format == url_var::EXPORT_FORMAT_JSON or !$msg->is_ok()) {
+            $ctrl->get_json($result, $msg);
+        } else {
+            if (!headers_sent()) {
+                header('Content-Type: ' . rest_ctrl::EXPORT_MIME_TYPES[$format]);
+            }
+            echo $result;
+        }
     }
 
 

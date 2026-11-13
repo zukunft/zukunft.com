@@ -9,7 +9,7 @@
         "words": [],
         "triples": [
             {
-                "id": 4098,
+                "id": 4108,
                 "name": "new NPP verdict scale",
                 "description": "cheaper | 0 | dearer",
                 "from": "new NPP verdict",
@@ -17,7 +17,7 @@
                 "to": "calculator scale"
             },
             {
-                "id": 4099,
+                "id": 4109,
                 "name": "new NPP verdict note",
                 "description": "the winter gap is closed by imports {source:BAK economiesuisse study 2026}",
                 "from": "new NPP verdict",

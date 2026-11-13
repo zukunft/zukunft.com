@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -53,10 +54,15 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_tests
@@ -254,6 +260,58 @@ class user_tests
 
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write last used');
+        // the default of the next value or triple and its removal with the deleted source or verb
+        foreach ([user_db::FLD_SOURCE => sources::SIB_ID, user_db::FLD_VERB => verbs::IS_ID] as $fld => $id) {
+            foreach (sql_db::DB_LIST as $db_type) {
+                $sc->reset($db_type);
+                $qp = $usr_test->sql_update_last_used($sc, $fld, $id);
+                $t->assert_qp($qp, $db_type);
+                $sc->reset($db_type);
+                $qp = $usr_test->sql_clear_last_used($sc, $fld, $id);
+                $t->assert_qp($qp, $db_type);
+            }
+        }
+        $test_name = 'the last used source is written without change log';
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_test->sql_update_last_used($sc, user_db::FLD_SOURCE, sources::SIB_ID);
+        $t->assert_text_not_contains($test_name, $qp->sql, $db_con->get_table_name(change::class));
+        $test_name = 'the removal of a deleted source as default is written without change log';
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_test->sql_clear_last_used($sc, user_db::FLD_SOURCE, sources::SIB_ID);
+        $t->assert_text_not_contains($test_name, $qp->sql, $db_con->get_table_name(change::class));
+
+        $t->subheader($ts . 'last used');
+        $t_src = new test_sources($t);
+        $t_trp = new test_triples($t);
+        $t_wrd = new test_words($t);
+        $test_name = 'a saved source becomes the last used source';
+        $src = $usr_test->source_to_remember($t_src->source_reserved());
+        $t->assert($test_name, $src?->id(), sources::SIB_ID);
+        // negative: neither a word nor a value without source names a source
+        $test_name = 'a saved word names no last used source';
+        $src = $usr_test->source_to_remember($t_wrd->word());
+        $t->assert_null($test_name, $src?->id());
+        $test_name = 'a saved value without a source names no last used source';
+        $src = $usr_test->source_to_remember($t_val->value($msg));
+        $t->assert_null($test_name, $src?->id());
+        $test_name = 'a saved verb becomes the last used verb';
+        $vrb = $usr_test->verb_to_remember(test_verbs::verb_part());
+        $t->assert($test_name, $vrb?->id(), verbs::PART_ID);
+        $test_name = 'the verb of a saved triple becomes the last used verb';
+        $vrb = $usr_test->verb_to_remember($t_trp->triple());
+        $t->assert($test_name, $vrb?->id(), verbs::PART_ID);
+        // negative: a word names no verb
+        $test_name = 'a saved word names no last used verb';
+        $vrb = $usr_test->verb_to_remember($t_wrd->word());
+        $t->assert_null($test_name, $vrb?->id());
+        // negative: a user without database row cannot remember a default
+        $test_name = 'the default of a user without database row is refused with a message';
+        $msg_no_row = new user_message();
+        $usr_no_row = new user();
+        $usr_no_row->update_last_used(user_db::FLD_SOURCE, sources::SIB_ID, $msg_no_row);
+        $t->assert_text_contains($test_name, $msg_no_row->text(), user_db::FLD_SOURCE);
 
         $test_usr_list = new user_list($usr_test);
         // TODO Prio 2 include all value tables

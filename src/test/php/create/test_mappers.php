@@ -877,6 +877,8 @@ class test_mappers
             case component_types::SYSTEM_BODY_USER_JOBS:
             case component_types::SYSTEM_BODY_ALL_JOBS:
             case component_types::SYSTEM_BODY_CONFIG_TREE:
+            case component_types::SYSTEM_BODY_IMPORT_PREVIEW:
+            case component_types::FORM_WIKIDATA_ID:
             case component_types::SYSTEM_BODY_ERROR_LOG:
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:

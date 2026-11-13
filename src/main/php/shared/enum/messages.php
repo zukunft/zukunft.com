@@ -242,6 +242,40 @@ enum messages: string
     case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
     case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
     case WIKIPEDIA_NO_WIKIDATA = 'wikipedia_no_wikidata';
+    // the info that a refresh has found nothing to update, with and without the time of the wikipedia page
+    case WIKIPEDIA_IN_LINE = 'wikipedia_in_line';
+    case WIKIPEDIA_IN_LINE_NO_TIME = 'wikipedia_in_line_no_time';
+    // the tooltip of the refresh icon of a wikidata reference, the problems of the import preview and its parts
+    case WIKIDATA_REFRESH = 'wikidata_refresh';
+    case WIKIDATA_REF_MISSING = 'wikidata_ref_missing';
+    case WIKIDATA_READ_FAILED = 'wikidata_read_failed';
+    case WIKIDATA_PROPERTY_UNKNOWN = 'wikidata_property_unknown';
+    case WIKIDATA_IN_LINE = 'wikidata_in_line';
+    case WIKIDATA_IMPORTED = 'wikidata_imported';
+    case WIKIDATA_NAME_USED = 'wikidata_name_used';
+    case WIKIDATA_ID_FIELD = 'wikidata_id_field';
+    case IMPORT_PREVIEW_WORDS_NEW = 'import_preview_words_new';
+    case IMPORT_PREVIEW_TRIPLES_NEW = 'import_preview_triples_new';
+    case IMPORT_PREVIEW_VALUES_NEW = 'import_preview_values_new';
+    case IMPORT_PREVIEW_VALUES_SAME = 'import_preview_values_same';
+    case IMPORT_PREVIEW_VALUES_CONFLICT = 'import_preview_values_conflict';
+    case IMPORT_PREVIEW_AS_USER_VALUE = 'import_preview_as_user_value';
+    case IMPORT_PREVIEW_WITH_WORD = 'import_preview_with_word';
+    case IMPORT_PREVIEW_PROBLEMS = 'import_preview_problems';
+    case IMPORT_PREVIEW_CONFIRM = 'import_preview_confirm';
+    case IMPORT_PREVIEW_CHANGED = 'import_preview_changed';
+    case IMPORT_PREVIEW_SHOW = 'import_preview_show';
+    // the upload of the import view (import::put_upload) and the export of a phrase selection (export::file_text)
+    case IMPORT_UPLOAD_NOT_PERMITTED = 'import_upload_not_permitted';
+    case IMPORT_UPLOAD_MISSING = 'import_upload_missing';
+    case IMPORT_UPLOAD_NO_JSON = 'import_upload_no_json';
+    case IMPORT_UPLOAD_EMPTY = 'import_upload_empty';
+    case IMPORT_UPLOAD_TOO_BIG = 'import_upload_too_big';
+    case IMPORT_UPLOAD_DONE = 'import_upload_done';
+    case EXPORT_PHRASE_MISSING = 'export_phrase_missing';
+    case EXPORT_FORMAT_UNKNOWN = 'export_format_unknown';
+    case EXPORT_FORMULA_MISSING = 'export_formula_missing';
+    case EXPORT_FORMULA_NAME_MISSING = 'export_formula_name_missing';
     // the reference rows that the confirm of a phrase change writes too (see url_var::REF_ROW)
     case INFO_CONFIRM_REFS = 'info_confirm_refs';
     case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';
@@ -986,6 +1020,125 @@ enum messages: string
         . '" is not imported, because the name of its wikidata criterion "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be read';
+    // a wikidata claim that is not imported, named by its entity, its property, its claim id and its number
+    case WIKIDATA_NO_VALUE = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because wikidata names no number for it e.g. because the value is unknown';
+    case WIKIDATA_DEPRECATED = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because wikidata marks it as deprecated';
+    case WIKIDATA_QUALIFIER_UNKNOWN = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its qualifier "'
+        . self::VAR_START . self::VAR_FIELD_NAME . self::VAR_END
+        . '" may change what the number means';
+    case WIKIDATA_TIME_TWICE = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because it has more than one point in time';
+    case WIKIDATA_TIME_UNKNOWN = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its point in time "'
+        . self::VAR_START . self::VAR_TIME . self::VAR_END
+        . '" cannot be read';
+    case WIKIDATA_TIME_PRECISION = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its point in time "'
+        . self::VAR_START . self::VAR_TIME . self::VAR_END
+        . '" is less precise than a year';
+    case WIKIDATA_SAME_WORDS = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because another value has the same words "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '", so the import cannot know which number is meant';
+    case WIKIDATA_ID_TWICE = 'the values of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" with the wikidata id "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" are not imported, because the id is the reference of more than one phrase "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '"; please keep the wikidata reference only at one of them';
+    // the price of a currency in another currency is a value of the listed currency pair e.g. "EUR per USD"
+    case WIKIDATA_CURRENCY_PAIR_MISSING = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because no currency pair of it and the currency "'
+        . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
+        . '" is listed, so the import cannot know which currency is the base; please ask the admin to add the pair';
+    case WIKIDATA_CURRENCY_PRICE_ZERO = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because a price of zero has no inverse for the listed reverse currency pair "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '"';
+    case WIKIDATA_CURRENCY_PAIR_INVERTED = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is imported as its inverse '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' of the currency pair "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '", because only this reverse pair is listed; the inverse is rounded to the digits of wikidata';
+    // only an offline test reads the wikidata answers from a folder, so a missing file is a missing test resource
+    case WIKIDATA_FIXTURE_MISSING = 'the wikidata answer of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" is not read, because the test file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" is missing; please add it to the test resources';
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
@@ -2926,6 +3079,8 @@ enum messages: string
     case REQUEST_NOT_PERMITTED = 'request_not_permitted';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
+    // shown if an api write is rejected because it does not carry the anti csrf token of the session e.g. after the session has expired
+    case CHANGE_BLOCKED_SESSION_TOKEN = 'change_blocked_session_token';
     // shown if an update put message names another user than the one of the session e.g. a page loaded before a login
     case UPDATE_PUT_OTHER_USER = 'update_put_other_user';
     // shown if an update put stops at a problem, with the number of the changes that are not saved
