@@ -48,6 +48,8 @@ class view_menu
     public string $view_items = '';
     // the menu entries of the page e.g. the columns of its value table, shown first
     public string $page_items = '';
+    // the im- and export entries of the page e.g. the csv download of its value table, shown last
+    public string $export_items = '';
     // the names of some views that the menu does not offer, which the tooltip of "... more" names
     public array $more_names = [];
     // the name of the shown object e.g. the word "Pi", which the tooltip of "add view" names

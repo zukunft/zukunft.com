@@ -141,4 +141,11 @@ PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, te
             OR   s.group_id ~ $7
             OR   s.group_id ~ $8
             OR   s.group_id ~ $9
-            OR   s.group_id ~ $10 )  LIMIT $12 OFFSET $13;
+            OR   s.group_id ~ $10 )
+      ORDER BY group_id,
+               phrase_id_1,
+               phrase_id_2,
+               phrase_id_3,
+               phrase_id_4
+         LIMIT $12
+        OFFSET $13;

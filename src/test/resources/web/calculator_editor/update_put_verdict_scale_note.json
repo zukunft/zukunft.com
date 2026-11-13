@@ -1,0 +1,32 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "id": 4108,
+                "name": "new NPP verdict scale",
+                "description": "cheaper | 0 | dearer",
+                "from": "new NPP verdict",
+                "verb": "has a",
+                "to": "calculator scale"
+            },
+            {
+                "id": 4109,
+                "name": "new NPP verdict note",
+                "description": "the winter gap is closed by imports {source:BAK economiesuisse study 2026}",
+                "from": "new NPP verdict",
+                "verb": "has a",
+                "to": "calculator note"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

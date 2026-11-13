@@ -1,0 +1,24 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "id": 4030,
+                "name": "new NPP more",
+                "description": "the winter gap is closed by imports {source:BAK economiesuisse study 2026}",
+                "from": "new NPP",
+                "verb": "has a",
+                "to": "calculator more"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

@@ -133,6 +133,70 @@ of `style/formula_editor.css` are nested in the hosts, so that the page keeps th
 database read test writes `use_cases/formula_editor.html` next to the hand made
 `use_cases/formula_editor_sample.html`, which loads the same script and style with a fixed seed.
 
+### The table editor
+
+The table editor of a phrase (`views::TABLE_EDITOR`) is, like the calculator editor, a page built in the
+browser by `src/main/resources/script/table_editor.js` with `style/table_editor.css`, whose rules are all nested
+in the host `#tableEditor`. The pod page (`system_page::table_editor`) renders only the stylesheet, the empty host
+`<div id="tableEditor">`, the session token and three json elements:
+
+- `seed`: the `/api/phraseData` answer of the phrase, with the same id as the seed of the calculator editor
+  (`system_page::CALC_EDITOR_SEED_ID`)
+- `tableEditorTexts`: every `table_editor_` message and the `calc_editor_` texts of the top line, by their full
+  message id
+- `tableEditorSettings`: `verbs`, `column`, `words`, `keywords` (the keyword triple per parameter key) and `urls`
+  (`put`, `table` and `no_js`), all from PHP consts
+
+The script renders the table from the seed without an api call. `url_var::JAVASCRIPT` = 0 (`sc=0`), or a config that
+allows no javascript for the calculator, shows the server page with the components of the view.
+
+Like the calculator editor the page has the top line with the tools and two white cards: the settings on the left,
+in collapsible groups of which only "Columns" and "Rows" are open at the start ("Column details" and "Row details"
+hold their further fields), and on the right the tabs "Table preview", "All texts" (the text parameters to edit and
+the column and row labels), "Changes" (the changed parameters and what the save sends) and "Definition (JSON)". The
+Export button of the top line downloads the table as csv.
+
+The definition of a table is data: a triple from the phrase of the table to each table keyword of
+`editor_views.json`. A text parameter is the description of the triple, a number a value with the phrase and the
+keyword, a flag the triple itself and a choice the triples from the parameter triple to the selected phrases (several
+choices ordered by `is follower of`); a flag that is off and an empty parameter have no triple. The own columns are
+the items of the `table column` triple of the phrase, ordered by `is follower of`, each with its tier as a choice
+triple to `mayor`, `main`, `minor` or `marginal`. The rows are the phrases linked to the row phrase by the row verb
+(subject or object side) and the sub-rows those linked by the hierarchy verb; a top row without sub-rows is an orphan.
+The row of a triple of the owner (e.g. `ABB Electrification`) shows its to side, the acronym of a row is its
+`is an acronym for` triple, and an `assumed` value with a `confidence` value gives the confidence of the row.
+`ui_list::table_with_related_columns` and `value_list::row_orders` read the same definition of the page phrase, else
+the column tiers and the sort orders of all tables, and the url wins over both.
+
+The phraseData walk of a phrase with own columns adds the rows of its table with their values and results; the walk
+of the built-from chain ends before a word, and the formulas are loaded only for the phrases of the data, not for the
+sides that only name a triple (header of `cfg/export/phrase_data.php`).
+
+Undo, redo, the change count and the save follow the calculator editor: the save posts one `updatePut` body to
+`/api/updatePut/` with the session token, every problem of a save is shown to the user, and a removed parameter is
+deleted with the logged `del()`.
+
+`system_views_read_tests::assert_editor_view` writes `use_cases/table_editor.html`, which `html_page_diff` compares
+with the hand made `use_cases/table_editor_sample.html` (the same script and style with the seed of the use case
+`table_editor_sample.json`) into `use_cases/table_editor_diff.md`; both pages are compared as a headless browser shows
+them after the script has built the editor (`src/test/js/table_editor_cases.js`). The global warming solutions of the
+start page are the second case, `use_cases/table_editor_global_warming_solution.html`: own columns without table
+parameters, so that the editor starts with its defaults, and more rows than one page. The scenarios in `src/test/js` cover each action
+of the editor with a positive and a negative case, and each resulting `updatePut` body is a fixture in
+`src/test/resources/web/table_editor/` with a write test that also reads the saved definition back.
+
+An own column can name its unit, e.g. `potential gain in EUR`. The table then shows only the own columns in their
+order and leaves out every other value, unless `url_var::DISPLAY_LIST_UNMATCHED` = 1 (an entry of the edit menu) adds
+them behind the own columns. If no value fits an own column, all values stay visible. A value table uses the table
+design that `url_var::DISPLAY_LIST_DESIGN` names, else `frontend.layout.table.design` of `config.yaml`; each design
+of `frontend.layout.table.designs` names colours of `colours.page`, so that it also fits the dark mode. A new design
+needs a row in `def::TABLE_DESIGNS` and `value_list::TABLE_DESIGN_NAMES`.
+
+The "export as csv" entry of the edit menu calls the page with `url_var::DISPLAY_LIST_CSV` = 1: `http/view.php` then
+sends `data_object::table_csv` as a download instead of the page, or the page with a message if it has no value table.
+The csv has the selected columns and every row, also behind the limit of the page, and the numbers without rounding,
+variance and confidence; a text that a spreadsheet would run as a formula starts with an apostrophe.
+
 The calculator editor (`system_page::calculator_editor`) has no page without the
 script: it renders the empty host, the answer of the phraseData api for the page
 phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the
@@ -168,7 +232,58 @@ message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
-sent as text.
+sent as text. A triple with another from, verb or to, e.g. a moved item, an argument moved to the other
+side or another result of the verdict, is sent as removed and added (`relinkLinks` in
+`calculator_editor.js`), because the link of a triple is never changed (`docs/llm/architecture.md`);
+a triple that names it goes the same way, the added one gets the generated name if it would keep the
+name of the removed one, and the added triples come parents first.
+
+The page structure starts with the collapsed section Arguments, above the inputs like on the page: each argument is
+its claim triple from the reason phrase to the claim argued about, e.g. `supply gap supports lifting the NPP ban`,
+with the side as the verb (`supports` pro, `limits` contra), the text of the page as its description and its label;
+the editor changes, adds and removes them, and a moved argument renames its claim if the claim is named by its
+parts. A removed argument leaves its claim, like a removed input leaves its phrase, because other pages can name it.
+The page settings change the title, the lead text and the hideable lead text, which the page shows collapsed below
+the title behind "... more": the descriptions of the `calculator label`, `calculator hint` and `calculator more`
+triples of the phrase that the page reads its lists from. The list Verdict holds the states of the verdict in the
+order yes, no, undecided, each with its headline as label and its text as hint; the settings of a state also change
+what all states share: the compared result and the threshold (the two `with` triples of the verdict, in their order),
+the scale below the meter with the two ends of the meter (its `field limit down` and `field limit up` values) and the
+note (`calculator scale` and `calculator note` of the verdict).
+The list Sensitivity table holds the two axes of the table, the rows first and then the columns, each with its values
+as sub-items with label and number (the value of the table and the axis value e.g. `construction cost 5000`; a new
+axis value gets a new value with the unit and quality phrases of its siblings); the settings of an axis or a value
+also change the hint below the table and the two results of a cell, the number in the cell and the one in brackets
+(the items of the `calculator cell` triple of the table), and the title is a list heading of the page settings.
+The list Presets holds the buttons that set several inputs at once, each a scenario phrase with the text of the
+button as label and its tooltip as hint; its settings show per number field the number that the preset sets, the
+value with the scenario and the field phrase and the fewest other phrases, as the page picks it: a changed number
+changes that value, a cleared one deletes it and a number for a field without a value adds one with the unit phrases
+of the field value. A removed preset leaves the numbers of its scenario, because studies use the same scenario phrase.
+A click on a part of the preview selects where it is changed: `calculator_json.js` marks with `data-part` an argument,
+a field, a preset button, the verdict, the sensitivity table with its row and column headings, the rows, row groups
+and column headings of the result table, the detail tables with their columns and extra rows (a row of the table
+phrase names its table, which defines the rows), the header and the hideable lead text with the name of the triple
+that defines them, a note of the notes list (`calculator note`, the last list of the page structure, where the text
+of a note is the description of its triple) with the name of its triple, a note of a formula with the name of the
+formula, and a source with its name. The sources of the loaded data are the list "Sources" below the lists of the
+page structure, without add or remove, because a source belongs to every page that shows one of its values: its
+name, description, link and doi are saved in the `sources` section of the `updatePut` message, and a new name also
+changes every text of the editor that names the source by `{source:…}`. The editor selects the item of that name without drawing the preview
+again, so that a collapsed part still opens; a formula like the page structure does, with its formula editor and
+compare instead of the preview; and any other name the page settings. A link in a part, e.g. of a source, selects
+too instead of leaving the editor with its unsaved changes.
+
+The page preview of the editor is the calculator page itself: the editor page also embeds the settings of the
+calculator page without the save (`system_page::calculator_editor`, a save of the preview would store a case) and
+`calculator_json.js`, whose `renderCalculatorPage` builds the preview after each change from the data with the unsaved
+changes (`editedDoc`) and calculates every result again, so that a changed value or formula shows at once; the
+collapsed blocks that the user has opened stay open. So every rule of the page holds in the preview without a second
+implementation; only the parts that `calculator_json.js` marks with `data-part` can be clicked to select them (see above).
+`system_views_read_tests::run_npp_ch_vote_editor` renders the editor of the Swiss NPP vote into
+`use_cases/npp_ch_vote_editor.html`, reads the preview (`#pane`, `html_page_diff::element_page`) and the page
+`npp_ch_vote_js.html` after both scripts have run in a headless browser with the sensitivity table opened, and writes
+the differences to `use_cases/npp_ch_vote_editor_diff.md`, which names only the save.
 
 A phraseData answer fills the request cache of a page with `phrase_data::fill`:
 each word, triple, formula, source, value and result of the answer becomes the
@@ -185,6 +300,39 @@ source of the page, and `phrase_data_ui_tests` renders the complete page from th
 sample answer alone and checks its parts; the snapshots of the page,
 `use_cases/pv_lifetime_balance_js.html` and `use_cases/pv_lifetime_balance_no_js.html`, are
 written by the database read test (`system_views_read_tests::run_pv_lifetime_balance`).
+
+A page without a complete phraseData answer loads the values that its results use
+with one paged call: the missing operands of a table
+(`ui_list::add_missing_operand_values`) and the context of a result for the
+assumptions (`ui_list::add_context_values`) ask the value list api once for all
+phrases. A page of the answer holds at most the row limit of the backend
+(`sql_db::ROW_MAX`) sorted by the key of the rows, so the answer names a next page
+(`json_fields::NEXT_PAGE`) if its page is full, counted before the filters of the api,
+and the frontend asks for it (`api::JSON_LIST_PAGE`, `ListBase::load_pages`) until no
+next page is named; so no operand is missing however many phrases are asked. A load
+that is not paged still reports a full page (`msg_id::LIST_ROW_LIMIT_REACHED`). The
+switch `api_types::LOAD_PER_PHRASE` in the last parameter `api_type_list $typ_lst` of
+`ui_list::table_with_related_columns` and `ui_list::assumption_fields` loads each phrase
+with a call of its own instead (`system_views_read_tests::run_populism_solutions_table`
+and `run_context_values_per_phrase` test both). A missing operand of a table can be a
+result too, e.g. the avoided emission of the potential gain, so the results of all missing
+phrases are loaded with one paged call as well (`ui_list::load_results_of_phrases`), which
+the formula tooltip of the result needs (`run_result_operands`). Only the results within the
+contexts of the results that need the phrases are loaded (`api::JSON_LIST_CONTEXT_IDS`,
+backend `result_list::filter_within_phrases`), because a result uses only a number
+whose phrases are all part of its context (`formula_calc::value_of`); e.g. of the
+results of the initial effort only the ones of the rows of the start page table
+(`run_start_page_steps`). The request cache keeps such an answer by each phrase and
+the union of the contexts (`data_object::has_results_within`).
+
+The value and result list api answer names each phrase once (`api_types::PHRASES_ONCE`, set by `api/valueList`
+and `api/resultList`): an object with the phrases sorted by id and the values resp. results, which name their
+phrases and the context of a result only by the phrase ids; a triple names its from, its to and its verb only by
+id, because the frontend has the verbs preloaded. The frontend reads this object and the plain list of items
+with the phrases in each item to the same values resp. results (`ListBase::api_mapper_with_phrases`) and reports
+an id that the phrase list of the answer does not contain (`msg_id::API_PHRASE_ID_MISSING`). Each phrase of the
+object is mapped to one phrase object that every value resp. result of the answer uses, because a copy per item
+does not fit in the memory of the pod for a large answer, e.g. the results of the initial effort.
 
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`
@@ -309,14 +457,16 @@ in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 
 ### The pinned views of the static start page are written by the test run
 
-`/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
+`/index.html` and the short urls in the docroot (`/pv`, `/nnp`, …) are static
 files, so no request reads the config for them. The pinned views of
 `config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
 their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
 with an empty `url`, which the import does not save as a value, and with a
-`view name` and a `phrase name` opens that view with
-that phrase e.g. the view `Calculator` with the triple `example PV installation`,
+`view name` opens that view, with its `phrase name` if it has one,
+e.g. the view `Calculator` with the triple `example PV installation`,
 whose negative phrase id names the triple, because the ids differ by pod.
+A pinned view with an empty `url` and an empty `view name` is inactive: it has
+no link on the start page, no short url page and no entry in the `.htaccess`.
 `system_views_read_tests::run_pinned_views` loads these ids from the database
 and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
 other static pages like the forward pages of `api::FORWARD_VIEWS`:
@@ -328,9 +478,10 @@ other static pages like the forward pages of `api::FORWARD_VIEWS`:
 - `html_base::static_page` writes the font and the colours between the same
   comments of the other static pages of `test_files::STATIC_PAGES` e.g.
   `optional/ip_reject.html`.
-- `html_base::forward_url_page` writes one forward page per url name of
+- `html_base::forward_url_page` writes one forward page per active url name of
   `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
-  javascript.
+  javascript; `test_base::assert_no_file` reports and with
+  `AUTO_UPDATE_TEST_FILES` removes the page of an inactive pinned view.
 
 A new pinned view therefore needs only its url name in the extensionless
 allow-list of the `.htaccess`, and the test fails until it is there. The url
@@ -423,8 +574,24 @@ values before results, within the context phrases that the result carries
 `arithmetic`. A stored number that differs from the page calculation is
 replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
 result whose formula or values the page does not have keeps its stored number.
+An operand that no row of the table shows, e.g. the world GDP of the potential
+loss of a problem, is loaded once for all results of the table by its context
+phrases without the markers (`ui_list::add_missing_operand_values`,
+`formula_calc::missing_operand_phrases`), and such a result is calculated with
+all values of the page, so that its tooltip shows the numbers used.
 The save with the backend job and its compare is the next step
 (`docs/llm/pending.md` "PV lifetime balance page").
+
+The report button loads `url_var::REPORT` into a small frame below the buttons, so
+that the page stays and no script is needed. The frame shows only the last step with
+the seconds so far (`calculator_report::pdf`, `frontend::report_step`, the css of
+`html_base::frame_start`). At the end the pdf is kept in the session and the frame
+refreshes to `url_var::REPORT_FILE`, which sends it once as a download
+(`frontend::report_end_html`). The request has its own time limit
+(`calculator_report::MAX_TIME_SEC`) and a fatal error shows the last step to the
+user instead of a blank answer (`frontend::report_watch`). The session is not locked
+while the report is created (`frontend::report_release_session`), so that the other
+pages of the user do not wait, and any other request removes a report that was not fetched.
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 
@@ -433,7 +600,14 @@ other and talk only over the API (see `architecture.md`). The request bootstrap 
 therefore split in two, and each side uses only its own:
 
 - `web/frontend.php` — the **pure html php frontend**: `http/view.php`,
-  `http/about.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+  `http/about.php`, `http/docs.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+  `http/docs.php?doc=faq` shows a markdown file of `/docs/` as html (`web/html/markdown.php`,
+  `html_base::docs_page`); only a file name of `/docs/` without a path is accepted and a link
+  to another document of `/docs/` opens it with `http/docs.php` again; an image of `/docs/`
+  without a path e.g. `server_structure.svg` is shown from `/docs/` of the own server
+  (`markdown::DOC_IMAGE`). The page has the standard
+  navbar; for a user who is no admin its edit icon is grey, opens no menu and has the tooltip
+  `msg_id::DOC_CHANGE_ADMIN_ONLY` (`html_base::navbar` with `$edit_lock_tip`).
 - `cfg/application.php` — the **backend**, i.e. the api calls: the `api/**`
   scripts call `application::start_api()` / `start_api_core()` / `end_api()`.
 
@@ -526,6 +700,17 @@ use the same lowercased label text for both `for` and `id`.
 The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
 view `d`) already emit the url var as `name` directly — follow that when adding a
 new form element.
+
+## The user never sees a database id if it can be avoided
+
+A database id is an internal number: it differs from pod to pod, it moves with the
+import order and it tells the user nothing. So a page, a message, a title, a label
+or a tooltip names the object (its name, its phrases, its code id for a system
+object) and never its id; a feature that only works if the user reads or types an
+id is not built, but solved by a name, a selector or a link. The id stays where
+the user does not read it: in the hidden fields and the urls of forms and links,
+and a url that the user is meant to read, keep or share uses the human readable
+form (`?words=Pi`, see `docs/llm/json_views.md`) wherever the view supports it.
 
 ## Behaviour shared by word and triple belongs on the phrase
 
@@ -838,11 +1023,11 @@ therefore no number of the row; to count every linked phrase, the start page
 loads the children of all these list triples with one api call
 (`ui_list::start_page_children`) and adds them only to a copy of the request
 cache taken after the column and sort definitions are loaded, because the cache
-also fills the phrase selectors of later pages. Every start page problem except proprietary
-software has such a `<problem> reason` and `<problem> solution` triple
-(`problem_main_reasons.json`), each of which is a `global problem reason` or a
-`global problem solution`; proprietary software is the sample row with one
-reason and one solution and without any `, ...`. The value cells
+also fills the phrase selectors of later pages. Every start page problem has such a
+`<problem> reason` and `<problem> solution` triple (`problem_main_reasons.json`), each of
+which is a `global problem reason` or a `global problem solution`; a problem whose solution
+list has only the start page solution, e.g. proprietary software, shows no `, ...` in its
+solution cell. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
 hidden phrase stands beside the phrase shown. A cell keeps only its most
@@ -912,7 +1097,7 @@ the format of the table cell (`5.5a trillion EUR (2.2 – 13.75)`), so the chart
 tells the reader the same as the full table.
 
 Which charts a table offers is data, defined in `solution_prio.json` like the
-column tiers: a chart type word carries the `chart_types` value as its
+column tiers: a chart type triple carries the `chart_types` value as its
 `code_id` (`range bars` → `range_bars`, `scatter plot` → `scatter`), a chart is
 the triple `<chart type> of <column>` (`range bars of potential loss`) or, for
 two columns, `<chart type> of <column> and <column>` with the y column first
@@ -997,13 +1182,17 @@ detail, range and detail with range, `views::default_versions`). Each view has
 the switch icon behind its name except the own view of the object, which already
 shows it always; the view that shows the page is grey with the tooltip "this view
 has been used to show …" (`view::used_link`). An object without an edit view of its
-own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
-the edit menu nor in the views tab, because the edit view it inherits from
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon in the
+edit menu, because the edit view it inherits from
 `db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
-reports a page class that forgets it. The tooltip
+reports a page class that forgets it. The edit menu is the only place that offers
+the views of the shown object, so the tab box of the page (`ui_list::view_tab_box`)
+has no views tab. The tooltip
 of "... more" names some cached views that the menu does not offer
 (`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
-"change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is
+"change this view" and "add view", whose tooltip names the shown object. The sub header
+"im- and export" (`msg_id::NAVBAR_IM_EXPORT`) above "export as csv" (`value_list::export_menu_items`,
+`view_menu::export_items`) follows, and for an admin "server admin" is the last entry. Shown as a chart only, the table is
 replaced by its charts below a `styles::CHART_HEAD` line that keeps the header
 of the table centred; the way back to the table is the edit menu.
 

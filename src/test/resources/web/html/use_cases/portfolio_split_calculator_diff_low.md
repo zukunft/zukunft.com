@@ -2,9 +2,7 @@
 
 Change the generated page portfolio_split_calculator_js.html#low so that it shows what the hand made sample portfolio_split_calculator_sample.html#low shows: add what is missing, correct what differs and remove what only the generated page has, unless the sample lacks it by mistake. A number can differ for a good reason, because the sample calculates its numbers with its own script, so check the value or the formula before changing it. Fix a finding in the use case json or in the calculator renderer, never in the sample or in the generated snapshot.
 
-## Missing in the generated page (1)
-
-- button: Report
+## Missing in the generated page (0)
 
 ## Different (48)
 
@@ -14,13 +12,13 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report"
 - field: Exchange rate, value: the sample shows "0.1304" and the generated page ""
 - row: Target / Target weight, cells: the sample shows "60.0 % | 20.0 % | 20.0 % | 100.0 %" and the generated page "30.0 % | 20.0 % | 20.0 % | 100.0 %"
-- row: Target / Target value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 | 3'922'180 | 3'922'180 | 19'610'900"
+- row: Target / Target value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
 - row: Realised / Stocks, cells: the sample shows "5'861'100 | 1'953'700 | 1'953'700 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
 - row: Realised / Bonds, cells: the sample shows "3'602'700 | 1'200'900 | 1'200'900 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
 - row: Realised / Cash, cells: the sample shows "2'302'740 | 767'580 | 767'580 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
 - row: Realised / Portfolio value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
 - row: Realised / Realised weight, cells: the sample shows "60.000 % | 20.000 % | 20.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | +2'941'635.00 | +2'941'635.00 | 0.00"
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
 - row: # / 3, cells: the sample shows "GIVN Givaudan SA | 100 shares | 3'700.00 | 20.000 | 20 | 20 | 60 | 0.00" and the generated page "ConfedBond30 Swiss Confederation 1.25% 2030 | 1'500'000 CHF | 5'025.00 | 300'000.000 | 300'000 | 300'000 | 900'000 | 0.00"
 - row: # / 4, cells: the sample shows "PGHN Partners Group Holding AG | 250 shares | 1'200.00 | 50.000 | 50 | 50 | 150 | 0.00" and the generated page "NestleBond27 Nestlé Holdings 0.875% 2027 | 1'500'000 CHF | 4'990.00 | 300'000.000 | 300'000 | 300'000 | 900'000 | 0.00"
 - row: # / 5, cells: the sample shows "GEBN Geberit AG | 500 shares | 590.00 | 100.000 | 100 | 100 | 300 | 0.00" and the generated page "RocheBond28 Roche Holdings 1.0% 2028 | 1'000'000 CHF | 4'950.00 | 200'000.000 | 200'000 | 200'000 | 600'000 | 0.00"

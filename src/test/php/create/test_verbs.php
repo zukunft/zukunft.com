@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'verbs.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\types\verbs as verbs_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_verbs extends test_objects
@@ -118,6 +120,16 @@ class test_verbs extends test_objects
         $vrb->set_description(verbs::NOT_SET_COM);
         $vrb->set_user($this->env->usr1);
         $vrb->frm_name = verbs::NOT_SET_NAME;
+        return $vrb;
+    }
+
+    /**
+     * @return verb the test verb of the change_verb workflow with a stored reverse and without a name in formulas
+     */
+    function with_reverse(): verb
+    {
+        $vrb = $this->verb_name_only();
+        $vrb->reverse = verbs::TEST_ADD_REVERSE;
         return $vrb;
     }
 
@@ -290,6 +302,16 @@ class test_verbs extends test_objects
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
     }
 
+    function verb_supports(): verb
+    {
+        return new verb(verbs::SUPPORTS_ID, verbs::SUPPORTS_NAME, verbs::SUPPORTS);
+    }
+
+    function verb_limits(): verb
+    {
+        return new verb(verbs::LIMITS_ID, verbs::LIMITS_NAME, verbs::LIMITS);
+    }
+
     function verb_uses(): verb
     {
         return new verb(verbs::USES_ID, verbs::USES_NAME, verbs::USES);
@@ -382,6 +404,26 @@ class test_verbs extends test_objects
         $lst = new verb_list($this->env->usr1);
         $lst->add_verb($this->verb_is_full());
         return $lst;
+    }
+
+
+    /*
+     * url
+     */
+
+    /**
+     * the fields of the test verb as its edit form posts them unchanged, used by the change_verb workflow;
+     * the object id, the '8'-prefixed opening values and the back target are added by the workflow
+     *
+     * @return array the edit form url parameters of the change workflow verb (see with_reverse)
+     */
+    static function edit_url(): array
+    {
+        return [
+            url_var::NAME => verbs::TEST_ADD_NAME,
+            url_var::REVERSE => verbs::TEST_ADD_REVERSE,
+            url_var::NAME_IN_FORMULA => ''
+        ];
     }
 
 

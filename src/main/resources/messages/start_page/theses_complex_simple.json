@@ -98,7 +98,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
@@ -178,17 +178,7 @@
       ]
     },
     {
-      "name": "efficacy",
-      "refs": [
-        {
-          "name": "Political_efficacy",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7210531",
-          "type": "wikidata"
-        }
-      ]
+      "name": "efficacy"
     },
     {
       "name": "media",

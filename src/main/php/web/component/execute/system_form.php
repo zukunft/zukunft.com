@@ -44,8 +44,10 @@ include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::HELPER . 'data_object.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_names.php';
@@ -97,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -566,9 +569,12 @@ class system_form extends component
         // (only those that a link may name, see html_base::link_vars) and the origin mask that names the
         // object type of a confirm view
         $link_url = html_base::prefixed_url_array(html_base::link_vars($url_array), url_var::LINK);
+        // and the '6'-prefixed reference rows that the confirm writes with the phrase (see url_var::REF_ROW)
+        $row_url = url_var::ref_row_url_array(url_var::ref_rows($url_array));
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::BACK)
                 or array_key_exists($key, $link_url)
+                or array_key_exists($key, $row_url)
                 or $key == url_var::ORIGIN_MASK) {
                 $result .= $html->form_hidden($key, (string)$val);
             }
@@ -1662,66 +1668,39 @@ class system_form extends component
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE,
-            msg_id::FORM_FIELD_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE, msg_id::FORM_FIELD_REVERSE, $dbo->reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed plural reverse name
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
     function form_field_plural_reverse(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $reverse = $dbo->plural_reverse();
-        if ($reverse == null) {
-            $reverse = '';
-        }
-        return $html->form_field(
-            url_var::REVERSE_PLURAL,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $reverse,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::REVERSE_PLURAL, msg_id::FORM_FIELD_PLURAL_REVERSE, $dbo->plural_reverse(), $style_text, $dbo);
     }
 
     /**
      * request the verb name if used in a formula
+     * with the stored value as the '8' pre value, so that the confirm view shows only a changed name in formulas
      * @param db_object $dbo the object
+     * @param string $style_text the column style of the field e.g. col-md-4
      * @return string the html code to request the verb name used in a formula
      */
     function form_field_name_in_formulas(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $frm_name = $dbo->formula_name();
-        if ($frm_name == null) {
-            $frm_name = '';
-        }
-        return $html->form_field(
-            url_var::NAME_IN_FORMULA,
-            msg_id::FORM_FIELD_PLURAL_REVERSE,
-            $frm_name,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::NAME_IN_FORMULA, msg_id::FORM_FIELD_NAME_IN_FORMULAS, $dbo->formula_name(), $style_text, $dbo);
     }
 
     /**
@@ -2362,24 +2341,26 @@ class system_form extends component
      * create the html code for the form element to select the phrase type
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verb(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verb(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select one or more verbs
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verbs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verbs(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -2444,6 +2425,163 @@ class system_form extends component
     function form_refs(db_object $dbo, string $form_name, user_message $msg, ?ref_list $ref_lst): string
     {
         return $dbo->ref_selector($form_name, $msg, '', $ref_lst);
+    }
+
+    /**
+     * the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW), so that the
+     * confirm of the phrase change also adds, changes or deletes them: one row per reference and one add row;
+     * the confirm keeps only the rows that the user has changed (url_var::ref_rows)
+     *
+     * @param db_object $dbo the frontend word or triple of the edit view
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg to report a reference or source list that cannot be loaded
+     * @param data_object|null $dto the request cache with the type lists, the sources and the cached references
+     * @param array $url_arr the url of the edit view, whose posted rows are shown again on a re-render after an error
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
+     * @return string the html code of the reference rows, '' for an object that is not a phrase
+     */
+    function form_ref_rows(
+        db_object    $dbo,
+        string       $form_name,
+        user_message $msg,
+        ?data_object $dto,
+        array        $url_arr = [],
+        bool         $test_mode = false
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        if ($dbo instanceof word or $dbo instanceof triple) {
+            $html = new html_base();
+            $src_lst = $dto?->source_list() ?? new source_list();
+            $src_lst->load_for_selector('', $msg, $test_mode);
+            $ref_lst = new ui_list()->refs_of_phrase($dbo, $msg, $dto);
+            // the same order as the tab box, so that the row number of a reference is the same on each render
+            $ref_lst->sort_by_impact_and_type();
+            $rows = '';
+            $row = 1;
+            foreach ($ref_lst->lst() as $ref) {
+                $rows .= $this->ref_row_change($ref, $row, $form_name, $src_lst, $url_arr);
+                $row++;
+            }
+            $rows .= $this->ref_row_add($row, $form_name, $dto, $src_lst, $url_arr);
+            $result = $html->label_no_for($mtr->txt(msg_id::FORM_REF_ROWS)) . $rows;
+        }
+        return $result;
+    }
+
+    /**
+     * one row of the edit form that changes or deletes a stored reference: its id and the update action as
+     * hidden fields, the type as read only text, because another type is another reference (ref::link_key_fields),
+     * the editable fields with their stored values as '86' values and the delete box, which overwrites the
+     * update action, because the last posted value of a var wins
+     *
+     * @param ref $ref the stored reference of the phrase
+     * @param int $row the number of the row within the form, starting with 1
+     * @param string $form_name the name of the html form
+     * @param source_list $src_lst the sources that can be selected
+     * @param array $url_arr the url of the edit view, whose posted row is shown again on a re-render
+     * @return string the html code of the row
+     */
+    private function ref_row_change(ref $ref, int $row, string $form_name, source_list $src_lst, array $url_arr): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $ref_id = (string)$ref->id();
+        // a posted row is only taken if it belongs to the same reference
+        $posted = ($url_arr[url_var::REF_ROW . url_var::REF . $row] ?? '') == $ref_id;
+        $row_url = $posted ? $url_arr : [];
+        $del_var = url_var::REF_ROW . url_var::ACTION . $row;
+        $cols = $html->form_hidden($del_var, url_var::CRUD_UPDATE);
+        $cols .= $html->form_hidden(url_var::REF_ROW . url_var::REF . $row, $ref_id);
+        $type_text = $mtr->txt(msg_id::FORM_SELECT_REF_TYPE) . ': ' . $html->esc($ref->type_name());
+        $cols .= $html->div_form($html->label_no_for($type_text), view_styles::COL_SM_2);
+        $cols .= $this->ref_row_field(url_var::EXTERNAL_KEY, $row, msg_id::FORM_FIELD_EXTERNAL_KEY, $ref->external_key(), $row_url, true);
+        $cols .= $this->ref_row_field(url_var::URL, $row, msg_id::FORM_FIELD_URL, $ref->url(), $row_url, true);
+        $cols .= $this->ref_row_field(url_var::DESCRIPTION, $row, msg_id::FORM_FIELD_DESCRIPTION, $ref->get_description(), $row_url, true);
+        $src_id = (string)($ref->source()?->id() ?? 0);
+        $cols .= $this->ref_row_source($row, $form_name, $src_lst, $src_id, $row_url, true);
+        $is_del = ($row_url[$del_var] ?? '') == url_var::CRUD_DELETE;
+        $del_box = $html->input_checkbox($del_var, $is_del, $form_name, url_var::CRUD_DELETE);
+        $cols .= $html->div_form($del_box . ' ' . $html->label($mtr->txt(msg_id::FORM_FIELD_REF_DELETE), $del_var), view_styles::COL_SM_2);
+        return $html->div_row($cols);
+    }
+
+    /**
+     * the empty row of the edit form that adds a reference: the add action as hidden field, the type selector
+     * and the empty fields without '86' values; the confirm drops it if no external key has been entered
+     *
+     * @param int $row the number of the row within the form, the next after the stored references
+     * @param string $form_name the name of the html form
+     * @param data_object|null $dto the request cache with the reference types
+     * @param source_list $src_lst the sources that can be selected
+     * @param array $url_arr the url of the edit view, whose posted add row is shown again on a re-render
+     * @return string the html code of the row
+     */
+    private function ref_row_add(int $row, string $form_name, ?data_object $dto, source_list $src_lst, array $url_arr): string
+    {
+        global $ui_sys;
+        $html = new html_base();
+        $act_var = url_var::REF_ROW . url_var::ACTION . $row;
+        // a posted row is only taken if it is the add row
+        $row_url = (($url_arr[$act_var] ?? '') == url_var::CRUD_CREATE) ? $url_arr : [];
+        $cols = $html->form_hidden($act_var, url_var::CRUD_CREATE);
+        $ref_typ_lst = ($dto?->typ_lst_cache ?? $ui_sys->typ_lst_cache)->ref_typ;
+        $typ_var = url_var::REF_ROW . url_var::REF_TYPE . $row;
+        $typ_id = (int)($row_url[$typ_var] ?? $ref_typ_lst->default_id());
+        $cols .= $ref_typ_lst->selector($form_name, $typ_id, $typ_var, view_styles::COL_SM_2);
+        $cols .= $this->ref_row_field(url_var::EXTERNAL_KEY, $row, msg_id::FORM_FIELD_EXTERNAL_KEY, '', $row_url, false);
+        $cols .= $this->ref_row_field(url_var::URL, $row, msg_id::FORM_FIELD_URL, '', $row_url, false);
+        $cols .= $this->ref_row_field(url_var::DESCRIPTION, $row, msg_id::FORM_FIELD_DESCRIPTION, '', $row_url, false);
+        $cols .= $this->ref_row_source($row, $form_name, $src_lst, '0', $row_url, false);
+        return $html->div_row($cols);
+    }
+
+    /**
+     * one text field of a reference row, with its stored value as the '86' value if the reference is stored
+     *
+     * @param string $var the url var of the field e.g. url_var::EXTERNAL_KEY
+     * @param int $row the number of the row within the form
+     * @param msg_id $label the label of the field
+     * @param string|null $stored the stored value of the field, '' for the add row
+     * @param array $row_url the posted url of this row, empty if the row has not been posted
+     * @param bool $with_pre true to add the stored value as the '86' value, false for the add row
+     * @return string the html code of the field
+     */
+    private function ref_row_field(string $var, int $row, msg_id $label, ?string $stored, array $row_url, bool $with_pre): string
+    {
+        $html = new html_base();
+        $name = url_var::REF_ROW . $var . $row;
+        $value = $row_url[$name] ?? $stored ?? '';
+        $result = $html->form_field($name, $label, $value, html_base::INPUT_TEXT, '', view_styles::COL_SM_2, '', '_' . $row);
+        if ($with_pre) {
+            // on a re-render keep the stored value of the edit form start, not the posted change
+            $result .= $html->form_hidden(url_var::PRE . $name, $row_url[url_var::PRE . $name] ?? $stored ?? '');
+        }
+        return $result;
+    }
+
+    /**
+     * the source selector of a reference row, with the stored source as the '86' value if the reference is stored
+     *
+     * @param int $row the number of the row within the form
+     * @param string $form_name the name of the html form
+     * @param source_list $src_lst the sources that can be selected
+     * @param string $stored the id of the stored source, '0' for none
+     * @param array $row_url the posted url of this row, empty if the row has not been posted
+     * @param bool $with_pre true to add the stored source as the '86' value, false for the add row
+     * @return string the html code of the selector
+     */
+    private function ref_row_source(int $row, string $form_name, source_list $src_lst, string $stored, array $row_url, bool $with_pre): string
+    {
+        $html = new html_base();
+        $name = url_var::REF_ROW . url_var::SOURCE . $row;
+        $selected = (int)($row_url[$name] ?? $stored);
+        $result = $src_lst->selector($form_name, $selected, $name, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_2);
+        if ($with_pre) {
+            $result .= $html->form_hidden(url_var::PRE . $name, $row_url[url_var::PRE . $name] ?? $stored);
+        }
+        return $result;
     }
 
     /**
@@ -2988,17 +3126,29 @@ class system_form extends component
      */
     function button_import(): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Import', html_base::BS_BTN_IMPORT);
+        return $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT), html_base::BS_BTN_IMPORT);
     }
 
     /**
-     * @return string the html code for a form save button
+     * the export button of an export view, which shows the same view again with the request to download the export
+     * of the selected phrases (see frontend::export_file)
+     *
+     * @param int $msk_id the id of the export view, so that the submit returns to it
+     * @return string the html code of the export button with the hidden view and, for a view with a fixed format, the hidden format
      */
-    function button_export(): string
+    function button_export(int $msk_id): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Export', html_base::BS_BTN_EXPORT);
+        $result = $html->form_hidden(url_var::MASK, (string)$msk_id);
+        if (array_key_exists($msk_id, views::EXPORT_FORMATS)) {
+            $result .= $html->form_hidden(url_var::EXPORT_FORMAT, views::EXPORT_FORMATS[$msk_id]);
+        }
+        $txt = $mtr->txt(msg_id::SYSTEM_BUTTON_EXPORT);
+        $result .= $html->button_bs($txt, html_base::BS_BTN_EXPORT, '', url_var::EXPORT_FILE, '', url_var::TRUE);
+        return $result;
     }
 
     /**

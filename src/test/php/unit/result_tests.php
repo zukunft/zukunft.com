@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -196,6 +197,24 @@ class result_tests
         $t->assert_sql_update($sc, $res, $db_res);
         $t->assert_sql_update($sc, $res_big, $db_res_big);
         $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
+        // the user row of a prime, a main, a most and a big result table without log like the writes above;
+        // the big result as the exclusion that the delete writes, because its number change is tested above
+        $usr_res_big_ex = $t_res->result_big();
+        $usr_res_big_ex->exclude();
+        $usr_db_res_big = $t_res->result_big();
+        $t->assert_sql_update_user($sc, $res_prime_max, $db_res_prime_max, []);
+        $t->assert_sql_update_user($sc, $res_main, $db_res_main, []);
+        $t->assert_sql_update_user($sc, $res, $db_res, []);
+        $t->assert_sql_update_user($sc, $usr_res_big_ex, $usr_db_res_big, []);
+        $test_name = 'no user row update of a result if the user row has already all overwrites';
+        $qp = $usr_db_res_big->sql_update_user($sc, $usr_db_res_big, $msg, new sql_type_list());
+        $qp_name = $qp?->name;
+        $t->assert_null($test_name, $qp_name);
+        // the insert of the user row with the fields that differ from the standard row; the most table
+        // is covered by the insert of the user row above, which is the same prepared statement
+        $t->assert_sql_save_fields($sc, $res_prime_max, $db_res_prime_max);
+        $t->assert_sql_save_fields($sc, $res_main, $db_res_main);
+        $t->assert_sql_save_fields($sc, $res_big, $db_res_big);
         // TODO Prio 0 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
@@ -372,6 +391,21 @@ class result_tests
         // negative: a row in the table that fits the source group stays where it is
         $test_name = 'a row in the table that fits the source group is updated in place';
         $t->assert_false($test_name, $t_res->result_prime()->row_in_other_table($t_res->result_prime()));
+
+        // a result is removed without change log by result_list::db_delete_no_log,
+        // so the delete of a single result is refused instead of reporting a delete that has not been done
+        $t->subheader($ts . 'delete of a single result');
+        $del_msg = new user_message();
+        $del_ok = true;
+        $del_call = function () use ($t_res, $del_msg, &$del_ok) {
+            $del_ok = $t_res->result_prime()->del($del_msg);
+        };
+        $test_name = 'the delete of a single result reports that it is refused';
+        $t->assert_log_err($test_name, $del_call, 'result_list::db_delete_no_log', $del_msg);
+        $test_name = '... and returns false';
+        $t->assert_false($test_name, $del_ok);
+        $test_name = '... and the message is not ok';
+        $t->assert_false($test_name, $del_msg->is_ok());
 
         // the text key of a prime group names the same phrases in the order of the text keys
         $t->subheader($ts . 'text key of a prime group');

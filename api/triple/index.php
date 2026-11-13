@@ -34,10 +34,12 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
+include_once paths::MODEL_REF . 'ref_link_wikipedia.php';
 include_once paths::MODEL_WORD . 'triple.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_link_wikipedia;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -81,7 +83,12 @@ if ($db_con->is_open()) {
         $trp = new triple($load_usr);
         if ($trp_id > 0) {
             $trp->load_by_id($trp_id, $msg);
-            $result = $trp->api_json($typ_lst, $msg, $load_usr);
+            // the refresh icon of a wikipedia reference asks for the description of the wikipedia page
+            new ref_link_wikipedia()->refresh_from_url($trp, $_GET, $msg);
+            // a failed refresh is answered with its message only (see controller::get_json)
+            if ($msg->is_ok()) {
+                $result = $trp->api_json($typ_lst, $msg, $load_usr);
+            }
         } elseif ($trp_name > 0) {
             $trp->load_by_name($trp_name, $msg);
             $result = $trp->api_json($typ_lst, $msg, $load_usr);

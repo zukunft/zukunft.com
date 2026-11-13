@@ -135,6 +135,9 @@ repeated input.
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
 | repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
+| slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider; without javascript only the number field is shown |
+| preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency`; without javascript the buttons are not shown |
+| tag | `house heating input heated area` · `has a` · `calculator tag` | the description replaces the generated measured or assumed tag, e.g. `measured 50-500` |
 
 A repeated input:
 
@@ -162,6 +165,9 @@ A repeated input:
 | result width | the value `house heating`, `calculator result width` = 896 | the result panel of the page has this width in pixels instead of the standard width |
 | table hint | `house heating detail fuel` · `has a` · `calculator hint` | the description is shown below the detail table or the check table |
 | colour | `house heating column heat pump` · `has a` · `calculator colour` | a flagged single column gets the first colour of the page palette and the instances of a repeated column the others cycling, in the header and in the cells of a detail table |
+| difference column | `house heating column difference` · `has a` · `calculator difference` | the result column shows the first column minus the second column of its row; the cell stays empty if one of them has no number |
+| cell | `house heating row annual heat demand` · `has a` · `calculator cell` | a list: an item with a `with` triple to a column phrase shows the number of the page phrase and the item phrase in this column of the row, e.g. the cost of the alternative in the column without the plant; the first column shows the number of the row phrase also without the column phrase if no number has both |
+| sensitivity | `house heating` · `has a` · `calculator sensitivity` | a collapsed table that the browser calculates per cell while it is open: its first `has a` item names the input of the rows, the second the input of the columns; their `has a` items are the levels with a label, and the value of the table phrase and the level replaces the input; the items of its `calculator cell` list are the numbers of a cell, and the verdict colours the cell; without javascript the cells are empty |
 
 Two proposed rules for the detail tables need no keyword:
 
@@ -182,6 +188,31 @@ Two proposed rules for the detail tables need no keyword:
   the label of the item in bold in front. The notes come before the descriptions of the
   formulas.
 
+### Arguments and verdict
+
+- **more**: `house heating` · `has a` · `calculator more` is a lead text in a collapsed section below the hint.
+- **arguments**: `house heating arguments` = `house heating` · `has a` · `calculator argument` is a list. The label of
+  the list is the heading of the two sides separated by `|`. An item names a triple: a `supports` triple is an argument
+  of the first side and a `limits` triple one of the second side, with its label in bold and its description as the
+  text. The first argument of a side is shown and the others are collapsed.
+- **verdict**: `house heating verdict` = `house heating` · `has a` · `calculator verdict` compares the number of its first
+  `with` phrase with the number of its second `with` phrase, the threshold. Its three `has a` items in their order
+  are the states for a number below minus the threshold, above the threshold and in between, with the label as the
+  headline and the hint as the text. A `calculator note` of the verdict is shown below it.
+- **scale**: `house heating verdict scale` = `house heating verdict` · `has a` · `calculator scale` draws the meter. The
+  values `field limit down` and `field limit up` of the triple are its ends, and the description is the text
+  below it with the parts separated by `|`.
+
+### Placeholders in a text
+
+The description of a text triple or an argument can contain:
+
+| placeholder | shows | example |
+|---|---|---|
+| `{num:text}` | the text in the style of a number | `{num:820 CHF}` |
+| `{source:name}` | the `[n]` link to the source in the source list | `{source:sample fuel price statistic}` |
+| `{result:phrase:decimals}` | the live number of the phrase for the page phrase, formatted with these decimals, or without decimals if the placeholder names none; also a sub text of a row and a verdict text use it | `{result:annual saving:0}` |
+
 ### Buttons
 
 | element | triple in the sample | effect |
@@ -190,6 +221,7 @@ Two proposed rules for the detail tables need no keyword:
 | download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
 | printable report | `house heating inputs` · `has a` · `calculator printable report` | a link to the pdf report of the page: the logo of the user setting `report logo` or of zukunft.com, a table per column filtered by `split count` with the positions of this portfolio, the other tables, notes and sources of the page and the formulas used |
 | copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |
+| case | `portfolio split inputs` · `has a` · `calculator case` | the field for the name of a case above the save button of a page that is built from another phrase; a page without this triple has no such field |
 
 ### Calculations
 

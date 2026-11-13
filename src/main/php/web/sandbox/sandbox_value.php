@@ -319,6 +319,18 @@ class sandbox_value extends sandbox
 
 
     /**
+     * set the phrases of this value that a list answer names only once (see ListBase::api_mapper_with_phrases)
+     * @param array $phr_of_fld the phrase objects by json field e.g. json_fields::PHRASES, which are shared with other values
+     * @return void
+     */
+    function set_phrases_of_fields(array $phr_of_fld): void
+    {
+        if (array_key_exists(json_fields::PHRASES, $phr_of_fld)) {
+            $this->grp->set_lst($phr_of_fld[json_fields::PHRASES]);
+        }
+    }
+
+    /**
      * set the vars of this base object on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg OK or a warning e.g. if the server version does not match
@@ -549,7 +561,19 @@ class sandbox_value extends sandbox
         $url = $html->url_back($this->default_view_id(), $this->id(), $url_arr);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
-        return $html->ref($url, $txt, '', '', true);
+        return $html->ref($url, $txt, $this->link_title(), '', true);
+    }
+
+    /**
+     * the tooltip of the link to the number, so that each number of a table cell explains itself:
+     * the value overwrites it with its source and the result with the formula that has calculated it;
+     * a number without one shows the title of the table cell e.g. "assumed, confidence 20 %"
+     *
+     * @return string the tooltip of the link to the number, empty for no tooltip
+     */
+    protected function link_title(): string
+    {
+        return '';
     }
 
     /**

@@ -107,6 +107,8 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+// for used_by_data; loaded via value.php like in triple.php
+//include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 // for sandbox_related::views_assigned, which cannot include it itself
@@ -166,6 +168,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -359,10 +362,8 @@ class word extends sandbox_code_id
         string       $name_fld = word_fields::FLD_NAME,
         string       $type_fld = phrase::FLD_TYPE): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        // map the fields whenever the row has been mapped (id set), not based on the parent return,
-        // because an error left on $msg by an earlier operation must not lead to a half mapped word
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        if ($result) {
             if (array_key_exists(word_fields::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[word_fields::FLD_PLURAL];
             }
@@ -571,10 +572,9 @@ class word extends sandbox_code_id
                     // word (idor); see sandbox_multi::is_readable_by, same gate as api/valueList
                     $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // INCL_PHRASES so each value carries its group phrases, which the
-                        // frontend needs for the value name and to sort the list by impact
+                        // with the group phrases and the source of each value (api_type_list::VALUES_RELATED)
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                            $typ_lst->values_related(), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);
@@ -765,7 +765,7 @@ class word extends sandbox_code_id
             }
         }
         // a word without an own default view and without parent views is shown with the system
-        // default word view, so the views tab of the word page offers at least this view
+        // default word view, so the edit menu of the word page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::WORD, $msg);
@@ -1794,25 +1794,6 @@ class word extends sandbox_code_id
         return $qp;
     }
 
-    /**
-     * calculates how many times a word is used, because this can be helpful for sorting
-     */
-    function calc_usage_old(): bool
-    {
-        global $db_con;
-
-        // TODO Prio 2 recreate based on the group
-        /*
-        $sql = 'UPDATE words t
-             SET ' . $db_con->sf("values") . ' = (
-          SELECT COUNT(group_id)
-            FROM group g
-           WHERE g.phrase_id = t.word_id);';
-        $db_con->exe_try('Calculate word usage', $sql);
-        */
-        return true;
-    }
-
 
     /*
      * related
@@ -1907,6 +1888,56 @@ class word extends sandbox_code_id
         } else {
             return false;
         }
+    }
+
+    /**
+     * a word that a value, a result, a formula or a triple still uses is only excluded for the user
+     * by del(), because the delete would also delete its values and triples (del_links)
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the word must not be deleted, but only excluded for the user
+     */
+    function used_by_someone_else(user_message $msg): bool
+    {
+        return parent::used_by_someone_else($msg) or $this->used_by_data($msg);
+    }
+
+    /**
+     * the values and results first, because they are lost by a delete
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if a value, a result, a formula or a triple uses this word, false for a word without id
+     */
+    function used_by_data(user_message $msg): bool
+    {
+        // a word that is not in the database cannot be used by any data
+        if ($this->id() == 0) {
+            return false;
+        }
+        $phr = $this->phrase();
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr($phr, $msg, 1);
+        $used = !$val_lst->is_empty();
+        if (!$used) {
+            $res_lst = new result_list($this->get_user());
+            $res_lst->load_by_phrase($phr, $msg);
+            $used = !$res_lst->is_empty();
+        }
+        if (!$used) {
+            // a formula linked to the word or a formula expression that names it
+            $frm_lst = new formula_list($this->get_user());
+            $frm_lst->load_by_phr($phr, $msg);
+            $frm_ref_lst = new formula_list($this->get_user());
+            $frm_ref_lst->load_by_word_ref($this, $msg);
+            $used = (!$frm_lst->is_empty() or !$frm_ref_lst->is_empty());
+        }
+        if (!$used) {
+            // a triple with this word as from or to
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_phr($phr, $msg);
+            $used = !$trp_lst->is_empty();
+        }
+        return $used;
     }
 
     /**
@@ -2141,7 +2172,10 @@ class word extends sandbox_code_id
         // TODO Prio 2 review
         // do not overwrite a type with the default value
         // because this is set also if not specified by the import
-        if ($this->type_id($msg) == $sys->typ_lst->phr_typ->default_id() and $obj->type_id($msg) !== null) {
+        // e.g. a use case that names the system word "name" must not give it the normal type;
+        // only a new word (compared with the empty object, id 0) gets the default type
+        if ($this->type_id($msg) == $sys->typ_lst->phr_typ->default_id()
+            and ($obj->type_id($msg) !== null or $obj->id() != 0)) {
             // if not the user table
             if (!$sc_par_lst->is_usr_tbl()) {
                 $change_typ = false;

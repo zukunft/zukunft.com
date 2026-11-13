@@ -180,7 +180,12 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                // a delete by name gets its id from the name (see frontend::action_crud)
+                $is_del_by_name = (($url_array[url_var::ACTION] ?? '') == url_var::CRUD_DELETE
+                    and ($url_array[url_var::NAME] ?? '') != '');
+                if (!$is_del_by_name) {
+                    $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                }
             }
         }
         return $msg;
@@ -912,7 +917,8 @@ class db_object extends TextIdObject
      */
 
     /**
-     * save the frontend object in the database
+     * save the frontend object in the database and remember its source or verb as the default of the
+     * requesting user (see user::save_last_used)
      * TODO Prio 2 should be done via api
      *
      * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
@@ -937,6 +943,7 @@ class db_object extends TextIdObject
         // object by its id (see frontend::action_crud)
         if ($usr_msg_db->is_ok()) {
             $this->id = $db_obj->id();
+            $usr_msg_db->usr->save_last_used($db_obj, $usr_msg_db);
         }
         /*
          * TODO Prio 2 activate api call
@@ -950,7 +957,8 @@ class db_object extends TextIdObject
     }
 
     /**
-     * update the frontend object via api in the database
+     * update the frontend object via api in the database and remember its source or verb as the
+     * default of the requesting user (see user::save_last_used)
      *
      * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
@@ -975,6 +983,7 @@ class db_object extends TextIdObject
         // row, so the following render must show the object by the new id (see frontend::action_crud)
         if ($usr_msg_db->is_ok()) {
             $this->id = $db_obj->id();
+            $usr_msg_db->usr->save_last_used($db_obj, $usr_msg_db);
         }
         /*
          * TODO Prio 2 activate api call
@@ -1240,29 +1249,6 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use country to narrow the selection
-     * @return string with the HTML code to show the phrase selector
-     */
-    public function phrase_selector_old(
-        string     $name,
-        string     $form,
-        string     $label = '',
-        string     $col_class = '',
-        int        $selected = 0,
-        string     $pattern = '',
-        ?phrase_ui $phr = null
-    ): string
-    {
-        return $this->selector_not_defined('phrase_selector_old');
-    }
-
-    /**
      * html code for a form field to select a word or triple
      *
      * @param phrase_list $phr_lst a preloaded phrase list for the selection
@@ -1369,12 +1355,13 @@ class db_object extends TextIdObject
         global $mtr;
         $html = new html_base();
         $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
-        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str = $html->form_field(url_var::IMPORT_FILE, $msg_id, $name, html_base::INPUT_FILE);
         $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
         $result = '<' . html_base::FORM
             . ' ' . html_base::ACTION . '="' . $action . '"'
             . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
             . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $html->form_session_token()
             . $html->form_user()
             . $frm_str
             . '</' . html_base::FORM . '>';
@@ -1404,10 +1391,12 @@ class db_object extends TextIdObject
     /**
      * create the html code to select a verb
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user whose last used verb a new object preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param string $style the formatting code e.g. to fix the width of the selector
      * @return string the html code to select a verb
      */
-    public function verb_selector(string $form, ?type_lists $typ_lst, string $style = view_styles::COL_SM_3): string
+    public function verb_selector(string $form, user_message $msg, ?type_lists $typ_lst, string $style = view_styles::COL_SM_3): string
     {
         return $this->selector_not_defined('verb_selector');
     }

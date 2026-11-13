@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_li
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -140,6 +142,14 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the do not update a link guard: the link type of a formula link is a normal field, so only the
+        // formula and the phrase identify the link
+        $t_wrd = new test_words($t);
+        $lnk_from = clone $lnk;
+        $lnk_from->set_fob($t_frm->formula_increase());
+        $lnk_to = clone $lnk;
+        $lnk_to->set_tob($t_wrd->word_hour()->phrase());
+        $t->assert_link_guard($sc, $lnk, ['formula' => $lnk_from, 'phrase' => $lnk_to]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         // the delete log function is created once per name, so a link to a phrase that has been
@@ -205,6 +215,22 @@ class formula_link_tests
         $t->assert($test_name, $lnk_id_only->formula()->name() ?? '', '');
         $test_name = 'a row without a description leaves the description empty';
         $t->assert($test_name, $lnk_id_only->description ?? '', '');
+        $t->assert_row_mapper_guard($t_frm->formula_link(), $t_frm->formula_link_row());
+
+        // the rows of a list are independent, so the error of one row must not stop the next row
+        $test_name = 'a row whose mapping fails is not added to the list';
+        $lnk_lst = new formula_link_list($t->usr1);
+        $db_rows = [$t_frm->formula_link_row_untrimmed(), $t_frm->formula_link_row()];
+        $t->map_list_rows($lnk_lst, $db_rows, $msg);
+        $lnk_ids = $lnk_lst->ids();
+        $t->assert($test_name, $lnk_ids, [$t_frm->formula_link()->id()]);
+        $test_name = '... but the row after it is mapped completely';
+        $lnk_after = $lnk_lst->get_first_object();
+        $lnk_name = $lnk_after?->name();
+        $t->assert($test_name, $lnk_name, formula_names::SCALE_TO_SEC . ' to ' . word_names::MINUTE);
+        $test_name = '... and the failed row is reported';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
 
         $t->subheader($ts . 'api mapper');
 
@@ -223,6 +249,13 @@ class formula_link_tests
         $lnk_new = new formula_link($t->usr1);
         $lnk_new->api_mapper($t_frm->formula_link()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $lnk_new->order_nbr, test_const::FORMULA_LINK_ORDER_NBR);
+        $msg->reset();
+        // a formula linked to a triple must not be linked to the word with the same id
+        $test_name = 'the api mapper keeps the negative phrase id of a triple';
+        $lnk_new = new formula_link($t->usr1);
+        $trp_phr_id = triple_names::CANTON_ZURICH_ID * -1;
+        $lnk_new->api_mapper([json_fields::ID => 0, json_fields::PHRASE_ID => $trp_phr_id], $msg);
+        $t->assert($test_name, $lnk_new->phrase_id(), $trp_phr_id);
         $msg->reset();
         // the formula is expected as a json object, not only by its id
         $test_name = 'an api message with only an id as the formula is refused';

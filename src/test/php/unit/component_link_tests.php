@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_tests
@@ -129,6 +130,14 @@ class component_link_tests
         $lnk_reordered->order_nbr = 2;
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);
         $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the do not update a link guard: the link type of a component link is a normal field, so only the
+        // view and the component identify the link
+        $t_msk = new test_views($t);
+        $lnk_from = clone $lnk;
+        $lnk_from->set_fob($t_msk->view_word_log());
+        $lnk_to = clone $lnk;
+        $lnk_to->set_tob($t_cmp->component_matrix());
+        $t->assert_link_guard($sc, $lnk, ['view' => $lnk_from, 'component' => $lnk_to]);
         $t->assert_sql_delete($sc, $lnk);
         // is covered already by the horizontal tests
         //$t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);

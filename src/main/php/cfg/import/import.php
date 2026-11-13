@@ -67,6 +67,8 @@ include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_cache.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -100,6 +102,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -238,6 +242,9 @@ class import
     public ?int $view_validations_failed = 0;
     public ?int $system_done = 0;
     public ?int $system_failed = 0;
+    // the number of objects of the json of put_json by the change table of their type e.g. [words => 2],
+    // which are all saved only if put_json returns true
+    public array $counts = [];
 
     function __construct(string $file_name = '')
     {
@@ -419,6 +426,8 @@ class import
             // analyse the import file
             $this->step_main_start(msg_id::COUNT, $this->est_time_create);
             $dto = $this->get_data_object_yaml($yaml_array, $msg);
+            // a yaml key only names a triple, so an existing triple keeps its link
+            $dto->triple_list()->set_links_by_db_name($msg);
             $this->step_main_end();
 
             // write to the database
@@ -486,6 +495,7 @@ class import
             // write to the database
             $this->step_main_start(msg_id::SAVE, $this->est_time_store);
             $dto->save($msg, $this);
+            $this->counts = $dto->counts_by_table();
             $this->step_main_end();
 
             // also after a problem, because the objects before the problem are saved
@@ -497,6 +507,70 @@ class import
 
         $sys->times->switch();
         return $msg->is_ok();
+    }
+
+    /**
+     * import the json file that a user has uploaded on the import view as the requesting user, like the put of
+     * api/json, but only for a user who may import and only a json file of this request within the size limit
+     *
+     * @param array $upload the entry of the uploaded file as php gives it in $_FILES e.g. with the name, the size and the tmp name
+     * @param bool $is_uploaded true if php has received the file with this request (is_uploaded_file of the entry point)
+     * @param user_message $msg with the requesting user, who imports, and to report why the file is refused
+     * @return bool true if the file has been imported; the number of objects per type is in $this->counts
+     */
+    function put_upload(array $upload, bool $is_uploaded, user_message $msg): bool
+    {
+        $result = false;
+        if (!$this->upload_refused($upload, $is_uploaded, $msg)) {
+            $this->file_name = $upload[rest_ctrl::UPLOAD_NAME];
+            $json_str = file_get_contents($upload[rest_ctrl::UPLOAD_TMP_NAME]);
+            if ($json_str === false) {
+                $msg->add(msg_id::IMPORT_READ_ERROR, [
+                    msg_id::VAR_FILE_TYPE => files::JSON,
+                    msg_id::VAR_FILE_NAME => $this->file_name
+                ]);
+            } else {
+                // the import writes its progress for the console, which is no part of the page
+                ob_start();
+                $result = $this->put_json($json_str, $msg);
+                ob_end_clean();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $upload the entry of the uploaded file as php gives it in $_FILES
+     * @param bool $is_uploaded true if php has received the file with this request
+     * @param user_message $msg with the requesting user and to report why the file is refused
+     * @return bool true if the file must not be imported, which $msg explains
+     */
+    private function upload_refused(array $upload, bool $is_uploaded, user_message $msg): bool
+    {
+        global $cfg;
+
+        $file_name = $upload[rest_ctrl::UPLOAD_NAME] ?? '';
+        $size = (int)($upload[rest_ctrl::UPLOAD_SIZE] ?? 0);
+        $limit_mb = $cfg->get_by([triples::FILE_SIZE, words::LIMIT, words::IMPORT], def::FALLBACK_IMPORT_FILE_MB);
+        $is_json = str_ends_with(strtolower($file_name), files::JSON);
+        $vars = [msg_id::VAR_FILE_NAME => $file_name];
+        $refused = true;
+        if ($msg->usr == null or !$msg->usr->can_import()) {
+            $msg->add(msg_id::IMPORT_UPLOAD_NOT_PERMITTED, $vars);
+        } elseif (!$is_uploaded) {
+            $msg->add(msg_id::IMPORT_UPLOAD_MISSING, $vars);
+        } elseif (!$is_json) {
+            $msg->add(msg_id::IMPORT_UPLOAD_NO_JSON, $vars);
+        } elseif ($size <= 0) {
+            $msg->add(msg_id::IMPORT_UPLOAD_EMPTY, $vars);
+        } elseif ($size > $limit_mb * self::BYTES_PER_MB) {
+            $vars[msg_id::VAR_VALUE] = $size;
+            $vars[msg_id::VAR_VALUE_CHK] = $limit_mb;
+            $msg->add(msg_id::IMPORT_UPLOAD_TOO_BIG, $vars);
+        } else {
+            $refused = false;
+        }
+        return $refused;
     }
 
     /**
@@ -570,6 +644,10 @@ class import
 
         if ($dto == null) {
             $dto = new data_object($msg->usr);
+        }
+        // without an import user set by the caller the requesting user of the message imports
+        if ($this->usr == null) {
+            $this->usr = $msg->usr;
         }
 
         // get the user first to allow user-specific validation

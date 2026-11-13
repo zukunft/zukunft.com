@@ -72,9 +72,26 @@ const TXT = {
     tabPage: "calc_editor_tab_page",
     tabTexts: "calc_editor_tab_texts",
     tabChanges: "calc_editor_tab_changes",
+    tabJson: "calc_editor_tab_json",
+    jsonNote: "calc_editor_json_note",
+    copy: "calc_editor_copy",
+    copied: "calc_editor_copied",
+    copyManual: "calc_editor_copy_manual",
+    tabPdf: "calc_editor_tab_pdf",
+    pdfNote: "calc_editor_pdf_note",
+    pdfCreate: "calc_editor_pdf_create",
+    pdfOffline: "calc_editor_pdf_offline",
+    pdfCreating: "calc_editor_pdf_creating",
+    pdfCreated: "calc_editor_pdf_created",
+    pdfFailed: "calc_editor_pdf_failed",
     listColumns: "calc_editor_list_columns",
     listRowgroups: "calc_editor_list_rowgroups",
     listDetails: "calc_editor_list_details",
+    listArguments: "calc_editor_list_arguments",
+    listVerdict: "calc_editor_list_verdict",
+    listSensitivity: "calc_editor_list_sensitivity",
+    listPresets: "calc_editor_list_presets",
+    listNotes: "calc_editor_list_notes",
     kindPage: "calc_editor_kind_page",
     kindInput: "calc_editor_kind_input",
     kindAssumption: "calc_editor_kind_assumption",
@@ -87,6 +104,12 @@ const TXT = {
     kindDextra: "calc_editor_kind_dextra",
     kindDfilter: "calc_editor_kind_dfilter",
     kindSub: "calc_editor_kind_sub",
+    kindArgument: "calc_editor_kind_argument",
+    kindVerdict: "calc_editor_kind_verdict",
+    kindSaxis: "calc_editor_kind_saxis",
+    kindSlevel: "calc_editor_kind_slevel",
+    kindPreset: "calc_editor_kind_preset",
+    kindNote: "calc_editor_kind_note",
     addInput: "calc_editor_add_input",
     addAssumption: "calc_editor_add_assumption",
     addColumn: "calc_editor_add_column",
@@ -96,6 +119,52 @@ const TXT = {
     addDetail: "calc_editor_add_detail",
     addDcol: "calc_editor_add_dcol",
     addDextra: "calc_editor_add_dextra",
+    addArgument: "calc_editor_add_argument",
+    argumentReason: "calc_editor_argument_reason",
+    argumentSide: "calc_editor_argument_side",
+    argumentPro: "calc_editor_argument_pro",
+    argumentContra: "calc_editor_argument_contra",
+    argumentTarget: "calc_editor_argument_target",
+    argumentText: "calc_editor_argument_text",
+    argumentTextNote: "calc_editor_argument_text_note",
+    addVerdict: "calc_editor_add_verdict",
+    verdictBox: "calc_editor_verdict_box",
+    verdictBoxNote: "calc_editor_verdict_box_note",
+    verdictScale: "calc_editor_verdict_scale",
+    verdictScaleNote: "calc_editor_verdict_scale_note",
+    verdictNote: "calc_editor_verdict_note",
+    verdictResult: "calc_editor_verdict_result",
+    verdictResultNote: "calc_editor_verdict_result_note",
+    verdictThreshold: "calc_editor_verdict_threshold",
+    verdictThresholdNote: "calc_editor_verdict_threshold_note",
+    verdictScaleMin: "calc_editor_verdict_scale_min",
+    verdictScaleMax: "calc_editor_verdict_scale_max",
+    verdictScaleLimitNote: "calc_editor_verdict_scale_limit_note",
+    addSaxis: "calc_editor_add_saxis",
+    addSlevel: "calc_editor_add_slevel",
+    sensitivityBox: "calc_editor_sensitivity_box",
+    sensitivityBoxNote: "calc_editor_sensitivity_box_note",
+    sensitivityHint: "calc_editor_sensitivity_hint",
+    sensitivityCellMain: "calc_editor_sensitivity_cell_main",
+    sensitivityCellMainNote: "calc_editor_sensitivity_cell_main_note",
+    sensitivityCellChange: "calc_editor_sensitivity_cell_change",
+    sensitivityCellChangeNote: "calc_editor_sensitivity_cell_change_note",
+    sensitivityNumber: "calc_editor_sensitivity_number",
+    sensitivityNumberNote: "calc_editor_sensitivity_number_note",
+    addPreset: "calc_editor_add_preset",
+    presetValues: "calc_editor_preset_values",
+    presetValuesNote: "calc_editor_preset_values_note",
+    addNote: "calc_editor_add_note",
+    noteText: "calc_editor_note_text",
+    noteTextNote: "calc_editor_note_text_note",
+    listSources: "calc_editor_list_sources",
+    kindSource: "calc_editor_kind_source",
+    sourceName: "calc_editor_source_name",
+    sourceNameNote: "calc_editor_source_name_note",
+    sourceDescription: "calc_editor_source_description",
+    sourceDescriptionNote: "calc_editor_source_description_note",
+    sourceUrl: "calc_editor_source_url",
+    sourceDoi: "calc_editor_source_doi",
     fromItem: "calc_editor_from_item",
     fromNothing: "calc_editor_from_nothing",
     fromPhraseName: "calc_editor_from_phrase_name",
@@ -127,6 +196,8 @@ const TXT = {
     readFrom: "calc_editor_read_from",
     pageTitle: "calc_editor_page_title",
     leadText: "calc_editor_lead_text",
+    moreText: "calc_editor_more_text",
+    moreTextNote: "calc_editor_more_text_note",
     listHeadings: "calc_editor_list_headings",
     noHeading: "calc_editor_no_heading",
     labelOf: "calc_editor_label_of",
@@ -215,6 +286,7 @@ const TXT = {
     values: "calc_editor_values",
     newWords: "calc_editor_new_words",
     changedFormulas: "calc_editor_changed_formulas",
+    changedSources: "calc_editor_changed_sources",
     removed: "calc_editor_removed",
     discarded: "calc_editor_discarded",
     podAnswered: "calc_editor_pod_answered",
@@ -314,6 +386,8 @@ document.getElementById(EDITOR_HOST_ID).innerHTML = [
     '<button class="tab" role="tab" id="tab-page" aria-selected="true" data-tab="page">' + txtHtml(TXT.tabPage) + '</button>',
     '<button class="tab" role="tab" id="tab-texts" aria-selected="false" data-tab="texts">' + txtHtml(TXT.tabTexts) + '</button>',
     '<button class="tab" role="tab" id="tab-changes" aria-selected="false" data-tab="changes">' + txtHtml(TXT.tabChanges) + '</button>',
+    '<button class="tab" role="tab" id="tab-json" aria-selected="false" data-tab="json">' + txtHtml(TXT.tabJson) + '</button>',
+    '<button class="tab" role="tab" id="tab-pdf" aria-selected="false" data-tab="pdf">' + txtHtml(TXT.tabPdf) + '</button>',
     '</div>',
     '<div class="pane" id="pane"></div>',
     '<div class="formula-editor" id="calcFormulaCompare" hidden></div>',
@@ -335,6 +409,14 @@ const KW = {
     column: "calculator result column",
     rowgroup: "calculator row group",
     detail: "calculator detail table",
+    argument: "calculator argument",
+    verdict: "calculator verdict",
+    sensitivity: "calculator sensitivity",
+    cell: "calculator cell",
+    preset: "calculator preset",
+    scale: "calculator scale",
+    note: "calculator note",
+    more: "calculator more",
     highlight: "calculator highlight",
     signed: "calculator signed"
 };
@@ -356,14 +438,35 @@ const UNIT_TYPES = new Set(["measure unit", "format percent"]);
 const FOLLOW = "is follower of";
 const HAS = "has a";
 const WITH = "with";
+/* the name of the verb "is", for which the pod creates the name of a triple as "from (to)" */
+const IS_A = "is a";
+/* the roles of the two phrases that the verdict compares, in their order, which also end the names of their triples */
+const COMPARED_ROLES = ["result", "threshold"];
+/* the roles of the results of a cell of the sensitivity table: the number in the cell and the one in brackets */
+const CELL_ROLES = ["main", "change"];
+/* the verbs from the reason to the claim of an argument, pro first like the page, the same as verbs SUPPORTS and LIMITS */
+const ARGUMENT_SIDES = [{verb: "supports", txt: TXT.argumentPro}, {verb: "limits", txt: TXT.argumentContra}];
+/* the settings of the calculator page, which the preview gets, the same as system_page CALC_PAGE_SETTINGS_ID */
+const PAGE_SETTINGS_ID = "calcPageSettings";
+/* the host of the preview has the style of the calculator page, the same as view_styles USE_CASE */
+const PREVIEW_STYLE = "use-case";
+/* the attribute of a part of the preview with the name of the triple that defines it, the same as in calculator_json.js */
+const PART_ATTR = "data-part";
 
-/* the five lists of a calculator page, in the order of the page */
+/* the ten lists of a calculator page, in the order of the page: the arguments are below the title above the inputs,
+   the presets in the panel of the inputs, the verdict on top of the results, the sensitivity table below them and the
+   notes below the detail tables; a list without heading on the page has none in the page settings */
 const LISTS = [
+    {key: "argument", kw: KW.argument, title: txt(TXT.listArguments), suffix: "arguments", fallback: ""},
     {key: "input", kw: KW.input, title: txt(TXT.inputs), suffix: "inputs", fallback: txt(TXT.inputs)},
+    {key: "preset", kw: KW.preset, title: txt(TXT.listPresets), suffix: "presets", fallback: "", noHeading: true},
     {key: "assumption", kw: KW.assumption, title: txt(TXT.assumptions), suffix: "assumptions", fallback: txt(TXT.assumptions)},
+    {key: "verdict", kw: KW.verdict, title: txt(TXT.listVerdict), suffix: "verdict", fallback: "", noHeading: true},
     {key: "column", kw: KW.column, title: txt(TXT.listColumns), suffix: "result columns", fallback: ""},
     {key: "rowgroup", kw: KW.rowgroup, title: txt(TXT.listRowgroups), suffix: "row groups", fallback: ""},
-    {key: "detail", kw: KW.detail, title: txt(TXT.listDetails), suffix: "detail tables", fallback: ""}
+    {key: "sensitivity", kw: KW.sensitivity, title: txt(TXT.listSensitivity), suffix: "sensitivity", fallback: ""},
+    {key: "detail", kw: KW.detail, title: txt(TXT.listDetails), suffix: "detail tables", fallback: ""},
+    {key: "note", kw: KW.note, title: txt(TXT.listNotes), suffix: "notes", fallback: ""}
 ];
 
 /* what each kind of item is, which verb links it to its parent and which sub-items it can have */
@@ -378,9 +481,22 @@ const KIND = {
     dcol: {name: txt(TXT.kindDcol), verb: HAS, kids: ["dfilter"], prefix: "detail column"},
     dextra: {name: txt(TXT.kindDextra), verb: WITH, kids: [], prefix: null, highlight: true},
     dfilter: {name: txt(TXT.kindDfilter), verb: WITH, kids: [], prefix: null},
-    sub: {name: txt(TXT.kindSub), verb: HAS, kids: [], prefix: null}
+    sub: {name: txt(TXT.kindSub), verb: HAS, kids: [], prefix: null},
+    argument: {name: txt(TXT.kindArgument), verb: HAS, kids: [], prefix: "argument"},
+    verdict: {name: txt(TXT.kindVerdict), verb: HAS, kids: [], prefix: "verdict", hint: true},
+    sensitivity: {name: txt(TXT.kindSaxis), verb: HAS, kids: ["slevel"], prefix: "sensitivity"},
+    slevel: {name: txt(TXT.kindSlevel), verb: HAS, kids: [], prefix: null},
+    preset: {name: txt(TXT.kindPreset), verb: HAS, kids: [], prefix: "preset", hint: true},
+    // the text of a note is the description of its triple
+    note: {name: txt(TXT.kindNote), verb: HAS, kids: [], prefix: "note", text: true}
 };
 const ADD_TEXT = {
+    preset: txt(TXT.addPreset),
+    note: txt(TXT.addNote),
+    argument: txt(TXT.addArgument),
+    verdict: txt(TXT.addVerdict),
+    sensitivity: txt(TXT.addSaxis),
+    slevel: txt(TXT.addSlevel),
     input: txt(TXT.addInput),
     assumption: txt(TXT.addAssumption),
     column: txt(TXT.addColumn),
@@ -484,10 +600,9 @@ let MANAGED = null;      /* the triple and value indexes that the editor owns */
 let state = null;        /* the editable model */
 let selected = "page";
 let activeTab = "page";
-/* the lists of the page structure that the user has opened; on startup only the first list, the inputs, is open */
-const openLists = new Set([LISTS[0].key]);
-/* the collapsed blocks of the page preview that the user has opened e.g. the assumptions; closed on startup */
-const openPreview = new Set();
+/* the lists of the page structure that the user has opened; on startup only the inputs are open, so the arguments
+   above them are collapsed */
+const openLists = new Set(["input"]);
 const history = {undo: [], redo: [], lastKey: "", lastTime: 0};
 
 function buildIndex(doc) {
@@ -583,6 +698,7 @@ function emptyPhrase() {
     const result = {
         label: newProp(null, null, ""),
         hint: newProp(null, null, ""),
+        more: newProp(null, null, ""),
         highlight: newFlag(null, null, false),
         side: [],
         field: {
@@ -647,6 +763,7 @@ function childKind(parentKind, verb) {
     const map = {
         rowgroup: {"has a": "row"},
         row: {"with": "filter"},
+        sensitivity: {"has a": "slevel"},
         detail: {"has a": "dcol", "with": "dextra"},
         dcol: {"with": "dfilter"}
     };
@@ -699,6 +816,12 @@ function parseNode(i, kind, used) {
             kidIdx.push(j);
         }
     });
+    if (kind === "argument") {
+        node.claim = parseClaim(t.to, used);
+    }
+    if (KIND[kind].text) {
+        node.text = t.description || "";
+    }
     const kids = kidIdx.map(function (j) {
         return parseNode(j, childKind(kind, T[j].verb), used);
     });
@@ -710,6 +833,54 @@ function parseNode(i, kind, used) {
     return node;
 }
 
+/* the name of a claim triple that is named by its parts, like the backend triple::generate_name for every verb except is */
+function claimAutoName(from, verb, to) {
+    const result = from + " " + verb + " " + to;
+    return result;
+}
+
+/* the claim of an argument e.g. "supply gap supports lifting the NPP ban" with its text and its label, which belong to the
+   argument, so that a removed argument removes them too; null if the data has no triple of that name */
+function parseClaim(name, used) {
+    const j = IDX.byName.get(name);
+    let result = null;
+    if (j !== undefined) {
+        const c = IDX.T[j];
+        used.add(j);
+        result = {
+            src: j, name: c.name, nameAuto: c.name === claimAutoName(c.from, c.verb, c.to),
+            from: c.from, verb: c.verb, to: c.to, text: c.description || "",
+            label: newProp(null, null, ""), hint: newProp(null, null, "")
+        };
+        fromList(c.name).forEach(function (k) {
+            const p = IDX.T[k];
+            if (p.verb === HAS && p.to === KW.label) {
+                result.label = newProp(k, customName(p.name, c.name + " label"), p.description || "");
+                used.add(k);
+            } else if (p.verb === HAS && p.to === KW.hint) {
+                result.hint = newProp(k, customName(p.name, c.name + " hint"), p.description || "");
+                used.add(k);
+            }
+        });
+    }
+    return result;
+}
+
+/* a new claim argues about the claim of the other arguments e.g. lifting the NPP ban, pro by default */
+function newClaim() {
+    let target = "";
+    walkAll(function (n) {
+        if (!target && n.claim) {
+            target = n.claim.to;
+        }
+    });
+    const result = {
+        src: null, name: "", nameAuto: true, from: "", verb: ARGUMENT_SIDES[0].verb, to: target, text: "",
+        label: newProp(null, null, ""), hint: newProp(null, null, "")
+    };
+    return result;
+}
+
 function parseDoc(doc) {
     IDX = buildIndex(doc);
     const T = IDX.T;
@@ -718,8 +889,9 @@ function parseDoc(doc) {
     const page = selectionName(doc);
     let base = "";
     T.forEach(function (t) {
+        // not by a note, because the verdict has a note of its own
         if (!base && t.verb === HAS && LISTS.some(function (L) {
-            return L.kw === t.to;
+            return L.kw === t.to && L.key !== "note";
         })) {
             base = t.from;
         }
@@ -732,11 +904,17 @@ function parseDoc(doc) {
             base = page;
         }
     }
-    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}, formulaEdits: {}};
+    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}, formulaEdits: {}, sourceEdits: {}};
     state = model;
     const itemNames = new Set();
     LISTS.forEach(function (L) {
-        const group = {src: null, name: null, label: newProp(null, null, ""), items: []};
+        // the scale, the note and the compared result and threshold belong to the verdict box below its states,
+        // the hint and the results of a cell to the sensitivity table
+        const group = {
+            src: null, name: null, label: newProp(null, null, ""), hint: newProp(null, null, ""),
+            scale: newProp(null, null, ""), note: newProp(null, null, ""), compared: [],
+            cellSrc: null, cellName: null, cells: [], items: []
+        };
         fromList(base).forEach(function (i) {
             const t = T[i];
             if (group.src === null && t.verb === HAS && t.to === L.kw) {
@@ -749,14 +927,46 @@ function parseDoc(doc) {
             const gname = T[group.src].name;
             itemNames.add(gname);
             const nodes = [];
+            const compared = [];
+            const cells = [];
             fromList(gname).forEach(function (j) {
                 const c = T[j];
                 if (c.verb === HAS && c.to === KW.label) {
                     group.label = newProp(j, customName(c.name, gname + " label"), c.description || "");
                     used.add(j);
+                } else if (c.verb === HAS && c.to === KW.scale) {
+                    group.scale = newProp(j, customName(c.name, gname + " scale"), c.description || "");
+                    used.add(j);
+                } else if (c.verb === HAS && c.to === KW.note) {
+                    group.note = newProp(j, customName(c.name, gname + " note"), c.description || "");
+                    used.add(j);
+                } else if (L.key === "verdict" && c.verb === WITH && !isKeyword(c.to) && c.name) {
+                    compared.push(parseNode(j, "sub", used));
+                } else if (c.verb === HAS && c.to === KW.hint) {
+                    group.hint = newProp(j, customName(c.name, gname + " hint"), c.description || "");
+                    used.add(j);
+                } else if (c.verb === HAS && c.to === KW.cell) {
+                    group.cellSrc = j;
+                    group.cellName = customName(c.name, gname + " cells");
+                    used.add(j);
+                    fromList(c.name).forEach(function (k) {
+                        if (T[k].verb === HAS && !isKeyword(T[k].to) && T[k].name) {
+                            cells.push(parseNode(k, "sub", used));
+                        }
+                    });
                 } else if (c.verb === HAS && !isKeyword(c.to) && c.name) {
                     nodes.push(parseNode(j, L.key, used));
                 }
+            });
+            group.compared = sortChain(compared, function (n) {
+                return n.orderPrev;
+            }, function (n) {
+                return n.name;
+            });
+            group.cells = sortChain(cells, function (n) {
+                return n.orderPrev;
+            }, function (n) {
+                return n.name;
             });
             group.items = sortChain(nodes, function (n) {
                 return n.orderPrev;
@@ -919,6 +1129,9 @@ function parseDoc(doc) {
             } else if (t.to === KW.hint) {
                 phrase(t.from).hint = newProp(i, customName(t.name, t.from + " hint"), t.description || "");
                 used.add(i);
+            } else if (t.to === KW.more) {
+                phrase(t.from).more = newProp(i, customName(t.name, t.from + " more"), t.description || "");
+                used.add(i);
             } else if (t.to === KW.highlight) {
                 phrase(t.from).highlight = newFlag(i, customName(t.name, t.from + " highlight"), true);
                 used.add(i);
@@ -993,11 +1206,12 @@ function allNames() {
 
 function conventionalName(node, parentName) {
     const prefix = KIND[node.kind].prefix;
-    const to = node.to || "…";
+    // an argument is named after its reason, because its claim already names the side and the claim argued about
+    const to = (node.claim ? node.claim.from : node.to) || "…";
     let result = "";
     if (prefix) {
         result = state.base + " " + prefix + " " + to;
-    } else if (node.kind === "dextra") {
+    } else if (node.kind === "dextra" || node.kind === "slevel") {
         result = parentName + " " + to;
     } else {
         result = parentName + " filter";
@@ -1077,8 +1291,9 @@ function fromText(from) {
 }
 
 function labelInfo(node, parent) {
-    let result = {text: cap(node.to), from: txt(TXT.fromPhraseName)};
-    const ph = phraseText(node.to, "label");
+    let result = {text: cap(node.claim ? node.claim.from : node.to), from: txt(TXT.fromPhraseName)};
+    // the label of an argument belongs to its claim, which the page shows like the label of a phrase
+    const ph = node.claim ? node.claim.label.text : phraseText(node.to, "label");
     const own = node.label.text;
     let other = "";
     if (parent && parent.kind === "rowgroup" && IDX.byName.has(node.to)) {
@@ -1146,19 +1361,8 @@ function highlightInfo(node) {
     return result;
 }
 
-function groupLabel(listKey) {
-    const L = LISTS.find(function (x) {
-        return x.key === listKey;
-    });
-    let result = L.fallback;
-    if (state.lists[listKey].label.text) {
-        result = state.lists[listKey].label.text;
-    }
-    return result;
-}
-
 /* ------------------------------------------------------------------ */
-/* numbers for the preview: the values and the results                   */
+/* numbers for the settings: the values and the results                  */
 /* ------------------------------------------------------------------ */
 function poolNumber(entry) {
     let result = entry.number;
@@ -1198,74 +1402,12 @@ function findEntry(required, opts) {
     return best;
 }
 
-function unitOf(words) {
-    let result = "";
-    (words || []).forEach(function (w) {
-        if (!result && IDX.symbolFor.has(w)) {
-            result = IDX.symbolFor.get(w);
-        } else if (!result && IDX.unitNames.has(w)) {
-            result = w;
-        }
-    });
-    return result;
-}
-
-function fmtNumber(raw, unit) {
-    const num = Number(raw);
-    let result = String(raw);
-    if (raw !== undefined && raw !== null && raw !== "" && isFinite(num)) {
-        let shown = num;
-        let suffix = unit ? " " + unit : "";
-        // the unit of a share is percent or its symbol e.g. "%"
-        const isPercent = unit === "percent" || unit === IDX.symbolFor.get("percent");
-        if (isPercent && Math.abs(num) <= 1.5) {
-            shown = num * 100;
-            suffix = " %";
-        }
-        const abs = Math.abs(shown);
-        let decimals = 2;
-        if (abs >= 100) {
-            decimals = 0;
-        } else if (abs >= 10) {
-            decimals = 1;
-        }
-        const fixed = shown.toFixed(decimals);
-        const parts = fixed.split(".");
-        const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
-        const decPart = parts.length > 1 ? "." + parts[1] : "";
-        result = intPart + decPart + suffix;
-    }
-    return result;
-}
-
 function fieldValue(x) {
     const vp = state.phrases[x] ? state.phrases[x].field.valuePhrases.map(function (v) {
         return v.to;
     }) : [];
     const req = [x].concat(vp);
     const result = findEntry(req, {valuesOnly: true});
-    return result;
-}
-
-function confidenceOf(x, entry) {
-    let result = "";
-    if (entry && entry.words.indexOf("assumed") >= 0) {
-        IDX.pool.forEach(function (e) {
-            if (!result && e.vidx !== undefined && e.words.indexOf(x) >= 0 && e.words.indexOf("confidence") >= 0) {
-                result = String(e.number);
-            }
-        });
-    }
-    return result;
-}
-
-function sourceNumber(name) {
-    let result = 0;
-    (DOC.sources || []).forEach(function (s, i) {
-        if (!result && s.name === name) {
-            result = i + 1;
-        }
-    });
     return result;
 }
 
@@ -1313,12 +1455,24 @@ function emitAll() {
         }
     }
 
+    function emitClaim(c) {
+        triple(c.src, c.name, c.from, c.verb, c.to, c.text, true, TXT_ORDER);
+        emitProp(c.label, c.name, KW.label, "label");
+        emitProp(c.hint, c.name, KW.hint, "hint");
+    }
+
     function emitNodes(nodes, parentName) {
         const prevByVerb = {};
         nodes.forEach(function (n) {
             const prev = prevByVerb[n.verb] || null;
             if (n.to && n.name) {
-                triple(n.src, n.name, parentName, n.verb, n.to, "", false);
+                // the claim first, because the triple of the argument links to it by its name
+                if (n.claim) {
+                    emitClaim(n.claim);
+                }
+                // the text of a note, which an empty text leaves out unless the stored triple has one to clear
+                const textManaged = n.text !== undefined && (n.text !== "" || (n.src !== null && IDX.T[n.src].description !== undefined));
+                triple(n.src, n.name, parentName, n.verb, n.to, n.text, textManaged);
                 emitProp(n.label, n.name, KW.label, "label");
                 emitProp(n.hint, n.name, KW.hint, "hint");
                 emitFlag(n.highlight, n.name, KW.highlight, "highlight");
@@ -1341,14 +1495,28 @@ function emitAll() {
             const gname = groupName(L.key);
             triple(g.src, gname, base, HAS, L.kw, "", false);
             emitProp(g.label, gname, KW.label, "label");
+            emitProp(g.scale, gname, KW.scale, "scale");
+            emitProp(g.note, gname, KW.note, "note");
+            emitProp(g.hint, gname, KW.hint, "hint");
+            emitNodes(g.compared, gname);
             emitNodes(g.items, gname);
+            const hasCells = g.cells.some(function (n) {
+                return n.to;
+            });
+            if (g.cellSrc !== null || hasCells) {
+                const cname = cellGroupName(g, gname);
+                triple(g.cellSrc, cname, gname, HAS, KW.cell, "", false);
+                emitNodes(g.cells, cname);
+            }
         }
     });
+    (state.keptClaims || []).forEach(emitClaim);
     Object.keys(state.phrases).forEach(function (x) {
         const p = state.phrases[x];
         const f = p.field;
         emitProp(p.label, x, KW.label, "label");
         emitProp(p.hint, x, KW.hint, "hint");
+        emitProp(p.more, x, KW.more, "more");
         emitFlag(p.highlight, x, KW.highlight, "highlight");
         p.side.forEach(function (s, i) {
             if (s.to) {
@@ -1397,8 +1565,110 @@ function emitAll() {
     return out;
 }
 
+/* the name of the triple of the sensitivity table to its cell keyword e.g. "new NPP sensitivity cells" */
+function cellGroupName(g, gname) {
+    const result = g.cellName || gname + " cells";
+    return result;
+}
+
+/* the stored number of a value of an axis of the sensitivity table e.g. 5000 of construction cost 5000, null if none */
+function levelValue(lv) {
+    const result = lv.to ? findEntry([groupName("sensitivity"), lv.to], {valuesOnly: true}) : null;
+    return result;
+}
+
+/* the phrases of a new number of an axis value: the table, the value and the unit and quality phrases of a value of
+   the same axis e.g. CHF per kW and assumed, so that the cells calculate with the number like with the others */
+function levelWords(axis, lv) {
+    const gname = groupName("sensitivity");
+    let others = [];
+    axis.children.forEach(function (sib) {
+        const entry = sib === lv ? null : levelValue(sib);
+        if (others.length === 0 && entry !== null) {
+            others = entry.words.filter(function (w) {
+                return w !== gname && w !== sib.to;
+            });
+        }
+    });
+    const result = [gname, lv.to].concat(others);
+    return result;
+}
+
+/* the items of the number fields that a preset can set, the inputs first like the page, without the phrase selectors */
+function presetFields() {
+    const result = state.lists.input.items.concat(state.lists.assumption.items).filter(function (n) {
+        const p = state.phrases[n.to];
+        return n.to && !(p && p.field.type === FIELD.selector);
+    });
+    return result;
+}
+
+/* the number that a preset sets for a field: the value with both phrases and the fewest others, null if there is none
+   or if the values of the fewest phrases differ, like the cell lookup of calculator_json.js that the preset uses */
+function presetEntry(preset, x) {
+    let best = [];
+    IDX.pool.forEach(function (e) {
+        const hasBoth = e.vidx !== undefined && e.words.indexOf(preset) >= 0 && e.words.indexOf(x) >= 0;
+        if (hasBoth && (best.length === 0 || e.words.length < best[0].words.length)) {
+            best = [e];
+        } else if (hasBoth && e.words.length === best[0].words.length) {
+            best.push(e);
+        }
+    });
+    const numbers = new Set(best.map(function (e) {
+        return String(e.number);
+    }));
+    const result = best.length > 0 && numbers.size === 1 ? best[0] : null;
+    return result;
+}
+
+/* the unit and quality phrases of the value of a field e.g. CHF per kW, which a new number of a preset gets too */
+function fieldUnitWords(x) {
+    const entry = fieldValue(x);
+    const result = entry === null ? [] : entry.words.filter(function (w) {
+        return w !== state.page && w !== x;
+    });
+    return result;
+}
+
+/* a number of a preset for a field: a change of the stored value, a cleared stored value is deleted and a number
+   for a field without a value is a new value */
+function setPresetValue(n, x, value) {
+    const num = String(value).trim();
+    const entry = n.to ? presetEntry(n.to, x) : null;
+    state.valueDeletes = state.valueDeletes || {};
+    n.newValues = n.newValues || {};
+    if (entry !== null) {
+        delete state.valueEdits[entry.vidx];
+        delete state.valueDeletes[entry.vidx];
+        if (num === "") {
+            state.valueDeletes[entry.vidx] = true;
+        } else if (String(DOC.values[entry.vidx].number) !== num) {
+            state.valueEdits[entry.vidx] = num;
+        }
+    } else if (num === "") {
+        delete n.newValues[x];
+    } else {
+        n.newValues[x] = num;
+    }
+}
+
 function emitValues() {
     const out = [];
+    state.lists.preset.items.forEach(function (n) {
+        Object.keys(n.newValues || {}).forEach(function (x) {
+            if (n.to && presetEntry(n.to, x) === null) {
+                out.push({src: null, words: [n.to, x].concat(fieldUnitWords(x)), number: n.newValues[x]});
+            }
+        });
+    });
+    state.lists.sensitivity.items.forEach(function (axis) {
+        axis.children.forEach(function (lv) {
+            if (lv.to && lv.number && levelValue(lv) === null) {
+                out.push({src: null, words: levelWords(axis, lv), number: lv.number});
+            }
+        });
+    });
     Object.keys(state.phrases).forEach(function (x) {
         const lim = state.phrases[x].field.limits;
         [["min", FIELD.min], ["max", FIELD.max], ["step", FIELD.step]].forEach(function (pair) {
@@ -1429,36 +1699,102 @@ function mergeObj(orig, gen, textManaged) {
     return result;
 }
 
-/* a moved item links its order triple to another item, but the link of a triple is the same for all users,
-   so the order triple is removed for the user and added with the new link; the added one gets the name
-   that the pod creates from the link, because the removed one keeps its name for the other users;
-   a link that only follows the rename of the linked item is no move */
-function relinkOrders(changes) {
+/* the link of a triple is what the triple is and is never changed (docs/llm/architecture.md), so a triple with
+   another from, verb or to, e.g. a moved item or an argument moved to the other side, is removed for the user
+   and added with the new link; a triple that names a removed one goes the same way, because it would else still
+   name the removed one; the added one gets the name that the pod creates from the link if it keeps the name of
+   the removed one, because the removed one keeps its name for the other users; a link that only follows the
+   rename of the linked item is no move; the added triples are sorted parents first, so that each names its
+   parent by a name that the pod already knows */
+function relinkLinks(changes, unchanged) {
     const renamed = new Map();
     changes.mod.forEach(function (m) {
         if (m.before.name !== m.after.name) {
             renamed.set(m.before.name, m.after.name);
         }
     });
+    // the name of each removed triple and the name of the triple that is added instead
+    const relinked = new Map();
 
-    function moved(m) {
+    function linkChanged(m) {
         const from = renamed.get(m.before.from) || m.before.from;
         const to = renamed.get(m.before.to) || m.before.to;
-        return m.after.verb === FOLLOW && (m.after.from !== from || m.after.to !== to);
+        return m.after.verb !== m.before.verb || m.after.from !== from || m.after.to !== to;
     }
 
-    const kept = [];
-    changes.mod.forEach(function (m) {
-        if (moved(m)) {
-            const added = Object.assign({}, m.after);
-            delete added.name;
-            changes.del.push({src: m.src, t: m.before});
-            changes.add.push(added);
-        } else {
-            kept.push(m);
+    function namesRelinked(m) {
+        return relinked.has(m.before.from) || relinked.has(m.before.to);
+    }
+
+    const added = [];
+
+    function relink(m) {
+        const t = Object.assign({}, m.after);
+        t.from = relinked.get(m.before.from) || t.from;
+        t.to = relinked.get(m.before.to) || t.to;
+        if (t.verb === FOLLOW || t.name === m.before.name) {
+            delete t.name;
         }
+        relinked.set(m.before.name, t.name || generatedName(t));
+        changes.del.push({src: m.src, t: m.before});
+        added.push(t);
+    }
+
+    let open = changes.mod.concat(unchanged);
+    let found = true;
+    while (found) {
+        found = false;
+        const kept = [];
+        open.forEach(function (m) {
+            if (linkChanged(m) || namesRelinked(m)) {
+                relink(m);
+                found = true;
+            } else {
+                kept.push(m);
+            }
+        });
+        open = kept;
+    }
+    // an unchanged triple has the same object before and after and is no change
+    changes.mod = open.filter(function (m) {
+        return m.before !== m.after;
     });
-    changes.mod = kept;
+    parentsFirst(added).forEach(function (t) {
+        changes.add.push(t);
+    });
+}
+
+/* the name that the pod creates for a triple without a given name (triple::generate_name) */
+function generatedName(t) {
+    if (t.verb === IS_A) {
+        return t.from + " (" + t.to + ")";
+    }
+    return t.from + " " + t.verb + " " + t.to;
+}
+
+/* the triples in an order that adds a triple only after the triples of the list that it names */
+function parentsFirst(trp) {
+    const result = [];
+    let open = trp.slice();
+    let found = true;
+    while (open.length > 0 && found) {
+        found = false;
+        const openNames = new Set(open.map(function (t) {
+            return t.name || generatedName(t);
+        }));
+        const kept = [];
+        open.forEach(function (t) {
+            if (openNames.has(t.from) || openNames.has(t.to)) {
+                kept.push(t);
+            } else {
+                result.push(t);
+                found = true;
+            }
+        });
+        open = kept;
+    }
+    // a cycle is not possible for triples, but would be reported by the pod instead of an endless loop
+    return result.concat(open);
 }
 
 /* what has changed against the loaded data: the triples, values and words to add, change or remove */
@@ -1467,7 +1803,7 @@ function buildOutput() {
     const emitted = emitAll();
     const bySrc = new Map();
     const fresh = [];
-    const changes = {add: [], del: [], mod: [], words: [], values: [], formulas: []};
+    const changes = {add: [], del: [], mod: [], words: [], values: [], formulas: [], sources: []};
     emitted.forEach(function (e) {
         if (e.src !== null && e.src !== undefined && !bySrc.has(e.src)) {
             bySrc.set(e.src, e);
@@ -1476,6 +1812,8 @@ function buildOutput() {
         }
     });
     const finalTriples = [];
+    // the unchanged triples, which are removed and added again if they name a triple with another link
+    const unchanged = [];
     T.forEach(function (t, i) {
         if (!MANAGED.triples.has(i)) {
             finalTriples.push(t);
@@ -1484,6 +1822,8 @@ function buildOutput() {
             const merged = mergeObj(t, e.obj, e.textManaged);
             if (JSON.stringify(merged) !== JSON.stringify(t)) {
                 changes.mod.push({src: i, before: t, after: merged});
+            } else {
+                unchanged.push({src: i, before: t, after: t});
             }
             finalTriples.push(merged);
         } else {
@@ -1494,7 +1834,7 @@ function buildOutput() {
         finalTriples.push(e.obj);
         changes.add.push(e.obj);
     });
-    relinkOrders(changes);
+    relinkLinks(changes, unchanged);
 
     /* values: the limits of the fields and the edited shown numbers */
     const V = DOC.values || [];
@@ -1519,6 +1859,10 @@ function buildOutput() {
         }
         if (state.valueEdits[i] !== undefined) {
             number = String(state.valueEdits[i]);
+        }
+        // a number of a preset that the user has cleared (setPresetValue)
+        if ((state.valueDeletes || {})[i]) {
+            keep = false;
         }
         if (!keep) {
             changes.values.push({
@@ -1556,6 +1900,18 @@ function buildOutput() {
         }
     });
 
+    /* sources: the changed fields, which are saved as the own version of the user */
+    (DOC.sources || []).forEach(function (s) {
+        const fields = SOURCE_FIELDS.filter(function (f) {
+            return sourceField(s, f) !== (s[f] || "");
+        }).map(function (f) {
+            return {field: f, before: s[f] || "", after: sourceField(s, f)};
+        });
+        if (fields.length > 0) {
+            changes.sources.push({id: s.id, name: s.name, fields: fields});
+        }
+    });
+
     /* words: every phrase that is not in the database yet is added as a word */
     const knownNow = new Set(IDX.known);
     finalTriples.forEach(function (t) {
@@ -1571,7 +1927,7 @@ function buildOutput() {
         });
     });
 
-    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length;
+    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length + changes.sources.length;
     const warnings = validate(finalTriples);
     const result = {changes: changes, changed: changed, warnings: warnings, triples: finalTriples};
     return result;
@@ -1761,6 +2117,12 @@ function nodeRow(n, parent, listKey, arr, i) {
     if (n.signed.on) {
         chips.push('<span class="chip" title="' + txtHtml(TXT.signTip) + '">±</span>');
     }
+    const side = n.claim ? ARGUMENT_SIDES.find(function (s) {
+        return s.verb === n.claim.verb;
+    }) : undefined;
+    if (side !== undefined) {
+        chips.push('<span class="chip">' + txtHtml(side.txt) + "</span>");
+    }
     const f = state.phrases[n.to] ? state.phrases[n.to].field : null;
     if (f && f.type === FIELD.selector && (n.kind === "input" || n.kind === "assumption")) {
         chips.push('<span class="chip" title="' + txtHtml(TXT.phraseSelector) + '">' + txtHtml(TXT.chipSelect) + "</span>");
@@ -1820,6 +2182,15 @@ function renderTree() {
             '<div class="addrow" style="padding-left:6px"><button class="addlink" data-act="addTop" data-list="' + L.key + '">' + esc(ADD_TEXT[L.key]) + "</button></div>" +
             "</details>";
     });
+    /* the sources of the values of the page, which are changed but not added here */
+    const sources = DOC ? DOC.sources || [] : [];
+    if (sources.length > 0) {
+        const open = openLists.has(SOURCE_LIST) ? " open" : "";
+        html += '<details class="sect" data-list="' + SOURCE_LIST + '"' + open + '>' +
+            '<summary class="sect-head"><h3>' + txtHtml(TXT.listSources) + '</h3><span class="chip">' + sources.length + "</span></summary>" +
+            '<div class="list" data-list="' + SOURCE_LIST + '">' + sources.map(sourceRow).join("") + "</div>" +
+            "</details>";
+    }
     host.innerHTML = html;
 }
 
@@ -1860,9 +2231,13 @@ function renderInspector() {
     } else if (findFormula(selected)) {
         /* the formula editor shows the formula in its own host */
         html = "";
+    } else if (findSource(selected)) {
+        html = sourceInspector(findSource(selected));
     } else {
         const hit = findNode(selected);
-        if (hit) {
+        if (hit && hit.node.claim) {
+            html = argumentInspector(hit);
+        } else if (hit) {
             html = nodeInspector(hit);
         } else {
             selected = "page";
@@ -1887,8 +2262,15 @@ function pageInspector() {
         area: true,
         note: "<span class=\"mono\">" + esc(base) + " hint</span>"
     });
+    html += inputHtml({t: "ph", p: base, f: "more"}, phraseText(base, "more"), {
+        label: txtHtml(TXT.moreText),
+        area: true,
+        note: txtHtml(TXT.moreTextNote) + " <span class=\"mono\">" + esc(base) + " more</span>"
+    });
     html += '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.listHeadings) + "</h4></div>";
-    LISTS.forEach(function (L) {
+    LISTS.filter(function (L) {
+        return !L.noHeading;
+    }).forEach(function (L) {
         const g = state.lists[L.key];
         const fb = L.fallback ? L.fallback : txt(TXT.noHeading);
         html += inputHtml({t: "grp", l: L.key}, g.label.text, {
@@ -1931,6 +2313,13 @@ function nodeInspector(hit) {
             note: hintNote
         });
     }
+    if (K.text) {
+        html += inputHtml({t: "node", uid: n.uid, f: "text"}, n.text, {
+            label: txtHtml(TXT.noteText),
+            area: true,
+            note: txtHtml(TXT.noteTextNote)
+        });
+    }
     if (K.highlight || n.highlight.on) {
         const small = !n.highlight.on && hl.on ? txtHtml(TXT.alreadyKeyRow, {[VAR.source]: hl.from}) : txtHtml(TXT.boldRow);
         html += checkHtml({t: "node", uid: n.uid, f: "highlight"}, n.highlight.on, txtHtml(TXT.keyRowPage), small);
@@ -1950,10 +2339,134 @@ function nodeInspector(hit) {
     if (n.kind === "input" || n.kind === "assumption") {
         html += exampleValueHtml(n);
     }
+    if (n.kind === "verdict") {
+        html += verdictBoxHtml();
+    }
+    if (n.kind === "slevel") {
+        html += levelNumberHtml(n);
+    }
+    if (n.kind === "sensitivity" || n.kind === "slevel") {
+        html += sensitivityBoxHtml();
+    }
+    if (n.kind === "preset") {
+        html += presetValuesHtml(n);
+    }
     if (n.to) {
         html += phraseBox(n);
     }
     html += '<div class="danger-zone"><button class="btn danger" data-act="remove" data-uid="' + n.uid + '">' + txtHtml(TXT.removeItem) + "</button></div>";
+    return html;
+}
+
+/* an argument is its claim triple from the reason to the claim argued about, with the side as its verb and the text of
+   the page as its description */
+function argumentInspector(hit) {
+    const n = hit.node;
+    const c = n.claim;
+    const info = labelInfo(n, hit.parent);
+    const bind = function (f) {
+        return {t: "arg", uid: n.uid, f: f};
+    };
+    let html = '<div class="insp-title"><span class="kind">' + esc(KIND[n.kind].name) + '</span><span class="big">' + esc(info.text) + "</span></div>";
+    html += inputHtml(bind("from"), c.from, {
+        label: txtHtml(TXT.argumentReason), phrases: true, mono: true, id: "phrase_" + n.uid,
+        placeholder: txt(TXT.phraseShortPlaceholder),
+        note: c.from && !IDX.known.has(c.from) ? txtHtml(TXT.notInFile) : ""
+    });
+    const sides = ARGUMENT_SIDES.map(function (s) {
+        return '<option value="' + esc(s.verb) + '"' + (s.verb === c.verb ? " selected" : "") + ">" + txtHtml(s.txt) + "</option>";
+    }).join("");
+    html += '<div class="fg"><label for="side_' + n.uid + '">' + txtHtml(TXT.argumentSide) + "</label>" +
+        '<select class="inp" id="side_' + n.uid + '" data-bind="' + bindAttr(bind("verb")) + '">' + sides + "</select></div>";
+    html += inputHtml(bind("to"), c.to, {label: txtHtml(TXT.argumentTarget), phrases: true, mono: true});
+    html += inputHtml(bind("label"), c.label.text, {label: txtHtml(TXT.labelPage), placeholder: c.label.text ? "" : info.text});
+    html += inputHtml(bind("text"), c.text, {label: txtHtml(TXT.argumentText), area: true, note: txtHtml(TXT.argumentTextNote)});
+    html += '<div class="triple"><b>' + esc(c.name || "—") + "</b> = " + esc(c.from || "…") + " <i>" + esc(c.verb) + "</i> " + esc(c.to || "…") + "</div>";
+    html += '<div class="triple"><b>' + esc(n.name || "—") + "</b> = " + esc(parentNameOf(hit)) + " <i>" + esc(n.verb) + "</i> " + esc(n.to || "…") + "</div>";
+    html += '<div class="danger-zone"><button class="btn danger" data-act="remove" data-uid="' + n.uid + '">' + txtHtml(TXT.removeItem) + "</button></div>";
+    return html;
+}
+
+/* the parts of the verdict box that all its states share: the compared result and threshold, the scale below the meter
+   with its ends and the note */
+function verdictBoxHtml() {
+    const g = state.lists.verdict;
+    const gname = groupName("verdict");
+    let html = '<div class="box shared"><div class="box-head"><h4>' + txtHtml(TXT.verdictBox) + "</h4><p>" + txtHtml(TXT.verdictBoxNote) + "</p></div>";
+    [[TXT.verdictResult, TXT.verdictResultNote], [TXT.verdictThreshold, TXT.verdictThresholdNote]].forEach(function (t, i) {
+        const n = g.compared[i];
+        html += inputHtml({t: "cmp", i: i}, n ? n.to : "", {
+            label: txtHtml(t[0]), phrases: true, mono: true,
+            note: txtHtml(t[1]) + (n ? " <span class=\"mono\">" + esc(n.name) + "</span>" : "")
+        });
+    });
+    html += inputHtml({t: "grp", l: "verdict", f: "scale"}, g.scale.text, {
+        label: txtHtml(TXT.verdictScale),
+        note: txtHtml(TXT.verdictScaleNote) + " <span class=\"mono\">" + esc(gname) + " scale</span>"
+    });
+    // the ends of the meter are the limits of the scale triple, which the parse reads like the limits of a field
+    const scaleName = g.scale.name || gname + " scale";
+    const limits = state.phrases[scaleName] ? state.phrases[scaleName].field.limits : null;
+    [["min", TXT.verdictScaleMin], ["max", TXT.verdictScaleMax]].forEach(function (end) {
+        html += inputHtml({t: "lim", p: scaleName, k: end[0]}, limits ? limits[end[0]].num : "", {
+            label: txtHtml(end[1]), type: "number",
+            note: txtHtml(TXT.verdictScaleLimitNote)
+        });
+    });
+    html += inputHtml({t: "grp", l: "verdict", f: "note"}, g.note.text, {
+        label: txtHtml(TXT.verdictNote),
+        area: true,
+        note: "<span class=\"mono\">" + esc(gname) + " note</span>"
+    });
+    html += "</div>";
+    return html;
+}
+
+/* the number of a value of an axis of the sensitivity table: the stored value, else the number of a new value */
+function levelNumberHtml(n) {
+    const entry = levelValue(n);
+    const opts = {label: txtHtml(TXT.sensitivityNumber), type: "number", note: txtHtml(TXT.sensitivityNumberNote)};
+    const bind = entry === null ? {t: "node", uid: n.uid, f: "number"} : {t: "val", v: entry.vidx};
+    const result = inputHtml(bind, entry === null ? (n.number || "") : poolNumber(entry), opts);
+    return result;
+}
+
+/* the numbers that a preset sets, one per number field of the page: the stored number, a new one or empty */
+function presetValuesHtml(n) {
+    let html = '<div class="box shared"><div class="box-head"><h4>' + txtHtml(TXT.presetValues) + "</h4><p>" + txtHtml(TXT.presetValuesNote) + "</p></div>";
+    presetFields().forEach(function (f) {
+        const entry = n.to ? presetEntry(n.to, f.to) : null;
+        let num = (n.newValues || {})[f.to] || "";
+        if (entry !== null) {
+            num = (state.valueDeletes || {})[entry.vidx] ? "" : poolNumber(entry);
+        }
+        html += inputHtml({t: "pval", uid: n.uid, x: f.to}, num, {
+            label: esc(labelInfo(f, null).text), type: "number",
+            note: "<span class=\"mono\">" + esc(f.to) + "</span>"
+        });
+    });
+    html += "</div>";
+    return html;
+}
+
+/* the parts of the sensitivity table that all its axes share: the hint below the table and the results of a cell */
+function sensitivityBoxHtml() {
+    const g = state.lists.sensitivity;
+    const gname = groupName("sensitivity");
+    let html = '<div class="box shared"><div class="box-head"><h4>' + txtHtml(TXT.sensitivityBox) + "</h4><p>" + txtHtml(TXT.sensitivityBoxNote) + "</p></div>";
+    html += inputHtml({t: "grp", l: "sensitivity", f: "hint"}, g.hint.text, {
+        label: txtHtml(TXT.sensitivityHint),
+        area: true,
+        note: "<span class=\"mono\">" + esc(gname) + " hint</span>"
+    });
+    [[TXT.sensitivityCellMain, TXT.sensitivityCellMainNote], [TXT.sensitivityCellChange, TXT.sensitivityCellChangeNote]].forEach(function (t, i) {
+        const n = g.cells[i];
+        html += inputHtml({t: "cell", i: i}, n ? n.to : "", {
+            label: txtHtml(t[0]), phrases: true, mono: true,
+            note: txtHtml(t[1]) + (n ? " <span class=\"mono\">" + esc(n.name) + "</span>" : "")
+        });
+    });
+    html += "</div>";
     return html;
 }
 
@@ -2145,218 +2658,25 @@ function optionsHtml(x, f) {
 /* ------------------------------------------------------------------ */
 /* rendering: the preview of the calculator page                        */
 /* ------------------------------------------------------------------ */
-function selAttr(id) {
-    const result = ' data-sel="' + id + '"';
+/* the settings of the calculator page without its save (system_page::calculator_editor), null on a page without them */
+function pageSettings() {
+    const el = document.getElementById(PAGE_SETTINGS_ID);
+    const result = el === null ? null : parseJson(el.textContent);
     return result;
 }
 
-function previewField(n, inInputs) {
-    const info = labelInfo(n, null);
-    const hint = hintInfo(n);
-    const p = state.phrases[n.to];
-    const f = p ? p.field : null;
-    let body = "";
-    let tag = "";
-    let hintText = hint.text;
-    if (f && f.type === FIELD.selector) {
-        const choices = optionChoices(n.to, f);
-        const opts = choices.map(function (c) {
-            const val = findEntry([n.to, c.phrase], {valuesOnly: true}) || findEntry([c.phrase], {valuesOnly: true});
-            const v = val ? poolNumber(val) : "";
-            return "<option" + (c.phrase === f.uses.to ? " selected" : "") + ' value="' + esc(v) + '">' + esc(c.label) + "</option>";
-        }).join("");
-        body = "<select tabindex=\"-1\">" + (opts || "<option>" + txtHtml(TXT.noOptions) + "</option>") + "</select>";
-    } else {
-        const entry = fieldValue(n.to);
-        const num = entry ? poolNumber(entry) : "";
-        const unit = entry ? unitOf(entry.words) : "";
-        const lim = f ? f.limits : null;
-        const attrs = lim ? (lim.min.num !== "" ? ' min="' + esc(lim.min.num) + '"' : "") + (lim.max.num !== "" ? ' max="' + esc(lim.max.num) + '"' : "") + (lim.step.num !== "" ? ' step="' + esc(lim.step.num) + '"' : "") : "";
-        body = '<div class="row"><input type="number" tabindex="-1" value="' + esc(num) + '"' + attrs + ">" + (unit ? '<span class="unit">' + esc(unit) + "</span>" : "") + "</div>";
-        if (!inInputs && entry) {
-            const conf = confidenceOf(n.to, entry);
-            if (entry.source) {
-                tag = '<span class="tag m">' + txtHtml(TXT.measured) + "</span>";
-                const sn = sourceNumber(entry.source);
-                if (sn && hintText) {
-                    hintText = hintText + " [" + sn + "]";
-                }
-            } else if (entry.words.indexOf("assumed") >= 0) {
-                tag = '<span class="tag a">' + txtHtml(TXT.assumed) + (conf ? " " + esc(conf) : "") + "</span>";
-            }
-        }
-        if (!entry) {
-            body += '<span class="hint">' + txtHtml(TXT.noValue, {[VAR.phrase]: n.to}) + "</span>";
-        }
+/* the preview is the calculator page itself: the script of the page builds it from the data with the unsaved changes,
+   so that it calculates its results again like the page; the blocks that the user has opened stay open after a change
+   @param pageHost the element of the pane that gets the page
+   @param open per collapsed block of the page before the change true if it was open */
+function previewPage(pageHost, open) {
+    const settings = pageSettings();
+    if (typeof renderCalculatorPage === "function" && settings !== null) {
+        renderCalculatorPage(pageHost, editedDoc(), settings, true);
+        pageHost.querySelectorAll("details").forEach(function (d, i) {
+            d.open = open[i] === true;
+        });
     }
-    const result = '<div class="field"' + selAttr(n.uid) + "><label>" + esc(info.text) + tag + "</label>" + body + (hintText ? '<span class="hint">' + esc(hintText) + "</span>" : "") + "</div>";
-    return result;
-}
-
-function rowSub(n) {
-    const hint = hintInfo(n).text;
-    const parts = [];
-    if (hint) {
-        parts.push(esc(hint));
-    }
-    const sideFrom = [n.to].concat(filtersOf(n));
-    sideFrom.forEach(function (ph) {
-        const p = state.phrases[ph];
-        if (p) {
-            p.side.forEach(function (s) {
-                if (s.to) {
-                    const e = findEntry([s.to, n.to].concat(filtersOf(n).filter(function (f) {
-                        return f !== ph;
-                    })), {needPage: true});
-                    const label = phraseText(s.to, "label") || s.to;
-                    if (e) {
-                        parts.push(esc(label) + " " + esc(fmtNumber(poolNumber(e), unitOf(e.words))));
-                    }
-                }
-            });
-        }
-    });
-    const result = parts.length > 0 ? '<span class="sub">' + parts.join(" · ") + "</span>" : "";
-    return result;
-}
-
-function cellHtml(required, signed) {
-    const e = findEntry(required, {needPage: true});
-    let result = '<td class="n"></td>';
-    if (e) {
-        const num = poolNumber(e);
-        const text = esc(fmtNumber(num, unitOf(e.words)));
-        if (signed) {
-            result = '<td class="n"><span class="' + (Number(num) < 0 ? "neg" : "pos") + '">' + text + "</span></td>";
-        } else {
-            result = '<td class="n">' + text + "</td>";
-        }
-    }
-    return result;
-}
-
-/* the start of a collapsed block of the preview, open only if the user has opened it, because the preview is drawn again after each change */
-function previewDetailsStart(key) {
-    const open = openPreview.has(key) ? " open" : "";
-    const result = '<details data-preview="' + key + '"' + open + ">";
-    return result;
-}
-
-function previewPage() {
-    const base = state.base;
-    const cols = state.lists.column.items.filter(function (c) {
-        return c.to;
-    });
-    let html = '<div class="legend"><span><i></i>' + txtHtml(TXT.legendClick) + "</span><span>" + txtHtml(TXT.legendNumbers) + "</span></div>";
-    html += '<div class="use-case">';
-    html += '<header data-sel="page"><h4>' + esc(phraseText(base, "label") || cap(base)) + "</h4>" +
-        (phraseText(base, "hint") ? "<p>" + esc(phraseText(base, "hint")) + "</p>" : "") + "</header>";
-    html += '<div class="grid"><aside class="panel"><div class="inputs"><h2>' + esc(groupLabel("input")) + "</h2>";
-    const inputs = state.lists.input.items.filter(function (n) {
-        return n.to;
-    });
-    html += inputs.map(function (n) {
-        return previewField(n, true);
-    }).join("") || '<div class="empty-list">' + txtHtml(TXT.noInputs) + "</div>";
-    html += '<button type="button" class="btn-save" tabindex="-1">' + txtHtml(TXT.save) + "</button></div>";
-    html += previewDetailsStart("assumption") + "<summary>" + esc(groupLabel("assumption")) + "</summary>";
-    const assumptions = state.lists.assumption.items.filter(function (n) {
-        return n.to;
-    });
-    html += assumptions.map(function (n) {
-        return previewField(n, false);
-    }).join("") || '<div class="empty-list">' + txtHtml(TXT.noAssumptions) + "</div>";
-    html += '<p class="derived">' + txtHtml(TXT.otherOperands) + "</p></details></aside>";
-    html += '<section class="panel">';
-    if (groupLabel("column")) {
-        html += "<h2>" + esc(groupLabel("column")) + "</h2>";
-    }
-    html += '<div class="scroll"><table><thead><tr><th>' + txtHtml(TXT.result) + "</th>" +
-        cols.map(function (c) {
-            return '<th class="n"' + selAttr(c.uid) + ">" + esc(labelInfo(c, null).text) + "</th>";
-        }).join("") + "</tr></thead><tbody>";
-    const span = cols.length + 1;
-    state.lists.rowgroup.items.forEach(function (g) {
-        if (g.to) {
-            html += '<tr class="sec" data-sel="' + g.uid + '"><td colspan="' + span + '">' + esc(labelInfo(g, null).text) + "</td></tr>";
-            g.children.forEach(function (r) {
-                if (r.to && r.kind === "row") {
-                    const key = highlightInfo(r).on;
-                    const filters = filtersOf(r);
-                    const cls = [];
-                    if (key) {
-                        cls.push("key");
-                    }
-                    if (selected === r.uid) {
-                        cls.push("is-sel");
-                    }
-                    html += '<tr data-sel="' + r.uid + '"' + (cls.length ? ' class="' + cls.join(" ") + '"' : "") + "><td>" + esc(labelInfo(r, g).text) + rowSub(r) + "</td>" +
-                        cols.map(function (c) {
-                            return cellHtml([r.to].concat(filters).concat([c.to]), g.signed.on);
-                        }).join("") + "</tr>";
-                }
-            });
-        }
-    });
-    if (state.lists.rowgroup.items.length === 0) {
-        html += '<tr><td colspan="' + span + '" class="miss">' + txtHtml(TXT.noRowGroups) + "</td></tr>";
-    }
-    html += "</tbody></table></div>";
-    const details = state.lists.detail.items.filter(function (d) {
-        return d.to;
-    });
-    html += previewDetailsStart("detail") + "<summary>" + esc(groupLabel("detail") || txt(TXT.details)) + '</summary><div class="more">';
-    details.forEach(function (d) {
-        html += detailTable(d);
-    });
-    html += notesHtml() + sourcesHtml() + "</div></details>";
-    html += "</section></div></div>";
-    return html;
-}
-
-function detailTable(d) {
-    const colsD = d.children.filter(function (c) {
-        return c.kind === "dcol" && c.to;
-    });
-    const extra = d.children.filter(function (c) {
-        return c.kind === "dextra" && c.to;
-    });
-    const rowPhrases = IDX.T.filter(function (t) {
-        return t.verb === "is a" && t.to === d.to;
-    }).map(function (t) {
-        return t.from;
-    });
-    let html = "<h2" + selAttr(d.uid) + ">" + esc(labelInfo(d, null).text) + "</h2>";
-    html += '<div class="scroll"><table><thead><tr><th>' + esc(cap(d.to)) + "</th>" +
-        colsD.map(function (c) {
-            return '<th class="n"' + selAttr(c.uid) + ">" + esc(labelInfo(c, null).text) + "</th>";
-        }).join("") + "</tr></thead><tbody>";
-    rowPhrases.forEach(function (rp) {
-        html += "<tr><td>" + esc(phraseText(rp, "label") || cap(rp)) + "</td>" + colsD.map(function (c) {
-            return cellHtml([c.to, rp].concat(filtersOf(c)), false);
-        }).join("") + "</tr>";
-    });
-    extra.forEach(function (x) {
-        const key = highlightInfo(x).on;
-        const cls = [];
-        if (key) {
-            cls.push("key");
-        }
-        if (selected === x.uid) {
-            cls.push("is-sel");
-        }
-        html += '<tr data-sel="' + x.uid + '"' + (cls.length ? ' class="' + cls.join(" ") + '"' : "") + "><td>" + esc(labelInfo(x, null).text) + "</td>" +
-            colsD.map(function (c) {
-                return cellHtml([c.to, x.to].concat(filtersOf(c)), false);
-            }).join("") + "</tr>";
-    });
-    if (rowPhrases.length === 0 && extra.length === 0) {
-        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss">' + txtHtml(TXT.noRows, {[VAR.phrase]: d.to}) + "</td></tr>";
-    } else if (rowPhrases.length === 0) {
-        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss"><small>' + txtHtml(TXT.rowsNote, {[VAR.phrase]: d.to}) + "</small></td></tr>";
-    }
-    html += "</tbody></table></div>";
-    return html;
 }
 
 /* ------------------------------------------------------------------ */
@@ -2472,20 +2792,109 @@ function showFormulaEditor(f) {
     }
 }
 
-function notesHtml() {
-    const notes = (DOC.formulas || []).map(function (f) {
-        return "<p><b>" + esc(f.name) + "</b> " + esc(f.description || "") + "</p>";
-    }).join("");
-    const result = notes ? '<div class="notes">' + notes + '<p class="derived">' + txtHtml(TXT.formulasNote) + "</p></div>" : "";
+/* ------------------------------------------------------------------ */
+/* sources                                                              */
+/* ------------------------------------------------------------------ */
+/* the selection key of a source in the structure, so that it never matches the uid of an item or a formula */
+const SOURCE_SEL = "source:";
+/* the key of the list of the sources in the page structure, below the lists of the page */
+const SOURCE_LIST = "source";
+/* the fields of a source that the editor changes, in the order of the settings */
+const SOURCE_FIELDS = ["name", "description", "url", "doi"];
+
+/* a field of a source with the change of this session e.g. its url */
+function sourceField(s, f) {
+    const edit = (state.sourceEdits || {})[s.id] || {};
+    const result = edit[f] !== undefined ? edit[f] : (s[f] || "");
     return result;
 }
 
-function sourcesHtml() {
-    const items = (DOC.sources || []).map(function (s) {
-        return "<li>" + (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>" : esc(s.name)) + "</li>";
-    }).join("");
-    const result = items ? '<div class="src"><h2>' + txtHtml(TXT.sources) + "</h2><ol>" + items + "</ol></div>" : "";
+/* the source of a selection key of the structure or null if the key selects no source */
+function findSource(sel) {
+    const key = String(sel);
+    const id = key.indexOf(SOURCE_SEL) === 0 ? key.slice(SOURCE_SEL.length) : null;
+    const result = id === null ? null : (DOC.sources || []).find(function (s) {
+        return String(s.id) === id;
+    }) || null;
     return result;
+}
+
+/* the source of a name as the page preview shows it, so with the change of this session */
+function sourceOfName(name) {
+    const result = (DOC.sources || []).find(function (s) {
+        return sourceField(s, "name") === name;
+    }) || null;
+    return result;
+}
+
+function sourceRow(s) {
+    const key = SOURCE_SEL + s.id;
+    const sel = selected === key ? " sel" : "";
+    const changed = SOURCE_FIELDS.some(function (f) {
+        return sourceField(s, f) !== (s[f] || "");
+    }) ? '<span class="chip new">' + txtHtml(TXT.chipChanged) + "</span>" : "";
+    const result = '<div class="node source' + sel + '" data-uid="' + esc(key) + '" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
+        '<span class="txt"><span class="lbl">' + esc(sourceField(s, "name")) + "</span>" +
+        '<span class="ph mono">' + esc(sourceField(s, "url") || "—") + "</span></span>" +
+        '<span class="side">' + changed + "</span></div>";
+    return result;
+}
+
+/* the settings of a source, which is not part of the page but of every page that shows a value of it */
+function sourceInspector(s) {
+    const bind = function (f) {
+        return {t: "src", id: s.id, f: f};
+    };
+    let html = '<div class="insp-title"><span class="kind">' + txtHtml(TXT.kindSource) + '</span><span class="big">' + esc(sourceField(s, "name")) + "</span></div>";
+    html += inputHtml(bind("name"), sourceField(s, "name"), {label: txtHtml(TXT.sourceName), note: txtHtml(TXT.sourceNameNote)});
+    html += inputHtml(bind("description"), sourceField(s, "description"), {
+        label: txtHtml(TXT.sourceDescription),
+        area: true,
+        note: txtHtml(TXT.sourceDescriptionNote)
+    });
+    html += inputHtml(bind("url"), sourceField(s, "url"), {label: txtHtml(TXT.sourceUrl), mono: true});
+    html += inputHtml(bind("doi"), sourceField(s, "doi"), {label: txtHtml(TXT.sourceDoi), mono: true});
+    return html;
+}
+
+/* a changed field of a source; a new name also changes the texts of the editor that name the source by
+   {source:…}, but an empty name leaves them, because the pod refuses a source without a name */
+function setSourceField(id, f, value) {
+    state.sourceEdits = state.sourceEdits || {};
+    const s = findSource(SOURCE_SEL + id);
+    if (s) {
+        const edit = state.sourceEdits[id] || {};
+        const text = f === "name" ? value.trim() : value;
+        if (f === "name" && text !== "") {
+            renameSourceRefs(edit.ref !== undefined ? edit.ref : s.name, text);
+            edit.ref = text;
+        }
+        if (text === (s[f] || "")) {
+            delete edit[f];
+        } else {
+            edit[f] = text;
+        }
+        state.sourceEdits[id] = edit;
+    }
+}
+
+/* the placeholders {source:…} of the old name in every text of the editor e.g. of an argument or a hint */
+function renameSourceRefs(oldName, newName) {
+    const from = "{source:" + oldName + "}";
+    const to = "{source:" + newName + "}";
+    const visit = function (obj) {
+        Object.keys(obj).forEach(function (k) {
+            const v = obj[k];
+            if (k === "text" && typeof v === "string") {
+                obj[k] = v.split(from).join(to);
+            } else if (v !== null && typeof v === "object") {
+                visit(v);
+            }
+        });
+    };
+    if (oldName !== newName) {
+        visit({lists: state.lists, phrases: state.phrases, kept: state.keptClaims || []});
+    }
 }
 
 /* ------------------------------------------------------------------ */
@@ -2630,21 +3039,132 @@ function changesPane() {
             return '<li class="mod">' + esc(f.name) + ": " + esc(f.before) + "<br>→ " + esc(f.after) + "</li>";
         }).join("") + "</ul></div>";
     }
+    if (c.sources.length) {
+        html += "<div><h3>" + txtHtml(TXT.changedSources, {[VAR.count]: c.sources.length}) + "</h3><ul>" + c.sources.map(function (s) {
+            return '<li class="mod">' + esc(s.name) + ": " + s.fields.map(function (x) {
+                return esc(x.field + " " + x.before) + "<br>→ " + esc(x.after);
+            }).join("<br>") + "</li>";
+        }).join("") + "</ul></div>";
+    }
     html += "</div>";
     return html;
 }
 
+/* the html id of the json of the Definition tab, which the copy reads */
+const JSON_TEXT_ID = "jsonText";
+
+/* the Definition tab: the data of the page with the unsaved changes as the export saves it, read only,
+   because a json loaded as the data would start the editor again without the unsaved changes */
+function jsonPane() {
+    const text = DOC && state.page ? exportJson(editedDoc()) : "";
+    const html = '<div class="json-box">'
+        + '<p class="note">' + txtHtml(TXT.jsonNote) + "</p>"
+        + '<div class="controls"><button type="button" class="btn" data-act="copyJson">' + txtHtml(TXT.copy) + "</button></div>"
+        + '<textarea id="' + JSON_TEXT_ID + '" readonly spellcheck="false">' + esc(text) + "</textarea>"
+        + "</div>";
+    return html;
+}
+
+/* copy the json of the Definition tab, or select it for the copy by the keyboard if the browser refuses */
+function copyJson() {
+    const ta = document.getElementById(JSON_TEXT_ID);
+    const manual = function () {
+        ta.focus();
+        ta.select();
+        toast(txt(TXT.copyManual));
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(function () {
+            toast(txt(TXT.copied));
+        }).catch(manual);
+    } else {
+        manual();
+    }
+}
+
+/* the entry point of the pod that creates the pdf of the posted data (http/calculator_pdf.php), below the root of the pod */
+const PDF_ROUTE = "http/calculator_pdf.php";
+const PDF_TYPE = "application/pdf";
+const PDF_EXT = ".pdf";
+let pdfCreating = false;
+
+/* the PDF tab: what the pdf contains and the button that creates it, which only a pod can do */
+function pdfPane() {
+    const blocked = !SOURCE.online || !DOC || !state.page || pdfCreating;
+    const html = '<div class="json-box">'
+        + '<p class="note">' + txtHtml(TXT.pdfNote) + "</p>"
+        + (SOURCE.online ? "" : '<p class="note">' + txtHtml(TXT.pdfOffline) + "</p>")
+        + '<div class="controls"><button type="button" class="btn primary" data-act="createPdf"' + (blocked ? " disabled" : "") + ">"
+        + txtHtml(TXT.pdfCreate) + "</button></div>"
+        + "</div>";
+    return html;
+}
+
+/* post the data of the page with the unsaved changes, i.e. the json of the export, to the pod and
+   save the pdf of the answer as a file by the download of the browser */
+async function createPdf() {
+    if (SOURCE.online && DOC && state.page && !pdfCreating) {
+        pdfCreating = true;
+        renderPane();
+        notice(txtHtml(TXT.pdfCreating), "");
+        const headers = {"Content-Type": "application/json", Accept: PDF_TYPE};
+        const token = document.querySelector('input[name="' + SESSION_TOKEN_NAME + '"]');
+        if (token) {
+            headers[CSRF_HEADER] = token.value;
+        }
+        let problem = "";
+        try {
+            const resp = await fetch(SOURCE.root + PDF_ROUTE, {
+                method: "POST", credentials: "same-origin", headers: headers, body: exportJson(editedDoc())
+            });
+            if (resp.ok) {
+                const name = selectionName(DOC).replace(EXPORT_NAME_CHAR, EXPORT_NAME_REPLACE) + PDF_EXT;
+                const url = URL.createObjectURL(await resp.blob());
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+                notice("", "");
+                toast(txt(TXT.pdfCreated, {[VAR.name]: name}));
+            } else {
+                problem = (await resp.text()) || String(resp.status);
+            }
+        } catch (e) {
+            problem = e.message || txt(TXT.noAnswer);
+        }
+        if (problem) {
+            notice(txtHtml(TXT.pdfFailed, {[VAR.value]: problem}), "err");
+        }
+        pdfCreating = false;
+        renderPane();
+    }
+}
+
 function renderPane() {
     const host = document.getElementById("pane");
+    // the collapsed blocks of the preview before the change, which stay open in the preview drawn again
+    const open = Array.from(host.querySelectorAll("." + PREVIEW_STYLE + " details")).map(function (d) {
+        return d.open;
+    });
     let html = "";
     if (activeTab === "page") {
-        html = previewPage();
+        html = '<div class="' + PREVIEW_STYLE + '"></div>';
     } else if (activeTab === "texts") {
         html = textsPane();
+    } else if (activeTab === "json") {
+        html = jsonPane();
+    } else if (activeTab === "pdf") {
+        html = pdfPane();
     } else {
         html = changesPane();
     }
     host.innerHTML = html;
+    if (activeTab === "page") {
+        previewPage(host.firstChild, open);
+    }
     host.querySelectorAll('[data-sel="' + selected + '"]').forEach(function (el) {
         el.classList.add("is-sel");
     });
@@ -2699,6 +3219,12 @@ function newNode(kind) {
         highlight: newFlag(null, null, false), signed: newFlag(null, null, false),
         orderSrc: null, orderName: null, orderPrev: null, children: []
     };
+    if (kind === "argument") {
+        result.claim = newClaim();
+    }
+    if (KIND[kind].text) {
+        result.text = "";
+    }
     return result;
 }
 
@@ -2740,6 +3266,10 @@ function removeNode(id) {
     if (hit) {
         mutate(function () {
             hit.arr.splice(hit.index, 1);
+            // the claim of a removed argument stays like the phrase of a removed input, because other pages can name it
+            if (hit.node.claim && hit.node.claim.src !== null) {
+                state.keptClaims = (state.keptClaims || []).concat([hit.node.claim]);
+            }
             if (selected === id) {
                 selected = hit.parent ? hit.parent.uid : "page";
             }
@@ -2872,8 +3402,25 @@ function setBound(b, value) {
         if (hit) {
             setNodeField(hit, b.f, value);
         }
+    } else if (b.t === "arg") {
+        const hit = findNode(b.uid);
+        if (hit && hit.node.claim) {
+            setClaimField(hit, b.f, value);
+        }
+    } else if (b.t === "src") {
+        setSourceField(b.id, b.f, value);
+    } else if (b.t === "cmp") {
+        setComparedPhrase(b.i, value);
+    } else if (b.t === "cell") {
+        setCellPhrase(b.i, value);
+    } else if (b.t === "pval") {
+        const hit = findNode(b.uid);
+        if (hit) {
+            setPresetValue(hit.node, b.x, value);
+        }
     } else if (b.t === "grp") {
-        state.lists[b.l].label.text = value;
+        // a text of a list: its heading by default, else e.g. the scale of the verdict
+        state.lists[b.l][b.f || "label"].text = value;
     } else if (b.t === "ph") {
         setPhraseField(b.p, b.f, value);
     } else if (b.t === "lim") {
@@ -2944,10 +3491,60 @@ function setNodeField(hit, f, value) {
         n.label.text = value;
     } else if (f === "hint") {
         n.hint.text = value;
+    } else if (f === "text") {
+        n.text = value;
+    } else if (f === "number") {
+        // the number of a new value of an axis of the sensitivity table, which has no stored value yet
+        n.number = value.trim();
     } else if (f === "highlight") {
         n.highlight.on = Boolean(value);
     } else if (f === "signed") {
         n.signed.on = Boolean(value);
+    }
+}
+
+/* the phrase of the result (0) or of the threshold (1) that the verdict compares; a verdict without them gets them
+   with the name of their role e.g. "new NPP verdict threshold", the threshold after the result */
+function setComparedPhrase(i, value) {
+    const g = state.lists.verdict;
+    for (let k = g.compared.length; k <= i; k++) {
+        const n = newNode("sub");
+        n.verb = WITH;
+        n.name = groupName("verdict") + " " + COMPARED_ROLES[k];
+        g.compared.push(n);
+    }
+    g.compared[i].to = value.trim();
+}
+
+/* the result of the number in a cell (0) or of the one in brackets (1) of the sensitivity table; a table without them
+   gets them with the name of their role, the one in brackets after the one in the cell */
+function setCellPhrase(i, value) {
+    const g = state.lists.sensitivity;
+    const cname = cellGroupName(g, groupName("sensitivity"));
+    for (let k = g.cells.length; k <= i; k++) {
+        const n = newNode("sub");
+        n.name = cname + " " + CELL_ROLES[k];
+        g.cells.push(n);
+    }
+    g.cells[i].to = value.trim();
+}
+
+/* a field of the claim of an argument; a claim named by its parts follows a changed part, and so does the argument
+   that names the claim, because a moved argument changes the verb and so the name of its claim */
+function setClaimField(hit, f, value) {
+    const c = hit.node.claim;
+    if (f === "text") {
+        c.text = value;
+    } else if (f === "label") {
+        c.label.text = value;
+    } else if (f === "from" || f === "verb" || f === "to") {
+        c[f] = value.trim();
+        if (c.nameAuto) {
+            c.name = claimAutoName(c.from, c.verb, c.to);
+        }
+        // without a reason or a claim argued about there is no claim, so nothing of the argument is saved
+        hit.node.to = c.from && c.to ? c.name : "";
+        refreshAutoName(hit);
     }
 }
 
@@ -2957,6 +3554,8 @@ function setPhraseField(x, f, value) {
         p.label.text = value;
     } else if (f === "hint") {
         p.hint.text = value;
+    } else if (f === "more") {
+        p.more.text = value;
     } else if (f === "highlight") {
         p.highlight.on = Boolean(value);
     } else if (f === "type") {
@@ -3121,6 +3720,16 @@ function putMessage(changes) {
     changes.formulas.forEach(function (f) {
         body.formulas.push({id: f.id, user_text: f.after});
     });
+    /* only with a changed source, so that a message without one keeps the sections of before */
+    if (changes.sources.length > 0) {
+        body.sources = changes.sources.map(function (s) {
+            const json = {id: s.id};
+            s.fields.forEach(function (x) {
+                json[x.field] = x.after;
+            });
+            return json;
+        });
+    }
     changes.values.forEach(function (v) {
         if (v.kind === "add") {
             body.values.push(valueJson(v));
@@ -3135,14 +3744,18 @@ function putMessage(changes) {
         return [d.t.name, d];
     }));
 
-    function depth(d) {
-        let n = 0;
-        let cur = d;
-        while (cur && delNames.has(cur.t.from) && n < 20) {
-            n = n + 1;
-            cur = byName.get(cur.t.from);
+    // the number of removed triples that a removed triple names by its from or its to, e.g. the order of an
+    // argument names the argument by its to, so that a triple is removed before the ones that it names
+    function depth(d, n = 0) {
+        let result = 0;
+        if (n < 20) {
+            [d.t.from, d.t.to].forEach(function (name) {
+                if (delNames.has(name) && name !== d.t.name) {
+                    result = Math.max(result, 1 + depth(byName.get(name), n + 1));
+                }
+            });
         }
-        return n;
+        return result;
     }
 
     changes.del.slice().sort(function (a, b) {
@@ -3199,7 +3812,7 @@ async function save() {
 function savedReport(body) {
     const lines = [];
     let warn = Boolean(body.warnings);
-    ["words", "triples", "formulas", "values"].forEach(function (section) {
+    ["words", "triples", "formulas", "sources", "values"].forEach(function (section) {
         (body[section] || []).forEach(function (o) {
             const name = o.name || (section.slice(0, -1) + " " + o.id);
             const own = " " + (o.user_overwrite ? txt(TXT.ownVersion) : txt(TXT.sharedVersion));
@@ -3282,9 +3895,26 @@ function loadDoc(doc, name, savedState) {
     DOC = doc;
     DOC_NAME = name;
     uidCounter = 0;
-    parseDoc(doc);
+    const parsed = parseDoc(doc);
     if (savedState) {
         state = savedState;
+        // a draft of an older editor has no list of the arguments, of the verdict or of the sensitivity table, no parts
+        // of the verdict box or of the table and no hideable lead text, which would else be saved as removed
+        LISTS.forEach(function (L) {
+            if (state.lists[L.key] === undefined) {
+                state.lists[L.key] = parsed.lists[L.key];
+            }
+            ["hint", "scale", "note", "compared", "cellSrc", "cellName", "cells"].forEach(function (k) {
+                if (state.lists[L.key][k] === undefined) {
+                    state.lists[L.key][k] = parsed.lists[L.key][k];
+                }
+            });
+        });
+        Object.keys(state.phrases).forEach(function (x) {
+            if (state.phrases[x].more === undefined) {
+                state.phrases[x].more = (parsed.phrases[x] || emptyPhrase()).more;
+            }
+        });
         walkAll(function (n) {
             const k = Number(String(n.uid).slice(1));
             if (k > uidCounter) {
@@ -3405,7 +4035,7 @@ function onClick(e) {
     }
     const btn = e.target.closest("[data-act]");
     const nodeEl = e.target.closest(".node");
-    const prev = e.target.closest("[data-sel]");
+    const part = e.target.closest("[" + PART_ATTR + "]");
     const tab = e.target.closest(".tab");
     if (btn) {
         const act = btn.dataset.act;
@@ -3420,14 +4050,21 @@ function onClick(e) {
             moveNode(btn.dataset.uid, -1);
         } else if (act === "down") {
             moveNode(btn.dataset.uid, 1);
+        } else if (act === "copyJson") {
+            copyJson();
+        } else if (act === "createPdf") {
+            createPdf();
         } else {
             phraseListAction(act, btn.dataset.p, btn.dataset.uid);
         }
     } else if (nodeEl) {
         select(nodeEl.dataset.uid);
-    } else if (prev && document.getElementById("pane").contains(prev)) {
-        e.preventDefault();
-        select(prev.dataset.sel);
+    } else if (part && document.getElementById("pane").contains(part)) {
+        // the link of a source selects too instead of leaving the editor with its unsaved changes
+        if (e.target.closest("a")) {
+            e.preventDefault();
+        }
+        selectPart(part.getAttribute(PART_ATTR));
     } else if (tab) {
         activeTab = tab.dataset.tab;
         renderPane();
@@ -3436,18 +4073,52 @@ function onClick(e) {
 
 function select(id) {
     if (selected !== id) {
-        selected = id;
-        history.lastKey = "";
-        /* an item selected e.g. in the page preview is shown in its list */
-        const hit = findNode(id);
-        if (hit) {
-            openLists.add(hit.listKey);
-        }
-        renderTree();
-        renderInspector();
+        showSelected(id);
         if (activeTab === "page") {
             renderPane();
         }
+    }
+}
+
+/* the selected item in the page structure and in the settings */
+function showSelected(id) {
+    selected = id;
+    history.lastKey = "";
+    /* an item selected e.g. in the page preview is shown in its list */
+    const hit = findNode(id);
+    if (hit) {
+        openLists.add(hit.listKey);
+    } else if (findSource(id)) {
+        openLists.add(SOURCE_LIST);
+    }
+    renderTree();
+    renderInspector();
+}
+
+/* a part of the page preview selects the item with the name of its triple e.g. an argument or a state of the verdict,
+   any other part e.g. the hideable lead text the page; the preview is not drawn again, so that a click on a collapsed
+   part also opens it; a note of a formula selects the formula like the page structure, which shows the formula editor
+   and its compare instead of the preview, in the row groups, whose result rows list their formulas; a source by
+   its name selects the source in the list of the sources */
+function selectPart(name) {
+    let id = "page";
+    walkAll(function (n) {
+        if (n.name === name) {
+            id = n.uid;
+        }
+    });
+    const formula = (DOC.formulas || []).find(function (f) {
+        return f.name === name;
+    });
+    const source = sourceOfName(name);
+    if (id === "page" && source !== null) {
+        id = SOURCE_SEL + source.id;
+    }
+    if (id === "page" && formula !== undefined) {
+        openLists.add("rowgroup");
+        select(FORMULA_SEL + formula.id);
+    } else if (selected !== id) {
+        showSelected(id);
     }
 }
 
@@ -3480,7 +4151,7 @@ function onChange(e) {
         const isText = el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "checkbox");
         if (isText) {
             /* the text was stored while typing; refresh the inspector for the new placeholders */
-            const structural = b.t === "node" && (b.f === "to" || b.f === "name");
+            const structural = (b.t === "node" && (b.f === "to" || b.f === "name")) || (b.t === "arg" && (b.f === "from" || b.f === "to"));
             if (structural && document.getElementById("insp").contains(el)) {
                 setTimeout(function () {
                     const active = document.activeElement;
@@ -3594,17 +4265,14 @@ document.addEventListener("click", onClick);
 document.addEventListener("input", onInput);
 document.addEventListener("change", onChange);
 document.addEventListener("keydown", onKey);
-/* the toggle event does not bubble, so it is caught on the way down to remember the open lists and preview blocks */
+/* the toggle event does not bubble, so it is caught on the way down to remember the open lists */
 document.addEventListener("toggle", function (e) {
     const el = e.target;
-    const list = el.matches && el.matches("details.sect") ? el.dataset.list : "";
-    const block = el.dataset ? el.dataset.preview : "";
-    const set = list ? openLists : openPreview;
-    const key = list || block;
+    const key = el.matches && el.matches("details.sect") ? el.dataset.list : "";
     if (key && el.open) {
-        set.add(key);
+        openLists.add(key);
     } else if (key) {
-        set.delete(key);
+        openLists.delete(key);
     }
 }, true);
 const treeEl = document.getElementById("tree");
@@ -3730,8 +4398,20 @@ function editedDoc() {
             added.push({words: v.words, number: v.number});
         }
     });
+    // a value names its source, so a renamed source is named by its new name
+    const renamed = new Map();
+    out.changes.sources.forEach(function (s) {
+        s.fields.forEach(function (x) {
+            if (x.field === "name") {
+                renamed.set(x.before, x.after);
+            }
+        });
+    });
     const values = (DOC.values || []).map(function (v, i) {
-        const result = numbers.has(i) ? Object.assign({}, v, {number: numbers.get(i)}) : v;
+        let result = numbers.has(i) ? Object.assign({}, v, {number: numbers.get(i)}) : v;
+        if (renamed.has(v.source)) {
+            result = Object.assign({}, result, {source: renamed.get(v.source)});
+        }
         return result;
     }).filter(function (v, i) {
         return !removed.has(i);
@@ -3743,6 +4423,15 @@ function editedDoc() {
         triples: out.triples,
         formulas: (DOC.formulas || []).map(function (f) {
             return Object.assign({}, f, {expression: formulaExpression(f)});
+        }),
+        sources: (DOC.sources || []).map(function (s) {
+            const result = Object.assign({}, s);
+            SOURCE_FIELDS.forEach(function (f) {
+                if (sourceField(s, f) !== (s[f] || "")) {
+                    result[f] = sourceField(s, f);
+                }
+            });
+            return result;
         }),
         values: values.concat(added)
     });

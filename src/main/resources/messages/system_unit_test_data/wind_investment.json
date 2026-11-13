@@ -184,7 +184,7 @@
       "name": "m²",
       "refs": [
         {
-          "name": "Square metre",
+          "name": "Square_metre",
           "type": "wikipedia"
         }
       ]

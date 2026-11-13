@@ -1,9 +1,8 @@
-User sandbox
-------------
+# User sandbox
 
-# import
+## import
 
-## sample formula "increase"
+### sample formula "increase"
 
 Assume many users use the JSON import for the formula "increase" (if a cell is empty, the value is "null" or the field
 is
@@ -36,6 +35,6 @@ Based on the database, the output to the users will be:
 
 The output for the user is the "best known" value, e.g. for the field "description". For some fields like "exclude" the default value is "null" which means "do not overwrite". 
 
-### code functions
+#### code functions
 
 To detect if the import object could be merged with a database row, the functions "get_similar" and "is_similar" are used. To detect, if a reject message should be created, the function "is_same" is used.

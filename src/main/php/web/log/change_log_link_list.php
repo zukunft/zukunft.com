@@ -112,7 +112,7 @@ class change_log_link_list extends ListBase
         $data[url_var::LOG_CLASS] = $lib->class_to_api_name($class);
         $ctrl = new rest_call();
         $data = $ctrl->id_data($id, $data);
-        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg), $msg);
     }
 
 

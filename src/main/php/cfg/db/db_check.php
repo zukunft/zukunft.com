@@ -55,6 +55,9 @@ include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_USER . 'user_type_list.php';
 include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -88,6 +91,9 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -115,7 +121,6 @@ class db_check
      */
     function db_check(sql_db $db_con, user_message $msg): bool
     {
-        global $cfg;
         global $sys;
 
         $do_consistency_check = false;
@@ -507,6 +512,12 @@ class db_check
         $cfg = new config();
         $lib = new library();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
+
+        // the last used verb of a user as the default of the next triple
+        $usr_tbl = $lib->class_to_name(user::class);
+        $vrb_tbl = $lib->class_to_name(verb::class);
+        $result .= $db_con->add_column($usr_tbl, user_db::FLD_VERB, type_object::FLD_ID_SQL_TYP->value, $msg);
+        $result .= $db_con->add_foreign_key(user_db::FK_VERB, $usr_tbl, user_db::FLD_VERB, $vrb_tbl, verb_db::FLD_ID, $msg);
 
         // the priority and the style added to the view link
         $trm_msk = $lib->class_to_name(term_view::class);

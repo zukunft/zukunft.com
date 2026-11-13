@@ -147,8 +147,8 @@ class sandbox_code_id extends sandbox_typed
         string       $type_fld = ''
     ): bool
     {
-        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        if ($this->id() != 0) {
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        if ($result) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
@@ -468,11 +468,11 @@ class sandbox_code_id extends sandbox_typed
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
+        // without the check of set_code_id, because the code id of the given object is the stored one or one that
+        // its import has already checked, so taking it over is no change of the code id e.g. if a normal user
+        // changes only the description of a source with a code id
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
-            // a local buffer for the requesting user of the fill, merged into the returned message
-            $code_msg = new user_message($usr_req);
-            $this->set_code_id($obj->get_code_id(), $code_msg);
-            $msg->merge($code_msg);
+            $this->set_code_id_db($obj->get_code_id());
         }
         return $msg;
     }
@@ -519,7 +519,7 @@ class sandbox_code_id extends sandbox_typed
         $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->code_id !== $this->code_id) {
+        if ($this->save_code_id($obj->code_id, $this->code_id, $msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,

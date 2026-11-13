@@ -86,7 +86,7 @@
       "description": "the basic structural and functional unit of all living organisms",
       "refs": [
         {
-          "name": "Cell (biology)",
+          "name": "Cell_(biology)",
           "type": "wikipedia"
         },
         {
@@ -324,7 +324,7 @@
       "description": "a sequence of three nucleotides that codes for an amino acid",
       "refs": [
         {
-          "name": "Genetic code",
+          "name": "Genetic_code",
           "type": "wikipedia"
         },
         {
@@ -338,7 +338,7 @@
       "description": "the process of copying a DNA sequence into messenger RNA",
       "refs": [
         {
-          "name": "Transcription (biology)",
+          "name": "Transcription_(biology)",
           "type": "wikipedia"
         },
         {
@@ -352,7 +352,7 @@
       "description": "the process of synthesizing a protein from a messenger RNA template",
       "refs": [
         {
-          "name": "Translation (biology)",
+          "name": "Translation_(biology)",
           "type": "wikipedia"
         },
         {
@@ -464,7 +464,7 @@
       "description": "a distinct variant of a characteristic of an organism",
       "refs": [
         {
-          "name": "Phenotypic trait",
+          "name": "Phenotypic_trait",
           "type": "wikipedia"
         },
         {
@@ -547,7 +547,7 @@
       "description": "the reproductive success of an organism in a given environment",
       "refs": [
         {
-          "name": "Fitness (biology)",
+          "name": "Fitness_(biology)",
           "type": "wikipedia"
         },
         {
@@ -603,11 +603,11 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
-          "name": "Q175385",
+          "name": "Q33829",
           "type": "wikidata"
         }
       ]
@@ -617,7 +617,7 @@
       "description": "all the populations of different species in a given area",
       "refs": [
         {
-          "name": "Community (ecology)",
+          "name": "Community_(ecology)",
           "type": "wikipedia"
         },
         {
@@ -715,7 +715,7 @@
       "description": "a group of tissues that perform a specific function",
       "refs": [
         {
-          "name": "Organ (biology)",
+          "name": "Organ_(biology)",
           "type": "wikipedia"
         },
         {
@@ -729,7 +729,7 @@
       "description": "a group of similar cells performing a specific function",
       "refs": [
         {
-          "name": "Tissue (biology)",
+          "name": "Tissue_(biology)",
           "type": "wikipedia"
         },
         {
@@ -1124,7 +1124,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell biology",
+          "name": "Cell_biology",
           "type": "wikipedia"
         },
         {
@@ -1141,7 +1141,7 @@
       "to": "molecular",
       "refs": [
         {
-          "name": "Molecular biology",
+          "name": "Molecular_biology",
           "type": "wikipedia"
         },
         {
@@ -1158,7 +1158,7 @@
       "to": "evolutionary",
       "refs": [
         {
-          "name": "Evolutionary biology",
+          "name": "Evolutionary_biology",
           "type": "wikipedia"
         },
         {
@@ -1175,7 +1175,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell membrane",
+          "name": "Cell_membrane",
           "type": "wikipedia"
         },
         {
@@ -1192,7 +1192,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell nucleus",
+          "name": "Cell_nucleus",
           "type": "wikipedia"
         },
         {
@@ -1209,7 +1209,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell wall",
+          "name": "Cell_wall",
           "type": "wikipedia"
         },
         {
@@ -1226,7 +1226,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell division",
+          "name": "Cell_division",
           "type": "wikipedia"
         },
         {
@@ -1243,7 +1243,7 @@
       "to": "cell",
       "refs": [
         {
-          "name": "Cell cycle",
+          "name": "Cell_cycle",
           "type": "wikipedia"
         },
         {
@@ -1260,7 +1260,7 @@
       "to": "stem",
       "refs": [
         {
-          "name": "Stem cell",
+          "name": "Stem_cell",
           "type": "wikipedia"
         },
         {
@@ -1277,7 +1277,7 @@
       "to": "base",
       "refs": [
         {
-          "name": "Base pair",
+          "name": "Base_pair",
           "type": "wikipedia"
         },
         {
@@ -1294,7 +1294,7 @@
       "to": "gene",
       "refs": [
         {
-          "name": "Gene expression",
+          "name": "Gene_expression",
           "type": "wikipedia"
         },
         {
@@ -1311,7 +1311,7 @@
       "to": "amino",
       "refs": [
         {
-          "name": "Amino acid",
+          "name": "Amino_acid",
           "type": "wikipedia"
         },
         {
@@ -1328,7 +1328,7 @@
       "to": "nucleic",
       "refs": [
         {
-          "name": "Nucleic acid",
+          "name": "Nucleic_acid",
           "type": "wikipedia"
         },
         {
@@ -1345,7 +1345,7 @@
       "to": "dominant",
       "refs": [
         {
-          "name": "Dominance (genetics)",
+          "name": "Dominance_(genetics)",
           "type": "wikipedia"
         },
         {
@@ -1362,7 +1362,7 @@
       "to": "recessive",
       "refs": [
         {
-          "name": "Dominance (genetics)",
+          "name": "Dominance_(genetics)",
           "type": "wikipedia"
         },
         {
@@ -1379,7 +1379,7 @@
       "to": "genetic",
       "refs": [
         {
-          "name": "Genetic code",
+          "name": "Genetic_code",
           "type": "wikipedia"
         },
         {
@@ -1396,7 +1396,7 @@
       "to": "allele",
       "refs": [
         {
-          "name": "Allele frequency",
+          "name": "Allele_frequency",
           "type": "wikipedia"
         },
         {
@@ -1420,7 +1420,7 @@
       "to": "gene",
       "refs": [
         {
-          "name": "Gene pool",
+          "name": "Gene_pool",
           "type": "wikipedia"
         },
         {
@@ -1437,7 +1437,7 @@
       "to": "Mendelian",
       "refs": [
         {
-          "name": "Mendelian inheritance",
+          "name": "Mendelian_inheritance",
           "type": "wikipedia"
         },
         {
@@ -1460,7 +1460,7 @@
       "to": "Hardy-Weinberg",
       "refs": [
         {
-          "name": "Hardy–Weinberg principle",
+          "name": "Hardy–Weinberg_principle",
           "type": "wikipedia"
         },
         {
@@ -1477,7 +1477,7 @@
       "to": "natural",
       "refs": [
         {
-          "name": "Natural selection",
+          "name": "Natural_selection",
           "type": "wikipedia"
         },
         {
@@ -1494,7 +1494,7 @@
       "to": "common",
       "refs": [
         {
-          "name": "Common descent",
+          "name": "Common_descent",
           "type": "wikipedia"
         },
         {
@@ -1511,7 +1511,7 @@
       "to": "genetic",
       "refs": [
         {
-          "name": "Genetic drift",
+          "name": "Genetic_drift",
           "type": "wikipedia"
         },
         {
@@ -1528,7 +1528,7 @@
       "to": "ecological",
       "refs": [
         {
-          "name": "Ecological niche",
+          "name": "Ecological_niche",
           "type": "wikipedia"
         },
         {
@@ -1545,7 +1545,7 @@
       "to": "food",
       "refs": [
         {
-          "name": "Food chain",
+          "name": "Food_chain",
           "type": "wikipedia"
         },
         {
@@ -1562,7 +1562,7 @@
       "to": "food",
       "refs": [
         {
-          "name": "Food web",
+          "name": "Food_web",
           "type": "wikipedia"
         },
         {
@@ -1579,7 +1579,7 @@
       "to": "trophic",
       "refs": [
         {
-          "name": "Trophic level",
+          "name": "Trophic_level",
           "type": "wikipedia"
         },
         {
@@ -1596,7 +1596,7 @@
       "to": "carrying",
       "refs": [
         {
-          "name": "Carrying capacity",
+          "name": "Carrying_capacity",
           "type": "wikipedia"
         },
         {
@@ -1619,7 +1619,7 @@
       "to": "gross",
       "refs": [
         {
-          "name": "Primary production",
+          "name": "Primary_production",
           "type": "wikipedia"
         },
         {
@@ -1636,7 +1636,7 @@
       "to": "net",
       "refs": [
         {
-          "name": "Primary production",
+          "name": "Primary_production",
           "type": "wikipedia"
         },
         {
@@ -1653,7 +1653,7 @@
       "to": "cellular",
       "refs": [
         {
-          "name": "Cellular respiration",
+          "name": "Cellular_respiration",
           "type": "wikipedia"
         },
         {
@@ -1670,7 +1670,7 @@
       "to": "heart",
       "refs": [
         {
-          "name": "Heart rate",
+          "name": "Heart_rate",
           "type": "wikipedia"
         },
         {
@@ -1687,7 +1687,7 @@
       "to": "stroke",
       "refs": [
         {
-          "name": "Stroke volume",
+          "name": "Stroke_volume",
           "type": "wikipedia"
         },
         {
@@ -1704,7 +1704,7 @@
       "to": "cardiac",
       "refs": [
         {
-          "name": "Cardiac output",
+          "name": "Cardiac_output",
           "type": "wikipedia"
         },
         {
@@ -1727,7 +1727,7 @@
       "to": "body mass",
       "refs": [
         {
-          "name": "Body mass index",
+          "name": "Body_mass_index",
           "type": "wikipedia"
         },
         {
@@ -1744,7 +1744,7 @@
       "to": "birth",
       "refs": [
         {
-          "name": "Birth rate",
+          "name": "Birth_rate",
           "type": "wikipedia"
         },
         {
@@ -1761,7 +1761,7 @@
       "to": "death",
       "refs": [
         {
-          "name": "Mortality rate",
+          "name": "Mortality_rate",
           "type": "wikipedia"
         },
         {
@@ -1784,7 +1784,7 @@
       "to": "population growth",
       "refs": [
         {
-          "name": "Population growth",
+          "name": "Population_growth",
           "type": "wikipedia"
         },
         {

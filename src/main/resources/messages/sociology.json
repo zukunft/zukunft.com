@@ -111,7 +111,7 @@
       "description": "action or behavior that violates social norms",
       "refs": [
         {
-          "name": "Deviance (sociology)",
+          "name": "Deviance_(sociology)",
           "type": "wikipedia"
         },
         {
@@ -195,7 +195,7 @@
       "description": "legitimate power to decide or authorize",
       "refs": [
         {
-          "name": "Authority (sociology)",
+          "name": "Authority_(sociology)",
           "type": "wikipedia"
         },
         {
@@ -209,7 +209,7 @@
       "description": "right and acceptance of an authority",
       "refs": [
         {
-          "name": "Legitimacy (political)",
+          "name": "Legitimacy_(political)",
           "type": "wikipedia"
         },
         {
@@ -349,7 +349,7 @@
       "description": "explanation for the process of modernization within societies",
       "refs": [
         {
-          "name": "Modernization theory",
+          "name": "Modernization_theory",
           "type": "wikipedia"
         },
         {
@@ -418,7 +418,7 @@
       "name": "value",
       "refs": [
         {
-          "name": "Value (ethics and social sciences)",
+          "name": "Value_(ethics_and_social_sciences)",
           "type": "wikipedia"
         },
         {
@@ -502,7 +502,7 @@
       "description": "a social group to which a person psychologically identifies as being a member",
       "refs": [
         {
-          "name": "In-group favoritism",
+          "name": "In-group_favoritism",
           "type": "wikipedia"
         },
         {
@@ -614,7 +614,7 @@
       "description": "group of two people, the smallest possible social group",
       "refs": [
         {
-          "name": "Dyad (sociology)",
+          "name": "Dyad_(sociology)",
           "type": "wikipedia"
         },
         {
@@ -628,7 +628,7 @@
       "description": "sociological term: group of three people",
       "refs": [
         {
-          "name": "Triad (sociology)",
+          "name": "Triad_(sociology)",
           "type": "wikipedia"
         },
         {
@@ -670,7 +670,7 @@
       "description": "nonscientific human classification system primarily based on physical appearance",
       "refs": [
         {
-          "name": "Race (human categorization)",
+          "name": "Race_(human_categorization)",
           "type": "wikipedia"
         },
         {
@@ -1098,7 +1098,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social theory",
+          "name": "Social_theory",
           "type": "wikipedia"
         },
         {
@@ -1115,7 +1115,7 @@
       "to": "urban",
       "refs": [
         {
-          "name": "Urban sociology",
+          "name": "Urban_sociology",
           "type": "wikipedia"
         },
         {
@@ -1132,7 +1132,7 @@
       "to": "political",
       "refs": [
         {
-          "name": "Political sociology",
+          "name": "Political_sociology",
           "type": "wikipedia"
         },
         {
@@ -1149,7 +1149,7 @@
       "to": "economic",
       "refs": [
         {
-          "name": "Economic sociology",
+          "name": "Economic_sociology",
           "type": "wikipedia"
         },
         {
@@ -1165,7 +1165,7 @@
       "to": "religion",
       "refs": [
         {
-          "name": "Sociology of religion",
+          "name": "Sociology_of_religion",
           "type": "wikipedia"
         },
         {
@@ -1181,7 +1181,7 @@
       "to": "education",
       "refs": [
         {
-          "name": "Sociology of education",
+          "name": "Sociology_of_education",
           "type": "wikipedia"
         },
         {
@@ -1198,7 +1198,7 @@
       "to": "medical",
       "refs": [
         {
-          "name": "Medical sociology",
+          "name": "Medical_sociology",
           "type": "wikipedia"
         },
         {
@@ -1215,7 +1215,7 @@
       "to": "environmental",
       "refs": [
         {
-          "name": "Environmental sociology",
+          "name": "Environmental_sociology",
           "type": "wikipedia"
         },
         {
@@ -1232,7 +1232,7 @@
       "to": "industrial",
       "refs": [
         {
-          "name": "Industrial sociology",
+          "name": "Industrial_sociology",
           "type": "wikipedia"
         },
         {
@@ -1249,7 +1249,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social psychology (sociology)",
+          "name": "Social_psychology_(sociology)",
           "type": "wikipedia"
         },
         {
@@ -1266,7 +1266,7 @@
       "to": "demographic",
       "refs": [
         {
-          "name": "Demographic transition",
+          "name": "Demographic_transition",
           "type": "wikipedia"
         },
         {
@@ -1283,7 +1283,7 @@
       "to": "mortality",
       "refs": [
         {
-          "name": "Mortality rate",
+          "name": "Mortality_rate",
           "type": "wikipedia"
         },
         {
@@ -1300,7 +1300,7 @@
       "to": "human",
       "refs": [
         {
-          "name": "Human migration",
+          "name": "Human_migration",
           "type": "wikipedia"
         },
         {
@@ -1316,7 +1316,7 @@
       "to": "life",
       "refs": [
         {
-          "name": "Life expectancy",
+          "name": "Life_expectancy",
           "type": "wikipedia"
         },
         {
@@ -1333,7 +1333,7 @@
       "to": "population",
       "refs": [
         {
-          "name": "Population density",
+          "name": "Population_density",
           "type": "wikipedia"
         },
         {
@@ -1350,7 +1350,7 @@
       "to": "infant",
       "refs": [
         {
-          "name": "Infant mortality",
+          "name": "Infant_mortality",
           "type": "wikipedia"
         },
         {
@@ -1367,7 +1367,7 @@
       "to": "dependency",
       "refs": [
         {
-          "name": "Dependency ratio",
+          "name": "Dependency_ratio",
           "type": "wikipedia"
         },
         {
@@ -1384,7 +1384,7 @@
       "to": "sex",
       "refs": [
         {
-          "name": "Sex ratio",
+          "name": "Sex_ratio",
           "type": "wikipedia"
         },
         {
@@ -1401,7 +1401,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social control",
+          "name": "Social_control",
           "type": "wikipedia"
         },
         {
@@ -1418,7 +1418,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social stigma",
+          "name": "Social_stigma",
           "type": "wikipedia"
         },
         {
@@ -1435,7 +1435,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Power (social and political)",
+          "name": "Power_(social_and_political)",
           "type": "wikipedia"
         },
         {
@@ -1452,7 +1452,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social movement",
+          "name": "Social_movement",
           "type": "wikipedia"
         },
         {
@@ -1469,7 +1469,7 @@
       "to": "collective",
       "refs": [
         {
-          "name": "Collective behavior",
+          "name": "Collective_behavior",
           "type": "wikipedia"
         },
         {
@@ -1486,7 +1486,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social class",
+          "name": "Social_class",
           "type": "wikipedia"
         },
         {
@@ -1503,7 +1503,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social stratification",
+          "name": "Social_stratification",
           "type": "wikipedia"
         },
         {
@@ -1520,7 +1520,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social mobility",
+          "name": "Social_mobility",
           "type": "wikipedia"
         },
         {
@@ -1537,7 +1537,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social inequality",
+          "name": "Social_inequality",
           "type": "wikipedia"
         },
         {
@@ -1554,7 +1554,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social capital",
+          "name": "Social_capital",
           "type": "wikipedia"
         },
         {
@@ -1571,7 +1571,7 @@
       "to": "cultural",
       "refs": [
         {
-          "name": "Cultural capital",
+          "name": "Cultural_capital",
           "type": "wikipedia"
         },
         {
@@ -1588,7 +1588,7 @@
       "to": "religion",
       "refs": [
         {
-          "name": "Religious denomination",
+          "name": "Religious_denomination",
           "type": "wikipedia"
         },
         {
@@ -1605,7 +1605,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social structure",
+          "name": "Social_structure",
           "type": "wikipedia"
         },
         {
@@ -1639,7 +1639,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social fact",
+          "name": "Social_fact",
           "type": "wikipedia"
         },
         {
@@ -1655,7 +1655,7 @@
       "to": "labour",
       "refs": [
         {
-          "name": "Division of labour",
+          "name": "Division_of_labour",
           "type": "wikipedia"
         },
         {
@@ -1672,7 +1672,7 @@
       "to": "symbolic",
       "refs": [
         {
-          "name": "Symbolic interactionism",
+          "name": "Symbolic_interactionism",
           "type": "wikipedia"
         },
         {
@@ -1689,7 +1689,7 @@
       "to": "structural",
       "refs": [
         {
-          "name": "Structural functionalism",
+          "name": "Structural_functionalism",
           "type": "wikipedia"
         },
         {
@@ -1706,7 +1706,7 @@
       "to": "conflict",
       "refs": [
         {
-          "name": "Conflict theories",
+          "name": "Conflict_theories",
           "type": "wikipedia"
         },
         {
@@ -1723,7 +1723,7 @@
       "to": "collective",
       "refs": [
         {
-          "name": "Collective consciousness",
+          "name": "Collective_consciousness",
           "type": "wikipedia"
         },
         {
@@ -1740,7 +1740,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social change",
+          "name": "Social_change",
           "type": "wikipedia"
         },
         {
@@ -1757,7 +1757,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social network",
+          "name": "Social_network",
           "type": "wikipedia"
         },
         {
@@ -1774,7 +1774,7 @@
       "to": "cultural",
       "refs": [
         {
-          "name": "Cultural relativism",
+          "name": "Cultural_relativism",
           "type": "wikipedia"
         },
         {
@@ -1791,7 +1791,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social norm",
+          "name": "Social_norm",
           "type": "wikipedia"
         },
         {
@@ -1808,7 +1808,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Identity (social science)",
+          "name": "Identity_(social_science)",
           "type": "wikipedia"
         },
         {
@@ -1825,7 +1825,7 @@
       "to": "reference",
       "refs": [
         {
-          "name": "Reference group",
+          "name": "Reference_group",
           "type": "wikipedia"
         },
         {
@@ -1842,7 +1842,7 @@
       "to": "role",
       "refs": [
         {
-          "name": "Role conflict",
+          "name": "Role_conflict",
           "type": "wikipedia"
         },
         {
@@ -1859,7 +1859,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social status",
+          "name": "Social_status",
           "type": "wikipedia"
         },
         {
@@ -1876,7 +1876,7 @@
       "to": "ascribed",
       "refs": [
         {
-          "name": "Ascribed status",
+          "name": "Ascribed_status",
           "type": "wikipedia"
         },
         {
@@ -1893,7 +1893,7 @@
       "to": "achieved",
       "refs": [
         {
-          "name": "Achieved status",
+          "name": "Achieved_status",
           "type": "wikipedia"
         },
         {
@@ -1910,7 +1910,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social group",
+          "name": "Social_group",
           "type": "wikipedia"
         },
         {
@@ -1927,7 +1927,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Group cohesiveness",
+          "name": "Group_cohesiveness",
           "type": "wikipedia"
         },
         {
@@ -1944,7 +1944,7 @@
       "to": "social",
       "refs": [
         {
-          "name": "Social integration",
+          "name": "Social_integration",
           "type": "wikipedia"
         },
         {
@@ -1961,7 +1961,7 @@
       "to": "gender",
       "refs": [
         {
-          "name": "Gender role",
+          "name": "Gender_role",
           "type": "wikipedia"
         },
         {
@@ -1978,7 +1978,7 @@
       "to": "minority",
       "refs": [
         {
-          "name": "Minority group",
+          "name": "Minority_group",
           "type": "wikipedia"
         },
         {
@@ -1995,7 +1995,7 @@
       "to": "nuclear",
       "refs": [
         {
-          "name": "Nuclear family",
+          "name": "Nuclear_family",
           "type": "wikipedia"
         },
         {
@@ -2012,7 +2012,7 @@
       "to": "extended",
       "refs": [
         {
-          "name": "Extended family",
+          "name": "Extended_family",
           "type": "wikipedia"
         },
         {

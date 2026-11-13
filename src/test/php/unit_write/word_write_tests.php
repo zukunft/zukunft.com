@@ -39,6 +39,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -48,11 +53,17 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -70,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -95,8 +107,24 @@ class word_write_tests
         // start the test section (ts)
         $ts = 'db write word ';
         $t->header($ts);
+
+        // the price word is named only by the expression of the ratio formula of create_test_formulas
+        $test_name = 'the price word of create_test_formulas is loaded';
+        $wrd_price = $t_db->load_word($msg, word_names::TEST_PRICE);
+        $t->assert_greater_zero($test_name, $wrd_price->id());
+        // the element rows that used_by_data reads are written only by element_refresh, like the import does
+        $test_name = 'the elements of the ratio formula are written';
+        $frm_ratio = $t_db->load_formula(formula_names::SYSTEM_TEST_RATIO);
+        $elm_msg = new user_message($t->usr1);
+        $is_refreshed = $frm_ratio->element_refresh($elm_msg);
+        // assert and not assert_true, because only assert measures the time also if the result is fine
+        $t->assert($test_name, $is_refreshed, true, $t::TIMEOUT_LIMIT_DB_MULTI, $elm_msg->text());
+        $test_name = 'a word that only a formula expression names is used by data';
+        $is_used = $wrd_price->used_by_data($msg);
+        $t->assert($test_name, $is_used, true, $t::TIMEOUT_LIMIT_DB_MULTI);
+
         // TODO Prio 1 add this cleanup before the test to all write tests
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         $t->subheader($ts . 'prepared');
         $test_name = 'add word ' . word_names::TEST_ADD_VIA_FUNC . ' via sql function';
@@ -273,8 +301,12 @@ class word_write_tests
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
-        $t_db->test_word($msg, word_names::TEST_FIN_REPORT);
+        $wrd_report = $t_db->test_word($msg, word_names::TEST_FIN_REPORT);
         $t_db->test_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
+        // the financial report word is used only by the cash flow triple just created
+        $test_name = 'a word that only a triple uses is used by data';
+        $is_used = $wrd_report->used_by_data($msg);
+        $t->assert($test_name, $is_used, true, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
@@ -365,6 +397,7 @@ class word_write_tests
         $result = $msg->text();
         $target = 'A word with the name "'.word_names::TEST_ADD.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $msg->reset();
 
         $t->subheader($ts . 'protection');
         $test_name = 'the owner can raise the protection of "' . word_names::TEST_ADD . '" to admin';
@@ -622,6 +655,9 @@ class word_write_tests
         $target = $wrd_usr1->name_dsp();
         $result = $wrd_usr1_reloaded->name_dsp();
         $t->assert('but the word "' . word_names::TEST_RENAMED . '" is still the same for user 1', $result, $target);
+        $test_name = '... and user 2 is told that the used word has only been hidden for user 2';
+        $del_txt = $msg_usr2->text();
+        $t->assert($test_name, $del_txt, $this->excluded_notice($t, word_names::TEST_RENAMED));
 
         $test_name = 'delete the word also for user 1';
         $del_id = $wrd_usr1_reloaded->id();
@@ -672,22 +708,115 @@ class word_write_tests
 
         // controlled deletion of the share test word before the fallback cleanup: it is created by the
         // normal user (see create_test_words), so load it as that owner and request the deletion as that
-        // owner, then assert the row is really gone instead of leaving it for the fallback cleanup below
+        // owner, then assert the row is really gone instead of leaving it for the fallback cleanup below;
+        // the share price value of create_test_values and the formula links of create_test_formula_links
+        // are removed first, because del() only excludes a used word
+        $test_name = 'a word that only formulas are linked to is used by data';
+        // a message of its own, so that the asserts show the reason of this delete and not an earlier message
+        $del_msg = new user_message($t->usr1);
+        $val_share = $t_db->load_value([word_names::TEST_SHARE, word_names::TEST_CHF]);
+        $val_share->del($del_msg);
+        // the value is created by usr1 (see test_db_load::add_value), so the delete removes the row and does not exclude it
+        $val_test_name = 'the share price value is deleted';
+        $val_chk = $t_db->load_value([word_names::TEST_SHARE, word_names::TEST_CHF]);
+        $val_left = $val_chk->is_saved();
+        $val_reason = '';
+        if ($val_left) {
+            $val_reason = $del_msg->text() . ' owner id: ' . $val_chk->owner_id()
+                . ' changer id: ' . $val_chk->changer($del_msg) . ' excluded: ' . var_export($val_chk->is_excluded(), true);
+        }
+        $t->assert($val_test_name, $val_left, false, $t::TIMEOUT_LIMIT_DB_MULTI, $val_reason);
+        $wrd_share = $t_db->load_word($del_msg, word_names::TEST_SHARE);
+        $is_used = $wrd_share->used_by_data($del_msg);
+        $t->assert_true($test_name, $is_used);
+        // negative: without the formula links nothing uses the word any more
+        $test_name = '... but not any more without the formula links';
+        foreach ([formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_SECTOR] as $frm_name) {
+            $frm_lnk = new formula_link($t->usr1);
+            $frm_lnk->load_by_link($t_db->load_formula($frm_name), $wrd_share->phrase(), $del_msg);
+            $frm_lnk->del($del_msg);
+        }
+        // only the value, because a formula link logs to the link changes, which this cleanup does not cover
+        $t->cleanup_change_log_of_deleted([$val_share]);
+        $is_used = $wrd_share->used_by_data($del_msg);
+        $used_by = $is_used ? $this->used_by_text($wrd_share) : '';
+        $t->assert($test_name, $is_used, false, $t::TIMEOUT_LIMIT_DB_MULTI, $used_by);
         $test_name = 'delete word "' . word_names::TEST_SHARE . '"';
-        $wrd_share = $t_db->load_word($msg, word_names::TEST_SHARE);
-        $wrd_share->del($msg);
+        $wrd_share->del($del_msg);
         $wrd_share_deleted = new word($t->usr1);
-        $wrd_share_deleted->load_by_name(word_names::TEST_SHARE, $msg);
-        $t->assert($test_name, $wrd_share_deleted->id(), 0);
+        $wrd_share_deleted->load_by_name(word_names::TEST_SHARE, $del_msg);
+        $share_id = $wrd_share_deleted->id();
+        // an empty used by text means that not the data, but the owner or the changes of another user keep the word
+        $del_reason = $del_msg->text();
+        if ($share_id != 0) {
+            $del_reason .= ' used by: ' . $this->used_by_text($wrd_share_deleted)
+                . ' owner id: ' . $wrd_share_deleted->owner_id() . ' user id: ' . $t->usr1->id();
+        }
+        $t->assert($test_name, $share_id, 0, $t::TIMEOUT_LIMIT_DB_MULTI, $del_reason);
+        // negative: a word that nothing uses any more is deleted, so it is not reported as only hidden
+        $test_name = '... and the user is not told that the word has only been hidden';
+        $del_txt = $del_msg->text();
+        $t->assert_text_not_contains($test_name, $del_txt, $this->excluded_notice($t, word_names::TEST_SHARE));
 
         // cleanup - fallback delete
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
         // cleanup - including related formulas
         $t_frm->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($msg, library::class_to_name(word::class));
 
+    }
+
+    /**
+     * the same parts as word::used_by_data, so that a failed check shows what still uses the word
+     *
+     * @param word $wrd the word that is expected to be no longer used
+     * @return string the objects that still use the word, empty if nothing uses it
+     */
+    private function used_by_text(word $wrd): string
+    {
+        $msg = new user_message($wrd->get_user());
+        $phr = $wrd->phrase();
+        $val_lst = new value_list($wrd->get_user());
+        $val_lst->load_by_phr($phr, $msg, 1);
+        $res_lst = new result_list($wrd->get_user());
+        $res_lst->load_by_phrase($phr, $msg);
+        $frm_lst = new formula_list($wrd->get_user());
+        $frm_lst->load_by_phr($phr, $msg);
+        $frm_ref_lst = new formula_list($wrd->get_user());
+        $frm_ref_lst->load_by_word_ref($wrd, $msg);
+        $trp_lst = new triple_list($wrd->get_user());
+        $trp_lst->load_by_phr($phr, $msg);
+        $parts = [
+            'values' => $val_lst,
+            'results' => $res_lst,
+            'linked formulas' => $frm_lst,
+            'formula expressions' => $frm_ref_lst,
+            'triples' => $trp_lst
+        ];
+        $result = '';
+        foreach ($parts as $part => $lst) {
+            if (!$lst->is_empty()) {
+                $result .= $part . ': ' . $lst->dsp_id() . '; ';
+            }
+        }
+        return $result . $msg->text();
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $name the name of the word that del() has only excluded
+     * @return string the notice of del() that the used word has only been hidden for the user
+     */
+    private function excluded_notice(test_cleanup $t, string $name): string
+    {
+        $exp_msg = new user_message($t->usr1);
+        $exp_msg->add(msg_id::DELETE_EXCLUDED_IN_USE, [
+            msg_id::VAR_CLASS_NAME => library::class_to_name_translated(word::class),
+            msg_id::VAR_NAME => $name
+        ], true);
+        return $exp_msg->text();
     }
 
     /**

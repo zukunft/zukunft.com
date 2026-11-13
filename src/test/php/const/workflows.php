@@ -346,6 +346,64 @@ class workflows
     const string WF_VALIDATE_LATEX = 'validate_latex';
     const int WF_VALIDATE_LATEX_NBR = 40;
 
+    // the login_start_page workflow name used for the snapshot folder and the test subheader: the user
+    // opens the login of the static start page, whose signup link keeps the start page as back target,
+    // and logs in, which returns to the static start page
+    const string WF_LOGIN_START_PAGE = 'login_start_page';
+    // the id of the current login_start_page workflow; increase it to add the next snapshot set
+    const int WF_LOGIN_START_PAGE_NBR = 41;
+
+    // the wikipedia_refresh workflow name used for the snapshot folder and the test subheader: the user
+    // presses the refresh icon of the wikipedia reference of the triple Geneva (city) and confirms the
+    // description of the wikipedia page; the backend reads wikipedia, so this
+    // workflow has no test mode twin and only the page before the refresh is a snapshot, because
+    // the text of the live wikipedia page can change (see ref_write_url_tests)
+    const string WF_WIKIPEDIA_REFRESH = 'wikipedia_refresh';
+    const int WF_WIKIPEDIA_REFRESH_NBR = 42;
+
+    // the ref_rows workflow name used for the test subheader: the user confirms the description of the
+    // triple Zurich (canton) together with the change, the delete and the add of a reference; it writes
+    // the base data as overlays of usr1, so it runs only in the write tests and has no snapshot
+    const string WF_REF_ROWS = 'ref_rows';
+    const int WF_REF_ROWS_NBR = 43;
+
+    // the ref_row_confirm workflow name used for the snapshot folder and the test subheader: the user
+    // saves the edit view of Zurich (canton) with one reference row, an add, a change or a delete, each
+    // with and without a change of the description, and confirms it; one snapshot set per case
+    const string WF_REF_ROW_CONFIRM = 'ref_row_confirm';
+    const int WF_REF_ROW_CONFIRM_NBR = 44;
+
+    // the wikidata_refresh workflow name used for the snapshot folder and the test subheader: the user
+    // presses the refresh icon of the wikipedia reference of the word health, which has no wikidata
+    // reference yet, and confirms the wikidata reference that wikipedia names; like the wikipedia_refresh
+    // workflow it reads the live wikipedia page, so only the word page before the refresh is a snapshot
+    const string WF_WIKIDATA_REFRESH = 'wikidata_refresh';
+    const int WF_WIKIDATA_REFRESH_NBR = 45;
+
+    // the ref_rows_form workflow name used for the snapshot folder and the test subheader: the user opens
+    // the edit view of Zurich (canton) with its reference rows, changes the key of one reference, checks
+    // the delete box of the other, fills the add row, saves and confirms; it only renders, because a
+    // write would change the change log of the seed triple (see docs/llm/pending_prio_2.md)
+    const string WF_REF_ROWS_FORM = 'ref_rows_form';
+    const int WF_REF_ROWS_FORM_NBR = 46;
+
+    // the wikidata_import workflow name used for the snapshot folder and the test subheader: the user presses
+    // the refresh icon of the wikidata reference of the triple Zurich (city), sees the import preview and
+    // confirms it; the backend reads the live wikidata entity, so only the triple page before the refresh is a
+    // snapshot, because the values of wikidata can change (see wikidata_write_tests)
+    const string WF_WIKIDATA_IMPORT = 'wikidata_import';
+    const int WF_WIKIDATA_IMPORT_NBR = 47;
+
+    // the change_verb workflow name used for the snapshot folder and the test subheader: the user changes
+    // the name in formulas of the test verb in the edit view and confirms it; a save without a change
+    // shows no field change
+    const string WF_CHANGE_VERB = 'change_verb';
+    const int WF_CHANGE_VERB_NBR = 48;
+
+    // snapshot file name marker for a save without a change, e.g. the 'unchanged' in
+    // 'wf48_edit_unchanged_save' where save is pressed on the edit view without changing a field
+    const string STEP_UNCHANGED = 'unchanged';
+
     /**
      * the user process step that a user reaction action triggers
      *

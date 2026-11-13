@@ -56,8 +56,10 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -94,12 +96,57 @@ use DateTime;
 class use_case_ui_tests
 {
 
-    // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js)
+    // a save button for the test of the buttons of the input list
+    const string CALC_SAVE_HTML = '<form id="save"></form>';
+    // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js and table_editor_scenarios.js)
     const string PUT_MESSAGE_ID = 'putMessage';
+    // the reason of the pod that refuses the save of the table editor (REFUSED_MESSAGE of table_editor_scenarios.js)
+    const string TABLE_REFUSED_MESSAGE = 'the user is not allowed to change this table';
     // the time of the save is replaced by this fixed time, so the message can be compared with the expected file
     const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
     // the result of a scenario that has not ended in the browser e.g. because a selector no longer matches
     const string SCENARIO_NOT_ENDED = 'the scenario has not ended in the headless browser';
+    // the fields of the message of the PDF tab scenarios (pressCreatePdf and pdf_tab_offline of calculator_editor_scenarios.js)
+    const string PDF_POST_ROUTE = 'route';
+    const string PDF_POST_TOKEN_SENT = 'token_sent';
+    const string PDF_POST_BODY = 'body';
+    const string PDF_BUTTON_DISABLED = 'disabled';
+    // the fields of a section of the page structure in the message of the arguments_collapsed scenario and the key of the arguments
+    const string TREE_LIST = 'list';
+    const string TREE_LIST_OPEN = 'open';
+    const string TREE_LIST_ARGUMENT = 'argument';
+    // the clicks of the preview_parts scenario and the settings that each click shows by their kind and label
+    const string CLICK_ARGUMENT = 'argument';
+    const string CLICK_VERDICT = 'verdict';
+    const string CLICK_FORMULA = 'formula';
+    const string CLICK_COMPARE = 'compare';
+    const string SHOWN_FORMULA = 'alternative cost formula';
+    const string CLICK_FIELD = 'field';
+    const string CLICK_PRESET = 'preset';
+    const string SHOWN_FIELD = 'Input field: Construction cost (overnight)';
+    const string SHOWN_PRESET = 'Preset: Academies pessimistic';
+    const string CLICK_ROW_GROUP = 'rowGroup';
+    const string CLICK_ROW = 'row';
+    const string CLICK_COLUMN = 'column';
+    const string CLICK_LEVEL = 'level';
+    const string CLICK_SOURCE = 'source';
+    const string CLICK_SOURCE_STAYS = 'stays';
+    const string CLICK_HEADING = 'heading';
+    const string SHOWN_SOURCE_NPP = 'Source: Fraunhofer ISE LCOE 2024 via Faktenfackel';
+    const string SHOWN_SOURCE_PV = "Source: Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)";
+    const string CLICK_NOTE = 'note';
+    const string SHOWN_NOTE = 'Note: Model limits';
+    const string SHOWN_DETAIL_COLUMN = 'Detail column: Direct';
+    const string SHOWN_DETAIL_TABLE = 'Detail table: Monthly energy balance, average year';
+    const string SHOWN_ROW_GROUP = 'Row group: New nuclear plant';
+    const string SHOWN_ROW = 'Result row: Annual production';
+    const string SHOWN_COLUMN = 'Result column: with new plant';
+    const string SHOWN_LEVEL = "Axis value: 5'000 CHF/kW";
+    const string CLICK_MORE = 'more';
+    const string CLICK_MORE_OPEN = 'moreOpen';
+    const string SHOWN_ARGUMENT = 'Argument: Winter supply gap';
+    const string SHOWN_VERDICT = 'Verdict state: Undecided on cost - decide on the other arguments';
+    const string SHOWN_PAGE = 'Page: New nuclear power plants in Switzerland: the vote of 28 February 2027';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -294,6 +341,76 @@ class use_case_ui_tests
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+
+        $t->subheader($ts . 'result tooltip');
+        // the tooltip of a result shows the result number with the numbers of the page used and below the formula with the term names
+        $test_name = 'the result number with the numbers used and the formula expression with the term names';
+        $num_txt = (string)round(values::SAMPLE_FLOAT, 2);
+        $res_txt = $t_res->result_zh_sum_ui($sum)->val_formatted($msg);
+        $exp_num = '"' . $res_txt . '" = ' . $num_txt . ' + ' . $num_txt . "\n" . $frm->get_usr_text();
+        $tip = new formula_calc()->expression_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst, $msg);
+        $t->assert($test_name, $tip, $exp_num);
+        $test_name = '... and is the tooltip of the result link in a table with the hint to click';
+        $res_tip = $t_res->result_zh_sum_ui($sum);
+        $res_lst = new result_list_ui();
+        $res_lst->add($res_tip, $msg);
+        $dto->set_result_list($res_lst);
+        $tbl_html = $this->render($t_cmp->component_table(), $wrd, $msk, $dto, $msg);
+        $title = htmlspecialchars($exp_num . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text(), ENT_QUOTES);
+        $res_html = $res_tip->value_edit($msg);
+        $t->assert_text_contains($test_name, $res_html, 'title="' . $title . '"');
+        // in a table each number keeps its own tooltip, so the cell title does not repeat it
+        $test_name = '... which in a table is the title of the link and not of the cell';
+        $t->assert_text_contains($test_name, $tbl_html, 'title="' . $title . '"');
+        $t->assert_text_not_contains($test_name, $tbl_html, 'title="' . $title . '"><a href=');
+        // the latex is not needed, because the tooltip shows the expression
+        $test_name = '... also for a formula with latex';
+        $frm->set_latex('\text{total} = \text{' . triple_names::CITY_ZH_NAME . '} + \text{' . triple_names::COMPANY_ZURICH . '}');
+        $tip_latex = new formula_calc()->expression_with_numbers($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst, $msg);
+        $t->assert($test_name, $tip_latex, $exp_num);
+        // a number that no row of the table shows, e.g. the world GDP of a potential loss, is loaded by its phrases
+        $test_name = 'the phrases of the operands without a number are loaded for the tooltip';
+        $missing = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), new value_list_ui(), $frm_lst);
+        $t->assert_contains($test_name, $missing->names(), [triple_names::CITY_ZH_NAME, triple_names::COMPANY_ZURICH]);
+        // negative: the operands with a number on the page need no load
+        $test_name = '... but not the phrases of the operands with a number on the page';
+        $missing_none = new formula_calc()->missing_operand_phrases($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $missing_none->is_empty(), true);
+        // each missing operand with its own phrases, so that a page can keep an operand that names only a unit
+        $test_name = 'the missing phrases are listed per operand';
+        $opr_lsts = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), new value_list_ui(), $frm_lst);
+        $opr_names = array_map(fn($opr_lst) => $opr_lst->names(), $opr_lsts);
+        $t->assert($test_name, $opr_names, [[triple_names::CITY_ZH_NAME], [triple_names::COMPANY_ZURICH]]);
+        // negative: no operand list for the operands with a number on the page
+        $test_name = '... but no list for the operands with a number on the page';
+        $opr_none = new formula_calc()->missing_operands($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $opr_none, []);
+        // negative: a result that no table has calculated keeps the link without a tooltip
+        $test_name = '... and no tooltip for a result without its calculation';
+        $res_plain_html = $t_res->result_zh_sum_ui($sum)->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $res_plain_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+        // negative: a value is not calculated, so its link keeps the tooltip of the table cell
+        $test_name = '... and no formula tooltip for a value';
+        $val_html = $dto->val_lst->lst()[0]->value_edit($msg);
+        $t->assert_text_not_contains($test_name, $val_html, msg_id::RESULT_TOOLTIP_DETAILS->text());
+        // the tooltip of a value is its source with the url or else the doi
+        $test_name = 'the tooltip of a value is the name and the url of its source';
+        $val_tip = $dto->val_lst->lst()[0];
+        $val_tip->src = new source_ui($t_src->source_reserved()->api_json());
+        $src_title = htmlspecialchars(sources::SIB . "\n" . sources::SIB_URL, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $val_tip->value_edit($msg), 'title="' . $src_title . '"');
+        $test_name = '... or the doi of a source without url';
+        $doi_json = json_decode($t_src->source_filled_included()->api_json(), true);
+        unset($doi_json[json_fields::URL]);
+        $val_tip->src = new source_ui(json_encode($doi_json));
+        $doi_title = htmlspecialchars($val_tip->src->name() . "\n" . def::LINK_DOI . sources::TEST_DOI, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $val_tip->value_edit($msg), 'title="' . $doi_title . '"');
+        // negative: a source known only by its id has no name to show, so the tooltip of the table cell stays
+        $test_name = '... but no tooltip for a source without name';
+        $val_tip->src = new source_ui();
+        $val_tip->src->set_id(sources::SIB_ID);
+        $t->assert_text_not_contains($test_name, $val_tip->value_edit_link($msg), 'title=');
+        $val_tip->src = new source_ui($t_src->source_reserved()->api_json());
 
         $t->subheader($ts . 'input fields');
         // a phrase of the values of the page that is assigned a field type is an input of the page:
@@ -592,6 +709,15 @@ class use_case_ui_tests
         $test_name = '... with the formula editor script before the calculator editor script, which starts it';
         $t->assert_text_contains($test_name, $editor_html,
             $html->script_src(files::FORMULA_EDITOR_SCRIPT) . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT));
+        // the page preview is the calculator page itself, which the script of the page builds from the edited data
+        $test_name = '... with the script of the calculator page before them, which builds the page preview';
+        $t->assert_text_contains($test_name, $editor_html,
+            $html->script_src(files::CALCULATOR_JSON_SCRIPT) . $html->script_src(files::FORMULA_EDITOR_SCRIPT));
+        $test_name = '... and the settings of the calculator page';
+        $t->assert_text_contains($test_name, $editor_html, 'id="' . system_page::CALC_PAGE_SETTINGS_ID . '"');
+        // negative: a save of the preview would store its inputs as a case of the page
+        $test_name = '... but without the save of the calculator page';
+        $t->assert_text_contains($test_name, $editor_html, '"' . system_page::CALC_PAGE_SAVE . '":""');
         $test_name = '... and the style of the formula editor';
         $t->assert_text_contains($test_name, $editor_html, $html->link_style(files::FORMULA_EDITOR_STYLE));
         // negative: the host of the formula editor view would start the editor a second time without the calculator editor
@@ -601,6 +727,27 @@ class use_case_ui_tests
         // negative: a component without a page phrase e.g. in a preview has no editor to show
         $test_name = '... but nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the table editor is built by its script into the host from the phrase data like the calculator editor
+        $test_name = 'the table editor of a phrase loads the editor script';
+        $tbl_editor_html = new system_page()->table_editor($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->script_src(files::TABLE_EDITOR_SCRIPT));
+        $test_name = '... into its host with the style of the editor';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->div('', '', system_page::TABLE_EDITOR_HOST_ID));
+        $test_name = '... with the phrase data as the seed of the script';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        $test_name = '... and the session token, which the save sends to the api in the csrf header';
+        $t->assert_text_contains($test_name, $tbl_editor_html, $html->form_session_token());
+        $test_name = '... and the keyword of each parameter field in the settings';
+        $kwd_json = json_encode([system_page::TABLE_EDITOR_KEYWORDS => triples::TABLE_EDITOR_KEYWORDS]);
+        $t->assert_text_contains($test_name, $tbl_editor_html, substr($kwd_json, 1, -1));
+        $test_name = '... and the texts of the top bar that the table editor shares with the calculator editor';
+        $t->assert_text_contains($test_name, $tbl_editor_html, json_encode(msg_id::CALC_EDITOR_UNDO->value) . ':');
+        // negative: a page without a phrase shows the page of the server, so it has no settings
+        $test_name = '... but nothing for a page without a phrase';
+        $t->assert($test_name, new system_page()->table_editor(new word_ui(), $msg, $dto), '');
+        // negative: without the request cache the page of the server is shown
+        $test_name = '... and nothing without the request cache';
+        $t->assert($test_name, new system_page()->table_editor($wrd, $msg, null), '');
         // the formula editor is built by its script into the host like the calculator editor
         $test_name = 'the formula editor of a phrase loads the editor script';
         $frm_editor_html = $this->render($t_cmp->component_formula_editor(), $wrd, $msk, $dto, $msg);
@@ -720,11 +867,11 @@ class use_case_ui_tests
         $dto_calc = new data_object();
         $dto_calc->online = false;
         $dto_calc->phr_lst = $cac;
-        $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
+        $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $msg, $dto_calc),
             $html->block(html_base::H4, triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
         // negative: a page without a phrase has no calculator title
         $test_name = '... and a page without a phrase has no calculator title';
-        $t->assert($test_name, $page->calculator_title(null, $dto_calc), '');
+        $t->assert($test_name, $page->calculator_title(null, $msg, $dto_calc), '');
         // the page sets the width of its result panel e.g. the wide table of the portfolio split
         $test_name = 'a page with a result width sets it as a style';
         $dto_width = new data_object();
@@ -749,6 +896,15 @@ class use_case_ui_tests
         $zh_city = new test_triples($t)->zh_city_ui();
         $form = views::CALCULATOR;
         $in_html = $page->calculator_input($zh_city, $msg, $dto_in, $form, views::CALCULATOR, []);
+        // a text shows its placeholders and escapes the text around them
+        $text_html = new ui_list()->calculator_text('<b> {num:36 %} {source:unknown}', $zh_city, $dto_in, $dto_in->val_lst, [], $msg);
+        $test_name = 'a text shows a number placeholder in the style of a number';
+        $t->assert_text_contains($test_name, $text_html, $html->span('36 %', styles::CALC_NUM));
+        // negative: no number instead of a wrong one for a source that the page does not list
+        $test_name = '... and nothing for an unknown source';
+        $t->assert_text_not_contains($test_name, $text_html, '{source');
+        $test_name = '... and escapes the text around it';
+        $t->assert_text_not_contains($test_name, $text_html, '<b>');
         $test_name = 'the calculator input starts with the default heading in the inputs frame';
         $t->assert_text_contains($test_name, $in_html, '<div class="' . styles::INPUTS . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_INPUTS)));
@@ -805,11 +961,26 @@ class use_case_ui_tests
         $btn_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_button_ui());
         $btn_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT));
         $t->assert_text_contains($test_name, $btn_html, '>' . triple_names::CALC_BUTTON_COM . '</button>');
+        // the input list shows two buttons per line with the save button in front of the download
+        $test_name = 'the save button is part of the two buttons per line of the input list';
+        $save_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT), self::CALC_SAVE_HTML);
+        $t->assert_text_contains($test_name, $save_html, '<div class="' . styles::CALC_ACTIONS . '">' . self::CALC_SAVE_HTML);
+        // negative: a list without the save button keeps its buttons without the two per line
+        $test_name = '... but not the buttons of another list';
+        $t->assert_text_not_contains($test_name, $btn_html, styles::CALC_ACTIONS);
+        // the page of the server shows the case name, which only the page of the browser can change
+        $test_name = 'a page built from another phrase shows the field of the case name';
+        $case_html = $list->calculator_case_field($btn_calc);
+        $t->assert_text_contains($test_name, $case_html, 'id="' . ui_list::CALC_CASE_FIELD_ID . '"');
+        $test_name = '... which cannot be changed without javascript';
+        $t->assert_text_contains($test_name, $case_html, ' disabled>');
         // negative: a list without a button keyword has no button, also not without a list
         $test_name = '... but a list without the keyword has none';
         $no_btn_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
         $no_btn_html = $list->calculator_buttons($no_btn_calc, $no_btn_calc->group(triples::CALCULATOR_INPUT));
         $t->assert($test_name, $no_btn_html, '');
+        $test_name = '... and inputs without the case keyword have no field of the case name';
+        $t->assert($test_name, $list->calculator_case_field($no_btn_calc), '');
         $test_name = '... and no list has none';
         $null_btn_html = $list->calculator_buttons($no_btn_calc, null);
         $t->assert($test_name, $null_btn_html, '');
@@ -1129,8 +1300,12 @@ class use_case_ui_tests
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
 
+        $this->calculator_decision_tests($t, $ts);
+        $this->table_editor_tests($t, $ts);
         $this->calculator_save_tests($t, $ts);
         $this->calculator_editor_scenario_tests($t, $ts);
+        $this->calculator_editor_argument_tests($t, $ts);
+        $this->table_editor_scenario_tests($t, $ts);
 
         $t->subheader($ts . 'calculation result');
         // the page phrase Zurich has the result column 2019, the signed row group city with the rows
@@ -1420,6 +1595,24 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // the results of a missing operand are loaded only within the context of the results that need them
+        $dto_ctx = new data_object();
+        $wide_ctx = [$zh_city_id, word_names::INHABITANT_ID];
+        $narrow_ctx = [$zh_city_id];
+        $test_name = 'the results within a context are not loaded before their load';
+        $has_before = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_false($test_name, $has_before);
+        $dto_ctx->add_results_within([$zh_city_id], $wide_ctx, $zh_res_lst);
+        $test_name = '... but after the load within a context that includes it';
+        $has_narrow = $dto_ctx->has_results_within($zh_city_id, $narrow_ctx);
+        $t->assert_true($test_name, $has_narrow);
+        // negative: a wider context can need results that the load has left out
+        $test_name = '... and not for a wider context';
+        $has_wider = $dto_ctx->has_results_within($zh_city_id, [...$wide_ctx, word_names::YEAR_2019_ID]);
+        $t->assert_false($test_name, $has_wider);
+        $test_name = '... and not as all results of the phrase';
+        $has_all = $dto_ctx->has_results_of($zh_city_id);
+        $t->assert_false($test_name, $has_all);
         // many cells and results of a calculator page ask the values of the same phrases, so the
         // request cache loads the values of the same phrases once
         $test_name = 'the values of phrases are not loaded if the cache has not asked them yet';
@@ -1623,6 +1816,227 @@ class use_case_ui_tests
     }
 
     /**
+     * the own columns and the own sorting of a table and the page of the table editor
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function table_editor_tests(test_cleanup $t, string $ts): void
+    {
+        global $ui_sys;
+        $html = new html_base();
+        $page = new system_page();
+        $msg = new user_message();
+        $t_phr = new test_phrases($t);
+        $zh_city = new test_triples($t)->zh_city_ui();
+        $dto = new data_object();
+        $dto->online = false;
+        $dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto->phr_lst = $t_phr->list_table_definition_ui();
+        $dto->val_lst = new test_values($t)->value_list_calculator_input_ui();
+        $calc = new calculator($zh_city->phrase(), $dto->phr_lst);
+        $calc_base = new calculator(new test_words($t)->zh_ui()->phrase(), $dto->phr_lst);
+        $no_def_lst = $t_phr->list_calculator_input_ui();
+
+        $t->subheader($ts . 'table editor');
+        $test_name = 'a table has its own columns in their order';
+        $t->assert($test_name, $calc->table_columns(), [word_names::YEAR_2020, word_names::YEAR_2019]);
+        $test_name = '... and its own sorting';
+        $sorts = $calc->table_sorts();
+        $t->assert($test_name, $sorts[0]?->name(), triple_names::TABLE_SORT_ORDER);
+        // negative: a definition is only valid for its own phrase, not for the phrase it is built from
+        $test_name = '... but another phrase has none';
+        $t->assert($test_name, $calc_base->table_columns(), []);
+        $t->assert($test_name, $calc_base->table_sorts(), []);
+        $test_name = '... and a table without a definition too';
+        $t->assert($test_name, new calculator($zh_city->phrase(), $no_def_lst)->table_columns(), []);
+
+        $editor_html = $page->table_editor($zh_city, $msg, $dto);
+        $test_name = 'the table editor loads its script';
+        $t->assert_text_contains($test_name, $editor_html, $html->script_src(files::TABLE_EDITOR_SCRIPT));
+        $test_name = '... the seed with the keywords';
+        $t->assert_text_contains($test_name, $editor_html, triples::TABLE_COLUMN);
+        $test_name = '... and the page of the server for a browser without javascript';
+        $t->assert_text_contains($test_name, $editor_html, url_var::JAVASCRIPT . '=' . url_var::FALSE);
+        // negative: without a phrase the view shows its phrase selector
+        $test_name = '... but no script without a phrase';
+        $t->assert($test_name, $page->table_editor(null, $msg, $dto), '');
+        $test_name = '... and without a request cache';
+        $t->assert($test_name, $page->table_editor($zh_city, $msg, null), '');
+    }
+
+    /**
+     * the parts of a page for a decision, each compared with a page that does not have it
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_decision_tests(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $list = new ui_list();
+        $page = new system_page();
+        $msg = new user_message();
+        $t_phr = new test_phrases($t);
+        $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
+        $zh_city = new test_triples($t)->zh_city_ui();
+        $dto = new data_object();
+        $dto->online = false;
+        $dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto->phr_lst = $t_phr->list_calculator_decision_ui();
+        $dto->val_lst = $t_val->value_list_calculator_input_ui();
+        $calc = new calculator($zh_city->phrase(), $dto->phr_lst);
+        $dto_no = new data_object();
+        $dto_no->online = false;
+        $dto_no->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_no->phr_lst = $t_phr->list_calculator_input_ui();
+        $dto_no->val_lst = $t_val->value_list_calculator_input_ui();
+        $calc_no = new calculator($zh_city->phrase(), $dto_no->phr_lst);
+
+        $t->subheader($ts . 'calculator arguments');
+        $more = $mtr->txt(msg_id::AND_MORE);
+        $arg_html = $list->calculator_arguments($calc, $zh_city, $dto, $msg);
+        $test_name = 'the lead text is collapsed';
+        $t->assert_text_contains($test_name, $arg_html, $html->details($html->esc($more), $html->p(triple_names::CALC_MORE_COM)));
+        $test_name = 'the first argument of a side is shown';
+        $first_li = $html->block(html_base::LI, $html->bold(triple_names::CALC_PRO_FIRST) . ' ' . triple_names::CALC_PRO_FIRST_COM);
+        $t->assert_text_contains($test_name, $arg_html, $html->block(html_base::UL, $first_li, styles::CALC_ARGUMENT_LIST));
+        $test_name = '... and the others are collapsed';
+        $second_li = $html->block(html_base::LI, $html->bold(triple_names::CALC_PRO_SECOND) . ' ' . triple_names::CALC_PRO_SECOND_COM);
+        $collapsed = $html->details($html->esc($more), $html->block(html_base::UL, $second_li, styles::CALC_ARGUMENT_LIST));
+        $t->assert_text_contains($test_name, $arg_html, $collapsed);
+        $test_name = 'a limiting argument is on the other side';
+        $t->assert_text_contains($test_name, $arg_html, triple_names::CALC_CONTRA_COM);
+        $test_name = '... which has its own heading';
+        $t->assert_text_contains($test_name, $arg_html, $html->block(html_base::H2, 'Against'));
+        // negative: a page without the keywords has neither the lead text nor the arguments
+        $test_name = 'a page without arguments shows nothing';
+        $t->assert($test_name, $list->calculator_arguments($calc_no, $zh_city, $dto_no, $msg), '');
+        $test_name = 'the title shows the arguments';
+        $t->assert_text_contains($test_name, $page->calculator_title($zh_city, $msg, $dto), triple_names::CALC_CONTRA_COM);
+        $test_name = '... but not without a request cache';
+        $t->assert_text_not_contains($test_name, $page->calculator_title($zh_city, $msg, null), triple_names::CALC_CONTRA_COM);
+
+        // a preset and a slider need the script, so the page of the server has no control without a function
+        $t->subheader($ts . 'calculator preset and slider');
+        $input_html = $page->calculator_input($zh_city, $msg, $dto, views::CALCULATOR, views::CALCULATOR, []);
+        $test_name = 'the page of the server shows the input with a slider flag';
+        $t->assert_text_contains($test_name, $input_html, 'type="number"');
+        $test_name = '... but no slider';
+        $t->assert_text_not_contains($test_name, $input_html, 'type="range"');
+        $test_name = '... and no preset';
+        $t->assert_text_not_contains($test_name, $input_html, triple_names::CALC_PRESET_LABEL);
+
+        $t->subheader($ts . 'calculator verdict');
+        $yes_class = '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[0] . '"';
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(-50);
+        $vd_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $test_name = 'a number below minus the threshold selects the first state';
+        $t->assert_text_contains($test_name, $vd_html, $yes_class);
+        $test_name = '... with its label';
+        $t->assert_text_contains($test_name, $vd_html, triple_names::CALC_VERDICT_YES);
+        $test_name = '... and the note';
+        $t->assert_text_contains($test_name, $vd_html, triple_names::CALC_VERDICT_NOTE);
+        $test_name = '... and the needle at its place on the meter';
+        $t->assert_text_contains($test_name, $vd_html, 'left: 25%');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(50);
+        $test_name = 'a number above the threshold selects the second state';
+        $vd_no_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $t->assert_text_contains($test_name, $vd_no_html, '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[1] . '"');
+        $test_name = '... and not the first';
+        $t->assert_text_not_contains($test_name, $vd_no_html, $yes_class);
+        $test_name = 'a result placeholder shows the named decimals';
+        $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . ':1}', $zh_city, $dto, $dto->val_lst, [], $msg), '50.0');
+        $test_name = '... and no decimals if it names none';
+        $t->assert($test_name, $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $dto->val_lst, [], $msg), '50');
+        // a result placeholder names a number of the page, which a study value of the same phrase must not hide
+        $test_name = 'a result placeholder shows the number of the page before the value of a study';
+        $page_lst = $dto->val_lst;
+        $dto->val_lst = $t_val->value_list_calculator_study_ui();
+        $result_text = $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $page_lst, [], $msg);
+        $t->assert($test_name, $result_text, '50');
+        // negative: without a number of the page the placeholder shows what a field of the phrase would show
+        $test_name = '... but the value of the study without a number of the page';
+        $no_page_lst = $t_val->value_list_calculator_option_ui();
+        $study_text = $list->calculator_text('{result:' . word_names::INHABITANTS . '}', $zh_city, $dto, $no_page_lst, [], $msg);
+        $t->assert($test_name, $study_text, '70');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(5);
+        $test_name = 'a number within the threshold selects the third state';
+        $vd_open_html = $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg);
+        $t->assert_text_contains($test_name, $vd_open_html, '<div class="' . styles::CALC_VERDICT . ' ' . ui_list::CALC_VERDICT_STATES[2] . '"');
+        $dto->val_lst = $t_val->value_list_calculator_verdict_ui(500);
+        $test_name = 'a number outside the meter keeps the needle on the meter';
+        $t->assert_text_contains($test_name, $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg), 'left: 99%');
+        // negative: no state instead of a wrong one if the numbers are missing
+        $test_name = 'a verdict without a number shows nothing';
+        $dto->val_lst = $t_val->value_list_calculator_option_ui();
+        $t->assert($test_name, $list->calculator_verdict($calc, $zh_city, $dto, $dto->val_lst, $msg), '');
+        $test_name = '... and a page without a verdict too';
+        $t->assert($test_name, $list->calculator_verdict($calc_no, $zh_city, $dto_no, $dto_no->val_lst, $msg), '');
+
+        $t->subheader($ts . 'calculator cell and difference');
+        $y2019 = $dto->phr_lst->get_by_name(word_names::YEAR_2019, $msg);
+        $y2020 = $dto->phr_lst->get_by_name(word_names::YEAR_2020, $msg);
+        $row_be = $dto->phr_lst->get_by_name(triple_names::CALC_ZH_ROW_BE, $msg);
+        $row_inh = $dto->phr_lst->get_by_name(triple_names::CALC_ZH_ROW_INHABITANTS, $msg);
+        $test_name = 'a cell shows the phrase of its column';
+        $t->assert($test_name, $calc->cell_phrase($row_be, $y2019)?->name(), word_names::INHABITANTS);
+        $test_name = '... but not in another column';
+        $t->assert_null($test_name, $calc->cell_phrase($row_be, $y2020)?->name());
+        $test_name = '... or without a column';
+        $t->assert_null($test_name, $calc->cell_phrase($row_be, null)?->name());
+        $test_name = '... and a row without a cell has none';
+        $t->assert_null($test_name, $calc->cell_phrase($row_inh, $y2019)?->name());
+        $test_name = 'a column with the flag is a difference';
+        $t->assert_true($test_name, $calc->is_difference($y2020));
+        $test_name = '... and a column without the flag is none';
+        $t->assert_false($test_name, $calc->is_difference($y2019));
+        $test_name = '... and no column too';
+        $t->assert_false($test_name, $calc->is_difference(null));
+        $vals = $t_val->value_list_calculator_verdict_ui(50);
+        $first = $vals->get_by_names([$zh_city->name(), word_names::INHABITANTS]);
+        $second = $vals->get_by_names([$zh_city->name(), word_names::YEAR_2019]);
+        $test_name = 'the difference is the first minus the second number';
+        $diff = $list->calculator_difference($first, $second);
+        $t->assert($test_name, $diff?->number(), 40.0);
+        $test_name = '... and keeps the first number';
+        $t->assert($test_name, $first->number(), 50.0);
+        $test_name = '... and is empty if a number is missing';
+        $t->assert_null($test_name, $list->calculator_difference($first, null)?->number());
+        $t->assert_null($test_name, $list->calculator_difference(null, $second)?->number());
+
+        $t->subheader($ts . 'calculator sensitivity');
+        $sens_html = $list->calculator_sensitivity($calc);
+        $test_name = 'the sensitivity table is collapsed with its label';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_SENSITIVITY_LABEL);
+        $test_name = '... the label of a column';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_LEVEL_COLUMN_LABEL);
+        $test_name = '... the label of a row';
+        $t->assert_text_contains($test_name, $sens_html, triple_names::CALC_LEVEL_ROW_LABEL);
+        $test_name = '... and an empty cell, which only the script of the page fills';
+        $t->assert_text_contains($test_name, $sens_html, $html->block(html_base::TD, '', styles::CALC_NUMBER));
+        $test_name = 'a page without the table has none';
+        $t->assert($test_name, $list->calculator_sensitivity($calc_no), '');
+
+        $t->subheader($ts . 'calculator case');
+        $test_name = 'a page built from another phrase has a base';
+        $t->assert_true($test_name, $calc->has_base());
+        $test_name = '... and a word has none';
+        $calc_word = new calculator($t_wrd->zh_ui()->phrase(), $dto->phr_lst);
+        $t->assert_false($test_name, $calc_word->has_base());
+        $test_name = 'a page with the verb of is the case of its to phrase';
+        $case_phr = $dto->phr_lst->get_by_name(triple_names::CALC_CASE_PAGE, $msg);
+        $t->assert($test_name, new calculator($case_phr, $dto->phr_lst)->case_name(), word_names::BE);
+        $test_name = '... but another triple is no case';
+        $t->assert($test_name, $calc->case_name(), '');
+        $test_name = '... and a word too';
+        $t->assert($test_name, $calc_word->case_name(), '');
+    }
+
+    /**
      * the save of a calculator page: only the number fields with a changed number are saved,
      * and the page is shown again; the write itself is simulated, so no database row is changed
      *
@@ -1761,7 +2175,7 @@ class use_case_ui_tests
         if ($browser_name == '') {
             $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
         } else {
-            $page = $this->scenario_page($brw);
+            $page = $this->scenario_page($brw, test_files::CALCULATOR_EDITOR, test_files::CALCULATOR_EDITOR_SCENARIOS);
             // the scenarios that save a change by the description of the test
             $saved = [
                 test_files::SCENARIO_AUTARKY_FORMULA => 'the changed expression of a formula is sent as its user text',
@@ -1794,31 +2208,296 @@ class use_case_ui_tests
             foreach ($unchanged as $scenario => $test_name) {
                 $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
             }
+            // the Definition tab shows the data of the page with the unsaved changes, like the export
+            $test_name = 'the Definition tab shows the data of the page as json';
+            $json_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB_LABEL);
+            $json = json_decode($json_txt, true) ?? [];
+            $t->assert_key_exists($test_name, json_fields::TRIPLES, $json);
+            $test_name = '... with the unsaved changes';
+            $t->assert_text_contains($test_name, $json_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: without a change the json has the label of the database
+            $test_name = '... but not a change that has not been made';
+            $plain_txt = $this->scenario_message($brw, $page, test_files::SCENARIO_JSON_TAB);
+            $t->assert_text_not_contains($test_name, $plain_txt, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // the PDF tab posts the data of the page with the unsaved changes and the token of the session to the pod
+            $test_name = 'the PDF tab posts the data of the page to the pdf entry point of the pod';
+            $pdf_post = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_LABEL), true) ?? [];
+            $pdf_route = $pdf_post[self::PDF_POST_ROUTE] ?? '';
+            $t->assert($test_name, $pdf_route, api::CALCULATOR_PDF_SCRIPT);
+            $test_name = '... with the token of the session';
+            $token_sent = $pdf_post[self::PDF_POST_TOKEN_SENT] ?? false;
+            $t->assert_true($test_name, $token_sent);
+            $test_name = '... and the unsaved changes';
+            $pdf_data = $pdf_post[self::PDF_POST_BODY] ?? [];
+            $pdf_body = json_encode($pdf_data, JSON_UNESCAPED_UNICODE);
+            $t->assert_text_contains($test_name, $pdf_body, triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+            // negative: a page that is not on a pod cannot create the pdf
+            $test_name = '... but a page that is not on a pod offers no pdf';
+            $offline = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PDF_TAB_OFFLINE), true) ?? [];
+            $disabled = $offline[self::PDF_BUTTON_DISABLED] ?? false;
+            $t->assert_true($test_name, $disabled);
+            $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
+            // a click on a detail table in the preview selects its column, and a row its table, which defines the rows
+            $clicks = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PREVIEW_DETAIL_PARTS), true) ?? [];
+            $test_name = 'a click on a column heading of a detail table in the preview selects the detail column';
+            $detail_column = $clicks[self::CLICK_COLUMN] ?? '';
+            $t->assert($test_name, $detail_column, self::SHOWN_DETAIL_COLUMN);
+            $test_name = '... and on a row of the table phrase the table';
+            $detail_row = $clicks[self::CLICK_ROW] ?? '';
+            $t->assert($test_name, $detail_row, self::SHOWN_DETAIL_TABLE);
+            // negative: the heading of the sources has no part, so the click keeps what is selected
+            $test_name = '... but a click on the heading of the sources keeps the selection';
+            $heading = $clicks[self::CLICK_HEADING] ?? '';
+            $t->assert($test_name, $heading, self::SHOWN_DETAIL_TABLE);
+            $test_name = 'a click on a source selects the source';
+            $source = $clicks[self::CLICK_SOURCE] ?? '';
+            $t->assert($test_name, $source, self::SHOWN_SOURCE_PV);
+            $test_name = '... and its link does not leave the editor';
+            $stays = $clicks[self::CLICK_SOURCE_STAYS] ?? false;
+            $t->assert_true($test_name, $stays);
             unlink($page);
         }
         $brw->stop();
     }
 
     /**
-     * a copy of the calculator editor snapshot that loads the scripts of this checkout and the scenarios
+     * the pro and contra arguments in the calculator editor of the Swiss NPP vote: the section starts collapsed above
+     * the inputs, and a changed, moved, added or removed argument is sent as the change of its claim triple, like the
+     * changed hideable lead text of the page as the change of its triple; the
+     * actions run in a headless browser, so without a browser the tests are skipped with a warning
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_editor_argument_tests(test_cleanup $t, string $ts): void
+    {
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        $t->subheader($ts . 'calculator editor arguments in ' . $browser_name);
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the calculator editor argument tests are skipped');
+        } else {
+            $page = $this->scenario_page($brw, test_files::NPP_CH_VOTE_EDITOR, test_files::CALCULATOR_EDITOR_SCENARIOS);
+            $lists = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_ARGUMENTS_COLLAPSED), true) ?? [];
+            $test_name = 'the arguments are the first section of the page structure';
+            $first_list = $lists[0][self::TREE_LIST] ?? '';
+            $t->assert($test_name, $first_list, self::TREE_LIST_ARGUMENT);
+            $test_name = '... and collapsed';
+            $first_open = $lists[0][self::TREE_LIST_OPEN] ?? true;
+            $t->assert_false($test_name, $first_open);
+            // negative: the inputs below stay open, so only the arguments are collapsed
+            $test_name = '... but the inputs below them are open';
+            $second_open = $lists[1][self::TREE_LIST_OPEN] ?? false;
+            $t->assert_true($test_name, $second_open);
+            $saved = [
+                test_files::SCENARIO_ARGUMENT_TEXT => 'the changed text of an argument is sent as the description of its claim',
+                test_files::SCENARIO_ARGUMENT_SIDE => 'an argument moved to the other side is sent as its removed triples and the added ones with the other verb',
+                test_files::SCENARIO_ADD_ARGUMENT => 'a new argument with a new reason is sent as a new word and new triples',
+                test_files::SCENARIO_REMOVE_ARGUMENT => 'a removed argument is sent as its deleted triple and order triple, while its claim stays',
+                test_files::SCENARIO_MORE_TEXT => 'the changed hideable lead text is sent as the description of its triple',
+                test_files::SCENARIO_VERDICT_LABEL => 'the changed headline of a verdict state is sent as the label of the state',
+                test_files::SCENARIO_VERDICT_SCALE_NOTE => 'the changed scale and note of the verdict box are sent as the descriptions of their triples',
+                test_files::SCENARIO_VERDICT_RESULT => 'another result of the verdict is sent as the removed result triple and the added one with the other phrase',
+                test_files::SCENARIO_VERDICT_SCALE_LIMITS => 'the new ends of the meter are sent as the changed limit values of the scale',
+                test_files::SCENARIO_SENSITIVITY_NUMBER => 'the changed number of an axis value of the sensitivity table is sent as its value',
+                test_files::SCENARIO_SENSITIVITY_ADD_LEVEL => 'a new axis value is sent as a new word, its triples and a value with the unit of the axis',
+                test_files::SCENARIO_SENSITIVITY_CELL_HINT => 'another result in brackets is sent as the removed and the added cell triple, the hint of the table as its changed triple',
+                test_files::SCENARIO_PRESET_LABEL => 'the changed text of a preset button is sent as the label of the preset',
+                test_files::SCENARIO_PRESET_VALUE => 'a changed number of a preset is sent as its value',
+                test_files::SCENARIO_PRESET_NEW_VALUE => 'a new number of a preset is sent as a new value with the unit of the field',
+                test_files::SCENARIO_PRESET_VALUE_CLEARED => 'a cleared number of a preset is sent as a deleted value',
+                test_files::SCENARIO_ADD_PRESET => 'a new preset is sent as a new word, its triples and its numbers',
+                test_files::SCENARIO_REMOVE_PRESET => 'a removed preset is sent as its deleted triples, while the numbers of its scenario stay',
+                test_files::SCENARIO_NOTE_TEXT => 'the changed text of a note is sent as the description of its triple',
+                test_files::SCENARIO_SOURCE_DESCRIPTION => 'the changed description of a source is sent as the changed field of the source',
+                test_files::SCENARIO_SOURCE_RENAME => 'a renamed source is sent with the texts that name it by its placeholder',
+            ];
+            foreach ($saved as $scenario => $test_name) {
+                $put = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $put,
+                    test_paths::WEB_CALCULATOR_EDITOR_RES . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON,
+                    test_files::JSON);
+            }
+            // negative: an argument without a reason has no claim, so nothing is sent
+            $test_name = '... but nothing for a new argument without a reason';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_ADD_ARGUMENT_WITHOUT_REASON), '');
+            // negative: the loaded lead text typed again is no change
+            $test_name = '... nor for the loaded hideable lead text typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_MORE_TEXT_UNCHANGED), '');
+            $test_name = '... nor for the loaded result of the verdict typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_VERDICT_RESULT_UNCHANGED), '');
+            $test_name = '... nor for the loaded end of the meter typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_VERDICT_SCALE_LIMITS_UNCHANGED), '');
+            $test_name = '... nor for a new axis value with a number but without a phrase';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_SENSITIVITY_ADD_LEVEL_WITHOUT_PHRASE), '');
+            $test_name = '... nor for a new preset with a button text but without a scenario';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_ADD_PRESET_WITHOUT_PHRASE), '');
+            $test_name = '... nor for the loaded text of a note typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_NOTE_TEXT_UNCHANGED), '');
+            $test_name = '... nor for the loaded link of a source typed again';
+            $t->assert($test_name, $this->scenario_message($brw, $page, test_files::SCENARIO_SOURCE_URL_UNCHANGED), '');
+            $this->assert_preview_parts($t, $brw, $page);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * a click on a part of the page preview selects where it is changed: an argument, the verdict, a field, a preset
+     * button, a row group, a result row, a result column and a row of the sensitivity table their item, the hideable
+     * lead text the page settings without closing it again, a source the source, a note of the notes
+     * list the note, a note of a formula the formula, and a part without an item e.g. the heading of the sources keeps
+     * the selection
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param headless_browser $brw the started headless browser
+     * @param string $page the path of the editor page with the scenarios
+     */
+    private function assert_preview_parts(test_cleanup $t, headless_browser $brw, string $page): void
+    {
+        $clicks = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PREVIEW_PARTS), true) ?? [];
+        $test_name = 'a click on an argument in the preview selects the argument';
+        $argument = $clicks[self::CLICK_ARGUMENT] ?? '';
+        $t->assert($test_name, $argument, self::SHOWN_ARGUMENT);
+        $test_name = '... on the verdict the state that it shows';
+        $verdict = $clicks[self::CLICK_VERDICT] ?? '';
+        $t->assert($test_name, $verdict, self::SHOWN_VERDICT);
+        // negative: the heading of the sources is no part, so the click keeps what is selected
+        $test_name = '... but a click on the heading of the sources keeps the selection';
+        $heading = $clicks[self::CLICK_HEADING] ?? '';
+        $t->assert($test_name, $heading, self::SHOWN_VERDICT);
+        $test_name = 'a click on a source selects the source';
+        $source = $clicks[self::CLICK_SOURCE] ?? '';
+        $t->assert($test_name, $source, self::SHOWN_SOURCE_NPP);
+        $test_name = 'a click on a field selects the input field';
+        $field = $clicks[self::CLICK_FIELD] ?? '';
+        $t->assert($test_name, $field, self::SHOWN_FIELD);
+        $test_name = '... on a preset button the preset';
+        $preset = $clicks[self::CLICK_PRESET] ?? '';
+        $t->assert($test_name, $preset, self::SHOWN_PRESET);
+        $test_name = 'a click on a row group of the result table selects the row group';
+        $row_group = $clicks[self::CLICK_ROW_GROUP] ?? '';
+        $t->assert($test_name, $row_group, self::SHOWN_ROW_GROUP);
+        $test_name = '... on a result row the row';
+        $row = $clicks[self::CLICK_ROW] ?? '';
+        $t->assert($test_name, $row, self::SHOWN_ROW);
+        $test_name = '... and on the heading of a column the result column';
+        $column = $clicks[self::CLICK_COLUMN] ?? '';
+        $t->assert($test_name, $column, self::SHOWN_COLUMN);
+        $test_name = 'a click on a row of the sensitivity table selects the value of its axis';
+        $level = $clicks[self::CLICK_LEVEL] ?? '';
+        $t->assert($test_name, $level, self::SHOWN_LEVEL);
+        $test_name = 'a click on the hideable lead text selects the page settings';
+        $more = $clicks[self::CLICK_MORE] ?? '';
+        $t->assert($test_name, $more, self::SHOWN_PAGE);
+        $test_name = '... and opens the text, because the preview is not drawn again';
+        $more_open = $clicks[self::CLICK_MORE_OPEN] ?? false;
+        $t->assert_true($test_name, $more_open);
+        $test_name = 'a click on a note of the notes list selects the note';
+        $note = $clicks[self::CLICK_NOTE] ?? '';
+        $t->assert($test_name, $note, self::SHOWN_NOTE);
+        $test_name = 'a click on a note of a formula selects the formula';
+        $formula = $clicks[self::CLICK_FORMULA] ?? '';
+        $t->assert($test_name, $formula, self::SHOWN_FORMULA);
+        $test_name = '... and shows its compare like a click on the formula in the page structure';
+        $compare = $clicks[self::CLICK_COMPARE] ?? false;
+        $t->assert_true($test_name, $compare);
+    }
+
+    /**
+     * the user actions of a scenario in the table editor snapshot create the update put message of the save,
+     * the exported csv or the problem that the editor shows, which is compared with the expected text; the
+     * actions run in a headless browser, so without a browser the tests are skipped with a warning
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function table_editor_scenario_tests(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        $t->subheader($ts . 'table editor scenario in ' . $browser_name);
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the table editor scenario tests are skipped');
+        } else {
+            $page = $this->scenario_page($brw, test_files::TABLE_EDITOR, test_files::TABLE_EDITOR_SCENARIOS);
+            $res_path = test_paths::WEB_RES . test_files::TABLE_EDITOR . DIRECTORY_SEPARATOR;
+            // the scenarios that save a change by the description of the test
+            $saved = [
+                test_files::TABLE_SCENARIO_ADD_COLUMN_TO_TIER => 'a column added to another tier is sent as new follower and tier triples',
+                test_files::TABLE_SCENARIO_MOVE_COLUMN => 'a column moved to the left is sent as new and deleted follower triples',
+                test_files::TABLE_SCENARIO_REMOVE_COLUMN => 'a removed column is sent as its deleted triples',
+                test_files::TABLE_SCENARIO_SORT_COLUMN => 'a sort by a column header is sent as the description of the row order triple',
+                test_files::TABLE_SCENARIO_COLUMN_ORDER_RULE => 'a changed choice is sent as a new choice triple and the deleted old one',
+                test_files::TABLE_SCENARIO_HEADER_ROTATE => 'a flag that is turned on is sent as a new flag triple',
+                test_files::TABLE_SCENARIO_ROW_LIMIT => 'a changed row limit is sent as the number of its value',
+                test_files::TABLE_SCENARIO_UNDO => 'an undone change is not sent, but the change before it',
+                test_files::TABLE_SCENARIO_REDO => 'a redone change is sent',
+                test_files::TABLE_SCENARIO_DISCARD_UNDO => 'an undone discard sends the discarded changes',
+                test_files::TABLE_SCENARIO_TITLE => 'a changed title is sent as the description of its parameter triple',
+            ];
+            foreach ($saved as $scenario => $test_name) {
+                $put = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $put,
+                    $res_path . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON, test_files::JSON);
+            }
+            // the scenarios that export the table as csv
+            $exported = [
+                test_files::TABLE_SCENARIO_EXPORT => 'the export is the shown table as csv with its sources',
+                test_files::TABLE_SCENARIO_EXPORT_NO_ROWS => '... and has no row if the search matches no row',
+            ];
+            foreach ($exported as $scenario => $test_name) {
+                $csv = $this->scenario_message($brw, $page, $scenario);
+                $t->assert_file($test_name, $csv, $res_path . $scenario . test_files::CSV);
+            }
+            // negative: the scenarios that end without a change send nothing
+            $unchanged = [
+                test_files::TABLE_SCENARIO_ADD_COLUMN_USED => '... but nothing is sent for a column of another tier typed into the picker',
+                test_files::TABLE_SCENARIO_MOVE_COLUMN_FIRST => '... nor for the first column moved to the left',
+                test_files::TABLE_SCENARIO_REMOVE_COLUMN_ADDED_AGAIN => '... nor for a column removed and added again',
+                test_files::TABLE_SCENARIO_SORT_LABEL => '... nor for a sort by the label, which is the saved order',
+                test_files::TABLE_SCENARIO_ROW_LIMIT_BACK => '... nor for the saved row limit typed again',
+                test_files::TABLE_SCENARIO_UNDO_ALL => '... nor for a change that is undone',
+                test_files::TABLE_SCENARIO_REDO_AFTER_NEW_STEP => '... nor for a redo after a new step',
+                test_files::TABLE_SCENARIO_DISCARD => '... nor for discarded changes',
+                test_files::TABLE_SCENARIO_SAVE_UNCHANGED => '... nor for a save without a change',
+            ];
+            foreach ($unchanged as $scenario => $test_name) {
+                $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
+            }
+            // negative: a refused save shows the reason of the pod
+            $test_name = 'a refused save shows the reason of the pod to the user';
+            $refused = $this->scenario_message($brw, $page, test_files::TABLE_SCENARIO_SAVE_REFUSED);
+            $t->assert($test_name, $refused, $mtr->txt(msg_id::TABLE_EDITOR_REFUSED) . ' ' . self::TABLE_REFUSED_MESSAGE);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * a copy of an editor snapshot that loads the scripts of this checkout and the scenarios
      *
      * @param headless_browser $brw the started headless browser
+     * @param string $page the name of the snapshot in the use case folder e.g. test_files::CALCULATOR_EDITOR
+     * @param string $scenarios the path of the scenarios script e.g. test_files::CALCULATOR_EDITOR_SCENARIOS
      * @return string the path of the copy in the temp folder, which the caller removes
      */
-    private function scenario_page(headless_browser $brw): string
+    private function scenario_page(headless_browser $brw, string $page, string $scenarios): string
     {
         $html = file_get_contents(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
-            . test_files::CALCULATOR_EDITOR . test_files::HTML);
-        return $brw->page_copy($html, test_files::CALCULATOR_EDITOR_SCENARIOS);
+            . $page . test_files::HTML);
+        return $brw->page_copy($html, $scenarios);
     }
 
     /**
      * run the user actions of a scenario in the headless browser and read the message of the save
      *
      * @param headless_browser $brw the started headless browser
-     * @param string $page the path of the calculator editor page with the scenarios
+     * @param string $page the path of the editor page with the scenarios
      * @param string $scenario the name of the scenario e.g. test_files::SCENARIO_AUTARKY_FORMULA
-     * @return string the update put message as formatted json with a fixed time, an empty string if nothing is saved
+     * @return string the update put message as formatted json with a fixed time, an empty string if nothing is saved,
+     *                the text of a scenario that ends without a message e.g. the exported csv
      *                or SCENARIO_NOT_ENDED if the scenario has failed, so that a failure never passes as nothing saved
      */
     private function scenario_message(headless_browser $brw, string $page, string $scenario): string
@@ -1828,8 +2507,10 @@ class use_case_ui_tests
             $result = self::SCENARIO_NOT_ENDED;
         } elseif ($result != '') {
             $json = json_decode($result, true);
-            $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
-            $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            if (is_array($json)) {
+                $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
+                $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
         }
         return $result;
     }

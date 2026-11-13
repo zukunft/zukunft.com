@@ -90,7 +90,8 @@ if ($db_con->is_open()) {
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     $cac_key = '';
-    $cac_page = '';
+    // an object also without a user, so that the cache header can read why nothing has been cached
+    $cac_page = new db_cache_page();
     if ($usr->id > 0 and $walk != null) {
         $cac_par = [
             url_var::ID => $phr_id,
@@ -110,14 +111,13 @@ if ($db_con->is_open()) {
         $phd = new phrase_data();
         $vars = $phd->export_json((int)$phr_id, $walk, $incl_res_text == url_var::TRUE, $msg);
         $result = json_encode($vars);
-        // e.g. the answer for an unknown phrase id is not cached, so that the phrase can be added later
-        if ($msg->is_ok()) {
-            $cac_page->save_json($cac_key, $result, $snap_time, $msg);
-        }
+        // e.g. the answer for an unknown phrase id is not cached, so that the phrase can be added later;
+        // save_json refuses it and names the message as the reason
+        $cac_page->save_json($cac_key, $result, $snap_time, $msg);
     }
 
     $ctrl = new controller();
-    $ctrl->cache_header($cac_hit);
+    $ctrl->cache_header($cac_hit, $cac_page->not_saved);
     $ctrl->get_json($result, $msg);
 
 

@@ -96,9 +96,10 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 class import_tests
 {
 
-    // the group id of a value as the calculator editor sends it and as the database uses it
-    const string TV_GROUP_ID_TEXT = '81495585085949938';
-    const int TV_GROUP_ID = 81495585085949938;
+    // the group id of a value as the calculator editor sends it and as the database uses it, e.g. of word 289
+    // and the triples 1997 and 1999; a prime id is at most group_id::JS_INT_MAX, so javascript reads it exactly
+    const string TV_GROUP_ID_TEXT = '1243523942351';
+    const int TV_GROUP_ID = 1243523942351;
     // a text id like the one of a value with more than four phrases, which must not become a number
     const string TV_GROUP_ID_KEY = '-2780+1295+1296+1297+1298';
 
@@ -382,6 +383,7 @@ class import_tests
             ...triples::CALCULATOR_DETAIL_FLAGS,
             ...triples::CALCULATOR_BLOCKS,
             ...triples::CALCULATOR_BUTTONS,
+            ...triples::CALCULATOR_PROPOSED,
             triples::CALCULATOR_DECIMALS => triples::CALCULATOR_DECIMALS_CODE_ID,
             triples::CALCULATOR_RESULT_WIDTH => triples::CALCULATOR_RESULT_WIDTH_CODE_ID
         ];
@@ -390,6 +392,14 @@ class import_tests
             $kwd_code_id = $trp_lst->get_by_name($name, $msg)?->get_code_id();
             $t->assert($test_name, $kwd_code_id, $code_id);
         }
+        // the sample of the calculator editor json uses every proposed element at least once
+        $sample = json_decode(file_get_contents(test_files::CALCULATOR_EDITOR_SAMPLE), true);
+        $sample_to = array_column($sample[json_fields::TRIPLES] ?? [], json_fields::EX_TO);
+        $test_name = 'the calculator editor sample uses every proposed element';
+        $t->assert($test_name, array_values(array_diff(array_keys(triples::CALCULATOR_PROPOSED), $sample_to)), []);
+        // negative: a difference column of the result columns replaces the former scenario column
+        $test_name = '... and not the replaced scenario column';
+        $t->assert_false($test_name, in_array('calculator scenario column', $sample_to));
         // negative: only a system, system test or developer user may set a code id
         $test_name = 'a normal user cannot import the code id of a calculator keyword';
         $msg = new user_message($t->usr_normal);
@@ -1418,7 +1428,7 @@ class import_tests
         $t->subheader($ts . 'update put');
         $upd = new update_put();
 
-        $test_name = 'a group id as text, which the editor sends beyond the safe integer of javascript, is a number';
+        $test_name = 'a group id as text, which the editor sends, is a number';
         $grp_id = $upd->db_id(self::TV_GROUP_ID_TEXT);
         $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID);
         $test_name = '... and a number stays a number';

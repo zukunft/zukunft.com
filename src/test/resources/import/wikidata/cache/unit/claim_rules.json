@@ -1,0 +1,183 @@
+{
+    "entities": {
+        "Q72": {
+            "id": "Q72",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "Zurich"
+                }
+            },
+            "claims": {
+                "P1082": [
+                    {
+                        "id": "Q72$day",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+423193", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+2021-12-31T00:00:00Z", "precision": 11}, "type": "time"}}],
+                            "P1013": [{"snaktype": "value", "property": "P1013", "datavalue": {"value": {"entity-type": "item", "id": "Q56229488"}, "type": "wikibase-entityid"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$month",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+420000", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+2020-06-00T00:00:00Z", "precision": 10}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$five-digit-year",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+500000", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+10000-00-00T00:00:00Z", "precision": 9}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$before-christ",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+1000", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "-0500-00-00T00:00:00Z", "precision": 9}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$preferred",
+                        "rank": "preferred",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+390000", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1950-00-00T00:00:00Z", "precision": 9}, "type": "time"}}],
+                            "P459": [{"snaktype": "value", "property": "P459", "datavalue": {"value": {"entity-type": "item", "id": "Q39825"}, "type": "wikibase-entityid"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$somevalue",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "somevalue",
+                            "property": "P1082"
+                        }
+                    },
+                    {
+                        "id": "Q72$novalue",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "novalue",
+                            "property": "P1082"
+                        }
+                    },
+                    {
+                        "id": "Q72$deprecated",
+                        "rank": "deprecated",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+103", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1960-00-00T00:00:00Z", "precision": 9}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$decade",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+104", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1970-00-00T00:00:00Z", "precision": 8}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$time-unknown",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+105", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "somevalue", "property": "P585"}]
+                        }
+                    },
+                    {
+                        "id": "Q72$time-twice",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+106", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1980-00-00T00:00:00Z", "precision": 9}, "type": "time"}},
+                                {"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1981-00-00T00:00:00Z", "precision": 9}, "type": "time"}}
+                            ]
+                        }
+                    },
+                    {
+                        "id": "Q72$applies-to-part",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+107", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1990-00-00T00:00:00Z", "precision": 9}, "type": "time"}}],
+                            "P518": [{"snaktype": "value", "property": "P518", "datavalue": {"value": {"entity-type": "item", "id": "Q0"}, "type": "wikibase-entityid"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$same-year-1",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+108", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1900-01-01T00:00:00Z", "precision": 11}, "type": "time"}}]
+                        }
+                    },
+                    {
+                        "id": "Q72$same-year-2",
+                        "rank": "normal",
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {"value": {"amount": "+109", "unit": "1"}, "type": "quantity"}
+                        },
+                        "qualifiers": {
+                            "P585": [{"snaktype": "value", "property": "P585", "datavalue": {"value": {"time": "+1900-12-31T00:00:00Z", "precision": 11}, "type": "time"}}]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

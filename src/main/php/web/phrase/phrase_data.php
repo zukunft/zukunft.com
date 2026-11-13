@@ -102,7 +102,9 @@ class phrase_data
             url_var::PHRASE_DATA_WALK => phrase_data_walks::FROM->value,
             url_var::INCL_RESULTS => url_var::TRUE
         ];
-        $json = json_decode($api->api_call(rest_ctrl::GET, $url, $api->data_with_user($data, $msg)), true) ?? [];
+        // the loading text of the page names the phrase, e.g. "Loading the data of Portfolio Split Calculator"
+        $answer = $api->api_call(rest_ctrl::GET, $url, $api->data_with_user($data, $msg), $msg, step_name: $phr->name());
+        $json = json_decode($answer, true) ?? [];
         $result = [];
         if (array_key_exists(json_fields::SELECTION, $json)) {
             $result = $json;

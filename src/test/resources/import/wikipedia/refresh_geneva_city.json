@@ -1,0 +1,24 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "description": "the description and the wikidata reference that the refresh takes from the wikipedia page Geneva",
+    "triples": [
+        {
+            "name": "Geneva (city)",
+            "from": "Geneva",
+            "verb": "is a",
+            "to": "city",
+            "description": "Geneva is the second-most populous city in Switzerland and the most populous in French-speaking Romandy. Situated in the southwest of the country, where the Rhône leaves Lake Geneva, it is the capital of the Republic and Canton of Geneva. Geneva is a global city, an international financial centre, and a worldwide centre for diplomacy, which has led to it being called the \"Peace Capital\".",
+            "refs": [
+                {
+                    "name": "Geneva",
+                    "type": "wikipedia"
+                },
+                {
+                    "name": "Q71",
+                    "type": "wikidata"
+                }
+            ]
+        }
+    ]
+}

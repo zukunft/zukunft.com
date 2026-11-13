@@ -82,12 +82,13 @@ class formula_list extends ListBase
      *
      * @param array $ids the database ids of the formulas
      * @param user_message $msg to report a problem of the api message to the user
+     * @param string $step_name what the formulas are loaded for e.g. the phrase of the page, shown below the loading text of a slow page
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_ids(array $ids, user_message $msg): bool
+    function load_by_ids(array $ids, user_message $msg, string $step_name = ''): bool
     {
         $rest = new rest_call();
-        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg);
+        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg, $step_name);
         $this->api_mapper($json_body);
         return !$this->is_empty();
     }
@@ -242,56 +243,6 @@ class formula_list extends ListBase
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
-    }
-
-    /**
-     * lists all formulas with results related to a word
-     */
-    function display_old($type = 'short'): string
-    {
-        log_debug('formula_list->display ' . $this->dsp_id());
-        $result = '';
-        $url_arr = [];
-
-        // list all related formula results
-        if ($this->lst() != null) {
-            // TODO Prio 2 add usort to base_list
-            $lst = $this->lst();
-            usort($lst, array(formula::class, "cmp"));
-            $this->set_lst($lst);
-            if ($this->lst() != null) {
-                foreach ($this->lst() as $frm) {
-                    // formatting should be moved
-                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($api_msg, $url_arr));
-                    $frm_ui = $frm->dsp_obj_old();
-                    $api_msg = new user_message(); // not reported: a legacy display function without a message, see display_old
-                    $frm_html = new formula($frm->api_json([], $api_msg));
-                    $result = '';
-                    if ($frm->name_wrd != null) {
-                        $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $url_arr);
-                    }
-                    // if the result is empty use the id to be able to select the formula
-                    if ($result == '') {
-                        $result .= $frm_ui->id();
-                    } else {
-                        $result .= ' value ' . $result;
-                    }
-                    $result .= ' ' . $frm_html->edit_link($url_arr);
-                    if ($type == 'short') {
-                        $result .= ' ' . $frm_ui->btn_del($url_arr);
-                        $result .= ', ';
-                    } else {
-                        $result .= ' (' . $frm_html->dsp_text($api_msg, $url_arr) . ')';
-                        $result .= ' ' . $frm_ui->btn_del($url_arr);
-                        $result .= ' <br> ';
-                    }
-                }
-            }
-        }
-
-        log_debug("formula_list->display ... done (" . $result . ")");
-        return $result;
     }
 
 }

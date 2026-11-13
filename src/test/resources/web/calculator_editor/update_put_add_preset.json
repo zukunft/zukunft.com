@@ -1,0 +1,48 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [
+            {
+                "name": "System Test Word"
+            }
+        ],
+        "triples": [
+            {
+                "name": "new NPP preset System Test Word",
+                "from": "new NPP presets",
+                "verb": "has a",
+                "to": "System Test Word"
+            },
+            {
+                "name": "new NPP preset System Test Word label",
+                "description": "Swiss Academies",
+                "from": "new NPP preset System Test Word",
+                "verb": "has a",
+                "to": "calculator label"
+            },
+            {
+                "name": "new NPP preset System Test Word order",
+                "from": "new NPP preset System Test Word",
+                "verb": "is follower of",
+                "to": "new NPP preset Academies"
+            }
+        ],
+        "formulas": [],
+        "values": [
+            {
+                "words": [
+                    "System Test Word",
+                    "construction time",
+                    "year"
+                ],
+                "number": 15
+            }
+        ],
+        "delete": []
+    }
+}

@@ -274,6 +274,21 @@ class value extends sandbox_value
     }
 
     /**
+     * the name of the source of the number and below it the url or else the doi of the source,
+     * e.g. as the tooltip of the number in a table cell
+     *
+     * @return string the tooltip of the link to the number, empty if the source name is not known
+     */
+    protected function link_title(): string
+    {
+        $result = $this->src?->name() ?? '';
+        if ($result != '' and $this->src->url_or_doi() != '') {
+            $result .= "\n" . $this->src->url_or_doi();
+        }
+        return $result;
+    }
+
+    /**
      * @param group $grp
      * @return float
      */
@@ -696,10 +711,12 @@ class value extends sandbox_value
     /**
      * the source selector of the value add and edit form followed by the icons to add a new source
      * or to change the selected one, so the user can create the missing source without leaving the
-     * value form (see system_views.json value_add and value_edit)
+     * value form (see system_views.json value_add and value_edit); a value without a source
+     * preselects the last used source of the user (see user::save_last_used in the backend), which
+     * the confirm view shows as a new source, because the id of a new value can already be its group id
      *
      * @param string $form
-     * @param user_message $msg with the requesting user for whom the sources are selected
+     * @param user_message $msg with the requesting user for whom the sources are selected and whose last used source a value without source preselects
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
@@ -710,12 +727,17 @@ class value extends sandbox_value
         $src_lst = $src_lst ?? new source_list();
         $src_lst->load_for_selector($pattern, $msg, $test_mode);
         // the selected entry is the source of this value, not the value itself
-        $selected = $this->src?->id() ?? 0;
+        $own_id = $this->src?->id() ?? 0;
+        $selected = $own_id;
+        if ($this->is_source_missing()) {
+            $selected = $msg->usr?->src?->id() ?? 0;
+        }
         $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
         $sel_html .= $this->crud_icons(views::SOURCE_ADD_ID, msg_id::SOURCE_ADD,
             views::SOURCE_EDIT_ID, msg_id::SOURCE_EDIT, $selected);
-        // the opening source is sent as the pre value so the confirm view can show the existing source
-        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$selected);
+        // the opening source of the value is sent as the pre value, so the confirm view shows the
+        // existing source and a preselected last used source as a new one
+        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$own_id);
     }
 
     /**
@@ -1288,40 +1310,6 @@ class value extends sandbox_value
 
                     $result .= '  </tr>';
                 }
-            }
-
-            // show the time phrase
-            log_debug('show time');
-            $time_lst = $this->grp->phr_lst()->time_word_list();
-            $has_time = false;
-            foreach ($time_lst->lst() as $time_phr) {
-                $result .= '  <tr>';
-                if ($time_phr->id() <> 0) {
-                    $has_time = true;
-                    $result .= '    <td colspan="2">';
-
-                    log_debug('show time selector');
-                    $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
-                    $url_pos++;
-
-                    $result .= '    </td>';
-                    $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
-                }
-                $result .= '  </tr>';
-            }
-            // show an empty time selector
-            if (!$has_time) {
-                $time_phr = new phrase($this->user());
-                $result .= '  <tr>';
-                $result .= '    <td colspan="2">';
-
-                log_debug('show time selector');
-                $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $url_arr);
-                $url_pos++;
-
-                $result .= '    </td>';
-                $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
-                $result .= '  </tr>';
             }
 
             // show the new phrases

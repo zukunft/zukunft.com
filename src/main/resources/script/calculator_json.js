@@ -40,12 +40,15 @@
 
 'use strict';
 
-(function () {
+/* build the calculator page into the host; the page of the server builds itself at the end of this file and the
+   calculator editor calls it for its page preview with the edited data, so that the preview is the page itself
+   @param host the element that gets the page, which has the style of the use case page
+   @param seed the phraseData answer of the page phrase, for the preview with the unsaved changes of the editor
+   @param settings the settings of the page (system_page::calculator_page_settings), for the preview without the save
+   @param recalculateAll true to show the results that the page calculates from the start, e.g. in the preview with changed
+                         values or formulas, false to show the stored results until an input changes */
+function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
-    // the html ids of the data, the same as the CALC_EDITOR_* and CALC_PAGE_* consts of system_page
-    const HOST_ID = 'calcPage';
-    const SEED_ID = 'seed';
-    const SETTINGS_ID = 'calcPageSettings';
     // the field of the name of a case, the api that creates a case and the url var of the page phrase, the same as url_var ID
     const CASE_FIELD_ID = 'caseName';
     const CASE_ROUTE = '/api/updatePut/';
@@ -78,9 +81,10 @@
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
+        arguments: 'arguments', argumentList: 'argument-list', num: 'num', ref: 'ref', presets: 'presets', headline: 'headline', scale: 'scale', sensitivity: 'sensitivity',
         notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
         addButton: 'btn btn-outline-primary btn-sm', removeButton: 'btn btn-outline-secondary btn-sm', imports: 'imports',
-        warnings: 'warnings', warning: 'warn',
+        warnings: 'warnings', warning: 'warn', actions: 'input-actions', reportFrame: 'report-frame',
         button: 'btn btn-outline-primary', chart: 'chart', legend: 'legend', statusOk: 'pill ok', statusFail: 'pill fail',
         // the colours of the flagged columns, the first for a single column, the others cycling for the instances (styles::CALC_COLUMN_COLOURS)
         colours: ['col-first', 'col-1', 'col-2', 'col-3', 'col-4']
@@ -98,10 +102,15 @@
     // in a hint the place of the source number and a phrase shown as its number (ui_list::CALC_HINT_SOURCE and CALC_HINT_NUMBER_PATTERN)
     const HINT_SOURCE = '[n]';
     const HINT_NUMBER_PATTERN = /\{([^{}|]+)(\|number)?\}/g;
+    // the placeholders of a text (ui_list::CALC_TEXT_PATTERN) and the style of the verdict by its state (ui_list::CALC_VERDICT_STATES)
+    const TEXT_PATTERN = /\{(num|source|result):([^{}]*)\}/g;
+    const VERDICT_STATES = ['yes', 'no', 'open'];
+    // the attribute of a part with the name of the triple that defines it, which the calculator editor reads (PART_ATTR there)
+    const PART_ATTR = 'data-part';
     // the translated texts by their message id (system_page::CALC_PAGE_TEXT_IDS)
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
-        details: 'calculator_details', sources: 'calculator_sources',
+        details: 'calculator_details', sources: 'calculator_sources', more: '... more',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
         diagram_final: 'calculator_diagram_final',
         case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
@@ -111,9 +120,6 @@
         measured: 'field_tag_measured', assumed: 'field_tag_assumed'
     };
 
-    const host = document.getElementById(HOST_ID);
-    const seed = readJson(SEED_ID);
-    const settings = readJson(SETTINGS_ID);
     if (host === null || seed === null || settings === null) {
         return;
     }
@@ -183,6 +189,10 @@
     const inputEntries = new Map();
     // the names of the sources of the page in the order of their number (see sourceNames)
     let pageSources = [];
+    // per name of a number field its phrase, which a preset sets
+    const inputPhrases = new Map();
+    // the sensitivity table calculates the page once per cell, so only while the user has it open
+    let sensitivityOpen = false;
     // the values and results that the results of the page use (see operandValues)
     let pageOperands = new Set();
     // the results of the page phrase, whose operands are the assumptions and whose formulas are the notes of the page
@@ -193,16 +203,6 @@
     /* ------------------------------------------------------------------ */
     /* helpers                                                              */
     /* ------------------------------------------------------------------ */
-
-    /* the json of a data element, where an id beyond the safe integer of javascript e.g. the group id of a value is read as text */
-    function readJson(id) {
-        const element = document.getElementById(id);
-        let result = null;
-        if (element !== null) {
-            result = JSON.parse(element.textContent.replace(/("id":\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
-        }
-        return result;
-    }
 
     /* like the backend triple::generate_name, because the other objects name a triple without its own name so */
     function generatedName(t) {
@@ -220,9 +220,12 @@
         return result;
     }
 
-    function block(tag, html, style) {
+    /* part: the name of the triple that defines the part e.g. of an argument, so that a click in the preview of the
+       calculator editor selects where the part is changed; empty for a part that the editor does not change */
+    function block(tag, html, style, part) {
         const cls = style ? ' class="' + style + '"' : '';
-        const result = '<' + tag + cls + '>' + html + '</' + tag + '>';
+        const attr = part ? ' ' + PART_ATTR + '="' + esc(part) + '"' : '';
+        const result = '<' + tag + cls + attr + '>' + html + '</' + tag + '>';
         return result;
     }
 
@@ -699,7 +702,7 @@
                 fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
             }
         });
-        const result = [];
+        const result = textSources();
         fieldValues.concat(operandValues()).forEach(function (e) {
             if (e !== null && sources.has(e.source) && result.indexOf(e.source) < 0) {
                 result.push(e.source);
@@ -1286,7 +1289,183 @@
     function title() {
         const pageLabel = ownText(page.name, KW.label) || ownText(base, KW.label) || capital(page.name);
         const lead = ownText(page.name, KW.hint) || ownText(base, KW.hint) || '';
-        const result = block('header', block('h4', esc(pageLabel)) + (lead === '' ? '' : block('p', esc(lead))));
+        const result = block('header', block('h4', esc(pageLabel)) + (lead === '' ? '' : block('p', esc(lead))) + argumentsHtml(), '', page.name);
+        return result;
+    }
+
+    /* the collapsed lead text and the arguments of both sides (ui_list::calculator_arguments) */
+    function argumentsHtml() {
+        const more = ownText(page.name, KW.more) || ownText(base, KW.more) || '';
+        const moreTriple = property(page.name, KW.more) || property(base, KW.more);
+        let result = more === '' ? '' : block('details', block('summary', esc(TEXTS[TXT.more])) + block('p', textHtml(more)), '', moreTriple.name);
+        const grp = group(KW.argument);
+        if (grp !== null) {
+            const heads = (ownText(grp.name, KW.label) || '').split('|');
+            const sides = [VERB.supports, VERB.limits].map(function (verb, pos) {
+                const lis = items(KW.argument).filter(function (item) {
+                    return (phrases.get(item.to) || {}).verb === verb;
+                }).map(function (item) {
+                    return block('li', block('b', esc(label(item))) + ' ' + textHtml(phrases.get(item.to).description || ''), '', item.name);
+                });
+                let body = block('h2', esc((heads[pos] || '').trim())) + block('ul', lis.slice(0, 1).join(''), STYLE.argumentList);
+                if (lis.length > 1) {
+                    body += block('details', block('summary', esc(TEXTS[TXT.more])) + block('ul', lis.slice(1).join(''), STYLE.argumentList));
+                }
+                return block('section', body, STYLE.panel + ' ' + (pos === 0 ? 'pro' : 'contra'));
+            }).join('');
+            result += block('div', sides, STYLE.arguments);
+        }
+        return result;
+    }
+
+    /* a text with its placeholders in the style of a number, as the number of a source and as a number of the page (ui_list::calculator_text) */
+    function textHtml(text) {
+        return esc(text).replace(TEXT_PATTERN, function (found, kind, arg) {
+            let result = '';
+            const name = arg.replace(/&amp;/g, '&').replace(/&#0?39;/g, "'");
+            if (kind === 'num') {
+                result = block('span', arg, STYLE.num);
+            } else if (kind === 'source') {
+                const pos = pageSources.indexOf(name);
+                result = pos < 0 ? '' : block('span', '[' + (pos + 1) + ']', STYLE.ref);
+            } else {
+                const sep = name.lastIndexOf(':');
+                const phrase = sep < 0 ? name : name.slice(0, sep);
+                const decimals = sep < 0 ? 0 : Number(name.slice(sep + 1));
+                // the number of the page first, which a value of a study with the same phrase must not hide (ui_list::calculator_text_value)
+                const entry = cellEntry([page.name, phrase]) || fieldEntry(phrase);
+                result = entry === null ? '' : formatNumber(entry.number, decimals);
+            }
+            return result;
+        });
+    }
+
+    function hasPlaceholder(text) {
+        TEXT_PATTERN.lastIndex = 0;
+        return TEXT_PATTERN.test(text);
+    }
+
+    /* the names of the sources that the texts of the page name by a placeholder (calculator::text_sources) */
+    function textSources() {
+        const texts = [ownText(page.name, KW.more) || ownText(base, KW.more) || ''];
+        items(KW.argument).forEach(function (item) {
+            texts.push((phrases.get(item.to) || {}).description || '');
+        });
+        items(KW.input).concat(items(KW.assumption)).forEach(function (item) {
+            texts.push(hint(item));
+        });
+        const result = [];
+        texts.join(' ').replace(/\{source:([^{}]+)\}/g, function (found, name) {
+            if (result.indexOf(name) < 0 && sources.has(name)) {
+                result.push(name);
+            }
+            return found;
+        });
+        return result;
+    }
+
+    /* the buttons that set several inputs at once, only here, because they need the script */
+    function presets() {
+        const html = items(KW.preset).map(function (item) {
+            return '<button type="button" class="' + STYLE.addButton + '" data-preset="' + esc(item.to) + '" title="' + esc(hint(item)) + '" '
+                + PART_ATTR + '="' + esc(item.name) + '">' + esc(label(item)) + '</button>';
+        }).join('');
+        return html === '' ? '' : block('div', html, STYLE.presets);
+    }
+
+    /* the state of the verdict by the numbers of its two phrases, null if one is missing */
+    function verdictState(grp) {
+        const phr = subItems(grp.name, VERB.with);
+        let result = null;
+        if (phr.length >= 2) {
+            const val = fieldEntry(phr[0].to) || cellEntry([page.name, phr[0].to]);
+            const limit = fieldEntry(phr[1].to) || cellEntry([page.name, phr[1].to]);
+            if (val !== null && limit !== null) {
+                const num = Number(val.number);
+                const thr = Number(limit.number);
+                result = {num: num, idx: num < -thr ? 0 : (num > thr ? 1 : 2)};
+            }
+        }
+        return result;
+    }
+
+    /* the verdict box with its texts, the note and the meter (ui_list::calculator_verdict) */
+    function verdict() {
+        const grp = group(KW.verdict);
+        const state = grp === null ? null : verdictState(grp);
+        const states = grp === null ? [] : subItems(grp.name, VERB.has);
+        let result = '';
+        if (state !== null && states.length >= 3) {
+            const item = states[state.idx];
+            let body = block('p', block('span', esc(label(item)), STYLE.headline)) + block('p', textHtml(hint(item)));
+            const scale = property(grp.name, KW.scale);
+            const down = scale === null ? null : fieldProperty(scale.name, KW.limit_down);
+            const up = scale === null ? null : fieldProperty(scale.name, KW.limit_up);
+            if (down !== null && up !== null && Number(up) > Number(down)) {
+                const left = Math.max(1, Math.min(99, (state.num - Number(down)) / (Number(up) - Number(down)) * 100));
+                body += '<div class="meter"><div class="needle" style="left: ' + left.toFixed(1) + '%"></div></div>'
+                    + block('div', scale.description.split('|').map(function (part) {
+                        return block('span', esc(part.trim()));
+                    }).join(''), STYLE.scale);
+            }
+            const note = ownText(grp.name, KW.note);
+            if (note) {
+                body += block('p', block('span', esc(note), STYLE.sub));
+            }
+            result = block('div', body, 'verdict ' + VERDICT_STATES[state.idx], item.name);
+        }
+        return result;
+    }
+
+    /* the table that calculates the page again per cell with the numbers of a row and a column (ui_list::calculator_sensitivity) */
+    function sensitivity() {
+        const grp = group(KW.sensitivity);
+        const axes = grp === null ? [] : subItems(grp.name, VERB.has);
+        let result = '';
+        if (axes.length >= 2) {
+            const rowEntry = fieldEntry(axes[0].to);
+            const colEntry = fieldEntry(axes[1].to);
+            const cols = subItems(axes[1].name, VERB.has);
+            const cellGroup = property(grp.name, KW.cell);
+            const cellItems = cellGroup === null ? [] : subItems(cellGroup.name, VERB.has);
+            const verdictGroup = group(KW.verdict);
+            const head = block('th', esc(label(axes[0])), '', axes[0].name) + cols.map(function (c) {
+                return block('th', esc(label(c)), STYLE.number, c.name);
+            }).join('');
+            const body = subItems(axes[0].name, VERB.has).map(function (r) {
+                const cells = cols.map(function (c) {
+                    let html = '';
+                    const rowLevel = cellEntry([grp.name, r.to]);
+                    const colLevel = cellEntry([grp.name, c.to]);
+                    if (sensitivityOpen && rowEntry !== null && colEntry !== null && rowLevel !== null && colLevel !== null) {
+                        const rowNum = rowEntry.number;
+                        const colNum = colEntry.number;
+                        rowEntry.number = rowLevel.number;
+                        colEntry.number = colLevel.number;
+                        recalculate();
+                        const nums = cellItems.map(function (item, pos) {
+                            const entry = cellEntry([page.name, item.to]);
+                            const num = entry === null ? 0 : Number(entry.number);
+                            const text = formatNumber(num, pos === 0 ? 0 : 2);
+                            return pos === 0 ? text : ' (' + (num > 0 ? '+' : '') + text + ')';
+                        }).join('');
+                        const state = verdictGroup === null ? null : verdictState(verdictGroup);
+                        const style = state === null || state.idx === 2 ? '' : (state.idx === 0 ? FMT.positive : FMT.negative);
+                        html = block('span', esc(nums), style);
+                        rowEntry.number = rowNum;
+                        colEntry.number = colNum;
+                    }
+                    return block('td', html, STYLE.number);
+                }).join('');
+                return block('tr', block('td', esc(label(r)), '', r.name) + cells);
+            }).join('');
+            if (sensitivityOpen) {
+                recalculate();
+            }
+            const text = ownText(grp.name, KW.hint);
+            result = block('details', block('summary', esc(label(grp))) + block('div', table(head, body)
+                + (text ? block('p', block('span', esc(text), STYLE.hint)) : ''), STYLE.more), STYLE.sensitivity, axes[0].name);
+        }
         return result;
     }
 
@@ -1297,6 +1476,9 @@
 
     /* the number of the source at the marker of the hint, else behind it (ui_list::calculator_hint) */
     function hintHtml(text, ref) {
+        if (hasPlaceholder(text)) {
+            return block('span', textHtml(text), STYLE.hint);
+        }
         const refTxt = ref === '' ? '' : ' ' + ref;
         const mark = ' ' + HINT_SOURCE;
         const shown = esc(text);
@@ -1361,8 +1543,9 @@
         const lbl = instance === undefined ? label(item) : label(item) + ' ' + phraseLabel(instance);
         let text = esc(lbl);
         let hintText = hint(item);
-        if (assumption && entry !== null) {
-            text += ' ' + block('span', esc(tagText(entry)), entry.source ? STYLE.tagMeasured : STYLE.tagAssumed);
+        const tagOwn = ownText(item.name, KW.tag);
+        if ((assumption || tagOwn) && entry !== null) {
+            text += ' ' + block('span', esc(tagOwn || tagText(entry)), entry.source ? STYLE.tagMeasured : STYLE.tagAssumed);
             hintText = hintText || entry.description;
         }
         const limits = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
@@ -1372,6 +1555,16 @@
         }).join('');
         const shown = entry === null ? '' : fieldShown(entry.number, entry);
         let input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(shown) + '"' + limits + ' form="' + esc(FORM) + '">';
+        if (hasFlag(item, KW.slider)) {
+            const slider = property(item.name, KW.slider);
+            const ownStep = slider === null ? null : fieldProperty(slider.name, KW.step);
+            const step = ownStep === null || entry === null ? ownStep : fieldShown(ownStep, entry);
+            const rangeLimits = step === null ? limits : limits.replace(/ step="[^"]*"/, '') + ' step="' + esc(step) + '"';
+            input = '<input type="range" id="r' + field + '" data-field="' + field + '" value="' + esc(shown) + '"' + rangeLimits + '>' + input;
+        }
+        if (instance === undefined) {
+            inputPhrases.set(field, name);
+        }
         const unit = entry === null ? '' : fieldUnit(entry);
         if (entry !== null) {
             input += saveVars(key, entry, lbl, unit);
@@ -1382,7 +1575,7 @@
         }
         input += removeButton(name, instance);
         const result = block('div', '<label for="' + field + '">' + text + '</label>' + block('div', input, STYLE.row)
-            + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field);
+            + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field, item.name);
         return result;
     }
 
@@ -1472,7 +1665,7 @@
         }
         const select = '<select class="' + STYLE.select + '" name="' + field + '" form="' + esc(FORM) + '" id="' + domId + '">' + html + '</select>';
         const result = block('div', '<label for="' + domId + '">' + esc(label(item)) + '</label>' + select
-            + hintHtml(hint(item), ''), STYLE.field);
+            + hintHtml(hint(item), ''), STYLE.field, item.name);
         return result;
     }
 
@@ -1481,7 +1674,7 @@
         const entry = fieldEntry(name);
         const number = entry === null ? '' : roughText(entry, 1);
         const result = block('div', '<label>' + esc(label(item)) + '</label>' + block('div', esc(number), STYLE.readOnly)
-            + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field);
+            + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field, item.name);
         return result;
     }
 
@@ -1566,8 +1759,8 @@
         let result = '';
         if (inputs.length > 0 || assumptions.length > 0) {
             const heading = ownText((group(KW.input) || {}).name, KW.label) || TEXTS[TXT.inputs];
-            result = block('div', block('h2', esc(heading)) + fields(inputs, false)
-                + block('div', warningTexts(), STYLE.warnings) + caseField() + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
+            result = block('div', block('h2', esc(heading)) + presets() + fields(inputs, false)
+                + block('div', warningTexts(), STYLE.warnings) + caseField() + buttons(group(KW.input), settings.save || ''), STYLE.inputs);
             const listed = assumptions.map(function (item) {
                 return item.to;
             });
@@ -1582,13 +1775,15 @@
 
     /* the name of the case that the page shows, empty for the default case e.g. Miller family of the triple Miller family portfolio split */
     function caseName() {
-        return page.verb === VERB.of && page.from === base ? page.to : '';
+        return page.verb === VERB.of ? page.to : '';
     }
 
-    /* the field for the name of a case, only for a page that is built from another phrase, of which a case is another kind */
+    /* the field for the name of a case, only for a page that is built from another phrase, of which a case is another kind, and whose inputs have the case keyword */
     function caseField() {
         const input = '<input type="text" id="' + CASE_FIELD_ID + '" value="' + esc(caseName()) + '">';
-        return base === null ? '' : block('div', '<label for="' + CASE_FIELD_ID + '">' + esc(TEXTS[TXT.case_name]) + '</label>' + input, STYLE.field);
+        const inputs = group(KW.input);
+        const hasCase = base !== null && inputs !== null && hasFlag(inputs, KW.case);
+        return !hasCase ? '' : block('div', '<label for="' + CASE_FIELD_ID + '">' + esc(TEXTS[TXT.case_name]) + '</label>' + input, STYLE.field);
     }
 
     /* the updatePut message of a new case without a database id: the word of the name, the triple of the case, the triples and the values of the page with the triple of the case instead of the page phrase and with the entered numbers; the results are calculated by the backend */
@@ -1676,6 +1871,9 @@
 
     /* the sub text of a row: its hint, else its side results with their number */
     function rowSub(row) {
+        if (hasPlaceholder(hint(row))) {
+            return block('span', textHtml(hint(row)), STYLE.sub);
+        }
         let sub = hintNumbers(hint(row));
         if (sub === '') {
             sub = sideResults(row).map(function (side) {
@@ -1728,7 +1926,7 @@
                     return sub.to === to;
                 }) : undefined;
                 const text = repeated ? (short === undefined ? capital(phraseLabel(to)) : label(short)) : label(c);
-                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(repeated, pos) : '', repeated: repeated, isPhrase: isPhrase, plus: hasFlag(c, KW.signed), hasUnit: hasFlag(c, KW.column_unit)});
+                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(repeated, pos) : '', repeated: repeated, isPhrase: isPhrase, plus: hasFlag(c, KW.signed), hasUnit: hasFlag(c, KW.column_unit), difference: hasFlag(c, KW.difference)});
             });
         });
         return result;
@@ -1759,6 +1957,30 @@
         return units.size === 1 ? Array.from(units)[0] : '';
     }
 
+    /* the number of a cell of the result table: of the phrase of a calculator cell, the difference of the first two columns or the row and column phrases (ui_list::calculation_table_values) */
+    function resultCell(row, ctx, col, pos, cells) {
+        let result = null;
+        if (col.difference) {
+            if (cells[0] && cells[1]) {
+                result = Object.assign({}, cells[0], {number: Number(cells[0].number) - Number(cells[1].number)});
+            }
+        } else {
+            const cellGroup = property(row.name, KW.cell);
+            const cell = cellGroup === null ? undefined : subItems(cellGroup.name, VERB.has).find(function (item) {
+                return filterOf(item) === col.to;
+            });
+            if (cell !== undefined) {
+                result = cellEntry([page.name, cell.to]);
+            } else {
+                result = cellEntry(ctx.concat([col.to]));
+                if (result === null && pos === 0) {
+                    result = cellEntry(ctx);
+                }
+            }
+        }
+        return result;
+    }
+
     function resultTable() {
         const cols = columns(items(KW.column));
         const grps = items(KW.rowgroup);
@@ -1769,16 +1991,18 @@
             grps.forEach(function (g) {
                 subItems(g.name, VERB.has).forEach(function (r) {
                     const ctx = [page.name, chosen(r.to), filterOf(r)];
-                    rows.push({grp: g, row: r, ctx: ctx, cells: cols.map(function (c) {
-                        return cellEntry(ctx.concat([c.to]));
-                    })});
+                    const cells = [];
+                    cols.forEach(function (c, i) {
+                        cells.push(resultCell(r, ctx, c, i, cells));
+                    });
+                    rows.push({grp: g, row: r, ctx: ctx, cells: cells});
                 });
             });
             // one unit of all numbers is named by the first header instead of each cell
             const unit = tableUnit(rows);
             const withUnit = unit === '';
             const head = block('th', esc(withUnit ? TEXTS[TXT.result] : unit)) + cols.map(function (c) {
-                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim());
+                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim(), c.name);
             }).join('');
             const formats = cols.map(function (c, i) {
                 return columnFormats(rows.map(function (r) {
@@ -1787,7 +2011,7 @@
             });
             let body = '';
             grps.forEach(function (g) {
-                body += block('tr', '<td colspan="' + (cols.length + 1) + '">' + esc(label(g)) + '</td>', STYLE.section);
+                body += block('tr', '<td colspan="' + (cols.length + 1) + '">' + esc(label(g)) + '</td>', STYLE.section, g.name);
                 const groupSigned = hasFlag(g, KW.signed);
                 rows.filter(function (r) {
                     return r.grp === g;
@@ -1797,10 +2021,10 @@
                     const signed = groupSigned && !plus;
                     const decimals = decimalsOf([r.row.to]);
                     const cells = r.cells.map(function (e, i) {
-                        return cellHtml(e, formats[i], signed, withUnit, decimals, plus);
+                        return cellHtml(e, formats[i], signed && !cols[i].plus, withUnit, decimals, plus || cols[i].plus);
                     }).join('');
                     const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row);
-                    body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
+                    body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '', r.row.name);
                 });
             });
             result = table(head, body);
@@ -1903,22 +2127,24 @@
         return result;
     }
 
-    /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far (ui_list::calculator_buttons) */
-    function buttons(item) {
-        let labels = [];
+    /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far; save: the html of the save button of the input list between the import and the download, which then shows two buttons per line (ui_list::calculator_buttons) */
+    function buttons(item, save) {
+        let fileImport = null;
+        let download = null;
         let report = null;
         let copy = [];
         if (item !== null && item !== undefined) {
-            labels = [KW.file_import, KW.download].map(function (keyword) {
-                return buttonLabel(item, keyword);
-            });
+            fileImport = buttonLabel(item, KW.file_import);
+            download = buttonLabel(item, KW.download);
             report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
                 copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
             }
         }
-        const link = report ? '<a href="' + esc(settings.report) + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
-        return plainButtons(labels) + link + plainButtons(copy);
+        const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
+        const frame = report ? '<iframe name="' + STYLE.reportFrame + '" class="' + STYLE.reportFrame + '" title="' + esc(report) + '"></iframe>' : '';
+        const result = plainButtons([fileImport]) + (save || '') + plainButtons([download]) + link + plainButtons(copy) + frame;
+        return save ? block('div', result, STYLE.actions) : result;
     }
 
     /* the label of the triple from the item to the button keyword, null if the item has no such button (calculator::button_label) */
@@ -2068,10 +2294,15 @@
 
     /* the section with per item the label in bold in front of the description (ui_list::calculator_notes) */
     function pageNotes() {
-        const html = items(KW.note).map(function (note) {
-            return block('p', block('b', esc(label(note))) + ' ' + esc(note.description));
+        const html = notesHtml();
+        const summary = html === '' ? null : ownText(group(KW.note).name, KW.label);
+        return !summary ? '' : block('details', block('summary', esc(summary)) + block('div', html, STYLE.notes));
+    }
+
+    function notesHtml() {
+        return items(KW.note).map(function (note) {
+            return block('p', block('b', esc(label(note))) + ' ' + esc(note.description), '', note.name);
         }).join('');
-        return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.note).name, KW.label) || '')) + block('div', html, STYLE.notes));
     }
 
     /* the section with the import buttons of the page, without a function so far (ui_list::calculator_imports) */
@@ -2090,13 +2321,15 @@
         }).forEach(function (tbl) {
             const cols = columns(subItems(tbl.name, VERB.has));
             const numbered = hasFlag(tbl, KW.row_number);
-            const head = (numbered ? block('th', ROW_NUMBER_HEAD, STYLE.number) : '') + block('th', esc(phraseLabel(tbl.to))) + cols.map(function (c) {
-                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim());
+            const head = (numbered ? block('th', ROW_NUMBER_HEAD, STYLE.number) : '') + block('th', esc(phraseLabel(tbl.to)), '', tbl.name) + cols.map(function (c) {
+                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim(), c.name);
             }).join('');
+            // the last part of a row is the name of the triple that defines it: a row of the table phrase has no own
+            // triple, so it names the table, and an extra row names its own triple
             const rows = rankedRows(tbl).map(function (k) {
-                return [phraseLabel(k), [page.name, k], false];
+                return [phraseLabel(k), [page.name, k], false, tbl.name];
             }).concat(subItems(tbl.name, VERB.with).map(function (x) {
-                return [label(x), [page.name, x.to], hasFlag(x, KW.highlight)];
+                return [label(x), [page.name, x.to], hasFlag(x, KW.highlight), x.name];
             }));
             const cells = rows.map(function (r) {
                 return cols.map(function (c) {
@@ -2118,12 +2351,12 @@
                 const number = numbered ? block('td', String(j + 1), STYLE.number) : '';
                 // a numbered table shows the hint of the row phrase e.g. the full name of a ticker (calculator::phrase_hint)
                 const sub = numbered ? ownText(r[1][1], KW.hint) : '';
-                return block('tr', number + block('td', esc(r[0]) + (sub ? block('span', esc(sub), STYLE.sub) : '')) + tds, r[2] ? STYLE.key : '');
+                return block('tr', number + block('td', esc(r[0]) + (sub ? block('span', esc(sub), STYLE.sub) : '')) + tds, r[2] ? STYLE.key : '', r[3]);
             }).join('');
             const tableHtml = table(head, body) + tableHint(tbl.name) + buttons(tbl);
             result += sections
-                ? block('details', block('summary', esc(label(tbl))) + tableHtml)
-                : block('h2', esc(label(tbl))) + tableHtml;
+                ? block('details', block('summary', esc(label(tbl))) + tableHtml, '', tbl.name)
+                : block('h2', esc(label(tbl)), '', tbl.name) + tableHtml;
         });
         return result;
     }
@@ -2135,9 +2368,12 @@
         }));
         const html = Array.from(names).sort().map(function (name) {
             const frm = formulas.get(name);
-            return frm === undefined || !frm.description ? '' : block('p', block('b', esc(name)) + ' ' + esc(frm.description));
+            return frm === undefined || !frm.description ? '' : block('p', block('b', esc(name)) + ' ' + esc(frm.description), '', name);
         }).join('');
-        const result = html === '' ? '' : block('div', html, STYLE.notes);
+        // the notes without a label are shown with the descriptions of the formulas
+        const grp = group(KW.note);
+        const plain = grp !== null && !ownText(grp.name, KW.label) ? notesHtml() : '';
+        const result = html + plain === '' ? '' : block('div', html + plain, STYLE.notes);
         return result;
     }
 
@@ -2145,7 +2381,7 @@
         const html = pageSources.map(function (name) {
             const src = sources.get(name);
             const text = src.url ? '<a href="' + esc(src.url) + '">' + esc(name) + '</a>' : esc(name);
-            return block('li', text);
+            return block('li', text, '', name);
         }).join('');
         const result = html === '' ? '' : block('div', block('h2', esc(TEXTS[TXT.sources])) + block('ol', html), STYLE.sources);
         return result;
@@ -2153,7 +2389,7 @@
 
     function resultPanel() {
         const heading = ownText((group(KW.column) || {}).name, KW.label) || '';
-        let result = (heading === '' ? '' : block('h2', esc(heading))) + resultTable();
+        let result = verdict() + (heading === '' ? '' : block('h2', esc(heading))) + resultTable() + sensitivity();
         result += checkTable() + diagrams() + detailTables(true) + pageNotes() + importSection();
         // the details after the main table, so that their notes and sources include the numbers of both
         const more = detailTables(false);
@@ -2176,27 +2412,84 @@
         return result;
     }
 
-    /* the result panel again with the numbers of the inputs, the open blocks staying open */
-    function refreshResults(event) {
-        const entry = inputEntries.get(event.target.name);
-        const panel = host.querySelector('section.' + STYLE.panel);
-        const value = enteredNumber(event.target, entry);
-        if (entry !== undefined && panel !== null && event.target.value !== '' && isFinite(value)) {
+    /* the changed input for the next calculation; true if it has a number */
+    function applyInput(changed) {
+        let input = changed;
+        // a slider and its number field show the same number
+        if (input.dataset.field) {
+            const number = document.getElementById(input.dataset.field);
+            number.value = input.value;
+            input = number;
+        } else if (input.id) {
+            const range = document.getElementById('r' + input.id);
+            if (range !== null) {
+                range.value = input.value;
+            }
+        }
+        const entry = inputEntries.get(input.name);
+        const value = enteredNumber(input, entry);
+        const hasNumber = entry !== undefined && input.value !== '' && isFinite(value);
+        if (hasNumber) {
             entry.number = value;
+        }
+        return hasNumber;
+    }
+
+    function refreshResults(event) {
+        if (applyInput(event.target)) {
+            redrawResults();
+        }
+    }
+
+    /* the result panel again with the numbers of the inputs, the open blocks staying open */
+    function redrawResults() {
+        const panel = host.querySelector('.' + STYLE.grid + ' > section.' + STYLE.panel);
+        if (panel !== null) {
             recalculate();
             const open = Array.from(panel.querySelectorAll('details')).map(function (d) {
                 return d.open;
             });
             panel.outerHTML = resultPanel();
             host.querySelector('div.' + STYLE.warnings).innerHTML = warningTexts();
-            host.querySelectorAll('section.' + STYLE.panel + ' details').forEach(function (d, i) {
+            host.querySelectorAll('.' + STYLE.grid + ' > section.' + STYLE.panel + ' details').forEach(function (d, i) {
                 d.open = open[i] === true;
             });
         }
     }
 
+    /* a preset sets each input that has a value of the preset phrase */
+    function applyPreset(event) {
+        const name = event.target.dataset ? event.target.dataset.preset : undefined;
+        if (name) {
+            let changed = false;
+            inputPhrases.forEach(function (phrase, field) {
+                const entry = cellEntry([name, phrase]);
+                const input = document.getElementById(field);
+                if (entry !== null && input !== null) {
+                    input.value = fieldShown(entry.number, inputEntries.get(field) || entry);
+                    changed = applyInput(input) || changed;
+                }
+            });
+            if (changed) {
+                redrawResults();
+            }
+        }
+    }
+
+    /* the sensitivity table gets its numbers when the user opens it; the toggle event does not bubble */
+    function toggleSensitivity(event) {
+        const isTable = event.target.classList.contains(STYLE.sensitivity);
+        if (isTable && event.target.open !== sensitivityOpen) {
+            sensitivityOpen = event.target.open;
+            redrawResults();
+        }
+    }
+
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
+    if (recalculateAll) {
+        recalculate();
+    }
     pageOperands = new Set(operandValues());
     pageSources = sourceNames();
     // the host has the style of the use case page (system_page::calculator_json), so it gets only its content
@@ -2204,5 +2497,32 @@
     host.addEventListener('input', refreshResults);
     host.addEventListener('change', refreshResults);
     host.addEventListener('submit', saveCase);
+    host.addEventListener('click', applyPreset);
+    host.addEventListener('toggle', toggleSensitivity, true);
+
+}
+
+/* the calculator page of the server (system_page::calculator_json); the calculator editor has no host of the page */
+(function () {
+
+    // the html ids of the data, the same as the CALC_EDITOR_* and CALC_PAGE_* consts of system_page
+    const HOST_ID = 'calcPage';
+    const SEED_ID = 'seed';
+    const SETTINGS_ID = 'calcPageSettings';
+
+    /* the json of a data element, where an id beyond the safe integer of javascript e.g. the group id of a value is read as text */
+    function readJson(id) {
+        const element = document.getElementById(id);
+        let result = null;
+        if (element !== null) {
+            result = JSON.parse(element.textContent.replace(/("id":\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
+        }
+        return result;
+    }
+
+    const host = document.getElementById(HOST_ID);
+    if (host !== null) {
+        renderCalculatorPage(host, readJson(SEED_ID), readJson(SETTINGS_ID), false);
+    }
 
 })();

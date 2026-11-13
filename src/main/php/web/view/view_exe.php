@@ -164,7 +164,9 @@ class view_exe extends view_base
             // javascript for the calculator, so that the page of the server is shown
             $js_page = '';
             if ($this->is_javascript_page($url_array)) {
-                $js_page = new system_page()->calculator_json($dbo, $msg, $cfg, $form_name, $this->id());
+                $js_page = $this->code_id == views::TABLE_EDITOR
+                    ? new system_page()->table_editor($dbo, $msg, $cfg)
+                    : new system_page()->calculator_json($dbo, $msg, $cfg, $form_name, $this->id());
             }
             if ($js_page != '') {
                 $result .= $js_page;
@@ -181,14 +183,13 @@ class view_exe extends view_base
 
     /**
      * @param array $url_array the url parameters of the page that shows the view
-     * @return bool true if the page that the browser builds from its json data may be shown, which
-     *              only the calculator has at the moment; sc=0 (url_var::JAVASCRIPT) asks for the
-     *              page of the server
+     * @return bool true if the page that the browser builds from its json data may be shown;
+     *              sc=0 (url_var::JAVASCRIPT) asks for the page of the server
      */
     private function is_javascript_page(array $url_array): bool
     {
         $refused = ($url_array[url_var::JAVASCRIPT] ?? '') == url_var::FALSE;
-        return !$refused and $this->code_id == views::CALCULATOR;
+        return !$refused and in_array($this->code_id, views::JAVASCRIPT_PAGES);
     }
 
     /**
@@ -646,7 +647,7 @@ class view_exe extends view_base
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url_back(views::COMPONENT_LINK_ADD_ID, 0, $url_arr, url_var::VIEW . url_var::EQ . $this->id());
                 $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
             }
         }

@@ -164,10 +164,13 @@ class source_list extends sandbox_list_named
         $src_lst = $db_con->get($qp, $msg, 'source list');
         foreach ($src_lst as $db_row) {
             $src = new source($this->get_user());
-            $src->row_mapper_sandbox($db_row, $msg);
-            if ($this->add($src)) {
-                $result = true;
+            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+            if ($src->row_mapper_sandbox($db_row, $row_msg)) {
+                if ($this->add($src)) {
+                    $result = true;
+                }
             }
+            $msg->merge($row_msg);
         }
 
         return $result;

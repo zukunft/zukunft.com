@@ -156,8 +156,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t_db->create_test_db_entries($t);
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
-                // TODO Prio 1 activate
-                //new verb_write_tests()->run($t);
+                new verb_write_tests()->run($t);
                 new triple_write_tests()->run($t);
                 new phrase_write_tests()->run($t);
                 new phrase_list_write_tests()->run($t);
@@ -193,6 +192,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
+                new import_upload_write_tests()->run($t);
+                new export_write_tests()->run($t);
                 // reads the live wikidata and refreshes the captured json of the wikidata cache folder
                 if (INTEGRATION_TEST) {
                     new wikidata_write_tests()->run($t);

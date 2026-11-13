@@ -1331,10 +1331,10 @@ class test_phrases
         $lst->add($t_trp->gross_domestic_usage_solution()->phrase());
         $lst->add($t_trp->free_software_solution()->phrase());
         // the default charts of the ranking like phrase_list::load_chart_definitions loads them:
-        // the chart type words with the code id that selects the chart type, the tiers, the
+        // the chart types with the code id that selects the chart type, the tiers, the
         // chart triples with the plotted columns and their assignment to the default tier
-        $lst->add($t_wrd->word_range_bars()->phrase());
-        $lst->add($t_wrd->word_scatter_plot()->phrase());
+        $lst->add($t_trp->range_bars()->phrase());
+        $lst->add($t_trp->scatter_plot()->phrase());
         $lst->add($t_trp->chart_type_default()->phrase());
         $lst->add($t_trp->chart_type_alternative()->phrase());
         $lst->add($t_trp->range_bars_of_loss()->phrase());
@@ -1390,7 +1390,7 @@ class test_phrases
             $lst->add($trp->phrase());
         }
         // the mayor chart like phrase_list::load_chart_definitions loads it
-        $lst->add($t_wrd->word_leverage_plot()->phrase());
+        $lst->add($t_trp->leverage_plot()->phrase());
         $lst->add($t_trp->chart_type_mayor()->phrase());
         $lst->add($t_trp->gain_and_loss()->phrase());
         $lst->add($t_trp->leverage_of_gain_and_loss()->phrase());
@@ -1557,9 +1557,8 @@ class test_phrases
      */
     private function add_sort_definitions(phrase_list $lst): void
     {
-        $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $lst->add($t_wrd->word_numeric_descending()->phrase());
+        $lst->add($t_trp->numeric_descending()->phrase());
         $lst->add($t_trp->sort_order_default()->phrase());
         $lst->add($t_trp->numeric_desc_of_loss()->phrase());
         $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
@@ -1961,6 +1960,36 @@ class test_phrases
     {
         $t_trp = new test_triples($this->env);
         return $this->calculator_input_ui([...$t_trp->calculator_zh_result(), ...$t_trp->calculator_zh_number_note()]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the test of a page for a decision: the calculation result test with test_triples::calculator_zh_decision
+     */
+    function list_calculator_decision_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        return $this->calculator_input_ui([...$t_trp->calculator_zh_result(), ...$t_trp->calculator_zh_decision()]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the table editor test: the calculator input test with the own table of Zurich (city)
+     */
+    function list_table_definition_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->table_definition_zh());
+    }
+
+    /**
+     * @param array $columns the own columns as triples in their order e.g. potential gain in htp
+     * @return phrase_list_ui the related phrases of a table of Zurich (city) with own columns that name their unit
+     */
+    function list_table_definition_units_ui(array $columns): phrase_list_ui
+    {
+        $lst = new phrase_list($this->env->usr1);
+        foreach (new test_triples($this->env)->table_definition_units($columns) as $trp) {
+            $lst->add($trp->phrase());
+        }
+        return $this->ui_list($lst);
     }
 
     /**

@@ -25,7 +25,7 @@ RedirectMatch 404 ^/src/test/
 
 # the static offline fallback pages and the short urls of the pinned views of config.yaml
 # in the docroot have no file extension, so they are allowed by their exact names
-<FilesMatch "^(login|login_activate|logout|signup|settings|find|problems|pv|panels|cbam|portfolio_split|company_sheet)$">
+<FilesMatch "^(login|login_activate|logout|signup|settings|find|problems|pv|nnp|portfolio_split)$">
     Require all granted
 </FilesMatch>
 
@@ -59,11 +59,6 @@ RedirectMatch 404 ^/vendor/
 # cache) that are never fetched by a browser. Return 404 so the folder looks
 # non-existent even if a cache file gets an allowed file extension.
 RedirectMatch 404 ^/cache/
-
-# The /http_old folder holds legacy controllers no longer used by the frontend
-# (the modern UI routes through /http/view.php). They are kept for reference
-# only and must never be served. Return 404 so the folder looks non-existent.
-RedirectMatch 404 ^/http_old/
 
 # The top-level /test folder holds the CLI test runners (test.php, test_unit.php, ...) and
 # helpers that reset the database. They run only from a shell (each script additionally

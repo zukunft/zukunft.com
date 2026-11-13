@@ -32,10 +32,13 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -77,19 +80,10 @@ class formula_trigger_tests
         $phr_lst2->add_name(word_names::YEAR_2020, $msg);
         $frm = $t_db->load_formula(formula_names::INCREASE);
 
-        $test_name = 'add a number ' . values::CH_INHABITANTS_2019_IN_MIO . ' for 2019';
-        $val_add1 = new value($t->usr1);
-        $val_add1->set_grp($phr_lst1->get_grp_id());
-        $val_add1->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $t->assert_true($test_name, $val_add1->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
-
-        $test_name = 'add second number ' . values::CH_INHABITANTS_2020_IN_MIO . ' for 2020';
-        $val_add2 = new value($t->usr1);
-        $val_add2->set_grp($phr_lst2->get_grp_id());
-        $val_add2->set_number(values::CH_INHABITANTS_2020_IN_MIO);
-        $t->assert_true($test_name, $val_add2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
-
-        // check if the first number have been saved correctly
+        // TODO Prio 1 add some alternative add a number tests that does not impact other tests
+        // the numbers for 2019 and 2020 are seed values (country.json) shared with the read tests,
+        // so this test only reads them: a delete by the test user would exclude them for all later tests
+        // check if the first number is in the database
         $added_val = new value($t->usr1);
         $added_val->load_by_grp($phr_lst1->get_grp_id(), $msg);
         $result = $added_val->number();
@@ -116,11 +110,14 @@ class formula_trigger_tests
         $t->assert('value->check best value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
+        // the calc saves the result of the seed formula, which is no seed row, so the test removes it again
+        $res_before = new result($t->usr1);
+        $res_existed = $res_before->load_by_grp($phr_lst2->get_grp_id(), $msg);
         $res_lst = $frm->calc($phr_lst2, $msg);
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $res_ui = new result($res->api_json([api_types::INCL_PHRASES]));
+                $res_ui = new result_ui($res->api_json([api_types::INCL_PHRASES]));
                 $result = trim($res_ui->val_formatted($msg_ui));
             } else {
                 $result = '';
@@ -132,14 +129,25 @@ class formula_trigger_tests
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = '0.75' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
+            $target = '0.75' . result_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         }
         // TODO Prio 0 activate
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+        // a result is derived data without change log, so it is removed like formula::delete_results does
+        // and not by result::del, which deletes only values (see sandbox_multi::del_exe)
+        if (!$res_existed) {
+            $res_added = new result($t->usr1);
+            if ($res_added->load_by_grp($phr_lst2->get_grp_id(), $msg)) {
+                $res_del_lst = new result_list($t->usr1);
+                $res_del_lst->add($res_added);
+                $res_del_lst->db_delete_no_log($msg, new import(), result::class);
+            }
+            $res_check = new result($t->usr1);
+            $test_name = 'the result that the calc of ' . $frm->dsp_id() . ' has added is removed';
+            $t->assert_false($test_name, $res_check->load_by_grp($phr_lst2->get_grp_id(), $msg));
+        }
 
-        // remove the test values with the group rows that the saves above have added
-        $t->del_value($val_add1, $msg);
-        $t->del_value($val_add2, $msg);
+        // TODO Prio 1 remove the previous added numbers
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

@@ -632,8 +632,9 @@ class formula_link extends sandbox_link
         if (is_int($api_msg_part)) {
             if ($dto != null) {
                 $phr = $dto->get_phrase_by_id($api_msg_part, $phr);
-            } else {
-                $phr->set_id($api_msg_part);
+            } elseif ($api_msg_part != 0) {
+                // with the sign, because a formula can be linked to a triple
+                $phr->set_obj_from_id($api_msg_part);
             }
         } else {
             $msg->add(msg_id::FORMULA_ID_MISSING, [
@@ -856,7 +857,9 @@ class formula_link extends sandbox_link
         // delete log names the phrase and its sql function is created only once per name
         if ($this->phrase_id() <> 0) {
             $phr = new phrase($this->get_user());
-            $phr->load_by_id($this->phrase_id(), $msg);
+            $phr_msg = new user_message($msg->usr); // a buffer, because the load does not start on the problem already reported, merged below
+            $phr->load_by_id($this->phrase_id(), $phr_msg);
+            $msg->merge($phr_msg);
             if ($phr->id() != 0) {
                 $this->set_phrase($phr);
             } else {

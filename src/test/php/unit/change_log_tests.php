@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -79,16 +80,24 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -305,6 +314,9 @@ class change_log_tests
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value($msg)->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
+        // a result change is logged like a value change, so a result is also selected by its group id
+        $this->assert_sql_list_by_field(result::class, '', 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(result::class, '', $t_grp->group_16()->id(), $log_lst, $db_con, $t);
         // a type row e.g. a sys log function logs to the changes table like the named objects,
         // so the test cleanup can remove the change log of a type test row via the same list load
         $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
@@ -315,17 +327,18 @@ class change_log_tests
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');
         $cl_lst = new change_log_link_list();
-        $test_name = 'sql to load the link changes of a word selects the change_links table';
-        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $t->usr1);
-        $t->assert_text_contains($test_name, $sql_word, 'FROM change_links c');
-        $test_name = 'the link changes of a word are selected by the from and to id';
-        $t->assert_text_contains($test_name, $sql_word,
-            '(c.old_from_id = 123 OR c.old_to_id = 123 OR c.new_from_id = 123 OR c.new_to_id = 123)');
-        $test_name = 'the link changes of a component are selected by the to id only';
-        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $t->usr1);
-        $t->assert_text_contains($test_name, $sql_cmp, '(c.old_to_id = 45 OR c.new_to_id = 45)');
+        // the changes of the user itself, selected by the user and not by the id
+        $this->assert_sql_link_list_by_obj(user::class, 1, $cl_lst, $db_con, $t);
+        // a word is selected by the from and to id of the link
+        $this->assert_sql_link_list_by_obj(word::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(value::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(formula::class, 1, $cl_lst, $db_con, $t);
+        $this->assert_sql_link_list_by_obj(view::class, 1, $cl_lst, $db_con, $t);
+        // a component is selected by the to id only
+        $this->assert_sql_link_list_by_obj(component::class, 1, $cl_lst, $db_con, $t);
         $test_name = 'an unknown object class creates no link change sql';
-        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $t->usr1), '');
+        $qp_unknown = $cl_lst->load_sql_by_obj($db_con->sql_creator(), change_table::class, 1, $t->usr1);
+        $t->assert($test_name, $qp_unknown->name, '');
 
         // a link change is sent to the frontend with the relevant side as old/new value
         $t->subheader($ts . 'link change api');
@@ -460,8 +473,20 @@ class change_log_tests
 
         // sql to load a log entry by field and row id
         // TODO Prio 2 check that user-specific changes are included in the list of changes
-        // TODO Prio 2 add tests for all value types
+        // each value change table has its own query name, and a norm or big group has a text id
+        $grp_id = 'system_test_group_id';
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_time_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_text_big($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_prime($t->usr1));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_norm($t->usr1), $grp_id);
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_geo_big($t->usr1), $grp_id);
 
         // sql to load a field by field name and table id
         $tbl = new change_table();
@@ -586,18 +611,24 @@ class change_log_tests
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
      * @param change|change_value $log the user sandbox object e.g. a word
+     * @param int|string $row_id the row id for the query, a text group id for a norm value
      */
-    private function assert_sql_by_field_row(test_cleanup $t, sql_db $db_con, change|change_value $log): void
+    private function assert_sql_by_field_row(
+        test_cleanup $t,
+        sql_db       $db_con,
+        change|change_value $log,
+        int|string   $row_id = 2
+    ): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+        $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, $row_id);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+            $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, $row_id);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -818,6 +849,38 @@ class change_log_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param change_log_list $log_lst the user sandbox object e.g. a word
      */
+    /**
+     * check the sql to load the link changes of one object for Postgres and MySQL
+     *
+     * @param string $class the class of the object whose link changes are loaded
+     * @param int|string $id the database id of the object
+     * @param change_log_link_list $cl_lst the link change list that creates the sql
+     * @param sql_db $db_con the unit test db connection that creates the sql creator
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    private function assert_sql_link_list_by_obj(
+        string               $class,
+        int|string           $id,
+        change_log_link_list $cl_lst,
+        sql_db               $db_con,
+        test_cleanup         $t): void
+    {
+        $sc = $db_con->sql_creator();
+
+        // check the Postgres query syntax
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $cl_lst->load_sql_by_obj($sc, $class, $id, $t->usr1);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $cl_lst->load_sql_by_obj($sc, $class, $id, $t->usr1);
+            $t->assert_qp($qp, $sc->db_type);
+        }
+    }
+
     private function assert_sql_list_last(
         string          $class,
         int|string      $id,

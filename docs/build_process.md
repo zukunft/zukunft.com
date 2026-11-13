@@ -1,5 +1,4 @@
-Build Process (planned)
--------------
+# Build Process (planned)
 
 The automatic build process starts these steps if the development branch has been updated:
 

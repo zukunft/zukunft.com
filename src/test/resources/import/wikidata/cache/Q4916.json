@@ -4,8 +4,8 @@
             "pageid": 5867,
             "ns": 0,
             "title": "Q4916",
-            "lastrevid": 2562478881,
-            "modified": "2026-10-30T07:46:45Z",
+            "lastrevid": 2568293449,
+            "modified": "2026-11-12T13:19:51Z",
             "type": "item",
             "id": "Q4916",
             "labels": {
@@ -1202,6 +1202,10 @@
                 "ast": {
                     "language": "ast",
                     "value": "moneda común europea"
+                },
+                "gd": {
+                    "language": "gd",
+                    "value": "airgead an Aonaidh Eòrpaich"
                 }
             },
             "aliases": {
@@ -1485,6 +1489,16 @@
                     {
                         "language": "es",
                         "value": "€"
+                    }
+                ],
+                "gd": [
+                    {
+                        "language": "gd",
+                        "value": "Eòro"
+                    },
+                    {
+                        "language": "gd",
+                        "value": "Iùro"
                     }
                 ]
             },
@@ -10378,6 +10392,23 @@
                                 ]
                             }
                         ]
+                    }
+                ],
+                "P4802": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P4802",
+                            "hash": "8d0a5a7115e45be8b4241bed05c537c14706f864",
+                            "datavalue": {
+                                "value": "102610",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$EB5DF6EF-EEC1-49D0-9A74-CAE4755212A1",
+                        "rank": "normal"
                     }
                 ]
             },

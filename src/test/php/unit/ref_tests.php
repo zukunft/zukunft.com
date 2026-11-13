@@ -45,6 +45,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
@@ -52,7 +53,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -61,13 +64,16 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
+use DateTimeInterface;
 
 class ref_tests
 {
@@ -122,6 +128,12 @@ class ref_tests
         $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::POSTGRES);
         $sc->reset(sql_db::MYSQL);
         $t->assert_qp($ref_lst->load_sql_by_phr_id($sc, 1), sql_db::MYSQL);
+        // the wikidata references of the items that a wikidata import names, by the key that the user sees
+        $wd_keys = [refs::ZURICH_CITY_WIKIDATA_KEY, refs::GENEVA_KEY];
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($ref_lst->load_sql_by_type_and_keys($sc, ref_types::WIKIDATA_ID, $wd_keys), sql_db::POSTGRES);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($ref_lst->load_sql_by_type_and_keys($sc, ref_types::WIKIDATA_ID, $wd_keys), sql_db::MYSQL);
 
         $t->subheader($ts . 'sql write insert');
         $ref = $t_ref->reference();
@@ -136,6 +148,21 @@ class ref_tests
         $ref = $t_ref->reference_incomplete();
         $t->assert_sql_insert_fail($sc, $ref, [sql_type::LOG]);
 
+        // the external key is the to of a reference, but a user can overwrite it, so a user who changes
+        // the key of a reference of another owner must find the new key in the own overlay row
+        $test_name = 'the overlay row of a user who changes the external key includes the external key';
+        $msg = new user_message($t->usr1);
+        $std_ref = $t_ref->reference_math();
+        $usr_ref = $t_ref->reference_math();
+        $usr_ref->set_external_key(refs::CHANGE_NEW_KEY);
+        $par_lst = new sql_type_list([sql_type::LOG, sql_type::USER, sql_type::INSERT, sql_type::NO_ID_RETURN]);
+        $fvt_lst = $usr_ref->db_fields_changed($std_ref, $msg, $par_lst);
+        $qp = $usr_ref->sql_insert_switch(new sql_creator(), $fvt_lst, $usr_ref->db_fields_all(), $msg, $par_lst);
+        $usr_tbl = sql_db::TBL_USER_PREFIX . new library()->class_to_table(ref::class);
+        $usr_insert = substr($qp->sql, strpos($qp->sql, $usr_tbl));
+        $t->assert_text_contains($test_name, $usr_insert, ref_fields::FLD_EX_KEY);
+        $t->assert_msg($test_name, $msg);
+
         $t->subheader($ts . 'sql write update');
         $ref = $t_ref->reference_change();
         $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
@@ -144,6 +171,20 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'do not update a link guard');
+        // the phrase and the reference type identify a reference
+        global $sys;
+        $t_wrd = new test_words($t);
+        $ref_from = $ref->clone_all();
+        $ref_from->set_fob($t_wrd->word()->phrase());
+        $ref_type = $ref->clone_all();
+        $ref_type->set_predicate_id($sys->typ_lst->ref_typ->id(ref_types::WIKIPEDIA));
+        $t->assert_link_guard($sc, $ref, ['phrase' => $ref_from, 'type' => $ref_type]);
+        // ... but the external key is a normal field, e.g. if a later import names another wikipedia page
+        $test_name = 'another external key is no link change';
+        $ref_key = $ref->cloned_linked(refs::CHANGE_OLD_KEY);
+        $t->assert_false($test_name, $ref_key->is_link_changed($ref));
 
         $t->subheader($ts . 'sql delete');
         // TODO Prio 1 log deleting the link by logging the change of the external link to empty
@@ -236,6 +277,13 @@ class ref_tests
         $t->assert($test_name, $ref_map->phrase_id(), 0);
         $msg->reset();
 
+        // a reference of a triple must stay linked to the triple and not move to the word with the same id
+        $test_name = 'the api mapper keeps the negative phrase id of a triple';
+        $trp_phr_id = triple_names::CANTON_ZURICH_ID * -1;
+        $ref_map->api_mapper([json_fields::ID => refs::ZURICH_CANTON_WIKIDATA_ID, json_fields::PHRASE_ID => $trp_phr_id], $msg);
+        $t->assert($test_name, $ref_map->phrase_id(), $trp_phr_id);
+        $msg->reset();
+
         // the base url of a reference type is part of the pod setup, so a trusted source sets it
         $test_name = 'the trusted api mapper sets the base url of a reference type';
         $ref_typ = new ref_type();
@@ -311,6 +359,28 @@ class ref_tests
         $t->assert_key_not_exists($test_name, json_fields::IMPACT, $vars);
         $msg->reset();
 
+        // the time of the external page is sent with its time zone, so that the frontend can convert it
+        $test_name = 'the page time of a refreshed wikipedia reference';
+        $ref = $t_ref->reference_math_wikipedia();
+        $ref->set_page_time(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $ref->api_json_array([], $msg);
+        $page_time = $vars[json_fields::PAGE_TIME] ?? '';
+        $t->assert($test_name, $page_time, test_const::DUMMY_DATETIME);
+        $msg->reset();
+
+        // a reused reference must not keep the time of an earlier refresh
+        $test_name = 'a reset reference has no page time';
+        $ref->reset(true);
+        $page_time = $ref->page_time()?->format(DateTimeInterface::ATOM);
+        $t->assert_null($test_name, $page_time);
+
+        // negative: a reference that has not been refreshed sends no page time
+        $test_name = 'no page time of a reference without refresh';
+        $ref = $t_ref->reference_math_wikipedia();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PAGE_TIME, $vars);
+        $msg->reset();
+
         // a reference list sends one entry per reference
         $test_name = 'one entry per reference of a list';
         $ref_lst = $t_ref->ref_list_math();
@@ -345,6 +415,17 @@ class ref_tests
         $t->subheader($ts . 'frontend');
         $ref = $t_ref->reference_plus();
         $t->assert_api_to_ui($ref, new ref_ui());
+
+        $test_name = 'the frontend reference reads the page time of the refresh';
+        $ref = $t_ref->reference_math_wikipedia();
+        $ref->set_page_time(new DateTime(test_const::DUMMY_DATETIME));
+        $ref_ui = new ref_ui($ref->api_json([api_types::TEST_MODE]));
+        $t->assert($test_name, $ref_ui->page_time, test_const::DUMMY_DATETIME);
+
+        // negative: a reference without refresh has no page time in the frontend
+        $test_name = 'a frontend reference without refresh has no page time';
+        $ref_ui = new ref_ui($t_ref->reference_math_wikipedia()->api_json([api_types::TEST_MODE]));
+        $t->assert_null($test_name, $ref_ui->page_time);
 
         // the ref edit view shows the last update time and the system calculated impact as
         // display only info, because the user can never change these two db fields

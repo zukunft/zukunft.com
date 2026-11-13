@@ -75,7 +75,7 @@ class phrase_list_write_tests
         $t->header($ts);
         // cleanup any leftovers of a previous failed test run (triples first because they link words)
         $t_trp->cleanup($ts);
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         // TODO Prio 2 make prepare not needed any more
         $t_db->test_word($msg, words::CHF, phrase_type_shared::MEASURE);
@@ -167,7 +167,7 @@ class phrase_list_write_tests
         $t->assert_contains_not('phrase_list->ex_scaling ex ' . $phr_lst->dsp_name(), $result, $target);
 
         // cleanup - fallback delete
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which

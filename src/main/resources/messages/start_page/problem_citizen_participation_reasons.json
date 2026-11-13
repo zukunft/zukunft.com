@@ -6,7 +6,7 @@
   "selection": [
     "citizen participation reasons that cause costs"
   ],
-  "description": "The most relevant reasons why too little or too coarse citizen participation causes costs, each linked to citizen participation with 'can cause' and quantified by the studies that report it for the world and per country: the lower trust in the national government of the people who feel that they have no say in what the government does (OECD Trust Survey 2024), the public overspending without a mandatory fiscal referendum (Feld & Matsusaka 2003), the budget misallocation away from health and sanitation and the higher infant mortality without participatory budgeting in Brazil (Gonçalves 2014), the lower life satisfaction with weaker direct democratic rights in the Swiss cantons (Frey & Stutzer 2000) and the higher tax evasion in the Swiss cantons with less direct democracy (Frey, as reported by the Times Higher Education 1997). The share of the people who feel that they have a say, the trust in the national government, the decline of the voter turnout and the share of the elections whose result is rejected by a loser (International IDEA 2024) are added as the context of the problem; these values are not attributed to the lack of citizen participation by their sources, so they do not carry a '<reason> due to citizen participation' triple. The binary referendum position count, the loss of the problem and its solution are stated in problem_citizen_participation.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a percentage point difference also as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample, period and metric, and most of them compare more participation with less participation in one country, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro; an amount in Swiss francs is not converted, but the value is stored as the share that the source reports and the franc amount is kept in the description. A value of a reason carries the triple '<reason> due to citizen participation' and not the phrase 'citizen participation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why too little or too coarse citizen participation causes costs, each linked to citizen participation with 'can cause' and quantified by the studies that report it for the world and per country: the lower trust in the national government of the people who feel that they have no say in what the government does (OECD Trust Survey 2024), the public overspending without a mandatory fiscal referendum (Feld & Matsusaka 2003), the budget misallocation away from health and sanitation and the higher infant mortality without participatory budgeting in Brazil (Gonçalves 2014), the lower life satisfaction with weaker direct democratic rights in the Swiss cantons (Frey & Stutzer 2000) and the higher tax evasion in the Swiss cantons with less direct democracy (Frey, as reported by the Times Higher Education 1997). The share of the people who feel that they have a say, the trust in the national government, the decline of the voter turnout and the share of the elections whose result is rejected by a loser (International IDEA 2024) are added as the context of the problem; these values are not attributed to the lack of citizen participation by their sources, so they do not carry a '<reason> due to citizen participation' triple. The binary referendum position count, the loss of the problem and its solution are stated in problem_citizen_participation.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a percentage point difference also as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample, period and metric, and most of them compare more participation with less participation in one country, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro; an amount in Swiss francs is not converted, but the value is stored as the share that the source reports and the franc amount is kept in the description. A value of a reason carries the triple '<reason> due to citizen participation' and not the phrase 'citizen participation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the citizen participation reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "citizen"
@@ -189,6 +189,33 @@
     },
     {
       "name": "2020-2024"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -403,6 +430,126 @@
       "verb": "can cause",
       "to": "tax evasion",
       "description": "citizens who have less say in how the tax money is spent feel less bound to pay the tax"
+    },
+    {
+      "name": "citizen participation reason",
+      "description": "a reason of the potential loss of citizen participation; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "citizen participation"
+    },
+    {
+      "name": "budget misallocation (citizen participation reason)",
+      "from": "budget misallocation",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "trust gap (citizen participation reason)",
+      "from": "trust gap",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "public overspending (citizen participation reason)",
+      "from": "public overspending",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "infant mortality (citizen participation reason)",
+      "from": "infant mortality",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "life satisfaction loss (citizen participation reason)",
+      "from": "life satisfaction loss",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "tax evasion (citizen participation reason)",
+      "from": "tax evasion",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "citizen participation reason columns",
+      "description": "the own columns of the table of the citizen participation reasons",
+      "from": "citizen participation reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "citizen participation reason columns reason",
+      "from": "citizen participation reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "citizen participation reason columns potential loss in EUR",
+      "from": "citizen participation reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "citizen participation reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "citizen participation reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "citizen participation reason sort",
+      "description": "the own default sorting of the table of the citizen participation reasons, the biggest potential loss on top",
+      "from": "citizen participation reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "citizen participation reason sort numeric descending of potential loss in EUR",
+      "from": "citizen participation reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

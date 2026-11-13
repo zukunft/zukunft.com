@@ -78,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -202,6 +204,32 @@ class value_tests
         $val_filled = $val->clone_reset();
         $val_filled->fill($val, $t->usr1);
         $t->assert($test_name, $val_filled->grp()->name_given(), '');
+
+        // a table shows the source of a value as the tooltip of the number, so the api message that
+        // brings the values brings their sources too and the frontend needs no extra call
+        $t->subheader($ts . 'source');
+        $test_name = 'the api json of a value nests its source if the sources are asked';
+        $val_src = $t_val->value_pi_math();
+        $val_src->set_source(new test_sources($t)->source_reserved());
+        $src_json = $val_src->api_json_array([api_types::INCL_SOURCES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $src_json[json_fields::SOURCE][json_fields::URL] ?? '', sources::SIB_URL);
+        $test_name = '... so the frontend has the source name without a load';
+        $src_ui = new value_ui();
+        $src_ui->api_mapper($src_json, new user_message_ui());
+        $t->assert($test_name, $src_ui->src?->name() ?? '', sources::SIB);
+        // negative: the plain api message stays small
+        $test_name = '... but not if the sources are not asked';
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $val_src->api_json_array([api_types::TEST_MODE], $msg));
+        $test_name = 'the values related to a word ask for the sources and keep the test mode';
+        $rel_typ = new api_type_list([api_types::TEST_MODE])->values_related();
+        $t->assert_true($test_name, $rel_typ->include_sources() and $rel_typ->test_mode());
+        $test_name = 'the values of each phrase are loaded with a call of their own if asked';
+        $per_phr_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        $t->assert_true($test_name, $per_phr_typ->load_per_phrase());
+        // negative: without the flag the phrases are loaded with one call
+        $test_name = '... but not without the flag';
+        $one_call_typ = new api_type_list([api_types::TEST_MODE]);
+        $t->assert_false($test_name, $one_call_typ->load_per_phrase());
 
         // the description that the user types in the change value view is the description of the group
         $t->subheader($ts . 'description');
@@ -427,7 +455,7 @@ class value_tests
         // the single steps of the delete of a value: the delete either removes the row or, if another
         // user has used the value, excludes it with a user row, so each step of this decision is
         // checked here, because a wrong step writes a row that no user can select again
-        // (see sandbox_multi::del and save_fields_func)
+        // (see sandbox_multi::del and save_changes)
         $t->subheader($ts . 'delete steps');
 
         // step 1: the delete is skipped if the value has no key, so the key check must never
@@ -477,7 +505,7 @@ class value_tests
         $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
         $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
         // a user row of a value without source is stored with the placeholder source, so the
-        // update of a repeated import must use the placeholder too (sandbox_multi::save_fields_func)
+        // update of a repeated import must use the placeholder too (sandbox_multi::sql_update_user)
         $val_stored = $t_val->value_16();
         $val_stored->set_source_id(sources::TRUST_ME_BRO_ID);
         $val_no_src = $t_val->value_16();
@@ -574,6 +602,17 @@ class value_tests
         $val->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert_false($test_name, $val->has_usr_cfg());
 
+        // a value without external source has the user as source, which the user row is stored and shown with
+        $test_name = 'a loaded user value without external source shows "my estimates"';
+        $val = new value($t->usr1);
+        $db_row[sandbox::FLD_CHANGE_USER] = $t->usr1->id();
+        $db_row[source_fields::FLD_ID] = sources::TRUST_ME_BRO_ID;
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert($test_name, $val->source_id(), sources::TRUST_ME_BRO_ID);
+        $test_name = '... because the load never replaces it by the source of the standard row';
+        $qp_load = $t_val->value_16()->load_sql_by_grp($sc, $t_val->value_16()->grp());
+        $t->assert_text_not_contains($test_name, $qp_load->sql, fields::FLD_CODE_ID);
+
         // step 6: each reload of the delete must keep the key of the value, but the group id of a
         // main or big row is a text, which a cast to int would turn into 0
         $test_name = 'the text group id of a row is kept even if the table type says prime';
@@ -606,7 +645,7 @@ class value_tests
         $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
         // a prime value is not selected by the group id but by the phrase ids of the group
         $test_name = '... and the key fields of a prime value write are the phrases of the group';
-        $val_prime = $t_val->value_ch();
+        $val_prime = $t_val->value_prime_4();
         $val_prime->id = 0;
         $fvt_lst = $val_prime->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
         $t->assert($test_name, $fvt_lst->get_value($val_prime->id_fields_prime()[0]),
@@ -764,7 +803,12 @@ class value_tests
         $val_3 = $t_val->value_prime_3();
         $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
         $db_val_3_share = $t_val->value_shared($val_3);
-        $val_4 = $t_val->value_prime_max();
+        $val_4 = $t_val->value_prime_4();
+        $db_val_4 = $val_4->cloned(values::SAMPLE_FLOAT);
+        $test_name = 'a value of four phrases with an id of at most 31 is saved in the prime table';
+        $t->assert_true($test_name, $val_4->is_prime());
+        $test_name = '... but not without such an id, e.g. Zurich, inhabitants, 2019 and million';
+        $t->assert_false($test_name, $t_val->value_prime_max()->is_prime());
         $val_main = $t_val->value_main();
         $db_val_main_share = $t_val->value_shared($val_3);
         $val_16 = $t_val->value_16();
@@ -809,6 +853,8 @@ class value_tests
         $t->assert_sql_update($sc, $val_3, $db_val_3);
         $t->assert_sql_update($sc, $val_3, $db_val_3, [sql_type::USER]);
         $t->assert_sql_update($sc, $val_3, $db_val_3_share, [sql_type::LOG]);
+        // the number change of a prime value with four phrases is logged with the field of the standard table
+        $t->assert_sql_update($sc, $val_4, $db_val_4, [sql_type::LOG]);
         $t->assert_sql_update($sc, $val_main, $db_val_main_share, [sql_type::LOG]);
         $t->assert_sql_update($sc, $val_16, $db_val_16);
         $t->assert_sql_update($sc, $val_16, $db_val_16, [sql_type::LOG]);
@@ -821,6 +867,39 @@ class value_tests
         $t->assert_sql_update_owner($sc, $t->usr2, $val_3, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_16, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_17, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write of the user row');
+        // fresh objects, because the builders set the source of the user row (set_user_table_source)
+        $usr_val_3 = $t_val->value_prime_3();
+        $usr_db_val_3 = $usr_val_3->cloned(values::SAMPLE_FLOAT);
+        $usr_val_17 = $t_val->value_17_plus();
+        $usr_db_val_17 = $usr_val_17->cloned(values::SAMPLE_FLOAT);
+        // the exclusion of a value that another user uses, because the number change of value_16 is tested above
+        $usr_val_16_ex = $t_val->value_16();
+        $usr_val_16_ex->exclude();
+        $usr_db_val_16 = $t_val->value_16();
+        // the user row of a prime, a most and a big value table
+        $t->assert_sql_update_user($sc, $usr_val_3, $usr_db_val_3);
+        $t->assert_sql_update_user($sc, $usr_val_16_ex, $usr_db_val_16);
+        $t->assert_sql_update_user($sc, $usr_val_17, $usr_db_val_17);
+        $test_name = 'no user row update if the user row has already all overwrites';
+        $qp = $usr_db_val_16->sql_update_user($sc, $usr_db_val_16, $msg);
+        $qp_name = $qp?->name;
+        $t->assert_null($test_name, $qp_name);
+        // the insert of the user row with the fields that differ from the standard row; the prime table
+        // is covered by the insert with log of the user row above, which is the same prepared statement
+        $ins_val_16 = $t_val->value_16();
+        $std_val_16 = $ins_val_16->cloned(values::SAMPLE_FLOAT);
+        $ins_val_17 = $t_val->value_17_plus();
+        $std_val_17 = $ins_val_17->cloned(values::SAMPLE_FLOAT);
+        $t->assert_sql_save_fields($sc, $ins_val_16, $std_val_16, [sql_type::LOG]);
+        $t->assert_sql_save_fields($sc, $ins_val_17, $std_val_17, [sql_type::LOG]);
+        // the insert itself always writes the source key of the user row (value_base::db_fields_changed),
+        // so the decision of save_user_row is what prevents a user row without change
+        $test_name = 'a value that does not differ from the standard row is no difference, so no user row is inserted';
+        $same_val_16 = $t_val->value_16();
+        $std_same_val_16 = $t_val->value_16();
+        $t->assert_true($test_name, $same_val_16->no_diff($std_same_val_16, $msg));
         // the owner is the user of the standard row, so an owner change is only detected against
         // a db row of the old owner and never against a db row of the same user as save uses it,
         // which has left the owner unchanged when a value was deleted (see sandbox_multi::set_owner)
@@ -1178,6 +1257,16 @@ class value_tests
         $vts->reset(true);
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
+
+        $t->subheader($ts . 'sql write');
+        // the update of the standard row and the insert of the user row of an excluded time series
+        $vts_db = new value_time_series($t->usr1);
+        $vts_db->set_grp($t_grp->group_16());
+        $vts_excl = new value_time_series($t->usr1);
+        $vts_excl->set_grp($t_grp->group_16());
+        $vts_excl->exclude();
+        $t->assert_sql_update($sc, $vts_excl, $vts_db, [sql_type::LOG]);
+        $t->assert_sql_save_fields($sc, $vts_excl, $vts_db, [sql_type::LOG]);
 
         $t->subheader($ts . 'data sql setup');
         $tsn = $t_val->value_ts_data();

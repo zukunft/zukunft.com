@@ -9,7 +9,7 @@
 
     a text diff of the two files is useless, because the generated page has the frame, the
     styles and the ids of the pod, so both pages are read as the items that a reader sees: the
-    title, the lead text, the headings, the input fields, the table rows, the buttons and the
+    title, the lead text, the headings, the input fields, the verdict, the table rows, the buttons and the
     list items of the notes and sources; the report lists what the generated page misses, what
     differs, what only the generated page has and where the order differs, as a markdown text
     that can be given to an llm as the prompt to bring the generated page closer to the sample
@@ -52,6 +52,7 @@ class html_page_diff
     // the separator of the numbers of the generated pages, which a number input of a sample cannot hold
     const string THOUSAND_SEP = "'";
     const string CLASS_FIELD = 'field';
+    const string CLASS_BUTTON = 'btn';
     const string CLASS_CHECK = 'check';
     const string CLASS_READ_ONLY = 'ro';
     const string CLASS_WARNING = 'warn';
@@ -62,6 +63,9 @@ class html_page_diff
     const string CLASS_SECTION = 'sec';
     const string CLASS_KEY = 'key';
     const string CLASS_SUB = 'sub';
+    const string CLASS_VERDICT = 'verdict';
+    const string CLASS_HEADLINE = 'headline';
+    const string CLASS_SCALE = 'scale';
 
     // the kinds of the items, which start the key of an item and name the order checks
     const string KIND_TITLE = 'title';
@@ -72,6 +76,7 @@ class html_page_diff
     const string KIND_SECTION = 'table section';
     const string KIND_ROW = 'row';
     const string KIND_WARNING = 'warning';
+    const string KIND_VERDICT = 'verdict';
     const string KIND_BUTTON = 'button';
     const string KIND_LIST_ITEM = 'list item';
     // the kinds whose order is compared, because the reader sees them in this order
@@ -86,6 +91,21 @@ class html_page_diff
     const string PROP_SUB = 'sub text';
     const string PROP_BOLD = 'bold';
     const string PROP_CELLS = 'cells';
+
+    // what the llm that gets the report should change: the generated page to match the hand made sample
+    const string PROMPT_SAMPLE = 'Change the generated page %1$s so that it shows what the hand made sample'
+        . ' %2$s shows: add what is missing, correct what differs and remove what only the'
+        . ' generated page has, unless the sample lacks it by mistake. A number can differ for a good'
+        . ' reason, because the sample calculates its numbers with its own script, so check the value'
+        . ' or the formula before changing it. Fix a finding in the use case json or in the calculator'
+        . ' renderer, never in the sample or in the generated snapshot.';
+    // ... or the page preview of an editor to match the page that the preview shows
+    const string PROMPT_PREVIEW = 'Change the page preview of the editor %1$s so that it shows what the page'
+        . ' %2$s shows: add what is missing, correct what differs and remove what only the preview has.'
+        . ' Both are built by calculator_json.js, the preview from the data with the changes of the editor'
+        . ' (editedDoc of calculator_editor.js) and the page settings without the save, so a difference is'
+        . ' in that data or in those settings, except the save, which the preview leaves out on purpose.'
+        . ' Fix a finding in the editor, never in the page or in the generated snapshots.';
 
 
     /*
@@ -107,9 +127,34 @@ class html_page_diff
             // only a warning that the reader sees, because the sample hides the others
             $warnings = '//main//div[' . $this->has_class(self::CLASS_WARNING) . '][not(@hidden)]';
             $this->add_text_items($xpath, $warnings, self::KIND_WARNING, $result);
+            $this->add_verdict_items($xpath, $result);
             $this->add_table_items($xpath, $result);
-            $this->add_text_items($xpath, '//main//button', self::KIND_BUTTON, $result);
+            // a link that looks like a button is a button for the reader e.g. the pdf report
+            $this->add_text_items($xpath, '//main//button | //main//a[' . $this->has_class(self::CLASS_BUTTON) . ']', self::KIND_BUTTON, $result);
             $this->add_text_items($xpath, '//main//li', self::KIND_LIST_ITEM, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * the part of a page as the main part of a page of its own, so that page_items reads only that part
+     * e.g. the page preview of an editor without the structure tree and the settings next to it
+     *
+     * @param string $html the html code of a whole page
+     * @param string $id the id of the element that holds the part e.g. pane
+     * @return string the html page with the content of the element as its main part, empty if the page has no such element
+     */
+    function element_page(string $html, string $id): string
+    {
+        $result = '';
+        $xpath = $this->xpath($html);
+        $node = $xpath?->query('//*[@id="' . $id . '"]')->item(0);
+        if ($node != null) {
+            $inner = '';
+            foreach ($node->childNodes as $child) {
+                $inner .= $xpath->document->saveHTML($child);
+            }
+            $result = '<html><body><main>' . $inner . '</main></body></html>';
         }
         return $result;
     }
@@ -160,6 +205,35 @@ class html_page_diff
         foreach ($xpath->query($query) as $node) {
             $this->add_item($items, $kind . ': ' . $this->text($node), []);
         }
+    }
+
+    /**
+     * @param DOMXPath $xpath the query of the page
+     * @param array $items the items of the page to which an item per verdict box is added, named by its headline
+     *                     e.g. "verdict: Undecided on cost - ...", so that another text of the same state is a difference
+     */
+    private function add_verdict_items(DOMXPath $xpath, array &$items): void
+    {
+        foreach ($xpath->query('//main//div[' . $this->has_class(self::CLASS_VERDICT) . ']') as $verdict) {
+            // any tag, because the sample sets the class on the paragraph and the page on a span in it
+            $headline = $this->first_text($xpath, './/*[' . $this->has_class(self::CLASS_HEADLINE) . ']', $verdict);
+            $this->add_item($items, self::KIND_VERDICT . ': ' . $headline, [self::PROP_TEXT => $this->verdict_text($xpath, $verdict)]);
+        }
+    }
+
+    /**
+     * @param DOMXPath $xpath the query of the page
+     * @param DOMNode $verdict the verdict box
+     * @return string the texts of its paragraphs and of its scale separated by a bar, so that the white space
+     *                between the paragraphs, which only one of the pages has, is not a difference
+     */
+    private function verdict_text(DOMXPath $xpath, DOMNode $verdict): string
+    {
+        $parts = [];
+        foreach ($xpath->query('.//p | .//div[' . $this->has_class(self::CLASS_SCALE) . ']/span', $verdict) as $node) {
+            $parts[] = $this->text($node);
+        }
+        return implode(' | ', array_filter($parts, fn(string $part) => $part != ''));
     }
 
     /**
@@ -382,19 +456,21 @@ class html_page_diff
      * @param array $page the items of the generated page (page_items)
      * @param string $sample_name the file name of the sample e.g. pv_lifetime_balance_sample.html
      * @param string $page_name the file name of the generated page e.g. pv_lifetime_balance_no_js.html
+     * @param string $prompt_format the task for the llm with the page name and the sample name e.g. self::PROMPT_PREVIEW
      * @return string the markdown text with the differences and the prompt for an llm
      */
-    function report(array $sample, array $page, string $sample_name, string $page_name): string
+    function report(
+        array  $sample,
+        array  $page,
+        string $sample_name,
+        string $page_name,
+        string $prompt_format = self::PROMPT_SAMPLE
+    ): string
     {
         $missing = array_keys(array_diff_key($sample, $page));
         $extra = array_keys(array_diff_key($page, $sample));
         $title = 'Differences of ' . $page_name . ' to ' . $sample_name;
-        $prompt = 'Change the generated page ' . $page_name . ' so that it shows what the hand made sample '
-            . $sample_name . ' shows: add what is missing, correct what differs and remove what only the'
-            . ' generated page has, unless the sample lacks it by mistake. A number can differ for a good'
-            . ' reason, because the sample calculates its numbers with its own script, so check the value'
-            . ' or the formula before changing it. Fix a finding in the use case json or in the calculator'
-            . ' renderer, never in the sample or in the generated snapshot.';
+        $prompt = sprintf($prompt_format, $page_name, $sample_name);
         return '# ' . $title . "\n\n" . $prompt . "\n"
             . $this->report_section('Missing in the generated page', $missing)
             . $this->report_section('Different', $this->different_lines($sample, $page))
@@ -464,7 +540,7 @@ class html_page_diff
      * @param array $lines the findings of the section
      * @return string the markdown of the section with the number of findings in the heading and one list entry per finding
      */
-    private function report_section(string $title, array $lines): string
+    function report_section(string $title, array $lines): string
     {
         $result = "\n" . '## ' . $title . ' (' . count($lines) . ')' . "\n";
         if ($lines != []) {

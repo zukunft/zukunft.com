@@ -37,19 +37,41 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
+use DateTimeZone;
+use DOMDocument;
 
 class reference_ui_tests
 {
+
+    // the description that the backend has taken from the wikipedia page of mathematics
+    const string MATH_WIKIPEDIA_COM = 'Mathematics is a field of study that discovers and organizes methods, theories and theorems.';
+    // the description that the backend has taken from the wikipedia page of geneva
+    const string GENEVA_WIKIPEDIA_COM = 'Geneva is the second-most populous city in Switzerland.';
+    // a page time that the backend has not sent in the api format
+    const string INVALID_PAGE_TIME = '07.11.2026 14:48';
+
     function run(test_cleanup $t): void
     {
         global $mtr;
@@ -194,10 +216,331 @@ class reference_ui_tests
         $test_name = 'the reference page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
 
-        // an empty tab is dropped, so a reference whose api message carries no related
-        // views shows no views tab instead of an empty one
-        $test_name = 'a reference without related views shows no views tab';
+        // the views of an object are offered by the edit menu of the navbar only
+        $test_name = 'the reference page shows no views tab';
         $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+
+        $t->subheader($ts . 'wikipedia refresh');
+
+        // the stored word and the word as the backend answers the wikipedia refresh
+        $t_wrd = new test_words($t);
+        $refresh_par = url_var::REFRESH . '=' . url_var::REFRESH_WIKIPEDIA;
+        $edit_url = [url_var::MASK => views::WORD_EDIT_ID, url_var::ID => word_names::MATH_ID];
+        $old = new word_ui($t_wrd->word_math()->api_json());
+        $old->description = word_names::MATH_COM;
+        $old->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $new = new word_ui($t_wrd->word_math()->api_json());
+        $new->description = self::MATH_WIKIPEDIA_COM;
+        $new->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $new_wd_ref = $new->ref_lst->get_by_type_code_id(ref_types::WIKIDATA);
+        $new_wd_ref->set_external_key(refs::CHANGE_NEW_KEY);
+        $phr = $old->phrase();
+
+        $test_name = 'a wikipedia reference links to the refresh of the phrase description';
+        $wiki_ref = $old->ref_lst->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $lnk_html = $wiki_ref->name_link();
+        $t->assert_text_contains($test_name, $lnk_html, $refresh_par);
+
+        $test_name = 'a wikidata reference has no wikipedia refresh';
+        $lnk_html = $ref->name_link();
+        $t->assert_text_not_contains($test_name, $lnk_html, $refresh_par);
+
+        // the refresh icon of a wikidata reference opens the import preview of the values instead of a refresh job
+        $test_name = 'a wikidata reference links to the import preview of the values of wikidata';
+        $wikidata_par = url_var::REFRESH . '=' . url_var::REFRESH_WIKIDATA;
+        $t->assert_text_contains($test_name, $lnk_html, $wikidata_par);
+
+        // negative: the wikipedia refresh stays the refresh of the description
+        $test_name = '... and a wikipedia reference has no wikidata refresh';
+        $t->assert_text_not_contains($test_name, $wiki_ref->name_link(), $wikidata_par);
+
+        $test_name = 'an empty reference list has no wikipedia reference';
+        $no_ref = new ref_list_ui()->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $t->assert_null($test_name, $no_ref?->external_key());
+
+        $test_name = 'the wikipedia refresh shows the confirm page of the edit';
+        $cnf_url = $phr->confirm_url_of_refresh($edit_url, $old, $new, $msg);
+        $mask = $cnf_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::CONFIRM_EDIT_ID);
+
+        $test_name = '... with the wikipedia text as the new description';
+        $description = $cnf_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, self::MATH_WIKIPEDIA_COM);
+
+        $test_name = '... with the stored description as the from value';
+        $pre_description = $cnf_url[url_var::PRE . url_var::DESCRIPTION];
+        $t->assert($test_name, $pre_description, word_names::MATH_COM);
+
+        $wd_row = phrase_ui::REFRESH_WIKIDATA_ROW;
+        $test_name = '... and with the changed wikidata id as a reference row of the same confirm';
+        $cnf_rows = url_var::ref_rows($cnf_url);
+        $t->assert($test_name, $cnf_rows[$wd_row][url_var::EXTERNAL_KEY] ?? '', refs::CHANGE_NEW_KEY);
+        $test_name = '... that changes the stored wikidata reference';
+        $t->assert($test_name, $cnf_rows[$wd_row][url_var::ACTION] ?? '', url_var::CRUD_UPDATE);
+        $test_name = '... with the stored wikidata id as the from value';
+        $cnf_pre = url_var::ref_row_pre_values($cnf_url);
+        $t->assert($test_name, $cnf_pre[$wd_row][url_var::EXTERNAL_KEY] ?? '', refs::MATH_KEY);
+
+        $test_name = 'a phrase without wikidata reference gets its add with the same confirm';
+        $no_wd = clone $old;
+        $no_wd->ref_lst = $t_ref->ref_list_math_without_wikidata_ui();
+        $add_url = $phr->confirm_url_of_refresh($edit_url, $no_wd, $new, $msg);
+        $add_rows = url_var::ref_rows($add_url);
+        $t->assert($test_name, $add_rows[$wd_row][url_var::ACTION] ?? '', url_var::CRUD_CREATE);
+        $test_name = '... still on the confirm page of the description';
+        $t->assert($test_name, $add_url[url_var::MASK], views::CONFIRM_EDIT_ID);
+        $msg->reset();
+
+        // the answer of the backend that differs from the stored phrase only in the description
+        $new_com = clone $old;
+        $new_com->description = self::MATH_WIKIPEDIA_COM;
+
+        $test_name = 'an unchanged wikidata id is not confirmed again';
+        $same_url = $phr->confirm_url_of_refresh($edit_url, $old, $new_com, $msg);
+        $t->assert($test_name, url_var::ref_rows($same_url), []);
+
+        $test_name = '... but the changed description is';
+        $mask = $same_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::CONFIRM_EDIT_ID);
+        $msg->reset();
+
+        // the answer of the backend that differs from the stored phrase only in the wikidata id
+        $new_wd = clone $old;
+        $new_wd->ref_lst = $new->ref_lst;
+
+        $test_name = 'a changed wikidata id alone is confirmed as a reference row';
+        $wd_url = $phr->confirm_url_of_refresh($edit_url, $old, $new_wd, $msg);
+        $wd_rows = url_var::ref_rows($wd_url);
+        $wd_key = $wd_rows[$wd_row][url_var::EXTERNAL_KEY] ?? '';
+        $t->assert($test_name, $wd_key, refs::CHANGE_NEW_KEY);
+
+        $test_name = '... on the confirm page with the stored description';
+        $description = $wd_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, word_names::MATH_COM);
+        $msg->reset();
+
+        $lib = new library();
+        $test_name = 'a phrase in line with wikipedia shows the page of the phrase again';
+        $in_line_url = $phr->confirm_url_of_refresh($edit_url, $old, $old, $msg);
+        $mask = $in_line_url[url_var::MASK];
+        $t->assert($test_name, $mask, views::WORD_ID);
+
+        $test_name = '... with the message that no update is needed';
+        $in_line_txt = $lib->msg_var_text([[msg_id::WIKIPEDIA_IN_LINE_NO_TIME, [msg_id::VAR_NAME => word_names::MATH]]], $mtr);
+        $t->assert($test_name, $msg->text(), $in_line_txt);
+
+        $test_name = '... which is an info and no warning';
+        $t->assert_true($test_name, $msg->is_ok());
+        $msg->reset();
+
+        // the answer of the backend with the time of the wikipedia page, which is shown in the time zone of the pod
+        global $ui_sys;
+        $timed = clone $old;
+        $timed->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $timed_wiki_ref = $timed->ref_lst->get_by_type_code_id(ref_types::WIKIPEDIA);
+        $timed_wiki_ref->page_time = test_const::DUMMY_DATETIME;
+        $pod_time = new DateTime(test_const::DUMMY_DATETIME)->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        $time_txt = $pod_time->format($ui_sys->cfg->date_time_format());
+
+        $test_name = 'the message of a phrase in line with wikipedia names the time of the page';
+        $phr->confirm_url_of_refresh($edit_url, $old, $timed, $msg);
+        $timed_vars = [msg_id::VAR_NAME => word_names::MATH, msg_id::VAR_TIME => $time_txt];
+        $timed_txt = $lib->msg_var_text([[msg_id::WIKIPEDIA_IN_LINE, $timed_vars]], $mtr);
+        $t->assert($test_name, $msg->text(), $timed_txt);
+        $msg->reset();
+
+        // negative: a page time that is not in the api format is a program error, which is reported
+        $test_name = 'a page time in another format is reported as an internal error';
+        $timed_wiki_ref->page_time = self::INVALID_PAGE_TIME;
+        $page_time_txt = null;
+        $call = function () use ($timed_wiki_ref, $msg, &$page_time_txt) {
+            $page_time_txt = $timed_wiki_ref->page_time_text($msg);
+        };
+        $t->assert_log_err($test_name, $call, self::INVALID_PAGE_TIME, $msg);
+
+        $test_name = '... and names no time';
+        $t->assert($test_name, $page_time_txt, '');
+        $msg->reset();
+
+        // negative: without any wikidata item the refresh changes nothing
+        $test_name = 'a wikipedia page without wikidata item shows the page of the phrase again';
+        $none_url = $phr->confirm_url_of_refresh($edit_url, $no_wd, $no_wd, $msg);
+        $t->assert($test_name, $none_url[url_var::MASK], views::WORD_ID);
+        $test_name = '... with the message that no wikidata link has been found';
+        $t->assert_text_contains($test_name, $msg->text(), word_names::MATH);
+        $msg->reset();
+
+        $test_name = 'the confirm page of a triple keeps its to phrase';
+        $t_trp = new test_triples($t);
+        $ge_old = $t_trp->triple_ge_ui();
+        $ge_old->ref_lst = $t_ref->ref_list_geneva_ui();
+        $ge_new = $t_trp->triple_ge_ui();
+        $ge_new->ref_lst = $t_ref->ref_list_geneva_ui();
+        $ge_new->description = self::GENEVA_WIKIPEDIA_COM;
+        $ge_edit_url = [url_var::MASK => views::TRIPLE_EDIT_ID, url_var::ID => triple_names::CITY_GE_ID];
+        $ge_url = $ge_old->phrase()->confirm_url_of_refresh($ge_edit_url, $ge_old, $ge_new, $msg);
+        $to_id = $ge_url[url_var::PHRASE_TO] ?? 0;
+        $t->assert($test_name, $to_id, word_names::CITY_ID);
+
+        $test_name = '... and its stored to phrase, so that only the description is written';
+        $pre_to_id = $ge_url[url_var::PRE . url_var::PHRASE_TO] ?? 0;
+        $t->assert($test_name, $pre_to_id, word_names::CITY_ID);
+
+        $test_name = '... with the wikipedia text as the new description';
+        $description = $ge_url[url_var::DESCRIPTION];
+        $t->assert($test_name, $description, self::GENEVA_WIKIPEDIA_COM);
+        $msg->reset();
+
+        $preview = new ui_preview();
+        $refs_title = $mtr->txt(msg_id::INFO_CONFIRM_REFS);
+        $test_name = 'the confirm page lists the reference changes of the same confirm';
+        $cnf_html = $preview->popup_changes($msg, $cnf_url, $old, true);
+        $t->assert_text_contains($test_name, $cnf_html, $refs_title);
+        // the cells of the reference table, because the hidden '86' input carries the stored id too
+        $test_name = '... with the new wikidata id as to';
+        $new_cell = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . refs::CHANGE_NEW_KEY . '</span>');
+        $t->assert_text_contains($test_name, $cnf_html, $new_cell);
+        $test_name = '... and the stored one as from';
+        $old_cell = $html->td('<span class="' . styles::STYLE_GREY . '">' . refs::MATH_KEY . '</span>');
+        $t->assert_text_contains($test_name, $cnf_html, $old_cell);
+        $msg->reset();
+
+        $test_name = 'a confirm page without reference change lists no reference';
+        $same_html = $preview->popup_changes($msg, $same_url, $old, true);
+        $t->assert_text_not_contains($test_name, $same_html, $refs_title);
+        $msg->reset();
+
+        $test_name = 'a confirm that changes only a reference still shows the impact of the change';
+        $t->assert_text_contains($test_name, $preview->popup_impact($wd_url), $mtr->txt(msg_id::POPUP_IMPACT));
+
+        $test_name = 'the confirm form carries the reference rows to the confirmed write';
+        $wd_key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . $wd_row;
+        $back_html = new system_form()->form_back(views::CONFIRM_EDIT_ID, word_names::MATH_ID, $cnf_url);
+        $t->assert_text_contains($test_name, $back_html, $html->form_hidden($wd_key_var, refs::CHANGE_NEW_KEY));
+        $msg->reset();
+
+        $t->subheader($ts . 'reference rows');
+
+        $test_name = 'the reference rows written to the url are read back unchanged';
+        $rows = [$wd_row => [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => refs::MATH_ID]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($rows)), $rows);
+        $test_name = '... and their stored values as from values';
+        $pre_rows = [$wd_row => [url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $rows_url = url_var::ref_row_url_array($rows, $pre_rows);
+        $t->assert($test_name, url_var::ref_row_pre_values($rows_url), $pre_rows);
+
+        $test_name = 'a delete row lists the stored external key of the reference as from';
+        $del_html = $preview->popup_changes($msg, array_merge($same_url, $rows_url), $old, true);
+        $from_cell = $html->td('<span class="' . styles::STYLE_GREY . '">' . refs::MATH_KEY . '</span>');
+        $t->assert_text_contains($test_name, $del_html, $from_cell);
+        $test_name = '... and nothing as to';
+        $to_cell = $html->td('<span class="' . styles::STYLE_CHANGED . '"></span>');
+        $t->assert_text_contains($test_name, $del_html, $to_cell);
+        $msg->reset();
+        // negative: a typed url cannot set the phrase of a row nor a row without action
+        $test_name = 'a row var that is not a reference field is ignored';
+        $phr_var = url_var::REF_ROW . url_var::PHRASE . $wd_row;
+        $typed_url = array_merge(url_var::ref_row_url_array($rows), [$phr_var => word_names::MATH_ID]);
+        $t->assert($test_name, url_var::ref_rows($typed_url), $rows);
+        $test_name = '... and a row without crud action is no change';
+        $key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . $wd_row;
+        $t->assert($test_name, url_var::ref_rows([$key_var => refs::MATH_KEY]), []);
+
+        // the edit form posts every stored reference and an empty add row, but only a real change is confirmed
+        $upd_rows = [$wd_row => [
+            url_var::ACTION => url_var::CRUD_UPDATE,
+            url_var::REF => refs::MATH_ID,
+            url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $test_name = 'an update row with all fields equal to their stored values is no change';
+        $same_pre = [$wd_row => [url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows, $same_pre)), []);
+        $test_name = '... but one changed field keeps the row';
+        $changed_pre = [$wd_row => [url_var::EXTERNAL_KEY => refs::CHANGE_NEW_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows, $changed_pre)), $upd_rows);
+        $test_name = '... and an update row without stored values is kept, like the rows of the confirmed post';
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($upd_rows)), $upd_rows);
+        $test_name = 'an add row without external key is no change';
+        $empty_add = [$wd_row => [url_var::ACTION => url_var::CRUD_CREATE, url_var::EXTERNAL_KEY => '']];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($empty_add)), []);
+        $test_name = '... but an add row with an external key is kept';
+        $key_add = [$wd_row => [url_var::ACTION => url_var::CRUD_CREATE, url_var::EXTERNAL_KEY => refs::MATH_KEY]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($key_add)), $key_add);
+        $test_name = 'a delete row is kept even if its stored values are unchanged';
+        $del_rows = [$wd_row => [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => refs::MATH_ID]];
+        $t->assert($test_name, url_var::ref_rows(url_var::ref_row_url_array($del_rows, $same_pre)), $del_rows);
+
+        $test_name = 'a written row is removed from the url together with its stored values';
+        $t->assert($test_name, url_var::without_ref_row($rows_url, $wd_row), []);
+
+        $t->subheader($ts . 'reference form rows');
+
+        // the edit form of a phrase shows its references as rows, so that the confirm of the phrase writes them too
+        $row_wrd = new word_ui($t_wrd->word_math()->api_json());
+        $row_wrd->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $rows_html = $sfm->form_ref_rows($row_wrd, views::WORD_EDIT, $msg, null, [], true);
+        $t->html_page_test($rows_html, 'reference form rows', 'reference_form_rows', $msg);
+        // the form shows the references in the order of the tab box, which form_ref_rows has set
+        $first_ref = $row_wrd->ref_lst->lst()[0];
+        $add_row = count($row_wrd->ref_lst->lst()) + 1;
+        $first_ref_var = url_var::REF_ROW . url_var::REF . 1;
+        $first_key_var = url_var::REF_ROW . url_var::EXTERNAL_KEY . 1;
+        $test_name = 'the edit form of a phrase changes its first reference in the first row';
+        $t->assert_text_contains($test_name, $rows_html, $html->form_hidden($first_ref_var, (string)$first_ref->id()));
+        $test_name = '... with the stored external key as the stored value of the row';
+        $pre_key_html = $html->form_hidden(url_var::PRE . $first_key_var, $first_ref->external_key());
+        $t->assert_text_contains($test_name, $rows_html, $pre_key_html);
+        $test_name = '... and adds a reference in the row after the stored references';
+        $add_act_var = url_var::REF_ROW . url_var::ACTION . $add_row;
+        $t->assert_text_contains($test_name, $rows_html, $html->form_hidden($add_act_var, url_var::CRUD_CREATE));
+        $test_name = '... where every html id of the rows is unique, because each field is shown in each row';
+        preg_match_all('/ id="([^"]+)"/', $rows_html, $id_matches);
+        $t->assert($test_name, count(array_unique($id_matches[1])), count($id_matches[1]));
+        // negative: only a word or triple has references as rows of its edit form
+        $test_name = 'an object that is not a phrase gets no reference rows';
+        $t->assert($test_name, $sfm->form_ref_rows($ref, views::WORD_EDIT, $msg, null, [], true), '');
+        $msg->reset();
+
+        $test_name = 'the form rows posted without a change are no reference change';
+        $posted = $this->posted_vars($rows_html);
+        $t->assert($test_name, url_var::ref_rows($posted), []);
+        $test_name = 'one changed key, one checked delete box and one filled add row are three reference changes';
+        $changed = $posted;
+        $changed[$first_key_var] = refs::CHANGE_NEW_KEY;
+        $changed[url_var::REF_ROW . url_var::ACTION . 2] = url_var::CRUD_DELETE;
+        $changed[url_var::REF_ROW . url_var::EXTERNAL_KEY . $add_row] = refs::MATH_KEY;
+        $t->assert($test_name, array_keys(url_var::ref_rows($changed)), [1, 2, $add_row]);
+    }
+
+    /**
+     * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
+     * if it is checked and a selector with its selected entry; a later field with the same name wins
+     *
+     * @param string $html the html code of the form fields
+     * @return array the posted url vars e.g. ['6a1' => 'u', '6ek1' => 'Q395']
+     */
+    private function posted_vars(string $html): array
+    {
+        $dom = new DOMDocument();
+        // the html5 tags are unknown to libxml, which reports them but reads the fields anyway
+        $use_errors = libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+        $result = [];
+        foreach ($dom->getElementsByTagName('input') as $input) {
+            $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
+            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))) {
+                $result[$input->getAttribute('name')] = $input->getAttribute('value');
+            }
+        }
+        foreach ($dom->getElementsByTagName('select') as $select) {
+            foreach ($select->getElementsByTagName('option') as $option) {
+                if ($option->hasAttribute('selected')) {
+                    $result[$select->getAttribute('name')] = $option->getAttribute('value');
+                }
+            }
+        }
+        return $result;
     }
 
 }

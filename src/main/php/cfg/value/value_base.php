@@ -145,7 +145,6 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -193,7 +192,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
-use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -396,6 +394,10 @@ class value_base extends sandbox_value
 
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
+        }
+        // e.g. the undo of a removed value includes the value again for the user
+        if (array_key_exists(json_fields::EXCLUDED, $api_json)) {
+            $this->set_excluded($api_json[json_fields::EXCLUDED]);
         }
         // only the request, the save checks if the user is an admin
         $this->set_default = (($api_json[json_fields::SET_DEFAULT] ?? false) === true);
@@ -667,16 +669,17 @@ class value_base extends sandbox_value
     }
 
     /**
-     * use the placeholder source for a value without source, because one user can link a value
-     * to more than one source, so the source id is part of the user value prime key and cannot
-     * be null; the insert, the update and the delete of a user row use it alike, or the update compares the
-     * missing source with the placeholder of the stored row and finds a change of a key field only
+     * a value without external source has the user as source, so its user row is stored with the
+     * source "my estimates" (see docs/llm/constants.md), because one user can link a value to more
+     * than one source, so the source id is part of the user value prime key and cannot be null;
+     * the insert, the update and the delete of a user row use it alike
      */
     protected function set_user_table_source(): void
     {
+        global $sys;
         if (!$this->has_source()) {
             $src = new source($this->get_user());
-            $src->id = sources::TRUST_ME_BRO_ID;
+            $src->id = $sys->no_source_id();
             $this->set_source($src);
         }
     }
@@ -2332,7 +2335,6 @@ class value_base extends sandbox_value
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value
-                // TODO Prio 2 if no one else has ever changed the value, change to default value, else create a user overwrite
 
                 // read the database value to be able to check if something has been changed
                 // done first, because it needs to be done for user and general values
@@ -2351,7 +2353,10 @@ class value_base extends sandbox_value
                 $std_rec->reset();
                 $std_rec->set_user($this->get_user()); // user must also be set to allow to take the ownership
                 $std_msg = $msg->clone_reset();
-                $std_rec->load_standard($this->id(), $std_msg);
+                // without the standard row the decision would compare with an empty value
+                if (!$std_rec->load_standard($this->id(), $std_msg)) {
+                    $msg->merge($std_msg);
+                }
                 log_debug("standard value settings loaded (" . $std_rec->get_value() . ")");
 
                 // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
@@ -2368,8 +2373,8 @@ class value_base extends sandbox_value
                 if ($msg->is_ok()) {
                     // make sure that only an admin user reduces or raises the protection level
                     $this->check_protection_change($db_rec, $msg);
-                    // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                    // the standard row if the user is the owner and no other user has adjusted the value, else the user row
+                    $this->save_changes($db_con, $db_rec, $std_rec, $msg);
                 } else {
                     log_warning('value ' . $this->dsp_id() . ' not saved');
                 }

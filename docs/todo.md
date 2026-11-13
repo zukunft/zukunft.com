@@ -1,5 +1,4 @@
-TODO notes
-----------
+# TODO notes
 
 A proper issue ticket should be created for these TODOs notes:
 
@@ -8,23 +7,27 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
-    TODO use case PV calculator
-
-    TODO add admin dashboard and jobs 
+    TODO add new ch npp (AKW) example as test on smartvote for initiatives
+    TODO add table editor
+    TODO add on results a latex formula tooltip with the calculation
+    TODO fix all Prio 0
+    TODO add job dashboard to normal users 
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
+    TODO add more related phrases, values and results to the results shown on the start page
+    TODO make it more clear that the pinned views are not the legal pages
     TODO limit the prime phrase id by the int number that can be processed in JavaScript
-    TODO clean up http_old
-    TODO cleaup *_old
+    TODO add a FAQ to the main page with 'Will this not be replaced by LLM AI'?
 
     ->  launch
 
-    TODO test on smartvote for initiatives, CBAM, SNSF decitions
 
     TODO Release 0.0.4
 
+    TODO add equity calculator example
+    TODO add CBAM calculator example
+    TODO add calculator for SNSF decitions (what should snf.ch focus on)
     TODO if in the calculator Editor an unknown word is typed use a local embadding model model to suggest a wikipedia link and a list of suggested triples, if the new word has spaces or other parts suggest using the parts and create a triple
-    TODO add a Swiss NPP (AKW) sample
     TODO add translations for the pinned view e.g. NPP -> de: AKW
     TODO for CH AKW yes/no to top field is to vote yes or no based on the total price per kWh
     TODO by default guess the location of the user e.g. to auto switch the language
@@ -41,6 +44,7 @@ A proper issue ticket should be created for these TODOs notes:
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
     TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
     TODO show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
+    TODO create a backend server structure with load balancer, static cache servers, webservers, db balancers (read and write) and database servers as described in docs/server_structure.md
 
     TODO the user settings should have some (config.yaml) quick settings 
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
@@ -90,7 +94,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO fill the workflow unit tests with all workflows of the main objects
     TODO fix to bugs in the component types so that all component type returns a nice result
     TODO add unit test for all system pages including the login page to be able to use the view.php script also for the login page
-    TODO deprecate the old $back parameter and use instead back prefixed parameters
     TODO in the start page suggest also to have a look at a list of problems by continent, courty, region and personal issue, which can be created if the user is logged in
 
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
@@ -272,27 +275,12 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create the test objects always based on functions in create_test_objects
     TODO use with-log for insert links e.g. triple
     TODO use with-log for insert values
-    TODO Step 26: deprecate the get_old in result
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
-    TODO Step 25: deprecate the get_old in group_list
     TODO Substeps: move all display functions from the backend objects to the frontend
-    TODO Step 24: deprecate the get_old in user_list
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
     TODO Step 23: deprecate the get_old in value_ui
     TODO remove backend classes from frontend
-    TODO Step 22: deprecate the get_old in value_list
     TODO remove frontend classes from backend
-    TODO Step 21: deprecate the get_old in ???
-    TODO review the main unit tests
-    TODO Step 20: deprecate the get_old in ???
-    TODO review the remaining unit tests
-    TODO Step 19: deprecate the get_old in ???
-    TODO review the main db read tests
-    TODO Step 18: deprecate the get_old in ???
-    TODO review the remaining db read tests
-    TODO Step 17: deprecate the get_old in ???
-    TODO review the main db write tests
-    TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
 
@@ -309,6 +297,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO end all function that might create a message to the user with return $urs_msg->is_ok(); if there is not a good reason
     TODO use message seq number error detection also for pod to pod messages to detect man in the middle issues
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
+    TODO replicate the estimates and the calculations e.g. of KOF ETH and SNB to check how good the estimates are
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
@@ -384,7 +373,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO base the html frontend objects (_ui) on the api JSON using the set_from_json function
     TODO check that in the API            messages the database id is used for all preloaded types e.g. phrase type
     TODO check that in the im- and export messages the     code id is used for all preloaded types e.g. phrase type
-    TODO refactor the web classes (dismiss all _old classes)
     TODO always use a function of the test_new_obj class to create a object for testing
     TODO create unit tests for all display object functions
     TODO remove the set and get functions from the api objects and make them as simple as possible

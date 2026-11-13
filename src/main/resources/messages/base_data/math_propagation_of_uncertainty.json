@@ -84,7 +84,7 @@
       "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
       "refs": [
         {
-          "name": "Deviation (statistics)",
+          "name": "Deviation_(statistics)",
           "type": "wikipedia"
         }
       ]
@@ -131,13 +131,7 @@
       "description": "the result of dividing one number by another"
     },
     {
-      "name": "power",
-      "refs": [
-        {
-          "name": "Exponentiation",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "power"
     },
     {
       "name": "exponential",
@@ -219,7 +213,7 @@
       "to": "standard",
       "refs": [
         {
-          "name": "Standard deviation",
+          "name": "Standard_deviation",
           "type": "wikipedia"
         },
         {

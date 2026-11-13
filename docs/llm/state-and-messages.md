@@ -660,7 +660,13 @@ frontend calls the api of its own pod without the session, so a call without
 (`user::data_user` with `server_guard::from_own_pod`) answers for the same user
 whose objects the page shows. The url never
 decides who the user is: the session does, and a url with another `u` only gets
-the `URL_USER_NOT_SESSION_USER` notice (`frontend::url_user_matches`). A user
+the `URL_USER_NOT_SESSION_USER` notice (`frontend::url_user_matches`).
+`http/view.php` then removes that `u` from the url of the request
+(`frontend::url_without_foreign_user`) before the page is built, so no link,
+form or back target of the page repeats it and the notice is shown only once,
+e.g. after an expired session the next click shows the page without the notice.
+Keep this removal: a page that passes the foreign `u` on shows the notice again
+on every following page. A user
 that is shown or changed is therefore never named by `u`, but by `ue`
 (`url_var::USER_TO_EDIT`, human `user_to_edit`). The views of
 `views::USER_TO_EDIT_MASKS_IDS` (the user page, the admin user add, edit

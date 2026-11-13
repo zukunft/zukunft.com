@@ -43,7 +43,16 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::EXECUTE . 'calculator_definition_report.php';
+include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once test_paths::UTILS . 'headless_browser.php';
+include_once test_paths::UTILS . 'csv_table_diff.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -74,6 +83,15 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_definition_report;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data as phrase_data_ui;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -84,6 +102,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\csv_table_diff;
 use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\utils\html_page_diff;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -91,6 +110,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class system_views_read_tests
 {
 
+    // two cells of the sensitivity table of the Swiss NPP vote: the levelised cost and the verdict number of the
+    // construction cost and the cost of capital of the inputs (8'826 CHF/kW, 5 %) and of 5'000 CHF/kW at 3 %
+    const string NPP_SENSITIVITY_INPUT_CELL = '114 (-0.01)';
+    const string NPP_SENSITIVITY_OTHER_CELL = '66 (-0.77)';
     // the element of use_case_cases.js with the result of a case as json and its two fields
     const string CASE_RESULT_ID = 'caseResult';
     const string CASE_MISSING = 'missing';
@@ -103,6 +126,8 @@ class system_views_read_tests
     const string CASE_NOT_ENDED = 'the case has not ended in the headless browser';
     // the row of the PV calculator page whose numbers every input case changes
     const string PV_PRODUCTION_ROW = html_page_diff::KIND_ROW . ': Electricity / PV production';
+    // the element of calculator_editor.js that holds the page preview
+    const string EDITOR_PREVIEW_ID = 'pane';
 
     /**
      * render every system view with the data read from the database and compare it with the snapshot
@@ -139,10 +164,19 @@ class system_views_read_tests
         $this->run_pv_lifetime_balance_cases($t);
         $this->run_calculator_editor($t);
         $this->run_formula_editor($t);
+        $this->run_table_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t);
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
+        $this->run_npp_ch_vote($t);
+        $this->run_npp_ch_vote_editor($t);
+        $this->run_npp_sensitivity($t);
+        $this->run_global_warming_solutions_csv($t);
+        $this->run_populism_solutions_table($t);
+        $this->run_context_values_per_phrase($t);
+        $this->run_result_operands($t);
+        $this->run_start_page_steps($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -187,7 +221,10 @@ class system_views_read_tests
         // the variants differ only by the display parameters of the url, so they share one
         // request cache and only the first loads the data of the table
         $cfg = $t->view_context();
+        // the first variant loads the data of the table, so its steps and api calls are logged with their seconds
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID, $cfg);
+        $t->set_debug($debug_before);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
@@ -476,6 +513,11 @@ class system_views_read_tests
             $test_name = 'the short url ' . $url_name . ' opens ' . $pin[words::URL];
             $t->assert_file($test_name, $html->forward_url_page($pin[words::URL]), test_files::PINNED_PAGE_PATH . $url_name);
         }
+        // negative: an inactive pinned view has no target, so its short url page is removed
+        foreach (array_keys($t->pinned_views_inactive()) as $url_name) {
+            $test_name = 'the inactive pinned view ' . $url_name . ' has no short url page';
+            $t->assert_no_file($test_name, test_files::PINNED_PAGE_PATH . $url_name);
+        }
         $test_name = 'the start page links the pinned views of config.yaml';
         $start_page = file_get_contents(test_files::START_PAGE);
         $t->assert_file($test_name, $html->start_page($start_page, $pin_lst, new user_message()), test_files::START_PAGE);
@@ -485,6 +527,10 @@ class system_views_read_tests
         $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
         $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr->id()]);
         $t->assert($test_name, $this->pinned_url($t, $pin_by_names, $msg), $expected);
+        $test_name = '... and only the view if it has no phrase name';
+        $pin_view_only = [triples::VIEW_NAME => views::CALCULATOR_NAME];
+        $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID]);
+        $t->assert($test_name, $this->pinned_url($t, $pin_view_only, $msg), $expected);
     }
 
     /**
@@ -496,26 +542,20 @@ class system_views_read_tests
     private function pinned_url(test_cleanup $t, array $pin, user_message_cfg $msg): string
     {
         $url = $pin[words::URL] ?? '';
-        if ($this->is_by_names($pin)) {
+        if ($url == '') {
             $msk = new view($t->usr1);
             $msk->load_by_name($pin[triples::VIEW_NAME], $msg);
-            $phr = new phrase($t->usr1);
-            $phr->load_by_name($pin[triples::PHRASE_NAME], $msg);
-            // the phrase id of a triple is negative, so the view shows the triple
-            $url = new html_base()->page_url([url_var::MASK => $msk->id(), url_var::ID => $phr->id()]);
+            $url_array = [url_var::MASK => $msk->id()];
+            $phr_name = $pin[triples::PHRASE_NAME] ?? '';
+            if ($phr_name != '') {
+                $phr = new phrase($t->usr1);
+                $phr->load_by_name($phr_name, $msg);
+                // the phrase id of a triple is negative, so the view shows the triple
+                $url_array[url_var::ID] = $phr->id();
+            }
+            $url = new html_base()->page_url($url_array);
         }
         return $url;
-    }
-
-    /**
-     * @param array $pin the url or the view name and the phrase name of a pinned view of config.yaml
-     * @return bool true if the pinned view has no url but a view name and a phrase name
-     */
-    private function is_by_names(array $pin): bool
-    {
-        return ($pin[words::URL] ?? '') == ''
-            and ($pin[triples::VIEW_NAME] ?? '') != ''
-            and ($pin[triples::PHRASE_NAME] ?? '') != '';
     }
 
     /**
@@ -580,8 +620,9 @@ class system_views_read_tests
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
         $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
-        // the table editor placeholder shows only its title and the phrase selector
-        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        // the parked table editor of the server with its title and the phrase selector
+        $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg,
+            '', [url_var::JAVASCRIPT => url_var::FALSE]);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
@@ -643,6 +684,8 @@ class system_views_read_tests
      * @param string $diff_name the file name of the markdown report without the extension
      * @param string $cases_script the script with the CASES of a sample that fills its tables by its script,
      *                             so that the sample is compared as a browser shows it; empty for a sample with its tables in the html
+     * @param bool $page_by_script true if also the generated page is built by its script e.g. the table editor,
+     *                             so that the page is compared as a browser shows it with the same cases script
      * @return void
      */
     private function assert_sample_diff(
@@ -650,26 +693,32 @@ class system_views_read_tests
         string       $sample_name,
         string       $page_name,
         string       $diff_name,
-        string       $cases_script = ''
+        string       $cases_script = '',
+        bool         $page_by_script = false
     ): void
     {
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $sample_file = $sample_name . test_files::HTML;
         $sample_html = $t->path_file($dir . $sample_file);
+        $page_html = $t->path_file($dir . $page_name . test_files::HTML);
         if ($cases_script != '') {
             $sample_html = $this->sample_in_browser($sample_html, $cases_script);
+            if ($page_by_script) {
+                $page_html = $this->sample_in_browser($page_html, $cases_script);
+            }
         }
-        if ($sample_html === null) {
+        if ($sample_html === null or $page_html === null) {
             $t->dsp_warning('no headless browser found, so the differences of ' . $sample_file . ' are not reported');
         } else {
-            $this->assert_sample_items($t, $sample_html, $sample_file, $page_name, $diff_name);
+            $this->assert_sample_items($t, $sample_html, $page_html, $sample_file, $page_name, $diff_name);
         }
     }
 
     /**
      * @param string $sample_html the html code of the sample
-     * @param string $cases_script the script with the CASES of the sample
-     * @return string|null the html code of the sample as a browser shows it after its script has run, null without a browser
+     * @param string $sample_html the html code of the sample or of a generated page that its script builds
+     * @param string $cases_script the script with the CASES of the page
+     * @return string|null the html code of the page as a browser shows it after its script has run, null without a browser
      */
     private function sample_in_browser(string $sample_html, string $cases_script): ?string
     {
@@ -687,6 +736,7 @@ class system_views_read_tests
     /**
      * @param test_cleanup $t the test environment with the test users
      * @param string $sample_html the html code of the sample to compare
+     * @param string $page_html the html code of the generated page to compare
      * @param string $sample_file the file name of the sample
      * @param string $page_name the file name of the generated page without the extension
      * @param string $diff_name the file name of the markdown report without the extension
@@ -695,6 +745,7 @@ class system_views_read_tests
     private function assert_sample_items(
         test_cleanup $t,
         string       $sample_html,
+        string       $page_html,
         string       $sample_file,
         string       $page_name,
         string       $diff_name
@@ -704,7 +755,7 @@ class system_views_read_tests
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $page_file = $page_name . test_files::HTML;
         $sample = $hpd->page_items($sample_html);
-        $page = $hpd->page_items($t->path_file($dir . $page_file));
+        $page = $hpd->page_items($page_html);
 
         // a sub text is a separate part of a cell, also if the html has no white space in front of it
         $test_name = 'the compare reads the parts of a cell the same with and without white space';
@@ -895,15 +946,41 @@ class system_views_read_tests
     }
 
     /**
+     * the table editor of the imported use case table_editor_sample.json: the script builds the editor and
+     * the table from the phrase data of sector of revenue, which the page embeds as the seed; the page is
+     * written to the use case folder next to the hand made table_editor_sample.html and the differences of
+     * the two are reported as a browser shows them, because the html of both is only the host and the json;
+     * the global warming solutions of the start page are the case of a table with own columns, but without
+     * table parameters, so that the editor starts with its defaults, and with more rows than one page
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_table_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::TABLE_EDITOR_NAME, test_files::TABLE_EDITOR, triple_names::SECTOR_OF_REVENUE);
+        $this->assert_sample_diff($t, test_files::TABLE_EDITOR_SAMPLE, test_files::TABLE_EDITOR,
+            test_files::TABLE_EDITOR_DIFF, test_files::TABLE_EDITOR_CASES, true);
+        $this->assert_editor_view($t, views::TABLE_EDITOR_NAME, test_files::TABLE_EDITOR_GLOBAL_WARMING_SOLUTION,
+            triple_names::GLOBAL_WARMING_SOLUTION);
+    }
+
+    /**
      * @param test_cleanup $t the test environment with the test users
      * @param string $view_name the name of the editor view e.g. views::FORMULA_EDITOR_NAME
      * @param string $file_name the name of the snapshot in the use case folder e.g. test_files::FORMULA_EDITOR
+     * @param string $phr_name the name of the page phrase, by default the example PV installation of the calculator editors
      * @return void
      */
-    private function assert_editor_view(test_cleanup $t, string $view_name, string $file_name): void
+    private function assert_editor_view(
+        test_cleanup $t,
+        string       $view_name,
+        string       $file_name,
+        string       $phr_name = triple_names::EXAMPLE_PV_INSTALLATION
+    ): void
     {
         $t->assert_view_by_name($view_name, $t->usr1, new triple($t->usr1),
-            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            $phr_name, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . $file_name);
     }
 
@@ -941,6 +1018,466 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS);
+    }
+
+    /**
+     * the csv export of the table of the global warming solutions through the view of the page, and the
+     * differences to the expected csv as a report
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_global_warming_solutions_csv(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $row_col = word_names::SOLUTION;
+
+        $test_name = 'the compare reads a cell by the name of its row and column';
+        $csv_txt = "rank,solution,gain\n1,wind,1.5\n";
+        $cells = $ctd->table_cells($csv_txt, $row_col);
+        $t->assert($test_name, $cells, ['wind' => ['rank' => '1', 'gain' => '1.5']]);
+        $test_name = '... and keeps two rows with the same name';
+        $same_cells = $ctd->table_cells("solution,gain\nwind,1\nwind,2\n", $row_col);
+        $t->assert($test_name, array_keys($same_cells), ['wind', 'wind' . csv_table_diff::SAME_NAME_SEP . '2']);
+        $test_name = 'the same number in another format is no difference';
+        $format_cells = $ctd->table_cells("solution,gain\nwind,1.78e+03\n", $row_col);
+        $number_cells = $ctd->table_cells("solution,gain\nwind,1780\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($format_cells, $number_cells, 'a', 'b'), 'Different cells (0)');
+        // negative: a rounded number stays a difference
+        $test_name = '... but a rounded number is one';
+        $full_cells = $ctd->table_cells("solution,gain\nwind,1784.3\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $full_cells, 'a', 'b'), 'Different cells (1)');
+        $test_name = 'a missing row is reported';
+        $none_cells = $ctd->table_cells("solution,gain\n", $row_col);
+        $t->assert_text_contains($test_name, $ctd->report($number_cells, $none_cells, 'a', 'b'), 'Rows missing in the export (1)');
+
+        // through the view, so that the url var, the component and the table are tested together
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_WARMING_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $test_name = 'the table of the global warming solutions is exported as csv';
+        $t->assert_text_contains($test_name, $export_csv, word_names::SOLUTION);
+
+        $target = $ctd->table_cells($t->path_file(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), $row_col);
+        $export = $ctd->table_cells($export_csv, $row_col);
+        // a result names the solution but not the page phrase and is still in the row of the solution
+        $test_name = 'the export has the calculated gain of a solution';
+        $t->assert($test_name, ($export['solar energy']['potential gain in trillion EUR'] ?? '') != '', true);
+        // negative: a solution without a calculated gain would be a row with an empty cell
+        $test_name = '... and the calculated reduction potential of a solution without a stated one';
+        $t->assert($test_name, ($export['coal phase-out']['reduction potential in gigatonne CO2eq per year'] ?? '') != '', true);
+        // the gain per effort uses the calculated gain of this table, the numbers are the calc-validation of the json
+        $eur_col = 'gain per effort in billion EUR per person year';
+        $htp_col = 'gain per effort in million htp per person year';
+        foreach ([
+                     ['circular economy', 89.11, 3.56],
+                     ['digitalization', 29.7, 1.19],
+                     ['coal phase-out', 594.63, 23.75],
+                 ] as [$row, $eur, $htp]) {
+            $test_name = 'the gain per effort of ' . $row . ' in EUR uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$eur_col] ?? 0), 2), $eur);
+            $test_name = 'the gain per effort of ' . $row . ' in htp uses the calculated gain';
+            $t->assert($test_name, round((float)($export[$row][$htp_col] ?? 0), 2), $htp);
+        }
+        // problem_global_warming.json states its numbers for "<solution> (climate solution)", so
+        // a row of this table has one number per fact and the effort of this table
+        $test_name = 'a solution of both files has one potential gain';
+        $t->assert($test_name, round((float)($export['circular economy']['potential gain in trillion EUR'] ?? 0), 6), 4.455275);
+        $test_name = '... and the initial effort of this table';
+        $t->assert($test_name, $export['circular economy']['initial effort in person year'] ?? '', '50');
+        // negative: the older gain of the same solution is no second number of the cell
+        $test_name = '... and no second number in the cell';
+        $t->assert($test_name, str_contains($export['solar energy']['potential gain in trillion EUR'] ?? '', value_list_ui::CSV_NUMBER_SEPARATOR), false);
+        // negative: the assumed gain of problem_global_warming.json in the same row is not used
+        $test_name = 'the gain per effort does not use the assumed gain of the same solution';
+        $t->assert($test_name, round((float)($export['coal phase-out'][$htp_col] ?? 0), 2) != 533.19, true);
+        $test_name = 'the differences of the export of the global warming solutions are reported';
+        $report = $ctd->report($target, $export, basename(test_files::GLOBAL_WARMING_SOLUTIONS_CSV), triple_names::GLOBAL_WARMING_SOLUTION);
+        $t->assert_file($test_name, $report, test_files::GLOBAL_WARMING_SOLUTIONS_DIFF, test_files::MD);
+    }
+
+    /**
+     * the own columns and the own sorting of the table of the populism solutions, read from its csv export
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_populism_solutions_table(test_cleanup $t): void
+    {
+        $ctd = new csv_table_diff();
+        $eur_col = 'potential gain in trillion EUR';
+        $own_cols = [$eur_col, 'potential gain in billion htp', 'initial effort in person year'];
+
+        $cfg = $t->view_context();
+        $t->assert_view_by_name(views::TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::POPULISM_SOLUTION,
+            $cfg, '', [url_var::DISPLAY_LIST_CSV => url_var::TRUE]);
+        $export_csv = $cfg->table_csv;
+        $export = $ctd->table_cells($export_csv, word_names::SOLUTION);
+        $first_row = reset($export) ?: [];
+        $test_name = 'the table of the populism solutions shows its own columns only';
+        $t->assert($test_name, array_keys($first_row), $own_cols);
+        // negative: the loss reduction fits no own column, so it is hidden without the url asking for it
+        $test_name = '... and not the loss reduction';
+        $t->assert_text_not_contains($test_name, $export_csv, triple_names::LOSS_REDUCTION);
+        $gains = array_map('floatval', array_column($export, $eur_col));
+        $sorted = $gains;
+        rsort($sorted);
+        $test_name = 'the rows are sorted by the biggest potential gain';
+        $t->assert($test_name, $gains, $sorted);
+        // negative: a table with one row or without numbers would pass the sort check
+        $test_name = '... of every solution';
+        $row_count = count($gains);
+        $t->assert_greater($test_name, 1, $row_count);
+
+        // the missing operands are loaded with one paged call, which stays complete also if the
+        // values of all missing phrases together exceed the row limit of the backend
+        $msg = new user_message();
+        $effort_lst = new phrase_list_ui();
+        $both_lst = new phrase_list_ui();
+        foreach ($cfg->res_lst->lst() as $res) {
+            $ctx_lst = $res->src_grp?->phr_lst();
+            $effort = $ctx_lst?->get_by_name(triple_names::INITIAL_EFFORT, $msg);
+            $factor = $ctx_lst?->get_by_name(triple_names::PERSON_YEAR_PER_BILLION_USD, $msg);
+            if ($effort != null and $factor != null and $effort_lst->is_empty()) {
+                $effort_lst->add_phrase($effort);
+                $both_lst->add_phrase($effort);
+                $both_lst->add_phrase($factor);
+            }
+        }
+        $test_name = 'the values of the initial effort are loaded with the other missing operands';
+        $effort_count = $this->values_with_names($cfg, [triple_names::INITIAL_EFFORT]);
+        $t->assert_greater($test_name, 0, $effort_count);
+        // negative: no missing phrase gets a call of its own
+        $test_name = '... and not with a call of their own';
+        $has_own_call = $cfg->has_values_of($effort_lst);
+        $t->assert_false($test_name, $has_own_call);
+
+        // with the per phrase switch each missing operand of the table is loaded with a call of its own
+        $per_cfg = $t->view_context();
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::POPULISM_SOLUTION, $msg);
+        $per_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        new ui_list()->table_with_related_columns($tbl_phr, $msg, $per_cfg, typ_lst: $per_typ);
+        $test_name = 'with the per phrase switch the initial effort is loaded with a call of its own';
+        $has_per_call = $per_cfg->has_values_of($effort_lst);
+        $t->assert_true($test_name, $has_per_call);
+        // negative: the switch never combines two missing phrases
+        $test_name = '... and not together with the person year per billion USD';
+        $has_both_call = $per_cfg->has_values_of($both_lst);
+        $t->assert_false($test_name, $has_both_call);
+    }
+
+    /**
+     * @param data_object_ui $cfg the request cache of a page
+     * @param array $names the phrase names that a counted value has all
+     * @return int the number of values in the cache that have all given phrases
+     */
+    private function values_with_names(data_object_ui $cfg, array $names): int
+    {
+        $result = 0;
+        foreach ($cfg->val_lst->lst() as $val) {
+            if (array_diff($names, $val->phr_lst()->names()) == []) {
+                $result++;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the assumption fields of a populism solution load the values of the context of each result
+     * with one paged call, and with api_types::LOAD_PER_PHRASE with a call per phrase
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_context_values_per_phrase(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $sol = new triple_ui();
+        $sol->load_by_name(triple_names::ONE_CLICK_HIDE_POPULISM, $msg);
+        new ui_list()->assumption_fields($sol, $msg, $cfg, '', []);
+        $effort_lst = new phrase_list_ui();
+        $both_lst = new phrase_list_ui();
+        foreach ($cfg->res_lst->lst() as $res) {
+            $ctx_lst = $res->src_grp?->phr_lst();
+            $effort = $ctx_lst?->get_by_name(triple_names::INITIAL_EFFORT, $msg);
+            $sol_phr = $ctx_lst?->get_by_name(triple_names::ONE_CLICK_HIDE_POPULISM, $msg);
+            if ($effort != null and $sol_phr != null and $effort_lst->is_empty()) {
+                $effort_lst->add_phrase($effort);
+                $both_lst->add_phrase($effort);
+                $both_lst->add_phrase($sol_phr);
+            }
+        }
+        $test_name = 'the context values of a result are loaded with one call';
+        $effort_count = $this->values_with_names($cfg, [triple_names::INITIAL_EFFORT, triple_names::ONE_CLICK_HIDE_POPULISM]);
+        $t->assert_greater($test_name, 0, $effort_count);
+        // negative: no phrase of the context gets a call of its own
+        $test_name = '... and not with a call per phrase';
+        $has_own_call = $cfg->has_values_of($effort_lst);
+        $t->assert_false($test_name, $has_own_call);
+
+        // with the per phrase switch each phrase of the context is loaded with a call of its own
+        $per_cfg = $t->view_context();
+        $per_typ = new api_type_list([api_types::LOAD_PER_PHRASE]);
+        new ui_list()->assumption_fields($sol, $msg, $per_cfg, '', [], [], $per_typ);
+        $test_name = 'with the per phrase switch the context values are loaded with a call per phrase';
+        $has_per_call = $per_cfg->has_values_of($effort_lst);
+        $t->assert_true($test_name, $has_per_call);
+        // negative: the switch never combines two phrases of the context
+        $test_name = '... and not with one call for the phrases of the context';
+        $has_both_call = $per_cfg->has_values_of($both_lst);
+        $t->assert_false($test_name, $has_both_call);
+    }
+
+    /**
+     * the potential gain of a global warming solution is calculated from the results of the avoided
+     * emission, which the table data has already, and the social cost of carbon in EUR per tonne,
+     * which the table lacks, so the table loads the results of this missing operand for the formula
+     * tooltip, although the operand names only a unit
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_result_operands(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::GLOBAL_WARMING_SOLUTION, $msg);
+        // the steps of the table and each api call are logged with their seconds, so that the
+        // load of the results of the missing operands can be followed in the test log
+        $t->step('result operands step: create the table of ' . triple_names::GLOBAL_WARMING_SOLUTION);
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        $tbl_html = new ui_list()->table_with_related_columns($tbl_phr, $msg, $cfg);
+        $t->set_debug($debug_before);
+        $t->step('result operands step: table created with ' . $cfg->res_lst->count() . ' results in the cache');
+        $operand = new triple_ui();
+        $operand->load_by_name(triple_names::EUR_PER_TONNE, $msg);
+        $operand_id = $operand->phrase()->id();
+        // the formula names its terms in quotes, which the tooltip escapes
+        $operand_tip = htmlspecialchars('"' . triple_names::AVOIDED_EMISSION . '"');
+        $test_name = 'the results of an operand that is a unit and a result are loaded for the table';
+        $has_operand = $cfg->has_results_within($operand_id, []);
+        $t->assert_true($test_name, $has_operand);
+        $test_name = '... so the potential gain has the formula with its numbers as tooltip';
+        $t->assert_text_contains($test_name, $tbl_html, $operand_tip);
+        // negative: a unit says how a number is stated, so its results are not loaded
+        $test_name = '... but not the results of a unit';
+        $has_unit = $cfg->has_results_within(word_names::TRILLION_ID, []);
+        $t->assert_false($test_name, $has_unit);
+    }
+
+    /**
+     * the steps of the start page with the more list, the columns without the minor tiers and the
+     * variance, which loads the values and the results of each missing operand with a call per
+     * phrase; the pod ends a page without a message above its memory limit, so each step is also
+     * checked against that limit and not only for its result
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_start_page_steps(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $cfg = $t->view_context();
+        $url_array = [
+            url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR,
+            url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
+        $tbl_phr = new triple_ui();
+        $tbl_phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        $effort = new triple_ui();
+        $effort->load_by_name(triple_names::INITIAL_EFFORT, $msg);
+        $effort_id = $effort->phrase()->id();
+        $effort_lst = new phrase_list_ui();
+        $effort_lst->add_phrase($effort->phrase());
+
+        // the biggest answer of the page and the last one before the page stops
+        $test_name = 'the results of the initial effort are loaded';
+        $t->step('start page step: load the results of ' . triple_names::INITIAL_EFFORT);
+        $start_mem = memory_get_usage();
+        memory_reset_peak_usage();
+        $res_lst = new result_list_ui();
+        $res_lst->load_by_phrase_list($effort_lst, $msg);
+        $res_mem = memory_get_peak_usage() - $start_mem;
+        $res_count = $res_lst->count();
+        $t->step('start page step: ' . $res_count . ' results loaded with ' . $res_mem . ' bytes');
+        $t->assert_greater($test_name, 0, $res_count, $t::TIMEOUT_LIMIT_REST);
+        $test_name = '... within the memory limit of the pod';
+        $t->assert_below($test_name, $t::POD_MEMORY_LIMIT, $res_mem);
+
+        // the table loads the values and then the results of each missing operand one by one
+        $test_name = 'the start page table loads the results of the initial effort';
+        $t->step('start page step: create the table of ' . triple_names::GLOBAL_PROBLEM);
+        $start_mem = memory_get_usage();
+        memory_reset_peak_usage();
+        // the steps of the table and each api call are logged with their seconds, so that a slow step is visible
+        $debug_before = $t->set_debug(url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        new ui_list()->table_with_related_columns($tbl_phr, $msg, $cfg, false, true, $url_array);
+        $t->set_debug($debug_before);
+        $tbl_mem = memory_get_peak_usage() - $start_mem;
+        $t->step('start page step: table created with ' . $tbl_mem . ' bytes');
+        $has_effort = $cfg->has_results_within($effort_id, []);
+        $t->assert_true($test_name, $has_effort, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... within the memory limit of the pod';
+        $t->assert_below($test_name, $t::POD_MEMORY_LIMIT, $tbl_mem);
+        // only the results that the calculation of the table can use, not all results of the phrase
+        $test_name = '... but only the results within the context of the table';
+        $tbl_effort_count = $this->results_with_phrase($cfg, $effort_id);
+        $t->step('start page step: ' . $tbl_effort_count . ' results of ' . triple_names::INITIAL_EFFORT . ' kept');
+        $t->assert_below($test_name, $res_count, $tbl_effort_count);
+        // negative: not all results of the phrase are loaded
+        $test_name = '... and not all results of the initial effort';
+        $has_all_effort = $cfg->has_results_of($effort_id);
+        $t->assert_false($test_name, $has_all_effort);
+        // negative: a unit says how a number is stated, so its results are not loaded
+        $test_name = '... but not the results of a unit';
+        $has_unit = $cfg->has_results_within(word_names::TRILLION_ID, []);
+        $t->assert_false($test_name, $has_unit);
+    }
+
+    /**
+     * @param data_object_ui $cfg the request cache of a page
+     * @param int $phr_id the id of a phrase
+     * @return int the number of results in the cache that have the phrase
+     */
+    private function results_with_phrase(data_object_ui $cfg, int $phr_id): int
+    {
+        $result = 0;
+        foreach ($cfg->res_lst->lst() as $res) {
+            if (in_array($phr_id, $res->phr_lst()->ids())) {
+                $result++;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the Swiss NPP vote page without javascript and as the browser builds it and the differences of the
+     * page without javascript to the hand made sample as a report, which names what the page still misses
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_ch_vote(test_cleanup $t): void
+    {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_NO_JS,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::NEW_NPP_VOTE, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::NPP_CH_VOTE_JS);
+        $this->assert_sample_diff($t, test_files::NPP_CH_VOTE_SAMPLE, test_files::NPP_CH_VOTE_NO_JS,
+            test_files::NPP_CH_VOTE_DIFF, test_files::NPP_CH_VOTE_CASES);
+    }
+
+    /**
+     * the calculator editor of the Swiss NPP vote and the differences of its page preview to the calculator page
+     * as the browser builds it (run_npp_ch_vote), because the preview should show the same page; both are read
+     * after their script has run in a headless browser, because the html of both holds only the json data, and
+     * with the sensitivity table opened, because both calculate its cells only while it is open
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_ch_vote_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::CALCULATOR_EDITOR_NAME, test_files::NPP_CH_VOTE_EDITOR,
+            triple_names::NEW_NPP_VOTE);
+        $hpd = new html_page_diff();
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+        $page_file = test_files::NPP_CH_VOTE_JS . test_files::HTML;
+        $editor_file = test_files::NPP_CH_VOTE_EDITOR . test_files::HTML;
+        $editor_snapshot = $t->path_file($dir . $editor_file);
+        $page_html = $this->sample_in_browser($t->path_file($dir . $page_file), test_files::NPP_CH_VOTE_SENSITIVITY_CASES);
+        $editor_html = $this->sample_in_browser($editor_snapshot, test_files::NPP_CH_VOTE_SENSITIVITY_CASES);
+        $closed_html = $this->sample_in_browser($editor_snapshot, test_files::NPP_CH_VOTE_CASES);
+        if ($page_html === null or $editor_html === null or $closed_html === null) {
+            $t->dsp_warning('no headless browser found, so the differences of the preview of ' . $editor_file . ' are not reported');
+        } else {
+            $preview_html = $hpd->element_page($editor_html, self::EDITOR_PREVIEW_ID);
+            $preview = $hpd->page_items($preview_html);
+            $page = $hpd->page_items($page_html);
+            $test_name = 'the page preview of ' . $editor_file . ' has items to compare';
+            $t->assert_true($test_name, count($preview) > 0);
+            // negative: the page has no preview, so a part that is not found is never compared as the whole page
+            $test_name = '... but the page itself has no preview';
+            $no_preview = $hpd->element_page($page_html, self::EDITOR_PREVIEW_ID);
+            $t->assert($test_name, $no_preview, '');
+            $this->assert_verdict_items($t, $hpd);
+            // the opened sensitivity table calculates the page again per cell, also with other numbers than the inputs
+            $test_name = 'the opened sensitivity table of the preview has the cell of the inputs';
+            $t->assert_text_contains($test_name, $preview_html, self::NPP_SENSITIVITY_INPUT_CELL);
+            $test_name = '... and a cell of other numbers';
+            $t->assert_text_contains($test_name, $preview_html, self::NPP_SENSITIVITY_OTHER_CELL);
+            // negative: the closed table calculates nothing
+            $test_name = '... but the closed table has no cells';
+            $closed_preview = $hpd->element_page($closed_html, self::EDITOR_PREVIEW_ID);
+            $t->assert_text_not_contains($test_name, $closed_preview, self::NPP_SENSITIVITY_INPUT_CELL);
+            $test_name = 'the differences of the preview of ' . $editor_file . ' to the page are reported';
+            $report = $hpd->report($page, $preview, $page_file, $editor_file, html_page_diff::PROMPT_PREVIEW);
+            $t->assert_file($test_name, $report, $dir . test_files::NPP_CH_VOTE_EDITOR_DIFF . test_files::MD, test_files::MD);
+        }
+    }
+
+    /**
+     * the verdict is named by its headline, so that the same state with another text is a difference
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param html_page_diff $hpd the compare that reads the items of a page
+     * @return void
+     */
+    private function assert_verdict_items(test_cleanup $t, html_page_diff $hpd): void
+    {
+        $test_name = 'the compare reads a verdict by its headline';
+        $verdict_html = '<main><div class="verdict open"><p><span class="headline">Undecided</span></p><p>%s</p></div></main>';
+        $verdict = $hpd->page_items(sprintf($verdict_html, 'within 0.25'));
+        $verdict_key = html_page_diff::KIND_VERDICT . ': Undecided';
+        $t->assert_key_exists($test_name, $verdict_key, $verdict);
+        $test_name = '... the same with white space between its paragraphs';
+        $spaced_verdict = $hpd->page_items(str_replace('</p><p>', "</p>\n <p>", sprintf($verdict_html, 'within 0.25')));
+        $t->assert($test_name, $spaced_verdict, $verdict);
+        // negative: another text of the same verdict stays a difference
+        $test_name = '... but another text of it is a difference';
+        $other_verdict = $hpd->page_items(sprintf($verdict_html, 'within 0.5'));
+        $t->assert_false($test_name, $verdict == $other_verdict);
+    }
+
+    /**
+     * the pdf of the calculator editor fills the cells of the sensitivity table of the Swiss NPP vote page,
+     * which the page leaves to its script: per cell the page is calculated again with the numbers of the
+     * row and of the column, and afterward each number of the page is set back
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_npp_sensitivity(test_cleanup $t): void
+    {
+        $msg = new user_message();
+        $trp = new triple_ui();
+        $trp->load_by_name(triple_names::NEW_NPP_VOTE, $msg);
+        $json = new phrase_data_ui()->load_from_walk($trp->phrase(), $msg);
+        $def_rpt = new calculator_definition_report();
+        $dto = $def_rpt->page_cache($json, $msg);
+        $dbo = $dto->phr_lst->get_by_name(triple_names::NEW_NPP_VOTE, $msg)?->obj();
+        $page = new system_page();
+        $plain_before = $page->calculation_result($dbo, $msg, $dto);
+        $filled = $page->calculation_result($dbo, $msg, $dto, true);
+        $plain_after = $page->calculation_result($dbo, $msg, $dto);
+        $test_name = 'the pdf fills the sensitivity cell of the numbers of the inputs like the main results';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_INPUT_CELL, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and a cell of other numbers by calculating the page again';
+        $t->assert_text_contains($test_name, $filled, self::NPP_SENSITIVITY_OTHER_CELL);
+        // negative: the page leaves the cells to its script, because each cell calculates the page again
+        $test_name = '... but the page leaves the cells empty';
+        $t->assert_text_not_contains($test_name, $plain_before, self::NPP_SENSITIVITY_INPUT_CELL);
+        $test_name = '... and each number of the page is set back after the cells';
+        $t->assert($test_name, $plain_after, $plain_before);
     }
 
     /**

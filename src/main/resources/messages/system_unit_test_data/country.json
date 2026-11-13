@@ -54,15 +54,15 @@
     {"from": "Switzerland", "verb": "is a", "to": "country"},
     {"from": "Germany", "verb": "is a", "to": "country"},
     {"name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton",
-      "refs": [ { "name": "canton of Zürich", "type": "wikipedia" },
+      "refs": [ { "name": "Canton_of_Zurich", "type": "wikipedia" },
                 { "name": "Q11943", "type": "wikidata" } ]
     },
     {"name": "Zurich (city)", "from": "Zurich", "verb": "is a", "to": "city"},
     {"name": "Bern (city)", "from": "Bern", "verb": "is a", "to": "city"},
     {"name": "Geneva (city)", "from": "Geneva", "verb": "is a", "to": "city",
-      "refs": [ { "name": "Zürich", "type": "wikipedia" },
-                { "name": "Q72", "type": "wikidata" },
-                { "name": "zurich", "type": "conceptnet" } ]
+      "refs": [ { "name": "Geneva", "type": "wikipedia" },
+                { "name": "Q71", "type": "wikidata" },
+                { "name": "geneva", "type": "conceptnet" } ]
     },
     {"from": "Zurich (canton)", "verb": "is part of", "to": "Switzerland"},
     {"name": "Zurich (city) share of Zurich (canton)", "from": "Zurich (city)", "verb": "is part of", "to": "Zurich (canton)"},

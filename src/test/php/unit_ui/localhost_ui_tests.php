@@ -114,6 +114,19 @@ class localhost_ui_tests
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
 
+        $this->run_start_page($t);
+    }
+
+    /**
+     * the start page snapshot views_by_id/start_page/1_start_page_details.html fetched from the pod
+     * separate from run(), so that test/test_part.php can rebuild it without the other localhost views
+     */
+    function run_start_page(test_cleanup $t): void
+    {
+        global $sys;
+
+        $t->subheader('unit ui localhost start page');
+
         // the start page with the main columns and the variance of its table shows the real
         // ranking data imported before this test, which the unit fixtures of the start page do
         // not carry, so this snapshot is the only one of views_by_id that is fetched from the pod
@@ -122,13 +135,16 @@ class localhost_ui_tests
             . url_var::ADD . url_var::DISPLAY_LIST_SIZE . url_var::EQ . Config::LIMIT_MORE_LIST
             . url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . value_list::COLUMN_TIERS_EX_MINOR
             . url_var::ADD . url_var::DISPLAY_LIST_VARIANCE . url_var::EQ . url_var::TRUE;
+        $t->step('start page fetch from ' . $url);
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = (string)file_get_contents($url);
         $sys->times->switch();
+        $t->step('start page fetched with ' . strlen($page) . ' bytes');
         // the loading seconds of the slow page are fixed by the html compare (see test_base::fix_volatile_loading_seconds)
         // the pod links root relative, so link to the pod like the other views_by_id snapshots
         $t->assert_html_page($test_name, $t->link_to_pod($page, THIS_URL),
             system_view_ui_tests::START_PAGE_DETAILS_FILE, test_base::TIMEOUT_LIMIT_IMPORT);
+        $t->step('start page compared with ' . system_view_ui_tests::START_PAGE_DETAILS_FILE);
     }
 
 }

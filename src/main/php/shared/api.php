@@ -42,6 +42,8 @@ class api
      */
 
     const string HOST_SAME = '/';
+    // the static start page index.html in the docroot
+    const string START_PAGE = self::HOST_SAME;
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string CONFIG_ALL = 'all';
@@ -59,8 +61,12 @@ class api
     const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
     const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
+    // shows a markdown document of /docs/ as html (see http/docs.php)
+    const string DOCS_SCRIPT = self::SCRIPT_PATH . 'docs.php';
     // the server admin page has its own authentication (see http/server_admin.php)
     const string SERVER_ADMIN_SCRIPT = self::SCRIPT_PATH . 'server_admin.php';
+    // creates the pdf of the posted data of the calculator editor (see http/calculator_pdf.php)
+    const string CALCULATOR_PDF_SCRIPT = self::SCRIPT_PATH . 'calculator_pdf.php';
     const string FIND_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID;
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;
@@ -71,6 +77,8 @@ class api
     // the http header name of the per session anti csrf token that must be sent with every
     // api write call of a session (see server_guard::csrf_token_valid)
     const string CSRF_TOKEN_HEADER = 'X-CSRF-Token';
+    // the key of the anti csrf header in the server vars of php, which is the header name in upper case with HTTP_
+    const string CSRF_TOKEN_SERVER_KEY = 'HTTP_X_CSRF_TOKEN';
     // the http header that names if an api answer comes from the cache, sent only if def::DEBUG_API_CACHE is true
     const string CACHE_HEADER = 'X-Zukunft-Cache';
     const string CACHE_HIT = 'hit';
@@ -157,6 +165,10 @@ class api
     const string JSON_LIST_SYSTEM_PHRASES = 'system_phrases';
     const string JSON_LIST_SYSTEM_FORMULAS = 'system_formulas';
     const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
+    // the phrases that a result of the phrase_ids may have at most, e.g. the context of the results of a table
+    const string JSON_LIST_CONTEXT_IDS = 'context_ids';
+    // the page of a value or result list answer, starting with 0, which the answer fills up to the row limit of the backend
+    const string JSON_LIST_PAGE = 'page';
 
 
     /*

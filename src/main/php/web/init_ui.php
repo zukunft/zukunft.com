@@ -79,3 +79,5 @@ $log_txt = new text_log();
 // load the environment settings e.g. to know if this is a dev, test or prod pod
 // (env.php is in shared/const because the environment is read by the frontend and the backend)
 include_once html_paths::SHARED_CONST . 'env.php';
+// set here and not when $sys is created above, because the environment is only known from env.php on
+$sys->echo_errors = system_object::echo_errors_default((string)getenv(ENVIRONMENT));

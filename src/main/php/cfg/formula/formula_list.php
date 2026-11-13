@@ -128,14 +128,17 @@ class formula_list extends sandbox_list_named
                     $frm_id = $db_row[formula_fields::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->get_user());
-                        $frm->row_mapper_sandbox($db_row, $msg);
-                        // TODO Prio 2 check if this is really needed
-                        if ($frm->name() <> '') {
-                            $name_wrd = new word($this->get_user());
-                            $name_wrd->load_by_name($frm->name(), $msg);
+                        $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                        if ($frm->row_mapper_sandbox($db_row, $row_msg)) {
+                            // TODO Prio 2 check if this is really needed
+                            if ($frm->name() <> '') {
+                                $name_wrd = new word($this->get_user());
+                                $name_wrd->load_by_name($frm->name(), $row_msg);
+                            }
+                            $this->add_obj($frm);
+                            $result = true;
                         }
-                        $this->add_obj($frm);
-                        $result = true;
+                        $msg->merge($row_msg);
                     }
                 }
             }

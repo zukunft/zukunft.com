@@ -132,6 +132,22 @@ that the leftover check needs to explain a row.
 - **Wrong**: `$db_con->delete($grp->sql_delete($sc, $msg), ...)` "because the
   logged delete does not work".
 
+## The write tests of `test.php` start on a recreated database — a leftover is a failed delete of the same run
+
+`test/test.php` recreates the complete database (`run_db_recreate`) before the write tests
+start, so at that stage the database holds only the seed data: there are never leftovers of
+an earlier run. When a write test finds a test object that it is about to add, or a row that
+its own flow does not explain, a delete earlier in the same run has failed.
+
+- The analysis reads the test code backwards from the failing assert to the last place where
+  that object was deleted or cleaned up, and checks why that delete did not remove the row.
+  A database query is not needed: the row can only come from the code that ran before.
+- The usual cause is a delete that became an exclusion (`docs/llm/delete.md` section 2):
+  another object that uses the row, or a user row of another test user, was still there when
+  the delete ran, so the row stayed and only an exclusion was written.
+- `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
+  `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,
@@ -147,6 +163,42 @@ changed files (`php -l` is fine — it executes nothing). Then ask the developer
 to run the suite and report the results, and fix what the report shows. If a
 run seems to "work" from the LLM environment, that is not permission — it means
 the environment accidentally reaches a deployment it should not touch.
+
+## Each change is tested upfront with `test/test_part.php`
+
+A full test run with `test/test.php` takes more than 30 minutes, so the developer
+tests each change first with `test/test_part.php`, which runs only the tests that
+`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls.
+
+- With every change the LLM activates or adds the tests that cover the change in
+  `a_selected_test::run`, so that the developer can run them right away.
+- `a_selected_test::run` always covers every potential fail of all uncommitted changes, not only
+  the expected ones: for each changed function the unit, read and write tests that call it, the
+  coding rule tests for a changed include, message or generated doc, the test that writes a
+  changed resource file (html snapshot, api json, `list.csv`) and, for a changed cleanup, the
+  cleanup with `check_cleanup` itself. A changed function without a test is a gap: write the test
+  first, then switch it on.
+- If `$t_db->create_test_db_entries($this)` and `$t_db->create_unit_test_db_entries($this)` are
+  switched on for the read tests, `$this->cleanup($msg)` is switched on after the read tests and
+  before the url tests, so that the url and write tests start without the test rows of the read
+  tests; the write tests create their test entries again.
+- In the same edit it deactivates the tests there whose changes are already
+  committed, so that the selected run stays short.
+- The full `test/test.php` run is still needed before a commit; `test_part.php`
+  only gives the fast feedback for one change.
+- `a_selected_test::run` calls the tests of `test/test.php` in the same order and
+  switches off the tests that are not needed as a comment; `php bin/test_differences.php`
+  writes every test that is missing, added or in another order to `docs/test_differences.md`.
+- Each test call in `a_selected_test::run` is one line that is switched on and off on its own,
+  e.g. `new system_views_read_tests()->run($this);`; never a test object in a var whose creation
+  and call are separate lines (`$msk_tests = new system_views_read_tests();` and then
+  `$msk_tests->run($this);`), because switching off one of the lines breaks the other.
+- `a_selected_test.php` has as few comments as possible: mainly the section separators
+  (e.g. `/* db read */`) for a fast orientation; why a test exists belongs into the test itself.
+
+So the target is to keep the number of changes low: every change has to be
+covered by the selected tests and confirmed by a `test_part.php` run, and a short
+list of changes keeps both the selected run and the next full run short.
 
 ## Test object creation
 
@@ -165,6 +217,12 @@ it from `test_words` (add `word_with_plural()` if none fits), not
 method doesn't exist yet, add it to the appropriate `test_*.php` in
 `src/test/php/create/` before writing the test. `test_mappers.php` coordinates
 factory calls when a test resolves a class name to a test object at runtime.
+
+The factory names follow one pattern per type for all objects, e.g. `word_filled`, `view_filled`
+(all fields set, excluded), `*_filled_included` (the same, active), `*_filled_add` (active, with the
+reserved test name for the db write test), `*_add`, `*_add_by_func`, `*_incomplete` and `*_name_only`.
+`php bin/test_object_overview.php` writes the matrix of the types per object to
+`docs/test_object_overview.md`, so a missing or oddly named factory shows up there.
 
 **Don't-repeat-yourself applies here too.** A multi-step object setup belongs in
 one named factory method, not written inline in a test (and never copied into a
@@ -725,14 +783,15 @@ edit the file:
 An LLM patching the generated line by hand masks the signal, and the next run
 overwrites the edit anyway.
 
-### No page of the local webserver is called during a `test/test.php` run
+### No other database call during a `test/test.php` run
 
-A page called from the local webserver while `test/test.php` runs updates data in
-the test database, e.g. the order of the users in `src/test/resources/unit/user/list.csv`,
-so the types get a different view and a regenerated api fixture such as
-`src/test/resources/api/type_lists/type_lists.json` switches its format or its fields
-from one run to the next. The solution is to call no page of the local webserver until
-the run has finished. A long term fix that makes the run independent of parallel page
+A call that reaches the database while `test/test.php` runs interferes with the run: e.g. a page
+of the local webserver updates data in the test database, such as the order of the users in
+`src/test/resources/unit/user/list.csv`, so the types get a different view and a regenerated api
+fixture such as `src/test/resources/api/type_lists/type_lists.json` switches its format or its
+fields from one run to the next. The solution is to make no other call to the database until the
+run has finished: no page of the local webserver, no api call, no second test script and no
+database client. A long term fix that makes the run independent of parallel page
 calls is a Prio 3 task.
 
 ### The test coverage counter stays simple
@@ -788,6 +847,22 @@ in the first line of a very long error.
 Data that needs a code id belongs in `files::SYSTEM_DATA_FILES`, which
 `import_file::import_system_data()` imports as the system user. Keep it out of the full
 load, and if a sample file mixes both, split the code-id part into the system data.
+
+## Two seed phrases miss data on purpose — the live samples of the refresh workflows
+
+Two seed phrases have a wikipedia reference but lack what the wikipedia page would give, so
+that a workflow can take it over from the live page:
+
+- the triple **Geneva (city)** (`triple_names::CITY_GE`) has **no description**, so that the
+  `wikipedia_refresh` workflow (`workflows::WF_WIKIPEDIA_REFRESH`) takes the description from
+  the wikipedia page Geneva;
+- the word **health** has **no wikidata reference**, so that the `wikidata_refresh` workflow
+  (`workflows::WF_WIKIDATA_REFRESH`) takes the wikidata id that the wikipedia page Health names.
+
+Never add the description of Geneva (city) or the wikidata reference of health to a seed
+file (e.g. `system_unit_test_data/country.json`, `base_phrases.json`, `base_data/health.json`,
+`solution_prio.json`), not even when a review or an import fills the descriptions and the
+wikidata ids of all other phrases: without the gap the workflow has nothing to take over.
 
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 
@@ -853,16 +928,21 @@ If a word, triple or other object is added to the database, e.g. by adding data 
 json file, the developer does these steps; an LLM runs none of the scripts and sets none of the
 flags (see *An LLM never runs the `/test/*` scripts*):
 
+Both flags are in `src/test/php/const/files.php`.
+
 0. A human reviews the code.
-1. Run `test/reset_db.php` once to update the database and fix the ids.
-2. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` again, which updates the
-   test files with an id directly, the `list.csv` files and the re-pin report
-   `docs/pinned_id_findings.md`.
-3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run the complete `test/test.php`, which re-pins the
-   id consts in the code.
-4. Set `AUTO_RE_PIN_OBJECT_ID` to `false` and run the complete `test/test.php` again, which
-   updates the test files with the updated id consts and the re-pin report, which should now be empty.
-5. Run the full `test/test.php` again and fix any errors, if needed step by step in a debug run
+1. Set `AUTO_UPDATE_TEST_FILES` to `true` and run `test/reset_db.php` once, which recreates the
+   database with the new ids and updates the `list.csv` files, the api files with a not yet fixed
+   id and the re-pin report `docs/pinned_id_findings.md`.
+2. If `docs/pinned_id_findings.md` shows "all ids are fine" for every class, continue with step 5.
+3. Set `AUTO_RE_PIN_OBJECT_ID` to `true` and run `test/test_re_pin.php` once, which rewrites the
+   number of each shifted `*_ID` const in its php file; this run still reads the old values, so its
+   pinned id asserts fail and the report is not written. Review the diff of the const files.
+4. Set `AUTO_RE_PIN_OBJECT_ID` to `false`, keep `AUTO_UPDATE_TEST_FILES` at `true` and run
+   `test/test_re_pin.php` again, which checks the re-pinned consts and writes the re-pin report
+   again. If the report does not show "all ids are fine" for every class, repeat from step 2;
+   a const that the report names as "re-pin by hand" is fixed in the code before the next run.
+5. Run the full `test/test.php` and fix any errors, if needed step by step in a debug run
    with a break on the error.
 6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
    double-check that no test case is volatile. If it is fine, do a final code review, which an

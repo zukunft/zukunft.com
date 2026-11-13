@@ -43,6 +43,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class api_type_list
 {
 
+    // the values related to a word or triple carry their group phrases for the value name and the
+    // sorting by impact and their source for the tooltip of a number in a table
+    const array VALUES_RELATED = [api_types::INCL_PHRASES, api_types::INCL_SOURCES];
+
     // the list of api message configuration settings
     public array $lst = [];
 
@@ -233,11 +237,40 @@ class api_type_list
     }
 
     /**
+     * @return api_type_list the configuration of the api message of the values related to a word or triple,
+     *                       in test mode also without database load
+     */
+    public function values_related(): api_type_list
+    {
+        $result = self::VALUES_RELATED;
+        if ($this->test_mode()) {
+            $result[] = api_types::TEST_MODE;
+        }
+        return new api_type_list($result);
+    }
+
+    /**
      * @return bool true if the message header should be included in the api message
      */
     public function use_header(): bool
     {
         return in_array(api_types::HEADER, $this->lst);
+    }
+
+    /**
+     * @return bool true if the values of each phrase should be loaded with an api call of its own
+     */
+    public function load_per_phrase(): bool
+    {
+        return in_array(api_types::LOAD_PER_PHRASE, $this->lst);
+    }
+
+    /**
+     * @return bool true if a list answer should name each phrase once and the items only by the phrase ids
+     */
+    public function phrases_once(): bool
+    {
+        return in_array(api_types::PHRASES_ONCE, $this->lst);
     }
 
 }

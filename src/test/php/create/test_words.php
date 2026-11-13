@@ -100,6 +100,23 @@ class test_words extends test_objects
         parent::cleanup_objects($ts, word_names::TEST_WORDS, new word($this->env->usr1));
     }
 
+    /**
+     * delete the remaining test words of a previous run, but not the words that create_test_db_entries has
+     * just added, because their values and triples keep them in use, so del() would only hide them for the owner
+     * and a phrase list by names would miss them (see word::used_by_data)
+     */
+    function cleanup_without_created(string $ts): void
+    {
+        $created = array_merge(
+            word_names::TEST_WORDS_CREATE,
+            word_names::TEST_WORDS_MEASURE,
+            word_names::TEST_WORDS_SCALING,
+            word_names::TEST_WORDS_TIME_YEAR
+        );
+        $names = array_values(array_diff(word_names::TEST_WORDS, $created));
+        parent::cleanup_objects($ts, $names, new word($this->env->usr1));
+    }
+
 
     /*
      * unit
@@ -1217,16 +1234,6 @@ class test_words extends test_objects
     }
 
     /**
-     * @return word "chart type" that the chart type tiers of solution_prio.json are built from
-     */
-    function word_chart_type(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::CHART_TYPE_ID, word_names::CHART_TYPE);
-        return $wrd;
-    }
-
-    /**
      * @return word "default" that names the chart type tier shown first
      */
     function word_default(): word
@@ -1257,55 +1264,12 @@ class test_words extends test_objects
     }
 
     /**
-     * @return word "leverage plot" with the code id that selects the chart type (see chart_types)
-     */
-    function word_leverage_plot(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::LEVERAGE_PLOT_ID, word_names::LEVERAGE_PLOT);
-        $wrd->set_code_id_db(chart_types::LEVERAGE->value);
-        return $wrd;
-    }
-
-    /**
      * @return word "alternative" that names the chart type tier the reader can select instead
      */
     function word_alternative(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::ALTERNATIVE_ID, word_names::ALTERNATIVE);
-        return $wrd;
-    }
-
-    /**
-     * @return word "range bars" with the code id that selects the chart type (see chart_types)
-     */
-    function word_range_bars(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::RANGE_BARS_ID, word_names::RANGE_BARS);
-        $wrd->set_code_id_db(chart_types::RANGE_BARS->value);
-        return $wrd;
-    }
-
-    /**
-     * @return word "scatter plot" with the code id that selects the chart type (see chart_types)
-     */
-    function word_scatter_plot(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::SCATTER_PLOT_ID, word_names::SCATTER_PLOT);
-        $wrd->set_code_id_db(chart_types::SCATTER->value);
-        return $wrd;
-    }
-
-    /**
-     * @return word "sort order" that the sort order keyword triple is built from
-     */
-    function word_sort_order(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::SORT_ORDER_ID, word_names::SORT_ORDER);
         return $wrd;
     }
 
@@ -1325,17 +1289,6 @@ class test_words extends test_objects
     function word_reason_ui(): word_ui
     {
         return new word_ui($this->word_reason()->api_json());
-    }
-
-    /**
-     * @return word "numeric descending" with the code id that selects the sort condition (see table_orders)
-     */
-    function word_numeric_descending(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::NUMERIC_DESCENDING_ID, word_names::NUMERIC_DESCENDING);
-        $wrd->set_code_id_db(table_orders::NUMERIC_DESC->value);
-        return $wrd;
     }
 
     function solution(): word
@@ -1439,6 +1392,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::DISINFORMATION_ID, word_names::DISINFORMATION);
+        $wrd->description = word_names::DISINFORMATION_COM;
         return $wrd;
     }
 
@@ -1446,6 +1400,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::RESEARCH_ID, word_names::RESEARCH);
+        $wrd->description = word_names::RESEARCH_COM;
         return $wrd;
     }
 
@@ -1453,6 +1408,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::TAXES_ID, word_names::TAXES);
+        $wrd->description = word_names::TAXES_COM;
         return $wrd;
     }
 
@@ -1460,6 +1416,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::SPENDING_ID, word_names::SPENDING);
+        $wrd->description = word_names::SPENDING_COM;
         return $wrd;
     }
 
@@ -1481,6 +1438,26 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::POINTS_ID, words::POINTS);
+        return $wrd;
+    }
+
+    /**
+     * @return word "world", e.g. of the world GDP that the potential loss of a problem is calculated from
+     */
+    function word_world(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::WORLD_ID, word_names::WORLD);
+        return $wrd;
+    }
+
+    /**
+     * @return word "annual", e.g. of the annual share of the GDP that a problem costs
+     */
+    function word_annual(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ANNUAL_ID, word_names::ANNUAL);
         return $wrd;
     }
 

@@ -120,6 +120,7 @@ class application
         // init system
         $code_name = 'api/' . $code_name;
         $sys = new system_object($code_name);
+        $sys->api_answer = true;
         // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
         // to see the request lifecycle without the message flood of the levels above
         log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
@@ -185,6 +186,7 @@ class application
 
         $code_name = 'api/' . $code_name;
         $sys = new system_object($code_name);
+        $sys->api_answer = true;
         // the includes of the api script are done before the timing starts
         $sys->times->add_script_loading(server_guard::request_start_time(), $sys->start_time);
         // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
@@ -338,6 +340,7 @@ class application
         $sys->pod_name = POD_NAME;
 
         $sys->errors = 0;
+        $sys->error_texts = [];
 
         log_debug($code_name . ': session_start');
 

@@ -183,57 +183,47 @@ class word_names
     const string CONFIDENCE = 'confidence';
     const int CONFIDENCE_ID = 341;
     // the problems and solutions of solution_prio.json that are a word, not a triple
+    // with the description of the import, which the start page shows as the tooltip
     const string DISINFORMATION = 'disinformation';
     const int DISINFORMATION_ID = 307;
+    const string DISINFORMATION_COM = 'false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.';
     const string RESEARCH = 'research';
     const int RESEARCH_ID = 277;
+    const string RESEARCH_COM = 'systematic investigation to discover new knowledge';
     const string TAXES = 'taxes';
     const int TAXES_ID = 279;
+    const string TAXES_COM = 'A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.';
     const string SPENDING = 'spending';
     const int SPENDING_ID = 281;
+    const string SPENDING_COM = 'an outlay of money for goods or services';
     const string HTP = 'htp';
     const int HTP_ID = 297;
     const string TRILLION = 'trillion';
     const int TRILLION_ID = 298;
     const string USD = 'USD';
-    const int USD_ID = 466;
+    const int USD_ID = 470;
     // the chart types of solution_prio.json and the tiers they are assigned to (see triples::SYSTEM_CHART_TYPE)
-    const string CHART_TYPE = 'chart type';
-    const int CHART_TYPE_ID = 386;
     const string DEFAULT = 'default';
     const int DEFAULT_ID = 229;
     const string MAYOR = 'mayor';
     const int MAYOR_ID = 285;
     const string MINOR = 'minor';
     const int MINOR_ID = 287;
-    // the chart type of start_page_charts.json, which the db setup imports last, so the id
-    // follows the highest word id of the seed data; check it in the word list.csv
-    const string LEVERAGE_PLOT = 'leverage plot';
-    const int LEVERAGE_PLOT_ID = 2066;
     const string ALTERNATIVE = 'alternative';
-    const int ALTERNATIVE_ID = 387;
-    const string RANGE_BARS = 'range bars';
-    const int RANGE_BARS_ID = 388;
-    const string SCATTER_PLOT = 'scatter plot';
-    const int SCATTER_PLOT_ID = 389;
-    // the default sort order of solution_prio.json (see triples::SYSTEM_SORT_ORDER)
-    const string SORT_ORDER = 'sort order';
-    const int SORT_ORDER_ID = 390;
-    const string NUMERIC_DESCENDING = 'numeric descending';
-    const int NUMERIC_DESCENDING_ID = 391;
+    const int ALTERNATIVE_ID = 388;
     // the reason column of the start page ranking (see triple_names::COLUMN_REASON)
     const string REASON = 'reason';
-    const int REASON_ID = 392;
+    const int REASON_ID = 396;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 623;
+    const int SALES_ID = 627;
     const string CASH = 'cash';
-    const int CASH_ID = 624;
+    const int CASH_ID = 628;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 625;
+    const int STATEMENT_ID = 629;
     const string PARTS = 'parts';
-    const int PARTS_ID = 627;
+    const int PARTS_ID = 631;
     const string INCOME = 'income';
     const int INCOME_ID = 328;
     const string TAX = 'tax';
@@ -263,26 +253,26 @@ class word_names
     const string FIFTEEN_YEAR = '15-year';
     const int FIFTEEN_YEAR_ID = 270;
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 399;
+    const int YEAR_2013_ID = 403;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 400;
+    const int YEAR_2014_ID = 404;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 401;
+    const int YEAR_2015_ID = 405;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 402;
+    const int YEAR_2016_ID = 406;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 403;
+    const int YEAR_2017_ID = 407;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 404;
+    const int YEAR_2018_ID = 408;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 204;
     const string ABB = 'ABB';
-    const int ABB_ID = 621;
+    const int ABB_ID = 625;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 622;
+    const int VESTAS_ID = 626;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -316,25 +306,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 689;
+    const int YEAR_2021_ID = 693;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 464;
+    const int YEAR_2022_ID = 468;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 688;
+    const int YEAR_2023_ID = 692;
     const string YEAR_2024 = '2024';
     const int YEAR_2024_ID = 306;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 687;
+    const int YEAR_2025_ID = 691;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 686;
+    const int YEAR_2026_ID = 690;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 685;
+    const int YEAR_2027_ID = 689;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 684;
+    const int YEAR_2028_ID = 688;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 683;
+    const int YEAR_2029_ID = 687;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 682;
+    const int YEAR_2030_ID = 686;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -380,19 +370,22 @@ class word_names
     // what is measured, typed "measure non unit", so that it heads no row of a value table
     const string GDP = 'GDP';
     const int GDP_ID = 304;
+    // the time span of a share of the GDP e.g. the annual loss that a problem causes
+    const string ANNUAL = 'annual';
+    const int ANNUAL_ID = 303;
     const string EURO = 'Euro';
-    const int EURO_ID = 454;
+    const int EURO_ID = 458;
     const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 468;
+    const int DOLLAR_ID = 472;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 470;
+    const int EURO_SIGN_ID = 474;
     // the words of the share unit of use_cases/pv_lifetime_balance.json
     const string SHARE = 'share';
     const int SHARE_ID = 330;
     const string RATIO = 'ratio';
     const int RATIO_ID = 344;
-    const int CURRENCY_ID = 417;
+    const int CURRENCY_ID = 421;
     const string US = 'US';
 
 

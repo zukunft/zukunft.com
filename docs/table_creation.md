@@ -1,5 +1,4 @@
-Create a table
-==============
+# Create a table
 
 This guide shows step by step how to get this table:
 
@@ -22,8 +21,7 @@ Icons used in this guide:
 | **...**         | more choices                    |
 
 
-1) Log in
----------
+## 1) Log in
 
 You only need to log in if you want to add or change something. Reading and
 sorting a table works without logging in.
@@ -41,17 +39,28 @@ After logging in, the person icon turns dark blue. Hover over it to see your
 name.
 
 
-2) Select the 'table editor' view
----------------------------------
+## 2) Select the 'table editor' view
 
-3) Choose the columns
----------------------
+Open the table of the phrase and select **"Table editor"** in the edit menu. On the left are the
+settings of the table in groups, e.g. **Columns**, **Rows**, **Hierarchy** and **Values**; on the right
+is the table, which changes with every setting before anything is saved.
 
-4) Select the default sorting
------------------------------
+## 3) Choose the columns
 
-5) Fill the data
-----------------
+Type a phrase in **"Mayor columns"** (always shown), **"Main columns"**, **"Minor columns"** or
+**"Marginal columns"** and pick it from the suggestions. Drag a column to change its order and click
+its **x** to remove it. **"Level shown"** selects down to which tier the columns are shown. Without an
+own column the table shows the columns of all tables.
+
+## 4) Choose the rows and the sorting
+
+In **Rows**, the **"Row phrase"**, the **"Row verb"** and the **"Direction"** select which phrases
+become the rows, e.g. the solutions of global warming. In **Hierarchy**, the
+**"Sub-row verb"** selects the sub-rows. Enter the **"Sort order"** as the column and `asc` or `desc`,
+e.g. *reward ratio desc*. **Undo** and **Redo** step through the changes; click **"Save"** to store
+them. A change only affects this table.
+
+## 5) Fill the data
 
 A column appears when the solutions have a number for it. Add, for example,
 the expected return of *district cooling*:
@@ -75,8 +84,7 @@ To add a source, a description or a range, click **"... more details ..."**
 before you click "add".
 
 
-6) Add a formula
-----------------
+## 6) Add a formula
 
 The potential gain and the reward ratio of each solution are not typed in.
 Two formulas calculate them:

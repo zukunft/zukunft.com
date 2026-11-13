@@ -2633,6 +2633,25 @@
       "description": "the name of the admin, the pod name and the creation time of the admin dashboard",
       "type": "system_admin_subtitle",
       "code_id": "system_admin_subtitle"
+    },
+    {
+      "name": "system form ref rows",
+      "description": "the references of the phrase as rows of the edit form, which the confirm of the phrase change writes too",
+      "type": "system_form_ref_rows",
+      "code_id": "form_ref_rows",
+      "ui_msg_code_id": "form_ref_rows"
+    },
+    {
+      "name": "system body import preview",
+      "description": "the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them",
+      "type": "system_body_import_preview",
+      "code_id": "system_body_import_preview"
+    },
+    {
+      "name": "system form wikidata id",
+      "description": "the wikidata id of the entity whose values the admin imports, which opens the import preview",
+      "type": "system_form_wikidata_id",
+      "code_id": "system_form_wikidata_id"
     }
   ],
   "views": [
@@ -5124,86 +5143,90 @@
         },
         {
           "position": "11",
-          "name": "system formatter row right"
+          "name": "system form ref rows"
         },
         {
           "position": "12",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "13",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "14",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "15",
-          "name": "system form end"
+          "name": "system formatter row end"
         },
         {
           "position": "16",
-          "name": "system formatter row start"
+          "name": "system form end"
         },
         {
           "position": "17",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "18",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "18",
+          "position": "19",
           "name": "parents of word",
           "style": "col-md-4"
         },
         {
-          "position": "19",
+          "position": "20",
           "name": "children of word",
           "position_type": "combine",
           "style": "col-md-4"
         },
         {
-          "position": "20",
+          "position": "21",
           "name": "system sub title values",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "21",
+          "position": "22",
           "name": "value list of word",
           "position_type": "combine"
         },
         {
-          "position": "22",
+          "position": "23",
           "name": "system sub title references",
           "style": "col-md-4"
         },
         {
-          "position": "23",
+          "position": "24",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "24",
+          "position": "25",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "25",
+          "position": "26",
           "name": "system formatter row end"
         },
         {
-          "position": "26",
+          "position": "27",
           "name": "system formatter row right"
         },
         {
-          "position": "27",
+          "position": "28",
           "name": "system form tab box",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "28",
+          "position": "29",
           "name": "system formatter row end"
         }
       ]
@@ -5513,94 +5536,98 @@
         },
         {
           "position": "18",
-          "name": "system formatter row right"
+          "name": "system form ref rows"
         },
         {
           "position": "19",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "20",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "21",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "22",
-          "name": "system form end"
+          "name": "system formatter row end"
         },
         {
           "position": "23",
-          "name": "system formatter row start"
+          "name": "system form end"
         },
         {
           "position": "24",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "25",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "25",
+          "position": "26",
           "name": "system formatter row end"
         },
         {
-          "position": "26",
+          "position": "27",
           "name": "system formatter row start"
         },
         {
-          "position": "27",
+          "position": "28",
           "name": "parents of word",
           "style": "col-md-4"
         },
         {
-          "position": "28",
+          "position": "29",
           "name": "children of word",
           "position_type": "combine",
           "style": "col-md-4"
         },
         {
-          "position": "29",
+          "position": "30",
           "name": "system sub title values",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "30",
+          "position": "31",
           "name": "value list of triple",
           "position_type": "combine"
         },
         {
-          "position": "31",
+          "position": "32",
           "name": "system sub title references",
           "style": "col-md-4"
         },
         {
-          "position": "32",
+          "position": "33",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "33",
+          "position": "34",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "34",
+          "position": "35",
           "name": "system formatter row end"
         },
         {
-          "position": "35",
+          "position": "36",
           "name": "system formatter row right"
         },
         {
-          "position": "36",
+          "position": "37",
           "name": "system form tab box",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "37",
+          "position": "38",
           "name": "system formatter row end"
         }
       ]
@@ -7115,22 +7142,27 @@
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form field name in formulas",
+          "style": "col-md-4"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
         }
       ]
@@ -7182,61 +7214,66 @@
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form field name in formulas",
+          "style": "col-md-4"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "13",
-          "name": "system form end"
+          "name": "system formatter row end"
         },
         {
           "position": "14",
-          "name": "system formatter row start"
+          "name": "system form end"
         },
         {
           "position": "15",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "16",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "system sub title triples",
           "style": "col-md-4"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "triples that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "18",
+          "position": "19",
           "name": "system sub title formulas",
           "style": "col-md-4"
         },
         {
-          "position": "19",
+          "position": "20",
           "name": "formulas that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "20",
+          "position": "21",
           "name": "system form tab box",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "21",
+          "position": "22",
           "name": "system formatter row end"
         }
       ]
@@ -10142,7 +10179,7 @@
         },
         {
           "position": "2",
-          "name": "system body not yet available"
+          "name": "system body import preview"
         }
       ]
     },
@@ -10156,10 +10193,6 @@
         {
           "position": "1",
           "name": "system title import result"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
         }
       ]
     },
@@ -10193,7 +10226,7 @@
         },
         {
           "position": "2",
-          "name": "system body not yet available"
+          "name": "system form wikidata id"
         }
       ]
     },
@@ -10922,14 +10955,6 @@
         {
           "position": "4",
           "name": "result list word"
-        },
-        {
-          "position": "5",
-          "name": "Export JSON"
-        },
-        {
-          "position": "6",
-          "name": "Export XML"
         }
       ]
     }

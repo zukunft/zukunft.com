@@ -81,7 +81,6 @@ include_once html_paths::MODEL_WORD . 'word_db.php';
 include_once html_paths::MODEL_SANDBOX . 'sandbox.php';
 include_once html_paths::API_OBJECT . 'api_message.php';
 include_once html_paths::SHARED_CONST . 'def.php';
-include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -121,7 +120,6 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -937,7 +935,7 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url_old(rest_ctrl::VIEW, $is_part_of->id(), [], url_var::WORDS);
+                    $url = $is_part_of->phrase_page_url();
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }

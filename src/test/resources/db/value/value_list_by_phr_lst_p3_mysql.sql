@@ -119,4 +119,11 @@ PREPARE value_list_by_phr_lst_p3 FROM
                                 AND u.user_id = ?
          WHERE REGEXP_LIKE(s.group_id, ?, 'c')
            AND REGEXP_LIKE(s.group_id, ?, 'c')
-           AND REGEXP_LIKE(s.group_id, ?, 'c') LIMIT ? OFFSET ?';
+           AND REGEXP_LIKE(s.group_id, ?, 'c')
+      ORDER BY group_id,
+               phrase_id_1,
+               phrase_id_2,
+               phrase_id_3,
+               phrase_id_4
+         LIMIT ?
+        OFFSET ?';

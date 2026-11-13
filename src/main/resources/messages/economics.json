@@ -72,7 +72,7 @@
       "description": "in economics, the amount of a good that sellers are willing to provide in the market",
       "refs": [
         {
-          "name": "Supply (economics)",
+          "name": "Supply_(economics)",
           "type": "wikipedia"
         },
         {
@@ -114,7 +114,7 @@
       "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
       "refs": [
         {
-          "name": "Market (economics)",
+          "name": "Market_(economics)",
           "type": "wikipedia"
         },
         {
@@ -124,17 +124,7 @@
       ]
     },
     {
-      "name": "elasticity",
-      "refs": [
-        {
-          "name": "Elasticity (economics)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q223639",
-          "type": "wikidata"
-        }
-      ]
+      "name": "elasticity"
     },
     {
       "name": "utility",
@@ -154,7 +144,7 @@
       "description": "assets used for the production of goods and services",
       "refs": [
         {
-          "name": "Capital (economics)",
+          "name": "Capital_(economics)",
           "type": "wikipedia"
         },
         {
@@ -209,7 +199,7 @@
       "name": "profit",
       "refs": [
         {
-          "name": "Profit (economics)",
+          "name": "Profit_(economics)",
           "type": "wikipedia"
         },
         {
@@ -223,7 +213,7 @@
       "description": "ratio of the cost of a good or service and its selling price",
       "refs": [
         {
-          "name": "Markup (business)",
+          "name": "Markup_(business)",
           "type": "wikipedia"
         },
         {
@@ -278,7 +268,7 @@
       "name": "consumption",
       "refs": [
         {
-          "name": "Consumption (economics)",
+          "name": "Consumption_(economics)",
           "type": "wikipedia"
         },
         {
@@ -458,7 +448,7 @@
       "description": "a present obligation of an entity to transfer an economic benefit, shown on the balance sheet",
       "refs": [
         {
-          "name": "Liability (financial accounting)",
+          "name": "Liability_(financial_accounting)",
           "type": "wikipedia"
         },
         {
@@ -472,7 +462,7 @@
       "description": "difference between the value of the assets/interest and the cost of the liabilities of something owned",
       "refs": [
         {
-          "name": "Equity (finance)",
+          "name": "Equity_(finance)",
           "type": "wikipedia"
         },
         {
@@ -527,7 +517,7 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Human population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
@@ -787,7 +777,7 @@
       "description": "central data structure in the practice of accounting",
       "refs": [
         {
-          "name": "Account (bookkeeping)",
+          "name": "Account_(bookkeeping)",
           "type": "wikipedia"
         },
         {

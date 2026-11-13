@@ -69,6 +69,7 @@ include_once test_paths::UNIT_UI . 'phrase_data_ui_tests.php';
 include_once test_paths::UNIT_UI . 'source_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'wikidata_import_ui_tests.php';
 include_once test_paths::UNIT_UI . 'language_ui_tests.php';
 include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'sys_log_ui_tests.php';
@@ -123,6 +124,7 @@ class all_ui_tests extends all_unit_tests
         new source_ui_tests()->run($t);
         new reference_ui_tests()->run($t);
         new reference_list_ui_tests()->run($t);
+        new wikidata_import_ui_tests()->run($t);
         new group_ui_tests()->run($t);
         new value_ui_tests()->run($t);
         new value_list_ui_tests()->run($t);

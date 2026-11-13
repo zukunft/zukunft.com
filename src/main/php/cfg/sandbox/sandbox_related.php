@@ -82,7 +82,7 @@ class sandbox_related
      */
 
     /**
-     * the views that can show the object for the views tab of the object page; the list is
+     * the views that can show the object for the edit menu of the object page; the list is
      * loaded by the object itself (load_views_related), because which views are related
      * differs per object e.g. the own default view of a word or the view type of a value
      *

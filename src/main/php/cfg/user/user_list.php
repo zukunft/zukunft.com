@@ -333,9 +333,12 @@ class user_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $usr = new user();
-                $usr->row_mapper($db_row, $msg);
-                $this->lst[] = $usr;
-                $result = true;
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($usr->row_mapper($db_row, $row_msg)) {
+                    $this->lst[] = $usr;
+                    $result = true;
+                }
+                $msg->merge($row_msg);
             }
             $this->set_hash();
         }

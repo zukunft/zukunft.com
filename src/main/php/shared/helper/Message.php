@@ -53,6 +53,11 @@ class Message
     // and a list of vars that should be added at the translated messages text
     // at the predefined and language specific place
     public array $msg_var_lst;
+    // true only in a test that expects an internal error (test_base::assert_log_err): log_err_msg keeps the text
+    // of the error here and neither writes nor counts it, because it is the expected result and no error of the run
+    public bool $log_test_only = false;
+    // the text of the last internal error that log_err_msg has kept while log_test_only is true
+    public string $log_test_txt = '';
 
     /**
      * assumes that normally everything is fine
@@ -247,6 +252,10 @@ class Message
     {
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
             $this->add($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
+        }
+        // the expected internal error of a test that a buffer has kept
+        if ($msg_to_add->log_test_txt != '') {
+            $this->log_test_txt = $msg_to_add->log_test_txt;
         }
     }
 

@@ -1,0 +1,48 @@
+rank,solution,reduction potential in Gt CO2eq per year,potential gain in trillion EUR,potential gain in billion htp,initial effort in person year,potential gain in billion EUR per person year,potential gain in million htp per person year,confidence
+1,solar energy,6,17.8,0.71,10,1.78e+03,71,0.5
+2,wind energy,5,14.9,0.59,15,990,40,0.5
+3,CO2 price,4.06,12.1,0.48,20,603,24,0.3
+4,phase-out of coal,10,29.7,1.2,50,595,24,0.5
+5,sufficiency,2,5.94,0.24,10,594,24,0.2
+6,reduced meat consumption,2,5.94,0.24,10,594,24,0.4
+7,subsidy reduction,1.95,5.79,0.23,10,579,23,0.3
+8,food waste,1.3,3.86,0.15,10,386,15,0.4
+9,methane reduction,5.13,15.2,0.61,40,381,15,0.5
+10,electric mobility,2.5,7.43,0.3,20,371,15,0.4
+11,speed limit,0.1,0.297,0.012,1,297,12,0.5
+12,reforestation,2,5.94,0.24,20,297,12,0.4
+13,CBAM calculation,1,2.97,0.12,10,297,12,0.2
+14,heat pump,1.5,4.46,0.18,15,297,12,0.4
+15,humus formation,1.5,4.46,0.18,20,223,8.9,0.3
+16,innovation,1.5,4.46,0.18,20,223,8.9,0.2
+17,electrification,2.5,7.43,0.3,40,186,7.4,0.4
+18,bicycle traffic,0.3,0.891,0.036,5,178,7.1,0.4
+19,air travel,0.5,1.49,0.059,10,149,5.9,0.3
+20,research,1,2.97,0.12,20,149,5.9,0.2
+21,energy efficiency,3,8.91,0.36,60,149,5.9,0.4
+22,CO2 standard,1.5,4.46,0.18,30,149,5.9,0.3
+23,material efficiency,0.8,2.38,0.095,20,119,4.7,0.4
+24,building retrofit,1,2.97,0.12,30,99,4,0.4
+25,energy storage,1,2.97,0.12,30,99,4,0.3
+26,recycling,0.5,1.49,0.059,15,99,4,0.4
+27,wetland restoration,0.5,1.49,0.059,15,99,4,0.3
+28,circular economy,1.5,4.46,0.18,50,89.1,3.6,0.3
+29,emissions trading,2.92,8.69,0.35,100,86.9,3.5,0.3
+30,hydropower,0.8,2.38,0.095,30,79.2,3.2,0.4
+31,freight transport,0.8,2.38,0.095,30,79.2,3.2,0.3
+32,district heating,0.5,1.49,0.059,20,74.3,3,0.3
+33,climate allowance,0.5,1.49,0.059,20,74.3,3,0.2
+34,education,0.5,1.49,0.059,20,74.3,3,0.2
+35,climate tariff,2,5.94,0.24,100,59.4,2.4,0.3
+36,sustainable agriculture,1,2.97,0.12,50,59.4,2.4,0.3
+37,climate finance,2,5.94,0.24,100,59.4,2.4,0.3
+38,public transit,0.5,1.49,0.059,30,49.5,2,0.4
+39,geothermal energy,0.5,1.49,0.059,50,29.7,1.2,0.3
+40,grid expansion,1,2.97,0.12,100,29.7,1.2,0.3
+41,supply chain law,0.3,0.891,0.036,30,29.7,1.2,0.2
+42,digitalization,0.5,1.49,0.059,50,29.7,1.2,0.2
+43,green hydrogen,1.5,4.46,0.18,500,8.91,0.36,0.3
+44,international agreement,3,8.91,0.36,1000,8.91,0.36,0.2
+45,CCS,1.5,4.46,0.18,1000,4.46,0.18,0.3
+46,nuclear energy,1.5,4.46,0.18,2000,2.23,0.089,0.3
+47,CCU,0.3,0.891,0.036,500,1.78,0.071,0.2

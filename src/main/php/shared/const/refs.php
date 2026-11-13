@@ -47,6 +47,9 @@ class refs
     const string PI_KEY = 'Q167';
     const int PI_ID = 29;
     const string PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    // the wikipedia reference of mathematics, the first reference of the base data (see src/test/resources/unit/ref/list.csv)
+    const string MATH_WIKIPEDIA_KEY = 'Mathematics';
+    const int MATH_WIKIPEDIA_ID = 1;
     const string MATH_KEY = 'Q395';
     const int MATH_ID = 2;
     const string MATH_COM = 'field of study';
@@ -61,10 +64,34 @@ class refs
     const string SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const int SYSTEM_TEST_ADD_ID = 992; // fixed snapshot id of the add workflow reference (like word_names::TEST_ADD_ID)
+    // the wikipedia and the wikidata reference of Geneva (city) used by the wikipedia refresh workflow,
+    // whose lead text starts with a pronunciation to remove
+    // the wikidata item of the triple Zurich (city) of the base data, whose population the wikidata import reads
+    const string ZURICH_CITY_WIKIDATA_KEY = 'Q72';
+    // the wikidata properties of the population and of the price, which the base data words population and price
+    // have as their reference of the type wikidata property, so that a wikidata import uses these words
+    const string POPULATION_WIKIDATA_PROPERTY_KEY = 'P1082';
+    const string PRICE_WIKIDATA_PROPERTY_KEY = 'P2284';
+    const string GENEVA_WIKIPEDIA_KEY = 'Geneva';
+    const string GENEVA_KEY = 'Q71';
+    const int GENEVA_ID = 279;
+    // the wikidata item that the wikipedia page of health names, which the word health of the base data
+    // does not have yet, so the wikidata refresh workflow adds it
+    const string HEALTH_WIKIDATA_KEY = 'Q12147';
+    const string HEALTH_WIKIPEDIA_KEY = 'Health';
+    // the wikipedia and the wikidata reference of Zurich (canton) of the base data, which the reference
+    // row confirm workflow deletes or changes (see src/test/resources/unit/ref/list.csv)
+    const string ZURICH_CANTON_WIKIPEDIA_KEY = 'Canton_of_Zurich';
+    const int ZURICH_CANTON_WIKIPEDIA_ID = 276;
+    const string ZURICH_CANTON_WIKIDATA_KEY = 'Q11943';
+    const int ZURICH_CANTON_WIKIDATA_ID = 277;
     // the url and the description that the change_ref workflow writes in its two rounds
     const string TEST_URL_CHANGED = 'https://api.zukunft.com/';
     const string TEST_DESCRIPTION_CHANGED = 'System Test Reference Description Changed';
     const string SYSTEM_TEST_RENAMED = 'System Test Reference External Key Changed';
+    // the external key of the reference that the reference rows write test adds with the confirm of a phrase change
+    const string SYSTEM_TEST_ROW_ADD = 'System Test Reference Row Added';
+    const int SYSTEM_TEST_ROW_ADD_ID = 993; // fixed snapshot id of the reference that the confirm of a row adds (like SYSTEM_TEST_ADD_ID)
 
     // must be the same as in /resource/api/source/source_put.json
     const string SYSTEM_TEST_API_ADD_KEY = 'System Test Reference API added';
@@ -81,13 +108,15 @@ class refs
     const array RESERVED_REFERENCES_KEYS = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_API_ADD_KEY,
-        self::SYSTEM_TEST_RENAMED
+        self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_ROW_ADD
     );
 
     const array TEST_REF_KEYS = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_API_ADD_KEY,
-        self::SYSTEM_TEST_RENAMED
+        self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_ROW_ADD
     );
 
 }

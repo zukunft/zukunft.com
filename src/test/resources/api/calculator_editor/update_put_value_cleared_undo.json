@@ -1,0 +1,15 @@
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "user_id": 3,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "timestamp": "2026-11-06T12:00:00+00:00",
+  "body": {
+    "values": [
+      {
+        "excluded": false
+      }
+    ]
+  }
+}

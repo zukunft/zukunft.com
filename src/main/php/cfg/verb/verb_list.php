@@ -203,11 +203,14 @@ class verb_list extends type_list
                     foreach ($db_vrb_lst as $db_vrb) {
                         if (!in_array($db_vrb[verb_db::FLD_ID], $vrb_id_lst)) {
                             $vrb = new verb;
-                            $vrb->row_mapper_verb($db_vrb, $msg);
-                            $vrb->set_user($this->usr);
-                            $vrb_lst[] = $vrb;
-                            $vrb_id_lst[] = $vrb->id;
-                            log_debug('verb_list->load added (' . $vrb->name() . ')');
+                            $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                            if ($vrb->row_mapper_verb($db_vrb, $row_msg)) {
+                                $vrb->set_user($this->usr);
+                                $vrb_lst[] = $vrb;
+                                $vrb_id_lst[] = $vrb->id;
+                                log_debug('verb_list->load added (' . $vrb->name() . ')');
+                            }
+                            $msg->merge($row_msg);
                         }
                     }
                 }
@@ -235,8 +238,11 @@ class verb_list extends type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
-                $vrb->row_mapper_verb($db_row, $msg);
-                $this->add_verb($vrb);
+                $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                if ($vrb->row_mapper_verb($db_row, $row_msg)) {
+                    $this->add_verb($vrb);
+                }
+                $msg->merge($row_msg);
             }
         }
         return $this->lst();

@@ -84,6 +84,8 @@
 .notes p{margin:0}
 .notes strong{color:var(--fg)}
 .imports{display:flex;flex-wrap:wrap;gap:8px}
+.input-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.input-actions .btn{width:100%;margin-left:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
     </style>
 </head>
@@ -140,8 +142,6 @@
     <aside class="panel">
       <div class="inputs" style="display:grid;gap:14px">
         <h2>Inputs</h2>
-        <!-- placement test only: the import does nothing yet -->
-        <button class="btn btn-outline-primary" type="button" title="Import the portfolio of the Spot rates"><i class="fas fa-file-import"></i> Import</button>
         <!-- one target weight per child, rendered from CHILDREN by renderChildren -->
         <div id="children"></div>
         <button id="addChild" class="btn btn-outline-primary btn-sm" type="button"><i class="fas fa-plus"></i> Add child</button>
@@ -166,10 +166,13 @@
           <label for="caseName">Case name</label>
           <input type="text" id="caseName" value="">
         </div>
-        <!-- placement test only: the save, the download and the report do nothing yet -->
-        <button class="btn btn-outline-primary" type="button">Save</button>
-        <button class="btn btn-outline-primary" type="button" title="Export the portfolio splitting as a spreadsheet"><i class="fas fa-download"></i> Download</button>
-        <button class="btn btn-outline-primary" type="button" title="Show the Portfolio Split as a printable PDF"><i class="fas fa-file-pdf"></i> Report</button>
+        <!-- placement test only: the import, the save, the download and the report do nothing yet -->
+        <div class="input-actions">
+          <button class="btn btn-outline-primary" type="button" title="Import the portfolio of the Spot rates"><i class="fas fa-file-import"></i> Import</button>
+          <button class="btn btn-outline-primary" type="button">Save</button>
+          <button class="btn btn-outline-primary" type="button" title="Export the portfolio splitting as a spreadsheet"><i class="fas fa-download"></i> Download</button>
+          <button class="btn btn-outline-primary" type="button" title="Show the Portfolio Split as a printable PDF"><i class="fas fa-file-pdf"></i> Report</button>
+        </div>
       </div>
 
       <details>

@@ -163,6 +163,17 @@ class term_view_tests
         $t->assert_sql_update($sc, $lnk_styled, $lnk);
         $t->assert_sql_update($sc, $lnk_styled, $lnk, [sql_type::LOG, sql_type::USER]);
 
+        $t->subheader($ts . 'term_view do not update a link guard');
+        // the guard is only for a link that is in the database; the link type of a term view is a
+        // normal field, so only the view and the term identify the link
+        $lnk_db = $t_lnk->term_view();
+        $lnk_db->id = 1;
+        $lnk_from = $lnk_db->clone_all();
+        $lnk_from->set_fob($t_msk->view_word_log());
+        $lnk_to = $lnk_db->clone_all();
+        $lnk_to->set_tob($t_trm->term_formula());
+        $t->assert_link_guard($sc, $lnk_db, ['view' => $lnk_from, 'term' => $lnk_to]);
+
         $t->subheader($ts . 'term_view sql delete');
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
@@ -171,6 +182,9 @@ class term_view_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
+
+        $t->subheader($ts . 'term_view row mapper');
+        $t->assert_row_mapper_guard($t_msk->term_view(), $t_msk->term_view_row());
 
         $t->subheader($ts . 'term_view api mapping');
         // a page url and an api message carry only the term id, which encodes the class of the

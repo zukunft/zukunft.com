@@ -1,4 +1,5 @@
-# Die Idee von zukunft.com: Rechnen mit Worten
+# Die Idee von zukunft.com: 
+# Rechnen mit Worten
 
 ## Wie alles anfing
 
@@ -79,12 +80,15 @@ Das ist die Brücke zur Entscheidungsidee des Projekts (siehe die Wiki-Seite "En
 
 Ein heutiger Chatbot gibt eine Antwort, aber man kann nicht wirklich nachsehen, wie sie zustande kam. Und vor allem, was der Chatbot warum weggelassen hat oder was er gar nicht weiss. Hier ist es umgekehrt: Das System gibt nichts aus, was es nicht offenlegen könnte. Jeder Wert ist auf seine Worte, seine Quellen und seine Formel zurückführbar. Die Maschine soll dem Menschen das Nachdenken erleichtern, nicht es ersetzen.
 
+Warum ein Chatbot vom Konzept her bei einer komplexen Frage nicht dasselbe Ergebnis garantieren kann, und weitere häufige Fragen, beantworten die [häufigen Fragen](faq_de.md).
+
 ## Wo man anfangen kann
 
 **Auf Deutsch:**
 
 - **Der Gesamtgedanke:** Das [Konzeptpapier (deutsch)](konzeptpapier_de.md) verbindet Rawls' Schleier des Nichtwissens, die Real-Time-Delphi-Methode und den Giant Global Graph zu einem Verfahren für faire, faktenbasierte Entscheidungen.
 - **Die Entscheidungslogik:** Die Wiki-Seite [Entscheidungen](https://github.com/zukunft/zukunft.com/wiki/Entscheidungen-(German-page)) erklärt, wie aus nachvollziehbaren Zahlen nachvollziehbare Entscheidungen werden (Stichwort "Glückszeitpunkte").
+- **Häufige Fragen:** [faq_de.md](faq_de.md), z.B. warum das nicht einfach ein KI-Chatbot erledigen kann.
 
 **Auf Englisch (Datenformat im Detail):**
 

@@ -351,7 +351,7 @@ class view_list extends sandbox_list_named
     }
 
     /**
-     * add the view of the id e.g. the default view of a phrase to the views tab, but only once
+     * add the view of the id e.g. the default view of a phrase to the related views, but only once
      * and only if the view can be loaded, because a list holding an unloaded entry is not empty
      * and would suppress the system default view fallback
      *

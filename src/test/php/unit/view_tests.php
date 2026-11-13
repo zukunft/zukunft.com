@@ -449,6 +449,15 @@ class view_tests
         $mrl_moved->start_pos = $mrl->start_pos + 1;
         $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
+        $t->subheader($ts . 'do not update a link guard');
+        // the relation type of a view relation is a normal field, so only the parent and the child view identify the link
+        $mrl = $t_msk->view_relation();
+        $mrl_from = clone $mrl;
+        $mrl_from->set_fob($t_msk->view_table());
+        $mrl_to = clone $mrl;
+        $mrl_to->set_tob($t_msk->view_table_editor());
+        $t->assert_link_guard($sc, $mrl, ['parent view' => $mrl_from, 'child view' => $mrl_to]);
+
         // sql write delete is already tested in the horizontal tests
         // ... but not the logged removal of a user overwrite (sandbox::del_usr_cfg_exe)
         $t->subheader($ts . 'sql write delete');

@@ -20,6 +20,11 @@
       "type": "api",
       "code_id": "wikidata",
       "url": "https://www.wikidata.org/wiki/"
+    },
+    {
+      "name": "my estimates",
+      "description": "user value without external source",
+      "code_id": "user_value"
     }
   ]
 }

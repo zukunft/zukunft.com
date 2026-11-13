@@ -55,6 +55,7 @@ the object structure is:
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
 ├── import_wikidata - retrieve and capture wikidata entity data
+├── import_wikidata_preview - what the wikidata import of a phrase would add to this pod
 ├── update_put - $upd - save the changes of an update put message with the database ids
 ├── change_table_field - helper class to create the database view with the log table and field name
 ├── text_log - object to handle standard io logging
@@ -63,6 +64,7 @@ the object structure is:
 ├── qlever - import of qlever nt and tsv files
 ├── ref_db - the database const for reference tables
 ├── ref_link_wikidata - link for the reference type wikidata
+├── ref_link_wikipedia - take over the description of a phrase from wikipedia
 ├── source_db - the database const for source tables
 ├── result_db - the database const for triple tables
 ├── sandbox_related - the related data of a sandbox object for its page tabs
@@ -408,6 +410,7 @@ the object structure is:
 ├── view_typesShared - db based ENUM of the view types
 ├── url_varShared - all names used for the url and the form field names
 ├── calculatorUi - read the calculator triples of a page phrase
+├── calculator_definition_reportUi - the pdf of the definition of a calculator
 ├── calculator_reportUi - the pdf report of a calculator page
 ├── ui_baseUi
 │   ├── ui_im_exportUi - html user interface components for im- and export
@@ -438,6 +441,8 @@ the object structure is:
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
 ├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
+├── markdownUi - show a markdown document of /docs/ as html
+├── pdf_fontUi - a TrueType font that a pdf embeds as a subset with the Identity-H encoding
 ├── pdf_writerUi - a minimal writer for a pdf with text, tables and one jpeg image
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend
@@ -450,6 +455,7 @@ the object structure is:
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard
+├── wikidata_importUi - the preview and the confirm of the import of the values of wikidata
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend
 │   ├── change_field_listUi - the preloaded change log fields used for the html frontend

@@ -45,10 +45,13 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
@@ -58,6 +61,11 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 // reset the html code var
 $web_txt = '';
 $report_pdf = '';
+$report_name = '';
+// a file that the request downloads instead of the page e.g. the csv of the value tables or an export
+$download = '';
+$download_name = '';
+$download_format = '';
 
 // init global objects for the database connection until the api is completed
 global $debug;
@@ -75,6 +83,9 @@ $msg_ui = new user_message_ui();  // frontend entry point
 // TODO Prio 2 llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
 // TODO Prio 2 llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
+// the json file of the import view, read only here, because a method never reads a superglobal
+$upload = $_FILES[url_var::IMPORT_FILE] ?? [];
+$is_uploaded = is_uploaded_file($upload[rest_ctrl::UPLOAD_TMP_NAME] ?? '');
 if (!empty($_POST)) {
     // redact the unhashed password before logging so a login post never leaks it into the log
     log_debug('view $_POST array: ' . library::dsp_array(url_var::without_secrets($_POST), true));
@@ -124,7 +135,8 @@ if ($db_con->is_open()) {
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($usr->api_json([], $msg), $msg_ui);
         $msg_ui->usr = $usr_ui;
-        frontend::url_user_matches($url_array, $msg_ui);
+        // a url of another user gets the notice once and is not repeated by the links of the page
+        $url_array = frontend::url_without_foreign_user($url_array, $msg_ui);
 
         $ui = new frontend('view');
 
@@ -179,12 +191,23 @@ if ($db_con->is_open()) {
         // and this cached page); the message of this request is added to the cached page
         // the page after an action shows the changed data, so it is never taken from the cache
         $cached_page = null;
-        // a pdf report is never a cached page and needs the start of a page not to be sent
+        // a pdf report is never a cached page
         $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
-        if ($redirect_msg === null and !$is_report) {
+        $is_report_file = ($url_array[url_var::REPORT_FILE] ?? '') == url_var::TRUE;
+        // a report that was never fetched does not stay in the session, which each request reads
+        if (!$is_report_file) {
+            unset($_SESSION[url_var::SESSION_REPORT_PDF], $_SESSION[url_var::SESSION_REPORT_NAME]);
+        }
+        if ($redirect_msg === null and !$is_report and !$is_report_file) {
             $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
         }
-        if ($cached_page !== null) {
+        if ($is_report_file) {
+            // the report that the request before has created, sent once
+            $report_pdf = $_SESSION[url_var::SESSION_REPORT_PDF] ?? '';
+            $report_name = $_SESSION[url_var::SESSION_REPORT_NAME] ?? '';
+            unset($_SESSION[url_var::SESSION_REPORT_PDF], $_SESSION[url_var::SESSION_REPORT_NAME]);
+            $web_txt .= $mtr->txt(msg_id::CALCULATOR_REPORT_NONE);
+        } elseif ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
 
@@ -196,6 +219,8 @@ if ($db_con->is_open()) {
             // publish the loaded ui cache to the allowed global so renderers
             // (e.g. phrase_list::category_subtitle) can read the verb type cache
             $ui_sys = $ui->dto;
+            // the frontend reads the debug level of the url only from its cache, because web/ uses no other global
+            $ui_sys->debug = (int)$debug;
 
             // load the user-specific frontend configuration onto the ui cache
             // TODO Prio 1 load the config from cache if nothing has been changed
@@ -213,7 +238,7 @@ if ($db_con->is_open()) {
             $is_action = ($is_post_action or $is_get_action) && $app->session_token_valid;
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
-                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto);
+                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
                     // a page text collected so far or an already sent header would be lost by a redirect
                     if ($web_txt == '' and !headers_sent()) {
                         $redirect_url = frontend::redirect_url($url_array, $msg_ui);
@@ -231,15 +256,52 @@ if ($db_con->is_open()) {
                 // show the result to the user
                 // and use the cached html pages for view-only requests to reduce the response time
                 $sys->times->switch(system_time_type::URL_TO_HTML);
+                // the loading end closes the html elements of the loading start, so it is added only after it
+                $loading_sent = false;
                 if ($is_report) {
-                    $page_html = $ui->url_to_html($url_array, $msg_ui, $ui->dto);
-                    $report_pdf = $ui->report_pdf;
+                    $ui->report_watch();
+                    // the other pages of the user do not wait for the session while the report is created
+                    $ui->report_release_session();
+                    $ui->send_report_start($msg_ui);
+                    $ui->url_to_html($url_array, $msg_ui, $ui->dto);
+                    if ($ui->report_pdf != '') {
+                        if (session_start()) {
+                            $_SESSION[url_var::SESSION_REPORT_PDF] = $ui->report_pdf;
+                            $_SESSION[url_var::SESSION_REPORT_NAME] = $ui->report_name;
+                            // the request of the file waits for the session, which else ends with this script
+                            session_write_close();
+                        } else {
+                            $ui->report_pdf = '';
+                            log_err_msg_ui('the session for the pdf report of ' . $ui->report_name . ' cannot be opened again', $msg_ui);
+                        }
+                    }
+                    $page_html = $ui->report_end_html($url_array, $msg_ui);
                 } else {
-                    $ui->send_loading_start($msg_ui, $start_time);
+                    $is_csv = url_var::is_csv_export($url_array);
+                    $is_export = url_var::is_file_export($url_array);
+                    // a download sends no page, so the header of the file must be the first output
+                    if (!$is_csv and !$is_export) {
+                        $ui->send_loading_start($msg_ui, $start_time);
+                        $loading_sent = true;
+                    }
+                    // before the page, so that the page shows the message if nothing can be exported
+                    if ($is_export and $ui->export_file($url_array, $msg_ui, $ui->dto)) {
+                        $download = $ui->dto->download;
+                        $download_name = $ui->dto->download_name;
+                        $download_format = $ui->dto->download_format;
+                    }
                     $is_live = ($is_action or $redirect_msg !== null);
                     $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
-                    $web_txt .= new html_base()->loading_end();
+                    if ($is_csv) {
+                        $download = $ui->dto?->table_csv ?? '';
+                        $download_name = $ui->dto?->table_csv_name ?? '';
+                        $download_format = url_var::EXPORT_FORMAT_CSV;
+                        if ($download == '') {
+                            $redirect_msg = ($redirect_msg ?? '') . $mtr->txt(msg_id::TABLE_CSV_EMPTY);
+                        }
+                    }
                 }
+                $web_txt .= $loading_sent ? new html_base()->loading_end() : '';
                 $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
             }
             $sys->times->switch(system_time_type::CLOSE);
@@ -263,8 +325,13 @@ if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
 if ($redirect_url != '') {
     header('Location: ' . $redirect_url, true, 303);
 } elseif ($report_pdf != '') {
-    header('Content-Type: application/pdf');
+    header('Content-Type: ' . pdf_writer::MIME_TYPE);
+    header(calculator_report::attachment_header($report_name));
     echo $report_pdf;
+} elseif ($download != '') {
+    header('Content-Type: ' . rest_ctrl::EXPORT_MIME_TYPES[$download_format]);
+    header(calculator_report::attachment_header($download_name, rest_ctrl::EXPORT_FILE_EXTENSIONS[$download_format]));
+    echo $download;
 } else {
     echo $web_txt;
 }

@@ -1,0 +1,43 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "from": "new NPP sensitivity cells",
+                "verb": "has a",
+                "to": "household bill change"
+            },
+            {
+                "from": "new NPP sensitivity cells has a household bill change",
+                "verb": "is follower of",
+                "to": "new NPP sensitivity cell levelised cost"
+            },
+            {
+                "id": 4116,
+                "name": "new NPP sensitivity hint",
+                "description": "each cell: the levelised cost and the change of the household bill",
+                "from": "new NPP sensitivity",
+                "verb": "has a",
+                "to": "calculator hint"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": [
+            {
+                "class": "triple",
+                "id": 4364
+            },
+            {
+                "class": "triple",
+                "id": 4283
+            }
+        ]
+    }
+}

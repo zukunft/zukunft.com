@@ -101,6 +101,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
+// for used_by_data; loaded via value.php like value_list.php
+//include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 // for sandbox_related::views_assigned; loaded via word.php like view.php, because term.php includes this file
@@ -134,6 +136,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -163,6 +166,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
@@ -381,10 +385,7 @@ class triple extends sandbox_link_named
     {
         // TODO Prio 0 add to coding.md that explicit is better than implicit: use this case as a sample. If a function returns a bool that indicates the status if the process should be continued, use id. Do not use any other values like the database id that are not explicit designed for the case e.g. because this would not work if a database table does not have an id but has only a timestamp
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        // map the fields whenever the row has been mapped (id set), not based on the parent return,
-        // because the parent return includes $msg->is_ok() and an error left on $msg by an earlier
-        // operation must not lead to a half mapped triple e.g. with a name but without the verb
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(triple_fields::FLD_FROM, $db_row)) {
                 $phr_id = $db_row[triple_fields::FLD_FROM];
                 if ($phr_id != null) {
@@ -431,7 +432,7 @@ class triple extends sandbox_link_named
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -814,7 +815,7 @@ class triple extends sandbox_link_named
         // the own default view on top
         $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
-        // so the views tab of the triple page offers at least this view
+        // so the edit menu of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
             $msk->load_by_code_id(views_shared::TRIPLE, $msg);
@@ -854,6 +855,11 @@ class triple extends sandbox_link_named
                 }
             } else {
                 $vars = parent::api_json_array($typ_lst, $msg, $usr);
+                // like a word, because the frontend also reads the code id of a triple nested in
+                // another triple e.g. the sort condition of "numeric descending of potential loss"
+                if ($this->get_code_id() != null) {
+                    $vars[json_fields::CODE_ID] = $this->get_code_id();
+                }
                 // the from, verb and to names are included for a page request (incl_related)
                 // or when the phrases are explicitly requested, so the frontend can show e.g.
                 // the triple page title "<from> <verb> <to>" with a link to each part
@@ -933,10 +939,9 @@ class triple extends sandbox_link_named
                     // emitted as an empty json list, which says the list has been asked
                     $this->values_related?->filter_readable_by($usr);
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
-                        // INCL_PHRASES so each value carries its group phrases, which the
-                        // frontend needs for the value name and to sort the list by impact
+                        // with the group phrases and the source of each value (api_type_list::VALUES_RELATED)
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+                            $typ_lst->values_related(), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
                         $this->load_formulas_related($msg);
@@ -1007,7 +1012,8 @@ class triple extends sandbox_link_named
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO Prio 2 use phrase cache
-                $phr->set_id($value);
+                // with the sign, because the from or the to of a triple can be a triple
+                $phr->set_obj_from_id($value);
             }
         } else {
             $msg->add_id($missing_msg);
@@ -1959,6 +1965,11 @@ class triple extends sandbox_link_named
             // fill the names, but not the given name of the database if another name is requested,
             // because it is the old name e.g. of the user overlay row on a rename back
             $is_renamed = ($this->name !== null and $this->name != $trp->name(true));
+            // a request without a name keeps the name of the database row, e.g. an update put that only
+            // includes a triple again, so that the save never takes the missing name as a rename to empty
+            if ($this->name === null) {
+                $this->name = $trp->name;
+            }
             if ($this->name_given === null and $trp->name_given != null and !$is_renamed) {
                 $this->name_given = $trp->name_given;
             }
@@ -2907,6 +2918,57 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * a triple that a value, a result, a formula or another triple still uses is only excluded for the user
+     * by del(), because the delete would also delete its values (del_links) or leave rows that name a
+     * triple that does not exist any more
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the triple must not be deleted, but only excluded for the user
+     */
+    function used_by_someone_else(user_message $msg): bool
+    {
+        return parent::used_by_someone_else($msg) or $this->used_by_data($msg);
+    }
+
+    /**
+     * the values and results first, because they are lost by a delete
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if a value, a result, a formula or another triple uses this triple, false for a triple without id
+     */
+    function used_by_data(user_message $msg): bool
+    {
+        // a triple that is not in the database cannot be used by any data
+        if ($this->id() == 0) {
+            return false;
+        }
+        $phr = $this->phrase();
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr($phr, $msg, 1);
+        $used = !$val_lst->is_empty();
+        if (!$used) {
+            $res_lst = new result_list($this->get_user());
+            $res_lst->load_by_phrase($phr, $msg);
+            $used = !$res_lst->is_empty();
+        }
+        if (!$used) {
+            // a formula linked to the triple or a formula expression that names it
+            $frm_lst = new formula_list($this->get_user());
+            $frm_lst->load_by_phr($phr, $msg);
+            $frm_ref_lst = new formula_list($this->get_user());
+            $frm_ref_lst->load_by_triple_ref($this, $msg);
+            $used = (!$frm_lst->is_empty() or !$frm_ref_lst->is_empty());
+        }
+        if (!$used) {
+            // a triple with this triple as from or to
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_phr($phr, $msg);
+            $used = !$trp_lst->is_empty();
+        }
+        return $used;
+    }
+
+    /**
      * @param user_message $msg to enrich with problems and suggested solutions
      * @returns bool true if no other user has modified the triple
      */
@@ -3215,7 +3277,8 @@ class triple extends sandbox_link_named
                 triple_fields::FLD_COND_ID,
                 fields::FLD_USAGE,
                 fields::FLD_IMPACT,
-                fields::FLD_VIEW
+                fields::FLD_VIEW,
+                fields::FLD_CODE_ID
             ],
             parent::db_fields_all_sandbox()
         );
@@ -3377,7 +3440,8 @@ class triple extends sandbox_link_named
             }
         }
         // TODO Prio 2 check if the excluded field is not already added by the sandbox function
-        if ($obj->excluded !== $this->excluded) {
+        // compared as bool, because an unset excluded (null) is the same as not excluded (false)
+        if ($obj->is_excluded() !== $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
@@ -3390,6 +3454,22 @@ class triple extends sandbox_link_named
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
                 $obj->excluded,
+            );
+        }
+        // the code id links the standard row to program code, so a user row never has one
+        if (!$usr_tbl and $this->save_code_id($obj->code_id, $this->code_id, $msg)) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                fields::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $obj->code_id
             );
         }
         if ($obj->name_given() !== $this->name_given()) {

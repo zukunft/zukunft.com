@@ -171,6 +171,14 @@ class url_mapper
                 $json[$json_fld] = $this->to_human_assoc($part, $msg);
             }
         }
+        // the reference rows by their row number, because the same url var is used in each row
+        $ref_rows = [];
+        foreach (url_var::ref_rows($url_array) as $row => $fields) {
+            $ref_rows[$row] = $this->to_human_assoc($fields, $msg);
+        }
+        if ($ref_rows != []) {
+            $json[json_fields::URL_PART_REF_ROW] = $ref_rows;
+        }
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
@@ -221,10 +229,11 @@ class url_mapper
                 // mapped (and the action / step / mask value converted) and re-apply the prefix to the
                 // human key, so the human url shows e.g. 8name / 9mask_id instead of reporting the
                 // prefixed key as missing
-                [$prefix, $base_key] = url_var::split_prefix((string)$std_key);
+                // a '6'-prefixed reference row keeps its row number at the end of the human key too
+                [$prefix, $base_key, $row] = url_var::split_ref_row((string)$std_key);
                 if (array_key_exists($base_key, $map_pos)) {
                     $pos = $map_pos[$base_key];
-                    $target_key = $prefix . $map_lst[$pos][0];
+                    $target_key = $prefix . $map_lst[$pos][0] . $row;
                     if ($base_key == url_var::ACTION) {
                         $value = $this->map_std_action_to($value, $msg);
                     }
@@ -236,6 +245,9 @@ class url_mapper
                     }
                     if ($base_key == url_var::PHRASE_DATA_WALK) {
                         $value = $this->map_std_phrase_data_walk_to($value, $msg);
+                    }
+                    if ($base_key == url_var::EXPORT_FORMAT) {
+                        $value = $this->map_std_export_format_to($value, $msg);
                     }
                     if ($base_key == url_var::MASK) {
                         $value = $this->map_std_mask_to($value);
@@ -382,6 +394,24 @@ class url_mapper
         );
     }
 
+    /**
+     * @param string $std_value the export format of a url e.g. json of a human url or efj
+     * @param user_message $msg to report a format that the map does not know
+     * @return string the export format as the standard url value e.g. efj
+     */
+    private function map_human_export_format_to_std(
+        string       $std_value,
+        user_message $msg
+    ): string
+    {
+        return $this->map_value_to_std(
+            $std_value,
+            $msg,
+            url_var::HUMAN_TO_STD_EXPORT_FORMAT_VAL,
+            'url_var::HUMAN_TO_STD_EXPORT_FORMAT_VAL'
+        );
+    }
+
     private function map_std_action_to(
         string       $std_value,
         user_message $msg
@@ -431,6 +461,24 @@ class url_mapper
             $msg,
             url_var::HUMAN_TO_STD_PHRASE_DATA_WALK_VAL,
             'url_var::HUMAN_TO_STD_PHRASE_DATA_WALK_VAL'
+        );
+    }
+
+    /**
+     * @param string $std_value the export format as the standard url value e.g. efj
+     * @param user_message $msg to report a format that the map does not know
+     * @return string the export format of the human url e.g. json
+     */
+    private function map_std_export_format_to(
+        string       $std_value,
+        user_message $msg
+    ): string
+    {
+        return $this->map_std_value_to(
+            $std_value,
+            $msg,
+            url_var::HUMAN_TO_STD_EXPORT_FORMAT_VAL,
+            'url_var::HUMAN_TO_STD_EXPORT_FORMAT_VAL'
         );
     }
 
@@ -523,6 +571,10 @@ class url_mapper
         $key = url_var::PHRASE_DATA_WALK;
         if (array_key_exists($key, $std_array)) {
             $std_array[$key] = $this->map_human_phrase_data_walk_to_std($std_array[$key], $msg);
+        }
+        $key = url_var::EXPORT_FORMAT;
+        if (array_key_exists($key, $std_array)) {
+            $std_array[$key] = $this->map_human_export_format_to_std($std_array[$key], $msg);
         }
         return $std_array;
     }

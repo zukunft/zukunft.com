@@ -117,7 +117,7 @@ class value extends value_base
     private ?float $number = null;
 
     // the views that can show a value; populated lazily by load_views_related() and only emitted
-    // via api_json_array() under the INCL_RELATED flag, so the views tab of the default value
+    // via api_json_array() under the INCL_RELATED flag, so the edit menu of the default value
     // view can offer the views to switch to
     public ?view_list $views_related = null;
 
@@ -234,21 +234,24 @@ class value extends value_base
             $typ_lst = new api_type_list($typ_lst);
         }
 
+        // the source is nested with its name, url and doi for the value default page and for a table, which
+        // shows it as the tooltip of the number, so the frontend needs no extra load; only on request, so that
+        // the plain api message stays small (see triple::api_json_array for the same pattern with the condition)
+        if (($typ_lst->incl_related() or $typ_lst->include_sources()) and $this->get_source_id() > 0) {
+            // a list has loaded the readable sources of all its values upfront (see value_list::load_sources),
+            // so only the value default page loads the source of its single value
+            if ($typ_lst->incl_related() and $this->get_source()->name() == '' and !$typ_lst->test_mode()) {
+                $this->load_source($msg);
+            }
+            if ($this->get_source()->name() != '') {
+                $vars[json_fields::SOURCE] = $this->get_source()->api_json_array([], $msg, $usr);
+            }
+        }
+
         // the views, changes and overwrites tabs of the value default page
         if ($typ_lst->incl_related()) {
-            // the value default page also shows the source and the time of the last update;
-            // both only for a page request, so that the plain api message stays small and
-            // the volatile timestamp does not make the api test fixtures unstable;
-            // the source is nested with its name, so the frontend can link it without an
-            // extra load (see triple::api_json_array for the same pattern with the condition)
-            if ($this->get_source_id() > 0) {
-                if ($this->get_source()?->name() == '' and !$typ_lst->test_mode()) {
-                    $this->load_source($msg);
-                }
-                if ($this->get_source()?->name() != '') {
-                    $vars[json_fields::SOURCE] = $this->get_source()->api_json_array([], $msg, $usr);
-                }
-            }
+            // the value default page also shows the time of the last update; only for a page
+            // request, so that the volatile timestamp does not make the api test fixtures unstable
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
@@ -296,7 +299,7 @@ class value extends value_base
      * load the views that can show this value into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; unlike a word a value has no
      * view of its own, so the related views are all views of the value view type, which is
-     * what the views tab offers the user to switch to
+     * what the edit menu offers the user to switch to
      *
      * @param user_message $msg to collect any problem while loading the views
      * @return void

@@ -1,0 +1,36 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "description": "the result the verdict compares with the threshold",
+                "from": "new NPP verdict",
+                "verb": "with",
+                "to": "average cost change"
+            },
+            {
+                "from": "new NPP verdict threshold",
+                "verb": "is follower of",
+                "to": "new NPP verdict with average cost change"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": [
+            {
+                "class": "triple",
+                "id": 4240
+            },
+            {
+                "class": "triple",
+                "id": 4085
+            }
+        ]
+    }
+}

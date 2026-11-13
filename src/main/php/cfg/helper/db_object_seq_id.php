@@ -133,21 +133,32 @@ class db_object_seq_id extends db_object
      * map the database fields to the object fields
      * to be extended by the child functions
      *
-     * @param array|null $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database; the caller maps only a found row
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
      * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
+     * @return bool $msg->is_ok(), so that a child mapper continues with if ($result); a missing row or a row without id is reported
      */
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, $msg, $id_fld);
         $this->id = 0;
-        if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            if (array_key_exists($id_fld, $db_row)) {
-                // TODO Prio 2 check that $this->reset() is removed from all load function and only this reset is used
-                $this->reset(true);
-                if ($db_row[$id_fld] != 0) {
-                    $this->id = $db_row[$id_fld];
+        if ($msg->is_ok()) {
+            parent::row_mapper($db_row, $msg, $id_fld);
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                if (array_key_exists($id_fld, $db_row)) {
+                    // TODO Prio 2 check that $this->reset() is removed from all load function and only this reset is used
+                    $this->reset(true);
+                    if ($db_row[$id_fld] != 0) {
+                        $this->id = $db_row[$id_fld];
+                    }
                 }
+            }
+            // also a missing row, because the caller maps only a found row; reported, so that the child
+            // mappers stop and a list does not add an empty object
+            if ($this->id == 0) {
+                $msg->add(msg_id::DB_ROW_ID_MISSING, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_NAME => $id_fld,
+                ]);
             }
         }
         return $msg->is_ok();
@@ -316,7 +327,7 @@ class db_object_seq_id extends db_object
         // reset the id first, so that a missing database row is reported with id 0 as documented
         // and never with the stale id of e.g. a row that another user has deleted in the meantime,
         // because e.g. del() decides between delete and user exclude based on the reloaded id
-        // (a found row sets the id again in the row_mapper independent of the message state)
+        // (a found row sets the id again in the row_mapper, but only if the message carries no earlier error)
         $this->id = 0;
         parent::load_without_id_return($qp, $msg);
         return $this->id();
@@ -631,9 +642,9 @@ class db_object_seq_id extends db_object
      */
     function name(): string|null
     {
-        $msg = 'ERROR: name function not overwritten by child object ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $msg_txt = 'ERROR: name function not overwritten by child object ' . $this::class;
+        log_err($msg_txt);
+        return $msg_txt;
     }
 
     /**
@@ -643,9 +654,9 @@ class db_object_seq_id extends db_object
      */
     function name_or_null(): ?string
     {
-        $msg = 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $msg_txt = 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
+        log_err($msg_txt);
+        return $msg_txt;
     }
 
     /**
@@ -1608,7 +1619,7 @@ class db_object_seq_id extends db_object
 
         if ($msg->usr == null) {
             // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
-            log_err('user missing while ' . $action . ' of ' . $class);
+            log_err_reported('user missing while ' . $action . ' of ' . $class);
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($msg->usr->is_blocked()) {
             global $sys;

@@ -1,0 +1,895 @@
+/* the table editor (script/table_editor.js, system_page::table_editor) */
+/* layout: the top line of the calculator editor, then like its columns two white cards: the settings */
+/* on the left and the live table, its texts, its changes and its definition as tabs on the right; */
+/* stacks on narrow screens */
+/* the colours e.g. --bg, --ink or --accent in the light and in the dark mode are the css variables */
+/* that the page head sets from config.yaml frontend.layout.colours.editor (html_base::theme_style), */
+/* so this file has no colour value; every rule is nested in the host, so that the page keeps the */
+/* standard styles of style_html.css e.g. of the site header, its buttons and the footer */
+#tableEditor {
+    --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --r: 6px;
+    /* the editor below the navbar of the pod: full width and left aligned instead of the centred text of the pod body */
+    flex: 1;
+    width: 100%;
+    text-align: left;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-page);
+    font-size: 14px;
+    line-height: 1.45;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    button, input, select, textarea {
+        font: inherit;
+        color: inherit;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            transition: none !important;
+        }
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    /* the top line of the calculator editor: the title, the phrase of the table and the tools */
+    .bar {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 5;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+        padding-block: 10px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        align-items: center;
+    }
+
+    /* the title in the same size as the one of the calculator editor */
+    .brand b {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: .01em;
+    }
+
+    .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .phrasebar {
+        flex: 1 1 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 10px;
+        align-items: center;
+        min-width: 0;
+        margin: 0;
+    }
+
+    .phrasebar label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-2);
+        letter-spacing: .04em;
+    }
+
+    /* the buttons and chips of the top line like the ones of the calculator editor; the main button e.g. */
+    /* load in the colour set "main button" of style_html.css; the smaller buttons below keep their size */
+    .bar .btn {
+        padding: 6px 11px;
+        font-size: 14px;
+        border-color: var(--line);
+        white-space: nowrap;
+    }
+
+    .bar .btn:hover {
+        background: var(--surface);
+        border-color: var(--accent);
+    }
+
+    .bar .btn:disabled {
+        opacity: .45;
+        border-color: var(--line);
+    }
+
+    .bar .btn.primary {
+        background: var(--btn-main);
+        border-color: var(--btn-main);
+        color: var(--btn-main-ink) !important;
+        font-weight: 500;
+    }
+
+    .bar .btn.primary:hover:not(:disabled) {
+        background: var(--btn-main-hover);
+        border-color: var(--btn-main-hover);
+    }
+
+    .bar .chip {
+        padding: 1px 7px;
+        border-radius: 99px;
+        border-color: var(--line);
+        color: var(--ink-2);
+    }
+
+    .phrasebar .inp {
+        flex: 0 1 380px;
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        border-radius: var(--r);
+        padding: 6px 8px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+    }
+
+    .chip.count {
+        background: var(--accent-soft);
+        border-color: transparent;
+        color: var(--accent-deep);
+        font-weight: 500;
+    }
+
+    .notice {
+        margin: 12px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+        padding: 9px 12px;
+        border-radius: var(--r);
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+    }
+
+    .notice.err {
+        background: var(--danger-soft);
+        color: var(--danger);
+    }
+
+    /* the two columns as white cards on the editor background like the columns of the calculator editor */
+    .wrap {
+        display: grid;
+        grid-template-columns: 340px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding-block: 14px 40px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+    }
+
+    @media (max-width: 860px) {
+        .wrap {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .col {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        min-width: 0;
+    }
+
+    .col-head {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .col-head h2 {
+        margin: 0;
+        font-size: 11px;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+    }
+
+    #rail {
+        padding: 12px;
+    }
+
+    aside .toolbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    details.group {
+        border-top: 1px solid var(--line);
+    }
+
+    details.group:last-of-type {
+        border-bottom: 1px solid var(--line);
+    }
+
+    details.group > summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 2px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    details.group > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    details.group > summary::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-right: 1.5px solid var(--muted);
+        border-bottom: 1.5px solid var(--muted);
+        transform: rotate(-45deg);
+        transition: transform .15s;
+    }
+
+    details.group[open] > summary::before {
+        transform: rotate(45deg);
+    }
+
+    details.group > summary .count {
+        margin-left: auto;
+        font-weight: 400;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+    }
+
+    .fields {
+        display: grid;
+        gap: 8px;
+        padding: 2px 2px 12px;
+    }
+
+    .field {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 128px;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .field.wide {
+        grid-template-columns: 1fr;
+    }
+
+    .field label {
+        font-size: 12.5px;
+        min-width: 0;
+    }
+
+    .field label code, .texts code {
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        color: var(--muted);
+        display: block;
+        letter-spacing: 0;
+    }
+
+    .field input[type=text], .field input[type=number], .field select, .field textarea, .texts input, .texts textarea {
+        width: 100%;
+        padding: 4px 6px;
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        background: var(--bg);
+        min-width: 0;
+    }
+
+    .field input[type=checkbox] {
+        justify-self: end;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+    }
+
+    .field textarea {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        min-height: 48px;
+        resize: vertical;
+    }
+
+    /* token field: ordered chips plus a phrase picker; the text of an empty list is the translated data-empty of the script */
+    .tokens {
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        background: var(--bg);
+        padding: 6px;
+        display: grid;
+        gap: 6px;
+    }
+
+    .tokens .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        min-height: 26px;
+    }
+
+    .tokens .chips:empty::before {
+        content: attr(data-empty);
+        color: var(--muted);
+        font-size: 12px;
+        padding: 3px 2px;
+    }
+
+    .chip-tok {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--surface);
+        border: 1px solid var(--pv-border);
+        border-radius: 3px;
+        padding: 2px 4px 2px 6px;
+        font-size: 12.5px;
+        cursor: grab;
+        user-select: none;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .chip-tok:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 0;
+    }
+
+    .chip-tok.dragging {
+        opacity: .45;
+    }
+
+    .chip-tok.drop-before {
+        box-shadow: -3px 0 0 var(--accent);
+    }
+
+    .chip-tok.drop-after {
+        box-shadow: 3px 0 0 var(--accent);
+    }
+
+    .chip-tok .grip {
+        color: var(--pv-border);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: -2px;
+    }
+
+    .chip-tok .rm {
+        border: 0;
+        background: none;
+        color: var(--muted);
+        cursor: pointer;
+        padding: 0 2px;
+        line-height: 1;
+        font-size: 14px;
+        border-radius: 2px;
+    }
+
+    .chip-tok .rm:hover {
+        color: var(--danger);
+        background: var(--danger-soft);
+    }
+
+    .picker {
+        position: relative;
+    }
+
+    .picker input {
+        width: 100%;
+        padding: 4px 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        background: var(--surface);
+        font-size: 12.5px;
+    }
+
+    .picker .suggest {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        margin-top: 2px;
+        background: var(--surface);
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+        z-index: 20;
+        max-height: 220px;
+        overflow: auto;
+    }
+
+    .picker .opt {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 12.5px;
+    }
+
+    .picker .opt .desc {
+        color: var(--muted);
+        font-size: 11.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .picker .opt mark {
+        background: var(--accent-soft);
+        color: inherit;
+        border-radius: 2px;
+    }
+
+    .picker .opt.active, .picker .opt:hover {
+        background: var(--surface-2);
+    }
+
+    .picker .opt.none {
+        color: var(--muted);
+        cursor: default;
+    }
+
+    .tokens .hint {
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    main {
+        padding: 4px 12px 14px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 2px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 12px;
+    }
+
+    .tabs button {
+        background: none;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        padding: 6px 12px;
+        color: var(--muted);
+        cursor: pointer;
+        margin-bottom: -1px;
+    }
+
+    .tabs button[aria-selected=true] {
+        color: var(--ink);
+        border-bottom-color: var(--accent);
+        font-weight: 500;
+    }
+
+    /* the pod forces white button text with !important, which is invisible on the light editor buttons */
+    .btn {
+        background: var(--surface);
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        padding: 4px 10px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--ink) !important;
+    }
+
+    .btn:hover {
+        background: var(--surface-2);
+    }
+
+    .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--surface) !important;
+    }
+
+    .btn.small {
+        padding: 2px 8px;
+        font-size: 12px;
+    }
+
+    .btn:disabled {
+        opacity: .5;
+        cursor: default;
+    }
+
+    .view-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 14px;
+        margin-bottom: 8px;
+    }
+
+    .view-head h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        text-wrap: balance;
+    }
+
+    .view-head .meta {
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .controls input[type=search] {
+        padding: 4px 8px;
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        background: var(--surface);
+        min-width: 0;
+        width: 220px;
+        max-width: 100%;
+    }
+
+    .levels {
+        display: inline-flex;
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        overflow: hidden;
+    }
+
+    .levels button {
+        border: 0;
+        background: var(--surface);
+        padding: 3px 10px;
+        cursor: pointer;
+        font-size: 12.5px;
+        color: var(--muted);
+    }
+
+    .levels button + button {
+        border-left: 1px solid var(--pv-border);
+    }
+
+    .levels button[aria-pressed=true] {
+        background: var(--accent-soft);
+        color: var(--ink);
+        font-weight: 500;
+    }
+
+    .table-box {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        background: var(--surface);
+    }
+
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        font-variant-numeric: tabular-nums;
+    }
+
+    th, td {
+        padding: 6px 10px;
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .density-compact th, .density-compact td {
+        padding: 2px 8px;
+    }
+
+    .density-comfortable th, .density-comfortable td {
+        padding: 10px 12px;
+    }
+
+    .borders-none th, .borders-none td {
+        border-bottom: 0;
+    }
+
+    .borders-grid th, .borders-grid td {
+        border-right: 1px solid var(--line);
+    }
+
+    .borders-grid th:last-child, .borders-grid td:last-child {
+        border-right: 0;
+    }
+
+    thead th {
+        background: var(--surface-2);
+        font-weight: 600;
+        font-size: 12.5px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    thead th .unit {
+        display: block;
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    thead th.sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    thead th.sortable:hover {
+        color: var(--accent);
+    }
+
+    thead th .arrow {
+        color: var(--accent);
+        font-size: 11px;
+        margin-left: 3px;
+    }
+
+    thead th.rotate {
+        height: 120px;
+        vertical-align: bottom;
+        white-space: nowrap;
+    }
+
+    thead th.rotate > div {
+        transform: rotate(-60deg);
+        transform-origin: left bottom;
+        width: 24px;
+        margin-left: 8px;
+    }
+
+    tbody.striped tr:nth-child(even) td {
+        background: color-mix(in srgb, var(--surface-2) 45%, var(--surface));
+    }
+
+    td.num, th.num {
+        text-align: right;
+    }
+
+    td.center {
+        text-align: center;
+    }
+
+    td.frozen, th.frozen {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: var(--surface);
+        box-shadow: 1px 0 0 var(--line);
+    }
+
+    thead th.frozen {
+        z-index: 3;
+        background: var(--surface-2);
+    }
+
+    tbody.striped tr:nth-child(even) td.frozen {
+        background: color-mix(in srgb, var(--surface-2) 45%, var(--surface));
+    }
+
+    td.label .toggle {
+        display: inline-block;
+        width: 16px;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        user-select: none;
+    }
+
+    td.label .toggle.leaf {
+        cursor: default;
+        visibility: hidden;
+    }
+
+    td.label .tree {
+        color: var(--pv-border);
+        font-family: var(--font-mono);
+    }
+
+    td.label .indent {
+        display: inline-block;
+    }
+
+    tr.parent td.label {
+        font-weight: 500;
+    }
+
+    tr.total td {
+        font-weight: 600;
+        border-top: 2px solid var(--pv-border);
+        background: var(--surface-2);
+    }
+
+    tr.subtotal td {
+        color: var(--muted);
+        font-style: italic;
+    }
+
+    tr.selected td {
+        background: var(--accent-soft) !important;
+    }
+
+    td .delta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-left: 5px;
+    }
+
+    td .delta.up {
+        color: var(--ok);
+    }
+
+    td .delta.down {
+        color: var(--danger);
+    }
+
+    td.hi {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    td.neg {
+        color: var(--danger);
+    }
+
+    td.missing {
+        color: var(--muted);
+    }
+
+    .chip {
+        display: inline-block;
+        font-size: 11px;
+        padding: 0 6px;
+        border-radius: 9px;
+        border: 1px solid var(--pv-border);
+        color: var(--muted);
+    }
+
+    .chip.measured {
+        border-color: var(--ok);
+        color: var(--ok);
+    }
+
+    .chip.assumed {
+        border-color: var(--shared);
+        color: var(--shared);
+    }
+
+    .pager {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        font-size: 12.5px;
+        color: var(--muted);
+        flex-wrap: wrap;
+    }
+
+    .caption {
+        color: var(--muted);
+        font-size: 12.5px;
+        margin-top: 8px;
+    }
+
+    .empty {
+        padding: 24px;
+        color: var(--muted);
+        text-align: center;
+    }
+
+    .json-box textarea {
+        width: 100%;
+        min-height: 420px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        border: 1px solid var(--pv-border);
+        border-radius: var(--r);
+        background: var(--surface);
+        padding: 10px;
+        resize: vertical;
+    }
+
+    .json-box .msg {
+        font-size: 12.5px;
+        color: var(--muted);
+    }
+
+    .json-box .msg.err {
+        color: var(--danger);
+    }
+
+    .note {
+        font-size: 12.5px;
+        color: var(--muted);
+        max-width: 70ch;
+        margin: 0 0 10px;
+    }
+
+    aside .toolbar .note {
+        margin: 0;
+    }
+
+    /* the All texts tab like in the calculator editor: the part of the table and its text, which wraps */
+    .texts td {
+        white-space: normal;
+    }
+
+    .texts td:first-child {
+        width: 34%;
+    }
+
+    /* the Changes tab like in the calculator editor */
+    .chg {
+        display: grid;
+        gap: 14px;
+    }
+
+    .chg h3 {
+        margin: 0 0 6px;
+        font-size: 13px;
+    }
+
+    .chg ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 3px;
+    }
+
+    .chg li {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        overflow-wrap: anywhere;
+    }
+
+    .chg li.add {
+        background: var(--ok-soft);
+        color: var(--ok);
+    }
+
+    .chg li.del {
+        background: var(--danger-soft);
+        color: var(--danger);
+        text-decoration: line-through;
+        text-decoration-thickness: 1px;
+    }
+
+    .chg li.mod {
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+    }
+
+    .chg li.wrn {
+        background: var(--shared-soft);
+        color: var(--shared);
+        font-family: var(--font-page);
+    }
+}

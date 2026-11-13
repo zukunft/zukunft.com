@@ -597,6 +597,13 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $other_msg->text(), (string)users::SYSTEM_ADMIN_ID);
         $test_name = '... and does not stop the request';
         $t->assert_true($test_name, $other_msg->is_ok());
+        // e.g. after an expired session, so the links of the page must not show the notice again
+        $test_name = 'a url of another user loses the user, so the notice is shown only once';
+        $foreign_url = [url_var::MASK => views::WORD_ID, url_var::USER => users::SYSTEM_ADMIN_ID];
+        $t->assert($test_name, frontend::url_without_foreign_user($foreign_url, new user_message()), [url_var::MASK => views::WORD_ID]);
+        $test_name = '... but the url of the session user keeps it';
+        $own_url = [url_var::MASK => views::WORD_ID, url_var::USER => users::DEV_ID];
+        $t->assert($test_name, frontend::url_without_foreign_user($own_url, new user_message($dev_ui)), $own_url);
 
         // the user to show or change is not the logged-in user, so it has its own url var
         $test_name = 'the user edit form names the user to change by user_to_edit';

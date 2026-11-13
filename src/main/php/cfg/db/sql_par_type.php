@@ -58,6 +58,7 @@ enum sql_par_type: string
     case TEXT_OR = 'text_or';
     case KEY_512 = 'key512';
     case TEXT_USR = 'text_usr'; // a name that can be user-specific e.g. the word or triple name
+    case TEXT_USR_LIST = 'text_usr_list'; // one of a list of texts that can be user-specific e.g. the external keys of references
     case INT_USR = 'int_usr'; // an id that can be user-specific e.g. the source of a value
     case LIKE_R = 'like_start_with'; // add a wildcard to the right to fine the values that start with the given text
     case LIKE_L = 'like_end_with'; // add a wildcard to the left to find the values that end with the given text
@@ -108,7 +109,7 @@ enum sql_par_type: string
     function is_list(): bool
     {
         return match($this) {
-            self::INT_LIST, self::INT_LIST_OR, self::TEXT_LIST => true,
+            self::INT_LIST, self::INT_LIST_OR, self::TEXT_LIST, self::TEXT_USR_LIST => true,
             default => false,
         };
     }

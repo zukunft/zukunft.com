@@ -58,6 +58,7 @@ class files
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
+    CONST string PHP = '.php';
     CONST string CSV = '.csv';
     CONST string ZIP = '.zip';
     CONST string XML = '.xml';
@@ -71,10 +72,28 @@ class files
     // the data that api/phraseData returns at least for the example PV installation
     CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // the phrase data of the row phrase of the table editor sample; only the received json is written, as the seed of use_cases/table_editor_sample.html
+    CONST string PHRASE_DATA_TABLE_EDITOR_NAME = 'phrase_data_table_editor';
+    CONST string PHRASE_DATA_TABLE_EDITOR = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_TABLE_EDITOR_NAME . self::JSON;
+    // the answers of the export api for a seed word with its related phrases and for the results of a seed formula
+    CONST string EXPORT_JSON_PI = test_paths::API_JSON_RES . 'export_pi' . self::JSON;
+    CONST string EXPORT_XML_PI = test_paths::API_JSON_RES . 'export_pi' . self::XML;
+    CONST string EXPORT_CSV_SCALE_TO_SEC = test_paths::API_JSON_RES . 'export_scale_minute_to_sec' . self::CSV;
     // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
     CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
+    // the hand made sample of the calculator editor json, which uses every proposed calculator element
+    CONST string CALCULATOR_EDITOR_SAMPLE = test_paths::RESOURCE . 'web' . DIRECTORY_SEPARATOR . 'calculator_editor' . DIRECTORY_SEPARATOR . 'calculator_editor_sample' . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the table editor of sector of revenue that the browser builds from its seed, next to the hand made table_editor_sample.html
+    CONST string TABLE_EDITOR = 'table_editor';
+    CONST string TABLE_EDITOR_SAMPLE = 'table_editor_sample';
+    // the table editor of the global warming solutions of the start page: own columns, but no table parameters and many rows
+    CONST string TABLE_EDITOR_GLOBAL_WARMING_SOLUTION = 'table_editor_global_warming_solution';
+    // the differences of table_editor.html to the sample as a markdown prompt for an llm
+    CONST string TABLE_EDITOR_DIFF = 'table_editor_diff';
+    // the script builds the editor of both pages, so the compare reads both after a browser has run them
+    CONST string TABLE_EDITOR_CASES = test_paths::JS . 'table_editor_cases' . self::JS;
     // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
     CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
     // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
@@ -96,8 +115,23 @@ class files
     CONST string PV_CASE_LOW = 'low';
     CONST string PV_CASE_MISSING_FIELD = 'missing_field';
     CONST array PV_CASES = [self::PV_CASE_STANDARD, self::PV_CASE_HIGH, self::PV_CASE_LOW];
+    // the Swiss NPP vote page without javascript and as the browser builds it, the hand made sample and the report of their differences
+    CONST string NPP_CH_VOTE_NO_JS = 'npp_ch_vote';
+    CONST string NPP_CH_VOTE_JS = 'npp_ch_vote_js';
+    CONST string NPP_CH_VOTE_SAMPLE = 'npp_ch_vote_sample';
+    CONST string NPP_CH_VOTE_DIFF = 'npp_ch_vote_diff';
+    // the calculator editor of the Swiss NPP vote and the report of the differences of its page preview to the page
+    CONST string NPP_CH_VOTE_EDITOR = 'npp_ch_vote_editor';
+    CONST string NPP_CH_VOTE_EDITOR_DIFF = 'npp_ch_vote_editor_diff';
+    // the expected csv export of the table of the global warming solutions and the report of the differences of the real export
+    CONST string GLOBAL_WARMING_SOLUTIONS_CSV = test_paths::EXPORT_START_PAGE . 'global_warming_solutions' . self::CSV;
+    CONST string GLOBAL_WARMING_SOLUTIONS_DIFF = test_paths::EXPORT_START_PAGE . 'global_warming_solutions_diff' . self::MD;
+    // the sample fills its verdict and its tables by its script, so the compare reads it after a browser has run it
+    CONST string NPP_CH_VOTE_CASES = test_paths::JS . 'npp_ch_vote_cases' . self::JS;
+    // ... and opens the sensitivity table, whose cells the page and the editor preview calculate only while it is open
+    CONST string NPP_CH_VOTE_SENSITIVITY_CASES = test_paths::JS . 'npp_ch_vote_sensitivity_cases' . self::JS;
     // the calculator page of the example portfolio split that the server renders without javascript
-    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS ='portfolio_split_calculator_no_js';
     // the same page that the browser builds with javascript from the database
     CONST string PORTFOLIO_SPLIT_CALCULATOR_JS = 'portfolio_split_calculator_js';
     CONST string PORTFOLIO_SPLIT_CALCULATOR_SAMPLE = 'portfolio_split_calculator_sample';
@@ -120,6 +154,8 @@ class files
     CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
     CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
+    // the undo of a removed value, which includes the value again for the user; the test sets the id and the number
+    CONST string UPDATE_PUT_VALUE_CLEARED_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_value_cleared_undo' . self::JSON;
     CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
     // the user actions that a headless browser runs in a copy of the calculator editor snapshot, selected by the
     // scenario name as the url hash; the update put message that the editor sends after a scenario is compared
@@ -143,8 +179,57 @@ class files
     CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
     CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
     CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the scenarios of the pro and contra arguments, which run in the calculator editor of the Swiss NPP vote
+    CONST string SCENARIO_ARGUMENTS_COLLAPSED = 'arguments_collapsed';
+    CONST string SCENARIO_ARGUMENT_TEXT = 'argument_text';
+    CONST string SCENARIO_ARGUMENT_SIDE = 'argument_side';
+    CONST string SCENARIO_ADD_ARGUMENT = 'add_argument';
+    CONST string SCENARIO_ADD_ARGUMENT_WITHOUT_REASON = 'add_argument_without_reason';
+    CONST string SCENARIO_REMOVE_ARGUMENT = 'remove_argument';
+    // ... and of the lead text that the page shows collapsed below the title
+    CONST string SCENARIO_MORE_TEXT = 'more_text';
+    CONST string SCENARIO_MORE_TEXT_UNCHANGED = 'more_text_unchanged';
+    // ... of the verdict and of the clicks in the page preview, which select where a part is changed
+    CONST string SCENARIO_VERDICT_LABEL = 'verdict_label';
+    CONST string SCENARIO_VERDICT_SCALE_NOTE = 'verdict_scale_note';
+    CONST string SCENARIO_VERDICT_RESULT = 'verdict_result';
+    CONST string SCENARIO_VERDICT_RESULT_UNCHANGED = 'verdict_result_unchanged';
+    CONST string SCENARIO_VERDICT_SCALE_LIMITS = 'verdict_scale_limits';
+    CONST string SCENARIO_VERDICT_SCALE_LIMITS_UNCHANGED = 'verdict_scale_limits_unchanged';
+    // ... of the sensitivity table
+    CONST string SCENARIO_SENSITIVITY_NUMBER = 'sensitivity_number';
+    CONST string SCENARIO_SENSITIVITY_ADD_LEVEL = 'sensitivity_add_level';
+    CONST string SCENARIO_SENSITIVITY_ADD_LEVEL_WITHOUT_PHRASE = 'sensitivity_add_level_without_phrase';
+    CONST string SCENARIO_SENSITIVITY_CELL_HINT = 'sensitivity_cell_hint';
+    // ... of the presets
+    CONST string SCENARIO_PRESET_LABEL = 'preset_label';
+    CONST string SCENARIO_PRESET_VALUE = 'preset_value';
+    CONST string SCENARIO_PRESET_NEW_VALUE = 'preset_new_value';
+    CONST string SCENARIO_PRESET_VALUE_CLEARED = 'preset_value_cleared';
+    CONST string SCENARIO_ADD_PRESET = 'add_preset';
+    CONST string SCENARIO_ADD_PRESET_WITHOUT_PHRASE = 'add_preset_without_phrase';
+    CONST string SCENARIO_REMOVE_PRESET = 'remove_preset';
+    // ... of the notes
+    CONST string SCENARIO_NOTE_TEXT = 'note_text';
+    CONST string SCENARIO_NOTE_TEXT_UNCHANGED = 'note_text_unchanged';
+    // ... of the sources
+    CONST string SCENARIO_SOURCE_DESCRIPTION = 'source_description';
+    CONST string SCENARIO_SOURCE_RENAME = 'source_rename';
+    CONST string SCENARIO_SOURCE_URL_UNCHANGED = 'source_url_unchanged';
+    CONST string SCENARIO_PREVIEW_PARTS = 'preview_parts';
+    // the scenarios that end with the json of the Definition tab as their message
+    CONST string SCENARIO_JSON_TAB_LABEL = 'json_tab_label';
+    CONST string SCENARIO_JSON_TAB = 'json_tab';
+    // the scenarios that end with the posted request of the PDF tab or the state of its button as their message
+    CONST string SCENARIO_PDF_TAB_LABEL = 'pdf_tab_label';
+    CONST string SCENARIO_PDF_TAB_OFFLINE = 'pdf_tab_offline';
+    // the scenario that ends with the settings that the clicks on the detail table of the preview show
+    CONST string SCENARIO_PREVIEW_DETAIL_PARTS = 'preview_detail_parts';
     // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_SOURCE_DESCRIPTION = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_DESCRIPTION . self::JSON;
+    CONST string UPDATE_PUT_SOURCE_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_SOURCE_RENAME . self::JSON;
+    CONST string UPDATE_PUT_NOTE_TEXT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_NOTE_TEXT . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;
@@ -152,10 +237,45 @@ class files
     CONST string UPDATE_PUT_ADD_INPUT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_ADD_INPUT . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_UP = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_UP . self::JSON;
     CONST string UPDATE_PUT_EMBODIED_EMISSION_DOWN = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_EMBODIED_EMISSION_DOWN . self::JSON;
+    // the update put messages that the table editor of sector of revenue sends after an action, which the write test saves and undoes
+    CONST string TABLE_SCENARIO_ADD_COLUMN = 'add_column';
+    CONST string TABLE_SCENARIO_MOVE_COLUMN = 'move_column';
+    CONST string TABLE_SCENARIO_REMOVE_COLUMN = 'remove_column';
+    CONST string TABLE_SCENARIO_COLUMN_ORDER_RULE = 'column_order_rule';
+    CONST string TABLE_SCENARIO_HEADER_ROTATE = 'header_rotate';
+    CONST string TABLE_SCENARIO_ROW_LIMIT = 'row_limit';
+    CONST string TABLE_SCENARIO_TITLE = 'title';
+    CONST string UPDATE_PUT_TABLE_ADD_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_ADD_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_MOVE_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_MOVE_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_REMOVE_COLUMN = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_REMOVE_COLUMN . self::JSON;
+    CONST string UPDATE_PUT_TABLE_COLUMN_ORDER_RULE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_COLUMN_ORDER_RULE . self::JSON;
+    CONST string UPDATE_PUT_TABLE_HEADER_ROTATE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_HEADER_ROTATE . self::JSON;
+    CONST string UPDATE_PUT_TABLE_ROW_LIMIT = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_ROW_LIMIT . self::JSON;
+    CONST string UPDATE_PUT_TABLE_TITLE = test_paths::WEB_RES . self::TABLE_EDITOR . DIRECTORY_SEPARATOR . self::UI_PUT_PREFIX . self::TABLE_SCENARIO_TITLE . self::JSON;
+    // the user actions that a headless browser runs in a copy of the table editor snapshot, selected by the scenario name as the url hash;
+    // the update put message is compared with UI_PUT_PREFIX + scenario name and the exported csv with the scenario name in web/table_editor
+    CONST string TABLE_EDITOR_SCENARIOS = test_paths::JS . 'table_editor_scenarios' . self::JS;
+    CONST string TABLE_SCENARIO_ADD_COLUMN_TO_TIER = 'add_column_to_tier';
+    CONST string TABLE_SCENARIO_ADD_COLUMN_USED = 'add_column_used';
+    CONST string TABLE_SCENARIO_MOVE_COLUMN_FIRST = 'move_column_first';
+    CONST string TABLE_SCENARIO_REMOVE_COLUMN_ADDED_AGAIN = 'remove_column_added_again';
+    CONST string TABLE_SCENARIO_SORT_COLUMN = 'sort_column';
+    CONST string TABLE_SCENARIO_SORT_LABEL = 'sort_label';
+    CONST string TABLE_SCENARIO_ROW_LIMIT_BACK = 'row_limit_back';
+    CONST string TABLE_SCENARIO_UNDO = 'undo';
+    CONST string TABLE_SCENARIO_UNDO_ALL = 'undo_all';
+    CONST string TABLE_SCENARIO_REDO = 'redo';
+    CONST string TABLE_SCENARIO_REDO_AFTER_NEW_STEP = 'redo_after_new_step';
+    CONST string TABLE_SCENARIO_DISCARD_UNDO = 'discard_undo';
+    CONST string TABLE_SCENARIO_DISCARD = 'discard';
+    CONST string TABLE_SCENARIO_EXPORT = 'export';
+    CONST string TABLE_SCENARIO_EXPORT_NO_ROWS = 'export_no_rows';
+    CONST string TABLE_SCENARIO_SAVE_UNCHANGED = 'save_unchanged';
+    CONST string TABLE_SCENARIO_SAVE_REFUSED = 'save_refused';
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
-    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL];
+    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL, self::PHRASE_DATA_TABLE_EDITOR];
 
     // the static forward pages in the docroot by their url path, which the test run rewrites
     // from the view of api::FORWARD_VIEWS (see base_ui_tests)
@@ -215,10 +335,16 @@ class files
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
     CONST string DOCS_MATH = test_paths::DOCS . 'math' . self::MD;
+    CONST string DOCS_TEST_DIFFERENCES = test_paths::DOCS . 'test_differences' . self::MD;
+    CONST string DOCS_TEST_OBJECT_OVERVIEW = test_paths::DOCS . 'test_object_overview' . self::MD;
+    // the test runners whose tests the test differences report compares
+    CONST string TEST_ALL_SCRIPT = test_paths::SCRIPTS . 'test' . self::PHP;
+    CONST string TEST_PART_SCRIPT = test_paths::SCRIPTS . 'test_part' . self::PHP;
     // the javascript evaluators of the math function report, started with node
     CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
     CONST string DOCS_PINNED_ID_FINDINGS = test_paths::DOCS . 'pinned_id_findings' . self::MD;
+    CONST string DOCS_TRANSLATION_FINDINGS = test_paths::DOCS . 'translation_findings' . self::MD;
 
 
     /*
@@ -258,6 +384,8 @@ class files
 
     CONST string IMPORT_USERS = test_paths::IMPORT_UNIT . 'users';
     CONST string IMPORT_WORDS = test_paths::IMPORT_UNIT . 'words';
+    // two test words and a test triple for the upload of the import view
+    CONST string IMPORT_UPLOAD = test_paths::IMPORT_UNIT . 'upload_words';
     CONST string IMPORT_VERBS = test_paths::IMPORT_UNIT . 'verbs';
     CONST string IMPORT_TRIPLES = test_paths::IMPORT_UNIT . 'triples';
     CONST string IMPORT_SOURCES = test_paths::IMPORT_UNIT . 'sources';
@@ -387,8 +515,20 @@ class files
     CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
     CONST string IMPORT_WTW_SAMPLE = test_paths::IMPORT_V_DEM . 'wtw_sample' . self::JSON;
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
+    // the summary of the Zurich page with a pronunciation in the lead text for the wikipedia refresh tests
+    CONST string IMPORT_WIKIPEDIA_SUMMARY_ZURICH = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Zurich' . self::JSON;
+    // the summary of the Geneva page as wikipedia sent it on 2026-11-10, never updated by a run
+    CONST string IMPORT_WIKIPEDIA_SUMMARY_GENEVA = test_paths::IMPORT_WIKIPEDIA_CACHE . 'summary_Geneva' . self::JSON;
+    // the description and the wikidata reference that the live wikipedia page gives the phrase of a
+    // wikipedia refresh workflow, as an import json, so that a change of the live page is reported
+    CONST string IMPORT_WIKIPEDIA_REFRESH_GENEVA = test_paths::IMPORT_WIKIPEDIA . 'refresh_geneva_city' . self::JSON;
+    CONST string IMPORT_WIKIPEDIA_REFRESH_HEALTH = test_paths::IMPORT_WIKIPEDIA . 'refresh_health' . self::JSON;
     // the json converted from the wikidata cache that can be imported into the database
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
+    // the import json that the live wikidata entity gives with the phrases of the pod, as the refresh of a wikidata
+    // reference offers it, written by the last run, so that a change of the live data is reported as such
+    CONST string IMPORT_WIKIDATA_REFRESH_Q72 = test_paths::IMPORT_WIKIDATA . 'refresh_Q72' . self::JSON;
+    CONST string IMPORT_WIKIDATA_REFRESH_Q4917 = test_paths::IMPORT_WIKIDATA . 'refresh_Q4917' . self::JSON;
 
     // the raw wikidata api responses used by the wikidata converter tests, so not import json
     CONST string IMPORT_WIKIDATA_P1082 = test_paths::IMPORT_WIKIDATA_CACHE . 'P1082' . self::JSON;
@@ -408,8 +548,28 @@ class files
     CONST string IMPORT_WIKIDATA_UNIT_P1082 = test_paths::IMPORT_WIKIDATA_UNIT . 'P1082' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q72' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72' . self::JSON;
-    // a hand made item without a name used as unit and as criterion in the cache folder, where the
-    // converter reads the units and criteria from; Q0 is no wikidata id, so no live capture overwrites it
+    // the targets of the two examples since the property has the reference type wikidata property, which replace
+    // IMPORT_WIKIDATA_UNIT_TARGET_Q72 and IMPORT_WIKIDATA_UNIT_TARGET_Q4917, and the population of Zurich with the
+    // names of the pod: the triple "Zurich (city)" for Q72 and the word "population" for P1082
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72_PROPERTY_TYPE = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72_property_type' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_PROPERTY_TYPE = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_property_type' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72_POD_NAMES = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72_pod_names' . self::JSON;
+    // a hand made Zurich with one population claim per rule of the converter and its expected import json
+    CONST string IMPORT_WIKIDATA_UNIT_CLAIM_RULES = test_paths::IMPORT_WIKIDATA_UNIT . 'claim_rules' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_CLAIM_RULES = test_paths::IMPORT_WIKIDATA_UNIT . 'import_claim_rules' . self::JSON;
+    // the euro prices of the US dollar as values of the listed pair "EUR per USD" and as the inverse of the
+    // listed reverse pair "USD per EUR", and a hand made US dollar with a price of zero that has no inverse
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_CURRENCY_PAIR = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_currency_pair' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917_REVERSE_PAIR = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917_reverse_pair' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_CURRENCY_PRICE_ZERO = test_paths::IMPORT_WIKIDATA_UNIT . 'currency_price_zero' . self::JSON;
+    // the units and criteria of the two examples, which the converter of the unit tests reads by their id
+    // from test_paths::IMPORT_WIKIDATA_UNIT, so that a live capture of the cache folder does not change them
+    CONST string IMPORT_WIKIDATA_UNIT_Q4916 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q4916' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q56229478 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q56229478' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q56229488 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q56229488' . self::JSON;
+    // a hand made item without a name used as unit and as criterion; Q0 is no wikidata id
+    CONST string IMPORT_WIKIDATA_UNIT_Q0 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q0' . self::JSON;
+    // no longer read by the converter, which reads IMPORT_WIKIDATA_UNIT_Q0 instead; kept until the developer retires it
     CONST string IMPORT_WIKIDATA_Q0 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q0' . self::JSON;
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)

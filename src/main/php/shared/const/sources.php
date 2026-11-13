@@ -56,8 +56,14 @@ class sources
     const string SIB_CODE = 'BIPM';
     const int WIKIDATA_ID = 2;
     const string WIKIDATA = 'wikidata';
+    // the source of every value without external source, because then the user is the source; a user value
+    // row without own source is stored with it (see value_base::set_user_table_source and docs/llm/constants.md);
+    // the code links it by TRUST_ME_BRO_CODE (see system_object::no_source_id), the id is only for tests
+    const int TRUST_ME_BRO_ID = 3;
+    const string TRUST_ME_BRO = 'my estimates';
+    const string TRUST_ME_BRO_CODE = 'user_value';
     const string MATH_CONST = 'mathematical constant';
-    const int BFS_ID = 9;
+    const int BFS_ID = 10;
     const string BFS = 'Federal Statistical Office';
     const string BFS_COM = 'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.';
     const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';
@@ -65,8 +71,6 @@ class sources
     const string TEST_DOI = '10.5281/zenodo.19443909';
     // a second doi used only to test that one source name cannot link to two publications
     const string TEST_DOI_OTHER = '10.5281/zenodo.19443910';
-    const int TRUST_ME_BRO_ID = 14;
-    const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';
     const int SYSTEM_TEST_ADD_ID = 995; // fixed snapshot id of the add workflow source (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';

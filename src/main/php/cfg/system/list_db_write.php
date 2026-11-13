@@ -159,15 +159,16 @@ class list_db_write extends list_db_read
             $save_per_sec = $cfg->get_by([$cfg_wrd, $cfg_act_wrd, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
             // prepare missing SQL statements
-            $imp->step_start(msg_id::PREPARE, $class, $sql_lst->count());
+            // the import is null e.g. if a save removes a single result row (see result::del_row_of_other_table)
+            $imp?->step_start(msg_id::PREPARE, $class, $sql_lst->count());
             $db_con->add_missing_prepared($sql_lst, $msg);
-            $imp->step_end($sql_lst->count());
+            $imp?->step_end($sql_lst->count());
 
             // add the remaining missing objects
             $step_time = $this->count() / $save_per_sec;
-            $imp->step_start($msg_id, $class, $this->count(), $step_time);
+            $imp?->step_start($msg_id, $class, $this->count(), $step_time);
             $sql_lst->exe_direct($msg);
-            $imp->step_end($sql_lst->count(), $save_per_sec);
+            $imp?->step_end($sql_lst->count(), $save_per_sec);
 
         }
         return $msg->is_ok();

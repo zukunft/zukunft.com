@@ -59,6 +59,7 @@ class paths
     const string UNIT_INT = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
     const string DEV = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency
+    const string SCRIPTS = ROOT_PATH . 'test' . DIRECTORY_SEPARATOR;               // the test runner scripts e.g. test.php
     // the docroot as the current folder of the root path, so the url path of a forward page
     // e.g. api::SETTINGS_REL, which starts with a separator, can be added to name its file
     const string DOCROOT = ROOT_PATH . '.';
@@ -83,12 +84,14 @@ class paths
     const string API_SYS_LOG_RES = self::API_RES . 'sys_log_list' . DIRECTORY_SEPARATOR;
     const string API_PHRASE_DATA_RES = self::API_RES . 'phrase_data' . DIRECTORY_SEPARATOR;
     const string API_CALCULATOR_EDITOR_RES = self::API_RES . 'calculator_editor' . DIRECTORY_SEPARATOR;
+    const string API_JSON_RES = self::API_RES . 'json' . DIRECTORY_SEPARATOR;
     const string DB_FORMULA = self::DB . self::FORMULA;
     const string DB_RES = self::RESOURCE . self::DB;
     const string DB_RES_FORMULA = self::DB_RES . self::FORMULA;
     const string DB_USER = self::DB_RES . 'user' . DIRECTORY_SEPARATOR;
     const string EXPORT = self::RESOURCE . 'export' . DIRECTORY_SEPARATOR;
     const string EXPORT_WORD = self::EXPORT . 'word' . DIRECTORY_SEPARATOR;
+    const string EXPORT_START_PAGE = self::EXPORT . 'start_page' . DIRECTORY_SEPARATOR;
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_INCONSISTENCY = self::IMPORT . 'inconsistency_tests' . DIRECTORY_SEPARATOR;
@@ -96,6 +99,8 @@ class paths
     const string IMPORT_PROTECTED_TOLERANCE = self::IMPORT . 'protected_tolerance' . DIRECTORY_SEPARATOR;
     const string IMPORT_V_DEM = self::IMPORT . 'v_dem' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
+    // hand made json as received from the summary api of wikipedia, so no import json
+    const string IMPORT_WIKIPEDIA_CACHE = self::IMPORT_WIKIPEDIA . 'cache' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIDATA = self::IMPORT . 'wikidata' . DIRECTORY_SEPARATOR;
     // the json as received from wikidata
     const string IMPORT_WIKIDATA_CACHE = self::IMPORT_WIKIDATA . 'cache' . DIRECTORY_SEPARATOR;

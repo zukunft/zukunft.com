@@ -83,6 +83,8 @@ include_once paths::DB . 'db_check.php';
 
 // include all other libraries that are usually needed
 include_once paths::SHARED_CONST . 'env.php';
+// set here and not when $sys is created above, because the environment is only known from env.php on
+$sys->echo_errors = system_object::echo_errors_default((string)getenv(ENVIRONMENT));
 include_once paths::SERVICE . 'db_cl.php';
 include_once paths::SERVICE . 'config.php';
 

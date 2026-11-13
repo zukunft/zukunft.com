@@ -213,11 +213,7 @@ class sandbox_named extends sandbox
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
-        // map the loaded fields whenever the row has been mapped (id set), independent of a prior
-        // error left on $msg by an earlier operation; gating this on $msg->is_ok() (via $result)
-        // would silently drop the name and make the object unreachable by a later name based
-        // lookup, e.g. the import cache that matches triples by name
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists($name_fld, $db_row)) {
                 $this->set_name($db_row[$name_fld]);
             }
@@ -564,12 +560,21 @@ class sandbox_named extends sandbox
     /**
      * get the term corresponding to this word or formula name
      * so in this case, if a formula or verb with the same name already exists, get it
+     * @param user_message $msg to collect any term retriving issues for the user
      * @return term
      */
     function get_term(user_message $msg): term
     {
         $trm = new term($this->get_user());
-        $trm->load_by_name($this->name(), $msg);
+        $name = $this->name();
+        // a term is found by its name only, so an object without name is reported instead of a fatal
+        if ($name === null or $name === '') {
+            $msg->add(msg_id::NAME_EMPTY, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+            ]);
+        } else {
+            $trm->load_by_name($name, $msg);
+        }
         return $trm;
     }
 
@@ -922,7 +927,14 @@ class sandbox_named extends sandbox
      */
     protected function check_save(user_message $msg): bool
     {
-        return $this->check_preserved($msg);
+        // a named object is found and shown by its name, so it is never saved without one
+        $name = $this->name();
+        if ($name === null or $name === '') {
+            $msg->add(msg_id::NAME_EMPTY, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+            ]);
+        }
+        return ($this->check_preserved($msg) and $msg->is_ok());
     }
 
     /**
@@ -938,7 +950,7 @@ class sandbox_named extends sandbox
     protected function check_preserved(user_message $msg): bool
     {
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'check_preserved');
+            log_err_reported('user not set in user_message', 'check_preserved');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
             global $mtr;
@@ -1159,22 +1171,25 @@ class sandbox_named extends sandbox
                     $sim = $db_chk;
                 }
             }
-            // check with the user namespace
-            $db_chk->set_user($this->get_user());
+            // check with the user namespace in an own object, because a load without result resets the id,
+            // which would turn the row found in the standard namespace into a similar object without id,
+            // e.g. if the user renames a source back to its standard name
+            $usr_chk = $this->clone_reset(true);
+            $usr_chk->set_user($this->get_user());
             if ($this::class == change::class) {
                 // TODO Prio 2 check if it is working with build in tests
-                if ($db_chk->load_by_id($this->id(), $msg)) {
-                    if ($db_chk->id() > 0) {
-                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $sim = $db_chk;
+                if ($usr_chk->load_by_id($this->id(), $msg)) {
+                    if ($usr_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $usr_chk->dsp_id() . '" of the user namespace');
+                        $sim = $usr_chk;
                     }
                 }
             } else {
                 if ($this->name() != '') {
-                    if ($db_chk->load_by_name($this->name(), $msg)) {
-                        if ($db_chk->id() > 0) {
-                            log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                            $sim = $db_chk;
+                    if ($usr_chk->load_by_name($this->name(), $msg)) {
+                        if ($usr_chk->id() > 0) {
+                            log_debug($this->dsp_id() . ' has the same name is the already existing "' . $usr_chk->dsp_id() . '" of the user namespace');
+                            $sim = $usr_chk;
                         }
                     }
                 } else {

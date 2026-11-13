@@ -253,7 +253,7 @@ class test_values extends test_objects
     function text_value_prime(): value_text
     {
         $t_grp = new test_groups($this->env);
-        $grp = $t_grp->group_prime_max();
+        $grp = $t_grp->group_prime_4();
         return new value_text($this->env->usr1, values::TEXT, $grp);
     }
 
@@ -285,12 +285,23 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value with the maximal number of prime phrase
+     * @return value of the four phrases of Zurich, inhabitants, 2019 and million, which is no prime value,
+     *         because none of its phrase ids is at most group_id::FIRST_SLOT_MAX
      */
     function value_prime_max(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_prime_max();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * @return value with the maximal number of prime phrases, saved in the prime table of four phrases
+     */
+    function value_prime_4(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_prime_4();
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
@@ -811,6 +822,25 @@ class test_values extends test_objects
     }
 
     /**
+     * the inhabitants of the city of Zurich as a measured value with the phrases of the result of
+     * test_results::result_list_zh_city_ui, so that both have the same phrase group and id
+     *
+     * @param float $number the measured number, which may differ from the result on purpose
+     * @return value_list_ui the frontend list with the one value
+     */
+    function value_list_zh_city_ui(float $number): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([
+            $t_trp->zh_city()->phrase(),
+            $t_wrd->word_inhabitant()->phrase()
+        ], $number));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss and the potential gain of every global problem of solution_prio.json,
      * so that the start page table of the global issues can be tested with the data that the
      * import creates: per problem the loss in trillion EUR and the gain of its solution in
@@ -833,6 +863,35 @@ class test_values extends test_objects
     function value_list_solution_prio_other_rows(): value_list
     {
         return $this->value_list_of_rows(array_slice($this->solution_prio_rows(), 1));
+    }
+
+    /**
+     * the values of the start page whose first problem is shown from its results like in the
+     * database (see test_results::result_list_solution_prio_first_row_calc_ui): the other ranking
+     * rows and the two inputs of the formula "annual damage in money" of the first problem, the
+     * world GDP and the annual share of it that global warming costs: 105 * 30 % = 31.5
+     *
+     * @return value_list_ui the frontend values of the start page with the inputs of the first loss
+     */
+    function value_list_solution_prio_page_ui(): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_other_rows();
+        $lst->add($this->value_for_phrases([
+            $t_wrd->word_world()->phrase(),
+            $t_wrd->word_gdp()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 105));
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_percent()->phrase(),
+            $t_wrd->word_gdp()->phrase(),
+            $t_wrd->word_annual()->phrase()
+        ], 0.3));
+        $tl = new test_lib();
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -1157,7 +1216,7 @@ class test_values extends test_objects
             $effort = round($gain_nbr * 10);
             $rows = [
                 [[$problem, $loss, $pct, $t_wrd->word_gdp()->phrase()], round($loss_nbr / 105, 3)],
-                [[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()], round($loss_nbr / 210, 3)],
+                [[$problem, $loss, $t_trp->percent_htp()->phrase()], round($loss_nbr / 210, 3)],
                 [[$problem, $t_trp->loss_reduction()->phrase(), $pct], $reduction],
                 [[$problem, $t_trp->initial_effort()->phrase(), $t_trp->person_year()->phrase()], $effort],
                 [[$problem, $t_trp->reward_ratio()->phrase(), $t_wrd->word_trillion()->phrase(),
@@ -1373,7 +1432,7 @@ class test_values extends test_objects
     }
 
     /**
-     * the potential loss of global warming in two units, with the numbers of solution_prio.json:
+     * the potential loss of global warming in two units, with the numbers of solution_prio.json and values.json:
      * the absolute loss in trillion EUR and the loss as a share of the global happy time points,
      * so that a table with one column per unit can be tested
      *
@@ -1388,8 +1447,7 @@ class test_values extends test_objects
         $loss = $t_wrd->word_loss()->phrase();
         $eur_phr = [$problem, $potential, $loss, $t_wrd->word_trillion()->phrase(),
             $t_wrd->word_eur()->phrase(), $t_wrd->word_assumed()->phrase()];
-        $htp_phr = [$problem, $potential, $loss, $t_wrd->word_percent()->phrase(),
-            $t_wrd->word_htp()->phrase()];
+        $htp_phr = [$problem, $potential, $loss, $t_trp->percent_htp()->phrase()];
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases($eur_phr, 2.2));
         $lst->add($this->value_for_phrases($htp_phr, -0.37));
@@ -1560,6 +1618,29 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_confidence_wider(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of the solution of global warming and two confidence values of the loss
+     * that qualify no value, because each names a place that the loss does not name
+     *
+     * @return value_list_ui the loss and two confidence values without a qualified value
+     */
+    function value_list_confidence_unmatched_ui(): value_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $problem = $t_trp->global_warming()->phrase();
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $conf = $t_wrd->word_confidence()->phrase();
+        $percent = $t_wrd->word_percent()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$problem, $t_trp->reduce_emissions()->phrase(), $potential, $loss,
+            $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase()], 2.2));
+        $lst->add($this->value_for_phrases([$problem, $t_wrd->word_zh()->phrase(), $potential, $loss, $conf, $percent], 0.2));
+        $lst->add($this->value_for_phrases([$problem, $t_wrd->word_ch()->phrase(), $potential, $loss, $conf, $percent], 0.3));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -1765,6 +1846,42 @@ class test_values extends test_objects
         $page = new test_triples($this->env)->zh_city()->phrase();
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases([$page, $inh], $num));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param float $num the number of the verdict, below minus 10 for the first state, above 10 for the second and else the third
+     * @return value_list_ui the number and the threshold of the verdict and the ends of its meter from -100 to 100 (test_triples::calculator_zh_decision)
+     */
+    function value_list_calculator_verdict_ui(float $num): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $page = $t_trp->zh_city()->phrase();
+        $trp_by_name = [];
+        foreach ($t_trp->calculator_zh_decision() as $trp) {
+            $trp_by_name[$trp->name()] = $trp;
+        }
+        $scale = $trp_by_name[triple_names::CALC_VERDICT_SCALE]->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$page, $t_wrd->word_inhabitant()->phrase()], $num));
+        $lst->add($this->value_for_phrases([$page, $t_wrd->word_2019()->phrase()], 10));
+        $lst->add($this->value_for_phrases([$scale, $t_trp->field_limit_down()->phrase()], -100));
+        $lst->add($this->value_for_phrases([$scale, $trp_by_name[triples::FIELD_LIMIT_UP]->phrase()], 100));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui a number of the inhabitants without the page phrase, like the value of a study that a field
+     *                       would show, e.g. the capital cost of the BAK base case next to the result of the NPP vote page
+     */
+    function value_list_calculator_study_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_inhabitant()->phrase()], 70));
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

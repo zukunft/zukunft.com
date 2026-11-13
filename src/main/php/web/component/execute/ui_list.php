@@ -57,6 +57,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
@@ -79,6 +80,8 @@ include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
@@ -88,6 +91,7 @@ include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'table_forms.php';
 
+use Closure;
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -105,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
@@ -132,6 +137,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
@@ -156,6 +163,19 @@ class ui_list extends ui_base
     const string CALC_OPTION_PHRASE = 'phrase';
     // in the hint of a field where the number of its source is shown; without it the number follows the hint
     const string CALC_HINT_SOURCE = '[n]';
+    // the placeholders of a text, the same as calculator_json.js TEXT_PATTERN
+    const string CALC_TEXT_PATTERN = '/\{(num|source|result):([^{}]*)\}/';
+    // the style of the verdict by the state: below minus the threshold, above the threshold and in between
+    const array CALC_VERDICT_STATES = ['yes', 'no', 'open'];
+    // the style of a number of the sensitivity table by the same state and the index of the state in between
+    const array CALC_VERDICT_STYLES = [styles::CALC_POSITIVE, styles::CALC_NEGATIVE, ''];
+    const int CALC_VERDICT_OPEN = 2;
+    // the decimals of a change in a cell of the sensitivity table, like the script of the page
+    const int SENSITIVITY_CHANGE_DECIMALS = 2;
+    // a change in a cell of the sensitivity table e.g. " (+0.25)"
+    const string SENSITIVITY_CHANGE_START = ' (';
+    const string SENSITIVITY_CHANGE_END = ')';
+    const string SENSITIVITY_PLUS = '+';
     // in the hint of a row a phrase in curly brackets is shown as its number with the unit e.g. {PV capacity}
     // or as the plain number e.g. {yield factor|number}, so that a sub text shows the live numbers of the page
     const string CALC_HINT_NUMBER_PATTERN = '/\{([^{}|]+)(\|number)?\}/';
@@ -182,6 +202,10 @@ class ui_list extends ui_base
     const string CALC_DIAGRAMS = 'diagrams';
     const string CALC_DIAGRAM_ID = 'calc-diagram-';
     const string CALC_DIAGRAM_LEGEND_SUFFIX = '-legend';
+    // from a phrase over the group and its item to the follower triple of the item
+    const int TABLE_DEFINITION_LEVELS = 3;
+    // the html id of the field of the name of a case, the same in calculator_json.js
+    const string CALC_CASE_FIELD_ID = 'caseName';
     const string CALC_DIAGRAM_LABEL = 'label';
     const string CALC_DIAGRAM_NUMBERS = 'numbers';
     const string CALC_DIAGRAM_LINES = 'lines';
@@ -1234,13 +1258,7 @@ class ui_list extends ui_base
             $phr = $dbo->phrase();
         }
         if ($phr != null) {
-            // a word or triple loaded for its page carries its references directly (like the
-            // related values and formulas); otherwise fall back to the page reference cache
-            if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
-                $ref_lst = $dbo->ref_lst;
-            } else {
-                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr, $msg);
-            }
+            $ref_lst = $this->refs_of_phrase($dbo, $msg, $dto);
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($msg, $phr_lst);
@@ -1256,6 +1274,26 @@ class ui_list extends ui_base
             $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
+    }
+
+    /**
+     * the references of a word or triple, shown in the tab box and as the rows of its edit form
+     *
+     * @param word|triple $dbo the frontend word or triple whose references are selected
+     * @param user_message $msg to report a reference list of the cache that cannot be selected
+     * @param data_object|null $dto the request cache with the references of the page
+     * @return ref_list the references of the phrase
+     */
+    function refs_of_phrase(word|triple $dbo, user_message $msg, ?data_object $dto): ref_list
+    {
+        // a word or triple loaded for its page carries its references directly (like the
+        // related values and formulas); otherwise fall back to the page reference cache
+        if ($dbo->ref_lst != null) {
+            $ref_lst = $dbo->ref_lst;
+        } else {
+            $ref_lst = $dto->ref_list_cloned()->get_by_phrase($dbo->phrase(), $msg);
+        }
+        return $ref_lst;
     }
 
     /**
@@ -1278,14 +1316,12 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of a sandbox object page: a "Views" tab with the related views
-     * (each a preview placeholder plus the open and switch buttons), a "Changes" tab with the
-     * change log of the object, latest first, a "My" tab with the session user's own overwrites
-     * (the user_ table rows e.g. of user_words), which is only shown if the user is logged in
-     * and has created overwrites of this object, and an "Others" tab with the shared overwrites
-     * that other users have done on this object; an empty tab is dropped, so a link page
-     * without related views shows the same box without the "Views" tab
-     * TODO Prio 3 replace the view preview placeholder with a real miniature preview
+     * HTML for the col-4 tab box of a sandbox object page: a "Changes" tab with the change log
+     * of the object, latest first, a "My" tab with the session user's own overwrites (the user_
+     * table rows e.g. of user_words), which is only shown if the user is logged in and has
+     * created overwrites of this object, and an "Others" tab with the shared overwrites that
+     * other users have done on this object; an empty tab is dropped; the related views are
+     * offered by the edit menu of the navbar (see sandbox::menu_view_items_ui)
      *
      * @param db_object $dbo the sandbox object that should be shown to the user
      * @param user_message $msg
@@ -1300,57 +1336,24 @@ class ui_list extends ui_base
         // guarded by class so that a mis-assigned seed component cannot fatal
         if ($dbo instanceof sandbox) {
             $html = new html_base();
-            // tab 1: each related view as a preview placeholder with the open and switch buttons
-            $views_html = $this->view_previews($dbo);
-            // tab 2: the change log of the word as the invisible (borderless, standard grey) table
+            // tab 1: the change log of the word as the invisible (borderless, standard grey) table
             // with the three columns when, who and what, latest first (see ui_log)
             $log = new ui_log();
             $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $msg, $test_mode);
-            // tab 3: the session user's own overwrites of this object (the current user_ table
+            // tab 2: the session user's own overwrites of this object (the current user_ table
             // row values compared to the standard values); an empty string if the user is not
             // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
             $preview = new ui_preview();
             $my_html = $preview->user_overwrites_table($dbo, $msg, $url_array, $test_mode);
-            // tab 4: the shared overwrites that other users have done on this object
+            // tab 3: the shared overwrites that other users have done on this object
             $others_html = $preview->other_overwrites_table($dbo, $msg, $url_array, $test_mode);
             $result = $html->tab_box([
-                $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_MY) => $my_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS) => $others_html,
             ]);
         } else {
             log_err($dbo::class . ' is not expected to have a change log and user overwrites');
-        }
-        return $result;
-    }
-
-    /**
-     * the "Views" tab of the view tab box; the list stays empty for an object whose api message
-     * carries no related views, which drops the tab
-     * @param sandbox $dbo the sandbox object that should be shown to the user
-     * @return string the html code of the view previews or an empty string if there is none
-     */
-    private function view_previews(sandbox $dbo): string
-    {
-        $result = '';
-        $html = new html_base();
-        // e.g. a new word has no name yet
-        $obj_name = $dbo->name() ?? '';
-        foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
-            $preview = $html->div('view preview', view_styles::COL_SM_12);
-            // the view name links to the object shown with the view, the switch icon opens the
-            // edit view of the shown object with this view preselected as its default view, and
-            // the edit icon changes the view itself; the edit view of the object differs per
-            // class, so its id is passed to the link builder, and an object without an edit view
-            // of its own gets no switch icon. the links escape the names (stored xss via a user
-            // given name), so the div gets already-built html only
-            $links = $msk->open_link($dbo->id(), $obj_name);
-            if ($dbo::HAS_EDIT_VIEW) {
-                $links .= ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $obj_name);
-            }
-            $links .= ' ' . $msk->edit_link();
-            $result .= $html->div($preview . $links);
         }
         return $result;
     }
@@ -1602,6 +1605,7 @@ class ui_list extends ui_base
      *                                  that ", ..." counts; null if the cached phrases are enough
      * @param array $col_names the own column phrase names of the table, e.g. lifetime and annual
      *                         of a use case page; empty for the system column tiers
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the missing operands are loaded with a call per phrase instead of one paged call
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1616,7 +1620,8 @@ class ui_list extends ui_base
         bool                                   $with_variance = true,
         bool                                   $value_rows_only = false,
         ?phrase_list                           $add_lst = null,
-        array                                  $col_names = []
+        array                                  $col_names = [],
+        api_type_list                          $typ_lst = new api_type_list()
     ): string
     {
         $result = '';
@@ -1631,11 +1636,13 @@ class ui_list extends ui_base
                 ]);
                 return $result;
             }
-            $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
-            // a phrase whose rows are the phrases linked to it, e.g. "global warming reason", has
-            // no value of its own, so the values of the linked phrases are loaded like on the start page
-            if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
-                $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+            $val_lst = $this->table_numbers($dbo, $msg, $dto);
+            log_debug('values of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+            // the own columns of the table of the table editor; the grid of the start page has fixed columns
+            if ($col_names == [] and !$col_values_only and $dto != null) {
+                $this->add_table_definition($dbo->phrase(), $dto, $msg);
+                $col_names = new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
+                log_debug('own columns of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
             }
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
@@ -1644,11 +1651,18 @@ class ui_list extends ui_base
                 // results are added to a copy, so that the value cache of the page stays unchanged
                 if ($dto != null) {
                     $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+                    log_debug('results of the table phrase loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 }
                 $tbl_lst = clone $val_lst;
                 $tbl_lst->add_results(
                     $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
-                $this->check_results($tbl_lst, $dto, $msg);
+                log_debug('table of ' . $tbl_lst->count() . ' values and results collected', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                $this->check_results($tbl_lst, $dto, $msg, $typ_lst);
+                // the source of a value with its url or doi is the tooltip of the number
+                if ($dto != null) {
+                    $this->add_sources($tbl_lst->lst(), $dto, $msg);
+                    log_debug('sources of the table numbers loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                }
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
@@ -1703,10 +1717,44 @@ class ui_list extends ui_base
                 // columns of each selection are kept for its tooltips
                 if ($dto != null) {
                     $dto->add_tier_names($tbl_lst->tier_names);
+                    $dto->table_own_columns = ($dto->table_own_columns or $tbl_lst->own_columns);
+                    $dto->add_table_csv($tbl_lst->table_csv, $dbo->name());
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the table
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $dto the data cache
+     * @return value_list|null the values of the phrase, else of the phrases linked to it e.g. "global warming reason", which has no value of its own
+     */
+    private function table_numbers(word|triple $dbo, user_message $msg, ?data_object $dto): ?value_list
+    {
+        $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
+        if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
+            $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+        }
+        return $val_lst;
+    }
+
+    /**
+     * load the own columns and the own sorting of the table of a phrase into the request cache;
+     * an offline cache is never filled from the api, so a unit test shows only what it has cached
+     *
+     * @param phrase $phr the phrase of the table
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_table_definition(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        $def_lst = new phrase_list();
+        if ($dto->online and $def_lst->load_related_by_name($phr->name(), foaf_direction::UP, $msg, self::TABLE_DEFINITION_LEVELS)) {
+            $dto->add_phrases($def_lst, $msg);
+        }
     }
 
     /**
@@ -1830,13 +1878,7 @@ class ui_list extends ui_base
     private function child_values(phrase $phr, data_object $dto, user_message $msg): ?value_list
     {
         $result = null;
-        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
-            $child_lst = new phrase_list();
-            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
-                $dto->add_phrases($child_lst, $msg);
-            }
-        }
-        $children = $dto->phr_lst->child_phrases($phr);
+        $children = $this->child_phrases($phr, $dto, $msg);
         if (!$children->is_empty()) {
             $val_lst = new value_list();
             if ($val_lst->load_by_phr_lst($children, $msg)) {
@@ -1847,10 +1889,31 @@ class ui_list extends ui_base
     }
 
     /**
-     * add the results of the page phrase to the request cache, e.g. the production and the
-     * avoided emission of a PV installation, so that the table shows the calculated numbers
-     * next to the measured ones; the stored results are shown until the frontend calculates
-     * them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+     * @param phrase $phr the phrase of the page e.g. "global warming solution"
+     * @param data_object $dto the request cache that gets the links
+     * @param user_message $msg to report a problem of an api call
+     * @return phrase_list the phrases linked to the given phrase and the linking triples, which are the rows of its table
+     */
+    private function child_phrases(phrase $phr, data_object $dto, user_message $msg): phrase_list
+    {
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        // the numbers of a row can name the link, e.g. "civic education (populism solution)"
+        $result = $dto->phr_lst->child_phrases($phr);
+        $result->merge($dto->phr_lst->child_links($phr), $msg);
+        return $result;
+    }
+
+    /**
+     * add the results of the page phrase and of its rows to the request cache, e.g. the
+     * production and the avoided emission of a PV installation or the gain of each global warming
+     * solution, whose result names the solution but not the page phrase, so that the table shows
+     * the calculated numbers next to the measured ones; the stored results are shown until the
+     * frontend calculates them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
      *
      * an offline cache is never filled from the api, like add_column_definitions, so a unit
      * test shows only the results it has cached upfront
@@ -1864,12 +1927,12 @@ class ui_list extends ui_base
     {
         // the cache can hold the results of another phrase e.g. of a table on the same page
         if ($dto->online and !$dto->page_data_complete and !$dto->has_results_of($phr->id())) {
-            $phr_lst = new phrase_list();
+            $phr_lst = $this->child_phrases($phr, $dto, $msg);
             $phr_lst->add_phrase($phr);
             $res_lst = new result_list();
             if ($res_lst->load_by_phrase_list($phr_lst, $msg)) {
                 $dto->add_results_of($phr->id(), $res_lst);
-                $this->add_result_formulas($dto, $res_lst, $msg);
+                $this->add_result_formulas($dto, $res_lst, $phr, $msg);
             }
         }
     }
@@ -1880,10 +1943,11 @@ class ui_list extends ui_base
      *
      * @param data_object $dto the request cache to fill
      * @param result_list $res_lst the results of the page with the id of their formula
+     * @param phrase $phr the phrase of the page, which the loading text of a slow page names
      * @param user_message $msg to report a problem of the api message to the user
      * @return void
      */
-    private function add_result_formulas(data_object $dto, result_list $res_lst, user_message $msg): void
+    private function add_result_formulas(data_object $dto, result_list $res_lst, phrase $phr, user_message $msg): void
     {
         $ids = [];
         foreach ($res_lst->lst() as $res) {
@@ -1894,7 +1958,7 @@ class ui_list extends ui_base
         }
         if ($ids != []) {
             $frm_lst = new formula_list();
-            if ($frm_lst->load_by_ids(array_values($ids), $msg)) {
+            if ($frm_lst->load_by_ids(array_values($ids), $msg, $phr->name())) {
                 $dto->frm_lst->merge($frm_lst, $msg);
             }
         }
@@ -1905,21 +1969,39 @@ class ui_list extends ui_base
      * calculated number in place of a stored number that differs, with a warning to the user, so
      * that a stale stored result is never shown silently (docs/llm/frontend.md "The frontend
      * calculates, a save job verifies"); a result whose formula or values the page does not have
-     * keeps its stored number
+     * keeps its stored number; the same calculation fills the expression with the numbers used
+     * for the tooltip of the result; a result that uses a number that no row of the table shows,
+     * e.g. the world GDP of the potential loss of a problem, is calculated with all values of the page
      *
      * @param value_list $tbl_lst the values and results of the table
      * @param data_object|null $dto the data cache of the page with the formulas of the results
      * @param user_message $msg to report a stored result that differs from the calculation
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the missing operands are loaded with a call per phrase instead of one paged call
      * @return void
      */
-    private function check_results(value_list $tbl_lst, ?data_object $dto, user_message $msg): void
+    private function check_results(
+        value_list    $tbl_lst,
+        ?data_object  $dto,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list()
+    ): void
     {
         $calc = new formula_calc($this->prior_names($dto));
         $frm_lst = $dto?->formula_list() ?? new formula_list();
+        $page_lst = null;
+        if ($dto != null) {
+            $this->add_missing_operand_values($tbl_lst, $dto, $calc, $frm_lst, $msg, $typ_lst);
+            $page_lst = $this->values_and_results($dto, $msg);
+            log_debug('page list of ' . $page_lst->count() . ' values and results merged', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        }
         foreach ($tbl_lst->lst() as $res) {
             if ($res instanceof result) {
-                $num = $calc->result($res, $tbl_lst, $frm_lst);
-                if ($num !== null and round($num, formula_calc::DECIMALS) != round($res->number(), formula_calc::DECIMALS)) {
+                $ops = $tbl_lst;
+                if ($page_lst != null and $calc->result($res, $tbl_lst, $frm_lst) === null) {
+                    $ops = $page_lst;
+                }
+                $num = $calc->result($res, $ops, $frm_lst);
+                if ($num !== null and formula_calc::differs($res->number(), $num)) {
                     $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_PAGE, [
                         msg_id::VAR_NAME => $res->name(),
                         msg_id::VAR_VALUE => $res->number(),
@@ -1927,7 +2009,146 @@ class ui_list extends ui_base
                     ]);
                     $res->number = $num;
                 }
+                $res->expression_numbers = $calc->expression_with_numbers($res, $ops, $frm_lst, $msg);
             }
+        }
+        log_debug('results of the table calculated', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+    }
+
+    /**
+     * load the values that a result of a table uses but the page lacks, e.g. the world GDP of the
+     * potential loss of a problem, for all results of the table and without the units, the times
+     * and the quality words (see is_marker), whose values are too many to load; by default the
+     * values of all missing phrases are loaded with one paged call, which stays complete also if
+     * they exceed the row limit of the backend
+     *
+     * @param value_list $tbl_lst the values and results of the table
+     * @param data_object $dto the request cache to fill
+     * @param formula_calc $calc the calculation that finds the operands of a result
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the missing phrases are loaded with a call per phrase instead of one paged call
+     * @return void
+     */
+    private function add_missing_operand_values(
+        value_list    $tbl_lst,
+        data_object   $dto,
+        formula_calc  $calc,
+        formula_list  $frm_lst,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list()
+    ): void
+    {
+        $page_lst = $this->values_and_results($dto, $msg);
+        $phr_lst = new phrase_list();
+        // per missing phrase the phrases of every result that needs it, which its results may have at most
+        $ctx_by_phr = [];
+        $prior_ids = $this->prior_phrase_ids($dto, $msg);
+        foreach ($tbl_lst->lst() as $res) {
+            if ($res instanceof result) {
+                foreach ($calc->missing_operands($res, $page_lst, $frm_lst) as $opr_lst) {
+                    foreach ($this->measured_phrases($opr_lst, $msg)->lst() as $phr) {
+                        $phr_lst->add_phrase($phr);
+                        $phr_id = $phr->id();
+                        $res_ctx_ids = [...$res->src_grp->phr_lst()->ids(), ...$prior_ids];
+                        $ctx_by_phr[$phr_id] = array_merge($ctx_by_phr[$phr_id] ?? [], $res_ctx_ids);
+                    }
+                }
+            }
+        }
+        log_debug($phr_lst->count() . ' phrases of missing operands found: ' . $phr_lst->short_names(), url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
+        log_debug('values of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        // an operand can be a result too e.g. the avoided emission of the potential gain
+        $this->load_results_of_phrases($phr_lst, $ctx_by_phr, $dto, $msg);
+        log_debug('results of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+    }
+
+    /**
+     * add the results of the given phrases to the request cache with one paged api call and only
+     * within the contexts of the results that need them, because a result can only use a number
+     * of its context (formula_calc::value_of), e.g. of all results of the initial effort only the
+     * ones of the solutions in the rows of the table; the union of the contexts holds every phrase
+     * that a needed result of any of the phrases can have, so the answer is complete for each phrase
+     *
+     * @param phrase_list $phr_lst the phrases whose results should be loaded
+     * @param array $ctx_by_phr per phrase id the phrase ids that a needed result may have at most
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function load_results_of_phrases(
+        phrase_list  $phr_lst,
+        array        $ctx_by_phr,
+        data_object  $dto,
+        user_message $msg
+    ): void
+    {
+        if ($dto->online and !$dto->page_data_complete) {
+            $todo_lst = new phrase_list();
+            $ctx_ids = [];
+            foreach ($phr_lst->lst() as $phr) {
+                $phr_ctx_ids = $ctx_by_phr[$phr->id()] ?? [];
+                if (!$dto->has_results_within($phr->id(), $phr_ctx_ids)) {
+                    $todo_lst->add_phrase($phr);
+                    $ctx_ids = [...$ctx_ids, ...$phr_ctx_ids];
+                }
+            }
+            if (!$todo_lst->is_empty()) {
+                $uni_ctx_ids = array_values(array_unique($ctx_ids));
+                $res_lst = new result_list();
+                $res_lst->load_by_phrase_list($todo_lst, $msg, $uni_ctx_ids);
+                // also an empty answer is kept, so that the phrases are not asked again
+                $dto->add_results_within($todo_lst->ids(), $uni_ctx_ids, $res_lst);
+            }
+        }
+    }
+
+    /**
+     * @param data_object $dto the request cache with the triples of the page
+     * @param user_message $msg to report a phrase of a "is follower of" chain that the page lacks
+     * @return array the ids of the phrases that an operand "prior" can read instead of the phrase of
+     *               its context (shared\calc\prior_operand), so that their results are loaded too
+     */
+    private function prior_phrase_ids(data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->prior_names($dto) as $before) {
+            if ($before != prior_operand::UNCLEAR) {
+                $phr = $dto->phr_lst?->get_by_name($before, $msg);
+                if ($phr != null) {
+                    $result[] = $phr->id();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add the values of the given phrases to the request cache, by default with one api call that
+     * loads the next page while the answer fills the row limit of the backend (ListBase::load_pages)
+     *
+     * @param phrase_list $phr_lst the phrases whose values should be loaded
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the phrases are loaded with a call per phrase instead of one paged call
+     * @return void
+     */
+    private function load_values_of_phrases(
+        phrase_list   $phr_lst,
+        data_object   $dto,
+        user_message  $msg,
+        api_type_list $typ_lst
+    ): void
+    {
+        if ($typ_lst->load_per_phrase()) {
+            foreach ($phr_lst->lst() as $phr) {
+                $one_lst = new phrase_list();
+                $one_lst->add_phrase($phr);
+                $dto->load_values_of($one_lst, $msg);
+            }
+        } elseif (!$phr_lst->is_empty()) {
+            $dto->load_values_of($phr_lst, $msg);
         }
     }
 
@@ -2301,12 +2522,14 @@ class ui_list extends ui_base
      * @param word|triple|db_object|type_object $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load
      * @param data_object $dto the data cache of the page with the values, the results and the formulas
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the context of a result is loaded with a call per phrase instead of one paged call
      * @return array the values and results that the results of the page use, each once
      */
     private function operand_values(
         word|triple|db_object|type_object $dbo,
         user_message                      $msg,
-        data_object                       $dto
+        data_object                       $dto,
+        api_type_list                     $typ_lst = new api_type_list()
     ): array
     {
         $result = [];
@@ -2314,7 +2537,7 @@ class ui_list extends ui_base
         $calc = new formula_calc($this->prior_names($dto));
         // in a fixed order, because the order of the operands is the order of their sources on the page
         foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
-            $this->add_context_values($res, $dto, $msg);
+            $this->add_context_values($res, $dto, $msg, $typ_lst);
             $operands = $calc->operands($res, $this->values_and_results($dto, $msg), $dto->formula_list());
             foreach ($operands as $val) {
                 $result[$val->id()] = $val;
@@ -2417,6 +2640,7 @@ class ui_list extends ui_base
      * @param array $url_arr the url parameters of the page with the entered numbers
      * @param array $skip the names of the phrases whose values are shown already e.g. the
      *                    assumptions that the calculator lists
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the context of a result is loaded with a call per phrase instead of one paged call
      * @return string the html code of the fields sorted by label or an empty string if the page has no assumption
      */
     function assumption_fields(
@@ -2425,12 +2649,13 @@ class ui_list extends ui_base
         ?data_object                           $dto,
         string                                 $form_name,
         array                                  $url_arr,
-        array                                  $skip = []
+        array                                  $skip = [],
+        api_type_list                          $typ_lst = new api_type_list()
     ): string
     {
         $fields = [];
         if ($dto != null and $dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
-            $vals = $this->operand_values($dbo, $msg, $dto);
+            $vals = $this->operand_values($dbo, $msg, $dto, $typ_lst);
             $this->add_sources($vals, $dto, $msg);
             foreach ($vals as $val) {
                 $names = $val->phr_lst()->names();
@@ -2448,14 +2673,22 @@ class ui_list extends ui_base
     /**
      * add the values that a result may use to the request cache: the values of the phrases of
      * the context of the result, without the units, the times and the quality words, whose values
-     * are too many to load and never an operand on their own; each context is loaded once
+     * are too many to load and never an operand on their own; by default the values of all phrases
+     * of the context are loaded with one paged call, which stays complete also if they exceed the
+     * row limit of the backend; each phrase or context is loaded once
      *
      * @param result $res a result of the page with the phrases of the values used
      * @param data_object $dto the request cache to fill
      * @param user_message $msg to report a problem of the api message to the user
+     * @param api_type_list $typ_lst with api_types::LOAD_PER_PHRASE the context is loaded with a call per phrase instead of one paged call
      * @return void
      */
-    private function add_context_values(result $res, data_object $dto, user_message $msg): void
+    private function add_context_values(
+        result        $res,
+        data_object   $dto,
+        user_message  $msg,
+        api_type_list $typ_lst = new api_type_list()
+    ): void
     {
         $ctx = $res->src_grp?->phr_lst();
         if ($ctx != null) {
@@ -2465,9 +2698,7 @@ class ui_list extends ui_base
                     $phr_lst->add_phrase($phr);
                 }
             }
-            if (!$phr_lst->is_empty()) {
-                $dto->load_values_of($phr_lst, $msg);
-            }
+            $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
         }
     }
 
@@ -2481,6 +2712,27 @@ class ui_list extends ui_base
         $lst = clone $dto->val_lst;
         $lst->add_results($dto->res_lst, $msg);
         return $lst;
+    }
+
+    /**
+     * @param phrase_list $opr_lst the phrases that one missing operand names
+     * @param user_message $msg to report a problem of the phrase types
+     * @return phrase_list the phrases of the operand whose numbers are loaded: without the units, the times and the
+     *                     quality words, whose values are too many to load, except if the operand names only such
+     *                     phrases, e.g. the unit "EUR per tonne" of the social cost of carbon, which is the number itself
+     */
+    private function measured_phrases(phrase_list $opr_lst, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($opr_lst->lst() as $phr) {
+            if (!$this->is_marker($phr, $msg)) {
+                $result->add_phrase($phr);
+            }
+        }
+        if ($result->is_empty()) {
+            $result = $opr_lst;
+        }
+        return $result;
     }
 
     /**
@@ -2679,9 +2931,10 @@ class ui_list extends ui_base
         }
         $text = $html->esc($label);
         $hint = $calc->hint($item);
-        if ($assumption and $val instanceof value) {
+        $tag = $calc->tag($item);
+        if (($assumption or $tag != '') and $val instanceof value) {
             $tag_style = $val->source_id() == null ? styles::INPUT_TAG_ASSUMED : styles::INPUT_TAG_MEASURED;
-            $text .= ' ' . $html->span($this->assumption_tag($val, $dto, $msg), $tag_style);
+            $text .= ' ' . $html->span($tag != '' ? $html->esc($tag) : $this->assumption_tag($val, $dto, $msg), $tag_style);
             if ($hint == '') {
                 $hint = $val->get_description();
             }
@@ -2698,9 +2951,442 @@ class ui_list extends ui_base
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
         $input .= $this->calculator_remove_button($calc, $phr, $instance);
-        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
-        return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
-            . $this->calculator_hint($hint, $refs), styles::INPUT_FIELD);
+        // a text that names its sources by a placeholder gets no generated source number
+        $hint_html = preg_match(self::CALC_TEXT_PATTERN, $hint)
+            ? $html->span($this->calculator_text($hint, $dbo, $dto, $dto->val_lst, $src_ids, $msg), styles::INPUT_HINT)
+            : $this->calculator_hint($hint, $this->field_source_refs($phr, $val, $dto, $src_ids, $msg));
+        return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW) . $hint_html, styles::INPUT_FIELD);
+    }
+
+    /**
+     * a text with its placeholders: {num:text} in the style of a number, {source:name} as the number
+     * of the source and {result:phrase:decimals} as the number of the phrase for the page, without decimals if they are not named
+     *
+     * @param string $text the text e.g. the description of an argument
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param value_list $lst the values and results of the page
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the text
+     */
+    function calculator_text(string $text, word|triple $dbo, data_object $dto, value_list $lst, array $src_ids, user_message $msg): string
+    {
+        $html = new html_base();
+        return preg_replace_callback(self::CALC_TEXT_PATTERN, function (array $found) use ($html, $dbo, $dto, $lst, $src_ids, $msg) {
+            $arg = html_entity_decode($found[2], ENT_QUOTES);
+            $result = '';
+            if ($found[1] == 'num') {
+                $result = $html->span($found[2], styles::CALC_NUM);
+            } elseif ($found[1] == 'source') {
+                $names = array_map(fn($src) => $src->name(), array_values($src_ids));
+                $pos = array_search($arg, $names);
+                $result = $pos === false ? '' : $html->span('[' . ($pos + 1) . ']', styles::CALC_REF);
+            } else {
+                $sep = strrpos($arg, ':');
+                $name = $sep === false ? $arg : substr($arg, 0, $sep);
+                $decimals = $sep === false ? 0 : (int)substr($arg, $sep + 1);
+                $val = $this->calculator_text_value($name, $dbo, $dto, $lst, $msg);
+                $result = $val == null ? '' : $this->calculator_fixed_number((float)$val->number(), $decimals);
+            }
+            return $result;
+        }, $html->esc($text));
+    }
+
+    /**
+     * @param float $num the number
+     * @param int $decimals the decimals to show
+     * @return string the number with the thousands separator
+     */
+    private function calculator_fixed_number(float $num, int $decimals): string
+    {
+        global $ui_sys;
+        $thousand_sep = $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP;
+        return number_format($num, $decimals, '.', $thousand_sep);
+    }
+
+    /**
+     * the collapsed lead text and the arguments of both sides below the title of the page
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param user_message $msg to report a problem of the load
+     * @param bool $with_more false without the collapsed lead text e.g. for a pdf that shows it as the lead text
+     * @return string the html code of the lead text and the arguments
+     */
+    function calculator_arguments(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg, bool $with_more = true): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $src_ids = $this->calculator_source_ids($calc, $dbo, $dto, $msg);
+        $more = $mtr->txt(msg_id::AND_MORE);
+        $result = '';
+        $more_text = $with_more ? $this->calculator_more($calc, $dbo, $dto, $msg) : '';
+        if ($more_text != '') {
+            $result .= $html->details($html->esc($more), $more_text);
+        }
+        $heads = explode('|', $calc->own_label($calc->group(triples::CALCULATOR_ARGUMENT)));
+        $sides = '';
+        foreach ([true, false] as $pos => $pro) {
+            $items = [];
+            foreach ($calc->arguments($pro) as $item) {
+                $items[] = $html->block(html_base::LI, $html->bold($html->esc($calc->label($item))) . ' '
+                    . $this->calculator_text($calc->item_phrase($item)?->get_description() ?? '', $dbo, $dto, $dto->val_lst, $src_ids, $msg));
+            }
+            $sides .= $this->calculator_argument_side(trim($heads[$pos] ?? ''), $items, $pro, $more);
+        }
+        return $result . ($calc->items(triples::CALCULATOR_ARGUMENT) == [] ? '' : $html->div($sides, styles::CALC_ARGUMENTS));
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param user_message $msg to report a problem of the load
+     * @return string the html code of the collapsed lead text with its numbers and references, empty if the page has none
+     */
+    function calculator_more(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): string
+    {
+        $result = '';
+        if ($calc->more() != '') {
+            $src_ids = $this->calculator_source_ids($calc, $dbo, $dto, $msg);
+            $result = new html_base()->p($this->calculator_text($calc->more(), $dbo, $dto, $dto->val_lst, $src_ids, $msg));
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $head the heading of the side
+     * @param string[] $items the html code of each list item of the side
+     * @param bool $pro true for the arguments in favour
+     * @param string $more the summary of the collapsed arguments
+     * @return string the side with its first argument and the others collapsed
+     */
+    private function calculator_argument_side(string $head, array $items, bool $pro, string $more): string
+    {
+        $html = new html_base();
+        $list = fn(array $lis) => $html->block(html_base::UL, implode('', $lis), styles::CALC_ARGUMENT_LIST);
+        $others = array_slice($items, 1);
+        $body = $html->block(html_base::H2, $html->esc($head)) . $list(array_slice($items, 0, 1));
+        if ($others != []) {
+            $body .= $html->details($html->esc($more), $list($others));
+        }
+        return $html->block(html_base::SECTION, $body, styles::CALC_PANEL . ' ' . ($pro ? styles::CALC_PRO : styles::CALC_CONTRA));
+    }
+
+    /**
+     * the verdict box: the state that the number of the first phrase has compared with the
+     * threshold, the second phrase, with its texts, the note and the meter
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the load
+     * @return string the html code of the verdict or an empty string if a number is missing
+     */
+    function calculator_verdict(calculator $calc, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
+    {
+        $html = new html_base();
+        $grp = $calc->group(triples::CALCULATOR_VERDICT);
+        $states = $grp == null ? [] : $calc->sub_items($grp, verbs::HAS_ID);
+        $verdict = $this->calculator_verdict_state($calc, $dbo, $dto, $lst, $msg);
+        $result = '';
+        if ($verdict != null and count($states) >= 3) {
+            [$num, $idx] = $verdict;
+            $src_ids = $this->calculator_source_ids($calc, $dbo, $dto, $msg);
+            $state = $states[$idx];
+            $scale = $calc->property($grp, triples::CALCULATOR_SCALE);
+            $down = $scale == null ? null : $this->field_property($scale, triples::FIELD_LIMIT_DOWN, $dto);
+            $up = $scale == null ? null : $this->field_property($scale, triples::FIELD_LIMIT_UP, $dto);
+            $body = $html->p($html->span($html->esc($calc->label($state)), styles::CALC_HEADLINE))
+                . $html->p($this->calculator_text($calc->hint($state), $dbo, $dto, $lst, $src_ids, $msg));
+            if ($scale != null and $down !== null and $up !== null and $up > $down) {
+                $left = max(1, min(99, ($num - $down) / ($up - $down) * 100));
+                $parts = '';
+                foreach (explode('|', $scale->get_description()) as $part) {
+                    $parts .= $html->span($html->esc(trim($part)));
+                }
+                $body .= $html->div($html->div_at(styles::CALC_NEEDLE, round($left, 1)), styles::CALC_METER) . $html->div($parts, styles::CALC_SCALE);
+            }
+            $note = $calc->own_text($grp, triples::CALCULATOR_NOTE);
+            if ($note != null) {
+                $body .= $html->p($html->span($html->esc($note), styles::CALC_SUB));
+            }
+            $result = $html->div($body, styles::CALC_VERDICT . ' ' . self::CALC_VERDICT_STATES[$idx]);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the load
+     * @return array|null the number that the verdict compares and the index of its state: 0 below the negative threshold,
+     *                    1 above the threshold and 2 within, null if the page has no verdict or a number is missing
+     */
+    private function calculator_verdict_state(calculator $calc, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): ?array
+    {
+        $grp = $calc->group(triples::CALCULATOR_VERDICT);
+        $phrases = $grp == null ? [] : $calc->sub_items($grp, verbs::WITH_ID);
+        $val = count($phrases) < 2 ? null : $this->calculator_hint_value($calc->item_phrase($phrases[0])?->name() ?? '', $dbo, $dto, $lst, $msg);
+        $limit = count($phrases) < 2 ? null : $this->calculator_hint_value($calc->item_phrase($phrases[1])?->name() ?? '', $dbo, $dto, $lst, $msg);
+        $result = null;
+        if ($val != null and $limit != null) {
+            $num = (float)$val->number();
+            $thr = (float)$limit->number();
+            $result = [$num, $num < -$thr ? 0 : ($num > $thr ? 1 : self::CALC_VERDICT_OPEN)];
+        }
+        return $result;
+    }
+
+    /**
+     * the sensitivity table with its rows and columns; the numbers need a calculation of the page per cell,
+     * so the page leaves the cells to its script, which fills them when the user opens the table
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @return string the html code of the table or an empty string if the page has none
+     */
+    function calculator_sensitivity(calculator $calc): string
+    {
+        return $this->sensitivity_table($calc, fn(phrase $row, phrase $col): string => '');
+    }
+
+    /**
+     * the sensitivity table with the numbers of each cell, e.g. for a pdf, which has no script:
+     * per cell the page is calculated again with the number of the row and of the column in place of
+     * the numbers of their input fields, like the script of the page does (calculator_json.js sensitivity)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param value_list $lst the values and results of the page, which have their numbers again afterward
+     * @param user_message $msg to report a problem of the calculation
+     * @return string the html code of the table with its numbers or an empty string if the page has none
+     */
+    function calculator_sensitivity_filled(calculator $calc, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
+    {
+        $grp = $calc->group(triples::CALCULATOR_SENSITIVITY);
+        $axes = $grp == null ? [] : $calc->sub_items($grp, verbs::HAS_ID);
+        $result = '';
+        if (count($axes) >= 2) {
+            $inputs = [];
+            foreach (array_slice($axes, 0, 2) as $axis) {
+                $inputs[] = $this->sensitivity_input($calc, $axis, $dbo, $dto, $msg);
+            }
+            $result = $this->sensitivity_table($calc, function (phrase $row, phrase $col)
+            use ($calc, $inputs, $dbo, $dto, $lst, $msg): string {
+                $changes = $this->sensitivity_changes($calc, $inputs, [$row, $col], $lst, $msg);
+                return $this->sensitivity_cell($calc, $changes, $dbo, $dto, $lst, $msg);
+            });
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $axis the row or the column item of the sensitivity table e.g. the construction cost
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param user_message $msg to report a problem of the load
+     * @return sandbox_value|null the value of the input field that the axis changes, null if the page has none
+     */
+    private function sensitivity_input(calculator $calc, phrase $axis, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $phr = $calc->item_phrase($axis);
+        return $phr == null ? null : $this->calculator_value($phr, $dbo, $dto, $msg);
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param array $inputs the values of the input fields of the row and of the column, null if a field is missing
+     * @param phrase[] $levels the row and the column item of the cell
+     * @param value_list $lst the values and results of the page with the numbers of the levels
+     * @param user_message $msg to report a problem of the load
+     * @return array per input field the value and the number that the cell uses for it, empty if a number is missing
+     */
+    private function sensitivity_changes(calculator $calc, array $inputs, array $levels, value_list $lst, user_message $msg): array
+    {
+        $grp = $calc->group(triples::CALCULATOR_SENSITIVITY);
+        $result = [];
+        foreach ($inputs as $pos => $input) {
+            $level = $this->calculator_result([$grp, $calc->item_phrase($levels[$pos])], $lst, $msg);
+            if ($input != null and $level != null) {
+                $result[] = [$input, $level->number()];
+            }
+        }
+        return count($result) == count($inputs) ? $result : [];
+    }
+
+    /**
+     * the numbers of one cell of the sensitivity table: the page is calculated with the numbers of the levels
+     * in place of the numbers of the input fields, then each number is set back
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param array $changes per input field the value and the number of the cell, empty for an empty cell
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the calculation
+     * @return string the html code of the content of the cell, coloured by the verdict that the numbers have
+     */
+    private function sensitivity_cell(
+        calculator   $calc,
+        array        $changes,
+        word|triple  $dbo,
+        data_object  $dto,
+        value_list   $lst,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        if ($changes != []) {
+            $before = $this->numbers_before($lst, $changes);
+            $this->set_numbers($changes);
+            $this->recalculate($lst, $dto, $msg);
+            $text = $this->sensitivity_text($calc, $dbo, $lst, $msg);
+            $state = $this->calculator_verdict_state($calc, $dbo, $dto, $lst, $msg);
+            $this->set_numbers($before);
+            $result = $html->span($html->esc($text), $this->verdict_style($state));
+        }
+        return $result;
+    }
+
+    /**
+     * @param value_list $lst the values and results of the page
+     * @param array $changes per input field the value and the number of the cell
+     * @return array each value of the page and of the changes with its number now, to set it back after a calculation
+     */
+    private function numbers_before(value_list $lst, array $changes): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            $result[] = [$val, $val->number];
+        }
+        foreach ($changes as [$input]) {
+            $result[] = [$input, $input->number];
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $numbers per value the number that it gets
+     */
+    private function set_numbers(array $numbers): void
+    {
+        foreach ($numbers as [$val, $num]) {
+            $val->number = $num;
+        }
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and results of the page calculated with the numbers of the cell
+     * @param user_message $msg to report a problem of the load
+     * @return string the results that the cell shows, the first without decimals and the others as a change e.g. "114 (-0.01)"
+     */
+    private function sensitivity_text(calculator $calc, word|triple $dbo, value_list $lst, user_message $msg): string
+    {
+        $grp = $calc->group(triples::CALCULATOR_SENSITIVITY);
+        $cell_grp = $calc->property($grp, triples::CALCULATOR_CELL);
+        $items = $cell_grp == null ? [] : $calc->sub_items($cell_grp, verbs::HAS_ID);
+        $fmt = new number_format();
+        $result = '';
+        foreach ($items as $pos => $item) {
+            $res = $this->calculator_result([$dbo->phrase(), $calc->item_phrase($item)], $lst, $msg);
+            $num = $res?->number() ?? 0;
+            $fmt->decimals = $pos == 0 ? 0 : self::SENSITIVITY_CHANGE_DECIMALS;
+            $result .= $pos == 0 ? $fmt->text($num) : $this->sensitivity_change($fmt->text($num), $num);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $text the formatted change
+     * @param float $num the change
+     * @return string the change in brackets with its sign e.g. " (+0.25)"
+     */
+    private function sensitivity_change(string $text, float $num): string
+    {
+        $sign = $num > 0 ? self::SENSITIVITY_PLUS : '';
+        return self::SENSITIVITY_CHANGE_START . $sign . $text . self::SENSITIVITY_CHANGE_END;
+    }
+
+    /**
+     * @param array|null $state the number and the state index of the verdict (see calculator_verdict_state)
+     * @return string the style of a number by the verdict: positive below, negative above and none within the threshold
+     */
+    private function verdict_style(?array $state): string
+    {
+        $idx = $state[1] ?? self::CALC_VERDICT_OPEN;
+        return self::CALC_VERDICT_STYLES[$idx];
+    }
+
+    /**
+     * calculate each result of the page again with the numbers of the page, as often as a result still
+     * changes, so that a result that uses another result gets its new number too
+     *
+     * @param value_list $lst the values and results of the page
+     * @param data_object $dto the request cache with the formulas of the page
+     * @param user_message $msg to report a problem of the calculation
+     */
+    private function recalculate(value_list $lst, data_object $dto, user_message $msg): void
+    {
+        $calc = new formula_calc($this->prior_names($dto));
+        $frm_lst = $dto->formula_list();
+        $changed = true;
+        $pass = 0;
+        while ($changed and $pass <= count($lst->lst())) {
+            $changed = false;
+            foreach ($lst->lst() as $res) {
+                if ($res instanceof result) {
+                    $num = $calc->result($res, $lst, $frm_lst);
+                    if ($num !== null and $num !== $res->number) {
+                        $res->number = $num;
+                        $changed = true;
+                    }
+                }
+            }
+            $pass++;
+        }
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param Closure $cell gives the html code of the content of a cell from the item of its row and of its column
+     * @return string the html code of the sensitivity table or an empty string if the page has none
+     */
+    private function sensitivity_table(calculator $calc, Closure $cell): string
+    {
+        $html = new html_base();
+        $grp = $calc->group(triples::CALCULATOR_SENSITIVITY);
+        $axes = $grp == null ? [] : $calc->sub_items($grp, verbs::HAS_ID);
+        $result = '';
+        if (count($axes) >= 2) {
+            $cols = $calc->sub_items($axes[1], verbs::HAS_ID);
+            $head = $html->block(html_base::TH, $html->esc($calc->label($axes[0])));
+            foreach ($cols as $col) {
+                $head .= $html->block(html_base::TH, $html->esc($calc->label($col)), styles::CALC_NUMBER);
+            }
+            $rows = '';
+            foreach ($calc->sub_items($axes[0], verbs::HAS_ID) as $row) {
+                $cells = '';
+                foreach ($cols as $col) {
+                    $cells .= $html->block(html_base::TD, $cell($row, $col), styles::CALC_NUMBER);
+                }
+                $rows .= $this->calculator_row($html->esc($calc->label($row)), $cells, false);
+            }
+            $hint = $calc->own_hint($grp);
+            $body = $this->calculator_table($head, $rows)
+                . ($hint == '' ? '' : $html->p($html->span($html->esc($hint), styles::INPUT_HINT)));
+            $result = $html->details($html->esc($calc->label($grp)), $html->div($body, styles::CALC_MORE));
+        }
+        return $result;
     }
 
     /**
@@ -3215,7 +3901,7 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the load
      * @return array the sources by id in the order of their number
      */
-    private function calculator_source_ids(
+    function calculator_source_ids(
         calculator   $calc,
         word|triple  $dbo,
         data_object  $dto,
@@ -3240,6 +3926,13 @@ class ui_list extends ui_base
         $vals = [...array_filter($vals), ...array_values($this->page_operands($dbo, $dto, $msg))];
         $this->add_sources($vals, $dto, $msg);
         $result = [];
+        foreach ($calc->text_sources() as $name) {
+            foreach ($dto->src_lst->lst() as $src) {
+                if ($src->name() == $name) {
+                    $result[$src->id()] = $src;
+                }
+            }
+        }
         foreach ($vals as $val) {
             $id = $val instanceof value ? ($val->src?->id() ?? 0) : 0;
             if ($id != 0 and ($val->src->name() ?? '') != '' and !array_key_exists($id, $result)) {
@@ -3433,6 +4126,30 @@ class ui_list extends ui_base
     }
 
     /**
+     * the number of a result placeholder of a text: the result of the page first, because the placeholder names a
+     * number that the page calculates, which a value of a study with the same phrase must not hide (calculator_json.js textHtml)
+     *
+     * @param string $name the name of the phrase of the placeholder e.g. capital cost
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the number of the page with the phrase, else the value that a field of the phrase would show, else null
+     */
+    private function calculator_text_value(string $name, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        $phr = $dto->phr_lst->get_by_name($name, $msg);
+        if ($phr != null) {
+            $result = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            if ($result == null) {
+                $result = $this->calculator_value($phr, $dbo, $dto, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param sandbox_value $val the value or result of a phrase of a hint
      * @param bool $plain true for the number as a field shows it but with the thousands separator, false for the rough number with its unit
      * @param user_message $msg to report a problem of the phrase types
@@ -3497,7 +4214,8 @@ class ui_list extends ui_base
                     $decimals = $this->row_decimals($calc->item_phrase($row), $dto->val_lst);
                     $cells = '';
                     foreach (array_keys($cols) as $c) {
-                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, $with_unit, $msg, $decimals, $plus);
+                        $col_plus = ($cols[$c][calculator::COLUMN_PLUS] ?? false);
+                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed and !$col_plus, $with_unit, $msg, $decimals, $plus or $col_plus);
                     }
                     $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
                         . $this->calculator_sub($calc, $row, $dbo, $dto, $lst, $msg);
@@ -3645,9 +4363,37 @@ class ui_list extends ui_base
             foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
                 $ctx = $this->calculation_row_context($calc, $dbo, $row);
                 foreach ($cols as $c => [, $col_phr]) {
-                    $result[$g][$r][$c] = $this->calculator_result([...$ctx, $col_phr], $lst, $msg);
+                    $cell_phr = $calc->cell_phrase($row, $col_phr);
+                    if ($cell_phr != null) {
+                        $val = $this->calculator_result([$dbo->phrase(), $cell_phr], $lst, $msg);
+                    } else {
+                        $val = $this->calculator_result([...$ctx, $col_phr], $lst, $msg);
+                        // the first column shows the row phrase itself if no number names the column
+                        if ($val == null and $c == 0) {
+                            $val = $this->calculator_result($ctx, $lst, $msg);
+                        }
+                    }
+                    if ($calc->is_difference($col_phr)) {
+                        $val = $this->calculator_difference($result[$g][$r][0] ?? null, $result[$g][$r][1] ?? null);
+                    }
+                    $result[$g][$r][$c] = $val;
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value|null $first the number of the first column
+     * @param sandbox_value|null $second the number of the second column
+     * @return sandbox_value|null the first minus the second number or null if one of them is missing
+     */
+    function calculator_difference(?sandbox_value $first, ?sandbox_value $second): ?sandbox_value
+    {
+        $result = null;
+        if ($first != null and $second != null and !$first->is_null() and !$second->is_null()) {
+            $result = clone $first;
+            $result->number = (float)$first->number() - (float)$second->number();
         }
         return $result;
     }
@@ -3835,27 +4581,63 @@ class ui_list extends ui_base
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
+     * @param string $save the html code of the save button of the input list between the import and the download, which then shows two buttons per line, '' for a list without it
      * @return string the html code of the buttons or an empty string if the item has none
      */
-    function calculator_buttons(calculator $calc, ?phrase $item): string
+    function calculator_buttons(calculator $calc, ?phrase $item, string $save = ''): string
     {
         global $mtr;
         $html = new html_base();
-        $labels = [$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT), $calc->button_label($item, triples::CALCULATOR_DOWNLOAD)];
         $copy = [];
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
             $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
         }
+        $result = $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT)])
+            . $save
+            . $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_DOWNLOAD)]);
+        $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
+        if ($report != '') {
+            $result .= $html->ref_to_frame($this->calculator_report_url($calc->phrase_id()), $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK);
+        }
+        $result .= $this->calculator_plain_buttons($copy);
+        if ($report != '') {
+            $result .= $html->frame(styles::CALC_REPORT_FRAME, $report);
+        }
+        return $save == '' ? $result : $html->div($result, styles::CALC_ACTIONS);
+    }
+
+    /**
+     * @param array $labels the texts of the buttons, of which an empty one has no button
+     * @return string the html code of the buttons without a function so far
+     */
+    private function calculator_plain_buttons(array $labels): string
+    {
+        $html = new html_base();
         $result = '';
         foreach (array_filter($labels) as $label) {
             $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
         }
-        $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
-        if ($report != '') {
-            $result .= $html->ref($this->calculator_report_url($calc->phrase_id()), $report, '', styles::CALC_BUTTON, false, false);
-        }
-        foreach ($copy as $label) {
-            $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        return $result;
+    }
+
+    /**
+     * the field of the name of a case of the page of the server, which only shows the name, because
+     * a new case is created by the updatePut api of the page that the browser builds (calculator_json.js)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @return string the html code of the field, empty for a page that is not built from another phrase or whose inputs have no case keyword
+     */
+    function calculator_case_field(calculator $calc): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $inputs = $calc->group(triples::CALCULATOR_INPUT);
+        if ($calc->has_base() and $inputs != null and $calc->has_flag($inputs, triples::CALCULATOR_CASE)) {
+            $input = '<' . html_base::INPUT . ' ' . html_base::TYPE . '="' . html_base::INPUT_TEXT . '" ' . html_base::ID . '="' . self::CALC_CASE_FIELD_ID
+                . '" ' . html_base::VALUE . '="' . $html->esc($calc->case_name()) . '" title="' . $html->esc($mtr->txt(msg_id::CALCULATOR_CASE_NO_JS)) . '" disabled>';
+            $label = $html->label($html->esc($mtr->txt(msg_id::CALCULATOR_CASE_NAME)), self::CALC_CASE_FIELD_ID);
+            $result = $html->div($label . $input, styles::INPUT_FIELD);
         }
         return $result;
     }
@@ -4055,9 +4837,10 @@ class ui_list extends ui_base
      * the notes of a calculator: per item of the list the label in bold in front of the description
      *
      * @param calculator $calc the calculator reader of the page
+     * @param bool $plain true for only the notes without a label, which are shown with the formula descriptions, false for the collapsed section of the notes with a label
      * @return string the html code of the section with the notes or an empty string if the page has none
      */
-    function calculator_notes(calculator $calc): string
+    function calculator_notes(calculator $calc, bool $plain = false): string
     {
         $html = new html_base();
         $notes = '';
@@ -4065,8 +4848,11 @@ class ui_list extends ui_base
             $notes .= $html->p($html->bold($html->esc($calc->label($note))) . ' ' . $html->esc($note->get_description()));
         }
         $result = '';
-        if ($notes != '') {
-            $summary = $calc->own_label($calc->group(triples::CALCULATOR_NOTE));
+        $summary = $calc->own_label($calc->group(triples::CALCULATOR_NOTE));
+        if ($notes != '' and $summary == '' and $plain) {
+            // without a label the notes are shown with the descriptions of the formulas
+            $result = $notes;
+        } elseif ($notes != '' and $summary != '' and !$plain) {
             $result = $html->details($html->esc($summary), $html->div($notes, styles::CALC_NOTES));
         }
         return $result;
@@ -4757,18 +5543,24 @@ class ui_list extends ui_base
     {
         $html = new html_base();
         $ctx = $this->calculation_side_context($calc, $dbo, $row);
-        $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
-        if ($sub == '') {
-            $parts = [];
-            foreach ($calc->side_results($row) as $side) {
-                $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
-                if ($val != null and !$val->is_null()) {
-                    $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
+        if (preg_match(self::CALC_TEXT_PATTERN, $calc->hint($row))) {
+            $text = $this->calculator_text($calc->hint($row), $dbo, $dto, $lst, $this->calculator_source_ids($calc, $dbo, $dto, $msg), $msg);
+            $result = $html->span($text, styles::CALC_SUB);
+        } else {
+            $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
+            if ($sub == '') {
+                $parts = [];
+                foreach ($calc->side_results($row) as $side) {
+                    $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
+                    if ($val != null and !$val->is_null()) {
+                        $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
+                    }
                 }
+                $sub = implode(', ', $parts);
             }
-            $sub = implode(', ', $parts);
+            $result = $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
         }
-        return $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
+        return $result;
     }
 
     /**
@@ -5070,7 +5862,7 @@ class ui_list extends ui_base
     ): result_list
     {
         $res_lst = new result_list();
-        $row_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
+        $row_names = $ctx_lst?->row_names($dbo->phrase()) ?? [];
         $row_names[] = $dbo->phrase()->name();
         foreach ($dto?->res_lst?->lst() ?? [] as $res) {
             if (array_intersect($row_names, $res->grp->phr_lst()->names()) != []) {
@@ -5726,6 +6518,7 @@ class ui_list extends ui_base
         // the data is loaded already by the page cache step (see view_exe::add_page_cache), so
         // this only fills what a caller without that step has not loaded
         $phr = $this->add_start_page_data($dto, $msg);
+        log_debug('data of the start page loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         $child_lst = $dto->start_lst_children ?? new phrase_list();
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits

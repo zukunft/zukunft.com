@@ -166,7 +166,7 @@
       "to": "life",
       "refs": [
         {
-          "name": "Life expectancy",
+          "name": "Life_expectancy",
           "type": "wikipedia"
         },
         {

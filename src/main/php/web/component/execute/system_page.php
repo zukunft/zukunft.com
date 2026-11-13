@@ -58,6 +58,7 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
+include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
@@ -103,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -164,6 +166,30 @@ class system_page extends component
         msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
         msg_id::CALCULATOR_SAVE,
     ];
+    // the html ids and the keys of the settings that the table editor script reads (script/table_editor.js);
+    // the seed has the id of the calculator editor seed, because both are the phraseData answer of the phrase
+    const string TABLE_EDITOR_HOST_ID = 'tableEditor';
+    const string TABLE_EDITOR_TEXTS_ID = 'tableEditorTexts';
+    const string TABLE_EDITOR_SETTINGS_ID = 'tableEditorSettings';
+    const string TABLE_EDITOR_VERBS = 'verbs';
+    const string TABLE_EDITOR_COLUMN = 'column';
+    const string TABLE_EDITOR_WORDS = 'words';
+    const string TABLE_EDITOR_KEYWORDS = 'keywords';
+    const string TABLE_EDITOR_URLS = 'urls';
+    const string TABLE_EDITOR_PUT_ROUTE = 'updatePut';
+    // the names of the verbs that the table editor links the parameters with by the key that the script reads
+    const array TABLE_EDITOR_VERB_NAMES = [
+        'has' => verbs::HAS_NAME,
+        'follow' => verbs::FOLLOW_NAME,
+        'acronym' => verbs::ACRONYM_NAME,
+    ];
+    // the words of a value that the table editor shows as the quality of a number by the key that the script reads
+    const array TABLE_EDITOR_WORD_NAMES = [
+        'assumed' => words::ASSUMED,
+        'confidence' => words::CONFIDENCE,
+    ];
+    // the table editor script gets all messages with this prefix and the calculator editor texts of its top bar
+    const string TABLE_EDITOR_TEXT_PREFIX = 'table_editor_';
     // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
     const string CALC_PAGE_HOST_ID = 'calcPage';
     const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
@@ -204,6 +230,7 @@ class system_page extends component
         'download' => triples::CALCULATOR_DOWNLOAD,
         'report' => triples::CALCULATOR_REPORT,
         'copy' => triples::CALCULATOR_COPY,
+        'case' => triples::CALCULATOR_CASE,
         'note' => triples::CALCULATOR_NOTE,
         'check' => triples::CALCULATOR_CHECK,
         'diagram' => triples::CALCULATOR_DIAGRAM,
@@ -223,6 +250,16 @@ class system_page extends component
         'step' => triples::FIELD_STEP,
         'value_phrases' => triples::FIELD_VALUE_PHRASES,
         'confidence' => words::CONFIDENCE,
+        'slider' => triples::CALCULATOR_SLIDER,
+        'preset' => triples::CALCULATOR_PRESET,
+        'tag' => triples::CALCULATOR_TAG,
+        'more' => triples::CALCULATOR_MORE,
+        'argument' => triples::CALCULATOR_ARGUMENT,
+        'verdict' => triples::CALCULATOR_VERDICT,
+        'scale' => triples::CALCULATOR_SCALE,
+        'difference' => triples::CALCULATOR_DIFFERENCE,
+        'cell' => triples::CALCULATOR_CELL,
+        'sensitivity' => triples::CALCULATOR_SENSITIVITY,
     ];
     // the code ids of the verbs by the key that the script reads, which gets their names from the type cache
     const array CALC_PAGE_VERB_CODE_IDS = [
@@ -236,6 +273,8 @@ class system_page extends component
         'rank' => verbs::RANK,
         'symbol' => verbs::SYMBOL,
         'acronym' => verbs::ACRONYM,
+        'supports' => verbs::SUPPORTS,
+        'limits' => verbs::LIMITS,
     ];
     // the translated texts of the calculator page script by their message id
     const array CALC_PAGE_TEXT_IDS = [
@@ -244,11 +283,13 @@ class system_page extends component
         msg_id::CALCULATOR_RESULT,
         msg_id::CALCULATOR_DETAILS,
         msg_id::CALCULATOR_SOURCES,
+        msg_id::AND_MORE,
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
         msg_id::CALCULATOR_DIAGRAM_FINAL,
         msg_id::CALCULATOR_CASE_NAME,
         msg_id::CALCULATOR_CASE_FAILED,
+        msg_id::CALCULATOR_CASE_NO_JS,
         msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
@@ -438,11 +479,11 @@ class system_page extends component
                 $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
             }
             if ($ui_msg_code_id_vars != null) {
-                $msg_id = $mtr->txt($ui_msg_code_id_vars);
                 $msg_txt = '';
 
                 // TODO Prio 1 move to a general function
-                if ($msg_id == msg_id::FORM_SUB_TITLE_VAR_USAGE->value) {
+                // by the message id, because the text of the id differs per language
+                if ($ui_msg_code_id_vars == msg_id::FORM_SUB_TITLE_VAR_USAGE) {
                     // a single usage needs the singular, because "Used 1 times" is wrong
                     if ($value_numeric === 1) {
                         $msg_txt = msg_id::SYS_MSG_USAGE_ONE;
@@ -450,7 +491,7 @@ class system_page extends component
                         $msg_txt = msg_id::SYS_MSG_USAGE;
                     }
                     $msg_txt = $lib->msg_var_replace(
-                        $msg_txt->value,
+                        $mtr->txt($msg_txt),
                         msg_id::VAR_USAGE,
                         $value_numeric);
                 }
@@ -533,13 +574,19 @@ class system_page extends component
         // embed the login mask and any BACK-prefixed params as hidden fields so they survive the POST
         // view.php dispatches on url_var::MASK in url_to_action; without LOGIN_ID the POST has no routing key and action_login is never called
         $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ID);
-        foreach (url_var::back_par($url_array) as $key => $val) {
+        $back_par = url_var::back_par($url_array);
+        foreach ($back_par as $key => $val) {
             $extra_hidden .= $html->form_hidden($key, $val);
+        }
+        // a signup instead of the login returns to the same page e.g. to the static start page
+        $signup_url = api::SIGNUP_SCRIPT;
+        if ($back_par != []) {
+            $signup_url .= url_var::ADD . http_build_query($back_par);
         }
 
         $web_usr = new user_dsp();
         $back_url = html_base::url_from_back($url_array);
-        $form_str = $web_usr->form_login($extra_hidden, $back_url);
+        $form_str = $web_usr->form_login($extra_hidden, $back_url, $signup_url);
 
         return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }
@@ -776,16 +823,15 @@ class system_page extends component
 
     /**
      * render the admin error-update page body: a table of unresolved program issues an admin can
-     * review and re-status; mirrors the display path of /http/error_update.php — the actual sys_log
-     * status change is dispatched by the URL action handler so this body only renders the data
+     * review and re-status; the actual sys_log status change is dispatched by the URL action handler
+     * so this body only renders the data
      *
      * @param sys_log_list|null $errors pre-loaded list of unresolved program issues; when null or
      *                                  empty the "no open errors" notice is shown
      * @param user_dsp|null $usr the session user; when null or not an admin a permission notice is
-     *                           rendered instead of the issue list — default-deny matches the
-     *                           legacy /http/error_update.php behaviour where anyone but an admin
-     *                           saw the permission notice; the same user is forwarded to the
-     *                           per-row renderer so each status-change link carries the right context
+     *                           rendered instead of the issue list (default-deny); the same user is
+     *                           forwarded to the per-row renderer so each status-change link carries
+     *                           the right context
      * @param array $url_arr the url vars of the calling page, forwarded to each row's
      *                       status-change link so navigation is preserved
      * @return string the HTML body for the error_update page
@@ -848,6 +894,38 @@ class system_page extends component
         $cft->can_edit = frontend::shows_personal_page($msg);
         $cft->is_admin = $this->is_admin($msg);
         return $cft->html($pattern, $scope);
+    }
+
+    /**
+     * the preview of the import of the values of wikidata with the confirm that writes them, for the phrase of the
+     * refresh icon of a wikidata reference (url_var::PHRASE) or for the wikidata id of the admin (url_var::EXTERNAL_KEY)
+     *
+     * @param user_message $msg with the requesting user to report why nothing can be imported
+     * @param array $url_arr the url vars of the page with the phrase or the wikidata id and the back target
+     * @param bool $test_mode true to show the given preview without a backend call, so without reading wikidata
+     * @param wikidata_import $imp the preview to show in the test mode
+     * @return string the html code of the preview with the confirm
+     */
+    function import_preview(
+        user_message    $msg,
+        array           $url_arr,
+        bool            $test_mode,
+        wikidata_import $imp = new wikidata_import()
+    ): string
+    {
+        if (!$test_mode) {
+            $imp->load($url_arr, $msg);
+        }
+        return $imp->html($url_arr, $msg);
+    }
+
+    /**
+     * @return string the html code of the form of the admin view "Import from Wikidata" with the wikidata id field,
+     *                which opens the import preview of the entity
+     */
+    function wikidata_key_form(): string
+    {
+        return new wikidata_import()->key_form();
     }
 
     /**
@@ -1266,11 +1344,13 @@ class system_page extends component
      * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load of the arguments
      * @param data_object|null $cfg the request cache with the calculator triples of the page
      * @return string the html code of the title or an empty string if the page has no phrase
      */
     function calculator_title(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
         ?data_object                                          $cfg
     ): string
     {
@@ -1283,6 +1363,9 @@ class system_page extends component
             $result = $html->block(html_base::H4, $html->esc($calc->title()));
             if ($calc->lead() != '') {
                 $result .= $html->p($html->esc($calc->lead()));
+            }
+            if ($cfg != null) {
+                $result .= new ui_list()->calculator_arguments($calc, $dbo, $cfg, $msg);
             }
         }
         return $result;
@@ -1325,8 +1408,8 @@ class system_page extends component
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
                     . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
-                    . $this->calculator_button_save($form_name, $msk_key, $dbo)
-                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT)),
+                    . $list->calculator_case_field($calc)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT), $this->calculator_button_save($form_name, $msk_key, $dbo)),
                     styles::INPUTS);
                 $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
                 $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
@@ -1406,10 +1489,81 @@ class system_page extends component
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
                 . $html->script_data(self::CALC_EDITOR_TEXTS_ID, $this->calculator_editor_texts())
                 . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
+                // the page preview is the calculator page, built by its script without a save, because a save of the preview would store a case
+                . $html->script_data(self::CALC_PAGE_SETTINGS_ID, $this->calculator_page_settings($dbo, '', '', $msg))
+                . $html->script_src(files::CALCULATOR_JSON_SCRIPT)
                 . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;
+    }
+
+    /**
+     * the table editor of the page phrase (docs/llm/frontend.md "The table editor"): the script builds
+     * the editor and the table from the seed, so that the editor starts without an api call of the browser
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed, so that the page of the server is shown
+     */
+    function table_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $cfg != null and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
+            $result = $html->link_style(files::TABLE_EDITOR_STYLE)
+                . $html->div('', '', self::TABLE_EDITOR_HOST_ID)
+                . $html->form_session_token()
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::TABLE_EDITOR_TEXTS_ID, $this->table_editor_texts())
+                . $html->script_data(self::TABLE_EDITOR_SETTINGS_ID, $this->table_editor_settings($dbo->phrase()))
+                . $html->script_src(files::TABLE_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of the page
+     * @return array the names of the verbs, the own column keyword, the value words and the parameter
+     *               keywords that the script links with and the urls of the save, the table and this page without javascript
+     */
+    private function table_editor_settings(phrase $phr): array
+    {
+        $html = new html_base();
+        $table_url = [url_var::MASK => views::TABLE_ID, url_var::ID => $phr->id()];
+        $editor_url = $html->page_url([url_var::MASK => views::TABLE_EDITOR_ID, url_var::ID => $phr->id()]);
+        // added afterwards, because page_url keeps only the vars that identify the page
+        $no_js_url = html_base::url_set_par($editor_url, url_var::JAVASCRIPT, url_var::FALSE);
+        return [
+            self::TABLE_EDITOR_VERBS => self::TABLE_EDITOR_VERB_NAMES,
+            self::TABLE_EDITOR_COLUMN => triples::TABLE_COLUMN,
+            self::TABLE_EDITOR_WORDS => self::TABLE_EDITOR_WORD_NAMES,
+            self::TABLE_EDITOR_KEYWORDS => triples::TABLE_EDITOR_KEYWORDS,
+            self::TABLE_EDITOR_URLS => [
+                'put' => $html->url_api(self::TABLE_EDITOR_PUT_ROUTE),
+                'table' => $html->url_with_user($html->page_url($table_url)),
+                'no_js' => $html->url_with_user($no_js_url),
+            ],
+        ];
+    }
+
+    /**
+     * @return array the translated texts of the table editor by their message id: all messages with the
+     *               table editor prefix and the calculator editor texts of the top bar, which both editors share
+     */
+    private function table_editor_texts(): array
+    {
+        $table_ids = $this->message_ids_by_prefix(self::TABLE_EDITOR_TEXT_PREFIX);
+        $calc_ids = $this->message_ids_by_prefix(self::CALC_EDITOR_TEXT_PREFIX);
+        return $this->message_texts([msg_id::SYSTEM_TITLE_TABLE_EDITOR, msg_id::CALCULATOR_SAVE, ...$calc_ids, ...$table_ids]);
     }
 
     /**
@@ -1554,12 +1708,14 @@ class system_page extends component
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg to report a problem of the load or a stored result that differs
      * @param data_object|null $cfg the request cache with the calculator triples, the values and the results of the page
+     * @param bool $filled true to calculate the cells of the sensitivity table e.g. for a pdf, which has no script to fill them
      * @return string the html code of the results or an empty string if the calculator has no result
      */
     function calculation_result(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         user_message                                          $msg,
-        ?data_object                                          $cfg
+        ?data_object                                          $cfg,
+        bool                                                  $filled = false
     ): string
     {
         global $mtr;
@@ -1578,12 +1734,19 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
             }
+            // the numbers of the sensitivity table only if no script fills them, because each cell calculates the page again
+            if ($filled) {
+                $sensitivity = $list->calculator_sensitivity_filled($calc, $dbo, $cfg, $lst, $msg);
+            } else {
+                $sensitivity = $list->calculator_sensitivity($calc);
+            }
+            $result = $list->calculator_verdict($calc, $dbo, $cfg, $lst, $msg) . $result . $sensitivity;
             $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
                 . $list->calculator_diagrams($calc, $lst, $msg)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
                 . $list->calculator_notes($calc)
                 . $list->calculator_imports($calc);
-            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $notes = $list->formula_notes($dbo, $msg, $cfg) . $list->calculator_notes($calc, true);
             $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
                 . $list->calculator_sources($calc, $dbo, $msg, $cfg);

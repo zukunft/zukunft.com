@@ -28,17 +28,7 @@
     },
     {
       "name": "solution",
-      "description": "a homogeneous mixture of a solute dissolved in a solvent",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q730920",
-          "type": "wikidata"
-        }
-      ]
+      "description": "a homogeneous mixture of a solute dissolved in a solvent"
     },
     {
       "name": "priority",
@@ -115,17 +105,7 @@
     },
     {
       "name": "gain",
-      "description": "the ratio of output to input of a system or amplifier",
-      "refs": [
-        {
-          "name": "Utility",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q466707",
-          "type": "wikidata"
-        }
-      ]
+      "description": "the ratio of output to input of a system or amplifier"
     },
     {
       "name": "effort",
@@ -431,7 +411,7 @@
       "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
       "refs": [
         {
-          "name": "Disability-adjusted life year",
+          "name": "Disability-adjusted_life_year",
           "type": "wikipedia"
         },
         {
@@ -444,11 +424,11 @@
       "name": "human",
       "refs": [
         {
-          "name": "Homo",
+          "name": "Human",
           "type": "wikipedia"
         },
         {
-          "name": "Q15978631",
+          "name": "Q5",
           "type": "wikidata"
         }
       ]
@@ -458,12 +438,16 @@
       "description": "number of people living in a place",
       "refs": [
         {
-          "name": "Population",
+          "name": "Human_population",
           "type": "wikipedia"
         },
         {
-          "name": "Q2625603",
+          "name": "Q33829",
           "type": "wikidata"
+        },
+        {
+          "name": "P1082",
+          "type": "wikidata_property"
         }
       ]
     },
@@ -571,13 +555,7 @@
     },
     {
       "name": "power",
-      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
-      "refs": [
-        {
-          "name": "Power_(social_and_political)",
-          "type": "wikipedia"
-        }
-      ]
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
     },
     {
       "name": "biased",
@@ -962,8 +940,10 @@
       "type": "value_status"
     },
     {
-      "name": "chart type",
-      "description": "how the rows of a table are drawn as a chart e.g. as range bars or as a scatter plot"
+      "name": "chart"
+    },
+    {
+      "name": "type"
     },
     {
       "name": "default",
@@ -974,23 +954,25 @@
       "description": "the one offered beside the default"
     },
     {
-      "name": "range bars",
-      "description": "chart with one row per table row with a dot for the number and a bar for its range, the biggest number on top",
-      "code_id": "range_bars"
+      "name": "bars"
     },
     {
-      "name": "scatter plot",
-      "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
-      "code_id": "scatter"
+      "name": "plot"
     },
     {
-      "name": "sort order",
-      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first"
+      "name": "scatter"
     },
     {
-      "name": "numeric descending",
-      "description": "sort condition: by the number of the column, the biggest number on top",
-      "code_id": "numeric_desc"
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     },
     {
       "name": "reason",
@@ -998,6 +980,44 @@
     }
   ],
   "triples": [
+    {
+      "name": "chart type",
+      "description": "how the rows of a table are drawn as a chart e.g. as range bars or as a scatter plot",
+      "from": "chart",
+      "verb": "has a",
+      "to": "type"
+    },
+    {
+      "name": "range bars",
+      "description": "chart with one row per table row with a dot for the number and a bar for its range, the biggest number on top",
+      "from": "bars",
+      "verb": "kind of",
+      "to": "range",
+      "code_id": "range_bars"
+    },
+    {
+      "name": "scatter plot",
+      "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
+      "from": "plot",
+      "verb": "kind of",
+      "to": "scatter",
+      "code_id": "scatter"
+    },
+    {
+      "name": "sort order",
+      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "description": "sort condition: by the number of the column, the biggest number on top",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric",
+      "code_id": "numeric_desc"
+    },
     {
       "name": "variance low (system)",
       "from": "variance",
@@ -1086,7 +1106,7 @@
       "to": "human",
       "refs": [
         {
-          "name": "World population",
+          "name": "World_population",
           "type": "wikipedia"
         },
         {

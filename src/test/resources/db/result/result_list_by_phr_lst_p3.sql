@@ -237,4 +237,16 @@ PREPARE result_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, big
                                  AND u.user_id = $7
          WHERE s.group_id ~ $4
            AND s.group_id ~ $5
-           AND s.group_id ~ $6 LIMIT $8 OFFSET $9;
+           AND s.group_id ~ $6
+      ORDER BY group_id,
+               phrase_id_1,
+               phrase_id_2,
+               phrase_id_3,
+               phrase_id_4,
+               phrase_id_5,
+               phrase_id_6,
+               phrase_id_7,
+               phrase_id_8,
+               formula_id
+         LIMIT $8
+        OFFSET $9;

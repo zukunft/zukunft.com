@@ -283,25 +283,35 @@ class term extends combine_named
     /**
      * TODO Prio 2 deprecate and replace with row_mapper_obj
      * map the main field from the term view to a term object
-     * @return bool true if at least one term has been loaded
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
+     * @return bool $msg->is_ok(); a missing row or a row without id is reported
      */
     function row_mapper(array $db_row, user_message $msg): bool
     {
-        $result = false;
         $this->set_id(0);
-        if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            if ($db_row[self::FLD_ID] != 0) {
-                $this->set_obj_from_id($db_row[self::FLD_ID]);
-                $this->set_name($db_row[self::FLD_NAME]);
-                // the description is part of the term view fields and needed
-                // e.g. for the tooltip of a term link
-                if (key_exists(fields::FLD_DESCRIPTION, $db_row)) {
-                    $this->set_description($db_row[fields::FLD_DESCRIPTION]);
+        if ($msg->is_ok()) {
+            $result = false;
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                if ($db_row[self::FLD_ID] != 0) {
+                    $this->set_obj_from_id($db_row[self::FLD_ID]);
+                    $this->set_name($db_row[self::FLD_NAME]);
+                    // the description is part of the term view fields and needed
+                    // e.g. for the tooltip of a term link
+                    if (key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                        $this->set_description($db_row[fields::FLD_DESCRIPTION]);
+                    }
+                    if (key_exists(fields::FLD_USAGE, $db_row)) {
+                        $this->set_usage($db_row[fields::FLD_USAGE]);
+                    }
+                    $result = true;
                 }
-                if (key_exists(fields::FLD_USAGE, $db_row)) {
-                    $this->set_usage($db_row[fields::FLD_USAGE]);
-                }
-                $result = true;
+            }
+            // reported like in db_object_seq_id::row_mapper, so that a list does not add an empty term
+            if (!$result) {
+                $msg->add(msg_id::DB_ROW_ID_MISSING, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_NAME => self::FLD_ID,
+                ]);
             }
         }
         return $msg->is_ok();
@@ -310,7 +320,8 @@ class term extends combine_named
     /**
      * map a complete underlying object to a term
      * @param array|null $db_row with the data directly from the database
-     * @return bool true if at least one term has been loaded
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
+     * @return bool $msg->is_ok(); a missing row or a row without id is reported
      */
     function row_mapper_sandbox(
         ?array       $db_row,
@@ -322,36 +333,38 @@ class term extends combine_named
         bool         $allow_usr_protect = true
     ): bool
     {
-        $result = false;
-        $this->set_obj_id(0);
-        if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            if ($this->row_has_ids($db_row, $id_fld)) {
-                $this->set_obj_from_id($db_row[term::FLD_ID]);
-                if ($this->type() == word::class) {
-                    $result = $this->get_word()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-                } elseif ($this->type() == triple::class) {
-                    $result = $this->get_triple()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-                } elseif ($this->type() == formula::class) {
-                    $result = $this->get_formula()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-                } elseif ($this->type() == verb::class) {
-                    $result = $this->get_verb()->row_mapper_verb($db_row, $msg, $id_fld, $name_fld);
+        if ($msg->is_ok()) {
+            $result = false;
+            $this->set_obj_id(0);
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                if ($this->row_has_ids($db_row, $id_fld)) {
+                    $this->set_obj_from_id($db_row[term::FLD_ID]);
+                    if ($this->type() == word::class) {
+                        $result = $this->get_word()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    } elseif ($this->type() == triple::class) {
+                        $result = $this->get_triple()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    } elseif ($this->type() == formula::class) {
+                        $result = $this->get_formula()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    } elseif ($this->type() == verb::class) {
+                        $result = $this->get_verb()->row_mapper_verb($db_row, $msg, $id_fld, $name_fld);
+                    } else {
+                        log_err_msg('Term ' . $this->dsp_id() . ' is of unknown type', $msg);
+                    }
+                    // overwrite the id of the term object with the real object id: a row of the
+                    // terms view carries the term id, which encodes the class and must be decoded
+                    // (e.g. term id 36 is formula 18), whereas a row of the word, triple, formula
+                    // or verb table carries the object id itself, which set_id would misread
+                    if ($id_fld == term::FLD_ID) {
+                        $this->set_id($db_row[$id_fld]);
+                    } else {
+                        $this->set_obj_id($db_row[$id_fld]);
+                    }
                 } else {
-                    log_err_msg('Term ' . $this->dsp_id() . ' is of unknown type', $msg);
+                    // a corrupted row, because the term loads select both ids: the user is told what has failed
+                    // and the admin gets the row to find the cause
+                    $msg->add(msg_id::TERM_ROW_ID_MISSING, [msg_id::VAR_NAME => $id_fld]);
+                    log_err_msg('id field ' . $id_fld . ' missing when trying to map term from ' . implode(',', $db_row), $msg);
                 }
-                // overwrite the id of the term object with the real object id: a row of the
-                // terms view carries the term id, which encodes the class and must be decoded
-                // (e.g. term id 36 is formula 18), whereas a row of the word, triple, formula
-                // or verb table carries the object id itself, which set_id would misread
-                if ($id_fld == term::FLD_ID) {
-                    $this->set_id($db_row[$id_fld]);
-                } else {
-                    $this->set_obj_id($db_row[$id_fld]);
-                }
-            } else {
-                // a corrupted row, because the term loads select both ids: the user is told what has failed
-                // and the admin gets the row to find the cause
-                $msg->add(msg_id::TERM_ROW_ID_MISSING, [msg_id::VAR_NAME => $id_fld]);
-                log_err_msg('id field ' . $id_fld . ' missing when trying to map term from ' . implode(',', $db_row), $msg);
             }
         }
         return $msg->is_ok();
@@ -1444,7 +1457,9 @@ class term extends combine_named
                 $this->set_obj($frm);
             } else {
                 // TODO Prio 0 review
-                $msg->add_err(msg_id::IMPORT_FAILED, []);
+                $msg->add_err(msg_id::IMPORT_FAILED, [
+                    msg_id::VAR_SUMMARY => 'the class "' . $class . '" of a term is neither a word, a verb, a triple nor a formula'
+                ]);
             }
         }
 

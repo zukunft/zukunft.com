@@ -145,7 +145,7 @@ class change_log_list extends ListBase
         // that more changes exist (see tbl_when_who_what)
         $data[url_var::LOG_SIZE] = $this->configured_row_limit($msg) + 1;
         $ctrl = new rest_call();
-        $json = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $json = $ctrl->api_call(rest_ctrl::GET, $url, $data, $msg);
         $msg->merge($this->set_from_json($json));
 
         return $msg;
@@ -203,7 +203,7 @@ class change_log_list extends ListBase
         $data[url_var::LOG_FIELD] = $fld;
         $ctrl = new rest_call();
         $data = $ctrl->id_data($id, $data);
-        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg), $msg);
     }
 
     /**

@@ -192,6 +192,48 @@ body {
     margin-top: 0; /* remove any inherited top margin */
 }
 
+/* a markdown document of /docs/ (http/docs.php): a readable text column on the left */
+.doc-page {
+    width: 100%;
+    max-width: 50rem;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.doc-page h1,
+.doc-page h2,
+.doc-page h3 {
+    margin-top: 1.5rem;
+}
+
+.doc-page pre {
+    background: var(--page-panel);
+    border: 1px solid var(--page-rule);
+    padding: 0.75rem;
+    overflow-x: auto;
+}
+
+.doc-page table {
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.doc-page th,
+.doc-page td {
+    border: 1px solid var(--page-rule);
+    padding: 0.25rem 0.5rem;
+}
+
+.doc-page blockquote {
+    border-left: 3px solid var(--page-border);
+    padding-left: 1rem;
+    color: var(--page-label);
+}
+
+.doc-page img {
+    max-width: 100%;
+}
+
 .main-container > form {
     width: 90%; /* match the table's full-width behaviour */
 }
@@ -950,6 +992,10 @@ a:hover {
     color: var(--page-grey);
     max-width: 70ch;
 }
+/* the introduction behind "... more" below the title fills the whole width of the page */
+.use-case header details p {
+    max-width: none;
+}
 /* the section headings of a panel e.g. inputs, main results and sources */
 .use-case h2 {
     font-size: .78rem;
@@ -1013,6 +1059,24 @@ a:hover {
 .use-case .panel form .btn {
     width: 100%;
     margin-left: 0;
+}
+/* two buttons per line below the inputs, the form of the save button takes one place like a button */
+.use-case .input-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.use-case .input-actions .btn {
+    width: 100%;
+    margin-left: 0;
+}
+/* the last step of the report below the buttons, so that the page stays while the report is created */
+.use-case .report-frame {
+    display: block;
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 2rem;
+    border: 0;
 }
 /* the selector keeps its arrow, which the bootstrap form-control removes */
 .use-case select {
@@ -1210,6 +1274,126 @@ a:hover {
     font-size: .8rem;
     color: var(--page-grey);
     margin-top: 6px;
+}
+/* the arguments of both sides below the title of a calculator page */
+.use-case .arguments {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+}
+@media (max-width: 760px) {
+    .use-case .arguments {
+        grid-template-columns: 1fr;
+    }
+}
+/* a coloured dot in front of the heading tells the side without changing the heading style */
+.use-case .pro h2::before,
+.use-case .contra h2::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.use-case .pro h2::before {
+    background: var(--page-success);
+}
+.use-case .contra h2::before {
+    background: var(--page-negative);
+}
+.use-case .argument-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: .9rem;
+}
+.use-case .argument-list li {
+    padding: 8px 0;
+    border-top: 1px solid var(--page-border);
+}
+.use-case .argument-list li:first-child {
+    border-top: 0;
+}
+/* the arguments behind "... more" continue the list, so their first one keeps the line */
+.use-case details .argument-list li:first-child {
+    border-top: 1px solid var(--page-border);
+}
+.use-case .argument-list b {
+    display: block;
+}
+.use-case .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+.use-case .ref {
+    font-size: .76rem;
+    color: var(--page-grey);
+}
+/* the range of a slider field is no text field, so it has no border and no padding */
+.use-case .field .row > input[type=range] {
+    border: 0;
+    padding: 0;
+    background: none;
+}
+.use-case .field .row > input[type=range] + input[type=number] {
+    flex: 0 0 6.5rem;
+    font-variant-numeric: tabular-nums;
+}
+.use-case .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+/* the verdict of a decision with the meter from the first to the second state */
+.use-case .verdict {
+    border: 2px solid var(--page-border);
+    border-radius: 8px;
+    padding: 18px;
+    display: grid;
+    gap: 6px;
+}
+.use-case .verdict.yes {
+    border-color: var(--page-success);
+}
+.use-case .verdict.no {
+    border-color: var(--page-negative);
+}
+.use-case .verdict.open {
+    border-color: var(--page-warning);
+}
+.use-case .verdict p {
+    margin: 0;
+}
+.use-case .verdict .headline {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.use-case .verdict .sub {
+    font-size: .76rem;
+    color: var(--page-grey);
+}
+.use-case .verdict .meter {
+    position: relative;
+    height: 10px;
+    background: linear-gradient(90deg, var(--page-success) 0 45%, var(--page-border) 45% 55%, var(--page-negative) 55% 100%);
+    border-radius: 5px;
+    margin-top: 8px;
+}
+.use-case .verdict .needle {
+    position: absolute;
+    top: -5px;
+    width: 4px;
+    height: 20px;
+    background: var(--page-link);
+    border-radius: 2px;
+}
+.use-case .verdict .scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: .76rem;
+    color: var(--page-grey);
 }
 /* the sign of a number of a signed row group; red is the bootstrap danger colour */
 .use-case .pos {
