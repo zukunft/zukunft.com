@@ -1374,7 +1374,7 @@ class base_ui_tests
 
         $url = $html->url_back(views::WORD_NAME);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
-        $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_NAME . '" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
         $result = (new button($url, $url_arr))->undo(msg_id::UNDO);
         //$t->assert(", btn_undo", $result, $target);
 

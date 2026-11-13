@@ -382,6 +382,8 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_upload_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'export_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';
@@ -7034,18 +7036,18 @@ class test_base
     }
 
     /**
-     * short text description of the last change of the given user
-     * @param user|null $usr the user for whom the log entries should be selected
+     * short text description of the last change of the given user with the fixed time of the test mode
+     * @param user|null $usr the user for whom the log entries should be selected, by default the first test user
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_user(?user $usr = null): string
     {
-        $msg = new user_message();
         if ($usr == null) {
             $usr = $this->usr1;
         }
-        $log = new change($this->usr1);
-        $log->load_by_user($this->usr1, $msg);
+        $msg = new user_message($usr);
+        $log = new change($usr);
+        $log->load_by_user($usr, $msg);
         $log_ui = new change_log_ui($log->api_json());
         return $log_ui->dsp(true);
     }

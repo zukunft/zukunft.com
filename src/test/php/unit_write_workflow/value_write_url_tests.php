@@ -41,12 +41,15 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_db_load.php';
@@ -57,12 +60,15 @@ include_once test_paths::UNIT_WORKFLOW . 'value_url_tests.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -94,12 +100,51 @@ class value_write_url_tests extends value_url_tests
         $this->change_value_group_workflow(workflows::WF_CHANGE_VALUE_GROUP_NBR, true);
         // changes the number of the same value
         $this->calculator_save_write($t);
+        // gives the same value a source
+        $this->value_source_write($t);
 
         // the values and test words of this run are removed by this run, so that the later
         // cleanups find no value that keeps the test words in use (see word::used_by_data)
         $t->subheader($this->ts . 'cleanup');
         $this->cleanup_test_values($t);
+        $t->cleanup_last_used();
 
+    }
+
+    /**
+     * the confirmed save of a value with a source makes the source the default of the next value of
+     * the requesting user (see user::save_last_used), unlike the save of a value without a source
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function value_source_write(test_cleanup $t): void
+    {
+        $t_wrd = new test_words($t);
+        $msg_ui = new user_message_ui();
+        $msg_ui->usr = $this->usr;
+        $msg = new user_message($t->usr1);
+        $t->subheader($this->ts . 'last used source');
+        // negative: the add value workflows and the calculator save above have no source
+        $test_name = 'a value saved without a source sets no last used source';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert_null($test_name, $usr_db->source_id());
+
+        $test_name = 'the source of a saved value is the last used source of the user';
+        $one = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $two = $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
+        $val = new value($t->usr1);
+        $val->load_by_id($this->value_id([$one, $two]), $msg);
+        $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
+        $val_ui->set_source_id(sources::SIB_ID);
+        $upd_msg = $val_ui->update($msg_ui);
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->source_id(), sources::SIB_ID);
+        $test_name = '... after a save without a problem';
+        $t->assert_msg($test_name, $upd_msg);
+        $test_name = '... but not of another user';
+        $usr2_db = $t->user_from_db($t->usr2);
+        $t->assert_null($test_name, $usr2_db->source_id());
+        $t->assert_msg($test_name, $msg);
     }
 
     /**

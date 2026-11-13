@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 class views
 {
 
@@ -1061,6 +1063,14 @@ class views
         self::EXPORT_SELECTIONS_ID,
         self::EXPORT_OBJECT_ID,
         self::EXPORT_READY_ID,
+    ];
+
+    // the export format of the export views with a fixed format; the view EXPORT_ID has a format selector
+    // and the ods view none, because nothing exports ods yet (docs/llm/pending_prio_2.md)
+    const array EXPORT_FORMATS = [
+        self::EXPORT_JSON_ID => url_var::EXPORT_FORMAT_JSON,
+        self::EXPORT_XML_ID => url_var::EXPORT_FORMAT_XML,
+        self::EXPORT_CSV_ID => url_var::EXPORT_FORMAT_CSV,
     ];
 
     // system masks that only used to display a sandbox object

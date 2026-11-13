@@ -754,6 +754,24 @@ class value_ui_tests
         $test_name = '... and sends no source as the pre value';
         $t->assert_text_contains($test_name, $sel_no_src, $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
 
+        // a value without a source preselects the last used source of the user (see user::save_last_used)
+        $t_usr = new test_users();
+        $msg_last = new user_message_ui($t_usr->user_last_used_ui());
+        $last_selected = '<option value="' . sources::SIB_ID . '"  selected >';
+        $test_name = 'a new value preselects the last used source of the user';
+        $sel_new = new value()->source_selector(views::VALUE_ADD, $msg_last, '', $t_src->source_list_ui());
+        $t->assert_text_contains($test_name, $sel_new, $last_selected);
+        $test_name = '... and sends no source as the pre value, so the confirm view shows the preselected source';
+        $t->assert_text_contains($test_name, $sel_new, $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+        // negative: a value with its own source keeps it
+        $test_name = 'a value with a source keeps its source instead of the last used one';
+        $sel_own = $val_src->source_selector(views::VALUE_EDIT, $msg_last, '', $t_src->source_list_ui());
+        $t->assert_text_not_contains($test_name, $sel_own, $last_selected);
+        // negative: a user without a last used source gets no source preselected
+        $test_name = 'a user without a last used source gets the please select entry';
+        $sel_none = new value()->source_selector(views::VALUE_ADD, $msg_ui, '', $t_src->source_list_ui());
+        $t->assert_text_not_contains($test_name, $sel_none, $last_selected);
+
         // the reference selector has the same layout as the source selector and offers the references of
         // the frontend cache instead of an always empty list
         $t_ref = new test_refs($t);

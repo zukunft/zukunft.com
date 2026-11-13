@@ -380,6 +380,7 @@
     \-- term_id - section for function term_id not yet defined that it should be set and get in /user/user.php
     \-- term_name - section for function term_name not yet defined that it should be set and get in /user/user.php
     \-- source_id - section for function source_id not yet defined that it should be set and get in /user/user.php
+    \-- verb_id - section for function verb_id not yet defined that it should be set and get in /user/user.php
     \-- unique_value - section for function unique_value not yet defined that it should be set and get in /user/user.php
     \-- key_field - section for function key_field not yet defined that it should be set and get in /user/user.php
     \-- is_excluded - section for function is_excluded is expected to be info in /user/user.php
@@ -430,7 +431,14 @@
     \-- can_import - section for function can_import not yet defined that it should be info in /user/user.php
     \-- last_term - section for function last_term not yet defined that it should be info in /user/user.php
     \-- dummy_all - section for function dummy_all not yet defined that it should be info in /user/user.php
-    \-- set_verb - section for function set_verb is expected to be set and get in /user/user.php
+    \-- save_last_used - section for function save_last_used is expected to be save in /user/user.php
+    \-- source_to_remember - section for function source_to_remember not yet defined that it should be info in /user/use
+            r.php
+    \-- verb_to_remember - section for function verb_to_remember not yet defined that it should be info in /user/user.ph
+            p
+    \-- update_last_used - section for function update_last_used not yet defined that it should be info in /user/user.ph
+            p
+    \-- clear_last_used - section for function clear_last_used not yet defined that it should be info in /user/user.php
     \-- set_profile - section for function set_profile is expected to be set and get in /user/user.php
     \-- raise_signup_profile - section for function raise_signup_profile not yet defined that it should be info in /user
             /user.php
@@ -448,6 +456,10 @@
     \-- db_insert - section for function db_insert not yet defined that it should be add in /user/user.php
     \-- db_update_user - section for function db_update_user not yet defined that it should be update in /user/user.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /user/user.php
+    \-- sql_update_last_used - section for function sql_update_last_used not yet defined that it should be sql write in 
+            /user/user.php
+    \-- sql_clear_last_used - section for function sql_clear_last_used not yet defined that it should be sql write in /u
+            ser/user.php
     \-- log_name_field - section for function log_name_field is expected to be log in /user/user.php
     \-- check - section for function check not yet defined that it should be db helper in /user/user.php
     \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset
@@ -1873,6 +1885,9 @@
     \-- unique - section for function unique not yet defined that it should be filter in /element/element_list.php
 \-- export
     \-- get - section for function get not yet defined that it should be set and get in /export/export.php
+    \-- file_text - section for function file_text not yet defined that it should be api in /export/export.php
+    \-- formula_result_csv - section for function formula_result_csv not yet defined that it should be api in /export/ex
+            port.php
 \-- export_type_list
     \-- __construct - section for function __construct is expected to be construct and map in /export/export_type_list.p
             hp
@@ -2212,6 +2227,8 @@
     \-- expected_total_import_time - section for function expected_total_import_time not yet defined that it should be e
             xport in /helper/data_object.php
     \-- count - section for function count not yet defined that it should be export in /helper/data_object.php
+    \-- counts_by_table - section for function counts_by_table not yet defined that it should be export in /helper/data_
+            object.php
     \-- save - section for function save is expected to be save in /helper/data_object.php
     \-- diff_msg - section for function diff_msg is expected to be info in /helper/data_object.php
     \-- order error - order of section api has difference at api_array should be before api_json
@@ -2488,6 +2505,8 @@
             rocess for continuous timestamp reporting in /import/import.php
     \-- put_json - section for function put_json not yet defined that it should be use to apply the time of the parent p
             rocess for continuous timestamp reporting in /import/import.php
+    \-- put_upload - section for function put_upload not yet defined that it should be use to apply the time of the pare
+            nt process for continuous timestamp reporting in /import/import.php
     \-- put_json_direct - section for function put_json_direct not yet defined that it should be use to apply the time o
             f the parent process for continuous timestamp reporting in /import/import.php
     \-- get_data_object - section for function get_data_object is expected to be set and get in /import/import.php
@@ -5712,6 +5731,12 @@
         \-- value_geo - create an array for the api json creation
         \-- value_text - create an array for the api json creation
         \-- value_time - create an array for the api json creation
+    \-- file_text
+        \-- export - the export of the phrases of an api request in the requested format e.g. for the download of an exp
+                ort view
+    \-- formula_result_csv
+        \-- export - the csv of the results of the formulas given by name: per formula a block with the formula name as 
+                the head of
     \-- load_dummy
         \-- type_lists - set all type list to dummy fallback values
     \-- load_sql_by_user
@@ -6325,6 +6350,9 @@
         \-- import - drop a zukunft.com yaml object to the database
     \-- put_json
         \-- import - drop a zukunft.com json message object to the database
+    \-- put_upload
+        \-- import - import the json file that a user has uploaded on the import view as the requesting user,
+                 like the put of
     \-- put_json_direct
         \-- import - drop a zukunft.com json message direct to the database
     \-- get_data_object
@@ -7426,6 +7454,7 @@
     \-- report_watch - section for function report_watch not yet defined that it should be view in /frontend.php
     \-- report_release_session - section for function report_release_session not yet defined that it should be view in /
             frontend.php
+    \-- export_file - section for function export_file not yet defined that it should be view in /frontend.php
     \-- loading_start - section for function loading_start not yet defined that it should be view in /frontend.php
     \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in 
             /frontend.php
@@ -7439,7 +7468,6 @@
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
-    \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
     \-- calculator_saved_text - section for function calculator_saved_text not yet defined that it should be execute in 
             /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
@@ -10013,7 +10041,7 @@
     \-- select_file
         \-- ui_im_export - the html code to select a filename e.g. to upload the file
     \-- select_export_format
-        \-- ui_im_export - the html code to select a filename e.g. to upload the file
+        \-- ui_im_export - the html code to select the format of the export view that exports in the selected format
     \-- json_export
         \-- ui_im_export - TODO Prio 2 move code from component_dsp_old
     \-- xml_export
@@ -10316,9 +10344,9 @@
     \-- human_url_to_json
         \-- url_mapper - // TODO Prio 2 review
     \-- name_to_human
-        \-- url_mapper - convert a view code id back to the standard numeric view id, using the loaded view cache
+        \-- url_mapper - @param string $std_value the export format as the standard url value e.g. efj
     \-- array_to_url
-        \-- url_mapper - convert a view code id back to the standard numeric view id, using the loaded view cache
+        \-- url_mapper - @param string $std_value the export format as the standard url value e.g. efj
     \-- dsp_log_view
         \-- hist_log - show the changes of the view
     \-- display
@@ -10829,7 +10857,8 @@
     \-- button_import
         \-- system_form - @return string the html code for a form save button
     \-- button_export
-        \-- system_form - @return string the html code for a form save button
+        \-- system_form - the export button of an export view,
+                 which shows the same view again with the request to download the export
     \-- button_request
         \-- system_form - TODO Prio 0 wire up the request action
     \-- form_end
@@ -11113,6 +11142,9 @@
         \-- frontend - give the report more time than a page and tell the user if it fails anyway, because a fatal
     \-- report_release_session
         \-- frontend - end the lock of the session, which keeps its values readable; the settings allow to open it
+    \-- export_file
+        \-- frontend - get the export of the phrase entered on an export view from the backend (api/json) and keep it in
+                 the
     \-- loading_start
         \-- frontend - the html start of the page with the logo, the loading text and the footer
 \-- cached page
@@ -11130,8 +11162,6 @@
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
-        \-- frontend - react to a user action such as pressing the save button on an edit form:
-    \-- show_view
         \-- frontend - react to a user action such as pressing the save button on an edit form:
 \-- log
     \-- log_info

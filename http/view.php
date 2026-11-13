@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator_report;
@@ -54,7 +55,6 @@ use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
@@ -62,8 +62,10 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 $web_txt = '';
 $report_pdf = '';
 $report_name = '';
-$table_csv = '';
-$table_csv_name = '';
+// a file that the request downloads instead of the page e.g. the csv of the value tables or an export
+$download = '';
+$download_name = '';
+$download_format = '';
 
 // init global objects for the database connection until the api is completed
 global $debug;
@@ -81,6 +83,9 @@ $msg_ui = new user_message_ui();  // frontend entry point
 // TODO Prio 2 llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
 // TODO Prio 2 llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
+// the json file of the import view, read only here, because a method never reads a superglobal
+$upload = $_FILES[url_var::IMPORT_FILE] ?? [];
+$is_uploaded = is_uploaded_file($upload[rest_ctrl::UPLOAD_TMP_NAME] ?? '');
 if (!empty($_POST)) {
     // redact the unhashed password before logging so a login post never leaks it into the log
     log_debug('view $_POST array: ' . library::dsp_array(url_var::without_secrets($_POST), true));
@@ -233,7 +238,7 @@ if ($db_con->is_open()) {
             $is_action = ($is_post_action or $is_get_action) && $app->session_token_valid;
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
-                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto);
+                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
                     // a page text collected so far or an already sent header would be lost by a redirect
                     if ($web_txt == '' and !headers_sent()) {
                         $redirect_url = frontend::redirect_url($url_array, $msg_ui);
@@ -273,17 +278,25 @@ if ($db_con->is_open()) {
                     $page_html = $ui->report_end_html($url_array, $msg_ui);
                 } else {
                     $is_csv = url_var::is_csv_export($url_array);
+                    $is_export = url_var::is_file_export($url_array);
                     // a download sends no page, so the header of the file must be the first output
-                    if (!$is_csv) {
+                    if (!$is_csv and !$is_export) {
                         $ui->send_loading_start($msg_ui, $start_time);
                         $loading_sent = true;
+                    }
+                    // before the page, so that the page shows the message if nothing can be exported
+                    if ($is_export and $ui->export_file($url_array, $msg_ui, $ui->dto)) {
+                        $download = $ui->dto->download;
+                        $download_name = $ui->dto->download_name;
+                        $download_format = $ui->dto->download_format;
                     }
                     $is_live = ($is_action or $redirect_msg !== null);
                     $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
                     if ($is_csv) {
-                        $table_csv = $ui->dto?->table_csv ?? '';
-                        $table_csv_name = $ui->dto?->table_csv_name ?? '';
-                        if ($table_csv == '') {
+                        $download = $ui->dto?->table_csv ?? '';
+                        $download_name = $ui->dto?->table_csv_name ?? '';
+                        $download_format = url_var::EXPORT_FORMAT_CSV;
+                        if ($download == '') {
                             $redirect_msg = ($redirect_msg ?? '') . $mtr->txt(msg_id::TABLE_CSV_EMPTY);
                         }
                     }
@@ -315,10 +328,10 @@ if ($redirect_url != '') {
     header('Content-Type: ' . pdf_writer::MIME_TYPE);
     header(calculator_report::attachment_header($report_name));
     echo $report_pdf;
-} elseif ($table_csv != '') {
-    header('Content-Type: ' . value_list_ui::CSV_MIME_TYPE);
-    header(calculator_report::attachment_header($table_csv_name, value_list_ui::CSV_FILE_EXTENSION));
-    echo $table_csv;
+} elseif ($download != '') {
+    header('Content-Type: ' . rest_ctrl::EXPORT_MIME_TYPES[$download_format]);
+    header(calculator_report::attachment_header($download_name, rest_ctrl::EXPORT_FILE_EXTENSIONS[$download_format]));
+    echo $download;
 } else {
     echo $web_txt;
 }

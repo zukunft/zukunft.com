@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -140,6 +141,35 @@ class verb_ui_tests
         $vrb_unused = new verb($t_vrb->verb()->api_json());
         $t->assert($test_name, $list->triple_list($vrb_unused, $msg, $cfg, $url_arr),
             $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES));
+
+        $t->subheader($ts . 'url mapper');
+
+        // the name in formulas and the impact get different values, so that a test can tell which
+        // url var the mapper has read for which field
+        $test_name = 'the url mapper sets the name in formulas of the verb';
+        $vrb_url = new verb();
+        $vrb_url->url_mapper([
+            url_var::ID => verbs::MEASURE_ID,
+            url_var::NAME => verbs::MEASURE_NAME,
+            url_var::NAME_IN_FORMULA => verbs::MEASURE_NAME_FORMULA,
+            url_var::IMPACT => test_const::DUMMY_IMPACT_VERB
+        ], $msg);
+        $t->assert($test_name, $vrb_url->frm_name, verbs::MEASURE_NAME_FORMULA);
+        $msg->reset();
+
+        $test_name = '... and the impact of the verb';
+        $impact = (string)$vrb_url->impact;
+        $t->assert($test_name, $impact, (string)test_const::DUMMY_IMPACT_VERB);
+
+        $test_name = 'a url without the name in formulas leaves it unset';
+        $vrb_no_frm = new verb();
+        $vrb_no_frm->url_mapper([
+            url_var::ID => verbs::MEASURE_ID,
+            url_var::NAME => verbs::MEASURE_NAME,
+            url_var::IMPACT => test_const::DUMMY_IMPACT_VERB
+        ], $msg);
+        $t->assert_null($test_name, $vrb_no_frm->frm_name);
+        $msg->reset();
 
         $t->subheader($ts . 'api mapper');
 

@@ -71,6 +71,7 @@ include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'ref_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'login_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'verb_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_by_id_write_tests.php';
@@ -78,8 +79,10 @@ include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'source_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'value_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'ref_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'verb_write_url_tests.php';
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
@@ -89,6 +92,9 @@ include_once test_paths::UNIT_UI . 'wikidata_import_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
+include_once test_paths::UNIT_UI . 'triple_ui_tests.php';
+include_once test_paths::UNIT_UI . 'value_ui_tests.php';
+include_once test_paths::UNIT_UI . 'verb_ui_tests.php';
 include_once test_paths::UNIT_UI . 'view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -141,6 +147,8 @@ use Zukunft\ZukunftCom\test\php\unit\triple_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\triple_tests;
 use Zukunft\ZukunftCom\test\php\unit\type_tests;
 use Zukunft\ZukunftCom\test\php\unit\user_list_tests;
+use Zukunft\ZukunftCom\test\php\unit\sandbox_tests;
+use Zukunft\ZukunftCom\test\php\unit\db_setup_tests;
 use Zukunft\ZukunftCom\test\php\unit\user_tests;
 use Zukunft\ZukunftCom\test\php\unit\wikidata_tests;
 use Zukunft\ZukunftCom\test\php\unit\wikipedia_tests;
@@ -190,13 +198,20 @@ use Zukunft\ZukunftCom\test\php\unit_ui\wikidata_import_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\result_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\triple_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\value_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\verb_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\word_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\login_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\ref_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\verb_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\ref_write_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\source_write_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\triple_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\value_write_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\verb_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -330,16 +345,16 @@ class a_selected_test extends all_unit_tests
         //new change_log_tests()->run($this);
         //new job_tests()->run($this);
         //new pod_tests()->run($this);
-        //new user_tests()->run($this);
+        new user_tests()->run($this);
         //new user_list_tests()->run($this);
         //new base_object_tests()->run($this);
-        //new sandbox_tests()->run($this);
+        new sandbox_tests()->run($this);
         //new language_tests()->run($this);
         //new type_tests()->run($this);
         //new db_cache_tests()->run($this);
         //new horizontal_tests()->run($this);
         //new permission_tests()->run($this);
-        //new system_view_ui_tests()->run($this);
+        new system_view_ui_tests()->run($this);
         //new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
         //new word_list_tests()->run($this);
         //new verb_tests()->run($this);
@@ -377,8 +392,8 @@ class a_selected_test extends all_unit_tests
         //new component_link_list_tests()->run($this);
         new import_tests()->run($this);
         new wikidata_tests()->run($this);
-        //new db_setup_tests()->run($this);
-        //new api_tests()->run_openapi_test($this);
+        new db_setup_tests()->run($this);
+        new api_tests()->run_openapi_test($this);
         //new base_ui_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
@@ -520,7 +535,7 @@ class a_selected_test extends all_unit_tests
              */
 
             $api_test = new api_tests();
-            //$api_test->run($this);
+            $api_test->run($this);
 
             // the start page with its main columns and variance fetched from the pod
             if (self::SELECTED_START_PAGE) {
@@ -540,7 +555,7 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             //new system_read_tests()->run($this);
-            //new system_views_read_tests()->run($this);
+            new system_views_read_tests()->run($this);
             // the start page steps up to the results of the initial effort, after which the page stops
             //$msk_tests->run_start_page_steps($this);
             //$cfg = $msk_tests->context($this);
@@ -637,9 +652,9 @@ class a_selected_test extends all_unit_tests
             //new horizontal_ui_tests()->run($this, $ui);
             //new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
             //new word_list_ui_tests()->run($this);
-            //new verb_ui_tests()->run($this);
+            new verb_ui_tests()->run($this);
             //new verb_list_ui_tests()->run($this);
-            //new triple_ui_tests()->run($this, $ui);
+            new triple_ui_tests()->run($this, $ui);
             //new triple_list_ui_tests()->run($this);
             //new phrase_ui_tests()->run($this);
             //new phrase_list_ui_tests()->run($this);
@@ -648,7 +663,7 @@ class a_selected_test extends all_unit_tests
             new wikidata_import_ui_tests()->run($this);
             //new reference_list_ui_tests()->run($this);
             //new group_ui_tests()->run($this);
-            //new value_ui_tests()->run($this);
+            new value_ui_tests()->run($this);
             //new value_list_ui_tests()->run($this);
             //new start_page_ui_tests()->run($this);
             //new formula_ui_tests()->run($this);
@@ -695,16 +710,18 @@ class a_selected_test extends all_unit_tests
             //new value_url_tests()->run($this);
             //new signup_url_tests()->run($this);
             //new login_url_tests()->run($this);
+            new verb_url_tests()->run($this);
             //new word_write_url_tests()->run($this);
-            //new triple_write_url_tests()->run($this);
+            new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
-            //new source_write_url_tests()->run($this);
+            new source_write_url_tests()->run($this);
             //new view_write_url_tests()->run($this);
             //new component_write_url_tests()->run($this);
             new ref_write_url_tests()->run($this);
-            //new value_write_url_tests()->run($this);
+            new value_write_url_tests()->run($this);
             //new signup_write_url_tests()->run($this);
             //new login_write_url_tests()->run($this);
+            new verb_write_url_tests()->run($this);
 
             /*
              * db write
@@ -749,7 +766,7 @@ class a_selected_test extends all_unit_tests
 
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
-            //new verb_write_tests()->run($t);
+            new verb_write_tests()->run($this);
             //new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
@@ -758,7 +775,9 @@ class a_selected_test extends all_unit_tests
             //new graph_tests()->run($t);
             //new term_write_tests()->run($t);
             //new term_list_tests()->run($t);
-            //new source_write_tests()->run($this);
+            new source_write_tests()->run($this);
+            new export_write_tests()->run($this);
+            new import_upload_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);

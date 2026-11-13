@@ -72,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
+include_once paths::MODEL_HELPER . 'db_object_multi_user.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 //include_once paths::DB . 'db_check.php';
@@ -100,6 +101,8 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_LOG . 'change_table_list.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -146,6 +149,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi_user;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\object_mapper;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -156,8 +160,11 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -204,6 +211,10 @@ class user extends db_id_object_non_sandbox
     const string KEY_IP = user_db::FLD_IP_ADDR;
     const string KEY_NAME = user_db::FLD_NAME;
     const string KEY_EMAIL = user_db::FLD_EMAIL;
+
+    // the query name parts of the write and the removal of the last used source or verb
+    const string LAST_USED = 'last';
+    const string CLEAR_LAST_USED = 'clear_last';
 
     // field length limits matching the db column type sql_field_type::NAME (VARCHAR 255)
     const int NAME_MAX_LEN = 255;
@@ -261,6 +272,8 @@ class user extends db_id_object_non_sandbox
     public ?term $trm = null;              // the last term used by the user
     public ?view $msk = null;              // the last view used by the user
     public ?source $src = null;            // the last source used by the user
+    // the last verb used by the user, written only by save_last_used and never by the logged user save
+    public ?verb $vrb = null;
 
     // TODO Prio 2 move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;      // the decimal point char for this user
@@ -353,6 +366,7 @@ class user extends db_id_object_non_sandbox
         $this->trm = null;
         $this->msk = null;
         $this->src = null;
+        $this->vrb = null;
 
         // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
@@ -484,6 +498,11 @@ class user extends db_id_object_non_sandbox
                     $this->src = $src;
                 }
             }
+            if (array_key_exists(user_db::FLD_VERB, $db_row)) {
+                if ($db_row[user_db::FLD_VERB] != null) {
+                    $this->vrb = new verb($db_row[user_db::FLD_VERB]);
+                }
+            }
 
             $this->dec_point = shared_config::DEFAULT_DEC_POINT;
             $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
@@ -558,6 +577,9 @@ class user extends db_id_object_non_sandbox
             $src = new source($this);
             $src->id = $api_json[json_fields::SOURCE_ID];
             $this->src = $src;
+        }
+        if (key_exists(json_fields::VERB, $api_json)) {
+            $this->vrb = new verb($api_json[json_fields::VERB]);
         }
 
         return $msg->is_ok();
@@ -777,6 +799,7 @@ class user extends db_id_object_non_sandbox
                 $vars[json_fields::SOURCE_ID] = $this->src->id();
             }
         }
+        $vars[json_fields::VERB] = $this->verb_id();
 
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -1099,6 +1122,14 @@ class user extends db_id_object_non_sandbox
     function source_id(): ?int
     {
         return $this->src?->id();
+    }
+
+    /**
+     * @return int|null the id of the last verb used by this user or null if the user has not used any verb yet
+     */
+    function verb_id(): ?int
+    {
+        return $this->vrb?->id();
     }
 
     /**
@@ -2832,17 +2863,105 @@ class user extends db_id_object_non_sandbox
         $this->name = 'standard user view for all users';
     }
 
-    // remember the last source that the user has used
-    // TODO Prio 2 add the database field
-    function set_verb($vrb_id): bool
+    /**
+     * remember the source or the verb of an object that this requesting user has just saved with a
+     * confirmed request as the default of the next value or triple; called only by the write of a
+     * user request (db_object::add_via_api and update), never by a save, because an import saves
+     * every object and must not change the default of the importing user
+     *
+     * @param db_object_seq_id|db_object_multi_user|user $dbo the object that this user has just added or changed
+     * @param user_message $msg to report a failed write of the default
+     * @return bool true if the default is written or the object names no source and no verb
+     */
+    function save_last_used(db_object_seq_id|db_object_multi_user|user $dbo, user_message $msg): bool
     {
-        log_debug('(' . $this->id . ',s' . $vrb_id . ')');
+        $src = $this->source_to_remember($dbo);
+        if ($src != null) {
+            $this->src = $src;
+            $this->update_last_used(user_db::FLD_SOURCE, $src->id(), $msg);
+        }
+        $vrb = $this->verb_to_remember($dbo);
+        if ($vrb != null) {
+            $this->vrb = $vrb;
+            $this->update_last_used(user_db::FLD_VERB, $vrb->id(), $msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * the source that a saved object makes the default of the next value: the source itself or the
+     * source of a value; "my estimates" is never remembered, because the save writes it into a user
+     * row without own source, so it is no choice of the user
+     *
+     * @param db_object_seq_id|db_object_multi_user|user $dbo the object that the user has just saved
+     * @return source|null the source to remember or null if the object names no source
+     */
+    function source_to_remember(db_object_seq_id|db_object_multi_user|user $dbo): ?source
+    {
+        $src = null;
+        if ($dbo instanceof source) {
+            $src = $dbo;
+        } elseif ($dbo instanceof value_base and $dbo->has_source() and !$dbo->has_placeholder_source()) {
+            $src = $dbo->get_source();
+        }
+        return $src;
+    }
+
+    /**
+     * the verb that a saved object makes the default of the next triple: the verb itself or the
+     * verb of a triple
+     *
+     * @param db_object_seq_id|db_object_multi_user|user $dbo the object that the user has just saved
+     * @return verb|null the verb to remember or null if the object names no verb
+     */
+    function verb_to_remember(db_object_seq_id|db_object_multi_user|user $dbo): ?verb
+    {
+        $vrb = null;
+        if ($dbo instanceof verb) {
+            $vrb = $dbo;
+        } elseif ($dbo instanceof triple) {
+            $vrb = $dbo->get_verb();
+        }
+        return $vrb;
+    }
+
+    /**
+     * write a source or a verb as the last used one of this user with an update of only this field
+     * and without change log, because the default is a convenience and no change of the user
+     *
+     * @param string $fld the field of the default, user_db::FLD_SOURCE or user_db::FLD_VERB
+     * @param int|null $id the id of the source or verb or null to remove the default
+     * @param user_message $msg to report a user without database row or a failed update
+     * @return bool true if the default has been written
+     */
+    function update_last_used(string $fld, ?int $id, user_message $msg): bool
+    {
         global $db_con;
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
-        $result = $db_con->set_class(user::class);
-        //$result = $db_con->update($this->id, verb_db::FLD_ID, $vrb_id);
-        return $result;
+        if ($this->id() <= 0) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $fld]);
+        } else {
+            $qp = $this->sql_update_last_used($db_con->sql_creator(), $fld, $id);
+            $db_con->update($qp, 'last used ' . $fld . ' of ' . $this->dsp_id(), $msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * remove a source or a verb that is deleted as the last used one of every user, because the
+     * foreign key of the users table would else refuse the delete; without change log like
+     * update_last_used
+     *
+     * @param string $fld the field of the default, user_db::FLD_SOURCE or user_db::FLD_VERB
+     * @param int $id the id of the source or verb that is deleted
+     * @param user_message $msg to report a failed update
+     * @return bool true if no user has the source or verb as default any more
+     */
+    function clear_last_used(string $fld, int $id, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->sql_clear_last_used($db_con->sql_creator(), $fld, $id);
+        $db_con->update($qp, 'clear the last used ' . $fld . ' ' . $id, $msg);
+        return $msg->is_ok();
     }
 
     function set_profile(
@@ -3673,6 +3792,50 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * create the sql statement to remember a source or a verb as the last used one of this user,
+     * without change log (see update_last_used)
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $fld the field of the default, user_db::FLD_SOURCE or user_db::FLD_VERB
+     * @param int|null $id the id of the source or verb or null to remove the default
+     * @return sql_par the sql update statement, the name of the sql statement and the parameter list
+     */
+    function sql_update_last_used(sql_creator $sc, string $fld, ?int $id): sql_par
+    {
+        $ext = sql::NAME_SEP . self::LAST_USED . sql::NAME_SEP . $fld;
+        $qp = new sql_par(self::class, new sql_type_list([sql_type::UPDATE]), $ext);
+        $sc->set_class(self::class);
+        $sc->set_name($qp->name);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field($fld, $id, sql_field_type::INT);
+        $qp->sql = $sc->create_sql_update(user_db::FLD_ID, $this->id(), $fvt_lst);
+        $qp->par = [$id, $this->id()];
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to remove a deleted source or verb as the last used one of every user,
+     * without change log (see clear_last_used)
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $fld the field of the default, user_db::FLD_SOURCE or user_db::FLD_VERB
+     * @param int $id the id of the source or verb that is deleted
+     * @return sql_par the sql update statement, the name of the sql statement and the parameter list
+     */
+    function sql_clear_last_used(sql_creator $sc, string $fld, int $id): sql_par
+    {
+        $ext = sql::NAME_SEP . self::CLEAR_LAST_USED . sql::NAME_SEP . $fld;
+        $qp = new sql_par(self::class, new sql_type_list([sql_type::UPDATE]), $ext);
+        $sc->set_class(self::class);
+        $sc->set_name($qp->name);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field($fld, null, sql_field_type::INT);
+        $qp->sql = $sc->create_sql_update($fld, $id, $fvt_lst);
+        $qp->par = [null, $id];
+        return $qp;
+    }
+
+    /**
      * create the sql statement to add a new user to the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -3732,14 +3895,14 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * get a list of all database fields that might be changed
-     * excluding the internal fields e.g. the database id
+     * get a list of all database fields that might be changed by the logged save
+     * excluding the internal fields e.g. the database id and the helper fields of the workflow
      *
      * @return array list of all database field names that have been updated
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return user_db::FLD_NAMES;
+        return array_diff(user_db::FLD_NAMES, user_db::FLD_NAMES_HELPER);
     }
 
     /**
@@ -4141,6 +4304,7 @@ class user extends db_id_object_non_sandbox
                 $obj->src
             );
         }
+        // the last used verb is no field of the logged user save, because only update_last_used writes it
         if ($obj->uses_sandbox !== $this->uses_sandbox) {
             if ($do_log) {
                 $lst->add_field(

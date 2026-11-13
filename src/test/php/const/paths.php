@@ -84,6 +84,7 @@ class paths
     const string API_SYS_LOG_RES = self::API_RES . 'sys_log_list' . DIRECTORY_SEPARATOR;
     const string API_PHRASE_DATA_RES = self::API_RES . 'phrase_data' . DIRECTORY_SEPARATOR;
     const string API_CALCULATOR_EDITOR_RES = self::API_RES . 'calculator_editor' . DIRECTORY_SEPARATOR;
+    const string API_JSON_RES = self::API_RES . 'json' . DIRECTORY_SEPARATOR;
     const string DB_FORMULA = self::DB . self::FORMULA;
     const string DB_RES = self::RESOURCE . self::DB;
     const string DB_RES_FORMULA = self::DB_RES . self::FORMULA;

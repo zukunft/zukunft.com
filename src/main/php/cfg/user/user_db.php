@@ -70,17 +70,23 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+//include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_db.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
@@ -146,6 +152,10 @@ class user_db extends db_object_seq_id
     const string FLD_VIEW_COM = 'the last mask that the user has used';
     const string FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
     const string FLD_SOURCE = 'source_id';
+    const string FLD_VERB_COM = 'the last verb used by this user to have a default for the next triple';
+    const string FLD_VERB = verb_db::FLD_ID;
+    // the name that the sql creator gives the foreign key of FLD_VERB, used by the upgrade of db_check
+    const string FK_VERB = 'users_verb_fk';
     const string FLD_STATUS_COM = 'e.g. to exclude inactive users';
     const string FLD_STATUS = 'user_status_id';
     const string FLD_USES_SANDBOX_COM = 'true if the user has changed any data, so the pages for this user cannot be served from the cache of the standard pages';
@@ -186,11 +196,15 @@ class user_db extends db_object_seq_id
         self::FLD_TERM,
         fields::FLD_VIEW,
         self::FLD_SOURCE,
+        self::FLD_VERB,
         self::FLD_USES_SANDBOX,
 
         // TODO Prio 2 to be added
         //self::FLD_EMAIL_STATUS,
     );
+    // the helper fields of the workflow that only change a suggestion and never a result,
+    // so they are neither logged nor registered as a change field
+    const array FLD_NAMES_HELPER = [self::FLD_VERB];
     // the database field names excluding the id and the fields for logon
     const array FLD_NAMES_LIST = array(
         fields::FLD_CODE_ID,
@@ -238,6 +252,7 @@ class user_db extends db_object_seq_id
         [self::FLD_TERM, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TERM_COM],
         [fields::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
         [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
+        [self::FLD_VERB, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, '', verb::class, self::FLD_VERB_COM],
         [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', user_status::class, self::FLD_STATUS_COM],
         [self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::NULL, '', '', self::FLD_USES_SANDBOX_COM],
         [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],

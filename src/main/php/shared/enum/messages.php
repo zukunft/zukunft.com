@@ -265,6 +265,17 @@ enum messages: string
     case IMPORT_PREVIEW_CONFIRM = 'import_preview_confirm';
     case IMPORT_PREVIEW_CHANGED = 'import_preview_changed';
     case IMPORT_PREVIEW_SHOW = 'import_preview_show';
+    // the upload of the import view (import::put_upload) and the export of a phrase selection (export::file_text)
+    case IMPORT_UPLOAD_NOT_PERMITTED = 'import_upload_not_permitted';
+    case IMPORT_UPLOAD_MISSING = 'import_upload_missing';
+    case IMPORT_UPLOAD_NO_JSON = 'import_upload_no_json';
+    case IMPORT_UPLOAD_EMPTY = 'import_upload_empty';
+    case IMPORT_UPLOAD_TOO_BIG = 'import_upload_too_big';
+    case IMPORT_UPLOAD_DONE = 'import_upload_done';
+    case EXPORT_PHRASE_MISSING = 'export_phrase_missing';
+    case EXPORT_FORMAT_UNKNOWN = 'export_format_unknown';
+    case EXPORT_FORMULA_MISSING = 'export_formula_missing';
+    case EXPORT_FORMULA_NAME_MISSING = 'export_formula_name_missing';
     // the reference rows that the confirm of a phrase change writes too (see url_var::REF_ROW)
     case INFO_CONFIRM_REFS = 'info_confirm_refs';
     case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';

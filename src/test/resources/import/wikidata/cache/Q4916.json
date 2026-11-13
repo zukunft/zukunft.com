@@ -4,8 +4,8 @@
             "pageid": 5867,
             "ns": 0,
             "title": "Q4916",
-            "lastrevid": 2567631080,
-            "modified": "2026-11-10T17:22:04Z",
+            "lastrevid": 2568293449,
+            "modified": "2026-11-12T13:19:51Z",
             "type": "item",
             "id": "Q4916",
             "labels": {
@@ -1202,6 +1202,10 @@
                 "ast": {
                     "language": "ast",
                     "value": "moneda común europea"
+                },
+                "gd": {
+                    "language": "gd",
+                    "value": "airgead an Aonaidh Eòrpaich"
                 }
             },
             "aliases": {
@@ -1485,6 +1489,16 @@
                     {
                         "language": "es",
                         "value": "€"
+                    }
+                ],
+                "gd": [
+                    {
+                        "language": "gd",
+                        "value": "Eòro"
+                    },
+                    {
+                        "language": "gd",
+                        "value": "Iùro"
                     }
                 ]
             },
