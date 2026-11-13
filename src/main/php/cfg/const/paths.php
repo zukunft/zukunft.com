@@ -58,6 +58,7 @@ class paths
     const string MODEL_IMPORT = self::MODEL . 'import' . DIRECTORY_SEPARATOR;
     const string EXPORT = self::MODEL . 'export' . DIRECTORY_SEPARATOR;
     const string SERVICE_MATH = self::SERVICE . 'math' . DIRECTORY_SEPARATOR;
+    const string SERVICE_EXPORT = self::SERVICE . 'export' . DIRECTORY_SEPARATOR;
     const string MODEL_CONST = self::MODEL . 'const' . DIRECTORY_SEPARATOR;
     const string MODEL_HELPER = self::MODEL . 'helper' . DIRECTORY_SEPARATOR;
     const string MODEL_SYSTEM = self::MODEL . 'system' . DIRECTORY_SEPARATOR;

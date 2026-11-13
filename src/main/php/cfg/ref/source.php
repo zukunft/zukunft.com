@@ -804,13 +804,17 @@ class source extends sandbox_code_id
      */
 
     /**
-     * delete the references to this source
+     * delete the references to this source and remove it as the last used source of every user
      *
      * @param user_message $msg the message for the user why deleting the word links has failed and a suggested solution
      * @return bool true if the word links has been deleted
      */
     function del_links(user_message $msg): bool
     {
+        // the default of a user would else block the delete by the foreign key of the users table
+        $usr = new user();
+        $usr->clear_last_used(user_db::FLD_SOURCE, $this->id(), $msg);
+
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
         //$grp_lst = new group_list($this->get_user());

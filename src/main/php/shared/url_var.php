@@ -150,6 +150,13 @@ class url_var
     const string TERM = 'e';
     const string TERM_POS = 'ep'; // used for a list of terms where the list position is added to the name
     const string EXTERNAL_KEY = 'ek'; // the external key of a form field
+    // 1 to download the export of the selected phrases instead of showing the export view
+    const string EXPORT_FILE = 'ed';
+    // the format of an export, one of the EXPORT_FORMAT_* values
+    const string EXPORT_FORMAT = 'ef';
+    const string EXPORT_FORMAT_JSON = 'efj'; // the zukunft.com import json (the default of the api)
+    const string EXPORT_FORMAT_XML = 'efx'; // the import json as xml
+    const string EXPORT_FORMAT_CSV = 'efc'; // the results of the formulas given by name
     const string FORMULA = 'f';
     const string NEED_ALL = 'fa';
     const string USER_EXPRESSION = 'fe';
@@ -190,6 +197,7 @@ class url_var
     // the checksum of the import json of a preview, so that the confirm imports only what the user has seen
     const string IMPORT_CHECKSUM = 'ic';
     const string ID = 'id'; // the internal database id of the main view object
+    const string IMPORT_FILE = 'if'; // the json file that the user uploads on the import view
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
@@ -648,6 +656,14 @@ class url_var
     const string EX_KEY_HUMAN = 'external_key';
     const string IMPORT_CHECKSUM_HUMAN = 'import_checksum';
 
+    // im- and export
+    const string IMPORT_FILE_HUMAN = 'import_file';
+    const string EXPORT_FILE_HUMAN = 'export_file';
+    const string EXPORT_FORMAT_HUMAN = 'export_format';
+    const string EXPORT_FORMAT_JSON_HUMAN = 'json';
+    const string EXPORT_FORMAT_XML_HUMAN = 'xml';
+    const string EXPORT_FORMAT_CSV_HUMAN = 'csv';
+
     // group
     const string GROUP_HUMAN = 'group_ig';
     const string GROUP_NAME_HUMAN = 'group_name';
@@ -920,6 +936,11 @@ class url_var
         [self::EX_KEY_HUMAN, self::EXTERNAL_KEY],
         [self::IMPORT_CHECKSUM_HUMAN, self::IMPORT_CHECKSUM],
 
+        // im- and export
+        [self::IMPORT_FILE_HUMAN, self::IMPORT_FILE],
+        [self::EXPORT_FILE_HUMAN, self::EXPORT_FILE],
+        [self::EXPORT_FORMAT_HUMAN, self::EXPORT_FORMAT],
+
         // group
         [self::GROUP_HUMAN, self::GROUP],
         [self::GROUP_NAME_HUMAN, self::GROUP_NAME],
@@ -1058,6 +1079,13 @@ class url_var
     const array HUMAN_TO_STD_PHRASE_DATA_WALK_VAL = [
         self::PHRASE_DATA_WALK_VALUE => self::PHRASE_DATA_WALK_VALUE_HUMAN,
         self::PHRASE_DATA_WALK_FROM => self::PHRASE_DATA_WALK_FROM_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_EXPORT_FORMAT_VAL = [
+        self::EXPORT_FORMAT_JSON => self::EXPORT_FORMAT_JSON_HUMAN,
+        self::EXPORT_FORMAT_XML => self::EXPORT_FORMAT_XML_HUMAN,
+        self::EXPORT_FORMAT_CSV => self::EXPORT_FORMAT_CSV_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1351,6 +1379,15 @@ class url_var
     static function is_csv_export(array $url_array): bool
     {
         return ($url_array[self::DISPLAY_LIST_CSV] ?? '') == self::TRUE;
+    }
+
+    /**
+     * @param array $url_array the url of a request e.g. [EXPORT_FILE => TRUE] of the export button
+     * @return bool true if the export of the selected phrases should be downloaded instead of showing the view
+     */
+    static function is_file_export(array $url_array): bool
+    {
+        return ($url_array[self::EXPORT_FILE] ?? '') == self::TRUE;
     }
 
     /**

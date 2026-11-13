@@ -1176,7 +1176,7 @@ each is a small standalone commit):
 
 ## general code cleanup to prevent future issues
 
-fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
+fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change, which stays in the version 0.0.3 until its launch, see docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
 
 ### complete the frontend backend split — implementation steps
 
@@ -1738,23 +1738,31 @@ remove the dead formula edit render path: web/formula/formula.php::dsp_edit and 
 
 ### import view (missing parts of the retired http_old/import.php)
 
-the legacy controller http_old/import.php (upload a json file and import it) has a mask in the new frontend: the import view (views::IMPORT_ID). The view even shows the real upload form (html_base.php line 1758 creates a multipart form that posts to /http/view.php?m=import, see the snapshot src/test/resources/web/html/views_by_id/im_export/76_import.html), but the post is never processed: frontend::url_to_action has no arm for the import view and no code in web/ reads $_FILES, so the submit only reaches log_ignored_write_step. The old controller had no caller left either (only the retired http_old/user.php linked to it), so the json import over the web is currently not possible at all - it works only via the test and setup scripts.
+the upload of the import view (views::IMPORT_ID) imports the json file for a user with user::can_import (import::put_upload, called by frontend::action_import_upload) and the import result view (views::IMPORT_RESULT_ID) names the number of the imported objects per type (docs/llm/log/http_old_phase2_2026-11-12.md). Open:
 
-process the upload of the import view (views::IMPORT_ID): read $_FILES once in http/view.php (never inside a method, see docs/llm/state-and-messages.md) and pass it as a parameter to a new import action in frontend::url_to_action, which calls cfg/import/import.php::put with the decoded json. Take the checks of the old controller over: only .json files, not empty, not bigger than the configured limit (the old hard coded 10 MB should become a config value) and is_uploaded_file, and answer with a user_message and a msg_id, never with a hard coded english text
+the import preview view (views::IMPORT_PREVIEW_ID) of an upload: show the counters and the clashes of the file before anything is written, with the confirm of the import
 
-show the import result of the old controller to the user: it reported per object type how many entries have been loaded (words, verbs, triples, formulas, sources, references, values, simple values, views, components, validated results and validated views, plus users and system objects for an admin). The counters are still filled by the import object, so only the message to the user has to be created, with the counter names translated via the msg_id mechanism
+the import result view shows only the summary message; its description asks for the objects of the import with their warnings and the links to the added objects
 
-allow the import only for a user that may import (user::can_import), and add a test for the negative case, because an import can change many objects at once and is therefore a good target for an attack. Note that the old controller did not check this at all: it imported the file for every user with an id
+the counters of the import object (import::words_done ...) are filled only by import::put, not by import::put_json, which the api and the upload use (import::counts is filled from the data object instead); decide whether the old counters and import::status_text go
+
+the import view has the component "system form button import" next to the upload form, which is no part of the form and has no function, because the upload form has its own submit
+
+the upload form posts to /http/view.php?m=import, the code id of the view, which the frontend maps to the view id, but the check of http/view.php for a change of an ip user (views::IP_BLOCKED_MASKS_IDS) compares the raw mask and misses it; the upload is still refused by user::can_import, but the form should post the view id
+
+the put of api/json (the import of the calculator editor) does not check user::can_import (decided by the developer for the upload of the import view); decide whether a normal user may import only into the own sandbox
 
 ### json export (missing parts of the retired http_old/get_json.php)
 
-the legacy endpoint http_old/get_json.php was not a html page but an api call: it took a comma separated list of phrase names (url_var::WORDS, e.g. 't=Nestlé,country,weight'), loaded the phrase list, added all related phrases (phrase_list::are) and returned the json of them created by service/export/json_io.php::export. It has no caller in the program code any more, only in the experimental js files src/test/php/dev/test_js.php and test_jquery.php (which partly call the productive server). Its replacement is not a view mask but the rest api endpoint api/json/index.php ('the json im- and export API controller'), and the export views views::EXPORT_ID, views::EXPORT_JSON_ID, views::EXPORT_XML_ID, views::EXPORT_CSV_ID and views::EXPORT_ODS_ID. Both are incomplete.
+api/json answers a get with the export of the phrases given by name (url_var::WORDS) or by id (url_var::PHRASE_LIST) with all related phrases that the user may read, as json or xml, or the csv of the results of the formulas given by name (url_var::EXPORT_FORMAT), and the export views offer it as a download (export::file_text, frontend::export_file, docs/llm/log/http_old_phase2_2026-11-12.md). Open:
 
-fix and complete api/json/index.php: it overwrites the url parameter with the hard coded line '$wrd_id = 1;', so it always returns the word with the id 1, it exports only a single word (word::export_json) instead of a phrase list with all related phrases (json_io::export as the old endpoint did), and it has no PUT branch although its header says that PUT imports data. Add the phrase name list parameter of the old endpoint, use json_io for the export, implement the PUT import (together with the import view, see the import view section above) and add an api test for each case
+the ods export: the view views::EXPORT_ODS_ID has no format (views::EXPORT_FORMATS), so its export button says that the format is not available; an ods writer is needed, e.g. from the rows of the csv
 
-make the export views work: views::EXPORT_ID (export in the selected format), views::EXPORT_JSON_ID, views::EXPORT_XML_ID, views::EXPORT_CSV_ID and views::EXPORT_ODS_ID show a form with the name, the group and a phrase selector, but nothing performs the export - service/export/json_io.php::export has no caller any more except json_io::export_file. Wire the export button of the views to the export service and offer the result as a download
+the export views select one phrase (url_var::PHRASE), while the api exports a list of phrases; a multi phrase select would export several phrases with one file
 
-remove or rewrite the experimental js files src/test/php/dev/test_js.php and src/test/php/dev/test_jquery.php: they call the retired /http/get_json.php, partly on the productive server (https://zukunft.com/http/get_json.php), and they are not part of any test suite. The retired http_old/get_json_test.php belongs to them: it just echoed a hard coded json array with ten sample names ('balance sheet', 'BMW', ...) as the answer for the autocomplete experiments, so nothing has to be migrated from it. The real suggestion list for the search field comes from the word find view (views::WORD_FIND_ID) resp. from the api (api/phraseList), and if a type ahead suggestion is wanted again, it must use the api and not a static file
+the save button of the export views has no function: the selection name, the group and the text are meant to be saved as an export selection of the user (views::EXPORT_SELECTIONS_ID shows "this page is not yet available")
+
+the placeholder components "Export JSON", "Export XML", "Export CSV" and "Export ODS" (ui_im_export::json_export ... ods_export, which return the component name) are linked to no view any more; decide whether the components with their types and code ids go
 
 ### data load
 
@@ -3007,3 +3015,49 @@ in a test run (`test_base::api_login`), so in production the change is probably 
 of the frontend like `db_object::update` (`frontend::import_confirmed`). To decide: the job change does the same, or
 the api accepts a server to server call of the own pod (`server_guard::from_own_pod`) without the token, which needs a
 security review.
+
+## review of the uncommitted http_old phase 2 change
+
+Review of 2026-11-13 of the working tree on top of `60ea05136` (last used default, export api, import upload and the
+deletion of 10 `http_old` scripts and the 2 `dev` experiments, see `docs/llm/log/http_old_phase2_2026-11-12.md`).
+No code was changed by the review.
+
+1. **Line balance:** the change adds 2011 lines and deletes 1747, of which about 1510 are the deleted scripts; so
+   about 1750 lines of new code remain for the defaults, the export and the upload. Candidates for the step by step
+   undo, from the least needed: the preselect of a saved value (point 2), the csv of the formula results as an own
+   export format (`export::formula_result_csv`, `formula_result_rows`, `library::csv_text`, the format `efc` with its
+   view test), the five refusal messages of the upload (`import::upload_refused`) and the counters per object type
+   (`data_object::counts_by_table`, `frontend::import_summary`).
+2. **Preselect of a saved value:** `web/value/value.php::source_selector` (`:732`) preselects the last used source
+   for every value without a source, also on the edit view of a saved value (e.g. wf35 `change_value_group`), because
+   the id of a new value can be its group id; the request was to preselect only for a new object. The triple
+   (`web/word/triple.php:953`) preselects only without a verb, which is a new triple. To decide: a value preselects
+   only on the add view, e.g. by the view id of the form.
+3. **Asymmetric delete guard:** `verb::del` (`verb.php:1285`) deletes only if `user::clear_last_used` has worked,
+   but `source::del_links` (`source.php:816`) ignores its result and goes on, so a failed clear ends later in the
+   foreign key error of `users_source_fk` instead of the message of the clear; the source gets the same guard.
+4. **One json key with two meanings:** the user json sends the last used verb id as `json_fields::VERB`
+   (`verb_id`, `cfg/user/user.php:802`, `web/user/user.php:788`), while the triple json sends the whole verb object
+   under the same key (`cfg/word/triple.php:885`); the source uses its own `json_fields::SOURCE_ID`. To decide: a
+   `json_fields::VERB_ID` for the id, like the source.
+5. **Helper without instance:** `source::del_links` and `verb::del` create an empty `new user()` only to call
+   `clear_last_used`, which uses no field of the user (it updates every user row); a static function or a function
+   of the user list says that no user is meant.
+6. **Leftovers:** `test_base::assert_api_get_json` (`test_base.php:1433`) has no caller; the fixture
+   `test/resources/api/json/word.json` is read by no test (the developer removes it, test resources are add only);
+   `http_old/verb_edit.php:115` calls the removed `user::set_verb` (the script was broken before and goes with the
+   next deletion).
+7. **Counters of the upload:** `data_object::counts_by_table` counts every object of the uploaded json after the
+   save, also the ones that existed already and are unchanged, while `msg_id::IMPORT_UPLOAD_DONE` names them as
+   imported; either the text says "in the file" or the counters count only the added and changed objects.
+8. **Backend import in the frontend process:** `frontend::action_import_upload` creates the backend `import` in the
+   frontend like `import_confirmed`, a second direct backend write path next to `db_object::add_via_api`; it moves to
+   the api together with the other frontend writes (TODO Prio 2 of `db_object::add_via_api`).
+9. **Before the commit:** `test/php/const/files.php:46` has `AUTO_UPDATE_TEST_FILES = true` (also in the last
+   commit); `a_selected_test.php` has twelve test classes switched on for this change; the generated docs
+   (`docs/code_*.md`) and the snapshots written by the auto update are checked with the diff.
+10. **Ids after the reset:** `test/resources/unit/user/list.csv` has the four env users at 11-14 instead of 9-12;
+    the next `/test/reset_db.php` shows if the shift is stable (then a setup import uses up two user ids) or a
+    leftover of the database before the reset.
+11. **Log file:** `docs/llm/log/http_old_phase2_2026-11-12.md` combines three logs and so has nine expected changes,
+    more than the three of `docs/llm/coding.md`; it is untracked.

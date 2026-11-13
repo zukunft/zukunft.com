@@ -175,6 +175,9 @@ class formula_names
     const string SYSTEM_TEST_SCALE_MIO_EXP = '"one" = "million" * 1000000';
     const string SYSTEM_TEST_SCALE_BIL = 'System Test Formula scale billions to one';
     const string SYSTEM_TEST_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
+    // a formula of a test word without a value, so that it has no result e.g. for the head only csv of its results
+    const string SYSTEM_TEST_NO_RESULT = 'System Test Formula without result';
+    const string SYSTEM_TEST_NO_RESULT_EXP = '= "' . word_names::TEST_ADD_TO . '" * 2';
 
     // the entries of the validate workflows of the formula form: an expression that names a term
     // which does not exist and a latex that names one term more than the expression, so that the
@@ -201,7 +204,8 @@ class formula_names
         self::SYSTEM_TEST_SCALE_K,
         self::SYSTEM_TEST_SCALE_TO_K,
         self::SYSTEM_TEST_SCALE_MIO,
-        self::SYSTEM_TEST_SCALE_BIL
+        self::SYSTEM_TEST_SCALE_BIL,
+        self::SYSTEM_TEST_NO_RESULT
     );
 
 }

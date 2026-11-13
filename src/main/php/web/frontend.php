@@ -55,6 +55,7 @@ include_once html_paths::SHARED . 'library.php';
 // get the api const that are shared between the backend and the html frontend
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'group_id_url.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
@@ -237,6 +238,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
@@ -901,6 +903,8 @@ class frontend
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
+     * @param array $upload the entry of the file uploaded on the import view as php gives it in $_FILES; empty for no upload
+     * @param bool $is_uploaded true if php has received the file of $upload with this request (is_uploaded_file)
      * @return array the url array to display the result and the next step
      */
     function url_to_action(
@@ -908,7 +912,9 @@ class frontend
         user_backend    &$usr_backend,
         user_message_ui $msg_ui,
         data_object     $dto = new data_object(),
-        bool            $do_it = true
+        bool            $do_it = true,
+        array           $upload = [],
+        bool            $is_uploaded = false
     ): array
     {
         // the requesting user of this request (docs/llm/state-and-messages.md); a request without
@@ -1017,6 +1023,8 @@ class frontend
             // the save of a calculator page writes the changed numbers without a confirm view
             $view == views::CALCULATOR_ID and $action == url_var::ACTION_SAVE => $url = $this->action_calculator_save(
                 $url_array, $msg_ui, $do_it),
+            // the submit of the import view imports the uploaded json file without a confirm view
+            $view == views::IMPORT_ID => $url = $this->action_import_upload($upload, $is_uploaded, $msg_ui, $do_it),
             default =>$this->log_ignored_write_step($view, $step, $msg_ui)
         };
 
@@ -1500,6 +1508,63 @@ class frontend
         session_write_close();
         ini_set('session.use_cookies', '0');
         session_cache_limiter('');
+    }
+
+    /**
+     * get the export of the phrase entered on an export view from the backend (api/json) and keep it in the
+     * request cache, so that the entry point sends it as a download; without a known format e.g. on the ods view,
+     * or if the backend refuses the export, the user gets the message with the view again
+     *
+     * @param array $url_array the submit of the export view with the phrase name, the selection name and the format
+     * @param user_message_ui $msg_ui with the requesting user, for whom the backend exports, and to report why nothing is exported
+     * @param data_object $dto the request cache that gets the download
+     * @return bool true if the download is in the request cache
+     */
+    function export_file(array $url_array, user_message_ui $msg_ui, data_object $dto): bool
+    {
+        $format = $url_array[url_var::EXPORT_FORMAT] ?? '';
+        $phr_name = trim($url_array[url_var::PHRASE] ?? '');
+        $result = false;
+        if (!array_key_exists($format, rest_ctrl::EXPORT_MIME_TYPES)) {
+            $msg_ui->add(msg_id::EXPORT_FORMAT_UNKNOWN, [msg_id::VAR_VALUE => $format]);
+        } else {
+            $answer = $this->export_answer($phr_name, $format, $msg_ui);
+            if ($answer != '') {
+                // the file is named by the selection name of the view or else by the phrase
+                $file_name = trim($url_array[url_var::NAME] ?? '');
+                if ($file_name == '') {
+                    $file_name = $phr_name;
+                }
+                $dto->download = $answer;
+                $dto->download_name = $file_name;
+                $dto->download_format = $format;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $phr_name the name of the phrase to export, for the csv the name of the formula
+     * @param string $format one of the url_var::EXPORT_FORMAT_* values
+     * @param user_message_ui $msg_ui with the requesting user and to report the message of the backend
+     * @return string the export as the backend has created it; empty if the backend has refused it, which $msg_ui explains
+     */
+    private function export_answer(string $phr_name, string $format, user_message_ui $msg_ui): string
+    {
+        $lib = new library();
+        $rest = new rest_call();
+        $url = new html_base()->url_api(rest_ctrl::JSON);
+        $data = [url_var::WORDS => $lib->csv_line([$phr_name]), url_var::EXPORT_FORMAT => $format];
+        $result = $rest->api_call(rest_ctrl::GET, $url, $rest->data_with_user($data, $msg_ui), $msg_ui);
+        $json = json_decode($result, true);
+        if (is_array($json) and array_key_exists(json_fields::MSG, $json)) {
+            $msg_ui->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json[json_fields::MSG]]);
+            $result = '';
+        } elseif ($result == '') {
+            log_err_msg_ui('the export api has answered nothing for "' . $phr_name . '" in the format ' . $format, $msg_ui);
+        }
+        return $result;
     }
 
     /**
@@ -2177,11 +2242,6 @@ class frontend
         $sys->times->switch();
         // url_to_html counts the rendering and the api wait itself
         return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
-    }
-
-    function show_view(int $id, user_message_ui $msg_ui): string
-    {
-        return $this->dto->typ_lst_cache->get_html_by_id($id, $msg_ui);
     }
 
 
@@ -3188,6 +3248,53 @@ class frontend
             }
         }
         return $result;
+    }
+
+    /**
+     * import the json file that the user has uploaded on the import view as the browsing user in this process, like
+     * import_confirmed, and show the import result view with the number of imported objects per type; a refused
+     * file shows the import view again with the message why
+     *
+     * @param array $upload the entry of the uploaded file as php gives it in $_FILES
+     * @param bool $is_uploaded true if php has received the file with this request
+     * @param user_message_ui $msg_ui with the requesting user, who imports, and to tell the result
+     * @param bool $do_it false to simulate the import e.g. in a unit test
+     * @return array the url of the import result view or of the import view after a refusal
+     */
+    private function action_import_upload(array $upload, bool $is_uploaded, user_message_ui $msg_ui, bool $do_it): array
+    {
+        $result = [url_var::MASK => views::IMPORT_ID];
+        if ($do_it) {
+            $map = new MapObject();
+            $usr_db = $map->convertMsgToDb($msg_ui)->usr;
+            $msg_db = new backend_user_message($usr_db); // a buffer of the backend import that is merged back into the message of the page
+            $imp = new import();
+            $imp->usr = $usr_db;
+            $done = $imp->put_upload($upload, $is_uploaded, $msg_db);
+            $msg_ui->merge($map->convertMsgToUi($msg_db));
+            if ($done) {
+                $msg_ui->add(msg_id::IMPORT_UPLOAD_DONE, [
+                    msg_id::VAR_FILE_NAME => $imp->file_name,
+                    msg_id::VAR_SUMMARY => $this->import_summary($imp->counts)
+                ], true);
+                $result = [url_var::MASK => views::IMPORT_RESULT_ID];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $counts the number of imported objects by the change table of their type e.g. [words => 2]
+     * @return string the numbers with the name of each type in the user language e.g. "Words: 2, Triples: 1"
+     */
+    private function import_summary(array $counts): string
+    {
+        global $mtr;
+        $parts = [];
+        foreach ($counts as $table => $count) {
+            $parts[] = $mtr->text_db_table($table) . ': ' . $count;
+        }
+        return implode(', ', $parts);
     }
 
     /**

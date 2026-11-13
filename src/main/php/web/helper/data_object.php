@@ -255,6 +255,11 @@ class data_object
     // the csv of the value tables of the page, which the entry point sends as a download, and the name of the first table for the file name
     public string $table_csv = '';
     public string $table_csv_name = '';
+    // the export of the selected phrases that the entry point sends as a download (see frontend::export_file),
+    // its file name without the extension and its format, one of the url_var::EXPORT_FORMAT_* values
+    public string $download = '';
+    public string $download_name = '';
+    public string $download_format = '';
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;

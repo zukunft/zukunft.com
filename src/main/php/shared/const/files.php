@@ -44,6 +44,7 @@ class files
     const string JSON = '.json';
     const string YAML = '.yaml';
     const string CSV = '.csv';
+    const string XML = '.xml';
     const string CSS = '.css';
     const string SVG = '.svg';
     const string JS = '.js';

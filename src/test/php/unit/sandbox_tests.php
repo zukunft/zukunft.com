@@ -914,7 +914,7 @@ class sandbox_tests
 
         $test_name = 'a missing selector overwrite is reported to the user via the message object';
         $dbo_ui = new db_object_ui();
-        $result = $dbo_ui->verb_selector('test_form', null);
+        $result = $dbo_ui->verb_selector('test_form', $msg_ui, null);
         $target = 'verb_selector function is not overwritten by ' . db_object_ui::class;
         $t->assert($test_name, $result, $target);
 

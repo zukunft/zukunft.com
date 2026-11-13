@@ -6,7 +6,8 @@
     -----------------------------------------------------
 
     runs the change_verb workflow of verb_url_tests with do_it true on a test verb that this test
-    adds before and removes after the workflow, never on a seed verb
+    adds before and removes after the workflow, never on a seed verb, and checks that the confirmed
+    change makes the verb the last used verb of the user until the verb is deleted
 
     This file is part of zukunft.com - calc with words
 
@@ -71,8 +72,20 @@ class verb_write_url_tests extends verb_url_tests
         // so the confirmed step is persisted and the database is checked
         $this->change_verb_workflow(workflows::WF_CHANGE_VERB_NBR, true);
 
+        // the confirmed change makes the verb the default of the next triple (see user::save_last_used)
+        $test_name = 'the changed verb is the last used verb of the user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert($test_name, $usr_db->verb_id(), $vrb->id());
+        $test_name = '... but not of another user';
+        $usr2_db = $t->user_from_db($t->usr2);
+        $t->assert_null($test_name, $usr2_db->verb_id());
+
         // remove the test verb and its change log with the logged delete
         $t_vrb->cleanup($this->ts);
+        $test_name = 'the deleted verb is no longer the last used verb of the user';
+        $usr_db = $t->user_from_db($t->usr1);
+        $t->assert_null($test_name, $usr_db->verb_id());
+        $t->cleanup_last_used();
     }
 
 }

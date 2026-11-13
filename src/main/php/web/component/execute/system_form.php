@@ -2341,24 +2341,26 @@ class system_form extends component
      * create the html code for the form element to select the phrase type
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verb(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verb(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select one or more verbs
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verbs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verbs(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name, $typ_lst);
+        return $dbo->verb_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -3124,17 +3126,29 @@ class system_form extends component
      */
     function button_import(): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Import', html_base::BS_BTN_IMPORT);
+        return $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT), html_base::BS_BTN_IMPORT);
     }
 
     /**
-     * @return string the html code for a form save button
+     * the export button of an export view, which shows the same view again with the request to download the export
+     * of the selected phrases (see frontend::export_file)
+     *
+     * @param int $msk_id the id of the export view, so that the submit returns to it
+     * @return string the html code of the export button with the hidden view and, for a view with a fixed format, the hidden format
      */
-    function button_export(): string
+    function button_export(int $msk_id): string
     {
+        global $mtr;
         $html = new html_base();
-        return $html->button_bs('Export', html_base::BS_BTN_EXPORT);
+        $result = $html->form_hidden(url_var::MASK, (string)$msk_id);
+        if (array_key_exists($msk_id, views::EXPORT_FORMATS)) {
+            $result .= $html->form_hidden(url_var::EXPORT_FORMAT, views::EXPORT_FORMATS[$msk_id]);
+        }
+        $txt = $mtr->txt(msg_id::SYSTEM_BUTTON_EXPORT);
+        $result .= $html->button_bs($txt, html_base::BS_BTN_EXPORT, '', url_var::EXPORT_FILE, '', url_var::TRUE);
+        return $result;
     }
 
     /**

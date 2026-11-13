@@ -31,18 +31,9 @@ below the table follow the same order.
 
 | script | generic replacement | functionality to move |
 |---|---|---|
-| `get_json_test.php` | none needed | nothing; a static json answer for the autocomplete experiments of `src/test/php/dev/test_jquery.php`: **can be removed** (prio 2 also asks to remove or rewrite these experiments) |
-| `link_del.php` | `views::TRIPLE_DEL_ID` | nothing; the triple del view shows the triple, its usage and the confirm: **can be removed** |
-| `phrase_list.php` | `views::WORD_ADD_ID` | nothing new; its body was a copy of the retired `word_add.php`, whose gaps are in prio 2 (`### word add view`): **can be removed** |
-| `value` | none needed | nothing; an html meta refresh to the no longer existing `http://www.zukunft.com/value.php`: **can be removed** |
-| `values_paste.php` | none | nothing; the whole body is commented out and never worked, the idea to paste a table of values is not a feature that is lost: **can be removed** |
-| `view_pur.php` | `/http/view.php` | nothing; an unfinished experiment of a view-only render that only called `frontend::show_view`: **can be removed** |
 | `error_log.php` | `views::ERROR_LOG_ID` | show the sys_log entry of the url id (`sys_log_ui::page_view`); today `system_page::error_log` returns only `'error_log placeholder'` |
-| `source_del.php` | `views::SOURCE_DEL_ID` | nothing; the del view shows the name, the description, the usage and the confirm: **can be removed** |
 | `source_edit.php` | `views::SOURCE_EDIT_ID` | remember the changed source as the last used source of the user (as `source_add.php`); verify that the edit view without an id or with an unknown id tells the user that the source is missing, as the old page did |
 | `source_add.php` | `views::SOURCE_ADD_ID` | remember the new source as the last used source of the user (`user::src`, `user_db::FLD_SOURCE`) and preselect it in `web/value/value.php::source_selector`; the empty name, the duplicate name (now a merge if url and doi agree, else `NAME_ALREADY_EXISTS`), the fields and the back navigation are covered |
-| `verb_del.php` | `views::VERB_DEL_ID` | nothing; the del view shows the name, the usage in triples and formulas and the confirm: **can be removed** |
-| `verb_add.php` | `views::VERB_ADD_ID` | nothing; the add view has the field "name in formulas" and refuses a verb name that is already used by a word, triple or formula: **can be removed** |
 | `verb_edit.php` | `views::VERB_EDIT_ID` | remember the verb as the last used verb of the user (`user::set_verb` is a stub without db field) |
 | `verbs.php` | `views::VERBS_ID` | prio 2: the list of all verbs with an edit, a delete and an add button for an admin; today the view has no component |
 | `json_save.php` | `api/json`, `views::EXPORT_JSON_ID` | the same json export as `get_json.php`; nothing in addition, so solved with the `get_json.php` row |
@@ -57,23 +48,11 @@ below the table follow the same order.
 | `import.php` | `views::IMPORT_ID` | prio 2: process the uploaded json file (checks for type, size and `is_uploaded_file`), show the counters per object type and allow it only for `user::can_import`; today the upload reaches only `log_ignored_write_step` |
 | `formula_result.php` | `views::RESULT_EXPLAIN_ID` | prio 2: explain a result by `web/result/result.php::explain` with the leading phrase and the time phrase of the url; today `system_page::result_explain` is a placeholder |
 | `formula_test.php` | `views::FORMULA_TEST_ID` | prio 2: the step by step calculation with the 'more details' level and the response time limit, the 'refresh results' button and maybe the admin only 'user' parameter; today `system_page::formula_test` is a placeholder |
-| `view_del.php` | `views::VIEW_DEL_ID` | nothing of the old page; the missing in-use check is a gap of both pages and stays in prio 2: **can be removed** |
 | `view_add.php` | `views::VIEW_ADD_ID` | prio 2: open the view edit view after the add, the sample word and the view type preset via the url |
 | `view_select.php` | alternative views of the edit icon menu | prio 2: the 'design the view' and the 'delete the view' button per view and the saving 'switch' button |
 | `view_edit.php` | `views::VIEW_EDIT_ID` | prio 2: the view designer (link, create, unlink and move the components) and the sample word |
 | `async_process.php` | none | an admin imports the system data (`import_file::import_system_data`) with the progress shown; the job type `job_types::BASE_IMPORT` exists, but nothing in `web/` can create the job: add an admin button that creates it and show the progress on the job control view (`views::JOB_CONTROL_ID`) |
 | `calculate.php` | none | an admin recalculates the results of all formulas in blocks with the progress shown every response time (`RESPONSE_TIME` config); add a job type for the full recalculation, an admin button that creates the job and the progress on the job control view, never a long running request |
-
-#### get_json_test.php, link_del.php, phrase_list.php, value, values_paste.php and view_pur.php
-
-Nothing to move: each script is replaced by a generic view or was an experiment that never worked, so it is only
-deleted. Before the delete check that no file of `src/` names the script, e.g. `src/test/php/dev/test_jquery.php`
-calls `get_json_test.php`, so the autocomplete experiments of `test_jquery.php` and `test_js.php` are removed or
-rewritten with it (prio 2).
-
-##### suggested code changes
-
-just delete
 
 #### error_log.php
 
@@ -119,12 +98,12 @@ Tests:
 Test runs: no import and no id changes, so a `test/test_part.php` run with the ui and the api tests and
 `run_html_snapshots`, then the full `test/test.php` before the commit.
 
-#### source_add.php, source_edit.php and source_del.php
+#### source_add.php and source_edit.php
 
 The add and the edit view remember the added or changed source as the last used source of the user (`user::src`,
 `user_db::FLD_SOURCE`), and the source selector of the value (`web/value/value.php::source_selector`) preselects
 it; check that the source edit view without an id or with an unknown id tells the user that the source is missing,
-as the old page did. The del view covers the old page already; then the three scripts are deleted.
+as the old page did; then the two scripts are deleted.
 
 ##### suggested code changes
 
@@ -172,13 +151,13 @@ the negative: with a known id the form is shown; the snapshot of the edit view w
 
 Test runs: step 1 adds no import and no id, so a `test/test_part.php` run with `source_write_url_tests` and the
 import tests is enough; step 2 with the ui tests and `run_html_snapshots`; the full `test/test.php` before each
-commit. After both steps `http_old/source_add.php`, `source_edit.php` and `source_del.php` are deleted.
+commit. After both steps `http_old/source_add.php` and `source_edit.php` are deleted.
 
-#### verb_add.php, verb_edit.php, verb_del.php and verbs.php
+#### verb_edit.php and verbs.php
 
 The edit remembers the verb as the last used verb of the user, which needs a db field, because `user::set_verb` is a
 stub (re-pin); the verb list view (`views::VERBS_ID`) lists all verbs with an edit, a delete and an add button for
-an admin (prio 2, `### verb list view`). The add view and the del view cover the old pages already.
+an admin (prio 2, `### verb list view`).
 
 ##### suggested code changes
 
@@ -214,7 +193,7 @@ Tests: the snapshot of the verbs view (`views_by_id/verb/170_verb_2.html`) for a
 user without them; `object_pages/verb_list.html` with links to the verb views.
 
 Test runs: step 1 needs a `test/reset_db.php` for the new field, step 2 the full run with re-pin. After the two
-steps `http_old/verb_edit.php` and `verbs.php` are deleted, together with `verb_add.php` and `verb_del.php`.
+steps `http_old/verb_edit.php` and `verbs.php` are deleted.
 
 #### json_save.php, get_csv.php, get_json.php and get_xml.php
 
@@ -287,7 +266,7 @@ gives a csv with the head only.
 Test runs: no import and no id changes, so each step needs a `test/test_part.php` run with its api and ui tests and
 `run_html_snapshots`, then the full `test/test.php` before its commit. After the steps `http_old/json_save.php`,
 `get_json.php`, `get_xml.php` and `get_csv.php` are deleted; the prio 2 section `### json export` is updated with
-what is done, and its point on `test_js.php` and `test_jquery.php` stays with the scripts without functionality.
+what is done.
 
 #### value_del.php, value.php, value_edit.php and value_add.php
 
@@ -351,6 +330,8 @@ ui test of the edit view with an empty number (the message, no confirm page) and
 workflow `add_value` with a number with a thousand separator.
 
 ###### step 3: change the phrases of a value
+
+-> the developer says: yes, changing the phrases of a value leads to creating a new value and deleting the old
 
 Decide first with the developer what a change of the phrases means: the phrases are the key of a value (the
 group id), so a value with other phrases is another value, like a triple with another from, verb or to is another
@@ -525,14 +506,14 @@ Test runs: no import and no id changes, so each step needs a `test/test_part.php
 tests and `run_html_snapshots`, then the full `test/test.php` before its commit. After the steps
 `http_old/formula_result.php` and `formula_test.php` are deleted.
 
-#### view_del.php, view_add.php, view_select.php and view_edit.php
+#### view_add.php, view_select.php and view_edit.php
 
 The view add view opens the view edit view after the add and takes the sample word and the view type from the url
 (prio 2, `### view add view`); the alternative views of the edit icon menu get the 'design the view' and the
 'delete the view' button per view and the 'switch' button that saves the choice (prio 2, `### view select page`);
 the view edit view becomes the view designer, which links, creates, unlinks and moves the components and shows the
-sample word (prio 2, `### view edit view`). The view del view covers the old page; its missing in-use check stays
-in prio 2 (`### view del view`).
+sample word (prio 2, `### view edit view`). The missing in-use check of the view del view stays in prio 2
+(`### view del view`).
 
 ##### suggested code changes
 
@@ -622,8 +603,7 @@ Test runs: no import and no id changes, so each step needs a `test/test_part.php
 tests and `run_html_snapshots`, step 1 with the snapshots of `views_by_object/`, then the full `test/test.php` before
 its commit; of the description change of step 1 the code link fill writes the csv row at the start of the
 selected run, the component description of `base_views.json` and `system_views.json` reaches the database only
-with their import (the full run or `a_selected_test::SELECTED_IMPORT_FILES`). After the steps `http_old/view_del.php`, `view_add.php`, `view_select.php` and `view_edit.php` are
-deleted.
+with their import (the full run or `a_selected_test::SELECTED_IMPORT_FILES`). After the steps `http_old/view_add.php`, `view_select.php` and `view_edit.php` are deleted.
 
 #### async_process.php and calculate.php
 
@@ -681,8 +661,8 @@ control view for an admin and for a user.
   position and the total on the job and leaves the job working, so that the next run continues it, and sets it to
   done after the last block; the same handler runs a `FORMULA_UPDATE` job for one formula (the 'refresh results'
   button of the formula test view)
-- the job gets the progress fields, e.g. `progress_done` and `progress_total`, with the minor version raise and
-  the upgrade of `db_check`; the runner continues a working job of this type that it has stopped (today it takes
+- the job gets the progress fields, e.g. `progress_done` and `progress_total`, in the setup sql and in
+  `db_check::db_upgrade_0_0_4`; the runner continues a working job of this type that it has stopped (today it takes
   only new jobs, `run`, `:115`)
 - the job control view shows the progress of a running job in percent and an admin button that creates the job
 
@@ -701,8 +681,8 @@ run; the full `test/test.php` before each commit. After the steps `http_old/asyn
 4. **Show the error log entry** in `views::ERROR_LOG_ID` by the url id, reusing `sys_log_ui::page_view`, with a page
    test in `unit_ui/`.
 5. **Remember the last used source and verb.** Decide with the developer when the user default is set (after the add
-   or edit of a source, after a value saved with a source, or both), add the missing verb db field with the minor
-   version raise and the `db_check` upgrade, set the default via the api and preselect it in the value and triple forms.
+   or edit of a source, after a value saved with a source, or both), add the missing verb db field in the setup sql
+   and in `db_check::db_upgrade_0_0_4`, set the default via the api and preselect it in the value and triple forms.
 6. **Admin jobs:** a button for an admin that creates a `BASE_IMPORT` job, and a new job type to recalculate all
    formulas (replacing `calculate.php`), both shown on the job control view.
 7. **Export and import:** finish the `### json export` and `### import view` sections of `pending_prio_2.md`
@@ -1663,8 +1643,8 @@ so the split between query, phrase names, json and cache insert is not visible y
    `289,-2573,807,-2529,-2542` and the row count of the result; expected: 34 s → about 10 s
    1b. if the regex scans stay the bigger part of the plan: a trigram index
    (`CREATE EXTENSION pg_trgm; CREATE INDEX … USING gin (group_id gin_trgm_ops)`) on the three
-   group id tables and their `user_values*` twins, which postgres uses for `~`; needs a database
-   upgrade script and the minor version raise (`docs/llm/versions.md`)
+   group id tables and their `user_values*` twins, which postgres uses for `~`; goes into the setup
+   sql and into `db_check::db_upgrade_0_0_4` (`docs/llm/versions.md`)
    1c. api timing: `log_debug(…, url_var::DEBUG_LEVEL_MAIN_STEP)` after the load, the phrase
    names, the json and the cache insert of `api/valueList/index.php`, so that
    `api/valueList/?phrase_ids=…&debug=9` shows the split like `view.php` does
@@ -3039,7 +3019,7 @@ if done remove this prompt from pending.md
 # move to Prio 2
 
 **Prompt:** the condition formula of a word and a triple, the user picture and the language fields (size L, two phases;
-re-pin, because the database structure changes with a minor version raise and a `db_check` upgrade).
+re-pin, because the database structure changes in the setup sql and in `db_check::db_upgrade_0_0_4`).
 - phase 1, one agent: "word db table" and "triple db table", the field `condition_formula_id` of both tables with the
   rename, the sql fixtures and the upgrade; stop for a run with re-pin
 - phase 2, four agents in parallel: agent triple view ("triple add and edit view" and "triple" of "language"), agent

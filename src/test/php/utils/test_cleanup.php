@@ -52,7 +52,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -158,6 +161,46 @@ class test_cleanup extends test_api
      * execute
      */
 
+
+    /**
+     * remove the last used source and verb that the confirmed frontend writes of a write test have set
+     * for the test users, so that their rows are as after the database reset and the next run renders
+     * the add forms without a preselected default (see user::save_last_used)
+     */
+    function cleanup_last_used(): void
+    {
+        $msg = new user_message($this->usr1);
+        foreach ([$this->usr1, $this->usr2] as $usr) {
+            $usr->update_last_used(user_db::FLD_SOURCE, null, $msg);
+            $usr->update_last_used(user_db::FLD_VERB, null, $msg);
+        }
+        $this->assert_msg('the last used source and verb of the test users are removed', $msg);
+    }
+
+    /**
+     * @param user $usr the test user whose stored last used source and verb should be checked
+     * @return user the user as it is in the database now
+     */
+    function user_from_db(user $usr): user
+    {
+        $msg = new user_message($usr);
+        $db_usr = new user();
+        $db_usr->load_by_id($usr->id(), $msg);
+        return $db_usr;
+    }
+
+    /**
+     * @param user $usr the test user whose user row changes should be checked
+     * @return int the id of the newest change log row of the user row or zero if the row has never been changed
+     */
+    function last_user_change_id(user $usr): int
+    {
+        $msg = new user_message($usr);
+        $chg_lst = new change_log_list();
+        $chg_lst->load_by_obj_fld(user::class, $msg, $usr->id(), $usr);
+        $chg = $chg_lst->lst()[0] ?? null;
+        return $chg?->id() ?? 0;
+    }
 
     /**
      * simple clean-up of the standard objects

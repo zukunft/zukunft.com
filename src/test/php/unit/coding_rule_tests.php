@@ -162,9 +162,8 @@ class coding_rule_tests
     const string RETIRED_SCRIPT_SAMPLE = 'view_select';
     // the file types of src/ that can link to a script
     const array RETIRED_SCRIPT_FILE_TYPES = [test_files::PHP, test_files::JS, test_files::HTML, test_files::JSON];
-    // the experiments of dev/ go with the retired scripts, and the generated resources are never
-    // edited by hand: their links come from the code that the check reads
-    const array RETIRED_SCRIPT_SKIP_PATHS = [test_paths::RESOURCE, test_paths::DEV];
+    // the generated resources are never edited by hand: their links come from the code that the check reads
+    const array RETIRED_SCRIPT_SKIP_PATHS = [test_paths::RESOURCE];
 
     function run(test_cleanup $t): void
     {

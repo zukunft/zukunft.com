@@ -10193,10 +10193,6 @@
         {
           "position": "1",
           "name": "system title import result"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
         }
       ]
     },
@@ -10959,14 +10955,6 @@
         {
           "position": "4",
           "name": "result list word"
-        },
-        {
-          "position": "5",
-          "name": "Export JSON"
-        },
-        {
-          "position": "6",
-          "name": "Export XML"
         }
       ]
     }

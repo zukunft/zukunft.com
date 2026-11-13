@@ -926,16 +926,19 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * create the html code to select the verb
+     * create the html code to select the verb; a triple without a verb, which is a new triple, preselects
+     * the last used verb of the user (see user::save_last_used in the backend)
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user whose last used verb a triple without verb preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @param string $style the formatting code e.g. to fix the width with the default value to leave space for the triple weight
      * @return string the html code to select a verb
      */
     public function verb_selector(
-        string      $form,
-        ?type_lists $typ_lst,
-        string      $style = view_styles::COL_SM_3
+        string       $form,
+        user_message $msg,
+        ?type_lists  $typ_lst,
+        string       $style = view_styles::COL_SM_3
     ): string
     {
         global $ui_sys;
@@ -947,7 +950,7 @@ class triple extends sandbox_code_id
         if ($this->verb != null) {
             $id = $this->get_verb()->id();
         } else {
-            $id = 0;
+            $id = $msg->usr?->vrb?->id() ?? 0;
         }
         return $typ_lst->vrb->selector($form, $id, url_var::VERB, $style);
     }

@@ -382,6 +382,8 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_upload_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'export_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';

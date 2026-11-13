@@ -1,0 +1,74 @@
+{
+    "version": "0.0.3",
+    "pod": "zukunft.com",
+    "time": "2022-12-26T18:23:45+01:00",
+    "user": "zukunft.com system test",
+    "selection": [
+        "Pi"
+    ],
+    "words": [
+        {
+            "protection": "admin_protection",
+            "name": "Pi",
+            "description": "ratio of the circumference of a circle to its diameter",
+            "type_code_id": "constant",
+            "type": "math constant"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "constant",
+            "description": "fixed and well-defined number",
+            "type_code_id": "constant",
+            "type": "math constant"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "mathematics",
+            "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+            "type_code_id": "default"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "π",
+            "description": "Symbol for the ratio of the circumference of a circle to its diameter",
+            "type_code_id": "constant",
+            "type": "math constant"
+        }
+    ],
+    "triples": [
+        {
+            "name": "Pi (math)",
+            "description": "ratio of the circumference of a circle to its diameter",
+            "type": "hidden triple",
+            "from": "Pi",
+            "verb": "is a",
+            "to": "mathematical constant"
+        },
+        {
+            "name": "π (unit symbol)",
+            "type": "hidden triple",
+            "from": "π",
+            "verb": "is symbol for",
+            "to": "Pi"
+        }
+    ],
+    "sources": [
+        {
+            "name": "mathematical constant",
+            "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition to facilitate using it across multiple mathematical problems."
+        }
+    ],
+    "values": [
+        {
+            "protection": "admin_protection",
+            "words": [
+                "Pi (math)"
+            ],
+            "source": "mathematical constant",
+            "number": 3.1415926535898
+        }
+    ],
+    "formulas": [],
+    "views": [],
+    "results": []
+}

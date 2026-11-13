@@ -9966,122 +9966,22 @@
             <br>
             <form action="/http/view.php" id="component_type_test_160">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
-                <div class="form-group col-md-4">
-                    <label for="d_form_select_view_160">
-                        View
+                <div class="form-group ">
+                    <label for="ef_form_select_export_format_160">
+                        Format
                     </label>
-                    <select class="form-control" name="d_160" form="component_type_test_160" id="d_form_select_view_160" >
-                        <option value="0"  >
-                            ---
+                    <select class="form-control" name="ef_160" form="component_type_test_160" id="ef_form_select_export_format_160" >
+                        <option value="efj"  selected >
+                            json
                         </option>
-                        <option value="180"  >
-                            Biological
+                        <option value="efx"  >
+                            xml
                         </option>
-                        <option value="193"  >
-                            CBAM Part Tree Calculator
-                        </option>
-                        <option value="16"  >
-                            Calculator
-                        </option>
-                        <option value="200"  >
-                            Comparison table
-                        </option>
-                        <option value="187"  >
-                            Currency
-                        </option>
-                        <option value="181"  >
-                            Education
-                        </option>
-                        <option value="183"  >
-                            Graph
-                        </option>
-                        <option value="179"  >
-                            Historic
-                        </option>
-                        <option value="185"  >
-                            Mathematical constant
-                        </option>
-                        <option value="192"  >
-                            PV in Switzerland emission comparison
-                        </option>
-                        <option value="112"  >
-                            Phrase (default)
-                        </option>
-                        <option value="202"  >
-                            Portfolio Split Calculator
-                        </option>
-                        <option value="177"  >
-                            Ranking
-                        </option>
-                        <option value="115"  >
-                            Related phrases
-                        </option>
-                        <option value="178"  >
-                            Science
-                        </option>
-                        <option value="184"  >
-                            Simple
-                        </option>
-                        <option value="2"  >
-                            Table
-                        </option>
-                        <option value="113"  >
-                            Term (default)
-                        </option>
-                        <option value="182"  >
-                            Touristic
-                        </option>
-                        <option value="4"  >
-                            Triple (default)
-                        </option>
-                        <option value="24"  >
-                            Triple (detail)
-                        </option>
-                        <option value="40"  >
-                            Triple (detail with range)
-                        </option>
-                        <option value="32"  >
-                            Triple (range)
-                        </option>
-                        <option value="114"  >
-                            Values of a phrase
-                        </option>
-                        <option value="3"  selected >
-                            Word (default)
-                        </option>
-                        <option value="23"  >
-                            Word (detail)
-                        </option>
-                        <option value="39"  >
-                            Word (detail with range)
-                        </option>
-                        <option value="31"  >
-                            Word (range)
-                        </option>
-                        <option value="189"  >
-                            country ratios
-                        </option>
-                        <option value="186"  >
-                            problem with solutions
-                        </option>
-                        <option value="198"  >
-                            process catch detail page
-                        </option>
-                        <option value="197"  >
-                            process catch main page
-                        </option>
-                        <option value="199"  >
-                            process catch result page
-                        </option>
-                        <option value="196"  >
-                            process catch start page
-                        </option>
-                        <option value="188"  >
-                            solution priority validation
+                        <option value="efc"  >
+                            csv
                         </option>
                     </select>
                 </div>
-                <input type="hidden" name="8d_160" value="3">
             </form>
             <br>
             <br>
@@ -10091,8 +9991,9 @@
             <br>
             <br>
             <br>
-            <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
-                Export
+            <input type="hidden" name="m_161" value="48">
+            <button class="btn btn-space col-1 btn-outline-secondary" type="submit" name="ed_161" value="1">
+                export
             </button>
             <br>
             <br>
@@ -10103,11 +10004,12 @@
             <br>
             <br>
             <form action="/http/view.php?m=component_type_test_162" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="token_162" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <div class="form-group col-md-12">
                     <label for="file_162">
                         File
                     </label>
-                    <input class="form-control" type="file" name="fileToUpload_162" id="file_162">
+                    <input class="form-control" type="file" name="if_162" id="file_162">
                 </div>
                 <input type="submit" name="submit_162" value="import" class="submit-input">
             </form>
@@ -10120,7 +10022,7 @@
             <br>
             <br>
             <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
-                Import
+                import
             </button>
             <br>
             <br>

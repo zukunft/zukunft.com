@@ -91,6 +91,7 @@ include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -150,6 +151,7 @@ use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -1614,6 +1616,28 @@ class data_object
         return $this->word_list()->count()
             + $this->triple_list()->count()
             + $this->value_list()->count();
+    }
+
+    /**
+     * the number of objects per type e.g. to tell the user what an upload has imported
+     * @return array the number of objects by the change table of their type e.g. [words => 2]; only the types with objects
+     */
+    function counts_by_table(): array
+    {
+        $counts = [
+            change_tables::WORD => $this->word_list()->count(),
+            change_tables::VERB => $this->verb_list()->count(),
+            change_tables::TRIPLE => $this->triple_list()->count(),
+            change_tables::SOURCE => $this->source_list()->count(),
+            change_tables::REF => $this->reference_list()->count(),
+            change_tables::VALUE => $this->value_list()->count(),
+            change_tables::FORMULA => $this->formula_list()->count(),
+            change_tables::RESULT => $this->result_list()->count(),
+            change_tables::VIEW => $this->view_list()->count(),
+            change_tables::VIEW_COMPONENT => $this->component_list()->count(),
+            change_tables::USER => $this->user_list()->count(),
+        ];
+        return array_filter($counts);
     }
 
     /**

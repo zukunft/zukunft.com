@@ -16,6 +16,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add job dashboard to normal users 
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
+    TODO add more related phrases, values and results to the results shown on the start page
+    TODO make it more clear that the pinned views are not the legal pages
     TODO limit the prime phrase id by the int number that can be processed in JavaScript
     TODO add a FAQ to the main page with 'Will this not be replaced by LLM AI'?
 

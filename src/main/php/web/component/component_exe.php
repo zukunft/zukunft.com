@@ -246,8 +246,8 @@ class component_exe extends component
             // select object fields
             component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $msg, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $msg, $cfg->typ_lst_cache),
             component_types::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $msg, $cfg->source_list(), $pattern, $test_mode),
             component_types::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $msg, $cfg->source_list(), $test_mode),
             component_types::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $msg, $cfg->ref_list(), $pattern),
@@ -297,7 +297,7 @@ class component_exe extends component
             // other select fields
             component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $msg, $select->view_list_for($dbo, $msg, $cfg)),
             component_types::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
-            component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $msg, $cfg),
+            component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($form_name, $url_arr),
 
             // verb only fields
             component_types::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $style),
@@ -387,7 +387,7 @@ class component_exe extends component
             component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
             component_types::FORM_BUTTON_IMPORT => $form->button_import(),
-            component_types::FORM_BUTTON_EXPORT => $form->button_export(),
+            component_types::FORM_BUTTON_EXPORT => $form->button_export($msk_id),
 
             // simple close the form section
             component_types::FORM_END => $form->form_end(),

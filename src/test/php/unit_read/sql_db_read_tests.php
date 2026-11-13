@@ -34,6 +34,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -85,6 +87,8 @@ class sql_db_read_tests
         $fld_msg = new user_message();
         $next_tbl_id = $sys->typ_lst->cng_tbl->count() + 1;
         $next_fld_id = $sys->typ_lst->cng_fld->count() + 1;
+        // a helper field of the workflow is never logged, so it has no change field (see user_db::FLD_NAMES_HELPER)
+        $usr_tbl = new library()->class_to_table(user::class);
 
         $tbl_lst = $db_con->get_tables($msg);
         foreach ($tbl_lst as $tbl) {
@@ -97,7 +101,8 @@ class sql_db_read_tests
                     $fld_lst = $db_con->get_fields($tbl, $msg);
                     foreach ($fld_lst as $fld) {
                         $fld_id = $sys->typ_lst->cng_fld->id($tbl_id . $fld);
-                        if ($fld_id == -1) {
+                        $is_helper = ($tbl == $usr_tbl and in_array($fld, user_db::FLD_NAMES_HELPER));
+                        if ($fld_id == -1 and !$is_helper) {
                             $fld_msg->add_message_text($next_fld_id . "," . $fld . "," . $tbl_id . ",,");
                             $next_fld_id++;
                         } else {

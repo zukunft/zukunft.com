@@ -1280,10 +1280,14 @@ class verb extends type_object
         if ($this->id() > 0) {
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
-                $sc = $db_con->sql_creator();
-                // TODO Prio 1 include deleting of user excludes in the sql function
-                $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
-                $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+                // the default of a user would else block the delete by the foreign key of the users table
+                $usr = new user();
+                if ($usr->clear_last_used(user_db::FLD_VERB, $this->id(), $msg)) {
+                    $sc = $db_con->sql_creator();
+                    // TODO Prio 1 include deleting of user excludes in the sql function
+                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+                    $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+                }
             } else {
                 // TODO Prio 2 create a new verb and request to delete the old
                 log_err_msg('Creating a new verb is not yet possible', $msg);

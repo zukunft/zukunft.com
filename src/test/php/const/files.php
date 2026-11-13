@@ -75,6 +75,10 @@ class files
     // the phrase data of the row phrase of the table editor sample; only the received json is written, as the seed of use_cases/table_editor_sample.html
     CONST string PHRASE_DATA_TABLE_EDITOR_NAME = 'phrase_data_table_editor';
     CONST string PHRASE_DATA_TABLE_EDITOR = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_TABLE_EDITOR_NAME . self::JSON;
+    // the answers of the export api for a seed word with its related phrases and for the results of a seed formula
+    CONST string EXPORT_JSON_PI = test_paths::API_JSON_RES . 'export_pi' . self::JSON;
+    CONST string EXPORT_XML_PI = test_paths::API_JSON_RES . 'export_pi' . self::XML;
+    CONST string EXPORT_CSV_SCALE_TO_SEC = test_paths::API_JSON_RES . 'export_scale_minute_to_sec' . self::CSV;
     // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
     CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
     // the hand made sample of the calculator editor json, which uses every proposed calculator element
@@ -380,6 +384,8 @@ class files
 
     CONST string IMPORT_USERS = test_paths::IMPORT_UNIT . 'users';
     CONST string IMPORT_WORDS = test_paths::IMPORT_UNIT . 'words';
+    // two test words and a test triple for the upload of the import view
+    CONST string IMPORT_UPLOAD = test_paths::IMPORT_UNIT . 'upload_words';
     CONST string IMPORT_VERBS = test_paths::IMPORT_UNIT . 'verbs';
     CONST string IMPORT_TRIPLES = test_paths::IMPORT_UNIT . 'triples';
     CONST string IMPORT_SOURCES = test_paths::IMPORT_UNIT . 'sources';

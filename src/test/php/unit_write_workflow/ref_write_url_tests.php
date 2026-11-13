@@ -95,6 +95,8 @@ class ref_write_url_tests extends ref_url_tests
 
         // cleanup - fallback delete in case the workflow did not persist as expected
         $t_ref->cleanup($this->ts);
+        // the confirmed triple changes have set the verb of the triple as default (see user::save_last_used)
+        $t->cleanup_last_used();
 
     }
 

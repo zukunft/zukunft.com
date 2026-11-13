@@ -204,6 +204,8 @@ class library
     const string CSV_ENCLOSURE = '"';
     // but both quotes are accepted when a csv line is read e.g. to read 'one, two and three'
     const array CSV_ENCLOSURES = ['"', "'"];
+    // the first chars with which a spreadsheet starts a formula
+    const string CSV_FORMULA_START = '/^[=+\-@\t\r]/';
 
     // the compact json format (see json_compact_format)
     const int JSON_MAX_LINE_LEN = 140; // an object or array is kept on one line up to this length
@@ -3191,6 +3193,35 @@ class library
     }
 
     /**
+     * the csv of a download e.g. of the value tables of a page or of the results of a formula
+     *
+     * @param array $rows per row the texts of the cells
+     * @return string the csv text, where a text that a spreadsheet would run as a formula is marked as text
+     */
+    function csv_text(array $rows): string
+    {
+        $stream = fopen('php://memory', 'r+');
+        foreach ($rows as $row) {
+            fputcsv($stream, array_map(fn($txt) => $this->csv_safe_text($txt), $row),
+                self::CSV_DELIMITER, self::CSV_ENCLOSURE, '');
+        }
+        rewind($stream);
+        $result = stream_get_contents($stream);
+        fclose($stream);
+        return $result;
+    }
+
+    /**
+     * @param string $txt the text of a cell e.g. a user given phrase name
+     * @return string the text, with a leading apostrophe if it is no number and a spreadsheet would run it as a formula
+     */
+    private function csv_safe_text(string $txt): string
+    {
+        $is_formula = (!is_numeric($txt) and preg_match(self::CSV_FORMULA_START, $txt) === 1);
+        return $is_formula ? "'" . $txt : $txt;
+    }
+
+    /**
      * split one csv line into the values
      * a value that contains the delimiter can be enclosed in single or double quotes
      * e.g. to import 'one, two and three' or "one, two and three" as one value
@@ -3563,6 +3594,7 @@ class library
             'Zukunft\ZukunftCom\main\php\web\component\sheet' => 'html_paths::SHEET',
             'Zukunft\ZukunftCom\main\php\service' => 'paths::SERVICE',
             'Zukunft\ZukunftCom\main\php\service\math' => 'paths::SERVICE_MATH',
+            'Zukunft\ZukunftCom\main\php\service\export' => 'paths::SERVICE_EXPORT',
             'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
             'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
             'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
