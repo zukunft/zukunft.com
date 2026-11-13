@@ -195,7 +195,7 @@
       "description": "memory process",
       "refs": [
         {
-          "name": "Encoding (memory)",
+          "name": "Encoding_(memory)",
           "type": "wikipedia"
         },
         {
@@ -209,7 +209,7 @@
       "description": "retrieval of events or information from the past",
       "refs": [
         {
-          "name": "Recall (memory)",
+          "name": "Recall_(memory)",
           "type": "wikipedia"
         },
         {
@@ -223,7 +223,7 @@
       "description": "subcategory of declarative memory, referring to the ability to recognize previously encountered events, objects, or people",
       "refs": [
         {
-          "name": "Recognition memory",
+          "name": "Recognition_memory",
           "type": "wikipedia"
         },
         {
@@ -251,7 +251,7 @@
       "description": "simple strategies, rules or mental processes involved in making quick judgments or decisions",
       "refs": [
         {
-          "name": "Heuristic (psychology)",
+          "name": "Heuristic_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -307,7 +307,7 @@
       "description": "facet of operant conditioning; change in a human or animal's surroundings that occurs after a given behavior or response which reduces the likelihood of that behavior occurring again in the future",
       "refs": [
         {
-          "name": "Punishment (psychology)",
+          "name": "Punishment_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -335,7 +335,7 @@
       "description": "fading of non-reinforced conditioned response over time",
       "refs": [
         {
-          "name": "Extinction (psychology)",
+          "name": "Extinction_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -349,7 +349,7 @@
       "description": "in psychology, an object or event that elicits a sensory or behavioral response in an organism",
       "refs": [
         {
-          "name": "Stimulus (psychology)",
+          "name": "Stimulus_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -377,7 +377,7 @@
       "description": "psychological construct, a mental and emotional entity that inheres in, or characterizes a person",
       "refs": [
         {
-          "name": "Attitude (psychology)",
+          "name": "Attitude_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -391,7 +391,7 @@
       "description": "yielding to instructions from an authority figure",
       "refs": [
         {
-          "name": "Obedience (human behavior)",
+          "name": "Obedience_(human_behavior)",
           "type": "wikipedia"
         },
         {
@@ -419,7 +419,7 @@
       "description": "process by which individuals explain the causes of behavior and events",
       "refs": [
         {
-          "name": "Attribution (psychology)",
+          "name": "Attribution_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -461,7 +461,7 @@
       "description": "personality trait",
       "refs": [
         {
-          "name": "Extraversion and introversion",
+          "name": "Extraversion_and_introversion",
           "type": "wikipedia"
         },
         {
@@ -573,7 +573,7 @@
       "description": "state of low mood and aversion to activity",
       "refs": [
         {
-          "name": "Depression (mood)",
+          "name": "Depression_(mood)",
           "type": "wikipedia"
         },
         {
@@ -601,7 +601,7 @@
       "description": "branch of psychology",
       "refs": [
         {
-          "name": "Counseling psychology",
+          "name": "Counseling_psychology",
           "type": "wikipedia"
         },
         {
@@ -629,7 +629,7 @@
       "description": "psychologist concepts by Sigmund Freud",
       "refs": [
         {
-          "name": "Id, ego and superego",
+          "name": "Id,_ego_and_superego",
           "type": "wikipedia"
         },
         {
@@ -730,7 +730,7 @@
       "description": "physiological capacity of organisms that provides data for perception",
       "refs": [
         {
-          "name": "Sensation (psychology)",
+          "name": "Sensation_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -744,7 +744,7 @@
       "description": "consistency of a measure in psychometrics and statistics, that is if it produces similar results under consistent conditions",
       "refs": [
         {
-          "name": "Reliability (statistics)",
+          "name": "Reliability_(statistics)",
           "type": "wikipedia"
         },
         {
@@ -758,7 +758,7 @@
       "description": "extent to which a concept, conclusion or measurement is well-founded and corresponds accurately to the real world",
       "refs": [
         {
-          "name": "Validity (statistics)",
+          "name": "Validity_(statistics)",
           "type": "wikipedia"
         },
         {
@@ -772,7 +772,7 @@
       "description": "psychological feeling of strain and pressure, that could increase the risk of strokes, heart attacks, ulcers, and mental illnesses such as depression and aggravation of a pre-existing condition",
       "refs": [
         {
-          "name": "Stress (psychology)",
+          "name": "Stress_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -856,7 +856,7 @@
       "description": "theory that attempts to define, analyze, or classify psychological drives",
       "refs": [
         {
-          "name": "Drive theory",
+          "name": "Drive_theory",
           "type": "wikipedia"
         },
         {
@@ -898,7 +898,7 @@
       "description": "relatively long lasting emotional, internal and subjective state",
       "refs": [
         {
-          "name": "Mood (psychology)",
+          "name": "Mood_(psychology)",
           "type": "wikipedia"
         },
         {
@@ -912,7 +912,7 @@
       "description": "experience of feeling or emotion",
       "refs": [
         {
-          "name": "Affect (psychology)",
+          "name": "Affect_(psychology)",
           "type": "wikipedia"
         },
         {

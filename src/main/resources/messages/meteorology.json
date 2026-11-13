@@ -72,7 +72,7 @@
       "description": "gas layer surrounding Earth",
       "refs": [
         {
-          "name": "Atmosphere of Earth",
+          "name": "Atmosphere_of_Earth",
           "type": "wikipedia"
         },
         {
@@ -184,7 +184,7 @@
       "description": "power per unit area received from the Sun in the form of electromagnetic radiation",
       "refs": [
         {
-          "name": "Solar irradiance",
+          "name": "Solar_irradiance",
           "type": "wikipedia"
         },
         {
@@ -411,7 +411,7 @@
       "name": "precipitation",
       "refs": [
         {
-          "name": "Precipitation (meteorology)",
+          "name": "Precipitation_(meteorology)",
           "type": "wikipedia"
         },
         {
@@ -509,7 +509,7 @@
       "description": "transition of a substance directly from the solid to the gas state",
       "refs": [
         {
-          "name": "Sublimation (phase transition)",
+          "name": "Sublimation_(phase_transition)",
           "type": "wikipedia"
         },
         {

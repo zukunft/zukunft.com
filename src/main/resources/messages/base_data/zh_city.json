@@ -689,7 +689,7 @@
       "description": "measurement of population per unit area or unit volume",
       "refs": [
         {
-          "name": "Population density",
+          "name": "Population_density",
           "type": "wikipedia"
         },
         {

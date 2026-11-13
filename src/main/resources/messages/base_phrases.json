@@ -162,7 +162,7 @@
       "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
       "refs": [
         {
-          "name": "Work (physics)",
+          "name": "Work_(physics)",
           "type": "wikipedia"
         },
         {
@@ -290,7 +290,7 @@
       "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
       "refs": [
         {
-          "name": "canton_of_Zürich",
+          "name": "Canton_of_Zurich",
           "type": "wikipedia"
         },
         {
@@ -311,15 +311,15 @@
       "name": "Geneva (city)",
       "refs": [
         {
-          "name": "Zürich",
+          "name": "Geneva",
           "type": "wikipedia"
         },
         {
-          "name": "Q72",
+          "name": "Q71",
           "type": "wikidata"
         },
         {
-          "name": "zurich",
+          "name": "geneva",
           "type": "conceptnet"
         }
       ],

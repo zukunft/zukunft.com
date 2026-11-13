@@ -7,7 +7,7 @@
     "the main reason of each global problem",
     "the reasons and the solutions of each global problem"
   ],
-  "description": "The most relevant reason of each global problem of the start page ranking with the potential loss that it causes, shown in the reason column of the ranking beside the climate gas emissions of global warming (solution_prio.json). The most relevant reason is the reason whose mechanism the annual potential loss of the problem measures, as the description of the annual GDP share in the problem file states, so this reason causes the whole loss of the row: its loss is the annual GDP share of the problem times the world GDP of 110.047 trillion EUR, the same calculation as the potential loss of the row. Each reason is the phrase of the reasons file of the problem, repeated here with the same definition. A value names the problem itself, because the start page takes it into the reason column of the problem row; it carries 'assumed', because the annual GDP share it is calculated from is assumed. The reasons of each problem except proprietary software are linked to '<problem> reason' (reason of the problem) like the reasons of global warming to 'global warming reason': the main reason and every '<problem> can cause <reason>' target of the reasons file of the problem, so that the reason cell of the start page row shows ', ...' with a link to the table of the reasons; only the main reason has a potential loss here, so the table lists the other reasons once they get a loss. The start page solution of each problem is linked to '<problem> solution' (solution of the problem) like the solutions of global warming, which is re-declared verbatim where the problem file has the list already; citizen participation also links the solidarity compass, the second solution of its problem file, while the other problems without a list have only the start page solution, so their solution cell shows no ', ...'. Proprietary software is left out on purpose as the sample row with only one reason and one solution and without any ', ...'. Each '<problem> reason' is a 'global problem reason' and each '<problem> solution' is a 'global problem solution', which assigns the reasons and the solutions to the global problems. This file is imported last, so that the database ids of every other phrase stay unchanged.",
+  "description": "The most relevant reason of each global problem of the start page ranking with the potential loss that it causes, shown in the reason column of the ranking beside the climate gas emissions of global warming (solution_prio.json). The most relevant reason is the reason whose mechanism the annual potential loss of the problem measures, as the description of the annual GDP share in the problem file states, so this reason causes the whole loss of the row: its loss is the annual GDP share of the problem times the world GDP of 110.047 trillion EUR, the same calculation as the potential loss of the row. Each reason is the phrase of the reasons file of the problem, repeated here with the same definition. A value names the problem itself, because the start page takes it into the reason column of the problem row; it carries 'assumed', because the annual GDP share it is calculated from is assumed. The reasons of each problem are linked to '<problem> reason' (reason of the problem) like the reasons of global warming to 'global warming reason': the main reason and every '<problem> can cause <reason>' target of the reasons file of the problem, so that the reason cell of the start page row shows ', ...' with a link to the table of the reasons; only the main reason has a potential loss here, so the table lists the other reasons once they get a loss. The start page solution of each problem is linked to '<problem> solution' (solution of the problem) like the solutions of global warming, which is re-declared verbatim where the problem file has the list already; citizen participation also links the solidarity compass, the second solution of its problem file, while the other problems without a list have only the start page solution, so their solution cell shows no ', ...'. Each '<problem> reason' is a 'global problem reason' and each '<problem> solution' is a 'global problem solution', which assigns the reasons and the solutions to the global problems. This file is imported last, so that the database ids of every other phrase stay unchanged.",
   "words": [
     {
       "name": "reason"
@@ -459,6 +459,24 @@
     },
     {
       "name": "gross"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "hardware"
+    },
+    {
+      "name": "upgrade"
+    },
+    {
+      "name": "vendor"
+    },
+    {
+      "name": "lock-in"
+    },
+    {
+      "name": "free"
     }
   ],
   "triples": [
@@ -1952,6 +1970,93 @@
     {
       "name": "GDP mismeasurement solution (global problem solution)",
       "from": "GDP mismeasurement solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "proprietary software reason",
+      "description": "a reason of the potential loss of proprietary software; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "proprietary software"
+    },
+    {
+      "name": "licence cost (proprietary software reason)",
+      "from": "licence cost",
+      "verb": "is a",
+      "to": "proprietary software reason"
+    },
+    {
+      "name": "licence price",
+      "from": "price",
+      "verb": "of",
+      "to": "licence"
+    },
+    {
+      "name": "licence price change",
+      "from": "change",
+      "verb": "of",
+      "to": "licence price"
+    },
+    {
+      "name": "licence price change (proprietary software reason)",
+      "from": "licence price change",
+      "verb": "is a",
+      "to": "proprietary software reason"
+    },
+    {
+      "name": "hardware upgrade",
+      "from": "upgrade",
+      "verb": "of",
+      "to": "hardware"
+    },
+    {
+      "name": "hardware upgrade (proprietary software reason)",
+      "from": "hardware upgrade",
+      "verb": "is a",
+      "to": "proprietary software reason"
+    },
+    {
+      "name": "vendor lock-in",
+      "from": "lock-in",
+      "verb": "kind of",
+      "to": "vendor",
+      "description": "the dependence on one supplier, because changing to another product needs a costly migration of the data, the formats and the trained staff"
+    },
+    {
+      "name": "vendor lock-in (proprietary software reason)",
+      "from": "vendor lock-in",
+      "verb": "is a",
+      "to": "proprietary software reason"
+    },
+    {
+      "name": "proprietary software solution",
+      "description": "a solution of proprietary software; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "proprietary software"
+    },
+    {
+      "name": "free software",
+      "from": "software",
+      "verb": "can be",
+      "to": "free"
+    },
+    {
+      "name": "free software (proprietary software solution)",
+      "from": "free software",
+      "verb": "is a",
+      "to": "proprietary software solution"
+    },
+    {
+      "name": "proprietary software reason (global problem reason)",
+      "from": "proprietary software reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "proprietary software solution (global problem solution)",
+      "from": "proprietary software solution",
       "verb": "is a",
       "to": "global problem solution"
     }

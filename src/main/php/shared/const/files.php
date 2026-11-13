@@ -43,6 +43,8 @@ class files
 
     const string JSON = '.json';
     const string YAML = '.yaml';
+    const string CSV = '.csv';
+    const string XML = '.xml';
     const string CSS = '.css';
     const string SVG = '.svg';
     const string JS = '.js';
@@ -77,6 +79,8 @@ class files
     const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
     const string BASE_VIEWS = self::MESSAGE_PATH . self::BASE_VIEWS_FILE;
     const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
+    // the translation of a document of /docs/ per language e.g. concept to konzept_de (see markdown::doc_translations)
+    const string DOC_TRANSLATIONS = self::TRANSLATION_PATH . 'docs' . self::CSV;
 
     // for html
     const string STYLE_HTML = self::STYLE_PATH . 'style_html' . self::CSS;
@@ -87,6 +91,13 @@ class files
     // the images on the server e.g. the logo of a report, which is a jpeg because a pdf can embed it as it is
     const string IMAGE_PATH = self::RESOURCE_PATH . 'images' . DIRECTORY_SEPARATOR;
     const string REPORT_LOGO_DEFAULT = self::IMAGE_PATH . 'logo_xs.jpg';
+    // the fonts that a pdf report embeds as a subset, so that it can show any char of a page e.g. the CO₂;
+    // DejaVu Sans by default and Noto Sans as an alternative (see the LICENSE files in the fonts folder)
+    const string FONT_PATH = self::RESOURCE_PATH . 'fonts' . DIRECTORY_SEPARATOR;
+    const string PDF_FONT_DEJAVU = self::FONT_PATH . 'DejaVuSans.ttf';
+    const string PDF_FONT_DEJAVU_BOLD = self::FONT_PATH . 'DejaVuSans-Bold.ttf';
+    const string PDF_FONT_NOTO = self::FONT_PATH . 'NotoSans-Regular.ttf';
+    const string PDF_FONT_NOTO_BOLD = self::FONT_PATH . 'NotoSans-Bold.ttf';
     // the only scripts of the html frontend: the calculator pages repeat their calculation in the
     // browser, the calculator and the formula editor build the editor and the json calculator page the
     // page from the phrase data, if config.yaml allows javascript for the calculator (see docs/llm/frontend.md)
@@ -96,5 +107,7 @@ class files
     const string FORMULA_EDITOR_SCRIPT = self::SCRIPT_PATH . 'formula_editor' . self::JS;
     const string FORMULA_EDITOR_STYLE = self::STYLE_PATH . 'formula_editor' . self::CSS;
     const string CALCULATOR_EDITOR_STYLE = self::STYLE_PATH . 'calculator_editor' . self::CSS;
+    const string TABLE_EDITOR_SCRIPT = self::SCRIPT_PATH . 'table_editor' . self::JS;
+    const string TABLE_EDITOR_STYLE = self::STYLE_PATH . 'table_editor' . self::CSS;
 
 }

@@ -179,6 +179,16 @@ class word_tests
         $qp = $wrd_same->sql_update($sc, $wrd, $msg, new sql_type_list([sql_type::LOG]));
         $t->assert_true($t->name . $test_name, $qp === null);
 
+        $t->subheader($ts . 'sql write update of the user row');
+        // the user row has the rename of the user, who now changes also the description
+        $wrd_usr_chg = clone $wrd_renamed;
+        $wrd_usr_chg->description = word_names::MATH_COM;
+        $t->assert_sql_update_user($sc, $wrd_usr_chg, $wrd_renamed);
+        $test_name = 'no user row update if the user row has already all overwrites';
+        $qp = $wrd_renamed->sql_update_user($sc, $wrd_renamed, $msg);
+        $qp_name = $qp?->name;
+        $t->assert_null($test_name, $qp_name);
+
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
         $wrd->description = word_names::MATH_COM;
@@ -273,6 +283,14 @@ class word_tests
         $t->assert_sql_delete($sc, $wrd, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
+        // the exclusion of a word that is still used, which keeps the word for the other users
+        $t->assert_sql_exclude($sc, $wrd);
+        // a word that is not in the database is used by no data, so the check needs no database;
+        // the words that data uses are checked in word_write_tests
+        $test_name = 'a word without id is used by no data';
+        $wrd_new = $t_wrd->word_filled_add();
+        $is_used = $wrd_new->used_by_data($msg);
+        $t->assert_false($test_name, $is_used);
 
         $t->subheader($ts . 'base object handling');
         $wrd = $t_wrd->word_filled();
@@ -701,13 +719,26 @@ class word_tests
         $wrd_db->fill($wrd_imp, $t->usr1);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
+        // the fill does not take over the code id for a normal user and an object without a code id
+        // never clears the code id of the database, so nothing is saved
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_code_id('test code id', new user_message(test_users::user_sys_test()));
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $t->usr_normal);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, []);
+        $test_name = 'a system test user can overwrite the code id of a word';
+        $wrd_db = $t_wrd->word();
+        $wrd_db->set_code_id_db('old code id');
+        $wrd_new = $t_wrd->word();
+        $wrd_new->set_code_id_db('new code id');
+        $names = $wrd_new->db_fields_changed($wrd_db, new user_message(test_users::user_sys_test()))->names();
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $names), true);
+        // negative: the code id links a row to program code
+        $test_name = 'a normal user cannot overwrite the code id of a word';
+        $names = $wrd_new->db_fields_changed($wrd_db, new user_message($t->usr_normal))->names();
+        $t->assert($test_name, in_array(fields::FLD_CODE_ID, $names), false);
 
         // the api write path maps the code id from the client json; a normal user must not be able
         // to plant a system code_id (see sandbox_code_id::api_mapper -> the privilege-checked setter)

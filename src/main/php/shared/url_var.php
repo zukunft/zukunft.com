@@ -90,6 +90,9 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
+    // prefix of the references that the confirm of a phrase change writes too, the row number at the
+    // end of the key e.g. 6ek1 for the external key of the first reference (see REF_ROW_VARS)
+    const string REF_ROW = '6';
     const string LINK = '7'; // prefix to add the vars of a link that the add view creates together with the new object e.g. 7p for the phrase of a formula added from a word page
     const string PRE = '8'; // prefix to add the database values the fields to an edit view when the view has be called. Used to detect the real user change requests
     const string BACK = '9'; // prefix to list of url targets for the back action
@@ -128,6 +131,9 @@ class url_var
     const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the edit menu of the navbar selects from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_VARIANCE = 'dlv'; // 1 to show the variance low and high behind each number of a list or table, 0 for the numbers only
     const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the edit menu of the navbar
+    const string DISPLAY_LIST_UNMATCHED = 'dlu'; // 1 to show also the values that fit no own column of a table, which are hidden by default
+    const string DISPLAY_LIST_DESIGN = 'dld'; // the name of the table design of config.yaml that a value table uses instead of the default design
+    const string DISPLAY_LIST_CSV = 'dlx'; // 1 to download the value tables of the page as csv instead of showing the page
     const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
     const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
     const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
@@ -135,6 +141,7 @@ class url_var
     const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
+    const string DOC = 'doc'; // the name of a markdown document of /docs/ shown by http/docs.php e.g. faq
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
     const string VIEW_RELATION_TYPE = 'dr'; // the type of the view to view link
@@ -143,6 +150,13 @@ class url_var
     const string TERM = 'e';
     const string TERM_POS = 'ep'; // used for a list of terms where the list position is added to the name
     const string EXTERNAL_KEY = 'ek'; // the external key of a form field
+    // 1 to download the export of the selected phrases instead of showing the export view
+    const string EXPORT_FILE = 'ed';
+    // the format of an export, one of the EXPORT_FORMAT_* values
+    const string EXPORT_FORMAT = 'ef';
+    const string EXPORT_FORMAT_JSON = 'efj'; // the zukunft.com import json (the default of the api)
+    const string EXPORT_FORMAT_XML = 'efx'; // the import json as xml
+    const string EXPORT_FORMAT_CSV = 'efc'; // the results of the formulas given by name
     const string FORMULA = 'f';
     const string NEED_ALL = 'fa';
     const string USER_EXPRESSION = 'fe';
@@ -156,6 +170,10 @@ class url_var
     const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
     // the phrase selection asks the backend for the phrases that match the typed chars
     const string REFRESH_PHRASES = 'frp'; // add the phrases that match the typed chars to the selector
+    // the refresh icon of a wikipedia reference takes over the description and the wikidata id of the phrase
+    const string REFRESH_WIKIPEDIA = 'frw';
+    // the refresh icon of a wikidata reference opens the preview of the values that wikidata would add
+    const string REFRESH_WIKIDATA = 'frd';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -176,13 +194,17 @@ class url_var
     const string SYS_LOG = 'hs'; // history of a system event
     const string LOG_TIME = 'ht'; // the time of the creation of the log event
     const string FIGURE = 'i';
+    // the checksum of the import json of a preview, so that the confirm imports only what the user has seen
+    const string IMPORT_CHECKSUM = 'ic';
     const string ID = 'id'; // the internal database id of the main view object
+    const string IMPORT_FILE = 'if'; // the json file that the user uploads on the import view
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
     const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
     const string INCL_RESULTS = 'is'; // 1 to include the results of the phrases in the phrase data api response
+    const string START_PAGE = 'ix'; // 1 for the static start page index.html e.g. as back target 9ix=1 of its login link
     const string PHRASE_DATA_WALK = 'pw'; // how the phrase data api collects the data of a phrase, one of the PHRASE_DATA_WALK_* values
     const string PHRASE_DATA_WALK_VALUE = 'pwv'; // the values of the phrase with their phrases (the default)
     const string PHRASE_DATA_WALK_FROM = 'pwf'; // the triples on the from side of the phrase e.g. the calculator tree
@@ -215,7 +237,8 @@ class url_var
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
-    const string REPORT = 'rp'; // 1 to answer with the pdf report of a calculator page instead of the page
+    const string REPORT = 'rp'; // 1 to answer with the steps of the pdf report of a calculator page, for the frame next to the report button
+    const string REPORT_FILE = 'rf'; // 1 to download the pdf report that the request with self::REPORT has created
     // 0 to show the page of the server instead of the page that the browser builds from its json data,
     // which a calculator page shows by default if config.yaml allows javascript for the calculator
     const string JAVASCRIPT = 'sc';
@@ -333,6 +356,7 @@ class url_var
     const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
     const string ACTION_CLEAR_CACHE = 'acc'; // an admin removes all cached data on the settings page
+    const string ACTION_IMPORT = 'aim'; // the confirm of an import preview writes the import e.g. from wikidata
 
     // the actions of the job list buttons that change a batch job directly without a confirm view
     const array JOB_ACTIONS = [
@@ -352,6 +376,7 @@ class url_var
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string REPORT_HUMAN = 'report'; // the long form of self::REPORT
+    const string REPORT_FILE_HUMAN = 'report_file'; // the long form of self::REPORT_FILE
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
     const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2757&sc=0
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
@@ -375,6 +400,7 @@ class url_var
     const array PAGE_VARS = [
         self::MASK,
         self::REPORT,
+        self::REPORT_FILE,
         self::ID,
         self::USER_TO_EDIT,
         self::ID_LST,
@@ -385,6 +411,8 @@ class url_var
         self::DISPLAY_LIST_COLUMNS,
         self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_UNMATCHED,
+        self::DISPLAY_LIST_DESIGN,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
@@ -405,6 +433,7 @@ class url_var
     // the prefix chars that move a normal url key into another part of the url: the vars of the link
     // created with a new object, the db values of an edit view and the back targets
     const array PREFIXES = [
+        self::REF_ROW,
         self::LINK,
         self::PRE,
         self::BACK,
@@ -415,6 +444,28 @@ class url_var
     const array LINK_VARS = [
         self::PHRASE,
     ];
+
+    // the url vars that a '6'-prefixed reference row may name; the phrase is never a row var, because
+    // the rows always belong to the confirmed phrase, so a typed url cannot change another phrase
+    const array REF_ROW_VARS = [
+        self::ACTION,
+        self::REF,
+        self::REF_TYPE,
+        self::EXTERNAL_KEY,
+        self::URL,
+        self::SOURCE,
+        self::DESCRIPTION,
+    ];
+
+    // the crud actions of a reference row; a row without one of them is no change
+    const array REF_ROW_ACTIONS = [
+        self::CRUD_CREATE,
+        self::CRUD_UPDATE,
+        self::CRUD_DELETE,
+    ];
+
+    // the chars of the row number at the end of a reference row key
+    const string ROW_DIGITS = '0123456789';
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
     // form and the activation key, which alone confirms the email and sets a new password)
@@ -451,6 +502,7 @@ class url_var
         // the page that the browser builds is a render mode of the same page
         self::JAVASCRIPT,
         self::REPORT,
+        self::REPORT_FILE,
         // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
         // page must not turn the url into a form submit of an object without an id
         self::DISPLAY_LIST_SIZE,
@@ -458,6 +510,9 @@ class url_var
         self::DISPLAY_LIST_COLUMNS,
         self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_UNMATCHED,
+        self::DISPLAY_LIST_DESIGN,
+        self::DISPLAY_LIST_CSV,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
@@ -478,6 +533,7 @@ class url_var
     const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
     const string LINK_HUMAN = 'link';
+    const string REF_ROW_HUMAN = 'ref_change';
     const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
@@ -493,6 +549,7 @@ class url_var
     const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
     const string ACTION_CLEAR_CACHE_HUMAN = 'clear_cache'; // an admin removes all cached data
+    const string ACTION_IMPORT_HUMAN = 'import_confirmed'; // the confirm of an import preview writes the import
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -573,6 +630,9 @@ class url_var
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
     const string DISPLAY_LIST_VARIANCE_HUMAN = 'display_list_variance'; // 1 to show the variance of the numbers of a list or table
     const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
+    const string DISPLAY_LIST_UNMATCHED_HUMAN = 'display_list_unmatched'; // 1 to show also the values that fit no own column of a table
+    const string DISPLAY_LIST_DESIGN_HUMAN = 'display_list_design'; // the name of the table design of a value table
+    const string DISPLAY_LIST_CSV_HUMAN = 'display_list_csv'; // 1 to download the value tables of the page as csv
     const string TAB_HUMAN = 'tab'; // the number of the selected tab of a page
     const string PLACE_HUMAN = 'place'; // the place name or postal code entered in the geolocator
     const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
@@ -594,6 +654,15 @@ class url_var
     const string REF_HUMAN = 'ref_id';
     const string REF_TYPE_HUMAN = 'ref_type';
     const string EX_KEY_HUMAN = 'external_key';
+    const string IMPORT_CHECKSUM_HUMAN = 'import_checksum';
+
+    // im- and export
+    const string IMPORT_FILE_HUMAN = 'import_file';
+    const string EXPORT_FILE_HUMAN = 'export_file';
+    const string EXPORT_FORMAT_HUMAN = 'export_format';
+    const string EXPORT_FORMAT_JSON_HUMAN = 'json';
+    const string EXPORT_FORMAT_XML_HUMAN = 'xml';
+    const string EXPORT_FORMAT_CSV_HUMAN = 'csv';
 
     // group
     const string GROUP_HUMAN = 'group_ig';
@@ -622,6 +691,8 @@ class url_var
     const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
     const string REFRESH_TERMS_HUMAN = 'terms_only';
     const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
+    const string REFRESH_WIKIPEDIA_HUMAN = 'description_from_wikipedia';
+    const string REFRESH_WIKIDATA_HUMAN = 'values_from_wikidata';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -718,6 +789,8 @@ class url_var
     const string SESSION_TOKEN = 'token';
     const string SESSION_USER_ID = 'usr_id';
     const string SESSION_REDIRECT_MSG = 'redirect_msg'; // the rendered message of an action, shown on the page after the redirect
+    const string SESSION_REPORT_PDF = 'report_pdf'; // the created pdf report until the request of the file
+    const string SESSION_REPORT_NAME = 'report_name'; // the name of the page of the created pdf report
 
 
     /*
@@ -762,10 +835,12 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::LINK_HUMAN, self::LINK],
+        [self::REF_ROW_HUMAN, self::REF_ROW],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
         [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
         [self::REPORT_HUMAN, self::REPORT],
+        [self::REPORT_FILE_HUMAN, self::REPORT_FILE],
 
         // user
         [self::USER_HUMAN, self::USER],
@@ -835,6 +910,9 @@ class url_var
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
         [self::DISPLAY_LIST_VARIANCE_HUMAN, self::DISPLAY_LIST_VARIANCE],
         [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
+        [self::DISPLAY_LIST_UNMATCHED_HUMAN, self::DISPLAY_LIST_UNMATCHED],
+        [self::DISPLAY_LIST_DESIGN_HUMAN, self::DISPLAY_LIST_DESIGN],
+        [self::DISPLAY_LIST_CSV_HUMAN, self::DISPLAY_LIST_CSV],
         [self::TAB_HUMAN, self::TAB],
         [self::PLACE_HUMAN, self::PLACE],
         [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
@@ -856,6 +934,12 @@ class url_var
         [self::REF_HUMAN, self::REF],
         [self::REF_TYPE_HUMAN, self::REF_TYPE],
         [self::EX_KEY_HUMAN, self::EXTERNAL_KEY],
+        [self::IMPORT_CHECKSUM_HUMAN, self::IMPORT_CHECKSUM],
+
+        // im- and export
+        [self::IMPORT_FILE_HUMAN, self::IMPORT_FILE],
+        [self::EXPORT_FILE_HUMAN, self::EXPORT_FILE],
+        [self::EXPORT_FORMAT_HUMAN, self::EXPORT_FORMAT],
 
         // group
         [self::GROUP_HUMAN, self::GROUP],
@@ -978,6 +1062,7 @@ class url_var
         self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
         self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
         self::ACTION_CLEAR_CACHE => self::ACTION_CLEAR_CACHE_HUMAN,
+        self::ACTION_IMPORT => self::ACTION_IMPORT_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -986,12 +1071,21 @@ class url_var
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
+        self::REFRESH_WIKIPEDIA => self::REFRESH_WIKIPEDIA_HUMAN,
+        self::REFRESH_WIKIDATA => self::REFRESH_WIKIDATA_HUMAN,
     ];
 
     // map human-readable url values to standard url values
     const array HUMAN_TO_STD_PHRASE_DATA_WALK_VAL = [
         self::PHRASE_DATA_WALK_VALUE => self::PHRASE_DATA_WALK_VALUE_HUMAN,
         self::PHRASE_DATA_WALK_FROM => self::PHRASE_DATA_WALK_FROM_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_EXPORT_FORMAT_VAL = [
+        self::EXPORT_FORMAT_JSON => self::EXPORT_FORMAT_JSON_HUMAN,
+        self::EXPORT_FORMAT_XML => self::EXPORT_FORMAT_XML_HUMAN,
+        self::EXPORT_FORMAT_CSV => self::EXPORT_FORMAT_CSV_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1060,6 +1154,131 @@ class url_var
             }
         }
         return [$prefix, substr($key, strlen($prefix))];
+    }
+
+    /**
+     * split a url key into its prefix, the url var and the row number of a reference row (see REF_ROW);
+     * the '8' value of a row field is the only compound prefix e.g. 86ek2
+     *
+     * @param string $key the url key e.g. '6ek2', '86ek2' or '9m'
+     * @return array the prefix, the url var and the row number e.g. ['86', 'ek', '2'], the row number empty for a key of no row
+     */
+    static function split_ref_row(string $key): array
+    {
+        [$prefix, $var] = self::split_prefix($key);
+        if ($prefix == self::PRE and str_starts_with($var, self::REF_ROW)) {
+            $prefix .= self::REF_ROW;
+            $var = substr($var, strlen(self::REF_ROW));
+        }
+        $row = '';
+        if (str_ends_with($prefix, self::REF_ROW)) {
+            $field = rtrim($var, self::ROW_DIGITS);
+            $row = substr($var, strlen($field));
+            $var = $field;
+        }
+        return [$prefix, $var, $row];
+    }
+
+    /**
+     * the reference rows that add, change or delete a reference; the empty add row and the unchanged rows of an
+     * edit form are dropped, so that only the real changes are confirmed and written
+     *
+     * @param array $url_array the url e.g. of the confirm page of a phrase change
+     * @return array the reference rows that change a reference e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
+     */
+    static function ref_rows(array $url_array): array
+    {
+        $pre_rows = self::ref_row_pre_values($url_array);
+        $result = [];
+        foreach (self::ref_row_fields($url_array, self::REF_ROW) as $row => $fields) {
+            if (self::is_ref_row_change($fields, $pre_rows[$row] ?? [])) {
+                $result[$row] = $fields;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
+     * @param array $pre_fields the stored values of the row e.g. ['ek' => 'Q72'], empty if the url has none
+     * @return bool true if the row adds, changes or deletes a reference, false e.g. for the empty add row of the edit view
+     */
+    private static function is_ref_row_change(array $fields, array $pre_fields): bool
+    {
+        $action = $fields[self::ACTION] ?? '';
+        $result = in_array($action, self::REF_ROW_ACTIONS);
+        if ($action == self::CRUD_CREATE) {
+            // a reference cannot exist without external key, so an add row without one is the untouched add row
+            $result = (($fields[self::EXTERNAL_KEY] ?? '') != '');
+        } elseif ($action == self::CRUD_UPDATE and $pre_fields != []) {
+            // the action and the id of the reference have no stored value
+            $row_values = array_diff_key($fields, [self::ACTION => '', self::REF => '']);
+            $result = (array_diff_assoc($row_values, $pre_fields) != []);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url e.g. of the confirm page of a phrase change
+     * @return array the stored values of the changed or deleted references by row e.g. [1 => ['ek' => 'Q72']]
+     */
+    static function ref_row_pre_values(array $url_array): array
+    {
+        return self::ref_row_fields($url_array, self::PRE . self::REF_ROW);
+    }
+
+    /**
+     * @param array $rows the reference rows e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
+     * @param array $pre_rows the stored values of the rows e.g. [1 => ['ek' => 'Q72']]
+     * @return array the url vars of the rows e.g. ['6a1' => 'u', '6l1' => 279, '6ek1' => 'Q71', '86ek1' => 'Q72']
+     */
+    static function ref_row_url_array(array $rows, array $pre_rows = []): array
+    {
+        $result = [];
+        foreach ($rows as $row => $fields) {
+            foreach ($fields as $var => $val) {
+                $result[self::REF_ROW . $var . $row] = $val;
+            }
+            foreach ($pre_rows[$row] ?? [] as $var => $val) {
+                $result[self::PRE . self::REF_ROW . $var . $row] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url with the reference rows
+     * @param int $row the number of the row that has been written
+     * @return array the url without the vars and the stored values of this row
+     */
+    static function without_ref_row(array $url_array, int $row): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$prefix, , $key_row] = self::split_ref_row((string)$key);
+            if (!str_ends_with($prefix, self::REF_ROW) or $key_row != (string)$row) {
+                $result[$key] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url with the reference rows
+     * @param string $prefix the prefix of the row part e.g. REF_ROW or PRE . REF_ROW
+     * @return array the fields of each row number that are listed in REF_ROW_VARS
+     */
+    private static function ref_row_fields(array $url_array, string $prefix): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$key_prefix, $var, $row] = self::split_ref_row((string)$key);
+            $is_row_var = ($key_prefix == $prefix and $row != '' and in_array($var, self::REF_ROW_VARS));
+            if ($is_row_var) {
+                $result[(int)$row][$var] = $val;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1151,6 +1370,33 @@ class url_var
     {
         $id_var = self::id_var($url_array[self::MASK] ?? 0);
         return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
+    }
+
+    /**
+     * @param array $url_array the url of a request e.g. [DISPLAY_LIST_CSV => TRUE]
+     * @return bool true if the value tables of the page should be downloaded as csv
+     */
+    static function is_csv_export(array $url_array): bool
+    {
+        return ($url_array[self::DISPLAY_LIST_CSV] ?? '') == self::TRUE;
+    }
+
+    /**
+     * @param array $url_array the url of a request e.g. [EXPORT_FILE => TRUE] of the export button
+     * @return bool true if the export of the selected phrases should be downloaded instead of showing the view
+     */
+    static function is_file_export(array $url_array): bool
+    {
+        return ($url_array[self::EXPORT_FILE] ?? '') == self::TRUE;
+    }
+
+    /**
+     * @param array $url_array the url of a request e.g. [DISPLAY_LIST_UNMATCHED => TRUE]
+     * @return bool true if a table with own columns should also show the values that fit none of them
+     */
+    static function show_unmatched(array $url_array): bool
+    {
+        return ($url_array[self::DISPLAY_LIST_UNMATCHED] ?? '') == self::TRUE;
     }
 
     /**

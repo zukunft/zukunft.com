@@ -1,0 +1,3682 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            sector of revenue - Table editor - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=it" title="Italian">
+                                        Italiano
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <link rel="stylesheet" href="http://localhost/src/main/resources/style/table_editor.css">
+            <div id="tableEditor">
+            </div>
+            <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+            <script type="application/json" id="seed">
+                {
+                    "pod": "zukunft.com",
+                    "type": "phraseData",
+                    "user_id": 3,
+                    "user": "zukunft.com system test",
+                    "version": "0.0.3",
+                    "time": "2022-12-26 18:23:45",
+                    "selection": [
+                        {
+                            "id": 5624,
+                            "name": "sector of revenue",
+                            "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case"
+                        }
+                    ],
+                    "words": [
+                        {
+                            "id": 4,
+                            "protection": "admin_protection",
+                            "name": "one",
+                            "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
+                            "type_code_id": "scaling_hidden",
+                            "type": "hidden scaling"
+                        },
+                        {
+                            "id": 19,
+                            "protection": "admin_protection",
+                            "name": "unit",
+                            "description": "A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 20,
+                            "protection": "admin_protection",
+                            "name": "system",
+                            "description": "A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 22,
+                            "name": "second",
+                            "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 23,
+                            "protection": "admin_protection",
+                            "name": "s",
+                            "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
+                            "type_code_id": "measure_unit",
+                            "type": "measure unit"
+                        },
+                        {
+                            "id": 26,
+                            "protection": "admin_protection",
+                            "name": "m",
+                            "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
+                            "type_code_id": "measure_unit",
+                            "type": "measure unit"
+                        },
+                        {
+                            "id": 99,
+                            "protection": "admin_protection",
+                            "name": "time",
+                            "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
+                            "type_code_id": "time",
+                            "type": "time"
+                        },
+                        {
+                            "id": 104,
+                            "protection": "admin_protection",
+                            "name": "month",
+                            "description": "A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",
+                            "type_code_id": "measure_unit",
+                            "type": "measure unit"
+                        },
+                        {
+                            "id": 105,
+                            "protection": "admin_protection",
+                            "name": "year",
+                            "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
+                            "type_code_id": "time",
+                            "type": "time"
+                        },
+                        {
+                            "id": 158,
+                            "protection": "admin_protection",
+                            "name": "million",
+                            "description": "to specify numbers in millions",
+                            "type_code_id": "scaling",
+                            "type": "scaling"
+                        },
+                        {
+                            "id": 159,
+                            "protection": "admin_protection",
+                            "name": "billion",
+                            "description": "to specify numbers in billions - 10\u2079",
+                            "type_code_id": "scaling",
+                            "type": "scaling"
+                        },
+                        {
+                            "id": 160,
+                            "protection": "admin_protection",
+                            "name": "percent",
+                            "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
+                            "type_code_id": "percent",
+                            "type": "format percent"
+                        },
+                        {
+                            "id": 162,
+                            "name": "b",
+                            "description": "the symbol used in formulas for billion",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 163,
+                            "name": "factor",
+                            "description": "how many times bigger one number is than the number it is compared with",
+                            "type_code_id": "factor",
+                            "type": "scaling factor"
+                        },
+                        {
+                            "id": 164,
+                            "name": "x",
+                            "description": "the symbol shown behind a number that is a factor",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 165,
+                            "name": "%",
+                            "description": "the symbol shown behind a number that is a percentage",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 169,
+                            "protection": "admin_protection",
+                            "name": "Now",
+                            "type_code_id": "time",
+                            "type": "time"
+                        },
+                        {
+                            "id": 193,
+                            "protection": "admin_protection",
+                            "name": "latest",
+                            "type_code_id": "latest",
+                            "type": "latest"
+                        },
+                        {
+                            "id": 194,
+                            "name": "this",
+                            "type_code_id": "formula_link",
+                            "type": "formula link"
+                        },
+                        {
+                            "id": 196,
+                            "name": "prior",
+                            "type_code_id": "formula_link",
+                            "type": "formula link"
+                        },
+                        {
+                            "id": 216,
+                            "name": "person",
+                            "description": "an individual human being",
+                            "type_code_id": "measure_unit",
+                            "type": "measure unit"
+                        },
+                        {
+                            "id": 227,
+                            "protection": "admin_protection",
+                            "name": "zukunft.com",
+                            "description": "the name of this system, used to mark its internal keywords",
+                            "type_code_id": "hidden_system",
+                            "type": "hidden system"
+                        },
+                        {
+                            "id": 229,
+                            "protection": "admin_protection",
+                            "name": "default",
+                            "description": "The setting used if nothing else is specified.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 234,
+                            "name": "full",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 240,
+                            "name": "mode",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 251,
+                            "name": "effort",
+                            "description": "the work needed to implement a solution, the counterpart of the gain",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 282,
+                            "name": "column",
+                            "description": "a vertical structural element that carries compressive loads",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 285,
+                            "name": "mayor",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 286,
+                            "name": "main",
+                            "description": "primary, isolated from interactions",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 287,
+                            "name": "minor",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 288,
+                            "name": "marginal",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 299,
+                            "name": "mio",
+                            "description": "the symbol used in formulas for million",
+                            "type_code_id": "scaling",
+                            "type": "scaling"
+                        },
+                        {
+                            "id": 300,
+                            "name": "bn",
+                            "description": "the symbol used in formulas for billion",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 306,
+                            "name": "2024",
+                            "description": "the year 2024",
+                            "type_code_id": "time",
+                            "type": "time"
+                        },
+                        {
+                            "id": 330,
+                            "name": "share",
+                            "description": "attributable proportion of a whole, 0..1",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 340,
+                            "protection": "admin_protection",
+                            "name": "source",
+                            "description": "The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 341,
+                            "name": "confidence",
+                            "description": "Subjective probability (0 to 1) that the tagged estimate range contains the true value.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 342,
+                            "protection": "admin_protection",
+                            "name": "initial",
+                            "description": "the first of a series: of a work the first step before any repetition or roll-out, of a measure the value before any correction or exclusion",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 344,
+                            "name": "ratio",
+                            "description": "the quotient of two values of the same or of a different unit",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 411,
+                            "name": "total",
+                            "description": "the whole amount or count, e.g. the total number of possible outcomes",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 470,
+                            "name": "USD",
+                            "description": "ISO 4217 alphabetic code for the United States dollar.",
+                            "type_code_id": "measure_unit",
+                            "type": "measure unit"
+                        },
+                        {
+                            "id": 545,
+                            "name": "dollar",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 546,
+                            "name": "US",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 618,
+                            "name": "growth",
+                            "description": "rate of increase over a period",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 625,
+                            "name": "ABB",
+                            "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Z\u00fcrich",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 644,
+                            "name": "sector",
+                            "description": "a distinct part of a whole",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 691,
+                            "name": "2025",
+                            "description": "the year 2025",
+                            "type_code_id": "time",
+                            "type": "time"
+                        },
+                        {
+                            "id": 734,
+                            "protection": "admin_protection",
+                            "name": "name"
+                        },
+                        {
+                            "id": 736,
+                            "protection": "admin_protection",
+                            "name": "phrase",
+                            "description": "a word or a triple, which selects or stores a value"
+                        },
+                        {
+                            "id": 743,
+                            "protection": "admin_protection",
+                            "name": "size"
+                        },
+                        {
+                            "id": 746,
+                            "protection": "admin_protection",
+                            "name": "table"
+                        },
+                        {
+                            "id": 750,
+                            "protection": "admin_protection",
+                            "name": "value"
+                        },
+                        {
+                            "id": 751,
+                            "protection": "admin_protection",
+                            "name": "version"
+                        },
+                        {
+                            "id": 759,
+                            "name": "row"
+                        },
+                        {
+                            "id": 760,
+                            "name": "limit"
+                        },
+                        {
+                            "id": 777,
+                            "name": "sources"
+                        },
+                        {
+                            "id": 792,
+                            "name": "tooltip",
+                            "description": "the text shown if the user moves the mouse over a control"
+                        },
+                        {
+                            "id": 803,
+                            "name": "bottom",
+                            "description": "the lowest part or group"
+                        },
+                        {
+                            "id": 806,
+                            "name": "format"
+                        },
+                        {
+                            "id": 807,
+                            "name": "level"
+                        },
+                        {
+                            "id": 854,
+                            "name": "language",
+                            "description": "system of communication"
+                        },
+                        {
+                            "id": 869,
+                            "name": "verb"
+                        },
+                        {
+                            "id": 872,
+                            "name": "title"
+                        },
+                        {
+                            "id": 873,
+                            "name": "layout"
+                        },
+                        {
+                            "id": 875,
+                            "name": "width"
+                        },
+                        {
+                            "id": 887,
+                            "name": "rule"
+                        },
+                        {
+                            "id": 896,
+                            "name": "label",
+                            "description": "the text that names an input field for the user"
+                        },
+                        {
+                            "id": 927,
+                            "name": "density",
+                            "description": "quantity per unit area or volume",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1024,
+                            "name": "scale",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1072,
+                            "name": "export",
+                            "description": "a good or service produced in one country and sold into another country.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1178,
+                            "name": "sum",
+                            "description": "the result of adding two or more numbers",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1230,
+                            "name": "electrification",
+                            "description": "Switching industrial processes, transport and heat from fossil fuels to clean electricity. Translation of the German keyword 'Elektrifizierung'.",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1246,
+                            "name": "maximum",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1249,
+                            "name": "minimum",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1303,
+                            "name": "revenue",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1420,
+                            "name": "frozen",
+                            "description": "blocked so that it cannot be paid out until a condition is met",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1458,
+                            "name": "responsive",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1566,
+                            "name": "aggregation",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1573,
+                            "name": "reference",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1781,
+                            "name": "Europe",
+                            "description": "the continent west of Asia, north of Africa and east of the Atlantic Ocean",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1848,
+                            "name": "corporate",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 1948,
+                            "name": "state",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2056,
+                            "name": "horizontal",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2302,
+                            "name": "hierarchy",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2303,
+                            "name": "header",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2304,
+                            "name": "interaction",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2305,
+                            "name": "context",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2306,
+                            "name": "all",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2309,
+                            "name": "pivot",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2310,
+                            "name": "direction",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2312,
+                            "name": "empty",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2313,
+                            "name": "expand",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2314,
+                            "name": "depth",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2315,
+                            "name": "indent",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2316,
+                            "name": "orphans",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2318,
+                            "name": "missing",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2319,
+                            "name": "align",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2322,
+                            "name": "delta",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2326,
+                            "name": "scope",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2328,
+                            "name": "caption",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2329,
+                            "name": "striped",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2330,
+                            "name": "borders",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2332,
+                            "name": "sortable",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2334,
+                            "name": "searchable",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2336,
+                            "name": "drilldown",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2339,
+                            "name": "refresh",
+                            "description": "to show the page again with the changed input",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2341,
+                            "name": "profile",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2342,
+                            "name": "formats",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2343,
+                            "name": "persist",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2345,
+                            "name": "parameter",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2578,
+                            "name": "ABBN",
+                            "description": "the SIX ticker of the share of ABB Ltd",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2627,
+                            "name": "normal",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2744,
+                            "name": "robotics",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2754,
+                            "name": "motion",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2787,
+                            "name": "automation",
+                            "description": "the control of a process or a machine by a technical system instead of a person, e.g. the control system of a chemical plant",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2788,
+                            "name": "Americas",
+                            "description": "North, Central and South America together, e.g. as a sales region of a company",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2789,
+                            "name": "AMEA",
+                            "description": "Asia, Middle East and Africa, a sales region of a company e.g. of ABB",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2790,
+                            "name": "EL",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2791,
+                            "name": "MO",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2792,
+                            "name": "listed",
+                            "description": "in the order of the list as it is given, e.g. the own columns of a table in the order the user has set",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2793,
+                            "name": "subject",
+                            "description": "the from side of a triple, e.g. 'ABB Motion' in 'ABB Motion is a sector of revenue'",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2794,
+                            "name": "show",
+                            "description": "to display something, e.g. a table row without a value",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2795,
+                            "name": "expanded",
+                            "description": "opened, so that the parts below are visible, e.g. the sub-rows of a table row",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2796,
+                            "name": "own",
+                            "description": "belonging to the object itself and not derived from its parts, e.g. the own value of a parent row instead of the sum of its children",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2797,
+                            "name": "siblings",
+                            "description": "the phrases with the same parent, e.g. the sub-sectors of one sector",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2798,
+                            "name": "dash",
+                            "description": "the sign - shown in place of a missing number",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2799,
+                            "name": "none",
+                            "description": "nothing of the kind, e.g. no delta shown",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2800,
+                            "name": "auto",
+                            "description": "decided by the system from the type of the content, e.g. numbers right and texts left",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2801,
+                            "name": "preferred",
+                            "description": "chosen before the others, e.g. the value of the preferred source if several sources have a value",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2802,
+                            "name": "scroll",
+                            "description": "to move the visible part of a page or a table, e.g. a wide table on a small screen",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2803,
+                            "name": "static",
+                            "description": "not updated by itself, only when the page is read again",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2804,
+                            "name": "English",
+                            "description": "the language of England, the USA and many other countries, e.g. the language of the texts of a table",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2805,
+                            "name": "csv",
+                            "description": "comma-separated values, a text format with one line per table row",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2806,
+                            "name": "json",
+                            "description": "JavaScript Object Notation, a text format for structured data",
+                            "type_code_id": "default"
+                        },
+                        {
+                            "id": 2807,
+                            "name": "visible",
+                            "description": "what the user sees at the moment, e.g. the rows of the current page of a table",
+                            "type_code_id": "default"
+                        }
+                    ],
+                    "triples": [
+                        {
+                            "id": 11,
+                            "name": "time unit",
+                            "description": "a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning",
+                            "from": "unit",
+                            "verb": "of",
+                            "to": "time"
+                        },
+                        {
+                            "id": 13,
+                            "name": "s (unit symbol)",
+                            "from": "s",
+                            "verb": "is symbol for",
+                            "to": "second"
+                        },
+                        {
+                            "id": 65,
+                            "protection": "admin_protection",
+                            "name": "second (time)",
+                            "description": "The second is defined by taking the fixed numerical value of the caesium frequency, \u0394\u03bdCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s\u22121.",
+                            "type": "measure unit",
+                            "from": "second",
+                            "verb": "must be one of",
+                            "to": "time unit"
+                        },
+                        {
+                            "id": 101,
+                            "name": "m is symbol for million",
+                            "from": "m",
+                            "verb": "is symbol for",
+                            "to": "million"
+                        },
+                        {
+                            "id": 102,
+                            "name": "b is symbol for billion",
+                            "from": "b",
+                            "verb": "is symbol for",
+                            "to": "billion"
+                        },
+                        {
+                            "id": 103,
+                            "name": "x is symbol for factor",
+                            "from": "x",
+                            "verb": "is symbol for",
+                            "to": "factor"
+                        },
+                        {
+                            "id": 104,
+                            "name": "% is symbol for percent",
+                            "from": "%",
+                            "verb": "is symbol for",
+                            "to": "percent"
+                        },
+                        {
+                            "id": 145,
+                            "name": "zukunft.com system",
+                            "description": "keyword for system internal triples such as the column definitions",
+                            "from": "zukunft.com",
+                            "verb": "is a",
+                            "to": "system"
+                        },
+                        {
+                            "id": 172,
+                            "name": "mio is symbol for million",
+                            "from": "mio",
+                            "verb": "is symbol for",
+                            "to": "million"
+                        },
+                        {
+                            "id": 173,
+                            "name": "bn is symbol for billion",
+                            "from": "bn",
+                            "verb": "is symbol for",
+                            "to": "billion"
+                        },
+                        {
+                            "id": 206,
+                            "name": "initial effort",
+                            "description": "the work needed to implement a solution the first time, without the recurring operation",
+                            "from": "effort",
+                            "verb": "kind of",
+                            "to": "initial"
+                        },
+                        {
+                            "id": 208,
+                            "name": "person year",
+                            "description": "the work of one person during one year, the unit of the initial effort",
+                            "type": "measure unit",
+                            "from": "person",
+                            "verb": "times",
+                            "to": "year"
+                        },
+                        {
+                            "id": 400,
+                            "name": "US dollar",
+                            "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
+                            "from": "dollar",
+                            "verb": "of",
+                            "to": "US"
+                        },
+                        {
+                            "id": 459,
+                            "name": "total is symbol for total",
+                            "from": "total",
+                            "verb": "is symbol for",
+                            "to": "total"
+                        },
+                        {
+                            "id": 484,
+                            "name": "USD is symbol for US dollar",
+                            "from": "USD",
+                            "verb": "is symbol for",
+                            "to": "US dollar"
+                        },
+                        {
+                            "id": 1197,
+                            "name": "billion USD",
+                            "from": "billion",
+                            "verb": "of",
+                            "to": "USD"
+                        },
+                        {
+                            "id": 1260,
+                            "name": "person year per billion USD",
+                            "from": "person year",
+                            "verb": "per",
+                            "to": "billion USD"
+                        },
+                        {
+                            "id": 1332,
+                            "name": "table column",
+                            "description": "list: the items of a triple from a phrase to this keyword are the own columns of the table of the phrase in their order, instead of the columns of all tables",
+                            "from": "table",
+                            "verb": "has a",
+                            "to": "column"
+                        },
+                        {
+                            "id": 3506,
+                            "name": "table parameter (system)",
+                            "description": "keyword for the parameters of a table; the groups are on its to side, so that the phrase data of a page that uses a word such as export does not walk to them",
+                            "from": "zukunft.com system",
+                            "verb": "has a",
+                            "to": "parameter"
+                        },
+                        {
+                            "id": 3509,
+                            "name": "table column (system)",
+                            "description": "keyword for the parameters of the columns of a table; the column tiers mayor, main and minor are the children of column (system)",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "table column"
+                        },
+                        {
+                            "id": 3510,
+                            "name": "row (system)",
+                            "description": "keyword for the parameters of the rows of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "row"
+                        },
+                        {
+                            "id": 3511,
+                            "name": "hierarchy (system)",
+                            "description": "keyword for the parameters of the sub-rows of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "hierarchy"
+                        },
+                        {
+                            "id": 3512,
+                            "name": "value (system)",
+                            "description": "keyword for the parameters of the values shown in a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "value"
+                        },
+                        {
+                            "id": 3513,
+                            "name": "aggregation (system)",
+                            "description": "keyword for the parameters of the totals of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "aggregation"
+                        },
+                        {
+                            "id": 3514,
+                            "name": "header (system)",
+                            "description": "keyword for the parameters of the headers of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "header"
+                        },
+                        {
+                            "id": 3515,
+                            "name": "layout (system)",
+                            "description": "keyword for the parameters of the layout of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "layout"
+                        },
+                        {
+                            "id": 3516,
+                            "name": "interaction (system)",
+                            "description": "keyword for the parameters of the interaction of the user with a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "interaction"
+                        },
+                        {
+                            "id": 3517,
+                            "name": "context (system)",
+                            "description": "keyword for the parameters of the context of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "context"
+                        },
+                        {
+                            "id": 3518,
+                            "name": "export (system)",
+                            "description": "keyword for the parameters of the export of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "export"
+                        },
+                        {
+                            "id": 3519,
+                            "name": "state (system)",
+                            "description": "keyword for the parameters of the state of a table",
+                            "from": "table parameter (system)",
+                            "verb": "can be",
+                            "to": "state"
+                        },
+                        {
+                            "id": 3521,
+                            "name": "level table column (system)",
+                            "description": "Which level is currently active: major / main / minor / all.",
+                            "from": "table column (system)",
+                            "verb": "can be",
+                            "to": "level"
+                        },
+                        {
+                            "id": 3523,
+                            "name": "order rule table column (system)",
+                            "description": "Rule used when no explicit order is given: alphabetical, by value count, by last change, by relevance.",
+                            "from": "table column (system)",
+                            "verb": "can be",
+                            "to": "rule"
+                        },
+                        {
+                            "id": 3525,
+                            "name": "frozen table column (system)",
+                            "description": "Number of leading columns that stay fixed when scrolling horizontally.",
+                            "from": "table column (system)",
+                            "verb": "can be",
+                            "to": "frozen"
+                        },
+                        {
+                            "id": 3528,
+                            "name": "pivot phrase table column (system)",
+                            "description": "The phrase whose related phrases become the columns (e.g. \u201cyear\u201d \u2192 2024, 2025 \u2026).",
+                            "from": "table column (system)",
+                            "verb": "can be",
+                            "to": "pivot"
+                        },
+                        {
+                            "id": 3529,
+                            "name": "phrase row (system)",
+                            "description": "The phrase whose related phrases define the rows (e.g. \u201csector of revenue\u201d).",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "phrase"
+                        },
+                        {
+                            "id": 3530,
+                            "name": "verb row (system)",
+                            "description": "The verb used to find the related phrases (\u201cis a\u201d, \u201cis part of\u201d, \u201chas\u201d).",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "verb"
+                        },
+                        {
+                            "id": 3531,
+                            "name": "direction row (system)",
+                            "description": "Whether the row phrase is the subject or the object of the triple.",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "direction"
+                        },
+                        {
+                            "id": 3535,
+                            "name": "limit row (system)",
+                            "description": "Maximum number of rows shown before paging kicks in.",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "limit"
+                        },
+                        {
+                            "id": 3536,
+                            "name": "page size row (system)",
+                            "description": "Rows per page when paging is on.",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "size"
+                        },
+                        {
+                            "id": 3542,
+                            "name": "empty row (system)",
+                            "description": "Show, hide or grey out rows that have no value in any visible column.",
+                            "from": "row (system)",
+                            "verb": "can be",
+                            "to": "empty"
+                        },
+                        {
+                            "id": 3543,
+                            "name": "verb hierarchy (system)",
+                            "description": "The verb that defines sub-rows (\u201cis part of\u201d).",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "verb"
+                        },
+                        {
+                            "id": 3544,
+                            "name": "expand hierarchy (system)",
+                            "description": "Default state of sub-rows: collapsed, expanded, expanded to level n.",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "expand"
+                        },
+                        {
+                            "id": 3545,
+                            "name": "max depth hierarchy (system)",
+                            "description": "How many levels of sub-rows may be opened.",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "depth"
+                        },
+                        {
+                            "id": 3546,
+                            "name": "indent hierarchy (system)",
+                            "description": "Visual indent per level (or tree lines, or a separate \u201clevel\u201d column).",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "indent"
+                        },
+                        {
+                            "id": 3547,
+                            "name": "parent value hierarchy (system)",
+                            "description": "How the parent row\u2019s value is shown: own value, sum of children, both, or blank.",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "value"
+                        },
+                        {
+                            "id": 3548,
+                            "name": "orphans hierarchy (system)",
+                            "description": "Where to put rows that have no parent: top, bottom, hidden.",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "orphans"
+                        },
+                        {
+                            "id": 3550,
+                            "name": "sort scope hierarchy (system)",
+                            "description": "Sorting applies within siblings only or flattens the tree.",
+                            "from": "hierarchy (system)",
+                            "verb": "can be",
+                            "to": "scope"
+                        },
+                        {
+                            "id": 3552,
+                            "name": "format value (system)",
+                            "description": "Number format: decimals, thousands separator, percent, scientific.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "format"
+                        },
+                        {
+                            "id": 3553,
+                            "name": "unit value (system)",
+                            "description": "Unit shown (in header or in cell) and target unit for conversion.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "unit"
+                        },
+                        {
+                            "id": 3554,
+                            "name": "scale value (system)",
+                            "description": "Scale factor for display (thousands, millions).",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "scale"
+                        },
+                        {
+                            "id": 3555,
+                            "name": "time value (system)",
+                            "description": "Which point in time or period the value refers to (latest, specific year, average).",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "time"
+                        },
+                        {
+                            "id": 3556,
+                            "name": "source mode value (system)",
+                            "description": "Which value wins when several sources exist: preferred source, latest, average, user\u2019s own.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "mode"
+                        },
+                        {
+                            "id": 3557,
+                            "name": "show source value (system)",
+                            "description": "Show the source inline, as tooltip, as a separate column, or not at all.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "source"
+                        },
+                        {
+                            "id": 3559,
+                            "name": "missing value (system)",
+                            "description": "What to display for an empty cell: blank, \u201cn/a\u201d, dash, estimate.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "missing"
+                        },
+                        {
+                            "id": 3560,
+                            "name": "align value (system)",
+                            "description": "Left, right, centre per column type.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "align"
+                        },
+                        {
+                            "id": 3563,
+                            "name": "delta value (system)",
+                            "description": "Show the change against a reference (previous period, other source) as absolute or percent.",
+                            "from": "value (system)",
+                            "verb": "can be",
+                            "to": "delta"
+                        },
+                        {
+                            "id": 3566,
+                            "name": "totals row aggregation (system)",
+                            "description": "Show a total row: sum, average, count, none.",
+                            "from": "aggregation (system)",
+                            "verb": "can be",
+                            "to": "row"
+                        },
+                        {
+                            "id": 3570,
+                            "name": "scope aggregation (system)",
+                            "description": "Whether totals cover visible rows only or all rows including paged ones.",
+                            "from": "aggregation (system)",
+                            "verb": "can be",
+                            "to": "scope"
+                        },
+                        {
+                            "id": 3571,
+                            "name": "label header (system)",
+                            "description": "Short label vs. full phrase name per column.",
+                            "from": "header (system)",
+                            "verb": "can be",
+                            "to": "label"
+                        },
+                        {
+                            "id": 3573,
+                            "name": "show unit header (system)",
+                            "description": "Unit in the header instead of the cell.",
+                            "from": "header (system)",
+                            "verb": "can be",
+                            "to": "unit"
+                        },
+                        {
+                            "id": 3575,
+                            "name": "row label mode header (system)",
+                            "description": "Row label as phrase name, abbreviation, id, or with description.",
+                            "from": "header (system)",
+                            "verb": "can be",
+                            "to": "mode"
+                        },
+                        {
+                            "id": 3576,
+                            "name": "title layout (system)",
+                            "description": "Table title (defaults to the row phrase and value phrase).",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "title"
+                        },
+                        {
+                            "id": 3577,
+                            "name": "caption layout (system)",
+                            "description": "Explanatory text under the table.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "caption"
+                        },
+                        {
+                            "id": 3578,
+                            "name": "density layout (system)",
+                            "description": "Compact, normal, comfortable row height.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "density"
+                        },
+                        {
+                            "id": 3579,
+                            "name": "striped layout (system)",
+                            "description": "Alternating row background.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "striped"
+                        },
+                        {
+                            "id": 3580,
+                            "name": "borders layout (system)",
+                            "description": "None, horizontal, full grid.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "borders"
+                        },
+                        {
+                            "id": 3582,
+                            "name": "max width layout (system)",
+                            "description": "Table width in px, percent, or fit-to-content.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "width"
+                        },
+                        {
+                            "id": 3583,
+                            "name": "responsive mode layout (system)",
+                            "description": "On small screens: horizontal scroll, stack columns, drop minor columns first.",
+                            "from": "layout (system)",
+                            "verb": "can be",
+                            "to": "responsive"
+                        },
+                        {
+                            "id": 3586,
+                            "name": "sortable interaction (system)",
+                            "description": "Whether the user can click headers to sort.",
+                            "from": "interaction (system)",
+                            "verb": "can be",
+                            "to": "sortable"
+                        },
+                        {
+                            "id": 3588,
+                            "name": "searchable interaction (system)",
+                            "description": "Free-text search over the visible table.",
+                            "from": "interaction (system)",
+                            "verb": "can be",
+                            "to": "searchable"
+                        },
+                        {
+                            "id": 3590,
+                            "name": "drilldown interaction (system)",
+                            "description": "Clicking a row or cell opens the phrase, the value history, or a sub-table.",
+                            "from": "interaction (system)",
+                            "verb": "can be",
+                            "to": "drilldown"
+                        },
+                        {
+                            "id": 3593,
+                            "name": "refresh mode interaction (system)",
+                            "description": "Static, reload on demand, live update.",
+                            "from": "interaction (system)",
+                            "verb": "can be",
+                            "to": "refresh"
+                        },
+                        {
+                            "id": 3596,
+                            "name": "language context (system)",
+                            "description": "Language for phrase names and formats.",
+                            "from": "context (system)",
+                            "verb": "can be",
+                            "to": "language"
+                        },
+                        {
+                            "id": 3597,
+                            "name": "profile context (system)",
+                            "description": "Which user profile / estimation set the values come from.",
+                            "from": "context (system)",
+                            "verb": "can be",
+                            "to": "profile"
+                        },
+                        {
+                            "id": 3598,
+                            "name": "time reference context (system)",
+                            "description": "Global \u201cas of\u201d date for all values.",
+                            "from": "context (system)",
+                            "verb": "can be",
+                            "to": "reference"
+                        },
+                        {
+                            "id": 3599,
+                            "name": "formats export (system)",
+                            "description": "Allowed exports: CSV, JSON, Markdown, PDF, image.",
+                            "from": "export (system)",
+                            "verb": "can be",
+                            "to": "formats"
+                        },
+                        {
+                            "id": 3600,
+                            "name": "scope export (system)",
+                            "description": "Visible cells only, or all rows/columns, or including hidden sources.",
+                            "from": "export (system)",
+                            "verb": "can be",
+                            "to": "scope"
+                        },
+                        {
+                            "id": 3601,
+                            "name": "include sources export (system)",
+                            "description": "Attach the source list to the export.",
+                            "from": "export (system)",
+                            "verb": "can be",
+                            "to": "sources"
+                        },
+                        {
+                            "id": 3602,
+                            "name": "persist user changes state (system)",
+                            "description": "Remember the user\u2019s column/row choices between sessions.",
+                            "from": "state (system)",
+                            "verb": "can be",
+                            "to": "persist"
+                        },
+                        {
+                            "id": 3604,
+                            "name": "view version state (system)",
+                            "description": "Version of the definition, so changes to the view can be traced like values.",
+                            "from": "state (system)",
+                            "verb": "can be",
+                            "to": "version"
+                        },
+                        {
+                            "id": 3743,
+                            "name": "share (ratio)",
+                            "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
+                            "type": "format percent",
+                            "from": "share",
+                            "verb": "must be one of",
+                            "to": "ratio"
+                        },
+                        {
+                            "id": 3795,
+                            "name": "share is symbol for share (ratio)",
+                            "from": "share",
+                            "verb": "is symbol for",
+                            "to": "share (ratio)"
+                        },
+                        {
+                            "id": 5216,
+                            "name": "ABBN (ticker)",
+                            "description": "the ticker symbol under which the ABB share is traded on SIX",
+                            "from": "ABBN",
+                            "verb": "is symbol for",
+                            "to": "ABB"
+                        },
+                        {
+                            "id": 5624,
+                            "name": "sector of revenue",
+                            "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case",
+                            "from": "sector",
+                            "verb": "of",
+                            "to": "revenue"
+                        },
+                        {
+                            "id": 5625,
+                            "name": "ABB Electrification",
+                            "description": "the business area of ABB for the distribution of electricity from source to socket, e.g. switchgear, circuit breakers and building automation",
+                            "from": "ABB",
+                            "verb": "has a",
+                            "to": "electrification"
+                        },
+                        {
+                            "id": 5626,
+                            "name": "ABB Motion",
+                            "description": "the business area of ABB for drives, motors, generators and traction converters",
+                            "from": "ABB",
+                            "verb": "has a",
+                            "to": "motion"
+                        },
+                        {
+                            "id": 5627,
+                            "name": "ABB Automation",
+                            "description": "the business area of ABB for the automation of the process, hybrid and marine industries, which includes the Machine Automation division since 2025",
+                            "from": "ABB",
+                            "verb": "has a",
+                            "to": "automation"
+                        },
+                        {
+                            "id": 5628,
+                            "name": "ABB Corporate and Other",
+                            "description": "the headquarters, the real estate, the treasury, E-mobility and the other non-core activities of ABB",
+                            "from": "ABB",
+                            "verb": "has a",
+                            "to": "corporate"
+                        },
+                        {
+                            "id": 5629,
+                            "name": "ABB Robotics division",
+                            "description": "the Robotics division of ABB, which is sold to SoftBank Group and shown as a discontinued operation since 2025",
+                            "from": "ABB",
+                            "verb": "has a",
+                            "to": "robotics"
+                        },
+                        {
+                            "id": 5630,
+                            "name": "ABB Electrification Europe",
+                            "from": "ABB Electrification",
+                            "verb": "has a",
+                            "to": "Europe"
+                        },
+                        {
+                            "id": 5631,
+                            "name": "ABB Electrification Americas",
+                            "from": "ABB Electrification",
+                            "verb": "has a",
+                            "to": "Americas"
+                        },
+                        {
+                            "id": 5632,
+                            "name": "ABB Electrification AMEA",
+                            "from": "ABB Electrification",
+                            "verb": "has a",
+                            "to": "AMEA"
+                        },
+                        {
+                            "id": 5633,
+                            "name": "ABB Motion Europe",
+                            "from": "ABB Motion",
+                            "verb": "has a",
+                            "to": "Europe"
+                        },
+                        {
+                            "id": 5634,
+                            "name": "ABB Motion Americas",
+                            "from": "ABB Motion",
+                            "verb": "has a",
+                            "to": "Americas"
+                        },
+                        {
+                            "id": 5635,
+                            "name": "ABB Motion AMEA",
+                            "from": "ABB Motion",
+                            "verb": "has a",
+                            "to": "AMEA"
+                        },
+                        {
+                            "id": 5636,
+                            "name": "ABB Automation Europe",
+                            "from": "ABB Automation",
+                            "verb": "has a",
+                            "to": "Europe"
+                        },
+                        {
+                            "id": 5637,
+                            "name": "ABB Automation Americas",
+                            "from": "ABB Automation",
+                            "verb": "has a",
+                            "to": "Americas"
+                        },
+                        {
+                            "id": 5638,
+                            "name": "ABB Automation AMEA",
+                            "from": "ABB Automation",
+                            "verb": "has a",
+                            "to": "AMEA"
+                        },
+                        {
+                            "id": 5639,
+                            "name": "ABB Electrification (sector of revenue)",
+                            "from": "ABB Electrification",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5640,
+                            "name": "ABB Motion (sector of revenue)",
+                            "from": "ABB Motion",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5641,
+                            "name": "ABB Automation (sector of revenue)",
+                            "from": "ABB Automation",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5642,
+                            "name": "ABB Corporate and Other (sector of revenue)",
+                            "from": "ABB Corporate and Other",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5643,
+                            "name": "ABB Robotics division (sector of revenue)",
+                            "from": "ABB Robotics division",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5644,
+                            "name": "EL is an acronym for ABB Electrification",
+                            "from": "EL",
+                            "verb": "is an acronym for",
+                            "to": "ABB Electrification"
+                        },
+                        {
+                            "id": 5645,
+                            "name": "MO is an acronym for ABB Motion",
+                            "from": "MO",
+                            "verb": "is an acronym for",
+                            "to": "ABB Motion"
+                        },
+                        {
+                            "id": 5646,
+                            "name": "sector of revenue columns",
+                            "description": "the own columns of the table of the sectors of revenue",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "table column"
+                        },
+                        {
+                            "id": 5647,
+                            "name": "sector of revenue column level",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "level table column (system)"
+                        },
+                        {
+                            "id": 5648,
+                            "name": "sector of revenue column order rule",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "order rule table column (system)"
+                        },
+                        {
+                            "id": 5649,
+                            "name": "sector of revenue header label",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "label header (system)"
+                        },
+                        {
+                            "id": 5650,
+                            "name": "sector of revenue header unit",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "show unit header (system)"
+                        },
+                        {
+                            "id": 5651,
+                            "name": "sector of revenue column pivot",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "pivot phrase table column (system)"
+                        },
+                        {
+                            "id": 5652,
+                            "name": "sector of revenue row phrase",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "phrase row (system)"
+                        },
+                        {
+                            "id": 5653,
+                            "name": "sector of revenue row verb",
+                            "description": "is a",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "verb row (system)"
+                        },
+                        {
+                            "id": 5654,
+                            "name": "sector of revenue row direction",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "direction row (system)"
+                        },
+                        {
+                            "id": 5655,
+                            "name": "sector of revenue row empty",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "empty row (system)"
+                        },
+                        {
+                            "id": 5656,
+                            "name": "sector of revenue row label",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "row label mode header (system)"
+                        },
+                        {
+                            "id": 5657,
+                            "name": "sector of revenue hierarchy verb",
+                            "description": "is part of",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "verb hierarchy (system)"
+                        },
+                        {
+                            "id": 5658,
+                            "name": "sector of revenue hierarchy expand",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "expand hierarchy (system)"
+                        },
+                        {
+                            "id": 5659,
+                            "name": "sector of revenue hierarchy indent",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "indent hierarchy (system)"
+                        },
+                        {
+                            "id": 5660,
+                            "name": "sector of revenue hierarchy parent value",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "parent value hierarchy (system)"
+                        },
+                        {
+                            "id": 5661,
+                            "name": "sector of revenue hierarchy orphans",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "orphans hierarchy (system)"
+                        },
+                        {
+                            "id": 5662,
+                            "name": "sector of revenue hierarchy sort scope",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "sort scope hierarchy (system)"
+                        },
+                        {
+                            "id": 5663,
+                            "name": "sector of revenue value unit",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "unit value (system)"
+                        },
+                        {
+                            "id": 5664,
+                            "name": "sector of revenue value format",
+                            "description": "#,##0",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "format value (system)"
+                        },
+                        {
+                            "id": 5665,
+                            "name": "sector of revenue value missing",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "missing value (system)"
+                        },
+                        {
+                            "id": 5666,
+                            "name": "sector of revenue value delta",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "delta value (system)"
+                        },
+                        {
+                            "id": 5667,
+                            "name": "sector of revenue value source",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "show source value (system)"
+                        },
+                        {
+                            "id": 5668,
+                            "name": "sector of revenue value align",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "align value (system)"
+                        },
+                        {
+                            "id": 5669,
+                            "name": "sector of revenue value time",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "time value (system)"
+                        },
+                        {
+                            "id": 5670,
+                            "name": "sector of revenue value source mode",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "source mode value (system)"
+                        },
+                        {
+                            "id": 5671,
+                            "name": "sector of revenue totals row",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "totals row aggregation (system)"
+                        },
+                        {
+                            "id": 5672,
+                            "name": "sector of revenue aggregation scope",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "scope aggregation (system)"
+                        },
+                        {
+                            "id": 5673,
+                            "name": "sector of revenue title",
+                            "description": "Revenue by sector",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "title layout (system)"
+                        },
+                        {
+                            "id": 5674,
+                            "name": "sector of revenue caption",
+                            "description": "ABB Ltd, third-party revenues in million USD, Robotics as a discontinued operation (ABB Financial Report 2025). Click a business area to open its regions.",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "caption layout (system)"
+                        },
+                        {
+                            "id": 5675,
+                            "name": "sector of revenue density",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "density layout (system)"
+                        },
+                        {
+                            "id": 5676,
+                            "name": "sector of revenue striped",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "striped layout (system)"
+                        },
+                        {
+                            "id": 5677,
+                            "name": "sector of revenue borders",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "borders layout (system)"
+                        },
+                        {
+                            "id": 5678,
+                            "name": "sector of revenue max width",
+                            "description": "100%",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "max width layout (system)"
+                        },
+                        {
+                            "id": 5679,
+                            "name": "sector of revenue responsive mode",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "responsive mode layout (system)"
+                        },
+                        {
+                            "id": 5680,
+                            "name": "sector of revenue sortable",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "sortable interaction (system)"
+                        },
+                        {
+                            "id": 5681,
+                            "name": "sector of revenue searchable",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "searchable interaction (system)"
+                        },
+                        {
+                            "id": 5682,
+                            "name": "sector of revenue drilldown",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "drilldown interaction (system)"
+                        },
+                        {
+                            "id": 5683,
+                            "name": "sector of revenue refresh mode",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "refresh mode interaction (system)"
+                        },
+                        {
+                            "id": 5684,
+                            "name": "sector of revenue language",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "language context (system)"
+                        },
+                        {
+                            "id": 5685,
+                            "name": "sector of revenue time reference",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "time reference context (system)"
+                        },
+                        {
+                            "id": 5686,
+                            "name": "sector of revenue profile",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "profile context (system)"
+                        },
+                        {
+                            "id": 5687,
+                            "name": "sector of revenue export formats",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "formats export (system)"
+                        },
+                        {
+                            "id": 5688,
+                            "name": "sector of revenue export scope",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "scope export (system)"
+                        },
+                        {
+                            "id": 5689,
+                            "name": "sector of revenue export sources",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "include sources export (system)"
+                        },
+                        {
+                            "id": 5690,
+                            "name": "sector of revenue persist user changes",
+                            "from": "sector of revenue",
+                            "verb": "has a",
+                            "to": "persist user changes state (system)"
+                        },
+                        {
+                            "id": 5691,
+                            "name": "ABB Electrification Europe (sector of revenue)",
+                            "from": "ABB Electrification Europe",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5692,
+                            "name": "ABB Electrification Americas (sector of revenue)",
+                            "from": "ABB Electrification Americas",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5693,
+                            "name": "ABB Electrification AMEA (sector of revenue)",
+                            "from": "ABB Electrification AMEA",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5694,
+                            "name": "ABB Motion Europe (sector of revenue)",
+                            "from": "ABB Motion Europe",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5695,
+                            "name": "ABB Motion Americas (sector of revenue)",
+                            "from": "ABB Motion Americas",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5696,
+                            "name": "ABB Motion AMEA (sector of revenue)",
+                            "from": "ABB Motion AMEA",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5697,
+                            "name": "ABB Automation Europe (sector of revenue)",
+                            "from": "ABB Automation Europe",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5698,
+                            "name": "ABB Automation Americas (sector of revenue)",
+                            "from": "ABB Automation Americas",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5699,
+                            "name": "ABB Automation AMEA (sector of revenue)",
+                            "from": "ABB Automation AMEA",
+                            "verb": "is a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5700,
+                            "name": "ABB Electrification Europe is part of ABB Electrification",
+                            "from": "ABB Electrification Europe",
+                            "verb": "is part of",
+                            "to": "ABB Electrification"
+                        },
+                        {
+                            "id": 5701,
+                            "name": "ABB Electrification Americas is part of ABB Electrification",
+                            "from": "ABB Electrification Americas",
+                            "verb": "is part of",
+                            "to": "ABB Electrification"
+                        },
+                        {
+                            "id": 5702,
+                            "name": "ABB Electrification AMEA is part of ABB Electrification",
+                            "from": "ABB Electrification AMEA",
+                            "verb": "is part of",
+                            "to": "ABB Electrification"
+                        },
+                        {
+                            "id": 5703,
+                            "name": "ABB Motion Europe is part of ABB Motion",
+                            "from": "ABB Motion Europe",
+                            "verb": "is part of",
+                            "to": "ABB Motion"
+                        },
+                        {
+                            "id": 5704,
+                            "name": "ABB Motion Americas is part of ABB Motion",
+                            "from": "ABB Motion Americas",
+                            "verb": "is part of",
+                            "to": "ABB Motion"
+                        },
+                        {
+                            "id": 5705,
+                            "name": "ABB Motion AMEA is part of ABB Motion",
+                            "from": "ABB Motion AMEA",
+                            "verb": "is part of",
+                            "to": "ABB Motion"
+                        },
+                        {
+                            "id": 5706,
+                            "name": "ABB Automation Europe is part of ABB Automation",
+                            "from": "ABB Automation Europe",
+                            "verb": "is part of",
+                            "to": "ABB Automation"
+                        },
+                        {
+                            "id": 5707,
+                            "name": "ABB Automation Americas is part of ABB Automation",
+                            "from": "ABB Automation Americas",
+                            "verb": "is part of",
+                            "to": "ABB Automation"
+                        },
+                        {
+                            "id": 5708,
+                            "name": "ABB Automation AMEA is part of ABB Automation",
+                            "from": "ABB Automation AMEA",
+                            "verb": "is part of",
+                            "to": "ABB Automation"
+                        },
+                        {
+                            "id": 5709,
+                            "name": "sector of revenue columns 2024",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "2024"
+                        },
+                        {
+                            "id": 5710,
+                            "name": "sector of revenue columns 2025",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "2025"
+                        },
+                        {
+                            "id": 5711,
+                            "name": "sector of revenue columns growth",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "growth"
+                        },
+                        {
+                            "id": 5712,
+                            "name": "sector of revenue columns share",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "share"
+                        },
+                        {
+                            "id": 5713,
+                            "name": "sector of revenue columns source",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "source"
+                        },
+                        {
+                            "id": 5714,
+                            "name": "sector of revenue columns confidence",
+                            "from": "sector of revenue columns",
+                            "verb": "has a",
+                            "to": "confidence"
+                        },
+                        {
+                            "id": 5715,
+                            "name": "sector of revenue column level mayor",
+                            "from": "sector of revenue column level",
+                            "verb": "has a",
+                            "to": "mayor"
+                        },
+                        {
+                            "id": 5716,
+                            "name": "sector of revenue column order rule listed",
+                            "from": "sector of revenue column order rule",
+                            "verb": "has a",
+                            "to": "listed"
+                        },
+                        {
+                            "id": 5717,
+                            "name": "sector of revenue header label full",
+                            "from": "sector of revenue header label",
+                            "verb": "has a",
+                            "to": "full"
+                        },
+                        {
+                            "id": 5718,
+                            "name": "sector of revenue column pivot year",
+                            "from": "sector of revenue column pivot",
+                            "verb": "has a",
+                            "to": "year"
+                        },
+                        {
+                            "id": 5719,
+                            "name": "sector of revenue row phrase sector of revenue",
+                            "from": "sector of revenue row phrase",
+                            "verb": "has a",
+                            "to": "sector of revenue"
+                        },
+                        {
+                            "id": 5720,
+                            "name": "sector of revenue row direction subject",
+                            "from": "sector of revenue row direction",
+                            "verb": "has a",
+                            "to": "subject"
+                        },
+                        {
+                            "id": 5721,
+                            "name": "sector of revenue row empty show",
+                            "from": "sector of revenue row empty",
+                            "verb": "has a",
+                            "to": "show"
+                        },
+                        {
+                            "id": 5722,
+                            "name": "sector of revenue row label name",
+                            "from": "sector of revenue row label",
+                            "verb": "has a",
+                            "to": "name"
+                        },
+                        {
+                            "id": 5723,
+                            "name": "sector of revenue hierarchy expand expanded",
+                            "from": "sector of revenue hierarchy expand",
+                            "verb": "has a",
+                            "to": "expanded"
+                        },
+                        {
+                            "id": 5724,
+                            "name": "sector of revenue hierarchy indent indent",
+                            "from": "sector of revenue hierarchy indent",
+                            "verb": "has a",
+                            "to": "indent"
+                        },
+                        {
+                            "id": 5725,
+                            "name": "sector of revenue hierarchy parent value own",
+                            "from": "sector of revenue hierarchy parent value",
+                            "verb": "has a",
+                            "to": "own"
+                        },
+                        {
+                            "id": 5726,
+                            "name": "sector of revenue hierarchy orphans bottom",
+                            "from": "sector of revenue hierarchy orphans",
+                            "verb": "has a",
+                            "to": "bottom"
+                        },
+                        {
+                            "id": 5727,
+                            "name": "sector of revenue hierarchy sort scope siblings",
+                            "from": "sector of revenue hierarchy sort scope",
+                            "verb": "has a",
+                            "to": "siblings"
+                        },
+                        {
+                            "id": 5728,
+                            "name": "sector of revenue value unit million",
+                            "from": "sector of revenue value unit",
+                            "verb": "has a",
+                            "to": "million"
+                        },
+                        {
+                            "id": 5729,
+                            "name": "sector of revenue value unit USD",
+                            "from": "sector of revenue value unit",
+                            "verb": "has a",
+                            "to": "USD"
+                        },
+                        {
+                            "id": 5730,
+                            "name": "sector of revenue value missing dash",
+                            "from": "sector of revenue value missing",
+                            "verb": "has a",
+                            "to": "dash"
+                        },
+                        {
+                            "id": 5731,
+                            "name": "sector of revenue value delta none",
+                            "from": "sector of revenue value delta",
+                            "verb": "has a",
+                            "to": "none"
+                        },
+                        {
+                            "id": 5732,
+                            "name": "sector of revenue value source tooltip",
+                            "from": "sector of revenue value source",
+                            "verb": "has a",
+                            "to": "tooltip"
+                        },
+                        {
+                            "id": 5733,
+                            "name": "sector of revenue value align auto",
+                            "from": "sector of revenue value align",
+                            "verb": "has a",
+                            "to": "auto"
+                        },
+                        {
+                            "id": 5734,
+                            "name": "sector of revenue value time latest",
+                            "from": "sector of revenue value time",
+                            "verb": "has a",
+                            "to": "latest"
+                        },
+                        {
+                            "id": 5735,
+                            "name": "sector of revenue value source mode preferred",
+                            "from": "sector of revenue value source mode",
+                            "verb": "has a",
+                            "to": "preferred"
+                        },
+                        {
+                            "id": 5736,
+                            "name": "sector of revenue totals row sum",
+                            "from": "sector of revenue totals row",
+                            "verb": "has a",
+                            "to": "sum"
+                        },
+                        {
+                            "id": 5737,
+                            "name": "sector of revenue aggregation scope all",
+                            "from": "sector of revenue aggregation scope",
+                            "verb": "has a",
+                            "to": "all"
+                        },
+                        {
+                            "id": 5738,
+                            "name": "sector of revenue density normal",
+                            "from": "sector of revenue density",
+                            "verb": "has a",
+                            "to": "normal"
+                        },
+                        {
+                            "id": 5739,
+                            "name": "sector of revenue borders horizontal",
+                            "from": "sector of revenue borders",
+                            "verb": "has a",
+                            "to": "horizontal"
+                        },
+                        {
+                            "id": 5740,
+                            "name": "sector of revenue responsive mode scroll",
+                            "from": "sector of revenue responsive mode",
+                            "verb": "has a",
+                            "to": "scroll"
+                        },
+                        {
+                            "id": 5741,
+                            "name": "sector of revenue drilldown phrase",
+                            "from": "sector of revenue drilldown",
+                            "verb": "has a",
+                            "to": "phrase"
+                        },
+                        {
+                            "id": 5742,
+                            "name": "sector of revenue refresh mode static",
+                            "from": "sector of revenue refresh mode",
+                            "verb": "has a",
+                            "to": "static"
+                        },
+                        {
+                            "id": 5743,
+                            "name": "sector of revenue language English",
+                            "from": "sector of revenue language",
+                            "verb": "has a",
+                            "to": "English"
+                        },
+                        {
+                            "id": 5744,
+                            "name": "sector of revenue time reference 2025",
+                            "from": "sector of revenue time reference",
+                            "verb": "has a",
+                            "to": "2025"
+                        },
+                        {
+                            "id": 5745,
+                            "name": "sector of revenue profile default",
+                            "from": "sector of revenue profile",
+                            "verb": "has a",
+                            "to": "default"
+                        },
+                        {
+                            "id": 5746,
+                            "name": "sector of revenue export formats csv",
+                            "from": "sector of revenue export formats",
+                            "verb": "has a",
+                            "to": "csv"
+                        },
+                        {
+                            "id": 5747,
+                            "name": "sector of revenue export formats json",
+                            "from": "sector of revenue export formats",
+                            "verb": "has a",
+                            "to": "json"
+                        },
+                        {
+                            "id": 5748,
+                            "name": "sector of revenue export scope visible",
+                            "from": "sector of revenue export scope",
+                            "verb": "has a",
+                            "to": "visible"
+                        },
+                        {
+                            "id": 5749,
+                            "name": "sector of revenue columns 2025 is follower of sector of revenue columns 2024",
+                            "from": "sector of revenue columns 2025",
+                            "verb": "is follower of",
+                            "to": "sector of revenue columns 2024"
+                        },
+                        {
+                            "id": 5750,
+                            "name": "sector of revenue columns growth is follower of sector of revenue columns 2025",
+                            "from": "sector of revenue columns growth",
+                            "verb": "is follower of",
+                            "to": "sector of revenue columns 2025"
+                        },
+                        {
+                            "id": 5751,
+                            "name": "sector of revenue columns share is follower of sector of revenue columns growth",
+                            "from": "sector of revenue columns share",
+                            "verb": "is follower of",
+                            "to": "sector of revenue columns growth"
+                        },
+                        {
+                            "id": 5752,
+                            "name": "sector of revenue columns source is follower of sector of revenue columns share",
+                            "from": "sector of revenue columns source",
+                            "verb": "is follower of",
+                            "to": "sector of revenue columns share"
+                        },
+                        {
+                            "id": 5753,
+                            "name": "sector of revenue columns confidence is follower of sector of revenue columns source",
+                            "from": "sector of revenue columns confidence",
+                            "verb": "is follower of",
+                            "to": "sector of revenue columns source"
+                        },
+                        {
+                            "id": 5754,
+                            "name": "sector of revenue columns 2024 mayor",
+                            "from": "sector of revenue columns 2024",
+                            "verb": "has a",
+                            "to": "mayor"
+                        },
+                        {
+                            "id": 5755,
+                            "name": "sector of revenue columns 2025 mayor",
+                            "from": "sector of revenue columns 2025",
+                            "verb": "has a",
+                            "to": "mayor"
+                        },
+                        {
+                            "id": 5756,
+                            "name": "sector of revenue columns growth main",
+                            "from": "sector of revenue columns growth",
+                            "verb": "has a",
+                            "to": "main"
+                        },
+                        {
+                            "id": 5757,
+                            "name": "sector of revenue columns share minor",
+                            "from": "sector of revenue columns share",
+                            "verb": "has a",
+                            "to": "minor"
+                        },
+                        {
+                            "id": 5758,
+                            "name": "sector of revenue columns source marginal",
+                            "from": "sector of revenue columns source",
+                            "verb": "has a",
+                            "to": "marginal"
+                        },
+                        {
+                            "id": 5759,
+                            "name": "sector of revenue columns confidence marginal",
+                            "from": "sector of revenue columns confidence",
+                            "verb": "has a",
+                            "to": "marginal"
+                        },
+                        {
+                            "id": 5760,
+                            "name": "sector of revenue value unit USD is follower of sector of revenue value unit million",
+                            "from": "sector of revenue value unit USD",
+                            "verb": "is follower of",
+                            "to": "sector of revenue value unit million"
+                        },
+                        {
+                            "id": 5761,
+                            "name": "sector of revenue export formats json is follower of sector of revenue export formats csv",
+                            "from": "sector of revenue export formats json",
+                            "verb": "is follower of",
+                            "to": "sector of revenue export formats csv"
+                        }
+                    ],
+                    "formulas": [
+                        {
+                            "id": 6,
+                            "name": "scale year to month",
+                            "description": "to convert times in years to months and the other way round, e.g. a yearly amount to a monthly one",
+                            "type_code_id": "default",
+                            "expression": "\"month\" = \"year\" * 12",
+                            "latex": "\\text{mo} = 12 \\cdot \\text{a}",
+                            "assigned_word": "year",
+                            "impact": null
+                        },
+                        {
+                            "id": 7,
+                            "name": "scale year to second",
+                            "description": "to convert times in years to seconds and the other way round, using the 31557600 seconds of a Julian year of 365.25 days",
+                            "type_code_id": "default",
+                            "expression": "\"second (time)\" = \"year\" * 31557600",
+                            "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
+                            "assigned_word": "year",
+                            "impact": null
+                        },
+                        {
+                            "id": 16,
+                            "protection": "admin_protection",
+                            "name": "scale million to one",
+                            "description": "convert numbers in millions to one and back",
+                            "type_code_id": "default",
+                            "expression": "\"one\" = \"million\" * 1000000",
+                            "latex": "\\text{one} = \\text{m} \\cdot 1000000",
+                            "assigned_word": "million",
+                            "impact": null
+                        },
+                        {
+                            "id": 18,
+                            "protection": "admin_protection",
+                            "name": "this",
+                            "description": "hardcoded formula to select now, today, this year, ...",
+                            "type_code_id": "time_this",
+                            "type": "time_this",
+                            "expression": "=\"Now\"",
+                            "latex": "=\\text{Now}",
+                            "assigned_word": "year",
+                            "impact": null
+                        },
+                        {
+                            "id": 19,
+                            "protection": "admin_protection",
+                            "name": "next",
+                            "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+                            "type_code_id": "time_next",
+                            "type": "time_next",
+                            "expression": "=value[\"time jump\"-\u003E,\"follower\"-\u003E\"Now\"]",
+                            "latex": "=value[\\text{time jump}-\u003E,\\text{follower}-\u003E\\text{Now}]",
+                            "assigned_word": "year",
+                            "impact": null
+                        },
+                        {
+                            "id": 20,
+                            "protection": "admin_protection",
+                            "name": "prior",
+                            "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+                            "type_code_id": "time_prior",
+                            "type": "time_prior",
+                            "expression": "=value[\"time jump\"-\u003E,\"Now\"-\u003E\"follower\"]",
+                            "latex": "=value[\\text{time jump}-\u003E,\\text{Now}-\u003E\\text{follower}]",
+                            "assigned_word": "year",
+                            "impact": null
+                        },
+                        {
+                            "id": 21,
+                            "protection": "admin_protection",
+                            "name": "increase",
+                            "description": "the relative change of a value compared to the previous period as a percent, e.g. the growth of a population from one year to the next",
+                            "type_code_id": "default",
+                            "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+                            "latex": "\\text{percent} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
+                            "assigned": [
+                                "CO2",
+                                "GDP",
+                                "inhabitants",
+                                "population",
+                                "year"
+                            ],
+                            "impact": null
+                        },
+                        {
+                            "id": 117,
+                            "name": "person years per billion USD by the carbon border tariff",
+                            "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
+                            "type_code_id": "default",
+                            "expression": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" / ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) / 2 )",
+                            "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} / ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) / 2 )",
+                            "assigned_word": "USD",
+                            "impact": null
+                        },
+                        {
+                            "id": 284,
+                            "name": "growth to the prior period",
+                            "description": "the relative change of the revenue of a sector against the prior year, the column growth of the table",
+                            "type_code_id": "default",
+                            "expression": "\"growth\",\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+                            "latex": "\\text{growth} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
+                            "assigned_word": "sector of revenue",
+                            "impact": null
+                        },
+                        {
+                            "id": 285,
+                            "name": "share of the total",
+                            "description": "the part of the revenue of a sector in the total revenue of the company in the same year, the column share of the table",
+                            "type_code_id": "default",
+                            "expression": "\"share\",\"percent\" = \"revenue\" / \"total\",\"revenue\"",
+                            "latex": "\\text{share} = \\frac{ \\text{revenue} }{ \\text{total revenue} }",
+                            "assigned_word": "sector of revenue",
+                            "impact": null
+                        }
+                    ],
+                    "sources": [
+                        {
+                            "id": 519,
+                            "name": "ABB Financial Report 2025, note 23",
+                            "description": "ABB Ltd (2026): Financial Report 2025, note 23 Operating segment and geographic data, pages 114 and 115: the third-party revenues of 2025 and 2024 in million USD by business area and geographical market, with 2024 recast to the business areas of 2025",
+                            "url": "https://library.e.abb.com/public/b32991481e8b4418a5c5261c5ff25440/ABB%20Financial%20Report%202025.pdf"
+                        },
+                        {
+                            "id": 520,
+                            "name": "ABB Financial Report 2025, note 3",
+                            "description": "ABB Ltd (2026): Financial Report 2025, note 3 Discontinued operations, page 71: the total revenues of the Robotics division, which is sold to SoftBank Group, 2,331 million USD in 2025 and 2,267 million USD in 2024",
+                            "url": "https://library.e.abb.com/public/b32991481e8b4418a5c5261c5ff25440/ABB%20Financial%20Report%202025.pdf"
+                        }
+                    ],
+                    "values": [
+                        {
+                            "id": 2378536440,
+                            "words": [
+                                "frozen table column (system)",
+                                "sector of revenue"
+                            ],
+                            "number": 1
+                        },
+                        {
+                            "id": 2379191800,
+                            "words": [
+                                "limit row (system)",
+                                "sector of revenue"
+                            ],
+                            "number": 50
+                        },
+                        {
+                            "id": 2379257336,
+                            "words": [
+                                "page size row (system)",
+                                "sector of revenue"
+                            ],
+                            "number": 6
+                        },
+                        {
+                            "id": 2379847160,
+                            "words": [
+                                "max depth hierarchy (system)",
+                                "sector of revenue"
+                            ],
+                            "number": 2
+                        },
+                        {
+                            "id": 2380436984,
+                            "words": [
+                                "scale value (system)",
+                                "sector of revenue"
+                            ],
+                            "number": 1
+                        },
+                        {
+                            "id": 2383713784,
+                            "words": [
+                                "sector of revenue",
+                                "view version state (system)"
+                            ],
+                            "number": 1
+                        },
+                        {
+                            "id": "/Lt-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 15190
+                        },
+                        {
+                            "id": "/Lt-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 17087
+                        },
+                        {
+                            "id": "/Lu-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 7212
+                        },
+                        {
+                            "id": "/Lu-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 7680
+                        },
+                        {
+                            "id": "/Lv-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 7657
+                        },
+                        {
+                            "id": "/Lv-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 8031
+                        },
+                        {
+                            "id": "/Lw-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Corporate and Other"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 524
+                        },
+                        {
+                            "id": "/Lw-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Corporate and Other"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 422
+                        },
+                        {
+                            "id": "/Lx-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Robotics division"
+                            ],
+                            "source": "ABB Financial Report 2025, note 3",
+                            "number": 2267
+                        },
+                        {
+                            "id": "/Lx-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Robotics division"
+                            ],
+                            "source": "ABB Financial Report 2025, note 3",
+                            "number": 2331
+                        },
+                        {
+                            "id": "/Ly-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 4566
+                        },
+                        {
+                            "id": "/Ly-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 5150
+                        },
+                        {
+                            "id": "/Lz-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 6577
+                        },
+                        {
+                            "id": "/Lz-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 7589
+                        },
+                        {
+                            "id": "/M.-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 4047
+                        },
+                        {
+                            "id": "/M.-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Electrification AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 4348
+                        },
+                        {
+                            "id": "/M/-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2241
+                        },
+                        {
+                            "id": "/M/-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2610
+                        },
+                        {
+                            "id": "/M0-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2618
+                        },
+                        {
+                            "id": "/M0-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2663
+                        },
+                        {
+                            "id": "/M1-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2353
+                        },
+                        {
+                            "id": "/M1-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Motion AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2407
+                        },
+                        {
+                            "id": "/M2-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 3110
+                        },
+                        {
+                            "id": "/M2-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation Europe"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 3438
+                        },
+                        {
+                            "id": "/M3-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 1970
+                        },
+                        {
+                            "id": "/M3-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation Americas"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2024
+                        },
+                        {
+                            "id": "/M4-0S+2m+5K+IL+",
+                            "words": [
+                                "2024",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2577
+                        },
+                        {
+                            "id": "/M4-0S+5K+8n+IL+",
+                            "words": [
+                                "2025",
+                                "million",
+                                "revenue",
+                                "USD",
+                                "ABB Automation AMEA"
+                            ],
+                            "source": "ABB Financial Report 2025, note 23",
+                            "number": 2569
+                        }
+                    ],
+                    "results": []
+                }
+            </script>
+            <script type="application/json" id="tableEditorTexts">
+                {
+                    "system_title_table_editor": "Table editor",
+                    "calculator_save": "Save",
+                    "calc_editor_for": "for",
+                    "calc_editor_phrase_placeholder": "word or triple, e.g. example PV installation",
+                    "calc_editor_load": "Load",
+                    "calc_editor_loading": "loading\u2026",
+                    "calc_editor_no_changes": "no changes",
+                    "calc_editor_change": "z$VarValueCount$z change",
+                    "calc_editor_changes": "z$VarValueCount$z changes",
+                    "calc_editor_warning": "z$VarValueCount$z warning",
+                    "calc_editor_warnings": "z$VarValueCount$z warnings",
+                    "calc_editor_undo": "Undo",
+                    "calc_editor_undo_tip": "Undo (Ctrl+Z)",
+                    "calc_editor_redo": "Redo",
+                    "calc_editor_redo_tip": "Redo (Ctrl+Shift+Z)",
+                    "calc_editor_discard_changes": "Discard changes",
+                    "calc_editor_discard_tip": "Throw away all edits since the last save",
+                    "calc_editor_view_page": "View page",
+                    "calc_editor_export": "Export",
+                    "calc_editor_export_tip": "Save the data of the page phrase with the unsaved changes as a json file on this device",
+                    "calc_editor_exported": "Saved as z$VarObjName$z.",
+                    "calc_editor_import": "Import",
+                    "calc_editor_import_tip": "Import a json file into the pod and show the calculator of its page phrase",
+                    "calc_editor_import_blocked": "Save or discard changes before import",
+                    "calc_editor_importing": "Importing z$VarObjName$z into the pod\u2026",
+                    "calc_editor_imported": "Imported z$VarObjName$z.",
+                    "calc_editor_import_failed": "The import of z$VarObjName$z has failed: z$VarValue$z.",
+                    "calc_editor_import_no_json": "z$VarObjName$z is no valid json file.",
+                    "calc_editor_saving": "Saving\u2026",
+                    "calc_editor_save_tip": "Write the changes to the database",
+                    "calc_editor_chip_database": "database",
+                    "calc_editor_page_structure": "Page structure",
+                    "calc_editor_item_count": "z$VarValueCount$z items",
+                    "calc_editor_settings": "Settings",
+                    "calc_editor_tab_page": "Page preview",
+                    "calc_editor_tab_texts": "All texts",
+                    "calc_editor_tab_changes": "Changes",
+                    "calc_editor_tab_json": "Definition (JSON)",
+                    "calc_editor_json_note": "This is the data of the page with the unsaved changes, as the export saves it. To change it as JSON, export it, edit the file and import it.",
+                    "calc_editor_copy": "Copy",
+                    "calc_editor_copied": "Copied.",
+                    "calc_editor_copy_manual": "Select-all is active; copy with Ctrl+C.",
+                    "calc_editor_tab_pdf": "Export as PDF",
+                    "calc_editor_pdf_note": "The PDF shows the page as the calculator shows it, named by the fields of the editor: the page title and the lead text, the arguments, the input fields with their numbers, units, limits and hints, the verdict, the results and the sources with their links, and then as the technical setup every value, result, formula, source, word and triple that defines the page, with the unsaved changes, on A4 portrait pages for reading and printing.",
+                    "calc_editor_pdf_create": "Create PDF",
+                    "calc_editor_pdf_offline": "The PDF is created by the pod, so it can only be created when the editor is opened on a pod.",
+                    "calc_editor_pdf_creating": "The PDF is being created ...",
+                    "calc_editor_pdf_created": "z$VarObjName$z created",
+                    "calc_editor_pdf_failed": "The PDF could not be created: z$VarValue$z",
+                    "calc_editor_list_columns": "Result columns",
+                    "calc_editor_list_rowgroups": "Row groups and rows",
+                    "calc_editor_list_details": "Detail tables",
+                    "calc_editor_list_arguments": "Arguments",
+                    "calc_editor_list_verdict": "Verdict",
+                    "calc_editor_list_sensitivity": "Sensitivity table",
+                    "calc_editor_list_presets": "Presets",
+                    "calc_editor_list_notes": "Notes",
+                    "calc_editor_kind_page": "Page",
+                    "calc_editor_kind_input": "Input field",
+                    "calc_editor_kind_assumption": "Assumption",
+                    "calc_editor_kind_column": "Result column",
+                    "calc_editor_kind_rowgroup": "Row group",
+                    "calc_editor_kind_row": "Result row",
+                    "calc_editor_kind_filter": "Row filter",
+                    "calc_editor_kind_detail": "Detail table",
+                    "calc_editor_kind_dcol": "Detail column",
+                    "calc_editor_kind_dextra": "Extra row",
+                    "calc_editor_kind_dfilter": "Column filter",
+                    "calc_editor_kind_sub": "Sub-item",
+                    "calc_editor_kind_argument": "Argument",
+                    "calc_editor_kind_verdict": "Verdict state",
+                    "calc_editor_kind_saxis": "Table axis",
+                    "calc_editor_kind_slevel": "Axis value",
+                    "calc_editor_kind_preset": "Preset",
+                    "calc_editor_kind_note": "Note",
+                    "calc_editor_add_input": "+ Add input",
+                    "calc_editor_add_assumption": "+ Add assumption",
+                    "calc_editor_add_column": "+ Add column",
+                    "calc_editor_add_rowgroup": "+ Add row group",
+                    "calc_editor_add_row": "+ row",
+                    "calc_editor_add_filter": "+ filter",
+                    "calc_editor_add_detail": "+ Add detail table",
+                    "calc_editor_add_dcol": "+ column",
+                    "calc_editor_add_dextra": "+ extra row",
+                    "calc_editor_add_argument": "+ Add argument",
+                    "calc_editor_argument_reason": "Reason phrase",
+                    "calc_editor_argument_side": "Side",
+                    "calc_editor_argument_pro": "Pro",
+                    "calc_editor_argument_contra": "Contra",
+                    "calc_editor_argument_target": "Claim argued about",
+                    "calc_editor_argument_text": "Text on the page",
+                    "calc_editor_argument_text_note": "The description of the claim triple; {num:\u2026} shows a number, {source:\u2026} the number of a source",
+                    "calc_editor_add_verdict": "+ Add state",
+                    "calc_editor_verdict_box": "Verdict box",
+                    "calc_editor_verdict_box_note": "The label of a state is the headline and its hint the text of the box; the order is yes, no, undecided",
+                    "calc_editor_verdict_scale": "Scale below the meter",
+                    "calc_editor_verdict_scale_note": "The texts at the left end, in the middle and at the right end, separated by |",
+                    "calc_editor_verdict_note": "Note",
+                    "calc_editor_verdict_result": "Compared result",
+                    "calc_editor_verdict_result_note": "The phrase of the number that selects the state, e.g. the average cost difference",
+                    "calc_editor_verdict_threshold": "Threshold",
+                    "calc_editor_verdict_threshold_note": "The phrase of the limit: below minus the limit the first state, above it the second, in between the third",
+                    "calc_editor_verdict_scale_min": "Left end of the meter",
+                    "calc_editor_verdict_scale_max": "Right end of the meter",
+                    "calc_editor_verdict_scale_limit_note": "The number of the compared result at this end; without both ends the box shows no meter",
+                    "calc_editor_add_saxis": "+ Add axis",
+                    "calc_editor_add_slevel": "+ value",
+                    "calc_editor_sensitivity_box": "Sensitivity table",
+                    "calc_editor_sensitivity_box_note": "The first axis gives the rows and the second the columns; each cell calculates the page again with the number of its row and of its column. The title is a list heading of the page settings.",
+                    "calc_editor_sensitivity_hint": "Hint below the table",
+                    "calc_editor_sensitivity_cell_main": "Number in a cell",
+                    "calc_editor_sensitivity_cell_main_note": "The result that each cell shows, e.g. the levelised cost",
+                    "calc_editor_sensitivity_cell_change": "Number in brackets",
+                    "calc_editor_sensitivity_cell_change_note": "The result in brackets with its sign, e.g. the average cost difference; the verdict of the cell colours it",
+                    "calc_editor_sensitivity_number": "Number of this value",
+                    "calc_editor_sensitivity_number_note": "The number that the cells of this row or column calculate with, stored like the value of the field e.g. 0.05 for 5 %",
+                    "calc_editor_add_preset": "+ Add preset",
+                    "calc_editor_preset_values": "Numbers that the preset sets",
+                    "calc_editor_preset_values_note": "The label is the text of the button and the hint its tooltip. An empty field is left as it is; a cleared number is deleted. The numbers are stored like the values of the fields e.g. 0.05 for 5 %.",
+                    "calc_editor_add_note": "+ Add note",
+                    "calc_editor_note_text": "Text on the page",
+                    "calc_editor_note_text_note": "Shown behind the label in bold; the description of the triple of the note",
+                    "calc_editor_list_sources": "Sources",
+                    "calc_editor_kind_source": "Source",
+                    "calc_editor_source_name": "Name",
+                    "calc_editor_source_name_note": "The name in the list of the sources; the texts of this page that name the source by {source:\u2026} follow a new name",
+                    "calc_editor_source_description": "Description",
+                    "calc_editor_source_description_note": "The change is saved for every page that uses the source; a description can be changed, but not cleared",
+                    "calc_editor_source_url": "Link",
+                    "calc_editor_source_doi": "DOI",
+                    "calc_editor_from_item": "this item",
+                    "calc_editor_from_nothing": "nothing",
+                    "calc_editor_from_phrase_name": "the phrase name",
+                    "calc_editor_from_phrase_label": "the label of the phrase \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_from_other_label": "the label of \u201cz$VarPhraseName$z\u201d (the row phrase is built from the group phrase)",
+                    "calc_editor_from_other_name": "the name of \u201cz$VarPhraseName$z\u201d (the row phrase is built from the group phrase)",
+                    "calc_editor_from_phrase_hint": "the hint of the phrase \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_from_phrase": "the phrase \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_from_filter_phrase": "the filter phrase \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_no_phrase_yet": "(no phrase yet)",
+                    "calc_editor_warn_triple_twice": "The triple \u201cz$VarObjName$z\u201d exists z$VarValueCount$z times. Two items with the same phrase in one list need a filter or another phrase.",
+                    "calc_editor_warn_name_twice": "The name \u201cz$VarObjName$z\u201d is used by z$VarValueCount$z triples. Give one of the items another name.",
+                    "calc_editor_warn_no_phrase": "An item of the type \u201cz$VarObjType$z\u201d has no phrase yet and is left out of the file.",
+                    "calc_editor_key_row_tip": "key row, from z$VarSource$z",
+                    "calc_editor_chip_key": "key",
+                    "calc_editor_sign_tip": "the cells show the sign",
+                    "calc_editor_chip_select": "select",
+                    "calc_editor_phrase_selector": "Phrase selector",
+                    "calc_editor_chip_new": "new",
+                    "calc_editor_chip_no_phrase": "no phrase",
+                    "calc_editor_chip_changed": "changed",
+                    "calc_editor_chip_shared": "shared",
+                    "calc_editor_move_up": "Move up",
+                    "calc_editor_move_down": "Move down",
+                    "calc_editor_remove": "Remove",
+                    "calc_editor_page_node": "page title, lead text and headings",
+                    "calc_editor_list_empty": "Nothing in this list yet.",
+                    "calc_editor_page_phrase": "page phrase",
+                    "calc_editor_read_from": "lists and texts read from",
+                    "calc_editor_page_title": "Page title",
+                    "calc_editor_lead_text": "Lead text",
+                    "calc_editor_more_text": "Hideable lead text",
+                    "calc_editor_more_text_note": "Shown collapsed below the title behind \u201c... more\u201d; {num:\u2026} shows a number, {source:\u2026} the number of a source",
+                    "calc_editor_list_headings": "Headings of the lists",
+                    "calc_editor_no_heading": "no heading",
+                    "calc_editor_label_of": "label of",
+                    "calc_editor_page_help": "Select an item in the structure or click a part of the preview to change it. Drag items by the grip to reorder them.",
+                    "calc_editor_phrase": "Phrase",
+                    "calc_editor_phrase_short_placeholder": "word or triple",
+                    "calc_editor_not_in_file": "Not in the file yet: it is added to the words on save.",
+                    "calc_editor_label_own_note": "Shown on this page only. Clear it to use z$VarSource$z.",
+                    "calc_editor_empty_shows": "Empty: shows z$VarSource$z.",
+                    "calc_editor_label_page": "Label on this page",
+                    "calc_editor_hint_page": "Hint on this page",
+                    "calc_editor_already_key_row": "Already a key row by z$VarSource$z.",
+                    "calc_editor_bold_row": "Shows the row in bold (calculator highlight).",
+                    "calc_editor_key_row_page": "Key row on this page",
+                    "calc_editor_show_sign": "Show the sign of the numbers",
+                    "calc_editor_sign_note": "Positive and negative cells get their own colour (calculator signed).",
+                    "calc_editor_triple_name": "Triple name",
+                    "calc_editor_follows_phrase": "follows the phrase",
+                    "calc_editor_triple_name_note": "The label, hint, order and sub-item triples are named after it.",
+                    "calc_editor_remove_item": "Remove this item",
+                    "calc_editor_shown_number": "Shown number",
+                    "calc_editor_value_note": "The value (z$VarValueList$z). A change here changes the stored value.",
+                    "calc_editor_phrase_box": "Phrase \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_phrase_box_note": "These settings belong to the phrase. They change every calculator that shows \u201cz$VarPhraseName$z\u201d.",
+                    "calc_editor_general_label": "General label",
+                    "calc_editor_general_hint": "General hint",
+                    "calc_editor_key_figure": "Key figure on every page",
+                    "calc_editor_side_results": "Side results",
+                    "calc_editor_side_note": "shown in the sub text of the row",
+                    "calc_editor_side_phrase": "side result phrase",
+                    "calc_editor_remove_side": "Remove side result",
+                    "calc_editor_add_side": "+ side result",
+                    "calc_editor_field_type": "Field type",
+                    "calc_editor_type_number": "Number (default)",
+                    "calc_editor_type_limits": "Number with limits",
+                    "calc_editor_minimum": "Minimum",
+                    "calc_editor_maximum": "Maximum",
+                    "calc_editor_step": "Step",
+                    "calc_editor_value_phrases": "Value phrases",
+                    "calc_editor_value_phrases_note": "the stored value must have these phrases too",
+                    "calc_editor_value_phrase": "value phrase",
+                    "calc_editor_remove_value_phrase": "Remove value phrase",
+                    "calc_editor_add_value_phrase": "+ value phrase",
+                    "calc_editor_options": "Options",
+                    "calc_editor_options_note": "\u201cz$VarPhraseName$z\u201d has a \u2026, in this order",
+                    "calc_editor_option_phrase": "option phrase",
+                    "calc_editor_option_label": "option label",
+                    "calc_editor_move_option_up": "Move option up",
+                    "calc_editor_remove_option": "Remove option",
+                    "calc_editor_add_option": "+ option",
+                    "calc_editor_options_isa": "Options by \u201cis a\u201d",
+                    "calc_editor_options_isa_note": "\u2026 is a \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_isa_option_phrase": "is a option phrase",
+                    "calc_editor_add_isa_option": "+ \u201cis a\u201d option",
+                    "calc_editor_value_based": "Take the options from the values",
+                    "calc_editor_value_based_note": "Used when no option is listed: every phrase with a value of \u201cz$VarPhraseName$z\u201d.",
+                    "calc_editor_selected_on": "Selected on \u201cz$VarPhraseName$z\u201d",
+                    "calc_editor_first_option": "\u2014 first option \u2014",
+                    "calc_editor_uses_note": "The page phrase uses this option.",
+                    "calc_editor_no_options": "no options",
+                    "calc_editor_no_value": "no value with \u201cz$VarPhraseName$z\u201d in the file",
+                    "calc_editor_legend_click": "click a part to edit it",
+                    "calc_editor_legend_numbers": "numbers come from the values and the results of the file",
+                    "calc_editor_no_inputs": "No inputs.",
+                    "calc_editor_no_assumptions": "No assumptions listed.",
+                    "calc_editor_other_operands": "+ the other operands of the results, derived from the formulas",
+                    "calc_editor_no_row_groups": "No row groups.",
+                    "calc_editor_no_rows": "No rows: no phrase is a \u201cz$VarPhraseName$z\u201d.",
+                    "calc_editor_rows_note": "The rows of the table are the phrases that is a \u201cz$VarPhraseName$z\u201d; the file has none yet.",
+                    "calc_editor_formulas_note": "derived from the formulas; a formula is changed in the structure below the result row it calculates",
+                    "calc_editor_list_heading": "Heading of z$VarObjName$z",
+                    "calc_editor_kind_hint": "Hint of z$VarObjType$z",
+                    "calc_editor_phrase_label": "phrase label",
+                    "calc_editor_phrase_hint": "phrase hint",
+                    "calc_editor_option_of": "option of z$VarPhraseName$z",
+                    "calc_editor_texts_intro": "Every label and hint of the page in one list, for proofreading.",
+                    "calc_editor_texts_shared": "texts belong to a phrase and change every calculator that shows it.",
+                    "calc_editor_col_triple": "Triple",
+                    "calc_editor_col_text": "Text",
+                    "calc_editor_check_before_saving": "Check before saving",
+                    "calc_editor_no_changes_since": "No changes since the last save.",
+                    "calc_editor_save_sends": "Save sends these changes to the database in one api call.",
+                    "calc_editor_added_triples": "Added triples (z$VarValueCount$z)",
+                    "calc_editor_changed_triples": "Changed triples (z$VarValueCount$z)",
+                    "calc_editor_removed_triples": "Removed triples (z$VarValueCount$z)",
+                    "calc_editor_values": "Values (z$VarValueCount$z)",
+                    "calc_editor_new_words": "New words (z$VarValueCount$z)",
+                    "calc_editor_changed_formulas": "Changed formulas (z$VarValueCount$z)",
+                    "calc_editor_changed_sources": "Changed sources (z$VarValueCount$z)",
+                    "calc_editor_removed": "Removed. Undo brings it back.",
+                    "calc_editor_discarded": "Changes discarded. Undo brings them back.",
+                    "calc_editor_pod_answered": "the pod answered z$VarValue$z for z$VarObjName$z",
+                    "calc_editor_pod_unreachable": "the pod could not be reached (z$VarValue$z)",
+                    "calc_editor_saved_change": "Saved z$VarValueCount$z change.",
+                    "calc_editor_saved_changes": "Saved z$VarValueCount$z changes.",
+                    "calc_editor_save_refused": "Not all changes are saved. The pod refused the save: z$VarValue$z. The changes before the problem may be saved; Load shows the database.",
+                    "calc_editor_no_answer": "no answer",
+                    "calc_editor_own_version": "(your own version)",
+                    "calc_editor_shared_version": "(the shared version)",
+                    "calc_editor_not_confirmed": "not confirmed",
+                    "calc_editor_save_not_confirmed": "The pod has not confirmed the save, so the changes may not be saved. Load shows the database.",
+                    "calc_editor_no_lists": "\u201cz$VarPhraseName$z\u201d has no calculator lists yet. The lists you add here are added to \u201cz$VarObjName$z\u201d.",
+                    "calc_editor_phrase_not_found": "the phrase z$VarObjId$z was not found",
+                    "calc_editor_verb_unknown": "the verb \u201cz$VarObjName$z\u201d is not in the type lists of the page",
+                    "calc_editor_read_failed": "The calculator could not be read from the database: z$VarValue$z.",
+                    "calc_editor_enter_name": "Enter the name of a word or triple first.",
+                    "calc_editor_unsaved_lost": "The z$VarValueCount$z unsaved changes to \u201cz$VarPhraseName$z\u201d will be lost.",
+                    "calc_editor_load_anyway": "Load \u201cz$VarPhraseName$z\u201d anyway",
+                    "calc_editor_cancel": "Cancel",
+                    "calc_editor_loaded": "Loaded \u201cz$VarPhraseName$z\u201d.",
+                    "calc_editor_offline_only": "This page is not connected to a zukunft.com pod, so only \u201cz$VarPhraseName$z\u201d can be loaded.",
+                    "calc_editor_reading": "Reading the calculator of \u201cz$VarPhraseName$z\u201d from the database\u2026",
+                    "calc_editor_not_on_pod": "No word or triple \u201cz$VarPhraseName$z\u201d on this pod. Pick one of the suggestions.",
+                    "calc_editor_reading_id": "Reading the calculator of phrase z$VarObjId$z from the database\u2026",
+                    "calc_editor_unsaved_from": "Unsaved edits from z$VarTime$z.",
+                    "calc_editor_restore": "Restore",
+                    "calc_editor_discard": "Discard",
+                    "calc_editor_restored": "Edits restored.",
+                    "table_editor_show_table": "Show the table",
+                    "table_editor_no_js": "Editor without javascript",
+                    "table_editor_refused": "The changes have not been saved:",
+                    "table_editor_unreachable": "The pod cannot be reached, please try again.",
+                    "table_editor_group_columns": "Columns",
+                    "table_editor_column_level": "Level shown",
+                    "table_editor_column_mayor": "Mayor columns",
+                    "table_editor_column_mayor_hint": "always shown",
+                    "table_editor_column_main": "Main columns",
+                    "table_editor_column_main_hint": "added at level main",
+                    "table_editor_group_column_details": "Column details",
+                    "table_editor_column_minor": "Minor columns",
+                    "table_editor_column_minor_hint": "added at level minor",
+                    "table_editor_column_marginal": "Marginal columns",
+                    "table_editor_column_marginal_hint": "added at level all",
+                    "table_editor_column_order_rule": "Order rule",
+                    "table_editor_column_frozen": "Frozen columns",
+                    "table_editor_header_label": "Header label",
+                    "table_editor_header_show_unit": "Unit in header",
+                    "table_editor_header_rotate": "Rotate headers",
+                    "table_editor_column_pivot_phrase": "Pivot phrase",
+                    "table_editor_column_pivot_phrase_hint": "phrase whose children become columns",
+                    "table_editor_group_rows": "Rows",
+                    "table_editor_row_phrase": "Row phrase",
+                    "table_editor_row_phrase_hint": "phrase whose related phrases become rows",
+                    "table_editor_group_row_details": "Row details",
+                    "table_editor_row_verb": "Row verb",
+                    "table_editor_row_direction": "Direction",
+                    "table_editor_row_filter": "Filter: min value",
+                    "table_editor_row_filter_hint": "on the first value column",
+                    "table_editor_row_order": "Sort order",
+                    "table_editor_row_order_hint": "column and asc or desc e.g. growth desc; empty = listed order",
+                    "table_editor_row_limit": "Row limit",
+                    "table_editor_row_show_all": "Show all (paged)",
+                    "table_editor_row_page_size": "Page size",
+                    "table_editor_row_empty": "Empty rows",
+                    "table_editor_row_label_mode": "Row label",
+                    "table_editor_row_pinned": "Pinned rows",
+                    "table_editor_row_pinned_hint": "ids kept at top",
+                    "table_editor_group_hierarchy": "Hierarchy",
+                    "table_editor_hierarchy_verb": "Sub-row verb",
+                    "table_editor_hierarchy_expand": "Default state",
+                    "table_editor_hierarchy_max_depth": "Max depth",
+                    "table_editor_hierarchy_indent": "Indent style",
+                    "table_editor_hierarchy_parent_value": "Parent value",
+                    "table_editor_hierarchy_orphans": "Orphans",
+                    "table_editor_hierarchy_sort_scope": "Sort scope",
+                    "table_editor_group_values": "Values",
+                    "table_editor_value_format": "Number format",
+                    "table_editor_value_format_hint": "e.g. #,##0.0: the digits after the point, a comma for the thousands separator",
+                    "table_editor_value_scale": "Scale",
+                    "table_editor_value_scale_one": "as stored (million)",
+                    "table_editor_value_scale_billion": "billion",
+                    "table_editor_value_scale_thousand": "thousand",
+                    "table_editor_value_unit": "Unit",
+                    "table_editor_value_missing": "Missing value",
+                    "table_editor_value_delta": "Delta to previous year",
+                    "table_editor_value_show_source": "Show source",
+                    "table_editor_value_show_confidence": "Show confidence",
+                    "table_editor_value_conditional_style": "Highlight \u2265",
+                    "table_editor_value_align": "Alignment",
+                    "table_editor_value_time": "Time reference",
+                    "table_editor_value_source_mode": "Source mode",
+                    "table_editor_group_aggregation": "Aggregation",
+                    "table_editor_totals_row": "Totals row",
+                    "table_editor_totals_column": "Totals column",
+                    "table_editor_subtotals": "Subtotals per parent",
+                    "table_editor_aggregation_scope": "Scope",
+                    "table_editor_group_layout": "Layout",
+                    "table_editor_title": "Title",
+                    "table_editor_caption": "Caption",
+                    "table_editor_density": "Density",
+                    "table_editor_striped": "Striped rows",
+                    "table_editor_borders": "Borders",
+                    "table_editor_max_width": "Max width",
+                    "table_editor_max_width_hint": "e.g. 100% or 720px",
+                    "table_editor_transpose": "Transpose",
+                    "table_editor_responsive_mode": "Small screens",
+                    "table_editor_group_interaction": "Interaction",
+                    "table_editor_sortable": "Sortable headers",
+                    "table_editor_searchable": "Search box",
+                    "table_editor_selectable": "Selectable rows",
+                    "table_editor_drilldown": "Click on row opens",
+                    "table_editor_refresh_mode": "Refresh",
+                    "table_editor_group_context": "Context",
+                    "table_editor_language": "Language",
+                    "table_editor_time_reference": "As of",
+                    "table_editor_profile": "Profile",
+                    "table_editor_view_owner": "View owner",
+                    "table_editor_view_shared": "Shared",
+                    "table_editor_group_export": "Export",
+                    "table_editor_export_formats": "Formats",
+                    "table_editor_export_scope": "Scope",
+                    "table_editor_export_include_sources": "Include sources",
+                    "table_editor_group_state": "State",
+                    "table_editor_persist_user_changes": "Remember changes",
+                    "table_editor_view_version": "Version",
+                    "table_editor_export_tip": "Download the table as shown as csv",
+                    "table_editor_open_groups": "Open all groups",
+                    "table_editor_close_groups": "Close all groups",
+                    "table_editor_rail_note": "Parameter name shown under each label; the JSON uses the same names.",
+                    "table_editor_token_placeholder": "Type to find a phrase to add",
+                    "table_editor_token_find": "find a phrase for z$VarObjName$z",
+                    "table_editor_token_hint": "Drag a chip to reorder, or focus it and use \u2190 \u2192. \u00d7 removes it.",
+                    "table_editor_token_empty": "no columns yet",
+                    "table_editor_token_remove": "remove z$VarObjName$z",
+                    "table_editor_no_match": "No free phrase matches \u201cz$VarObjName$z\u201d",
+                    "table_editor_tab_table": "Table preview",
+                    "table_editor_tab_json": "Definition (JSON)",
+                    "table_editor_texts_intro": "Every text of the table in one list, for proofreading: the text parameters can be changed here, the column and row labels are the names of their phrases.",
+                    "table_editor_col_part": "Part of the table",
+                    "table_editor_texts_column": "Column label",
+                    "table_editor_texts_row": "Row label",
+                    "table_editor_changed_params": "Changed parameters (z$VarValueCount$z)",
+                    "table_editor_removed": "Removed (z$VarValueCount$z)",
+                    "table_editor_json_note": "This is the full view definition. Edit it here and apply, or paste one that you saved earlier. Parameters the preview does not yet use are still kept, so the definition stays complete.",
+                    "table_editor_apply_json": "Apply JSON",
+                    "table_editor_copy": "Copy",
+                    "table_editor_applied": "Applied.",
+                    "table_editor_json_invalid": "Not valid JSON: z$VarValue$z",
+                    "table_editor_copied": "Copied.",
+                    "table_editor_copy_manual": "Select-all is active; copy with Ctrl+C.",
+                    "table_editor_csv_all_rows": "export_scope = all rows: a real export would include every page, this preview shows the current page",
+                    "table_editor_csv_sources": "sources",
+                    "table_editor_no_rows": "No rows match the current parameters.",
+                    "table_editor_sum_tip": "sum of sub-rows",
+                    "table_editor_level": "level",
+                    "table_editor_subtotal": "subtotal z$VarObjName$z",
+                    "table_editor_total": "total",
+                    "table_editor_count": "count",
+                    "table_editor_row": "row",
+                    "table_editor_select_row": "select z$VarObjName$z",
+                    "table_editor_toggle_tip": "open / close sub-rows",
+                    "table_editor_rows_shown": "z$VarValueCount$z of z$VarValue$z rows",
+                    "table_editor_meta_level": "level: z$VarValue$z",
+                    "table_editor_as_of": "as of z$VarTime$z",
+                    "table_editor_selected": "z$VarValueCount$z selected",
+                    "table_editor_search_rows": "Search rows",
+                    "table_editor_expand_all": "Expand all",
+                    "table_editor_collapse_all": "Collapse all",
+                    "table_editor_previous": "\u2039 Previous",
+                    "table_editor_next": "Next \u203a",
+                    "table_editor_page": "Page z$VarValueCount$z of z$VarValue$z",
+                    "table_editor_rows_hidden": "z$VarValueCount$z more rows hidden by row_limit. Turn on row_show_all to page through them.",
+                    "table_editor_number_invalid": "\u201cz$VarObjName$z\u201d is not a number: z$VarValue$z",
+                    "table_editor_measured": "measured"
+                }
+            </script>
+            <script type="application/json" id="tableEditorSettings">
+                {
+                    "verbs": {
+                        "has": "has a",
+                        "follow": "is follower of",
+                        "acronym": "is an acronym for"
+                    },
+                    "column": "table column",
+                    "words": {
+                        "assumed": "assumed",
+                        "confidence": "confidence"
+                    },
+                    "keywords": {
+                        "column_level": "level table column (system)",
+                        "column_order_rule": "order rule table column (system)",
+                        "column_frozen": "frozen table column (system)",
+                        "header_label": "label header (system)",
+                        "header_show_unit": "show unit header (system)",
+                        "header_rotate": "rotate header (system)",
+                        "column_pivot_phrase": "pivot phrase table column (system)",
+                        "row_phrase": "phrase row (system)",
+                        "row_verb": "verb row (system)",
+                        "row_direction": "direction row (system)",
+                        "row_filter": "filter row (system)",
+                        "row_order": "order row (system)",
+                        "row_limit": "limit row (system)",
+                        "row_show_all": "show all row (system)",
+                        "row_page_size": "page size row (system)",
+                        "row_empty": "empty row (system)",
+                        "row_label_mode": "row label mode header (system)",
+                        "row_pinned": "pinned row (system)",
+                        "hierarchy_verb": "verb hierarchy (system)",
+                        "hierarchy_expand": "expand hierarchy (system)",
+                        "hierarchy_max_depth": "max depth hierarchy (system)",
+                        "hierarchy_indent": "indent hierarchy (system)",
+                        "hierarchy_parent_value": "parent value hierarchy (system)",
+                        "hierarchy_orphans": "orphans hierarchy (system)",
+                        "hierarchy_sort_scope": "sort scope hierarchy (system)",
+                        "value_format": "format value (system)",
+                        "value_scale": "scale value (system)",
+                        "value_unit": "unit value (system)",
+                        "value_missing": "missing value (system)",
+                        "value_delta": "delta value (system)",
+                        "value_show_source": "show source value (system)",
+                        "value_show_confidence": "show confidence value (system)",
+                        "value_conditional_style": "conditional style value (system)",
+                        "value_align": "align value (system)",
+                        "value_time": "time value (system)",
+                        "value_source_mode": "source mode value (system)",
+                        "totals_row": "totals row aggregation (system)",
+                        "totals_column": "totals column aggregation (system)",
+                        "subtotals": "subtotals aggregation (system)",
+                        "aggregation_scope": "scope aggregation (system)",
+                        "title": "title layout (system)",
+                        "caption": "caption layout (system)",
+                        "density": "density layout (system)",
+                        "striped": "striped layout (system)",
+                        "borders": "borders layout (system)",
+                        "max_width": "max width layout (system)",
+                        "transpose": "transpose layout (system)",
+                        "responsive_mode": "responsive mode layout (system)",
+                        "sortable": "sortable interaction (system)",
+                        "searchable": "searchable interaction (system)",
+                        "selectable": "selectable interaction (system)",
+                        "drilldown": "drilldown interaction (system)",
+                        "refresh_mode": "refresh mode interaction (system)",
+                        "language": "language context (system)",
+                        "time_reference": "time reference context (system)",
+                        "profile": "profile context (system)",
+                        "view_owner": "view owner context (system)",
+                        "view_shared": "view shared context (system)",
+                        "export_formats": "formats export (system)",
+                        "export_scope": "scope export (system)",
+                        "export_include_sources": "include sources export (system)",
+                        "persist_user_changes": "persist user changes state (system)",
+                        "view_version": "view version state (system)"
+                    },
+                    "urls": {
+                        "put": "http://localhost/api/updatePut/",
+                        "table": "/http/view.php?m=2\u0026id=-5624",
+                        "no_js": "/http/view.php?m=194\u0026id=-5624\u0026sc=0"
+                    }
+                }
+            </script>
+            <script src="http://localhost/src/main/resources/script/table_editor.js">
+            </script>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

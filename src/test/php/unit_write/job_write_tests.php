@@ -64,12 +64,19 @@ class job_write_tests
         $ts = 'db write job ';
         $t->header($ts);
 
-        // make sure that the test value is set independent of any previous database tests
+        // make sure that the test values are set independent of any previous database tests
         $t_db->test_value(array(
             words::CH,
             word_names::INHABITANTS,
             word_names::MIO,
             word_names::YEAR_2020
+        ),
+            values::CH_INHABITANTS_2020_IN_MIO);
+        // the value without the time phrase that the job of this test links (see ex_time below)
+        $t_db->test_value(array(
+            words::CH,
+            word_names::INHABITANTS,
+            word_names::MIO
         ),
             values::CH_INHABITANTS_2020_IN_MIO);
 

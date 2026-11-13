@@ -1,0 +1,24 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "id": 4124,
+                "name": "supply gap supports lifting the NPP ban",
+                "description": "the winter gap is closed by imports {source:BAK economiesuisse study 2026}",
+                "from": "supply gap",
+                "verb": "supports",
+                "to": "lifting the NPP ban"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

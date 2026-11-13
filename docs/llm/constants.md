@@ -218,6 +218,29 @@ on rename/translation. The `code_id` is the stable identity that survives
 migrations, renames, and pod-to-pod import/export, because the import resolver
 matches by code_id alone.
 
+Keep the const name `sources::TRUST_ME_BRO_ID` (the source "my estimates"):
+never rename it, even if a re-pin or a cleanup suggests a more formal name.
+
+A value has either an external source or the user is its source, and then its
+source is "my estimates" (seed `sources.json`, code id
+`sources::TRUST_ME_BRO_CODE`, read by `system_object::no_source_id`). There is no
+other placeholder source: a user value row without external source is stored
+with "my estimates", because the source is part of the key of the user row
+(`value_base::set_user_table_source`); the load shows the source of the user row
+as it is stored; "my estimates" and no source are equal for the undo of a change
+(`sandbox_multi::no_diff`); and the source selector offers "my estimates" like
+any other source.
+
+Because a code id connects program code to a row, saving it is restricted the same
+way for words, triples, formulas, sources, views and components (`sandbox::save_code_id`):
+
+| action | who |
+|---|---|
+| read the code id | everyone; the permission is checked on the write |
+| set a missing code id | `can_set_code_id`: system, test and developer users |
+| replace an existing code id | `can_overwrite_code_id`: system and test users |
+| save without a code id | keeps the code id of the database, for every user |
+
 ## Boolean db fields are nullable smallint — null reads as false
 
 A boolean database field is defined with `sql_field_type::BOOL` (which maps to

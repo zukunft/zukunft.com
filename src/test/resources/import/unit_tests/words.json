@@ -27,17 +27,7 @@
       ]
     },
     {
-      "name": "solution",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q730920",
-          "type": "wikidata"
-        }
-      ]
+      "name": "solution"
     },
     {
       "name": "System Test Word"

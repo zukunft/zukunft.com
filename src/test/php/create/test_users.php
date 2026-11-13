@@ -36,33 +36,43 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_log_sum.php';
+include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_log_sum.php';
 include_once paths::MODEL_USER . 'user_log_sum_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_log_sum as user_log_sum_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateMalformedStringException;
@@ -274,6 +284,21 @@ class test_users
     }
 
     /**
+     * the frontend test user after a confirmed write with a source and a triple with a verb, so the
+     * add forms preselect the source and the verb (see user::save_last_used)
+     *
+     * @return user_ui the frontend test user with the reserved source and the verb "is" as the last used ones
+     */
+    function user_last_used_ui(): user_ui
+    {
+        $usr = $this->user_sys_test();
+        $usr->src = new source($usr);
+        $usr->src->id = sources::SIB_ID;
+        $usr->vrb = new verb(verbs::IS_ID);
+        return new user_ui($usr->api_json());
+    }
+
+    /**
      * a logged-in user with the normal profile as it is loaded from the database, so with the id set
      * unlike user_filled the id is set, because the frontend shows the user-specific parts of a page
      * (e.g. the 'my' tab of a word) only if the session user has an id
@@ -328,6 +353,17 @@ class test_users
             url_var::EMAIL => users::TEST_SIGNUP_EMAIL,
             url_var::USER_PASSWORD => users::TEST_USER_PASSWORD,
             url_var::USER_PASSWORD_RETYPE => users::TEST_USER_PASSWORD,
+        ];
+    }
+
+    /**
+     * @return array the fields that the login form posts for the system test user of the login_start_page workflow
+     */
+    static function login_url_array(): array
+    {
+        return [
+            url_var::USERNAME_HUMAN => users::SYSTEM_TEST_NAME,
+            url_var::USER_PASSWORD_HUMAN => users::TEST_USER_PASSWORD,
         ];
     }
 

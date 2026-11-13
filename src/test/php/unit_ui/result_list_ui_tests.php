@@ -96,6 +96,71 @@ class result_list_ui_tests
         $lst = new result_list();
         $api_json = [[json_fields::NUMBER => results::TV_INT]];
         $t->assert_false($test_name, $lst->api_mapper($api_json)->is_ok());
+        // the answer with each phrase once gives the same results as the answer with the phrases in each result
+        $old_json = json_decode($t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true);
+        $once_json = json_decode($t_res->result_list()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_PHRASES, api_types::PHRASES_ONCE]), true);
+        $old_lst = new result_list();
+        $old_lst->api_mapper($old_json);
+        $once_lst = new result_list();
+        $once_ok = $once_lst->api_mapper($once_json)->is_ok();
+        $old_names = $this->result_names($old_lst);
+        $once_names = $this->result_names($once_lst);
+        $test_name = 'the result answer with each phrase once gives the same results and phrases';
+        $t->assert($test_name, $once_names, $old_names);
+        $test_name = '... without a message';
+        $t->assert_true($test_name, $once_ok);
+        // negative: the answer is smaller, but not empty
+        $test_name = '... and names at least one phrase';
+        $once_phr_count = count($once_json[json_fields::PHRASES] ?? []);
+        $t->assert_greater($test_name, 0, $once_phr_count);
+        // each phrase of the answer is mapped once, so that an answer with many results fits in the memory of the pod;
+        // the loss and the gain of the first ranking row share the phrases of their problem
+        $row_lst = $t_res->result_list_solution_prio_first_row();
+        $test_name = 'the results of the answer with each phrase once share the object of a phrase';
+        $once_shared = $this->shares_phrase_objects(new result_list($row_lst->api_json(
+            [api_types::TEST_MODE, api_types::INCL_PHRASES, api_types::PHRASES_ONCE])));
+        $t->assert_true($test_name, $once_shared);
+        // negative: the answer with the phrases in each result maps them per result
+        $test_name = '... but not the results of the answer with the phrases in each result';
+        $old_shared = $this->shares_phrase_objects(new result_list($row_lst->api_json(
+            [api_types::TEST_MODE, api_types::INCL_PHRASES])));
+        $t->assert_false($test_name, $old_shared);
+    }
+
+    /**
+     * @param result_list $lst the mapped results
+     * @return bool true if two results of the list hold the same object for a phrase that both have
+     */
+    private function shares_phrase_objects(result_list $lst): bool
+    {
+        $result = false;
+        $obj_by_phr_id = [];
+        foreach ($lst->lst() as $res) {
+            foreach ($res->grp->lst() as $phr) {
+                $obj_id = spl_object_id($phr);
+                if (($obj_by_phr_id[$phr->id()] ?? null) === $obj_id) {
+                    $result = true;
+                }
+                $obj_by_phr_id[$phr->id()] = $obj_id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param result_list $lst the mapped results
+     * @return array per result the number and the names of its phrases, to compare two mappings
+     */
+    private function result_names(result_list $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $res) {
+            $names = $res->phr_lst()->names();
+            sort($names);
+            $result[] = $res->number() . ': ' . implode(', ', $names);
+        }
+        return $result;
     }
 
 }

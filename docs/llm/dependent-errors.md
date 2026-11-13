@@ -4,7 +4,54 @@ Detail for the `user_message` rules in `docs/llm/state-and-messages.md`. That
 document says *how* a message travels; this one says *when a step is allowed to
 stop and not report any further*.
 
-## The goal: as many certain errors as possible, and no guesses
+## The base rule: an error stops the following actions
+
+If `$msg` carries an error, no following action is started, because an action
+that runs on top of an error can produce a broken result: a half mapped object,
+a value saved without its phrase, a change log entry of a change nobody made.
+A broken result in the database is worse than a missing one, because the
+user cannot see that it is broken and every later step builds on it.
+
+An action that has already started is completed or not done at all, never
+stopped halfway. A mapping is such an action: if `$msg` already carries an
+error, the mapping does not start, so not even the id of the object is set; a
+mapping that has started maps the complete row, because a half mapped object is
+exactly the broken result this rule prevents. The mapper returns true only if it
+has mapped a row, so a child mapper continues with `if ($result)` after the
+parent mapper, and an entry whose mapping has returned false is neither saved in
+the database nor added to a list of objects that are saved.
+
+The only exceptions are **fully independent entries**, e.g. the rows of an
+imported list, where no entry uses anything of a previous one. There an error of
+one entry cannot break the next, so several independent tries detect several
+errors in one round trip. The number of errors after which the tries stop is
+not fixed in the code: how many errors are useful at once depends on the user,
+so it is a `config.yaml` value with a default that each user can overwrite
+(config values are user sandbox values, see `docs/llm/architecture.md`).
+Everything below applies only within this exception.
+
+Each try of an independent entry gets a **fresh message**, e.g. the mapping of
+each row of a list or the import of each value, so that the error of one entry
+never reaches the next try; the message of each try is merged into the request
+message afterwards (a buffer, see `docs/llm/state-and-messages.md`). A try never
+reads the shared request message, only its own one: the request message carries
+the errors of the earlier entries, so by the base rule the try would not even
+start although its own entry is fine.
+
+A list of independent entries that is only partly added is a **feature, not a
+broken result**: if 90 % of a huge list of values is imported and the rest has
+errors, the imported values stay. The user corrects the errors in the import
+file and imports the complete list again; the values already in the database
+are unchanged and skipped, so the retry is faster than the first try and only
+the corrected entries are written.
+
+A partly added list is only an issue for **depending entries**, i.e. an entry
+that cannot be added because an entry it uses is missing. That is the dependency
+check of the rules below: e.g. a triple whose word has not been imported is not
+added and gets its own message like "cannot be imported because the word x is
+missing", which is fine, because it names the cause the user fixes first.
+
+## The goal: as many certain errors as useful, and no guesses
 
 `$msg` collects errors so the user can fix several of them in one round trip.
 Showing one error per retry is bad — but so is showing errors the user cannot
@@ -19,14 +66,15 @@ So the errors of one request split in two:
   well disappear once that earlier error is fixed. Reporting it sends the user
   after a ghost.
 
-The target is: **report every independent error, suppress the dependent ones.**
+The target is: **report the independent errors up to the configured number, suppress the dependent ones.**
 
 The test question for a step is therefore not "did anything go wrong so far?" but:
 
 > If the user fixes the errors already collected, can the errors of *this* step
 > still be there?
 
-- **Yes, unchanged** → the step's errors are independent. Run it, always.
+- **Yes, unchanged** → the step's errors are independent. Run it, until the
+  configured number of errors is reached.
 - **Maybe not** → the step's errors are dependent. Guard the step with
   `if (<the step it depends on>->is_ok())`.
 
@@ -239,4 +287,6 @@ know whether the object went into the list.
   never as a quietly skipped step.
 - **Independent siblings in a loop.** Rows of a list do not depend on each other:
   a bad row 3 must not stop rows 4..n from being checked. Use a per-row buffer and
-  merge each one, so the user gets every bad row at once.
+  merge each one, so the user gets the bad rows at once, up to the configured
+  number of errors; then the loop stops and says that the rest was not checked
+  (rule 3).

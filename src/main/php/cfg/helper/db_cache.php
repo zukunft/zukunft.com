@@ -159,8 +159,7 @@ class db_cache extends db_object_seq_id_user
     {
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, db_cache_db::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(db_cache_db::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[db_cache_db::FLD_TYPE];
             }

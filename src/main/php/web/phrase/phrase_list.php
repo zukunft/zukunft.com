@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+// only a const of the frontend config is used, so not included, because config extends value_list (like sandbox_list_named)
+//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -93,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -207,7 +210,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::PHRASE] = $phr->id();
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = 1;
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $phr->name());
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -238,7 +241,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::NAME] = $name;
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = $levels;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $name);
     }
 
     /**
@@ -261,7 +264,7 @@ class phrase_list extends sandbox_list_named
         $data = array();
         $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
         $data[url_var::DIRECTION] = $direction->value;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $phr_lst->short_names());
     }
 
     /**
@@ -278,7 +281,7 @@ class phrase_list extends sandbox_list_named
         $data = array();
         $data[url_var::VERB] = $vrb->id();
         $data[url_var::DIRECTION] = $direction->value;
-        return $this->add_by_api($data, $msg);
+        return $this->add_by_api($data, $msg, $vrb->name());
     }
 
     /**
@@ -320,13 +323,14 @@ class phrase_list extends sandbox_list_named
      *
      * @param array $data the url vars of the api request e.g. the verb and the direction
      * @param user_message $msg to report a problem of the api message to the user
+     * @param string $step_name what the phrases are loaded for e.g. the name of the phrase, shown below the loading text of a slow page
      * @return bool true if at least one phrase has been added to this list
      */
-    private function add_by_api(array $data, user_message $msg): bool
+    private function add_by_api(array $data, user_message $msg, string $step_name = ''): bool
     {
         $count = $this->count();
         $api = new rest_call();
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $step_name);
         $msg->merge($this->api_mapper($json_body));
         return $this->count() > $count;
     }
@@ -429,8 +433,18 @@ class phrase_list extends sandbox_list_named
      */
     function sort_definitions(user_message $msg): array
     {
+        return $this->sort_definitions_of($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg), $msg);
+    }
+
+    /**
+     * @param phrase[] $orders the order triples "<condition> of <column>" e.g. of one table
+     * @param user_message $msg to report a condition word without the code id of a condition
+     * @return array per order the condition (table_orders) and the name of the column
+     */
+    function sort_definitions_of(array $orders, user_message $msg): array
+    {
         $result = [];
-        foreach ($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) as $order) {
+        foreach ($orders as $order) {
             // the condition word nested in the order triple carries the condition as its code id
             $cond_wrd = $order->get_from();
             $cond = table_orders::tryFrom($cond_wrd?->obj()?->code_id ?? '');
@@ -521,7 +535,7 @@ class phrase_list extends sandbox_list_named
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
-        $json_body = $api->api_get(self::class, $data, $msg);
+        $json_body = $api->api_get(self::class, $data, $msg, $frm->name());
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -691,6 +705,39 @@ class phrase_list extends sandbox_list_named
             }
         }
         return $result;
+    }
+
+    /**
+     * the triples of this list that link a phrase to the given phrase, because a number of a row
+     * can name the link instead of the linked phrase, e.g. "civic education (populism solution)"
+     * of "populism solution" names the numbers that the solution has only for populism; like
+     * child_names without the verb "of", because "potential loss of reason" is no reason
+     *
+     * @param phrase $phr the phrase whose links should be returned
+     * @return phrase_list the triples whose "to" side is the given phrase
+     */
+    function child_links(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $lst_phr) {
+            $is_link = ($lst_phr->is_triple() and $lst_phr->obj()->get_to()?->name() == $phr->name());
+            $is_child = ($is_link and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME);
+            if ($is_child and !$result->has_id($lst_phr->id())) {
+                $result->add_phrase($lst_phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of a table e.g. "populism solution"
+     * @return array the names that a number of a row of the table names, the linked phrases and
+     *               the linking triples, e.g. "civic education" and "civic education (populism solution)"
+     */
+    function row_names(phrase $phr): array
+    {
+        $link_names = $this->child_links($phr)->names();
+        return array_values(array_unique(array_merge($this->child_names($phr), $link_names)));
     }
 
     /**
@@ -889,7 +936,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase|null $phr the from side of a column definition e.g. "potential gain in EUR"
      * @return array the column phrase e.g. "potential gain" and the unit phrase or null for any unit
      */
-    private function column_and_unit(?phrase $phr): array
+    function column_and_unit(?phrase $phr): array
     {
         $result = [$phr, null];
         if ($phr != null and $phr->is_triple()) {
@@ -2141,6 +2188,24 @@ class phrase_list extends sandbox_list_named
             $this->set_lst($remain_lst->lst());
         }
         return $this;
+    }
+
+    /**
+     * the names of the first phrases as plain text in the order of the list, e.g. for the loading
+     * step of a slow page; the list itself is neither sorted nor changed
+     *
+     * @return string e.g. "world, GDP, EUR, 2023... and 18 more"
+     */
+    function short_names(): string
+    {
+        $names = $this->names();
+        $shown = array_slice($names, 0, config::LIMIT_NAME_LIST);
+        $result = implode(', ', $shown);
+        $rest = count($names) - count($shown);
+        if ($rest > 0) {
+            $result .= $this->more_text($rest);
+        }
+        return $result;
     }
 
     /**

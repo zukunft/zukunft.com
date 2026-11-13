@@ -94,6 +94,24 @@
     },
     {
       "name": "2024"
+    },
+    {
+      "name": "long"
+    },
+    {
+      "name": "run"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "welfare"
+    },
+    {
+      "name": "share"
     }
   ],
   "triples": [
@@ -175,6 +193,37 @@
       "from": "gain",
       "verb": "kind of",
       "to": "potential"
+    },
+    {
+      "name": "percent htp",
+      "from": "percent",
+      "verb": "of",
+      "to": "htp",
+      "type": "percent"
+    },
+    {
+      "name": "long run",
+      "from": "run",
+      "verb": "kind of",
+      "to": "long"
+    },
+    {
+      "name": "long run growth",
+      "from": "growth",
+      "verb": "kind of",
+      "to": "long run"
+    },
+    {
+      "name": "welfare weight",
+      "from": "weight",
+      "verb": "kind of",
+      "to": "welfare"
+    },
+    {
+      "name": "gain share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "gain"
     }
   ],
   "formulas": [
@@ -209,16 +258,16 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"loss\",\"long run growth\",\"percent\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent htp\" = \"potential loss\",\"percent\",\"GDP\" * \"welfare weight\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
-      "assigned_word": "htp"
+      "assigned_word": "welfare weight"
     },
     {
       "name": "initial effort of a solution",
@@ -230,7 +279,7 @@
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"gain share\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     },
@@ -306,9 +355,9 @@
     {
       "words": [
         "disinformation",
+        "loss",
+        "long run growth",
         "percent",
-        "GDP",
-        "factor",
         "assumed"
       ],
       "number": "15.7233",
@@ -317,8 +366,7 @@
     {
       "words": [
         "disinformation",
-        "htp",
-        "GDP",
+        "welfare weight",
         "factor",
         "assumed"
       ],
@@ -349,8 +397,7 @@
       "words": [
         "disinformation",
         "platform regulation",
-        "htp",
-        "billion",
+        "gain share",
         "factor",
         "assumed"
       ],
@@ -402,8 +449,7 @@
     {
       "words": [
         "disinformation",
-        "percent",
-        "htp",
+        "percent htp",
         "probability range factor",
         "variance low (system)"
       ],
@@ -413,8 +459,7 @@
     {
       "words": [
         "disinformation",
-        "percent",
-        "htp",
+        "percent htp",
         "probability range factor",
         "variance high (system)"
       ],
@@ -539,8 +584,9 @@
         "percent",
         "GDP",
         "annual",
-        "factor",
-        "assumed"
+        "assumed",
+        "loss",
+        "long run growth"
       ],
       "formula": "long run damage share of the GDP",
       "words": [
@@ -559,7 +605,7 @@
         "potential loss",
         "percent",
         "GDP",
-        "htp",
+        "welfare weight",
         "factor",
         "assumed"
       ],
@@ -567,8 +613,7 @@
       "words": [
         "disinformation",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed"
       ],
       "number": "-0.08",
@@ -606,7 +651,9 @@
         "billion",
         "loss reduction",
         "factor",
-        "assumed"
+        "assumed",
+        "percent htp",
+        "gain share"
       ],
       "formula": "avoided welfare loss with a gain factor",
       "words": [
@@ -735,8 +782,7 @@
       "context": [
         "disinformation",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "probability range factor",
         "variance low (system)"
@@ -745,8 +791,7 @@
       "words": [
         "disinformation",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "variance low (system)"
       ],
@@ -757,8 +802,7 @@
       "context": [
         "disinformation",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "probability range factor",
         "variance high (system)"
@@ -767,8 +811,7 @@
       "words": [
         "disinformation",
         "potential loss",
-        "percent",
-        "htp",
+        "percent htp",
         "assumed",
         "variance high (system)"
       ],

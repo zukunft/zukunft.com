@@ -92,11 +92,12 @@ class json_validation
 
     // the folders whose json files are not zukunft.com import files, so that the import rules
     // do not apply: the files of the inconsistency tests break a rule on purpose to test the
-    // import error handling and the wikidata cache holds the json as received from wikidata;
+    // import error handling and the wikidata and wikipedia caches hold the json as received from them;
     // the converted json of test_paths::IMPORT_WIKIDATA_TO_IMPORT is checked as any other file
     const array SKIP_PATHS = [
         test_paths::IMPORT_INCONSISTENCY,
         test_paths::IMPORT_WIKIDATA_CACHE,
+        test_paths::IMPORT_WIKIPEDIA_CACHE,
     ];
 
     // the classes that name a json file with a const, checked to tell a file that no const names
@@ -161,6 +162,9 @@ class json_validation
         triples::FIELD_LIMIT_DOWN,
         triples::FIELD_LIMIT_UP,
         triples::FIELD_STEP,
+        // a setting of how a page shows its numbers is no measured value
+        triples::CALCULATOR_DECIMALS,
+        triples::CALCULATOR_RESULT_WIDTH,
     ];
     const string CHK_NUMBER_TYPE = 'value with more than one measure unit, percent or factor phrase';
     // the phrase types that say how a number is stated, so a value has only one phrase of them

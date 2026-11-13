@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" font-family="Helvetica, Arial, sans-serif">
+  <title>zukunft.com server structure</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4b5d83"/>
+    </marker>
+    <marker id="arrowSync" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f7d55"/>
+    </marker>
+    <marker id="arrowFail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c23b30"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #385eb7; stroke-width: 1.5; }
+      .stack { fill: #dbe4f5; stroke: #385eb7; stroke-width: 1; }
+      .master { fill: #fbf0db; stroke: #8a5a07; stroke-width: 1.5; }
+      .name { font-size: 15px; font-weight: 600; fill: #1b2f5c; text-anchor: middle; }
+      .sub { font-size: 12px; fill: #4b5d83; text-anchor: middle; }
+      .lbl { font-size: 12px; fill: #4b5d83; }
+      .lbl-fail { font-size: 12px; fill: #c23b30; }
+      .req { stroke: #4b5d83; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+      .both { stroke: #4b5d83; stroke-width: 1.5; fill: none; marker-start: url(#arrow); marker-end: url(#arrow); }
+      .sync { stroke: #2f7d55; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; marker-start: url(#arrowSync); marker-end: url(#arrowSync); }
+      .fail { stroke: #c23b30; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrowFail); }
+      .layer { font-size: 11px; letter-spacing: .08em; fill: #7b88a3; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="900" fill="#eef2f8"/>
+
+  <!-- layer names -->
+  <text class="layer" x="20" y="47">CLIENT</text>
+  <text class="layer" x="20" y="134">ENTRY</text>
+  <text class="layer" x="20" y="249">PAGE CACHE</text>
+  <text class="layer" x="20" y="395">PAGE CREATION</text>
+  <text class="layer" x="20" y="525">DB ACCESS</text>
+  <text class="layer" x="20" y="685">DATABASE</text>
+
+  <!-- client -->
+  <rect class="box" x="500" y="20" width="200" height="44" rx="8"/>
+  <text class="name" x="600" y="47">browser or api client</text>
+
+  <!-- load balancer -->
+  <rect class="box" x="475" y="104" width="250" height="56" rx="8"/>
+  <text class="name" x="600" y="128">load balancer server</text>
+  <text class="sub" x="600" y="146">only distributes the requests</text>
+  <path class="both" d="M600,64 L600,104"/>
+
+  <!-- static cache servers -->
+  <rect class="box" x="130" y="214" width="250" height="60" rx="8"/>
+  <text class="name" x="255" y="240">static cache server</text>
+  <text class="sub" x="255" y="258">returns a stored page</text>
+  <rect class="box" x="475" y="214" width="250" height="60" rx="8"/>
+  <text class="name" x="600" y="240">static cache server</text>
+  <text class="sub" x="600" y="258">returns a stored page</text>
+  <rect class="box" x="820" y="214" width="250" height="60" rx="8"/>
+  <text class="name" x="945" y="240">static cache server</text>
+  <text class="sub" x="945" y="258">returns a stored page</text>
+  <path class="both" d="M560,160 L270,214"/>
+  <path class="both" d="M600,160 L600,214"/>
+  <path class="both" d="M640,160 L930,214"/>
+  <!-- the new page is shared with the other cache servers -->
+  <path class="sync" d="M382,244 L473,244"/>
+  <path class="sync" d="M727,244 L818,244"/>
+
+  <!-- webservers -->
+  <rect class="stack" x="472" y="372" width="280" height="60" rx="8"/>
+  <rect class="stack" x="466" y="366" width="280" height="60" rx="8"/>
+  <rect class="box" x="460" y="360" width="280" height="60" rx="8"/>
+  <text class="name" x="600" y="386">webservers</text>
+  <text class="sub" x="600" y="404">create the page</text>
+  <path class="both" d="M255,274 L520,360"/>
+  <path class="both" d="M600,274 L600,360"/>
+  <path class="both" d="M945,274 L680,360"/>
+  <text class="lbl" x="770" y="342">no stored page: to the least used webserver</text>
+
+  <!-- db read balancers -->
+  <rect class="stack" x="162" y="502" width="280" height="60" rx="8"/>
+  <rect class="stack" x="156" y="496" width="280" height="60" rx="8"/>
+  <rect class="box" x="150" y="490" width="280" height="60" rx="8"/>
+  <text class="name" x="290" y="516">db read balancers</text>
+  <text class="sub" x="290" y="534">answer from their cache</text>
+  <path class="both" d="M500,426 L330,490"/>
+  <text class="lbl" x="335" y="462">read</text>
+
+  <!-- db write balancers -->
+  <text class="sub" x="920" y="472">both keep a write until every database server has it</text>
+  <rect class="box" x="700" y="490" width="200" height="60" rx="8"/>
+  <text class="name" x="800" y="516">db write balancer A</text>
+  <text class="sub" x="800" y="534">sends the write to all</text>
+  <rect class="box" x="940" y="490" width="200" height="60" rx="8"/>
+  <text class="name" x="1040" y="516">db write balancer B</text>
+  <text class="sub" x="1040" y="534">second copy, takes over</text>
+  <path class="both" d="M700,426 L770,490"/>
+  <text class="lbl" x="660" y="462">write</text>
+
+  <!-- master database server -->
+  <rect class="master" x="760" y="660" width="280" height="60" rx="8"/>
+  <text class="name" x="900" y="686">master database server</text>
+  <text class="sub" x="900" y="704">of the phrase or object</text>
+  <path class="req" d="M760,550 L820,660"/>
+  <text class="lbl" x="700" y="610">1 write</text>
+  <path class="req" d="M880,660 L840,552"/>
+  <path class="req" d="M960,660 L1030,552"/>
+  <text class="lbl" x="975" y="610">2 id or confirmation</text>
+
+  <!-- database servers -->
+  <rect class="stack" x="162" y="672" width="280" height="60" rx="8"/>
+  <rect class="stack" x="156" y="666" width="280" height="60" rx="8"/>
+  <rect class="box" x="150" y="660" width="280" height="60" rx="8"/>
+  <text class="name" x="290" y="686">database servers</text>
+  <text class="sub" x="290" y="704">the same data on every server</text>
+  <path class="both" d="M290,550 L290,660"/>
+  <text class="lbl" x="300" y="600">not cached: to the least</text>
+  <text class="lbl" x="300" y="615">used database server</text>
+  <path class="req" d="M720,550 L436,690"/>
+  <text class="lbl" x="520" y="610">3 the write to all others,</text>
+  <text class="lbl" x="520" y="625">confirmed back to A and B</text>
+
+  <!-- failover -->
+  <path class="fail" d="M1100,550 L1100,790 L300,790 L300,738"/>
+  <text class="lbl-fail" x="700" y="782" text-anchor="middle">4 no answer or timeout of A: B selects another write balancer as new copy, then sends the write to all</text>
+
+  <!-- legend -->
+  <line x1="150" y1="850" x2="190" y2="850" stroke="#4b5d83" stroke-width="1.5"/>
+  <text class="lbl" x="200" y="854">request and answer</text>
+  <line x1="350" y1="850" x2="390" y2="850" stroke="#2f7d55" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text class="lbl" x="400" y="854">a new page sent to all other cache servers</text>
+  <line x1="700" y1="850" x2="740" y2="850" stroke="#c23b30" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text class="lbl" x="750" y="854">failover</text>
+  <rect class="stack" x="860" y="840" width="30" height="20" rx="4"/>
+  <text class="lbl" x="900" y="854">several servers</text>
+</svg>

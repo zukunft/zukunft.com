@@ -6,7 +6,7 @@
   "selection": [
     "black-box AI reasons that cause costs"
   ],
-  "description": "The most relevant reasons why black-box AI, an AI system whose training data, workings and decisions cannot be explained or audited, causes costs, each linked to black-box AI with 'can cause' and quantified by the studies, audits and official statistics that report it for the world and per country: the algorithmic discrimination of a commercial health care algorithm (Obermeyer et al. 2019), of the proprietary COMPAS recidivism score (ProPublica 2016) and of the risk classification model of the Dutch tax authorities (Autoriteit Persoonsgegevens 2021), the hallucination of large language models when they cite scientific references (Chelli et al. 2024) or answer legal queries (Dahl et al. 2024), the missed diagnosis and the alert fatigue of the proprietary Epic Sepsis Model (Wong et al. 2021), the reported AI incidents (Stanford AI Index 2026 based on the AI Incident Database), the mistakes of employees who rely on AI output (University of Melbourne and KPMG 2025) and the compliance and verification cost of the high-risk AI under the EU AI Act (European Commission impact assessment 2021). The annual GDP loss of black-box AI and its solution are stated in problem_black_box_ai.json instead, because they are the row of the global problem ranking of the start page. The Dutch childcare benefits scandal (toeslagenaffaire), in which a self-learning black box risk classification model selected the parents for the fraud investigations according to Amnesty International (2021), is added as the extreme case of wrongful decisions with the number of the recognised victims, their average compensation and the budget of the recovery operation; these values are not attributed to black-box AI by their source, because the harsh fraud policy of the tax authorities is also a cause, so they do not carry a '<reason> due to black-box AI' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of a source would be converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; all amounts used here are already reported in euro. A value of a reason carries the triple '<reason> due to black-box AI' and not the phrase 'black-box AI' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why black-box AI, an AI system whose training data, workings and decisions cannot be explained or audited, causes costs, each linked to black-box AI with 'can cause' and quantified by the studies, audits and official statistics that report it for the world and per country: the algorithmic discrimination of a commercial health care algorithm (Obermeyer et al. 2019), of the proprietary COMPAS recidivism score (ProPublica 2016) and of the risk classification model of the Dutch tax authorities (Autoriteit Persoonsgegevens 2021), the hallucination of large language models when they cite scientific references (Chelli et al. 2024) or answer legal queries (Dahl et al. 2024), the missed diagnosis and the alert fatigue of the proprietary Epic Sepsis Model (Wong et al. 2021), the reported AI incidents (Stanford AI Index 2026 based on the AI Incident Database), the mistakes of employees who rely on AI output (University of Melbourne and KPMG 2025) and the compliance and verification cost of the high-risk AI under the EU AI Act (European Commission impact assessment 2021). The annual GDP loss of black-box AI and its solution are stated in problem_black_box_ai.json instead, because they are the row of the global problem ranking of the start page. The Dutch childcare benefits scandal (toeslagenaffaire), in which a self-learning black box risk classification model selected the parents for the fraud investigations according to Amnesty International (2021), is added as the extreme case of wrongful decisions with the number of the recognised victims, their average compensation and the budget of the recovery operation; these values are not attributed to black-box AI by their source, because the harsh fraud policy of the tax authorities is also a cause, so they do not carry a '<reason> due to black-box AI' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of a source would be converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; all amounts used here are already reported in euro. A value of a reason carries the triple '<reason> due to black-box AI' and not the phrase 'black-box AI' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the black-box AI reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "artificial"
@@ -245,6 +245,33 @@
     {
       "name": "2028",
       "type": "time"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -416,6 +443,132 @@
       "verb": "can cause",
       "to": "compliance cost",
       "description": "the cost of making an opaque high-risk AI system documented, traceable, transparent and supervised by humans as the EU AI Act requires"
+    },
+    {
+      "name": "black-box AI reason",
+      "description": "a reason of the potential loss of black-box AI; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "black-box AI"
+    },
+    {
+      "name": "mistake (black-box AI reason)",
+      "from": "mistake",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "algorithmic discrimination (black-box AI reason)",
+      "from": "algorithmic discrimination",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "hallucination (black-box AI reason)",
+      "from": "hallucination",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "missed diagnosis (black-box AI reason)",
+      "from": "missed diagnosis",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "alert fatigue (black-box AI reason)",
+      "from": "alert fatigue",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "AI incident (black-box AI reason)",
+      "from": "AI incident",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "compliance cost (black-box AI reason)",
+      "from": "compliance cost",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "black-box AI reason columns",
+      "description": "the own columns of the table of the black-box AI reasons",
+      "from": "black-box AI reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "black-box AI reason columns reason",
+      "from": "black-box AI reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "black-box AI reason columns potential loss in EUR",
+      "from": "black-box AI reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "black-box AI reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "black-box AI reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "black-box AI reason sort",
+      "description": "the own default sorting of the table of the black-box AI reasons, the biggest potential loss on top",
+      "from": "black-box AI reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "black-box AI reason sort numeric descending of potential loss in EUR",
+      "from": "black-box AI reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

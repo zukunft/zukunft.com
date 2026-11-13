@@ -62,8 +62,8 @@ include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
-include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -80,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -89,7 +90,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class result_list extends sandbox_list_value
@@ -106,7 +106,9 @@ class result_list extends sandbox_list_value
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new result());
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
+        $this->api_mapper_with_phrases($json_array, json_fields::RESULTS, new result(), $msg);
+        return $msg;
     }
 
 
@@ -148,14 +150,19 @@ class result_list extends sandbox_list_value
      *
      * @param phrase_list $phr_lst the phrases whose results should be loaded
      * @param user_message $msg to report a problem of the api message to the user
+     * @param array $ctx_ids the phrase ids that a loaded result may have at most, e.g. the context of the results of a table; empty for all results
      * @return bool true if at least one result has been loaded
      */
-    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg): bool
+    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg, array $ctx_ids = []): bool
     {
         $data = array();
         // comma separated like every other id list of the api e.g. url_var::ID_LST
         $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
-        return $this->load_by($data, $msg);
+        if ($ctx_ids != []) {
+            $data[api::JSON_LIST_CONTEXT_IDS] = implode(',', $ctx_ids);
+        }
+        $this->load_pages(self::class, $data, $msg, $phr_lst->short_names());
+        return !$this->is_empty();
     }
 
     /**
@@ -425,49 +432,6 @@ class result_list extends sandbox_list_value
         }
 
         return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
-    }
-
-    /**
-     * create the html code to show the formula results to the user
-     * TODO Prio 2 move to result_list_min_display
-     */
-    function display_old(user_message $msg): string
-    {
-        $lib = new library();
-        $html = new html_base();
-
-        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
-        $result = ''; // reset the html code var
-
-        // prepare to show where the user uses different word than a normal viewer
-        //$row_nbr = 0;
-        $result .= $html->dsp_tbl_start_half();
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $res) {
-                //$row_nbr++;
-                $result .= '<tr>';
-                /*if ($row_nbr == 1) {
-                  $result .= '<th>words</th>';
-                  $result .= '<th>value</th>';
-                } */
-                $res->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $res->grp->phr_lst;
-                if (isset($res->time_phr)) {
-                    log_debug("add time " . $res->time_phr->name() . ".");
-                    $phr_lst->add($res->time_phr, $msg);
-                }
-                $api_msg = new user_message(); // not reported: a legacy display function without a message, see display_old
-                $phr_lst_ui = new phrase_list($phr_lst->api_json([], $api_msg));
-                $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_ui->name_link() . '</td>';
-                $result .= '<td>' . $res->display_linked() . '</td>';
-                $result .= '</tr>';
-            }
-        }
-        $result .= $html->dsp_tbl_end();
-
-        log_debug("done");
-        return $result;
     }
 
     /**

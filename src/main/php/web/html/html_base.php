@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'view_menu.php';
+include_once html_paths::HTML . 'markdown.php';
 include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
@@ -153,6 +154,9 @@ class html_base
     const string STYLESHEET = 'stylesheet';
     const string A = 'a';
     const string HREF = 'href';
+    const string IFRAME = 'iframe';
+    const string TARGET = 'target';
+    const string CLASS_FRAME_STEP = 'frame-step';
     const string NAV = 'nav';
     const string IMG = 'img';
     const string SRC = 'src';
@@ -165,6 +169,10 @@ class html_base
     const array MODE_PATH = [...html_base::LAYOUT_PATH, triples::COLOUR_MODE];
     // the config.yaml keys above the colour groups page, editor and chart (see theme_style)
     const array COLOUR_PATH = [...html_base::LAYOUT_PATH, words::COLOURS];
+    // the config.yaml keys of the table designs (see tbl_design)
+    const array TABLE_PATH = [...html_base::LAYOUT_PATH, words::TABLE];
+    // a design setting must name a colour of the page or def::TABLE_DESIGN_NONE, so that it cannot end the style attribute
+    const string TABLE_DESIGN_VALUE_PATTERN = '/^[a-z]+$/';
     const string CLASS_HTML = 'class';
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
@@ -239,6 +247,8 @@ class html_base
 
     // to sort
     const string CLASS_MAIN = 'main-container';
+    // a markdown document of /docs/ (see docs_page)
+    const string CLASS_DOC = 'doc-page';
     const string CLASS_FOOTER = 'site-footer';
     // the start of a page shown while the page is created (see loading_start)
     const string CLASS_LOADING = 'page-loading';
@@ -246,6 +256,8 @@ class html_base
     const string CLASS_LOADING_SECONDS = 'page-loading-seconds';
     const string LOADING_COUNTER = 'page-loading-sec';
     const string LOADING_COUNT_ANIMATION = 'page-loading-count';
+    // the step that a slow page is doing now, below the loading text (see loading_step)
+    const string CLASS_LOADING_STEP = 'page-loading-step';
     // the seconds up to which the loading text counts; not the php max_execution_time, because php
     // counts only its own cpu time, so a request that waits for the database runs much longer
     const int LOADING_COUNT_LIMIT = 3600;
@@ -641,6 +653,8 @@ class html_base
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
      * @param bool $is_admin true to offer the admin dashboard in the user menu
      * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
+     * @param string $edit_lock_tip if not empty the edit icon is grey, opens no menu and shows this tooltip
+     *                              e.g. for the documents of /docs/, which only an admin can change
      */
     function navbar(
         int       $msk_id = 0,
@@ -648,7 +662,8 @@ class html_base
         ?string   $usr_name = null,
         ?string   $usr_role = null,
         bool      $is_admin = false,
-        view_menu $mnu = new view_menu()
+        view_menu $mnu = new view_menu(),
+        string    $edit_lock_tip = ''
     ): string
     {
         global $ui_sys;
@@ -672,10 +687,17 @@ class html_base
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="col-md-2">' . "\n";
         $result .= '<' . self::UL . ' ' . self::CLASS_HTML . '="nav navbar-nav">' . "\n";
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
-        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
-        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
-        $result .= '</' . self::DETAILS . '>' . "\n";
+        if ($edit_lock_tip != '') {
+            // the same place as the edit menu, but without a menu that could be opened
+            $result .= '<' . html_names::SPAN . ' ' . self::CLASS_HTML . '="view-menu">'
+                . $this->icon_with_title(icons::EDIT, styles::STYLE_GREY, $edit_lock_tip)
+                . '</' . html_names::SPAN . '>' . "\n";
+        } else {
+            $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
+            $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
+            $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
+            $result .= '</' . self::DETAILS . '>' . "\n";
+        }
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= $lan_txt . "\n";
@@ -743,6 +765,11 @@ class html_base
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
         $add_tip = $this->tip_with_names(msg_id::NAVBAR_ADD_VIEW_TIP, msg_id::NAVBAR_ADD_VIEW_FOR_TIP, $mnu->obj_name);
         $result .= $this->list_item($this->ref($url_msk_add, msg_id::NAVBAR_ADD_VIEW->text(), $add_tip)) . "\n";
+        // the im- and export of the page e.g. the csv download of its table below its own sub header
+        if ($mnu->export_items != '') {
+            $result .= $this->list_item(msg_id::NAVBAR_IM_EXPORT->text(), styles::MENU_HEADER) . "\n";
+            $result .= $mnu->export_items . "\n";
+        }
         // the server admin page checks the access itself, the link is just not offered to the others
         if ($is_admin) {
             $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, msg_id::NAVBAR_SERVER_ADMIN->text())) . "\n";
@@ -946,7 +973,7 @@ class html_base
      * @param float $delay the seconds after which the loading text is shown
      * @param int $since the seconds since the request start shown when the text appears; counted up each second
      * @param user_message|Message $msg to report a configured font or colour that css could misread
-     * @return string the html code from the doctype to the loading text and the footer
+     * @return string the html code from the doctype to the loading text, below which the steps follow
      */
     function loading_start(float $delay, int $since, user_message|Message $msg): string
     {
@@ -961,13 +988,17 @@ class html_base
             $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
             $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
         }
+        // only the last step sent by loading_step is shown
+        $step = '.' . self::CLASS_LOADING_STEP;
+        $css .= ' ' . $step . ':has(~ ' . $step . ') {display: none;}';
         // with the font and the colours like every page
         $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
-        $txt = $this->nav($this->logo(), self::CLASS_NAV);
-        $txt .= $this->main($this->p($loading));
-        $txt .= $this->site_footer();
-        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
-        return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_LOADING . '">';
+        $result .= $this->nav($this->logo(), self::CLASS_NAV);
+        // the main element stays open for the steps; loading_end closes it with the footer
+        $result .= '<' . self::MAIN . ' ' . self::CLASS_HTML . '="' . self::CLASS_MAIN . '">';
+        return $result . $this->p($loading);
     }
 
     /**
@@ -992,11 +1023,77 @@ class html_base
     }
 
     /**
-     * @return string the html code that hides the start of the page sent by loading_start
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html start of the small frame next to a button, in which only the last step of a long running job is shown
+     */
+    function frame_start(user_message|Message $msg): string
+    {
+        // not by the last child, because a user message can follow the last step
+        $css = '.' . self::CLASS_FRAME_STEP . ':has(~ .' . self::CLASS_FRAME_STEP . ') {display: none;}';
+        $css .= ' ' . self::BODY . ' {min-height: 0;}';
+        $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
+        return $this->doctype() . '<' . self::HTML . '>' . $this->head($head) . '<' . self::BODY . '>';
+    }
+
+    /**
+     * @param string $text the step that a long running job is doing now
+     * @return string the html code of the step, which hides the step before
+     */
+    function frame_step(string $text): string
+    {
+        return $this->div($this->esc($text), self::CLASS_FRAME_STEP);
+    }
+
+    /**
+     * @param string $name the name of the frame, which a link selects as its target, and its style
+     * @param string $title the text that a screen reader tells for the frame
+     * @return string the html code of the frame
+     */
+    function frame(string $name, string $title): string
+    {
+        return '<' . self::IFRAME . ' ' . self::NAME . '="' . $name . '" ' . self::CLASS_HTML . '="' . $name . '" '
+            . self::TITLE_HTML . '="' . $this->esc($title) . '"></' . self::IFRAME . '>';
+    }
+
+    /**
+     * @param string $url the url that the frame loads
+     * @param string $name the text of the link
+     * @param string $frame the name of the frame, so that the page with the link stays
+     * @param string $css_class the style of the link
+     * @return string the html code of the link
+     */
+    function ref_to_frame(string $url, string $name, string $frame, string $css_class): string
+    {
+        return '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '" ' . self::TARGET . '="' . $frame . '" '
+            . self::CLASS_HTML . '="' . $css_class . '">' . $this->esc($name) . '</' . self::A . '>';
+    }
+
+    /**
+     * @param string $url the url that the browser loads next, which starts a download without a script if it is a file
+     * @return string the html code that loads the url at once
+     */
+    function refresh(string $url): string
+    {
+        return '<' . self::META . ' http-equiv="refresh" content="0; url=' . htmlspecialchars($url, ENT_QUOTES) . '">';
+    }
+
+    /**
+     * @param string $text the step that the slow page is doing now
+     * @return string the html code of the step below the loading text, which hides the step before
+     */
+    function loading_step(string $text): string
+    {
+        return $this->block(self::P, $this->esc($text), self::CLASS_LOADING_STEP);
+    }
+
+    /**
+     * @return string the html code that closes the start of the page sent by loading_start
+     *                with the footer below the steps and hides it
      */
     function loading_end(): string
     {
-        return $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
+        $result = '</' . self::MAIN . '>' . $this->site_footer() . '</' . self::DIV . '>';
+        return $result . $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
     }
 
     /**
@@ -1011,7 +1108,7 @@ class html_base
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
-            $url = $this->url_old(rest_ctrl::URL_ABOUT);
+            $url = rest_ctrl::PATH_FIXED . rest_ctrl::URL_ABOUT . rest_ctrl::EXT;
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
@@ -1296,57 +1393,6 @@ class html_base
      * wrapper for internal references used in the html code
      */
 
-    /**
-     * build a url for link a zukunft.com element
-     * TODO Prio 0 deprecate and use url_new for all url creations if possible
-     *
-     * @param string $obj_name the object that is requested e.g. a view
-     * @param int|string $id the id of the parameter e.g. 1 for math const
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
-     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
-     * @return string the created url
-     */
-    function url_old(
-        string       $obj_name,
-        int|string   $id = 0,
-        array        $url_arr = [],
-        string|array $par = '',
-        string       $id_ext = ''
-    ): string
-    {
-        $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
-        if ($id <> 0) {
-            if ($par != '') {
-                $result .= '?' . $par . '=' . $id;
-            } else {
-                $result .= '?id=' . $id;
-            }
-            if ($id_ext != '') {
-                $result .= '&' . $id_ext;
-            }
-        }
-        return $this->url_with_back($result, $url_arr);
-    }
-
-    /**
-     * TODO Prio 1 deprecate and replace if the the url_arr based back var
-     * build a zukunft.com internal url based on the html one-page setup
-     * o for the main object that should be shown to the user
-     * v for view which contains the main object type
-     * i for the database id of the main object
-     * r for the related phrase (the phrases used for all components)
-     * c for the related terms (the term used for all components)
-     * other related phrases or term are set in the components
-     *
-     * @param int|string $view the code_id or the database id of the view
-     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
-     * @param string $obj_name the object that should be shown e.g. a value
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
-     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
-     * @return string the created url
-     */
     /**
      * remove the trailing slash of a base url, because the script path already starts with one
      * @param string $base_url the absolut html path for urls or an empty string for a relative url
@@ -1828,12 +1874,18 @@ class html_base
      *                         '9script' (BACK . 'script'): the calling script for non-default pages e.g. /http/about.php
      *                          other BACK-prefixed params: the original query params with prefix stripped on return
      * @param string $script script to be called which should be api::MAIN_SCRIPT
-     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123'
+     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123' or '/' for the static start page
      */
     static function url_from_back(array $url_array, string $script = api::MAIN_SCRIPT): string
     {
         $back_array = html_base::url_par_from_back_part($url_array);
-        return empty($back_array) ? '' : $script . '?' . http_build_query($back_array);
+        $result = '';
+        if (array_key_exists(url_var::START_PAGE, $back_array)) {
+            $result = api::START_PAGE;
+        } elseif (!empty($back_array)) {
+            $result = $script . '?' . http_build_query($back_array);
+        }
+        return $result;
     }
 
     /**
@@ -2108,6 +2160,83 @@ class html_base
             $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="change_hist"';
         }
         return $result;
+    }
+
+    /**
+     * a value table in the design that the url names, else the default design of config.yaml
+     *
+     * @param string $tbl_rows the html code of the rows
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param user_message $msg to report a design or a setting that is not known
+     * @return string the html code of the table
+     */
+    function tbl_design(string $tbl_rows, array $url_array, user_message $msg): string
+    {
+        $name = $this->table_design_name($url_array, $msg);
+        [$colour, $border, $background] = def::TABLE_DESIGNS[$name];
+        $colour = $this->table_design_value($name, words::COLOUR, $colour, $msg);
+        $border = $this->table_design_value($name, words::BORDER, $border, $msg);
+        $background = $this->table_design_value($name, words::BACKGROUND, $background, $msg);
+        $classes = ['table', $border == def::TABLE_DESIGN_NONE ? 'table-borderless' : 'table-bordered'];
+        $vars = '';
+        if ($colour != def::TABLE_DESIGN_NONE) {
+            $vars .= '--bs-table-color: var(--page-' . $colour . '); ';
+        }
+        if ($border != def::TABLE_DESIGN_NONE) {
+            $vars .= '--bs-table-border-color: var(--page-' . $border . '); ';
+        }
+        if ($background != def::TABLE_DESIGN_NONE) {
+            $classes[] = 'table-striped';
+            $vars .= '--bs-table-striped-bg: var(--page-' . $background . '); ';
+            // bootstrap gives a striped row an own text colour
+            if ($colour != def::TABLE_DESIGN_NONE) {
+                $vars .= '--bs-table-striped-color: var(--page-' . $colour . '); ';
+            }
+        }
+        return '<' . self::TABLE . ' ' . self::CLASS_HTML . '="' . implode(' ', $classes) . '" '
+            . self::STYLE . '="' . trim($vars) . '">' . $tbl_rows . $this->tbl_end();
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param user_message $msg to report a name that is no design
+     * @return string the name of a design of def::TABLE_DESIGNS
+     */
+    private function table_design_name(array $url_array, user_message $msg): string
+    {
+        $wanted = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? $this->table_design_configured();
+        // user input, which may also be an array e.g. from dld[]=plain
+        $name = is_scalar($wanted) ? (string)$wanted : '';
+        if (array_key_exists($name, def::TABLE_DESIGNS)) {
+            $result = $name;
+        } else {
+            $msg->add_warning_with_vars(msg_id::TABLE_DESIGN_UNKNOWN, [msg_id::VAR_VALUE => $name]);
+            $result = def::TABLE_DESIGN_DEFAULT;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the default table design of config.yaml, which is not yet checked
+     */
+    function table_design_configured(): string
+    {
+        global $ui_sys;
+
+        return $ui_sys?->cfg?->text_by([...html_base::TABLE_PATH, words::DESIGN]) ?? def::TABLE_DESIGN_DEFAULT;
+    }
+
+    /**
+     * @param string $design the name of the design
+     * @param string $key the config.yaml key of the setting e.g. words::BORDER
+     * @param string $fallback the setting of def::TABLE_DESIGNS
+     * @param user_message|Message $msg to report a setting that is no colour name
+     * @return string the name of a colour of the page or def::TABLE_DESIGN_NONE
+     */
+    private function table_design_value(string $design, string $key, string $fallback, user_message|Message $msg): string
+    {
+        $names = [...html_base::TABLE_PATH, words::DESIGNS, $design, $key];
+        return $this->theme_value($names, $fallback, self::TABLE_DESIGN_VALUE_PATTERN, msg_id::CONFIG_COLOUR_INVALID, $msg);
     }
 
     function tbl_start_pur(): string
@@ -2402,14 +2531,65 @@ class html_base
         $result .= 'Switzerland<' . self::BR . '><' . self::BR . '>';
         $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_MAIN_IDEA) . ' ';
-        $result .= $this->ref(def::LINK_PAPER_DELPHI, $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
+        $result .= $this->ref(def::LINK_PAPER_DELPHI, $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '.<' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_ONCE_IMPLEMENTED) . ' ';
         $result .= $this->ref(def::LINK_PAPER_IMPERATIVE, $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
+        // the entry documents of /docs/ shown by http/docs.php
+        $md = new markdown();
+        $result .= $mtr->txt(msg_id::ABOUT_DOCS) . ' ';
+        $doc_links = [];
+        foreach (markdown::ABOUT_DOCS as $doc => $txt_id) {
+            $doc_links[] = $this->ref($md->doc_url($doc), $mtr->txt($txt_id), '', '', false, false);
+        }
+        $result .= implode(' &middot; ', $doc_links);
+        $result .= '<' . self::BR . '><' . self::BR . '>';
+        // the bank account for a donation to the project
+        $result .= $mtr->txt(msg_id::ABOUT_DONATION) . ' ' . def::DONATION_RECEIVER . ', IBAN ' . def::DONATION_IBAN;
+        $result .= '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
+        return $result;
+    }
+
+    /**
+     * a markdown document of /docs/ as a html page with the css of zukunft.com
+     *
+     * @param string $doc the name of the document without the extension e.g. "faq"
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @param string|null $usr_name the name of the logged-in user for the user menu; null if not logged in
+     * @param string|null $usr_role the profile name shown next to the user name; null for a regular user
+     * @param bool $is_admin true if the user is an admin, who gets the edit menu; for the others the edit icon is grey
+     * @return string the html page of the document or a page that says that the document does not exist
+     */
+    function docs_page(
+        string               $doc,
+        user_message|Message $msg,
+        ?string              $usr_name = null,
+        ?string              $usr_role = null,
+        bool                 $is_admin = false
+    ): string
+    {
+        global $mtr;
+        $md = new markdown();
+        $path = $md->doc_path($doc);
+        $text = $path == '' ? false : file_get_contents($path);
+        if ($text === false) {
+            $title = $mtr->txt(msg_id::DOC_NOT_FOUND);
+            $body = $this->p($title);
+        } else {
+            $title = $md->title($text);
+            $body = $md->to_html($text);
+        }
+        $result = $this->header($title, $msg);
+        // the standard navbar; the documents of /docs/ are changed only by an admin
+        $lock_tip = $is_admin ? '' : $mtr->txt(msg_id::DOC_CHANGE_ADMIN_ONLY);
+        $result .= $this->navbar(0, [], $usr_name, $usr_role, $is_admin, new view_menu(), $lock_tip);
+        $result .= $this->main('<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_DOC . '">'
+            . $body . '</' . self::DIV . '>');
+        $result .= $this->footer();
         return $result;
     }
 
@@ -2437,59 +2617,6 @@ class html_base
     private function line_small($line_text): string
     {
         return '<' . self::SMALL . '>' . $line_text . '</' . self::SMALL . '><' . self::BR . '>';
-    }
-
-    /**
-     * converts object class name to an edit php script name
-     *
-     */
-    function edit_url(string $class): string
-    {
-        return $class . rest_ctrl::UPDATE . rest_ctrl::EXT;
-    }
-
-    /**
-     * display a list that can be sorted using the fixed field "order_nbr"
-     * $sql_result - list of the query results
-     *
-     * @param array $item_lst a list of objects that have at least an id and a name
-     */
-    function list_sort(
-        array  $item_lst,
-        string $class,
-        string $script_parameter,
-        array  $url_arr = []): string
-    {
-        global $mtr;
-        $btn = new button();
-        $result = '';
-
-        $row_nbr = 0;
-        $num_rows = count($item_lst);
-        foreach ($item_lst as $key => $item) {
-            // list of all possible view entries
-            $row_nbr = $row_nbr + 1;
-            $edit_script = $this->edit_url($class);
-            $url = $this->url_old($edit_script, $key, $url_arr);
-            $result .= $this->ref($url, $item);
-            if ($row_nbr > 1) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_up=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::UP));
-            }
-            if ($row_nbr > 1 and $row_nbr < $num_rows) {
-                $result .= '/';
-            }
-            if ($row_nbr < $num_rows) {
-                $url = $this->url_old($edit_script, $key, $url_arr, '&move_down=' . $key);
-                $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
-            }
-            $result .= ' ';
-            // TODO Prio 1 review
-            //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
-            $result .= '<' . self::BR . '>';
-        }
-
-        return $result;
     }
 
     /**
@@ -3054,17 +3181,18 @@ class html_base
     }
 
     /**
-     * a checkbox that sends the number 1 if it is checked; the id equals the name, so a label can point to it
+     * a checkbox that sends its value if it is checked; the id equals the name, so a label can point to it
      *
      * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
      * @param bool $checked true to show the checkbox checked
      * @param string $form_name the form that the input joins by its form attribute
+     * @param string $value the value that is sent if the checkbox is checked e.g. url_var::CRUD_DELETE for a delete box
      * @return string the html code of the checkbox
      */
-    function input_checkbox(string $name, bool $checked, string $form_name): string
+    function input_checkbox(string $name, bool $checked, string $form_name, string $value = '1'): string
     {
         $attr = ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
-        $form = ' ' . html_names::VALUE . '="1" ' . self::FORM . '="' . $this->esc($form_name) . '"';
+        $form = ' ' . html_names::VALUE . '="' . $this->esc($value) . '" ' . self::FORM . '="' . $this->esc($form_name) . '"';
         $state = $checked ? ' checked' : '';
         return '<' . self::INPUT . $attr . $form . $state . '>';
     }
@@ -3207,6 +3335,7 @@ class html_base
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field
      */
     function input(
@@ -3216,13 +3345,14 @@ class html_base
         string      $type = '',
         string      $class_add = '',
         string      $placeholder = '',
-        string      $form_name = ''): string
+        string      $form_name = '',
+        string      $id_ext = ''): string
     {
         $name = '';
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $id = $this->form_field_id($url_id, $msg_id);
+        $id = $this->form_field_id($url_id, $msg_id) . $id_ext;
         if ($value != '') {
             // escape the value so a name/description with " < > & cannot break out of the
             // attribute; the browser decodes it back so the resubmitted value is unchanged
@@ -3476,6 +3606,7 @@ class html_base
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
+     * @param string $id_ext added to the html id to keep it unique if the same field is shown in several rows e.g. '_1'
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -3485,7 +3616,8 @@ class html_base
         string                $type = html_base::INPUT_TEXT,
         string                $input_class = '',
         string                $style = view_styles::COL_SM_12,
-        string                $form_name = ''
+        string                $form_name = '',
+        string                $id_ext = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -3493,11 +3625,11 @@ class html_base
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
-            $text = $this->label($name, $this->field_id($url_id, $name));
-            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name);
+            $text = $this->label($name, $this->field_id($url_id, $name) . $id_ext);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name, $id_ext);
             return $this->div_form($text, $style);
         } else {
-            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name);
+            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name, $id_ext);
         }
     }
 
@@ -3699,6 +3831,16 @@ class html_base
     function div(string $txt, string $style = '', string $id = ''): string
     {
         return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * @param string $style the html class name of an absolute positioned block e.g. a needle
+     * @param float $percent the position from the left of the parent in percent
+     * @return string the html code of the empty block at the position
+     */
+    function div_at(string $style, float $percent): string
+    {
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $style . '" style="left: ' . $percent . '%"></' . self::DIV . '>';
     }
 
     /**
@@ -3932,9 +4074,17 @@ class html_base
      * @param string $type the button type, '' for a submit button
      * @param string $name the url key that the button posts, '' for none
      * @param string $label the accessible name and mouseover text of a button that shows only an icon, '' for none
+     * @param string $value the value that the button posts with its name e.g. url_var::TRUE for a flag, '' for none
      * @return string the html code of the button
      */
-    function button_bs(string $text, string $style = '', string $type = '', string $name = '', string $label = ''): string
+    function button_bs(
+        string $text,
+        string $style = '',
+        string $type = '',
+        string $name = '',
+        string $label = '',
+        string $value = ''
+    ): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
@@ -3947,6 +4097,9 @@ class html_base
         // a named submit button posts its name as a url key (e.g. POST_SUBMIT) so the entry point can
         // tell a data-changing submit apart from a plain navigation and run url_to_action
         $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
+        if ($value != '') {
+            $name .= ' ' . self::VALUE . '="' . $value . '"';
+        }
         // a screen reader has no text to read on an icon, so the label names the action
         $label_attr = '';
         if ($label != '') {

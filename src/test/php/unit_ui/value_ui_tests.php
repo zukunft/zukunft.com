@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -470,6 +471,9 @@ class value_ui_tests
         $same_url[url_var::SOURCE] = (string)sources::BFS_ID;
         $same_html = $preview->popup_changes($msg_ui, $same_url, $val_chg, true);
         $t->assert_text_not_contains($test_name, $same_html, $mtr->text_db_field(source_fields::FLD_ID));
+        $test_name = 'the confirm page posts the old value again, so that after a failed write it still lists only the changes';
+        $pre_source = $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::BFS_ID);
+        $t->assert_text_contains($test_name, $chg_html, $pre_source);
 
         // the overwrite form writes the changed number of the value without the confirm view
         $t->subheader($ts . 'value overwrite');
@@ -707,6 +711,19 @@ class value_ui_tests
         $src_lst->load_for_selector('', $msg_ui, true);
         $t->assert_true($test_name, $src_lst->is_empty());
 
+        // the source of a value without external source is the user, which the user can also select
+        $test_name = 'the source selector offers "my estimates"';
+        $src_lst = $t_src->source_list_ui();
+        $src_usr = new source_ui();
+        $src_usr->set_id(sources::TRUST_ME_BRO_ID);
+        $src_usr->set_name(sources::TRUST_ME_BRO);
+        $src_usr->code_id = sources::TRUST_ME_BRO_CODE;
+        $src_lst->add($src_usr, $msg_ui);
+        $sel_usr = $src_lst->selector(views::VALUE_EDIT, 0, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        $t->assert_text_contains($test_name, $sel_usr, sources::TRUST_ME_BRO);
+        $test_name = '... next to the external sources';
+        $t->assert_text_contains($test_name, $sel_usr, sources::BFS);
+
         $test_name = 'the source selector links to the add source view';
         $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);
         $test_name = '... with the add icon';
@@ -736,6 +753,24 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $sel_no_src, url_var::MASK . '=' . views::SOURCE_ADD_ID);
         $test_name = '... and sends no source as the pre value';
         $t->assert_text_contains($test_name, $sel_no_src, $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+
+        // a value without a source preselects the last used source of the user (see user::save_last_used)
+        $t_usr = new test_users();
+        $msg_last = new user_message_ui($t_usr->user_last_used_ui());
+        $last_selected = '<option value="' . sources::SIB_ID . '"  selected >';
+        $test_name = 'a new value preselects the last used source of the user';
+        $sel_new = new value()->source_selector(views::VALUE_ADD, $msg_last, '', $t_src->source_list_ui());
+        $t->assert_text_contains($test_name, $sel_new, $last_selected);
+        $test_name = '... and sends no source as the pre value, so the confirm view shows the preselected source';
+        $t->assert_text_contains($test_name, $sel_new, $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+        // negative: a value with its own source keeps it
+        $test_name = 'a value with a source keeps its source instead of the last used one';
+        $sel_own = $val_src->source_selector(views::VALUE_EDIT, $msg_last, '', $t_src->source_list_ui());
+        $t->assert_text_not_contains($test_name, $sel_own, $last_selected);
+        // negative: a user without a last used source gets no source preselected
+        $test_name = 'a user without a last used source gets the please select entry';
+        $sel_none = new value()->source_selector(views::VALUE_ADD, $msg_ui, '', $t_src->source_list_ui());
+        $t->assert_text_not_contains($test_name, $sel_none, $last_selected);
 
         // the reference selector has the same layout as the source selector and offers the references of
         // the frontend cache instead of an always empty list
@@ -909,37 +944,37 @@ class value_ui_tests
         $ui_sys->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $tab_html = $list->view_tab_box($val_tab, $msg_ui, true);
 
-        $test_name = 'the value page shows the views tab';
-        $t->assert_text_contains($test_name, $tab_html, $views_tab_ref);
-        $test_name = '... with the name of a view that can show the value';
-        $t->assert_text_contains($test_name, $tab_html, views::SCIENCE);
+        // the views of the value are offered by the edit menu of the navbar, so the page has no views tab
+        $test_name = 'the value page shows no views tab';
+        $t->assert_text_not_contains($test_name, $tab_html, $views_tab_ref);
+        $test_name = '... but the edit menu offers a view that can show the value';
+        $menu_html = $val_tab->menu_view_items_ui($val_tab->view_lst);
+        $t->assert_text_contains($test_name, $menu_html, views::SCIENCE);
         // the switch button must open the edit view of the shown object, so on a value page the
         // value edit view and never the word edit view (see view::switch_link)
-        $test_name = '... and a switch button that opens the value edit view';
-        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
+        $test_name = '... with a switch button that opens the value edit view';
+        $t->assert_text_contains($test_name, $menu_html, url_var::MASK . '=' . views::VALUE_EDIT_ID);
         // the switch preselects the view as the default view of the value in the edit form, so the
         // switch is a one-click action, and it is an icon with the view and the value in the tooltip
         // the escaped url separator in front keeps 'd=' apart from the 'id=' of the object
         $test_name = '... which preselects the view as the default view of the value';
-        $t->assert_text_contains($test_name, $tab_html, '&amp;' . url_var::VIEW . url_var::EQ);
+        $t->assert_text_contains($test_name, $menu_html, '&amp;' . url_var::VIEW . url_var::EQ);
         $test_name = '... shown as a switch icon';
-        $t->assert_text_contains($test_name, $tab_html, icons::VIEW_SWITCH);
+        $t->assert_text_contains($test_name, $menu_html, icons::VIEW_SWITCH);
         // the tooltips name the value and the view; the link builder escapes the tooltip, so the
         // expected text is escaped the same way (the quotes around the names become entities)
-        $test_name = 'the value of the tab box carries its name for the tooltips';
+        $test_name = 'the value of the edit menu carries its name for the tooltips';
         $t->assert_true($test_name, $val_tab->name() != '');
         $test_name = '... with the value and the view name in the switch tooltip';
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+        $t->assert_text_contains($test_name, $menu_html, htmlspecialchars(
             "adjust '" . $val_tab->name() . "' so that it is always shown with the '" . views::SCIENCE . "' view", ENT_QUOTES));
         // the view name itself links to the value shown with that view
         $test_name = '... and the view name links to the value shown with the view';
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
+        $t->assert_text_contains($test_name, $menu_html, htmlspecialchars(
             "show '" . $val_tab->name() . "' with the '" . views::SCIENCE . "' view", ENT_QUOTES) . '">' . views::SCIENCE . '</a>');
-        // the edit icon opens the view edit form for the view, not for the value
-        $test_name = '... and an edit icon that opens the edit form of the view';
-        $t->assert_text_contains($test_name, $tab_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
-        $t->assert_text_contains($test_name, $tab_html, htmlspecialchars(
-            "change the '" . views::SCIENCE . "' view", ENT_QUOTES));
+        // negative: the view itself is changed by the "change this view" entry of the navbar
+        $test_name = '... but no edit icon that opens the edit form of the view';
+        $t->assert_text_not_contains($test_name, $menu_html, url_var::MASK . '=' . views::VIEW_EDIT_ID);
 
         $test_name = 'the value page shows the changes tab';
         $t->assert_text_contains($test_name, $tab_html, $log_tab_ref);
@@ -964,11 +999,9 @@ class value_ui_tests
             url_var::PRE . url_var::NUMERIC_VALUE . '=' . values::SAMPLE_INT);
         $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
-        // a value loaded without the related data has neither a views nor a my tab
+        // a value loaded without the related data has no my tab
         $val_plain = new value($t_val->value($msg)->api_json());
         $plain_html = $list->view_tab_box($val_plain, $msg_ui, true);
-        $test_name = 'a value without views shows no views tab';
-        $t->assert_text_not_contains($test_name, $plain_html, $views_tab_ref);
         $test_name = 'a value without overwrites shows no my tab';
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
 

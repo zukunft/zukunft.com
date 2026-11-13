@@ -40,7 +40,9 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_CALC . 'arithmetic.php';
@@ -49,7 +51,9 @@ include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
@@ -90,6 +94,19 @@ class formula_calc
     }
 
     /**
+     * compared by the difference like the import validation, because rounding each number would
+     * report e.g. 0.035 and 0.034999999, which round to 0.04 and 0.03
+     *
+     * @param float $stored the number of the stored result
+     * @param float $calculated the number calculated with the values of the page
+     * @return bool true if the numbers differ by the compared decimals or more
+     */
+    static function differs(float $stored, float $calculated): bool
+    {
+        return abs($stored - $calculated) >= pow(10, -self::DECIMALS);
+    }
+
+    /**
      * repeat the calculation of a result with the values and results of the page, e.g. the
      * lifetime production from the annual production and the lifetime of the installation
      *
@@ -101,13 +118,38 @@ class formula_calc
     function result(result $res, value_list $val_lst, formula_list $frm_lst): ?float
     {
         $result = null;
-        $frm_id = $res->frm?->id() ?? 0;
-        if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
-            $frm = $frm_lst->get($frm_id);
-            $exp = new library()->str_right_of($frm->get_usr_text(), chars::CHAR_CALC);
-            $txt = $this->with_numbers($exp, $res, $val_lst);
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
+            $txt = $this->with_numbers($exp, $res, $val_lst, fn($val) => sprintf('%.12F', $val->number()));
             if ($txt !== null) {
                 $result = new arithmetic()->calc($txt);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the result number with the numbers of the page used as they are shown in the table and below
+     * it the formula expression with the term names, e.g. '"0.75" = 2.5 * 30 %' and
+     * '"gain" = "loss" * "rate"' for the tooltip of the result (see result::link_title); a title
+     * attribute shows plain text only, so a latex formula could not be shown formatted
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page, the values first
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param user_message $msg to report a problem while formatting a number
+     * @return string the two lines of the expression or an empty string if the formula or a value is missing
+     */
+    function expression_with_numbers(result $res, value_list $val_lst, formula_list $frm_lst, user_message $msg): string
+    {
+        $result = '';
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
+            $usr_txt = $frm_lst->get($res->frm->id())->get_usr_text();
+            $txt = $this->with_numbers($exp, $res, $val_lst, fn($val) => $val->val_formatted($msg));
+            if ($txt !== null) {
+                $left = chars::TERM_DELIMITER . $res->val_formatted($msg) . chars::TERM_DELIMITER . ' ';
+                $result = $left . chars::CHAR_CALC . $txt . "\n" . $usr_txt;
             }
         }
         return $result;
@@ -146,9 +188,8 @@ class formula_calc
     function tokens(result $res, value_list $val_lst, formula_list $frm_lst): ?array
     {
         $result = null;
-        $frm_id = $res->frm?->id() ?? 0;
-        if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
-            $exp = new library()->str_right_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
             $result = $this->operand_tokens($exp, $res, $val_lst);
         }
         return $result;
@@ -219,20 +260,38 @@ class formula_calc
     }
 
     /**
+     * @param result $res a result of the page with its formula and the phrases of the values used
+     * @param formula_list $frm_lst the formulas of the page
+     * @return string|null the right part of the expression of the formula of the result
+     *                     or null if the result has no context or the page lacks its formula
+     */
+    private function page_expression(result $res, formula_list $frm_lst): ?string
+    {
+        $result = null;
+        $frm_id = $res->frm?->id() ?? 0;
+        if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
+            $usr_txt = $frm_lst->get($frm_id)->get_usr_text();
+            $result = new library()->str_right_of($usr_txt, chars::CHAR_CALC);
+        }
+        return $result;
+    }
+
+    /**
      * replace each phrase name of the expression by the number of the value or result that names
      * the phrases and belongs to the context of the result
      *
      * @param string $exp the right part of the formula expression with the phrase names
      * @param result $res the result with the context phrases of the values used
      * @param value_list $val_lst the values and results of the page
+     * @param callable $number_text the text of the number of a value, precise for the calculation or formatted for the user
      * @return string|null the expression with numbers or null if a value is missing
      */
-    private function with_numbers(string $exp, result $res, value_list $val_lst): ?string
+    private function with_numbers(string $exp, result $res, value_list $val_lst, callable $number_text): ?string
     {
         $ctx = $res->src_grp->phr_lst()->names();
         $missing = !$this->lists_are_plain($exp);
         $txt = preg_replace_callback($this->operand_pattern(),
-            function (array $found) use ($exp, $res, $val_lst, $ctx, &$missing): string {
+            function (array $found) use ($exp, $res, $val_lst, $ctx, $number_text, &$missing): string {
                 $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $found[0][0])));
                 $is_list = $this->is_list_argument($exp, $found[0][1]);
                 $vals = $this->values_of($names, $ctx, $res, $val_lst, $is_list);
@@ -241,7 +300,7 @@ class formula_calc
                     $missing = ($missing or !$this->pri->is_first($names, $ctx));
                     return '0';
                 }
-                $nums = array_map(fn($val) => sprintf('%.12F', $val->number()), $vals);
+                $nums = array_map($number_text, $vals);
                 return implode(chars::FUNC_ARG_SEPARATOR, $nums);
             }, $exp, -1, $count, PREG_OFFSET_CAPTURE);
         return $missing ? null : $txt;
@@ -322,6 +381,64 @@ class formula_calc
     }
 
     /**
+     * the context phrases of each operand of a result that has no number on the page, e.g. world,
+     * GDP, trillion and EUR for the world GDP of the potential loss of a problem, so that the page
+     * can load the missing values
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return phrase_list the phrases of the missing operands; empty if the formula or the context is missing
+     */
+    function missing_operand_phrases(result $res, value_list $val_lst, formula_list $frm_lst): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->missing_operands($res, $val_lst, $frm_lst) as $opr_lst) {
+            foreach ($opr_lst->lst() as $phr) {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the context phrases of each operand of a result that has no number on the page, one list per
+     * operand, so that a page can see which phrases an operand names together, e.g. "potential gain"
+     * and the quality word "calculated", or only the unit "EUR per tonne"
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return phrase_list[] per missing operand its phrases; empty if the formula or the context is missing
+     */
+    function missing_operands(result $res, value_list $val_lst, formula_list $frm_lst): array
+    {
+        $result = [];
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
+            $ctx_lst = $res->src_grp->phr_lst();
+            $ctx = $ctx_lst->names();
+            preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
+            foreach ($found[0] as [$operand, $start]) {
+                $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
+                $vals = $this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start));
+                if ($vals == [] and !$this->pri->is_first($names, $ctx)) {
+                    $opr_lst = new phrase_list();
+                    foreach ($ctx_lst->lst() as $phr) {
+                        if (in_array($phr->name(), $names)) {
+                            $opr_lst->add_phrase($phr);
+                        }
+                    }
+                    if (!$opr_lst->is_empty()) {
+                        $result[] = $opr_lst;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the values and results that the calculation of a result uses, found the same way as the
      * calculation finds them, e.g. for the assumptions of a page
      *
@@ -333,9 +450,8 @@ class formula_calc
     function operands(result $res, value_list $val_lst, formula_list $frm_lst): array
     {
         $result = [];
-        $frm_id = $res->frm?->id() ?? 0;
-        if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
-            $exp = new library()->str_right_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
+        $exp = $this->page_expression($res, $frm_lst);
+        if ($exp !== null) {
             $ctx = $res->src_grp->phr_lst()->names();
             preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
             foreach ($found[0] as [$operand, $start]) {

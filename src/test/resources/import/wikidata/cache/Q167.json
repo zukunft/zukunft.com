@@ -4,8 +4,8 @@
             "pageid": 305,
             "ns": 0,
             "title": "Q167",
-            "lastrevid": 2541730920,
-            "modified": "2026-09-07T14:47:58Z",
+            "lastrevid": 2564315910,
+            "modified": "2026-11-03T12:16:20Z",
             "type": "item",
             "id": "Q167",
             "labels": {
@@ -761,7 +761,7 @@
                 },
                 "fr": {
                     "language": "fr",
-                    "value": "constante mathématique définie comme le rapport entre le périmètre d'un cercle et son diamètre"
+                    "value": "constante mathématique correspondant au rapport de la circonférence d’un cercle à son diamètre"
                 },
                 "de": {
                     "language": "de",

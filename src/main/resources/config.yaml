@@ -283,14 +283,14 @@ zukunft.com:
               phrase name: "example PV installation"
               name: "PV and climate"
               tooltip: "calculate the effects of a local photovoltaic installation on the climate gas emissions"
-            panels:
-              url: "/http/view.php?m=4&id=1954"
-              view name: ""
-              phrase name: ""
-              name: "PV payoff"
-              tooltip: "step by step process to calculate the installation of photovoltaic panels including the prices and payoff"
+            nnp:
+              url: ""
+              view name: "Calculator"
+              phrase name: "new NPP vote 2027"
+              name: "new CH npp"
+              tooltip: "calculate if Switzerland should allow to build new nuclear power plant or not"
             cbam:
-              url: "/http/view.php?m=4&id=1954"
+              url: ""
               view name: ""
               phrase name: ""
               name: "CBAM Calculator"
@@ -302,11 +302,17 @@ zukunft.com:
               name: "Portfolio split"
               tooltip: "step by step process to calculate the splitting of an investment portfolio taking the round lots into account"
             company_sheet:
-              url: "/http/view.php?m=4&id=1954"
+              url: ""
               view name: ""
               phrase name: ""
               name: "Company sheet"
               tooltip: "compare two or more key figure sheets related to a company"
+            panels:
+              url: ""
+              view name: ""
+              phrase name: ""
+              name: "PV payoff"
+              tooltip: "step by step process to calculate the installation of photovoltaic panels including the prices and payoff"
       component:
         list:
           entries:
@@ -633,6 +639,35 @@ zukunft.com:
             colour mode:
               sys-conf-value: 1
               tooltip-comment: "1 to show the pages always light, which is the default, 2 always dark and 0 light or dark like the setting of the browser; the user menu switches between light and dark"
+            table:
+              tooltip-comment: "the look of the tables"
+              design:
+                sys-conf-value: "plain"
+                tooltip-comment: "the name of the table design below that a table uses by default"
+              designs:
+                tooltip-comment: "the named table designs; each value is the name of a colour of colours > page, so that a design also fits the dark mode, or none"
+                plain:
+                  tooltip-comment: "a table without lines and without a background"
+                  colour:
+                    sys-conf-value: "grey"
+                    tooltip-comment: "the colour of the text"
+                  border:
+                    sys-conf-value: "none"
+                    tooltip-comment: "the colour of the lines"
+                  background:
+                    sys-conf-value: "none"
+                    tooltip-comment: "the background of every second row"
+                bordered:
+                  tooltip-comment: "a table with lines and a grey background of every second row"
+                  colour:
+                    sys-conf-value: "grey"
+                    tooltip-comment: "the colour of the text"
+                  border:
+                    sys-conf-value: "rule"
+                    tooltip-comment: "the colour of the lines"
+                  background:
+                    sys-conf-value: "panel"
+                    tooltip-comment: "the background of every second row"
             colours:
               tooltip-comment: "the css colours of the pages and the editors e.g. #385eb7, rgba(0, 0, 0, 0.1) or white"
               page:
@@ -688,6 +723,12 @@ zukunft.com:
                 negative:
                   sys-conf-value: "#dc3545"
                   tooltip-comment: "a negative number"
+                success:
+                  sys-conf-value: "#198754"
+                  tooltip-comment: "the green of a positive decision e.g. the arguments for and the yes of a verdict"
+                warning:
+                  sys-conf-value: "#ffc107"
+                  tooltip-comment: "the yellow of an open decision e.g. the undecided verdict"
                 hover:
                   sys-conf-value: "#7a9fbf"
                   tooltip-comment: "a button when the mouse is over it"
@@ -747,6 +788,12 @@ zukunft.com:
                   negative:
                     sys-conf-value: "#f08a80"
                     tooltip-comment: "a negative number in the dark mode"
+                  success:
+                    sys-conf-value: "#7fd1a3"
+                    tooltip-comment: "the green of a positive decision in the dark mode"
+                  warning:
+                    sys-conf-value: "#e9b45a"
+                    tooltip-comment: "the yellow of an open decision in the dark mode"
                   hover:
                     sys-conf-value: "#4f6fa8"
                     tooltip-comment: "a button when the mouse is over it in the dark mode"

@@ -1,0 +1,49 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [
+            {
+                "name": "construction cost 20000"
+            }
+        ],
+        "triples": [
+            {
+                "name": "new NPP sensitivity rows construction cost 20000",
+                "from": "new NPP sensitivity rows",
+                "verb": "has a",
+                "to": "construction cost 20000"
+            },
+            {
+                "name": "new NPP sensitivity rows construction cost 20000 label",
+                "description": "20'000 CHF/kW",
+                "from": "new NPP sensitivity rows construction cost 20000",
+                "verb": "has a",
+                "to": "calculator label"
+            },
+            {
+                "name": "new NPP sensitivity rows construction cost 20000 order",
+                "from": "new NPP sensitivity rows construction cost 20000",
+                "verb": "is follower of",
+                "to": "new NPP sensitivity row 16000"
+            }
+        ],
+        "formulas": [],
+        "values": [
+            {
+                "words": [
+                    "new NPP sensitivity",
+                    "construction cost 20000",
+                    "assumed",
+                    "CHF per kW"
+                ],
+                "number": 20000
+            }
+        ],
+        "delete": []
+    }
+}

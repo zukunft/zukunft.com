@@ -376,7 +376,7 @@ class word_ui_tests
         $test_name = '... without a message about the repeated views';
         $msg_txt = $msg->text();
         $t->assert($test_name, $msg_txt, '');
-        $test_name = 'each view of the edit menu has the switch icon like in the views tab';
+        $test_name = 'each view of the edit menu has the switch icon';
         $menu_items = $wrd_menu->menu_view_items_ui($wrd_menu_lst);
         $t->assert_text_contains($test_name, $menu_items, icons::VIEW_SWITCH);
         $test_name = '... behind the view name in the same row';
@@ -412,20 +412,20 @@ class word_ui_tests
         $test_name = 'an object without its own edit view has no switch icon in the edit menu';
         $grp_items = new group_ui()->menu_view_items_ui($sci_lst);
         $t->assert_text_not_contains($test_name, $grp_items, icons::VIEW_SWITCH);
-        // the views tab of the object page offers the same view links as the edit menu
-        $test_name = 'the views tab of a word without a name shows its views';
-        $wrd_new = new word();
-        $wrd_new->view_lst = $sci_lst;
-        $new_tab = $list->view_tab_box($wrd_new, $msg, true);
-        $t->assert_text_contains($test_name, $new_tab, views::SCIENCE);
-        $test_name = '... with the switch icon';
-        $t->assert_text_contains($test_name, $new_tab, icons::VIEW_SWITCH);
-        // negative: an object without its own edit view gets no switch icon in the views tab either
-        $test_name = 'the views tab of an object without its own edit view has no switch icon';
-        $grp = new group_ui();
-        $grp->view_lst = $sci_lst;
-        $grp_tab = $list->view_tab_box($grp, $msg, true);
-        $t->assert_text_not_contains($test_name, $grp_tab, icons::VIEW_SWITCH);
+        // the edit menu is the only place that offers the views of the object, so the tab box of
+        // the page has no views tab and does not repeat the view links
+        $test_name = 'a word with related views has no views tab on its page';
+        $wrd_views = new word();
+        $wrd_views->view_lst = $sci_lst;
+        $views_tab = $list->view_tab_box($wrd_views, $msg, true);
+        $views_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS)) . '"';
+        $t->assert_text_not_contains($test_name, $views_tab, $views_tab_ref);
+        $test_name = '... and no link to its related views';
+        $t->assert_text_not_contains($test_name, $views_tab, views::SCIENCE);
+        // positive: the same views are still offered by the edit menu of the navbar
+        $test_name = '... but the edit menu offers them';
+        $views_menu = $wrd_views->menu_view_items_ui($sci_lst);
+        $t->assert_text_contains($test_name, $views_menu, views::SCIENCE);
         // the view that shows the page is grey with a tooltip that names the shown word
         $test_name = 'the view that shows the page is grey in the edit menu';
         $used_items = $wrd_menu->menu_view_items_ui($own_lst, views::MATH_CONST_ID);

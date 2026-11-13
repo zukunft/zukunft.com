@@ -114,6 +114,14 @@ class db_cache_page extends db_object_seq_id
         result_list::class,
     ];
 
+    // why save_json has not cached an answer, sent with the cache header if def::DEBUG_API_CACHE is on
+    const string NOT_SAVED_MSG = 'not saved because the message of the request is not ok: ';
+    const string NOT_SAVED_SWITCHED_OFF = 'not saved because the pod does not allow the page cache';
+    const string NOT_SAVED_WRITE = 'not saved because the cache write failed: ';
+
+    // the reason why the last save_json has not cached the answer; empty if it has been cached
+    public string $not_saved = '';
+
     /*
      * db const
      */
@@ -184,8 +192,7 @@ class db_cache_page extends db_object_seq_id
     {
         $lib = new library();
         $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(self::FLD_URL, $db_row)) {
                 $this->url = $db_row[self::FLD_URL];
             }
@@ -411,10 +418,16 @@ class db_cache_page extends db_object_seq_id
      */
     function save_json(string $key, string $json, DateTime $snap_time, user_message $msg): void
     {
-        if ($msg->is_ok() and $this->api_cache_allowed()) {
+        $this->not_saved = '';
+        if (!$msg->is_ok()) {
+            $this->not_saved = self::NOT_SAVED_MSG . $msg->all_message_text();
+        } elseif (!$this->api_cache_allowed()) {
+            $this->not_saved = self::NOT_SAVED_SWITCHED_OFF;
+        } else {
             // filling the cache is a system action that must also work for a user who cannot change data
             $cac_msg = new user_message(user::system()); // not reported, a failed cache write is only logged
             if (!$this->save_html($key, $json, $cac_msg, $snap_time)) {
+                $this->not_saved = self::NOT_SAVED_WRITE . $cac_msg->all_message_text();
                 log_warning('caching the api message ' . $key . ' failed because ' . $cac_msg->all_message_text());
             }
         }

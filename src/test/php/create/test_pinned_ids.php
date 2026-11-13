@@ -160,16 +160,10 @@ class test_pinned_ids
         [word_names::HTP, word_names::HTP_ID],
         [word_names::TRILLION, word_names::TRILLION_ID],
         [word_names::USD, word_names::USD_ID],
-        [word_names::CHART_TYPE, word_names::CHART_TYPE_ID],
         [word_names::DEFAULT, word_names::DEFAULT_ID],
         [word_names::MAYOR, word_names::MAYOR_ID],
         [word_names::MINOR, word_names::MINOR_ID],
-        [word_names::LEVERAGE_PLOT, word_names::LEVERAGE_PLOT_ID],
         [word_names::ALTERNATIVE, word_names::ALTERNATIVE_ID],
-        [word_names::RANGE_BARS, word_names::RANGE_BARS_ID],
-        [word_names::SCATTER_PLOT, word_names::SCATTER_PLOT_ID],
-        [word_names::SORT_ORDER, word_names::SORT_ORDER_ID],
-        [word_names::NUMERIC_DESCENDING, word_names::NUMERIC_DESCENDING_ID],
         [word_names::REASON, word_names::REASON_ID],
         [word_names::SALES, word_names::SALES_ID],
         [word_names::CASH, word_names::CASH_ID],
@@ -224,6 +218,7 @@ class test_pinned_ids
         [word_names::PRIOR_NAME, word_names::PRIOR_ID],
         [word_names::EUR, word_names::EUR_ID],
         [word_names::GDP, word_names::GDP_ID],
+        [word_names::ANNUAL, word_names::ANNUAL_ID],
         [word_names::EURO, word_names::EURO_ID],
         [word_names::DOLLAR, word_names::DOLLAR_ID],
         [word_names::EURO_SIGN, word_names::EURO_SIGN_ID],
@@ -357,6 +352,10 @@ class test_pinned_ids
         [triple_names::COLUMN_LOSS_REDUCTION, triple_names::COLUMN_LOSS_REDUCTION_ID],
         [triple_names::COLUMN_INITIAL_EFFORT, triple_names::COLUMN_INITIAL_EFFORT_ID],
         [triple_names::COLUMN_REWARD_RATIO, triple_names::COLUMN_REWARD_RATIO_ID],
+        [triple_names::RANGE_BARS, triple_names::RANGE_BARS_ID],
+        [triple_names::SCATTER_PLOT, triple_names::SCATTER_PLOT_ID],
+        [triple_names::LEVERAGE_PLOT, triple_names::LEVERAGE_PLOT_ID],
+        [triple_names::NUMERIC_DESCENDING, triple_names::NUMERIC_DESCENDING_ID],
         [triple_names::RANGE_BARS_OF_LOSS, triple_names::RANGE_BARS_OF_LOSS_ID],
         [triple_names::GAIN_AND_EFFORT, triple_names::GAIN_AND_EFFORT_ID],
         [triple_names::SCATTER_OF_GAIN_AND_EFFORT, triple_names::SCATTER_OF_GAIN_AND_EFFORT_ID],
@@ -415,6 +414,7 @@ class test_pinned_ids
         [triple_names::M_SYMBOL, triple_names::M_SYMBOL_ID],
         [triple_names::FACTOR_SYMBOL, triple_names::FACTOR_SYMBOL_ID],
         [triple_names::PERCENT_SYMBOL, triple_names::PERCENT_SYMBOL_ID],
+        [triple_names::PERCENT_HTP, triple_names::PERCENT_HTP_ID],
         [triple_names::CHF_SYMBOL, triple_names::CHF_SYMBOL_ID],
         [triple_names::SWISS_FRANC, triple_names::SWISS_FRANC_ID],
         [triple_names::SWISS_FRANC_CURRENCY, triple_names::SWISS_FRANC_CURRENCY_ID],
@@ -449,6 +449,7 @@ class test_pinned_ids
         [formula_names::GLOBAL_HTP, formula_names::GLOBAL_HTP_ID],
         [formula_names::JOULE_DEF, formula_names::JOULE_DEF_ID],
         [formula_names::CITY_POPULATION, formula_names::CITY_POPULATION_ID],
+        [formula_names::ANNUAL_DAMAGE, formula_names::ANNUAL_DAMAGE_ID],
         [formulas::INCREASE, formulas::INCREASE_ID],
     ];
 
@@ -721,8 +722,8 @@ class test_pinned_ids
     const array SOURCES = [
         [sources::SIB, sources::SIB_ID],
         [sources::WIKIDATA, sources::WIKIDATA_ID],
-        [sources::BFS, sources::BFS_ID],
         [sources::TRUST_ME_BRO, sources::TRUST_ME_BRO_ID],
+        [sources::BFS, sources::BFS_ID],
     ];
 
     // a reference is pinned by its external key

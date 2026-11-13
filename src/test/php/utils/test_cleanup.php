@@ -52,7 +52,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -93,6 +96,10 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 class test_cleanup extends test_api
 {
 
+    // the column name parts that mark the name of a test row in a cleanup check query e.g. word_name or name_generated
+    const string NAME_FIELD_END = '_name';
+    const string NAME_FIELD_START = 'name_';
+
     /*
      * object vars
      */
@@ -101,11 +108,99 @@ class test_cleanup extends test_api
     // so that the cleanup can remove them even if a test has failed before its own cleanup
     public array $test_val_ids = [];
 
+    // the keys per cleanup check query of the rows that create_test_db_entries has added; they belong to the whole
+    // write section, so a check_cleanup within it skips them and only the full cleanup removes them
+    private array $created_row_keys = [];
+
+    /**
+     * remember the test rows that exist after create_test_db_entries, so that a check_cleanup of a single
+     * write test reports only the leftovers of that test (see docs/llm/delete.md, test cleanup)
+     */
+    function remember_created_rows(): void
+    {
+        $this->created_row_keys = [];
+        foreach (test_files::CLEAN_CHECKS as $sql_file_name) {
+            foreach ($this->cleanup_check_rows(new user_message($this->usr_system), $sql_file_name) as $row) {
+                if (is_array($row)) {
+                    $this->created_row_keys[$sql_file_name][] = $this->created_row_key($row);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $row a row of a cleanup check query with the column names, the id first
+     * @return string the name of the row, because a write test may delete a row of create_test_db_entries and a later
+     *                test adds it again with a new id, or the id for a row without a name e.g. a change log row
+     */
+    private function created_row_key(array $row): string
+    {
+        $key = (string)$row[0];
+        $found = false;
+        foreach ($row as $fld => $val) {
+            $is_name = $this->is_name_field($fld);
+            if (!$found and $is_name and $val != '') {
+                $key = (string)$val;
+                $found = true;
+            }
+        }
+        return $key;
+    }
+
+    /**
+     * @param int|string $fld the column name or the position of a value in a database row
+     * @return bool true if the column holds the name of the row e.g. word_name or name_generated of an unnamed triple
+     */
+    private function is_name_field(int|string $fld): bool
+    {
+        return (is_string($fld) and (str_ends_with($fld, self::NAME_FIELD_END) or str_starts_with($fld, self::NAME_FIELD_START)));
+    }
+
 
     /*
      * execute
      */
 
+
+    /**
+     * remove the last used source and verb that the confirmed frontend writes of a write test have set
+     * for the test users, so that their rows are as after the database reset and the next run renders
+     * the add forms without a preselected default (see user::save_last_used)
+     */
+    function cleanup_last_used(): void
+    {
+        $msg = new user_message($this->usr1);
+        foreach ([$this->usr1, $this->usr2] as $usr) {
+            $usr->update_last_used(user_db::FLD_SOURCE, null, $msg);
+            $usr->update_last_used(user_db::FLD_VERB, null, $msg);
+        }
+        $this->assert_msg('the last used source and verb of the test users are removed', $msg);
+    }
+
+    /**
+     * @param user $usr the test user whose stored last used source and verb should be checked
+     * @return user the user as it is in the database now
+     */
+    function user_from_db(user $usr): user
+    {
+        $msg = new user_message($usr);
+        $db_usr = new user();
+        $db_usr->load_by_id($usr->id(), $msg);
+        return $db_usr;
+    }
+
+    /**
+     * @param user $usr the test user whose user row changes should be checked
+     * @return int the id of the newest change log row of the user row or zero if the row has never been changed
+     */
+    function last_user_change_id(user $usr): int
+    {
+        $msg = new user_message($usr);
+        $chg_lst = new change_log_list();
+        $chg_lst->load_by_obj_fld(user::class, $msg, $usr->id(), $usr);
+        $chg = $chg_lst->lst()[0] ?? null;
+        return $chg?->id() ?? 0;
+    }
 
     /**
      * simple clean-up of the standard objects
@@ -173,27 +268,10 @@ class test_cleanup extends test_api
         // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
         $ts = 'db cleanup ';
         $this->header($ts);
+        // the full cleanup removes also the rows of create_test_db_entries, so the next check covers them again
+        $this->created_row_keys = [];
 
-        if ($this->test_val_ids != []) {
-            foreach ($this->test_val_ids as $val_id) {
-                // the id of a value is the id of its group, which is a text for more than a few phrases
-                if ($val_id !== 0 and $val_id !== '') {
-                    // request to delete the added test value
-                    $val = new value($this->usr1);
-                    $val->load_by_id($val_id, $msg);
-                    // check again, because some id may be added twice
-                    if ($val->is_id_set()) {
-                        $this->del_value($val, $msg);
-                        $result .= $msg->get_last_message();
-                        $target = '';
-                        $this->assert('value->del test value for "' . word_names::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
-                    } else {
-                        // a test that has removed its value itself may have left the group row behind
-                        $this->del_group_row($val_id, $msg);
-                    }
-                }
-            }
-        }
+        $this->cleanup_test_values($this->test_val_ids, $msg);
 
         // remove the fixed test groups that create_test_groups has added for the write tests like
         // the test words below, because the next read or write tests add them again if needed
@@ -212,7 +290,10 @@ class test_cleanup extends test_api
 
         // a term view is not expected after a database reset, so the link that the write tests
         // create is removed here (see test_db_load::test_term_view_unlink)
-        $result .= $t_db->test_term_view_unlink($msg, new test_views($this)->term_view());
+        // with a message of its own, because the shared message may already carry the leftover report
+        $trm_msk_msg = $msg->clone_reset();
+        $result .= $t_db->test_term_view_unlink($trm_msk_msg, new test_views($this)->term_view());
+        $msg->merge($trm_msk_msg);
 
         // load the test view
         $msk = $t_db->load_view(views::TEST_ADD_NAME);
@@ -226,34 +307,43 @@ class test_cleanup extends test_api
             $msk_usr2 = $t_db->load_view(views::TEST_RENAMED_NAME, $this->usr2);
         }
 
+        // each step of the cleanup is independent, so each one loads and deletes with an own message that is
+        // merged into $msg after the step, because no load starts on an error of an earlier step
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+
         // load the first test view component
-        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $msg);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $stp_msg);
         if ($cmp->id() <= 0) {
-            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME, $msg);
+            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME, $stp_msg);
         }
 
         // load the first test view component for user 2
-        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $msg, $this->usr2);
+        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $stp_msg, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $msg, $this->usr2);
+            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $stp_msg, $this->usr2);
         }
 
         // load the second test view component
-        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME, $msg);
+        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME, $stp_msg);
 
         // load the second test view component for user 2
-        $cmp2_usr2 = $t_db->load_component(components::TEST_ADD_2_NAME, $msg, $this->usr2);
+        $cmp2_usr2 = $t_db->load_component(components::TEST_ADD_2_NAME, $stp_msg, $this->usr2);
+        $msg->merge($stp_msg);
 
         // check if the test components have been unlinked for user 2
         if ($msk_usr2->id() > 0 and $cmp_usr2->id() > 0) {
             $test_name = 'cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $msk_usr2->name() . '" for user 2';
-            $this->assert_true($test_name, $cmp_usr2->unlink($msk_usr2, $msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $cmp_usr2->unlink($msk_usr2, $stp_msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->merge($stp_msg);
         }
 
         // check if the test components have been unlinked
         if ($msk->id() > 0 and $cmp->id() > 0) {
             $test_name = 'cleanup: unlink first component "' . $cmp->name() . '" from "' . $msk->name() . '"';
-            $this->assert_true($test_name, $cmp->unlink($msk, $msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $cmp->unlink($msk, $stp_msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->merge($stp_msg);
         }
 
         // unlink the second component
@@ -262,74 +352,87 @@ class test_cleanup extends test_api
         // instead a foreign key error happens
         if ($msk->id() > 0 and $cmp2->id() > 0) {
             $test_name = 'cleanup: unlink second component "' . $cmp2->name() . '" from "' . $msk->name() . '"';
-            $this->assert_true($test_name, $cmp2->unlink($msk, $msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $cmp2->unlink($msk, $stp_msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->merge($stp_msg);
         }
 
         // unlink the second component for user 2
         if ($msk_usr2->id() > 0 and $cmp2_usr2->id() > 0) {
             $test_name = 'cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $msk_usr2->name() . '" for user 2';
-            $this->assert_true($test_name, $cmp2_usr2->unlink($msk_usr2, $msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $cmp2_usr2->unlink($msk_usr2, $stp_msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->merge($stp_msg);
         }
 
         // request to delete the added test views
         foreach (views::TEST_VIEWS as $dsp_name) {
             $msk = $t_db->load_view($dsp_name);
             if ($msk->id() > 0) {
-                $test_name = '';
-                $msk->del($msg);
-                $result .= $msg->get_last_message();
-                $target = '';
-                // deleting the view writes to the database, so a db timeout is used to avoid a false timeout
-                $this->assert('view->del of "' . $dsp_name . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
-            }
-        }
-
-        foreach (components::TEST_COMPONENTS as $cmp_name) {
-            $cmp = $t_db->load_component($cmp_name, $msg);
-            if ($cmp->id() > 0) {
-                // TODO Prio 0 use a local usr_msg for all del calls
+                // with a message of its own, because the shared message may already carry e.g. the
+                // leftover report of check_cleanup, which is no problem of this delete
                 $usr_msg_del = $msg->clone_reset();
-                $test_name = 'request to delete the added test views of "' . $cmp_name . '"';
-                $this->assert_true($test_name, $cmp->del($usr_msg_del), self::TIMEOUT_LIMIT_DB_MULTI);
+                $msk->del($usr_msg_del);
+                $result .= $usr_msg_del->get_last_message();
+                // deleting the view writes to the database, so a db timeout is used to avoid a false timeout
+                $this->assert_msg('view->del of "' . $dsp_name . '"', $usr_msg_del, self::TIMEOUT_LIMIT_DB);
                 $msg->merge($usr_msg_del);
             }
         }
 
+        foreach (components::TEST_COMPONENTS as $cmp_name) {
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $cmp = $t_db->load_component($cmp_name, $stp_msg);
+            if ($cmp->id() > 0) {
+                $test_name = 'request to delete the added test views of "' . $cmp_name . '"';
+                $this->assert_true($test_name, $cmp->del($stp_msg), self::TIMEOUT_LIMIT_DB_MULTI);
+            }
+            $msg->merge($stp_msg);
+        }
+
         $test_name = 'reload the first test view component "' . components::TEST_ADD_NAME . '" for user 2';
-        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $msg, $this->usr2);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $stp_msg, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
             $test_name .= ' or "' . components::TEST_RENAMED_NAME . '"';
-            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $msg, $this->usr2);
+            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $stp_msg, $this->usr2);
         }
 
         $test_name .= ' and request to delete the test view component  for user 2';
         if ($cmp_usr2->id() > 0) {
-            $this->assert_true($test_name, $cmp_usr2->del($msg), self::TIMEOUT_LIMIT_DB);
+            $this->assert_true($test_name, $cmp_usr2->del($stp_msg), self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name = 'reload the first test view component "' . components::TEST_ADD_NAME . '"';
-        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $msg);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $stp_msg);
         if ($cmp->id() <= 0) {
             $test_name .= ' or "' . components::TEST_RENAMED_NAME . '"';
-            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME, $msg);
+            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME, $stp_msg);
         }
 
         $test_name .= ' and request to delete the test view component';
         if ($cmp->id() > 0) {
-            $this->assert_true($test_name, $cmp->del($msg), self::TIMEOUT_LIMIT_DB);
+            $this->assert_true($test_name, $cmp->del($stp_msg), self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name = 'request to delete the second added test view component "' . components::TEST_ADD_2_NAME . '"';
-        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME, $msg);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME, $stp_msg);
         if ($cmp2->id() > 0) {
-            $this->assert_true($test_name, $cmp2->del($msg), self::TIMEOUT_LIMIT_DB);
+            $this->assert_true($test_name, $cmp2->del($stp_msg), self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name = 'request to delete the second added test view component "' . components::TEST_ADD_2_NAME . '" for user 2';
-        $cmp2_usr2 = $t_db->load_component(components::TEST_ADD_2_NAME, $msg, $this->usr2);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $cmp2_usr2 = $t_db->load_component(components::TEST_ADD_2_NAME, $stp_msg, $this->usr2);
         if ($cmp2_usr2->id() > 0) {
-            $this->assert_true($test_name, $cmp2_usr2->del($msg), self::TIMEOUT_LIMIT_DB);
+            $this->assert_true($test_name, $cmp2_usr2->del($stp_msg), self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name = 'reload the test view "' . views::TEST_ADD_NAME . '"  for user 2';
         $msk_usr2 = $t_db->load_view(views::TEST_ADD_NAME, $this->usr2);
@@ -340,7 +443,9 @@ class test_cleanup extends test_api
 
         $test_name .= ' and request to delete the added test view for user 2 first';
         if ($msk_usr2->id() > 0) {
-            $this->assert_true($test_name, $msk_usr2->del($msg), self::TIMEOUT_LIMIT_DB);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $msk_usr2->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+            $msg->merge($stp_msg);
         }
 
         $test_name = 'reload the test view "' . views::TEST_ADD_NAME . '"';
@@ -352,7 +457,9 @@ class test_cleanup extends test_api
 
         $test_name .= ' and request to delete it';
         if ($msk->id() > 0) {
-            $this->assert_true($test_name, $msk->del($msg), self::TIMEOUT_LIMIT_DB);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $msk->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+            $msg->merge($stp_msg);
         }
 
         $test_name_loop = 'request to delete the added test views';
@@ -360,14 +467,18 @@ class test_cleanup extends test_api
             $test_name = $test_name_loop . ' "' . $msk_name . '"';
             $msk = $t_db->load_view($msk_name);
             if ($msk->id() > 0) {
-                $this->assert_true($test_name, $msk->del($msg), self::TIMEOUT_LIMIT_DB);
+                $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+                $this->assert_true($test_name, $msk->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+                $msg->merge($stp_msg);
             }
         }
 
         $test_name = 'request to delete the renamed test source "' . sources::SYSTEM_TEST_RENAMED . '"';
         $src = $t_db->load_source(sources::SYSTEM_TEST_RENAMED);
         if ($src->id() > 0) {
-            $this->assert_true($test_name, $src->del($msg), self::TIMEOUT_LIMIT_DB);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $this->assert_true($test_name, $src->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+            $msg->merge($stp_msg);
         }
 
         $test_name_loop = 'request to delete the added test sources';
@@ -376,97 +487,94 @@ class test_cleanup extends test_api
             if ($src_name != sources::WIKIDATA) {
                 $src = $t_db->load_source($src_name);
                 if ($src->id() > 0) {
-                    $this->assert_true($test_name, $src->del($msg), self::TIMEOUT_LIMIT_DB);
+                    $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+                    $this->assert_true($test_name, $src->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+                    $msg->merge($stp_msg);
                 }
             }
         }
 
         $test_name = 'request to delete the added test reference "' . word_names::TEST_ADD . '" to "' . ref_types::WIKIDATA . '"';
-        $ref = $t_db->load_ref(word_names::TEST_ADD, ref_types::WIKIDATA, $msg);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $ref = $t_db->load_ref(word_names::TEST_ADD, ref_types::WIKIDATA, $stp_msg);
         if ($ref->id() > 0) {
-            $this->assert_true($test_name, $ref->del($msg), self::TIMEOUT_LIMIT_DB);
+            $this->assert_true($test_name, $ref->del($stp_msg), self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name_loop = 'request to delete the added test formulas';
         foreach (formula_names::TEST_FORMULAS as $frm_name) {
             $test_name = $test_name_loop . ' "' . $frm_name . '"';
             $frm = $t_db->load_formula($frm_name);
             if ($frm->id() > 0) {
-                $msg->reset(true);
-                $this->assert_true($test_name, $frm->del($msg), self::TIMEOUT_LIMIT_DB);
+                $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+                $this->assert_true($test_name, $frm->del($stp_msg), self::TIMEOUT_LIMIT_DB);
+                $msg->merge($stp_msg);
             }
             // remove the corresponding formula word
-            $wrd = $t_db->load_word($msg, $frm_name);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $wrd = $t_db->load_word($stp_msg, $frm_name);
             if ($wrd->id() > 0) {
-                $msg->reset(true);
-                $this->assert_true($test_name, $wrd->del($msg), self::TIMEOUT_LIMIT_DB);
+                $this->assert_true($test_name, $wrd->del($stp_msg), self::TIMEOUT_LIMIT_DB);
             }
+            $msg->merge($stp_msg);
         }
 
         $test_name_loop = 'request to delete the added test phrases';
         foreach (triple_names::TEST_TRIPLES as $phr_name) {
             $test_name = $test_name_loop . ' "' . $phr_name . '"';
-            $phr = $t_db->load_phrase($phr_name, $msg);
+            $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+            $phr = $t_db->load_phrase($phr_name, $stp_msg);
             if ($phr->id() <> 0) {
-                $this->assert_true($test_name, $phr->del($msg), self::TIMEOUT_LIMIT_DB);
+                $this->assert_true($test_name, $phr->del($stp_msg), self::TIMEOUT_LIMIT_DB);
             }
+            $msg->merge($stp_msg);
         }
 
-        // request to delete some triples not yet covered by the other cleanup jobs; only a triple
-        // whose "from" is a test word is a test row: the triples of the real year words are seed
-        // rows of companies.json with a pinned id (triple_names::YEAR_2019_ID and YEAR_2020_ID)
-        // and deleting one excludes it for the test user, which takes it out of every later read
-        $t_db->del_triple($msg, word_names::TEST_2021, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::TEST_2022, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
-        $t_db->del_triple($msg, word_names::TEST_2022, verbs::FOLLOW, word_names::TEST_2021);
-        $t_db->del_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
-        $t_db->del_triple($msg, word_names::TEST_TAX_REPORT, verbs::PART_NAME, word_names::TEST_CASH_FLOW);
-        $t_db->del_triple($msg, word_names::TEST_CASH, verbs::PART_NAME, word_names::TEST_ASSETS_CURRENT);
-        $t_db->del_triple($msg, word_names::TEST_ASSETS_CURRENT, verbs::PART_NAME, word_names::TEST_ASSETS);
-        $t_db->del_triple($msg, word_names::TEST_SECTOR, verbs::CAN_CONTAIN, word_names::TEST_ENERGY);
-        $t_db->del_triple($msg, word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
+        $this->cleanup_unnamed_test_triples($msg);
 
         // request to delete the added test word
         // TODO Prio 2 if a user has changed the word during the test, delete also the user words
         $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
-        $wrd = $t_db->load_word($msg, word_names::TEST_ADD);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $wrd = $t_db->load_word($stp_msg, word_names::TEST_ADD);
         if ($wrd->id() > 0) {
-            // the shared message still carries the leftover report of check_cleanup, which is not a delete error
-            $msg->reset(true);
-            $wrd->del($msg);
+            $wrd->del($stp_msg);
             // assert via the message, so a failing delete shows the reason instead of a bare false
-            $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);
+            $this->assert_msg($test_name, $stp_msg, self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name = 'request to delete the renamed test word  of "' . word_names::TEST_RENAMED . '"';
-        $wrd = $t_db->load_word($msg, word_names::TEST_RENAMED);
+        $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+        $wrd = $t_db->load_word($stp_msg, word_names::TEST_RENAMED);
         if ($wrd->id() > 0) {
-            $msg->reset(true);
-            $wrd->del($msg);
-            $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);
+            $wrd->del($stp_msg);
+            $this->assert_msg($test_name, $stp_msg, self::TIMEOUT_LIMIT_DB);
         }
+        $msg->merge($stp_msg);
 
         $test_name_loop = 'request to delete the added test words';
         foreach (word_names::TEST_WORDS as $wrd_name) {
             $test_name = $test_name_loop . ' "' . $wrd_name . '"';
             if ($wrd_name != word_names::MATH) {
-                $wrd = $t_db->load_word($msg, $wrd_name);
+                $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
+                $wrd = $t_db->load_word($stp_msg, $wrd_name);
                 if ($wrd->id() > 0) {
-                    $msg->reset();
-                    $owner = $wrd->owner($msg);
-                    // switch the requesting user to the owner only for this word and restore
-                    // it afterwards, because the shared message is also used for the next words
-                    // and the sequence resets after the loop
-                    $usr_before = $msg->usr;
-                    $msg->usr = $owner;
+                    $owner = $wrd->owner($stp_msg);
+                    // the requesting user of this step is the owner, because the message is only used for this word
+                    $stp_msg->usr = $owner;
                     // reload the word as owner
                     // TODO Prio 1 also reload the other objects as owner before trying to delete them
-                    $wrd = $t_db->load_word($msg, $wrd_name);
-                    $wrd->del($msg);
-                    $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);
-                    $msg->usr = $usr_before;
+                    $wrd = $t_db->load_word($stp_msg, $wrd_name);
+                    $wrd->del($stp_msg);
+                    $this->assert_msg($test_name, $stp_msg, self::TIMEOUT_LIMIT_DB);
+                } else {
+                    // a word that the test user has excluded is not loaded for this user,
+                    // so it is removed via the system user (see write_named_cleanup_force)
+                    $this->write_named_cleanup(new word($this->usr1), $wrd_name);
                 }
+                $msg->merge($stp_msg);
             } else {
                 log_info(' ... but keep the read only test word ' . word_names::MATH);
             }
@@ -494,6 +602,71 @@ class test_cleanup extends test_api
             return false;
         }
 
+    }
+
+    /**
+     * remove the test triples without a name of triple_names::TEST_TRIPLES, because a word that
+     * a triple uses is only excluded by its delete (see word::used_by_data)
+     * public to remove them also before the test words in the word write tests
+     *
+     * @param user_message $msg the shared message of the cleanup
+     * @return void
+     */
+    function cleanup_unnamed_test_triples(user_message $msg): void
+    {
+        $t_db = new test_db_load($this);
+        // the time test words are linked to the year and to the previous year like in
+        // word_write_tests::create_test_words; only a triple whose "from" is a test word is a test row:
+        // the triples of the real year words are seed rows with a pinned id (e.g. triple_names::YEAR_2019_ID)
+        // and deleting one excludes it for the test user, which takes it out of every later read
+        $prev_word_name = null;
+        foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {
+            if (in_array($word_name, word_names::TEST_WORDS)) {
+                $t_db->del_triple($msg, $word_name, verbs::IS, words::YEAR_CAP);
+                if ($prev_word_name != null) {
+                    $t_db->del_triple($msg, $word_name, verbs::FOLLOW, $prev_word_name);
+                }
+            }
+            $prev_word_name = $word_name;
+        }
+        $t_db->del_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
+        $t_db->del_triple($msg, word_names::TEST_TAX_REPORT, verbs::PART_NAME, word_names::TEST_CASH_FLOW);
+        $t_db->del_triple($msg, word_names::TEST_CASH, verbs::PART_NAME, word_names::TEST_ASSETS_CURRENT);
+        $t_db->del_triple($msg, word_names::TEST_ASSETS_CURRENT, verbs::PART_NAME, word_names::TEST_ASSETS);
+        $t_db->del_triple($msg, word_names::TEST_SECTOR, verbs::CAN_CONTAIN, word_names::TEST_ENERGY);
+        $t_db->del_triple($msg, word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
+        // a test row although its "from" is a seed word, because word_write_tests links it to the test parent word (add_child)
+        $t_db->del_triple($msg, word_names::MATH, verbs::IS, word_names::TEST_PARENT);
+    }
+
+    /**
+     * remove the given test values
+     *
+     * @param array $val_ids the ids of the values e.g. test_val_ids for the full cleanup or the values that one test has added
+     * @param user_message $msg the shared message of the cleanup, which may already carry e.g. the
+     *                          leftover report of check_cleanup; the problems of the deletes are added
+     * @return void
+     */
+    function cleanup_test_values(array $val_ids, user_message $msg): void
+    {
+        foreach ($val_ids as $val_id) {
+            // the id of a value is the id of its group, which is a text for more than a few phrases
+            if ($val_id !== 0 and $val_id !== '') {
+                // with a message of its own, because del() writes nothing if the message is not ok
+                $val_msg = new user_message($this->usr1);
+                $val = new value($this->usr1);
+                // check again via the returned id, because some id may be added twice
+                // and the query creation already sets the id of the value
+                if ($val->load_by_id($val_id, $val_msg) != 0) {
+                    $this->del_value($val, $val_msg);
+                    $this->assert_msg('value->del test value ' . $val_id, $val_msg, self::TIMEOUT_LIMIT_DB_MULTI);
+                } else {
+                    // a test that has removed its value itself may have left the group row behind
+                    $this->del_group_row($val_id, $val_msg);
+                }
+                $msg->merge($val_msg);
+            }
+        }
     }
 
     /**
@@ -566,7 +739,8 @@ class test_cleanup extends test_api
         // naming the test rows, so purge them by the reserved test name pattern before the overall
         // check that no test row is left in any table incl. the change log
         $this->cleanup_change_log_deleted();
-        if (!$this->cleanup_check_queries($msg, $class)) {
+        $chk_msg = $msg->clone_reset(); // the leftover report, merged after the cleanup, because no load starts on an earlier error
+        if (!$this->cleanup_check_queries($chk_msg, $class)) {
             $msg_start = 'there are ';
             $msg_text = 'unexpected system test rows in the database that could ';
             if ($this->cleanup($msg)) {
@@ -580,6 +754,7 @@ class test_cleanup extends test_api
             } else {
                 $msg_text .= 'NOT be fully removed: ';
             }
+            $msg->merge($chk_msg);
             $err_txt = $msg->all_message_text();
             $msg_txt = $msg_start . $msg_text . $err_txt;
             if ($err_txt != '') {
@@ -619,14 +794,11 @@ class test_cleanup extends test_api
      */
     private function cleanup_check_query(user_message $msg, string $class, string $sql_file_name): bool
     {
-        global $db_con;
-
-        $qp = new sql_par(self::class);
-        $qp->name .= $sql_file_name;
-        $qp->sql = $this->file($sql_file_name);
-        $db_rows = $db_con->get($qp, $msg);
-        if ($db_rows !== false) {
-            foreach ($db_rows as $row) {
+        $created_keys = $this->created_row_keys[$sql_file_name] ?? [];
+        foreach ($this->cleanup_check_rows($msg, $sql_file_name) as $row) {
+            // a row of create_test_db_entries is no leftover until the full cleanup has run
+            $is_created = (is_array($row) and in_array($this->created_row_key($row), $created_keys));
+            if (!$is_created) {
                 $name = 'name missing';
                 if (is_array($row)) {
                     if (count($row) > 2) {
@@ -647,6 +819,25 @@ class test_cleanup extends test_api
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to collect the problems of the query
+     * @param string $sql_file_name the cleanup check query e.g. test_files::CLEAN_CHECK_WORDS
+     * @return array the system test rows that the query finds
+     */
+    private function cleanup_check_rows(user_message $msg, string $sql_file_name): array
+    {
+        global $db_con;
+
+        $qp = new sql_par(self::class);
+        $qp->name .= $sql_file_name;
+        $qp->sql = $this->file($sql_file_name);
+        $db_rows = $db_con->get($qp, $msg);
+        if ($db_rows === false) {
+            return [];
+        }
+        return $db_rows;
     }
 
     /**

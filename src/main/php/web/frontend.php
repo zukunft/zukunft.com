@@ -55,6 +55,7 @@ include_once html_paths::SHARED . 'library.php';
 // get the api const that are shared between the backend and the html frontend
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'group_id_url.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
@@ -119,6 +120,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
+include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
@@ -135,6 +137,7 @@ include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
+include_once html_paths::SHARED_HELPER . 'MapObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED_TYPES . 'system_time_type.php';
@@ -204,6 +207,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -234,6 +238,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -256,6 +262,8 @@ class frontend
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
     // the http header that asks a proxy to pass the start of a page at once (see send_loading_start)
     const string HEADER_NO_BUFFERING = 'X-Accel-Buffering: no';
+    // the php errors that end a request e.g. the time or the memory limit
+    const array FATAL_ERRORS = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
 
     // the lists whose api answers are cached (see db_cache_page::api_key)
     const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
@@ -319,8 +327,11 @@ class frontend
 
     // the main data cache of the frontend
     public ?data_object $dto = null;
-    // the pdf that a request with url_var::REPORT has created, which the entry point sends instead of the page
+    // the pdf that a request with url_var::REPORT has created and the name of its page, which the entry point keeps for the request of the file
     public string $report_pdf = '';
+    public string $report_name = '';
+    // the step of the pdf report that a request with url_var::REPORT is doing, to name it if the report fails
+    private ?msg_id $report_step_id = null;
 
 
     /*
@@ -478,6 +489,23 @@ class frontend
     }
 
     /**
+     * the url of the request without the user of the url if it is not the requesting user, after the
+     * notice of url_user_matches, so that no link of the page repeats the url user and the notice is
+     * shown only once e.g. after an expired session (see docs/llm/state-and-messages.md)
+     *
+     * @param array $url_array the url of the request e.g. [url_var::USER => 11]
+     * @param user_message_ui $msg_ui with the requesting user, which gets the notice
+     * @return array the url without url_var::USER if it names another user, else unchanged
+     */
+    static function url_without_foreign_user(array $url_array, user_message_ui $msg_ui): array
+    {
+        if (!self::url_user_matches($url_array, $msg_ui)) {
+            unset($url_array[url_var::USER]);
+        }
+        return $url_array;
+    }
+
+    /**
      * the url of the page after an action as a plain get (POST-Redirect-GET), so the address bar
      * shows the next page and a reload does not repeat the action; the submit marker, the session
      * token and a typed password are left out, because a url is visible and stored in the history
@@ -496,7 +524,10 @@ class frontend
             $next_url[url_var::USER] = $usr_id;
         }
         $result = '';
-        if (!self::request_triggers_action($next_url)) {
+        if (array_key_exists(url_var::START_PAGE, $next_url)) {
+            // e.g. the login from the static start page returns to it, which is the same for every user
+            $result = api::START_PAGE;
+        } elseif (!self::request_triggers_action($next_url)) {
             $next_page = api::MAIN_SCRIPT . url_var::PAR . http_build_query($next_url);
             $result = new html_base()->url_with_id_var($next_page);
         }
@@ -872,6 +903,8 @@ class frontend
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
+     * @param array $upload the entry of the file uploaded on the import view as php gives it in $_FILES; empty for no upload
+     * @param bool $is_uploaded true if php has received the file of $upload with this request (is_uploaded_file)
      * @return array the url array to display the result and the next step
      */
     function url_to_action(
@@ -879,7 +912,9 @@ class frontend
         user_backend    &$usr_backend,
         user_message_ui $msg_ui,
         data_object     $dto = new data_object(),
-        bool            $do_it = true
+        bool            $do_it = true,
+        array           $upload = [],
+        bool            $is_uploaded = false
     ): array
     {
         // the requesting user of this request (docs/llm/state-and-messages.md); a request without
@@ -970,6 +1005,9 @@ class frontend
             // the button of an admin on the settings page removes all cached data without a confirm view
             $action == url_var::ACTION_CLEAR_CACHE and $step == url_var::STEP_CONFIRMED => $url = $this->action_clear_cache(
                 $msg_ui, $do_it),
+            // the confirm of an import preview writes the import that the user has seen on the preview
+            $action == url_var::ACTION_IMPORT and $step == url_var::STEP_CONFIRMED => $url = $this->action_import(
+                $url_array, $msg_ui, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
@@ -985,6 +1023,8 @@ class frontend
             // the save of a calculator page writes the changed numbers without a confirm view
             $view == views::CALCULATOR_ID and $action == url_var::ACTION_SAVE => $url = $this->action_calculator_save(
                 $url_array, $msg_ui, $do_it),
+            // the submit of the import view imports the uploaded json file without a confirm view
+            $view == views::IMPORT_ID => $url = $this->action_import_upload($upload, $is_uploaded, $msg_ui, $do_it),
             default =>$this->log_ignored_write_step($view, $step, $msg_ui)
         };
 
@@ -1135,6 +1175,10 @@ class frontend
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
         $url_array = $url_map->url_to_standard($url_array, $msg_ui);
+        // the refresh icon of a wikipedia reference leads to the confirm page or the reference add page
+        $url_array = $this->url_with_wikipedia_refresh($url_array, $msg_ui, $test_mode);
+        // the refresh icon of a wikidata reference leads to the preview of the values that wikidata would add
+        $url_array = $this->url_with_wikidata_refresh($url_array, $msg_ui, $test_mode);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -1314,20 +1358,25 @@ class frontend
             } else {
                 // the title of a calculator reads the calculator triples of the request cache and
                 // the components read their data from it, so it is filled before the html is created
+                $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
+                if ($is_report) {
+                    $this->report_step(msg_id::CALCULATOR_REPORT_STEP_LOAD);
+                }
                 $this->load_page_start();
                 $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
                 $this->load_page_end();
-                $this->report_pdf = $this->report_of_url($url_array, $dbo, $msg_ui, $dto);
-                $title = $msk_ui->title($dbo, $msg_ui, $dto);
-                $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
+                $this->report_pdf = $this->report_of_url($is_report, $dbo, $msg_ui, $dto);
+                // the report is shown in a frame of the page, which ends with report_end_html
+                $title = $is_report ? '' : $msk_ui->title($dbo, $msg_ui, $dto);
+                $dsp_text = $is_report ? '' : $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
-                if ($dsp_text == '' or $msk_ui->name() == '') {
+                if (!$is_report and ($dsp_text == '' or $msk_ui->name() == '')) {
                     $dsp_text = $msk_ui->name_tip();
                 }
-                if ($dsp_text == '') {
+                if ($dsp_text == '' and !$is_report) {
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
-                } else {
+                } elseif (!$is_report) {
                     $html = new html_base();
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
@@ -1352,18 +1401,18 @@ class frontend
     }
 
     /**
-     * @param array $url_array the parsed url as an array
+     * @param bool $is_report true if the url asks for the report
      * @param mixed $dbo the object of the page
      * @param user_message_ui $msg_ui to report a problem of the load
      * @param data_object $dto the request cache filled with the data of the page
      * @return string the pdf report if the url asks for it and the page is a calculator, else an empty string, so that the page is shown
      */
-    private function report_of_url(array $url_array, mixed $dbo, user_message_ui $msg_ui, data_object $dto): string
+    private function report_of_url(bool $is_report, mixed $dbo, user_message_ui $msg_ui, data_object $dto): string
     {
         $result = '';
-        $is_report = ($url_array[url_var::REPORT] ?? '') == url_var::TRUE;
         if ($is_report and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
-            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto);
+            $this->report_name = $dbo->name();
+            $result = new calculator_report()->pdf($dbo, $msg_ui, $dto, new DateTime(), $this->report_step(...));
         }
         return $result;
     }
@@ -1379,12 +1428,172 @@ class frontend
      */
     function send_loading_start(user_message_ui $msg_ui, float $start_time): void
     {
+        $this->send_at_once($this->loading_start($msg_ui, $start_time));
+        // from now on each api call shows its step below the loading text (see rest_call::send_loading_step)
+        if ($this->dto != null) {
+            $this->dto->loading_since = $start_time;
+        }
+    }
+
+    /**
+     * send the start of the frame in which the steps of the report are shown
+     *
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @return void
+     */
+    function send_report_start(user_message_ui $msg_ui): void
+    {
+        $this->send_at_once(new html_base()->frame_start($msg_ui));
+    }
+
+    /**
+     * @param string $html the html code that the browser should get now and not with the end of the page
+     * @return void
+     */
+    private function send_at_once(string $html): void
+    {
         // e.g. nginx would otherwise hold back the start until the page is complete
         header(self::HEADER_NO_BUFFERING);
         while (ob_get_level() > 0) {
             ob_end_flush();
         }
-        echo $this->loading_start($msg_ui, $start_time);
+        echo $html;
+        flush();
+    }
+
+    /**
+     * the end of the report frame: the request of the created file, whose download keeps the page, or the failure
+     *
+     * @param array $url_array the parsed url of the report request
+     * @param user_message_ui $msg_ui with the messages of the creation
+     * @return string the html code that ends the frame
+     */
+    function report_end_html(array $url_array, user_message_ui $msg_ui): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if ($this->report_pdf == '') {
+            $result = $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_NONE));
+        } else {
+            $url = $url_array;
+            unset($url[url_var::REPORT]);
+            $url[url_var::REPORT_FILE] = url_var::TRUE;
+            // before the last step, because the steps show only the last element of the frame
+            $result = $html->refresh($html->url_with_user($html->page_url($url)));
+            $result .= $html->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_READY));
+        }
+        return $result . $this->user_msg_html($msg_ui);
+    }
+
+    /**
+     * give the report more time than a page and tell the user if it fails anyway, because a fatal
+     * error e.g. of the time or memory limit cannot be caught and would leave the count running
+     *
+     * @return void
+     */
+    function report_watch(): void
+    {
+        set_time_limit(calculator_report::MAX_TIME_SEC);
+        register_shutdown_function(fn() => $this->report_failed(error_get_last()));
+    }
+
+    /**
+     * end the lock of the session, which keeps its values readable; the settings allow to open it
+     * again for the created report, because a session cannot send a header after the first output
+     *
+     * @return void
+     */
+    function report_release_session(): void
+    {
+        session_write_close();
+        ini_set('session.use_cookies', '0');
+        session_cache_limiter('');
+    }
+
+    /**
+     * get the export of the phrase entered on an export view from the backend (api/json) and keep it in the
+     * request cache, so that the entry point sends it as a download; without a known format e.g. on the ods view,
+     * or if the backend refuses the export, the user gets the message with the view again
+     *
+     * @param array $url_array the submit of the export view with the phrase name, the selection name and the format
+     * @param user_message_ui $msg_ui with the requesting user, for whom the backend exports, and to report why nothing is exported
+     * @param data_object $dto the request cache that gets the download
+     * @return bool true if the download is in the request cache
+     */
+    function export_file(array $url_array, user_message_ui $msg_ui, data_object $dto): bool
+    {
+        $format = $url_array[url_var::EXPORT_FORMAT] ?? '';
+        $phr_name = trim($url_array[url_var::PHRASE] ?? '');
+        $result = false;
+        if (!array_key_exists($format, rest_ctrl::EXPORT_MIME_TYPES)) {
+            $msg_ui->add(msg_id::EXPORT_FORMAT_UNKNOWN, [msg_id::VAR_VALUE => $format]);
+        } else {
+            $answer = $this->export_answer($phr_name, $format, $msg_ui);
+            if ($answer != '') {
+                // the file is named by the selection name of the view or else by the phrase
+                $file_name = trim($url_array[url_var::NAME] ?? '');
+                if ($file_name == '') {
+                    $file_name = $phr_name;
+                }
+                $dto->download = $answer;
+                $dto->download_name = $file_name;
+                $dto->download_format = $format;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $phr_name the name of the phrase to export, for the csv the name of the formula
+     * @param string $format one of the url_var::EXPORT_FORMAT_* values
+     * @param user_message_ui $msg_ui with the requesting user and to report the message of the backend
+     * @return string the export as the backend has created it; empty if the backend has refused it, which $msg_ui explains
+     */
+    private function export_answer(string $phr_name, string $format, user_message_ui $msg_ui): string
+    {
+        $lib = new library();
+        $rest = new rest_call();
+        $url = new html_base()->url_api(rest_ctrl::JSON);
+        $data = [url_var::WORDS => $lib->csv_line([$phr_name]), url_var::EXPORT_FORMAT => $format];
+        $result = $rest->api_call(rest_ctrl::GET, $url, $rest->data_with_user($data, $msg_ui), $msg_ui);
+        $json = json_decode($result, true);
+        if (is_array($json) and array_key_exists(json_fields::MSG, $json)) {
+            $msg_ui->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json[json_fields::MSG]]);
+            $result = '';
+        } elseif ($result == '') {
+            log_err_msg_ui('the export api has answered nothing for "' . $phr_name . '" in the format ' . $format, $msg_ui);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array|null $err the last error of the request
+     * @return void
+     */
+    private function report_failed(?array $err): void
+    {
+        global $mtr;
+        if (in_array($err['type'] ?? 0, self::FATAL_ERRORS)) {
+            $step = ' ' . $mtr->txt($this->report_step_id ?? msg_id::CALCULATOR_REPORT_STEP_LOAD);
+            echo new html_base()->frame_step($mtr->txt(msg_id::CALCULATOR_REPORT_FAILED) . $step);
+            flush();
+            log_err('pdf report failed at' . $step . ': ' . $err['message']);
+        }
+    }
+
+    /**
+     * show the step that the report is doing now with the seconds since the start of the request
+     *
+     * @param msg_id $id the step
+     * @return void
+     */
+    private function report_step(msg_id $id): void
+    {
+        global $mtr;
+        $this->report_step_id = $id;
+        $sec = (int)round(microtime(true) - $this->start_time);
+        echo new html_base()->frame_step($mtr->txt($id) . ' (' . $sec . ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS) . ')');
         flush();
     }
 
@@ -1657,6 +1866,8 @@ class frontend
         $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
         $list_variance = $url_array[url_var::DISPLAY_LIST_VARIANCE] ?? '';
         $list_as = $url_array[url_var::DISPLAY_LIST_AS] ?? '';
+        $list_unmatched = $url_array[url_var::DISPLAY_LIST_UNMATCHED] ?? '';
+        $list_design = $url_array[url_var::DISPLAY_LIST_DESIGN] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
@@ -1673,12 +1884,19 @@ class frontend
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_VARIANCE, url_var::DISPLAY_LIST_AS,
+                url_var::DISPLAY_LIST_UNMATCHED, url_var::DISPLAY_LIST_DESIGN,
                 ...table_orders::URL_VARS,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
-            if (!$is_key_param and !$is_show_step) {
+            // an array e.g. from dld[]=plain cannot be part of the key
+            if ((!$is_key_param and !$is_show_step) or !is_scalar($url_val)) {
                 $is_view_only = false;
             }
+        }
+        // the checks below know the views by their id, so a view named by its code id e.g. the login
+        // link m=login of the static start page is rendered live, because its back part would be lost
+        if (!is_numeric($mask_id)) {
+            $is_view_only = false;
         }
         // 'nc=1' (or 'nocache=1' in the human-readable url) switches the cache off for this request:
         // an empty cache key makes the caller render the page live and skip the cache write, so an
@@ -1732,6 +1950,12 @@ class frontend
             }
             if ($list_as != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_AS . url_var::EQ . $list_as;
+            }
+            if ($list_unmatched != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_UNMATCHED . url_var::EQ . $list_unmatched;
+            }
+            if ($list_design != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_DESIGN . url_var::EQ . rawurlencode((string)$list_design);
             }
             // the order of the rows is a view-only state of the same page like the list size
             foreach (table_orders::URL_VARS as $order_var) {
@@ -2020,11 +2244,6 @@ class frontend
         return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
     }
 
-    function show_view(int $id, user_message_ui $msg_ui): string
-    {
-        return $this->dto->typ_lst_cache->get_html_by_id($id, $msg_ui);
-    }
-
 
     /*
      * execute
@@ -2175,7 +2394,7 @@ class frontend
                         $signed_up = true;
                         $this->send_signup_mail($usr_by_name, $key, $msg_ui);
                     } else {
-                        log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
+                        log_err_reported('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
                         $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
                     }
                 }
@@ -2355,7 +2574,7 @@ class frontend
                                 $usr_ui->set_from_json($usr_by_id->api_json([], $activate_msg), $msg_ui);
                                 $activated = true;
                             } else {
-                                log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
+                                log_err_reported('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
                                 $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
                             }
                         }
@@ -2562,9 +2781,8 @@ class frontend
     }
 
     /**
-     * apply a sys_log status update on behalf of an admin; mirrors the action portion of
-     * the legacy /http/error_update.php script: when an admin clicks "close" on a sys_log row
-     * the id + status arrive as URL parameters and the matching entry is saved with the new
+     * apply a sys_log status update on behalf of an admin: when an admin clicks "close" on a
+     * sys_log row the id + status arrive as URL parameters and the matching entry is saved with the new
      * status; non-admins and incomplete parameters are ignored — the page is just re-rendered
      *
      * @param array $url_array the normalised URL params; expects ID (log id) and
@@ -2649,8 +2867,9 @@ class frontend
 
     /**
      * the object field values of a url without the control vars that select the view, the object and
-     * the render mode and without the '9'-prefixed back navigation targets and the '7'-prefixed link
-     * vars, e.g. to carry the posted values of a simulated write to the following page (see action_crud)
+     * the render mode and without the '9'-prefixed back navigation targets, the '7'-prefixed link
+     * vars and the '6'-prefixed reference rows, e.g. to carry the posted values of a simulated write
+     * to the following page (see action_crud)
      *
      * @param array $url_array the parsed url
      * @return array the url keys and values that are object field values
@@ -2662,7 +2881,8 @@ class frontend
             if (!in_array($key, url_var::CONTROL_VARS)
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
                 and !str_starts_with($key, url_var::BACK)
-                and !str_starts_with($key, url_var::LINK)) {
+                and !str_starts_with($key, url_var::LINK)
+                and !str_starts_with($key, url_var::REF_ROW)) {
                 $result[$key] = $val;
             }
         }
@@ -2730,6 +2950,11 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
+            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW)
+            $open_url = $url_array;
+            if ($crud == url_var::CRUD_UPDATE and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+                $open_url = $dbo->phrase()->save_ref_rows($url_array, $msg_ui);
+            }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
@@ -2738,6 +2963,11 @@ class frontend
             // the settings page shows many numbers, so it confirms which one has changed and how
             if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));
+            }
+            // the api calls of the rows have no common transaction, so the confirm page shows the
+            // reference rows again that could not be written, together with the message why
+            if (url_var::ref_rows($open_url) != []) {
+                return $open_url;
             }
         }
 
@@ -2959,6 +3189,115 @@ class frontend
     }
 
     /**
+     * write the import of the preview that the user has confirmed e.g. the values of wikidata for a phrase, and then
+     * show the page of the phrase; if nothing is written, e.g. because wikidata has changed since the preview, the
+     * user sees the preview again with the message why
+     *
+     * @param array $url_array the confirm url with the phrase or the wikidata id, the checksum and the back target
+     * @param user_message_ui $msg_ui with the requesting user, who writes the import, and to tell the result
+     * @param bool $do_it false to simulate the import e.g. in a unit test
+     * @return array the url of the page of the phrase, of the admin import view or of the preview again
+     */
+    private function action_import(array $url_array, user_message_ui $msg_ui, bool $do_it): array
+    {
+        $done = true;
+        if ($do_it) {
+            $done = $this->import_confirmed($url_array, $msg_ui);
+        }
+        $back_mask = $url_array[url_var::BACK . url_var::MASK] ?? views::IMPORT_WIKIDATA_ID;
+        if ($done) {
+            $result = [url_var::MASK => $back_mask];
+            if (array_key_exists(url_var::BACK . url_var::ID, $url_array)) {
+                $result[url_var::ID] = $url_array[url_var::BACK . url_var::ID];
+            }
+        } else {
+            $result = $url_array;
+            $result[url_var::MASK] = views::IMPORT_PREVIEW_ID;
+            unset($result[url_var::ACTION], $result[url_var::STEP], $result[url_var::IMPORT_CHECKSUM]);
+            unset($result[url_var::POST_SUBMIT]);
+        }
+        return $result;
+    }
+
+    /**
+     * write the import of a confirmed preview as the browsing user in this process, like db_object::update writes a
+     * confirmed change, because the api write guard refuses a call of the frontend without the token of the session
+     *
+     * @param array $url_array the confirm url with the phrase or the wikidata id and the checksum
+     * @param user_message_ui $msg_ui with the requesting user, who writes the import, and to tell the result
+     * @return bool true if the import has been written
+     */
+    private function import_confirmed(array $url_array, user_message_ui $msg_ui): bool
+    {
+        $result = false;
+        $json = new wikidata_import()->confirmed_import($url_array, $msg_ui);
+        if ($json != []) {
+            $map = new MapObject();
+            $usr_db = $map->convertMsgToDb($msg_ui)->usr;
+            $msg_db = new backend_user_message($usr_db); // a buffer of the backend import that is merged back into the message of the page
+            $imp = new import();
+            $imp->usr = $usr_db;
+            // the import writes its progress for the console, which is no part of the page
+            ob_start();
+            $imp->put_json(json_encode($json), $msg_db);
+            ob_end_clean();
+            $msg_ui->merge($map->convertMsgToUi($msg_db));
+            if ($msg_db->is_ok()) {
+                $msg_ui->add(msg_id::WIKIDATA_IMPORTED, [], true);
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * import the json file that the user has uploaded on the import view as the browsing user in this process, like
+     * import_confirmed, and show the import result view with the number of imported objects per type; a refused
+     * file shows the import view again with the message why
+     *
+     * @param array $upload the entry of the uploaded file as php gives it in $_FILES
+     * @param bool $is_uploaded true if php has received the file with this request
+     * @param user_message_ui $msg_ui with the requesting user, who imports, and to tell the result
+     * @param bool $do_it false to simulate the import e.g. in a unit test
+     * @return array the url of the import result view or of the import view after a refusal
+     */
+    private function action_import_upload(array $upload, bool $is_uploaded, user_message_ui $msg_ui, bool $do_it): array
+    {
+        $result = [url_var::MASK => views::IMPORT_ID];
+        if ($do_it) {
+            $map = new MapObject();
+            $usr_db = $map->convertMsgToDb($msg_ui)->usr;
+            $msg_db = new backend_user_message($usr_db); // a buffer of the backend import that is merged back into the message of the page
+            $imp = new import();
+            $imp->usr = $usr_db;
+            $done = $imp->put_upload($upload, $is_uploaded, $msg_db);
+            $msg_ui->merge($map->convertMsgToUi($msg_db));
+            if ($done) {
+                $msg_ui->add(msg_id::IMPORT_UPLOAD_DONE, [
+                    msg_id::VAR_FILE_NAME => $imp->file_name,
+                    msg_id::VAR_SUMMARY => $this->import_summary($imp->counts)
+                ], true);
+                $result = [url_var::MASK => views::IMPORT_RESULT_ID];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $counts the number of imported objects by the change table of their type e.g. [words => 2]
+     * @return string the numbers with the name of each type in the user language e.g. "Words: 2, Triples: 1"
+     */
+    private function import_summary(array $counts): string
+    {
+        global $mtr;
+        $parts = [];
+        foreach ($counts as $table => $count) {
+            $parts[] = $mtr->text_db_table($table) . ': ' . $count;
+        }
+        return implode(', ', $parts);
+    }
+
+    /**
      * true if the back target of a confirmed change is the page of the changed object itself, i.e. its
      * own view with its id before the write (none for an add), so the id of the write may replace it
      *
@@ -3085,6 +3424,68 @@ class frontend
             }
         }
         return $url_array;
+    }
+
+    /**
+     * the confirm page of the description and the wikidata id that the backend takes from the
+     * wikipedia page of a phrase, because the refresh icon of a wikipedia reference changes nothing
+     * before the user has confirmed it (see phrase::wikipedia_confirm_url)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell why nothing is taken from wikipedia
+     * @param bool $test_mode true to render without a backend call, so without reading wikipedia
+     * @return array the url of the confirm page or of the edit view, unchanged if no wikipedia refresh is requested
+     */
+    function url_with_wikipedia_refresh(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_WIKIPEDIA and !$test_mode) {
+            unset($result[url_var::REFRESH]);
+            $view = (int)($url_array[url_var::MASK] ?? 0);
+            $dbo = $this->dbo_for_url($view, $url_array);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif ($dbo instanceof word_ui or $dbo instanceof triple_ui) {
+                $result = $dbo->phrase()->wikipedia_confirm_url($url_array, $msg_ui);
+            } else {
+                log_err_msg_ui('the wikipedia refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the import preview of the values that wikidata would add to a phrase, because the refresh icon of a wikidata
+     * reference writes nothing before the user has confirmed it (see system_page::import_preview)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell why nothing is imported from wikidata
+     * @param bool $test_mode true to render without a backend call, so without reading wikidata
+     * @return array the url of the import preview with the phrase, unchanged if no wikidata refresh is requested
+     */
+    function url_with_wikidata_refresh(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_WIKIDATA and !$test_mode) {
+            unset($result[url_var::REFRESH]);
+            $view = (int)($url_array[url_var::MASK] ?? 0);
+            $dbo = $this->dbo_for_url($view, $url_array);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif ($dbo instanceof word_ui or $dbo instanceof triple_ui) {
+                $phr = $dbo->phrase();
+                // the preview shows no object of its own, so the phrase is named by its own url var and
+                // the back mask and id lead to the page of the phrase after the confirm or the cancel
+                unset($result[url_var::ID]);
+                $result[url_var::MASK] = views::IMPORT_PREVIEW_ID;
+                $result[url_var::PHRASE] = $phr->id();
+                $result[url_var::BACK . url_var::MASK] = $phr->view_id();
+                $result[url_var::BACK . url_var::ID] = $phr->obj_id();
+            } else {
+                log_err_msg_ui('the wikidata refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -3243,7 +3644,7 @@ class frontend
             $data = array($id_fld => $ids);
         }
         $ctrl = new rest_call();
-        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg_ui));
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg_ui), $msg_ui);
     }
 
     /*
@@ -3355,7 +3756,9 @@ class frontend
         $typ_lst = $this->dto?->typ_lst_cache;
         if ($typ_lst != null) {
             if ($msk_ui->shows_value_table($typ_lst, $msg_ui)) {
-                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names);
+                $val_lst_ui = new value_list_ui();
+                $mnu->page_items = $val_lst_ui->columns_menu_items($url_array, $dto->tier_names, $dto->table_own_columns);
+                $mnu->export_items = $val_lst_ui->export_menu_items($url_array);
             }
             // the editor of the view as defined by a view relation e.g. the table editor
             if ($msk_ui->editor_id != null) {

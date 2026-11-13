@@ -123,6 +123,25 @@ class ref_list extends sandbox_list
         return $this->key_lst;
     }
 
+    /**
+     * @param string $code_id the code id of the reference type e.g. ref_types::WIKIPEDIA
+     * @return ref|null the reference of the given type e.g. the wikipedia page of a phrase, null if the list has none
+     */
+    function get_by_type_code_id(string $code_id): ?ref
+    {
+        global $sys;
+        $result = null;
+        // compared by the type id, because a reference without a known type has no code id
+        $type_id = $sys->typ_lst->ref_typ->id($code_id);
+        // a phrase has at most one reference per type (see ref::load_by_link_ids)
+        foreach ($this->lst() as $ref) {
+            if ($ref->predicate_id() == $type_id) {
+                $result = $ref;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * api
@@ -184,6 +203,29 @@ class ref_list extends sandbox_list
         return $this->load($qp, $msg);
     }
 
+    /**
+     * load the references of one type with one of the given external keys, e.g. the wikidata references of the
+     * items that a wikidata import names, so that the import uses the phrases of the pod with these references
+     *
+     * @param int $typ_id the database id of the reference type e.g. of wikidata
+     * @param array $keys the external keys e.g. ["Q72", "Q4916"]
+     * @param user_message $msg to collect the load warnings for the user
+     * @return bool true if at least one reference has been loaded
+     */
+    function load_by_type_and_keys(int $typ_id, array $keys, user_message $msg): bool
+    {
+        global $db_con;
+
+        $result = false;
+        $this->reset();
+        // no key is the normal case e.g. of a claim without unit and criterion, so it is no error
+        if ($keys != []) {
+            $qp = $this->load_sql_by_type_and_keys($db_con->sql_creator(), $typ_id, $keys);
+            $result = $this->load($qp, $msg);
+        }
+        return $result;
+    }
+
 
     /*
      * load sql
@@ -239,6 +281,26 @@ class ref_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'phr');
         $sc->add_where(ref::FLD_FROM, $phr_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load the references of one type with one of the given external keys
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $typ_id the database id of the reference type e.g. of wikidata
+     * @param array $keys the external keys e.g. ["Q72", "Q4916"]
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_type_and_keys(sql_creator $sc, int $typ_id, array $keys): sql_par
+    {
+        $qp = $this->load_sql($sc, 'type_keys');
+        $sc->add_where(ref::FLD_PREDICATE, $typ_id);
+        // the key as the user sees it, which may be the key of an own overlay e.g. a changed wikidata id
+        $sc->add_where(ref::FLD_TO, $keys, sql_par_type::TEXT_USR_LIST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

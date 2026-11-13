@@ -246,12 +246,13 @@ class component_exe extends component
             // select object fields
             component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $msg, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $msg, $cfg->typ_lst_cache),
             component_types::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $msg, $cfg->source_list(), $pattern, $test_mode),
             component_types::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $msg, $cfg->source_list(), $test_mode),
             component_types::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $msg, $cfg->ref_list(), $pattern),
             component_types::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $msg, $cfg->ref_list()),
+            component_types::FORM_REF_ROWS => $form->form_ref_rows($dbo, $form_name, $msg, $cfg, $url_arr, $test_mode),
             component_types::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->value_list()),
             component_types::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->value_list()),
             component_types::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
@@ -296,7 +297,7 @@ class component_exe extends component
             // other select fields
             component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $msg, $select->view_list_for($dbo, $msg, $cfg)),
             component_types::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
-            component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $msg, $cfg),
+            component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($form_name, $url_arr),
 
             // verb only fields
             component_types::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $style),
@@ -330,6 +331,8 @@ class component_exe extends component
             component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),
             component_types::SYSTEM_BODY_ALL_JOBS => $page->all_jobs($msg, $msk_id, $test_mode),
             component_types::SYSTEM_BODY_CONFIG_TREE => $page->config_tree($msg, $url_arr, $test_mode),
+            component_types::SYSTEM_BODY_IMPORT_PREVIEW => $page->import_preview($msg, $url_arr, $test_mode),
+            component_types::FORM_WIKIDATA_ID => $page->wikidata_key_form(),
             component_types::FORM_WORD_ADD_SIMPLE => $form->form_word_add_simple($style),
             component_types::FORM_TRIPLE_ADD_SIMPLE => $form->form_triple_add_simple($style),
 
@@ -384,7 +387,7 @@ class component_exe extends component
             component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
             component_types::FORM_BUTTON_IMPORT => $form->button_import(),
-            component_types::FORM_BUTTON_EXPORT => $form->button_export(),
+            component_types::FORM_BUTTON_EXPORT => $form->button_export($msk_id),
 
             // simple close the form section
             component_types::FORM_END => $form->form_end(),
@@ -429,7 +432,7 @@ class component_exe extends component
             component_types::ASSUMPTION_FIELDS => $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr),
             component_types::FORMULA_NOTES => $list->formula_notes($dbo, $msg, $cfg),
             // calculator page - the parts are selected by the calculator triples of the page phrase
-            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $cfg),
+            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $msg, $cfg),
             component_types::CALCULATOR_INPUT => $page->calculator_input(
                 $dbo, $msg, $cfg, $form_name, $adm_dto->view_code_id($msk_id) ?: $msk_id, $url_arr),
             component_types::CALCULATION_RESULT => $page->calculation_result($dbo, $msg, $cfg),

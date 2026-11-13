@@ -156,12 +156,18 @@ class word_write_url_tests extends word_url_tests
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $this->ui->execute_and_next($url_arr, $req);
+        $t->assert_msg($test_name, $req->msg);
         $wrd_chk = new word($t->usr1);
         $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD, $msg) > 0);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $this->ui->execute_and_next($url_arr, $req);
+        // an own message like the new http request of the delete, so that an error of the add does
+        // not stop the reload of the word by the delete (docs/llm/dependent-errors.md); the url has
+        // the name but not the id of the just added word, so this tests the delete by name
+        $del_req = new user_request($t->usr1, new user_message_ui($this->usr), $this->ui->dto, true, true);
+        $this->ui->execute_and_next($url_arr, $del_req);
+        $t->assert_msg($test_name, $del_req->msg);
         $wrd_chk = new word($t->usr1);
         $wrd_chk->load_by_name(word_names::TEST_ADD, $msg);
         // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
@@ -683,41 +689,6 @@ class word_write_url_tests extends word_url_tests
         unset($_SESSION[url_var::SESSION_LOGGED]);
         unset($_SESSION[url_var::SESSION_USER_ID]);
         unset($_SESSION[url_var::USERNAME_HUMAN]);
-    }
-
-    /**
-     * make sure the user with the given name can log in with the fixed test password
-     * (users::TEST_USER_PASSWORD) without rewriting an already matching hash on every run;
-     * the user is loaded fresh by name - the same key user::login uses - so the check and the
-     * login always read the same database row, independent of the shared test user objects
-     *
-     * @param test_cleanup $t the test environment
-     * @param string $usr_name the name of the test user that needs the fixed test password
-     * @return void
-     */
-    private function ensure_test_password(test_cleanup $t, string $usr_name): void
-    {
-        $msg = new user_message();
-        $db_usr = new user();
-        $db_usr->load_by_name($usr_name, $msg);
-        $pw_hash = $db_usr->get_password();
-        if ($pw_hash == null or !password_verify(users::TEST_USER_PASSWORD, $pw_hash)) {
-            $pw_msg = new user_message($db_usr);
-            $db_usr->set_password(users::TEST_USER_PASSWORD, $pw_msg);
-            $db_usr->save($pw_msg);
-            $test_name = 'the test password is set for ' . $usr_name;
-            $t->assert_msg($test_name, $pw_msg);
-        }
-        // check the written state the way the login will read it, so a later login failure
-        // can be separated into a setup problem (this fails too) or a change in between
-        $chk_usr = new user();
-        $chk_usr->load_by_name($usr_name, $msg);
-        $pw_ok = password_verify(users::TEST_USER_PASSWORD, $chk_usr->get_password() ?? '');
-        // the bcrypt hash checks and creation are intentionally slow,
-        // so they are not charged to the assert timing
-        $t->reset_section_timer();
-        $test_name = 'the test password verifies for ' . $usr_name;
-        $t->assert_true($test_name, $pw_ok);
     }
 
     /**

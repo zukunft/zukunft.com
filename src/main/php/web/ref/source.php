@@ -196,6 +196,18 @@ class source extends sandbox_code_id
     }
 
     /**
+     * @return string the url of the source or else the doi.org url of its doi, empty if it has neither
+     */
+    function url_or_doi(): string
+    {
+        $result = $this->url ?? '';
+        if ($result == '') {
+            $result = $this->doi_url() ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * @return array the ordered db field names of a source used for the change preview order
      */
     function sandbox_fld_order(): array

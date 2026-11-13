@@ -81,6 +81,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_formulas.php';
 include_once test_paths::CREATE . 'test_results.php';
 include_once test_paths::CREATE . 'test_triples.php';
 include_once test_paths::CREATE . 'test_words.php';
@@ -144,6 +145,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_admin_dashboard;
 use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -1137,7 +1139,11 @@ class system_view_ui_tests
         $gw_parts->add($t_wrd->word_climate()->phrase());
         $gw_parts->add($t_wrd->word_warmer()->phrase());
         $dto_start->add_phrases(new phrase_list_ui($gw_parts->api_json()), $msg);
-        $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
+        // the first problem is shown from its results like in the database, so that the loss has
+        // the formula with its numbers as the tooltip, which the page calculates from its inputs
+        $dto_start->val_lst = $t_val->value_list_solution_prio_page_ui();
+        $dto_start->set_result_list(new test_results($t)->result_list_solution_prio_first_row_calc_ui());
+        $dto_start->set_formula_list(new test_formulas($t)->formula_list_annual_damage_ui());
         // a value or a result page names the phrases of its sample object, which a unit test can
         // only take from the request cache, so a copy of that cache also holds these phrases; the
         // phrase list is copied too, so that the other views keep the unchanged cache
@@ -1266,11 +1272,7 @@ class system_view_ui_tests
 
         // remove test files not used any more, except the details list fetched from the pod
         $updated_files[] = test_paths::RESOURCE . self::START_PAGE_DETAILS_FILE . test_files::HTML;
-        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
-            if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {
-                $t->delete_path_file($path);
-            }
-        }
+        $t->delete_unused_files_in(test_paths::RESOURCE . test_paths::VIEWS_BY_ID, $updated_files);
     }
 
     /**

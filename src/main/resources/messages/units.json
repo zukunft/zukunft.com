@@ -29,11 +29,11 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Constant",
+          "name": "Mathematical_constant",
           "type": "wikipedia"
         },
         {
-          "name": "Q1127670",
+          "name": "Q186509",
           "type": "wikidata"
         }
       ]
@@ -159,7 +159,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "life",
+          "name": "Life",
           "type": "wikipedia"
         },
         {
@@ -174,7 +174,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "death",
+          "name": "Death",
           "type": "wikipedia"
         },
         {
@@ -189,7 +189,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Homo",
+          "name": "Human",
           "type": "wikipedia"
         },
         {
@@ -253,7 +253,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Base (topology)",
+          "name": "Base_(topology)",
           "type": "wikipedia"
         },
         {
@@ -268,7 +268,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Identity element",
+          "name": "Identity_element",
           "type": "wikipedia"
         },
         {
@@ -298,7 +298,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Internationalism (politics)",
+          "name": "Internationalism_(politics)",
           "type": "wikipedia"
         },
         {
@@ -430,7 +430,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Mole (unit)",
+          "name": "Mole_(unit)",
           "type": "wikipedia"
         },
         {
@@ -473,7 +473,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Apomorphy and synapomorphy",
+          "name": "Apomorphy_and_synapomorphy",
           "type": "wikipedia"
         },
         {
@@ -570,7 +570,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Newton (unit)",
+          "name": "Newton_(unit)",
           "type": "wikipedia"
         },
         {
@@ -592,7 +592,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Pascal (unit)",
+          "name": "Pascal_(unit)",
           "type": "wikipedia"
         },
         {
@@ -702,7 +702,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Weber (unit)",
+          "name": "Weber_(unit)",
           "type": "wikipedia"
         },
         {
@@ -724,7 +724,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Tesla (unit)",
+          "name": "Tesla_(unit)",
           "type": "wikipedia"
         },
         {
@@ -790,7 +790,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Siemens (unit)",
+          "name": "Siemens_(unit)",
           "type": "wikipedia"
         },
         {
@@ -812,7 +812,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Henry (unit)",
+          "name": "Henry_(unit)",
           "type": "wikipedia"
         },
         {
@@ -856,7 +856,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Lumen (unit)",
+          "name": "Lumen_(unit)",
           "type": "wikipedia"
         },
         {
@@ -922,7 +922,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Gray (unit)",
+          "name": "Gray_(unit)",
           "type": "wikipedia"
         },
         {
@@ -1077,7 +1077,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Elementary particle",
+          "name": "Elementary_particle",
           "type": "wikipedia"
         },
         {
@@ -1092,7 +1092,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Electric charge",
+          "name": "Electric_charge",
           "type": "wikipedia"
         },
         {
@@ -1167,7 +1167,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Frequency drift",
+          "name": "Frequency_drift",
           "type": "wikipedia"
         },
         {
@@ -1197,7 +1197,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Fluid dynamics",
+          "name": "Fluid_dynamics",
           "type": "wikipedia"
         },
         {
@@ -1212,7 +1212,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Rate (mathematics)",
+          "name": "Rate_(mathematics)",
           "type": "wikipedia"
         },
         {
@@ -1343,7 +1343,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Max Planck",
+          "name": "Max_Planck",
           "type": "wikipedia"
         },
         {
@@ -1358,7 +1358,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Ludwig Boltzmann",
+          "name": "Ludwig_Boltzmann",
           "type": "wikipedia"
         },
         {
@@ -1373,7 +1373,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Amedeo Avogadro",
+          "name": "Amedeo_Avogadro",
           "type": "wikipedia"
         },
         {
@@ -1602,7 +1602,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Hyperfine structure",
+          "name": "Hyperfine_structure",
           "type": "wikipedia"
         },
         {
@@ -1617,7 +1617,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Atomic electron transition",
+          "name": "Atomic_electron_transition",
           "type": "wikipedia"
         },
         {
@@ -1632,7 +1632,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Frequency standard",
+          "name": "Frequency_standard",
           "type": "wikipedia"
         },
         {
@@ -1721,7 +1721,7 @@
       "description": "Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.",
       "refs": [
         {
-          "name": "Leonhard Euler",
+          "name": "Leonhard_Euler",
           "type": "wikipedia"
         },
         {
@@ -1821,7 +1821,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Jerk (physics)",
+          "name": "Jerk_(physics)",
           "type": "wikipedia"
         },
         {
@@ -1945,7 +1945,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "International System of Units",
+          "name": "International_System_of_Units",
           "type": "wikipedia"
         },
         {
@@ -2117,7 +2117,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "SI_derived_unit#Derived units with special names",
+          "name": "SI_derived_unit#Derived_units_with_special_names",
           "type": "wikipedia"
         },
         {
@@ -2150,7 +2150,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Metre per second",
+          "name": "Metre_per_second",
           "type": "wikipedia"
         },
         {
@@ -2182,7 +2182,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Square metre",
+          "name": "Square_metre",
           "type": "wikipedia"
         },
         {
@@ -2200,7 +2200,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Cubic metre",
+          "name": "Cubic_metre",
           "type": "wikipedia"
         },
         {
@@ -2218,7 +2218,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Cubic metre per second",
+          "name": "Cubic_metre_per_second",
           "type": "wikipedia"
         },
         {
@@ -2241,7 +2241,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Elementary charge",
+          "name": "Elementary_charge",
           "type": "wikipedia"
         },
         {
@@ -2259,7 +2259,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Planck constant",
+          "name": "Planck_constant",
           "type": "wikipedia"
         },
         {
@@ -2345,7 +2345,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Luminous efficacy",
+          "name": "Luminous_efficacy",
           "type": "wikipedia"
         },
         {
@@ -2372,7 +2372,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Metre per second squared",
+          "name": "Metre_per_second_squared",
           "type": "wikipedia"
         },
         {
@@ -2398,7 +2398,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Metre per second cubed",
+          "name": "Metre_per_second_cubed",
           "type": "wikipedia"
         }
       ]
@@ -2420,7 +2420,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Radian per second",
+          "name": "Radian_per_second",
           "type": "wikipedia"
         },
         {
@@ -2445,7 +2445,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Angular velocity",
+          "name": "Angular_velocity",
           "type": "wikipedia"
         },
         {
@@ -2463,7 +2463,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Angular acceleration",
+          "name": "Angular_acceleration",
           "type": "wikipedia"
         },
         {
@@ -2546,7 +2546,7 @@
       "description": "the volume of fluid that passes per unit time",
       "refs": [
         {
-          "name": "Volumetric flow rate",
+          "name": "Volumetric_flow_rate",
           "type": "wikipedia"
         },
         {
@@ -2568,7 +2568,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Volumetric flow rate",
+          "name": "Volumetric_flow_rate",
           "type": "wikipedia"
         },
         {
@@ -2665,7 +2665,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Caesium standard",
+          "name": "Caesium_standard",
           "type": "wikipedia"
         },
         {

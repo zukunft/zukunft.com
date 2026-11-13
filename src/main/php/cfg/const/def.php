@@ -281,6 +281,7 @@ class def
     // configuration values used as fallback if the value is missing in the system configuration
     const int FALLBACK_IMPORT_PER_SEC = 100; // expected number of objects that could be imported per second
     const int FALLBACK_IMPORT_BYTE_PER_SEC = 10000; // expected number of bytes per second that could be processed in import
+    const int FALLBACK_IMPORT_FILE_MB = 10; // the maximal size in MB of a file that a user uploads to import
     const int FALLBACK_PERCENT_STEP = 1; // the percent step size for the progress bar and of process parts
     const int FALLBACK_RETRY = 10; // the default number of retries for a failed process
     const float FALLBACK_TEST_TOLERANCE = 1.0; // the share of objects that an api answer may have more than its expected sample

@@ -208,6 +208,12 @@
                         <span class="hint">2018 consumer mix, low voltage [2]</span>
                     </div>
                     <div class="field">
+                        <label for="mixH">Swiss hydropower <span class="tag m">measured</span></label>
+                        <div class="row"><input id="mixH" type="number" step="0.1" value="8.3"><span
+                                class="unit">g/kWh</span></div>
+                        <span class="hint">storage hydropower, whole production chain; run-of-river 3.8 g/kWh [2]</span>
+                    </div>
+                    <div class="field">
                         <label for="mixC">Replacement mix</label>
                         <select id="mixC">
                             <option value="523" selected>European residual mix — 523 g/kWh [3]</option>
@@ -305,12 +311,12 @@
                         </tr>
                         <tr>
                             <td>Self-consumption rate<span class="sub">share of PV used on site</span></td>
-                            <td class="n"></td>
+                            <td class="n">49 %</td>
                             <td class="n">49 %</td>
                         </tr>
                         <tr class="key">
                             <td>Autarky<span class="sub">share of load covered by PV</span></td>
-                            <td class="n"></td>
+                            <td class="n">84 %</td>
                             <td class="n">84 %</td>
                         </tr>
                         <tr class="sec">
@@ -328,6 +334,11 @@
                         </tr>
                         <tr class="sec">
                             <td colspan="3">CO₂-eq saved, net of production emissions</td>
+                        </tr>
+                        <tr class="key">
+                            <td>vs. Swiss hydropower (8.3 g/kWh)<span class="sub">payback 187 a</span></td>
+                            <td class="n"><span class="neg">-10.5 t</span></td>
+                            <td class="n"><span class="neg">-349 kg</span></td>
                         </tr>
                         <tr class="key">
                             <td>vs. Swiss consumer mix, annual (128 g/kWh)<span class="sub">payback 12.1 a</span></td>
@@ -676,6 +687,7 @@
             yield: num("yield"),
             life: num("life"),
             pvlca: num("pvlca"),
+            mixH: num("mixH"),
             mixA: num("mixA"),
             mixC: num("mixC"),
             dayshare: Math.min(Math.max(num("dayshare"), 0), 1),
@@ -723,9 +735,11 @@
         const lifeDelivered = s.delivered * L;
         const pvIntensity = lifePv > 0 ? pvEmb * 1000 / lifePv : 0;
 
+        const grossH = lifeDelivered * p.mixH / 1000;
         const grossA = lifeDelivered * p.mixA / 1000;
         const grossB = s.chWeighted * L / 1000;
         const grossC = lifeDelivered * p.mixC / 1000;
+        const netH = grossH - emb;
         const netA = grossA - emb;
         const netB = grossB - emb;
         const netC = grossC - emb;
@@ -756,17 +770,18 @@
         h += row("Exported to grid", "", fmt(s.export * L, 0) + " kWh", fmt(s.export, 0) + " kWh");
         h += row("Battery losses", "", fmt((s.battIn - s.battOut) * L, 0) + " kWh", fmt(s.battIn - s.battOut, 0) + " kWh");
         h += row("Grid import still needed", "", fmt(s.grid * L, 0) + " kWh", fmt(s.grid, 0) + " kWh");
-        h += row("Self-consumption rate", "share of PV used on site", "", fmt(selfRate, 0) + " %");
-        h += row("Autarky", "share of load covered by PV", "", fmt(autarky, 0) + " %", "key");
+        h += row("Self-consumption rate", "share of PV used on site", fmt(selfRate, 0) + " %", fmt(selfRate, 0) + " %");
+        h += row("Autarky", "share of load covered by PV", fmt(autarky, 0) + " %", fmt(autarky, 0) + " %", "key");
 
         h += section("Production emissions");
-        const massValues = [pvEmb, battEmb, netA, netB, netC, battEffect];
+        const massValues = [pvEmb, battEmb, netH, netA, netB, netC, battEffect];
         const lifeDigits = columnDecimals(massValues.map((kg) => kg / 1000));
         const yearDigits = columnDecimals(massValues.map((kg) => kg / L));
         h += row("PV system", `${fmt(pvIntensity, 1)} g/kWh at this site`, tonnes(pvEmb, lifeDigits), fmt(pvEmb / L, yearDigits) + " kg");
         h += row("Battery", battUnits ? `${battUnits} × ${fmt(p.batt, 0)} kWh × ${fmt(p.bco2, 0)} kg/kWh` : "no battery", tonnes(battEmb, lifeDigits), fmt(battEmb / L, yearDigits) + " kg");
 
         h += section("CO₂-eq saved, net of production emissions");
+        h += row(`vs. Swiss hydropower (${fmt(p.mixH, 1)} g/kWh)`, `payback ${payback(grossH)}`, signed(netH, false, lifeDigits), signed(netH / L, true, yearDigits), "key");
         h += row(`vs. Swiss consumer mix, annual (${fmt(p.mixA, 0)} g/kWh)`, `payback ${payback(grossA)}`, signed(netA, false, lifeDigits), signed(netA / L, true, yearDigits), "key");
         h += row(`vs. Swiss consumer mix, monthly (${fmt(mixBeff, 0)} g/kWh PV-weighted)`, `payback ${payback(grossB)}`, signed(netB, false, lifeDigits), signed(netB / L, true, yearDigits), "key");
         h += row(`vs. replacement mix (${fmt(p.mixC, 0)} g/kWh)`, `payback ${payback(grossC)}`, signed(netC, false, lifeDigits), signed(netC / L, true, yearDigits), "key");

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_ENUM . 'chart_types.php';
@@ -47,6 +48,7 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -122,7 +124,8 @@ class phrase_list_read_tests
             . '" are the constant triple and the word';
         $lst = new phrase_list($t->usr1);
         $lst->load_like(word_names::MATH_PATTERN, $msg);
-        $t->assert($test_name, $lst->names(), [triple_names::MATH_CONST, word_names::MATH]);
+        $seed_names = $t->phrase_names_without_test_rows($lst);
+        $t->assert($test_name, $seed_names, [triple_names::MATH_CONST, word_names::MATH]);
 
         // before anything is typed the phrase select offers the base phrases, which the frontend
         // knows by name and id without a backend call (see phrase_list_ui::load_fallback), so the
@@ -179,7 +182,7 @@ class phrase_list_read_tests
         foreach ($trp_lst->lst() as $trp) {
             // a triple of a test word is created and deleted by every run, so its id changes
             // each time and it is no part of the fixed list of the seed data
-            if (!in_array($trp->get_from()?->name(), word_names::TEST_WORDS)) {
+            if (!$this->uses_test_word($trp)) {
                 $names_by_id[$trp->id() * -1] = $trp->name();
             }
         }
@@ -350,6 +353,17 @@ class phrase_list_read_tests
      * @param string $file_name the name of the expected csv file in the phrase resource folder
      * @return void
      */
+    /**
+     * @param triple $trp a triple loaded from the database
+     * @return bool true if the from or the to of the triple is a test word, e.g. a seed word linked to a test word
+     */
+    private function uses_test_word(triple $trp): bool
+    {
+        $from_name = $trp->get_from()?->name();
+        $to_name = $trp->get_to()?->name();
+        return (in_array($from_name, word_names::TEST_WORDS) or in_array($to_name, word_names::TEST_WORDS));
+    }
+
     private function assert_names_file(test_cleanup $t, string $test_name, array $names_by_id, string $file_name): void
     {
         $lib = new library();

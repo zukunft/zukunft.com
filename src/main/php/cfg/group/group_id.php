@@ -78,6 +78,13 @@ class group_id extends id
     const string TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const string TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const int PRIME_PHRASES_STD = 4;
+    // the highest phrase id of a prime group, because each id has 15 bits and a sign bit of the 64-bit id
+    const int PRIME_ID_MAX = 32767;
+    // the highest integer that javascript reads exactly (Number.MAX_SAFE_INTEGER), because the api json
+    // sends a prime group id as a number; a prime id is never bigger (see docs/llm/group_id.md)
+    const int JS_INT_MAX = 9007199254740991;
+    // the highest id of the first slot of four, so that the key is at most JS_INT_MAX (31 * 2^48 + 2^48 - 1)
+    const int FIRST_SLOT_MAX = 31;
     const int MAIN_PHRASES_STD = 7;
     const int STANDARD_PHRASES = 16;
     // the max length of the text key in the standard table: 16 phrase ids of 6 chars and a sign char
@@ -90,22 +97,84 @@ class group_id extends id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
-        // a local message, because a group id is computed from positions this list owns:
-        // a missing key while sorting is an internal inconsistency and not a user decision,
-        // so it is not propagated to the callers (is_prime, is_big, get_grp_id, ...)
-        $sort_msg = new user_message(); // not reported, see above
-        if ($phr_lst->count() <= self::PRIME_PHRASES_STD
-            and $phr_lst->prime_only()
-            and ($phr_lst->one_positiv() or $phr_lst->count() < self::PRIME_PHRASES_STD)
+        $id_lst = [];
+        foreach ($phr_lst->lst() as $phr) {
+            $id_lst[] = $phr->id();
+        }
+        return $this->get_id_by_ids($id_lst);
+    }
+
+    /**
+     * the group id of the given phrase ids, without the phrase objects, so that a list load can
+     * set the id of many groups fast; up to three prime ids, or four prime ids with a positive id of
+     * at most FIRST_SLOT_MAX, give the 64-bit integer id, any other ids the text key
+     *
+     * @param array $id_lst the phrase ids of the group in any order
+     * @return int|string the group id as 64-bit integer or the compact text key e.g. "0U+0X+3-"
+     */
+    function get_id_by_ids(array $id_lst): int|string
+    {
+        $prime_only = true;
+        foreach ($id_lst as $id) {
+            if ($id > self::PRIME_ID_MAX or $id < -self::PRIME_ID_MAX) {
+                $prime_only = false;
+            }
+        }
+        if (count($id_lst) <= self::PRIME_PHRASES_STD
+            and $prime_only
+            and $this->fits_js_int($id_lst)
         ) {
-            $phr_lst = $phr_lst->sort_rev_by_id($sort_msg);
-            $db_key = $this->int_group_id($phr_lst);
+            $db_key = $this->id_lst_to_int($this->prime_slot_order($id_lst));
         } else {
             // the standard and the big table use the same key, which is_big() selects by its size
-            $phr_lst = $phr_lst->sort_by_id($sort_msg);
-            $db_key = $this->alpha_num($phr_lst);
+            sort($id_lst);
+            $db_key = $this->ids_to_alpha_num($id_lst);
         }
         return $db_key;
+    }
+
+    /**
+     * @param array $id_lst the prime phrase ids of a group of up to four phrases
+     * @return bool true if the 64-bit key of the ids is at most JS_INT_MAX: up to three ids leave the first
+     *              slot empty, and four ids need a positive id of at most FIRST_SLOT_MAX for the first slot
+     */
+    private function fits_js_int(array $id_lst): bool
+    {
+        return (count($id_lst) < self::PRIME_PHRASES_STD or $this->first_slot_id($id_lst) > 0);
+    }
+
+    /**
+     * @param array $id_lst the prime phrase ids of a group of four phrases
+     * @return int the smallest positive id of at most FIRST_SLOT_MAX, which goes into the first slot,
+     *             because its sign bit is the sign bit of the 64-bit key, or 0 if the group has none
+     */
+    private function first_slot_id(array $id_lst): int
+    {
+        $result = 0;
+        foreach ($id_lst as $id) {
+            if ($id > 0 and $id <= self::FIRST_SLOT_MAX and ($result == 0 or $id < $result)) {
+                $result = $id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the order of the slots, so that the same set of phrases always gives the same key, because a group
+     * does not store the order in which its phrases have been added
+     *
+     * @param array $id_lst the prime phrase ids of a group that fits_js_int
+     * @return array the ids with the highest first, and for four ids the first slot id in front of them
+     */
+    private function prime_slot_order(array $id_lst): array
+    {
+        rsort($id_lst);
+        if (count($id_lst) == self::PRIME_PHRASES_STD) {
+            $first = $this->first_slot_id($id_lst);
+            unset($id_lst[array_search($first, $id_lst, true)]);
+            $id_lst = array_merge([$first], $id_lst);
+        }
+        return $id_lst;
     }
 
     /**
@@ -265,6 +334,11 @@ class group_id extends id
             or group_id_url::phrase_count($key) > self::STANDARD_PHRASES;
     }
 
+    /**
+     * @param int $grp_id the 64-bit integer id of a prime group
+     * @return array the phrase ids of the group with the highest first, independent of the order of the
+     *               slots, because the first slot of four holds the smallest positive id (see prime_slot_order)
+     */
     function int_array(int $grp_id): array
     {
         $result = [];
@@ -282,7 +356,7 @@ class group_id extends id
             }
             $bin_key = substr($bin_key, 16);
         }
-
+        rsort($result);
         return $result;
     }
 
@@ -298,21 +372,6 @@ class group_id extends id
         $id_lst = $this->int_array($grp_id);
         sort($id_lst);
         return $this->ids_to_alpha_num($id_lst);
-    }
-
-    /**
-     * create a 64-bit integer id based on four prime phrase ids
-     *
-     * @param phrase_list $phr_lst list of words or triples that are used to select the value
-     * @return int the group id based on the given phrase list as 64-bit integer
-     */
-    private function int_group_id(phrase_list $phr_lst): int
-    {
-        $id_lst = [];
-        foreach ($phr_lst->lst() as $phr) {
-            $id_lst[] = $phr->id();
-        }
-        return $this->id_lst_to_int($id_lst);
     }
 
     private function alpha_num2int(string $key): int

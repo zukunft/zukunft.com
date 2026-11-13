@@ -80,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
@@ -165,6 +166,12 @@ class horizontal_tests
             $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
             $id = $obj->id();
             $obj_changed = $obj->clone_reset(true);
+            // a link is never changed (the do not update a link guard), so a link object only changes other fields
+            if ($obj instanceof sandbox_link) {
+                $obj_changed->set_fob($obj->fob());
+                $obj_changed->set_tob($obj->tob());
+                $obj_changed->set_predicate_id($obj->predicate_id());
+            }
             $obj_changed = $t_map->change_base_object($obj_changed);
             $obj_changed->id = $id;
             // TODO Prio 3 remove exception by using one_time_fields

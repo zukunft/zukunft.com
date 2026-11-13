@@ -189,7 +189,7 @@ class sys_log_status extends type_object
         parent::import_mapper($in_ex_json, $msg, $dto);
 
         if ($msg->usr === null) {
-            log_err('user not set in user_message', 'import_mapper');
+            log_err_reported('user not set in user_message', 'import_mapper');
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::STATUS, $in_ex_json)) {

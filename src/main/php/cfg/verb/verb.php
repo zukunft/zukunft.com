@@ -287,7 +287,7 @@ class verb extends type_object
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($msg->usr === null) {
-                log_err('user not set in user_message', 'import_mapper');
+                log_err_reported('user not set in user_message', 'import_mapper');
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
@@ -354,8 +354,7 @@ class verb extends type_object
         string       $name_fld = verb_db::FLD_NAME): bool
     {
         $result = parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields if the id has been set from a found row, independent of the message state
-        if ($this->id() != 0) {
+        if ($result) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 if ($db_row[fields::FLD_CODE_ID] != null) {
                     $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
@@ -711,7 +710,7 @@ class verb extends type_object
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($msg->usr === null) {
-                        log_err('user not set in user_message', 'import_obj');
+                        log_err_reported('user not set in user_message', 'import_obj');
                         $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
                     } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                         $this->code_id = $value;
@@ -1088,21 +1087,24 @@ class verb extends type_object
     }
 
     /**
-     * check if the user has requested a verb with a preserved name
+     * check if the requesting user of the message has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg with the requesting user and enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
     protected function check_preserved(user_message $msg): bool
     {
-        $usr = $this->get_user();
+        // a verb is no user sandbox object, so the requesting user is the user of the message
+        $usr = $msg->usr;
 
         // init
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        if (!$usr->is_system()) {
+        if ($usr === null) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif (!$usr->is_system()) {
             if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
@@ -1175,6 +1177,10 @@ class verb extends type_object
                 // get similar database row but ignore the duplicate messages for the moment
                 $sim = $this->get_similar($sim_msg);
                 $this->similar_message($sim, $sim_msg);
+                // without a similar verb the buffer holds e.g. the name used by a word, which stops the add
+                if ($sim == null) {
+                    $msg->merge($sim_msg);
+                }
             }
         }
 
@@ -1274,10 +1280,14 @@ class verb extends type_object
         if ($this->id() > 0) {
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
-                $sc = $db_con->sql_creator();
-                // TODO Prio 1 include deleting of user excludes in the sql function
-                $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
-                $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+                // the default of a user would else block the delete by the foreign key of the users table
+                $usr = new user();
+                if ($usr->clear_last_used(user_db::FLD_VERB, $this->id(), $msg)) {
+                    $sc = $db_con->sql_creator();
+                    // TODO Prio 1 include deleting of user excludes in the sql function
+                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+                    $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+                }
             } else {
                 // TODO Prio 2 create a new verb and request to delete the old
                 log_err_msg('Creating a new verb is not yet possible', $msg);

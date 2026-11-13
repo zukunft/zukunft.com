@@ -1354,7 +1354,7 @@ class sandbox_list_named extends sandbox_list
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
                 } elseif (!$msg_upd->is_ok()) {
-                    log_err('sql update of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
+                    log_err('sql update of ' . $sbx->dsp_id() . ' skipped because ' . $msg_upd->all_message_text());
                 }
                 $msg->merge($msg_upd);
             }
@@ -1384,7 +1384,7 @@ class sandbox_list_named extends sandbox_list
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
                 } else {
-                    log_err('sql delete of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
+                    log_err('sql delete of ' . $sbx->dsp_id() . ' skipped because ' . $msg_del->all_message_text());
                 }
                 $msg->merge($msg_del);
             }
@@ -1488,7 +1488,7 @@ class sandbox_list_named extends sandbox_list
     function save(user_message $msg, ?import $imp = null): bool
     {
         $msg_txt = 'sandbox_list_named function save not overwritten';
-        log_err($msg_txt);
+        log_err_reported($msg_txt);
         $msg->add_warning_text($msg_txt);
         return $msg->is_ok();
     }

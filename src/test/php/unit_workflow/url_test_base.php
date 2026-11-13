@@ -44,8 +44,12 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 
@@ -108,6 +112,7 @@ class url_test_base
     protected string $step_path;       // the snapshot file path grown by the cumulative spine steps
     protected string $http_method;     // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
     protected string $url;             // the last call url of the workflow
+    protected array $next_url = [];    // the url that the action of the last step returns, from which http/view.php builds the redirect
 
 
     /**
@@ -215,6 +220,17 @@ class url_test_base
                 $lst->add($wrd->phrase());
             }
         }
+        $this->add_phrases_to_cache($lst);
+    }
+
+    /**
+     * add phrases to the request cache, because a read run renders without backend calls, so a page
+     * would else link e.g. the from and the to phrase of a triple without a name
+     *
+     * @param phrase_list $lst the phrases that the pages of the workflow show by their name
+     */
+    protected function add_phrases_to_cache(phrase_list $lst): void
+    {
         if (!$lst->is_empty()) {
             $cac_msg = new user_message(); // a test setup without a user action, so nothing to report
             $this->req->dto->add_phrases(new phrase_list_ui($lst->api_json()), $cac_msg);
@@ -264,6 +280,7 @@ class url_test_base
                 $this->req->usr_backend, $this->req->msg,
                 $this->req->dto, $this->req->do_it);
         }
+        $this->next_url = $next_url;
         $this->after_action($step);
         $sys->times->switch();
         // render in test mode so that the snapshot is reproducible without backend calls;
@@ -630,6 +647,41 @@ class url_test_base
             }
         }
         return $result;
+    }
+
+    /**
+     * make sure the user with the given name can log in with the fixed test password
+     * (users::TEST_USER_PASSWORD) without rewriting an already matching hash on every run;
+     * the user is loaded fresh by name - the same key user::login uses - so the check and the
+     * login always read the same database row, independent of the shared test user objects
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $usr_name the name of the test user that needs the fixed test password
+     * @return void
+     */
+    protected function ensure_test_password(test_cleanup $t, string $usr_name): void
+    {
+        $msg = new backend_user_message();
+        $db_usr = new user();
+        $db_usr->load_by_name($usr_name, $msg);
+        $pw_hash = $db_usr->get_password();
+        if ($pw_hash == null or !password_verify(users::TEST_USER_PASSWORD, $pw_hash)) {
+            $pw_msg = new backend_user_message($db_usr);
+            $db_usr->set_password(users::TEST_USER_PASSWORD, $pw_msg);
+            $db_usr->save($pw_msg);
+            $test_name = 'the test password is set for ' . $usr_name;
+            $t->assert_msg($test_name, $pw_msg);
+        }
+        // check the written state the way the login will read it, so a later login failure
+        // can be separated into a setup problem (this fails too) or a change in between
+        $chk_usr = new user();
+        $chk_usr->load_by_name($usr_name, $msg);
+        $pw_ok = password_verify(users::TEST_USER_PASSWORD, $chk_usr->get_password() ?? '');
+        // the bcrypt hash checks and creation are intentionally slow,
+        // so they are not charged to the assert timing
+        $t->reset_section_timer();
+        $test_name = 'the test password verifies for ' . $usr_name;
+        $t->assert_true($test_name, $pw_ok);
     }
 
 }

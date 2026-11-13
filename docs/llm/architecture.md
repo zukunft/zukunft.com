@@ -9,7 +9,9 @@ zukunft.com is a "Giant Global Graph" browser — a PHP/PostgreSQL web app that
 lets users build personal OLAP cubes using words, triples (RDF-like
 subject-verb-object), formulas, and values. The core concept is "calculating
 with words." Requires PHP 8.4+ and PostgreSQL (MySQL also supported). Minimum
-server: LAPP/LAMP stack.
+server: LAPP/LAMP stack. The servers of the pod zukunft.com itself (load balancer,
+static cache servers, webservers, db balancers and database servers) are in
+[server_structure.md](../server_structure.md).
 
 ## Source layout
 
@@ -96,6 +98,28 @@ Every phrase is a term, but a verb and a formula are terms that are **not**
 phrases. When describing why two objects of different classes must not share a
 name or id, pick the noun that actually covers both classes — e.g. a triple and
 a formula are both *terms* (not *phrases*, because a formula is not a phrase).
+
+**The link of a triple is its identity and is never changed.** The from phrase,
+the verb and the to phrase define the triple, like the phrases define a group, so
+a triple with another from, verb or to is always another triple. The same holds for
+every link (`formula_link`, `component_link`, `view_relation`, `term_view`, `ref`):
+its from and its to, and for a class in `def::LINK_TYPE_CLASSES` (triple, ref) its
+predicate, identify it; the other types are normal fields. A `ref` is identified by its
+phrase and its type only, so its external key is a normal field that e.g. a later import
+changes to another wikipedia page. The **do not update a link
+guard** refuses another link for a link with a database id for every user, also the
+owner (`LINK_CHANGE_REFUSED`), in two layers: the save (`sandbox_link::is_link_changed`
+in `sandbox::save`) and the sql update creation (`sandbox_link::is_link_field_changed`
+in `sandbox::sql_update_switch`), so that no path writes another link into a row; each
+link class has a unit test of it (`test_base::assert_link_guard`). The client sends the
+old link as removed and the one with the other link as added instead, like a moved
+item of the calculator editor, and the undo adds the old link again and removes the
+new one.
+Values, formulas and other triples that name the old triple keep naming it; a
+triple that should name the new one is itself another triple and goes the same
+way. Never describe or implement this as "the from (verb, to) of the triple has
+changed": the name, the description and the other fields of a triple can change,
+its link cannot.
 
 ## Key architectural patterns
 
@@ -348,6 +372,37 @@ with the next free id if missing. Example: logged writes of
 new loggable column is added to any table: register it in `change_fields.csv`
 in the same change.
 
+**The change fields are preloaded, and a field id names its table**: the table
+`change_fields` is a special case in two ways.
+
+1. *Preloaded, read only in exceptions*: all rows are loaded upfront into the
+   system object (`$sys->typ_lst->cng_fld`), because the few rows change only
+   with a system upgrade. A read of the table `change_fields` during a request
+   is a rare exception (e.g. `change_log::set_field` adding a field that the
+   upgrade has missed), never the normal way to get a field.
+2. *One entry per table*: almost every loggable field has two entries, one for
+   the standard table and one for the user table, e.g. `283,numeric_value,47`
+   for `values` and `295,numeric_value,48` for `user_values`. So the
+   `change_field_id` is unique including the `table_id`: the table of a change
+   log row is the table id of the preloaded entry of its `change_field_id`,
+   taken from the cache; it is never parsed from the field name and never kept
+   from the table that the loading object has set before the query.
+
+1**The csv type files are internal resource files**: the files in
+`src/main/resources/db_code_links/` are written by the developers, shipped with
+the program and have very few rows (a few to some hundred). So a row that cannot
+be read is never a user input problem but a program error, and the cost of a
+check never matters: `sql_db::load_db_code_link_file` checks every row
+completely and reports each problem with the file and the row, and the row it
+gives to a row mapper is a complete database row including its id.
+
+- **Wrong** — the update row leaves out the id column, so the row mapper has to
+  treat a row without id as normal and a broken row is no longer reported:
+  `for ($i = 1; $i < count($data); $i++) { $upd_row[$col_names[$i]] = trim($data[$i]); }`
+- **Right** — the update row carries the id like every row of the table, so the
+  row mapper reports every row without id:
+  `$upd_row = [$col_names[0] => $id];` before the loop that adds the other columns
+
 **Delete always with change log — top rule 4 of `docs/llm/coding.md`**: a row
 leaves the database only through the logged delete of its object (`del()`,
 which builds the sql with `sql_type::LOG`, e.g. `value_delete_log`,
@@ -356,7 +411,8 @@ and when), the base of the undo and the only way a lost row can be explained
 later, so a plain `DELETE` that leaves no entry destroys information that
 nothing can bring back. This is why a plain delete is never the fix for a
 logged delete that does not remove a row — the logged delete is repaired
-instead — and why test cleanups delete through `del()` as well.
+instead — and why test cleanups delete through `del()` as well. When `del()`
+deletes, when it only excludes and which dependent rows it removes: `docs/llm/delete.md`.
 
 An exception is possible only for rows that carry no user history because the
 next read recreates them, and it must be guarded by **more than one layer at

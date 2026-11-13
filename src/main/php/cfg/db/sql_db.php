@@ -1609,8 +1609,8 @@ class sql_db
                                     . ' does not match the id field of ' . $class);
                             }
                         } else {
-                            // build a db_row array from the csv line to use the row_mapper
-                            $upd_row = [];
+                            // build a db_row array from the csv line to use the row_mapper, with the id like every db row
+                            $upd_row = [$col_names[0] => $id];
                             for ($i = 1; $i < count($data); $i++) {
                                 $upd_row[$col_names[$i]] = trim($data[$i]);
                                 // check, which values need to be updates
@@ -1627,10 +1627,18 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $typ_obj->row_mapper_typ_obj($upd_row, $msg, $class);
+                                $upd_mapped = $typ_obj->row_mapper_typ_obj($upd_row, $msg, $class);
                                 $db_obj = $typ_obj->clone_reset();
-                                $typ_obj->row_mapper_typ_obj($db_row, $msg, $class);
-                                $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
+                                $db_mapped = $typ_obj->row_mapper_typ_obj($db_row, $msg, $class);
+                                if (!$upd_mapped) {
+                                    log_err('csv code link row ' . $row . ' of ' . $table_name
+                                        . ' cannot be mapped to update ' . $class);
+                                } elseif (!$db_mapped) {
+                                    log_err('the database row of csv code link row ' . $row . ' of ' . $table_name
+                                        . ' cannot be mapped to ' . $class);
+                                } else {
+                                    $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
+                                }
                             }
                         }
                     }
@@ -3471,7 +3479,7 @@ class sql_db
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
-                        $trace_link = log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
+                        $trace_link = log_fatal_reported($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
                         $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
                         $result = false;
                     }
@@ -3492,7 +3500,7 @@ class sql_db
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
-                        $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                        $trace_link = log_err_reported($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
                         $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
                         $result = false;
                     }
@@ -3549,16 +3557,6 @@ class sql_db
         } elseif ($debug > 10) {
             log_debug("sql_db->" . $type . " (" . substr($sql, 0, 100) . " ... )");
         }
-    }
-
-    /**
-     * TODO Prio 1 deprecate
-     * returns all values of an SQL query in an array
-     */
-    function get_old(string $sql, user_message $msg, string $sql_name = '', array $sql_array = array()): array
-    {
-        $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $msg, $sql_name, $sql_array);
     }
 
     /**
@@ -4777,7 +4775,7 @@ class sql_db
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
-                    log_err($sql_error . ' while executing ' . $qp->sql);
+                    log_err_reported($sql_error . ' while executing ' . $qp->sql);
                     $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
@@ -4793,7 +4791,7 @@ class sql_db
 
                 if ($db_id == 0 or $db_id == '') {
                     if (!$is_val) {
-                        log_err($err_msg);
+                        log_err_reported($err_msg);
                         $msg->add_message_text($err_msg);
                     }
                 } else {
@@ -4803,7 +4801,7 @@ class sql_db
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
@@ -4837,12 +4835,12 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
-                    log_err($err_msg);
+                    log_err_reported($err_msg);
                     $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
@@ -4880,12 +4878,12 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
-                    log_err($err_msg);
+                    log_err_reported($err_msg);
                     $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
-            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $trace_link = log_err_reported($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             $msg->add_message_text($trace_link);
         }
         $sys->times->switch();

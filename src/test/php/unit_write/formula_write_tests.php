@@ -65,7 +65,6 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -107,8 +106,7 @@ class formula_write_tests
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);
 
         $t->subheader($ts . 'sandbox for ' . formula_names::SYSTEM_TEST_ADD);
-        // TODO Prio 0 activate
-        //$t->assert_write_named($t_frm->formula_filled_add(), formula_names::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t_frm->formula_filled_add(), formula_names::SYSTEM_TEST_ADD, $msg);
 
         // TODO Prio 2 remove
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);
@@ -368,37 +366,11 @@ class formula_write_tests
         $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_increase->id() . '">' . formula_names::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
-        // ... the formula result selected by the word and in percent
-        // TODO Prio 2 defined the criteria for selecting the result
-        $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::CH, $msg);
-        /*
-        $result = trim($frm_ui->dsp_result($wrd, $back));
-        $target = '0.75 %';
-        $t->assert('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $result, $target);
-        */
-
         /* TODO Prio 2 reactivate
         $result = $frm->btn_edit();
-        $target = '<a href="/http/formula_edit.php?id=52&back=" title="Change formula increase"><img src="/src/main/resources/images/button_edit.svg" alt="Change formula increase"></a>';
         $target = 'data-icon="edit"';
         $t->dsp_contains(', formula->btn_edit for '.$frm->name().'', $target, $result);
         */
-
-        $page = 1;
-        $size = 20;
-        $call = rest_ctrl::PATH_FIXED .'test.php';
-        // TODO Prio 2 activate
-        //$result = $frm_html->dsp_hist($page, $size, $call, $back);
-        //$target = 'changed to';
-        //$t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id(), $target, $result);
-
-        //$result = $frm_html->dsp_hist_links($page, $size, $call, $back);
-        // TODO Prio 2 fix it
-        //$target = 'link';
-        $target = 'table';
-        //$result = $hist_page;
-        //$t->dsp_contains(', formula->dsp_hist_links for ' . $frm->dsp_id(), $target, $result);
 
         // test formula refresh functions
         $usr_msg_elm = $msg->clone_reset();
@@ -462,6 +434,11 @@ class formula_write_tests
         }
         $target = formula_names::SYSTEM_TEST_RENAMED;
         $t->assert('formula->load renamed formula "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
+
+        $test_name = '... and the formula word has been renamed with the formula';
+        $wrd_frm = new word($t->usr1);
+        $wrd_frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg);
+        $t->assert($test_name, $wrd_frm->name(), formula_names::SYSTEM_TEST_RENAMED);
 
         // ... and if the formula renaming has been logged (with 'user' after the action if the
         // rename landed in the user sandbox row, like the add above)

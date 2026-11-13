@@ -527,6 +527,38 @@ class test_results
     }
 
     /**
+     * the first ranking row as results like in the database, the potential loss with its formula
+     * "annual damage in money" and the context of the values used, so that the start page repeats
+     * the calculation with the inputs of test_values::value_list_solution_prio_page_ui and shows
+     * the formula with its numbers as the tooltip of the loss
+     *
+     * @return result_list_ui the frontend potential loss with its formula and the potential gain of the first row
+     */
+    function result_list_solution_prio_first_row_calc_ui(): result_list_ui
+    {
+        $t_val = new test_values($this->env);
+        $t_wrd = new test_words($this->env);
+        [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed] = $t_val->solution_prio_rows()[0];
+        $loss = $this->result_for_phrases($t_val->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::ANNUAL_DAMAGE_ID, formula_names::ANNUAL_DAMAGE);
+        $loss->set_formula($frm);
+        $ctx_lst = new phrase_list($this->env->usr1);
+        foreach ([$problem, $t_wrd->word_world()->phrase(), $t_wrd->word_gdp()->phrase(),
+                     $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
+                     $t_wrd->word_percent()->phrase(), $t_wrd->word_annual()->phrase()] as $phr) {
+            $ctx_lst->add($phr);
+        }
+        $loss->set_src_grp($ctx_lst->get_grp_id(false));
+        $lst = new result_list($this->env->usr1);
+        $lst->add($loss);
+        $lst->add($this->result_for_phrases(
+            $t_val->solution_prio_gain_phrases($problem, $solution, $is_assumed), $gain_nbr));
+        $tl = new test_lib();
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return result_list_ui the frontend first ranking row as results for unit testing
      */
     function result_list_solution_prio_first_row_ui(): result_list_ui

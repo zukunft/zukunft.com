@@ -236,6 +236,50 @@ enum messages: string
     case RESERVED_NAME = 'reserved_name';
     case NOT_SIMILAR = 'not_similar';
     case RELOAD = 'reload';
+    // the tooltip of the refresh icon of a wikipedia reference and the problems of that refresh
+    case WIKIPEDIA_REFRESH = 'wikipedia_refresh';
+    case WIKIPEDIA_REF_MISSING = 'wikipedia_ref_missing';
+    case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
+    case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
+    case WIKIPEDIA_NO_WIKIDATA = 'wikipedia_no_wikidata';
+    // the info that a refresh has found nothing to update, with and without the time of the wikipedia page
+    case WIKIPEDIA_IN_LINE = 'wikipedia_in_line';
+    case WIKIPEDIA_IN_LINE_NO_TIME = 'wikipedia_in_line_no_time';
+    // the tooltip of the refresh icon of a wikidata reference, the problems of the import preview and its parts
+    case WIKIDATA_REFRESH = 'wikidata_refresh';
+    case WIKIDATA_REF_MISSING = 'wikidata_ref_missing';
+    case WIKIDATA_READ_FAILED = 'wikidata_read_failed';
+    case WIKIDATA_PROPERTY_UNKNOWN = 'wikidata_property_unknown';
+    case WIKIDATA_IN_LINE = 'wikidata_in_line';
+    case WIKIDATA_IMPORTED = 'wikidata_imported';
+    case WIKIDATA_NAME_USED = 'wikidata_name_used';
+    case WIKIDATA_ID_FIELD = 'wikidata_id_field';
+    case IMPORT_PREVIEW_WORDS_NEW = 'import_preview_words_new';
+    case IMPORT_PREVIEW_TRIPLES_NEW = 'import_preview_triples_new';
+    case IMPORT_PREVIEW_VALUES_NEW = 'import_preview_values_new';
+    case IMPORT_PREVIEW_VALUES_SAME = 'import_preview_values_same';
+    case IMPORT_PREVIEW_VALUES_CONFLICT = 'import_preview_values_conflict';
+    case IMPORT_PREVIEW_AS_USER_VALUE = 'import_preview_as_user_value';
+    case IMPORT_PREVIEW_WITH_WORD = 'import_preview_with_word';
+    case IMPORT_PREVIEW_PROBLEMS = 'import_preview_problems';
+    case IMPORT_PREVIEW_CONFIRM = 'import_preview_confirm';
+    case IMPORT_PREVIEW_CHANGED = 'import_preview_changed';
+    case IMPORT_PREVIEW_SHOW = 'import_preview_show';
+    // the upload of the import view (import::put_upload) and the export of a phrase selection (export::file_text)
+    case IMPORT_UPLOAD_NOT_PERMITTED = 'import_upload_not_permitted';
+    case IMPORT_UPLOAD_MISSING = 'import_upload_missing';
+    case IMPORT_UPLOAD_NO_JSON = 'import_upload_no_json';
+    case IMPORT_UPLOAD_EMPTY = 'import_upload_empty';
+    case IMPORT_UPLOAD_TOO_BIG = 'import_upload_too_big';
+    case IMPORT_UPLOAD_DONE = 'import_upload_done';
+    case EXPORT_PHRASE_MISSING = 'export_phrase_missing';
+    case EXPORT_FORMAT_UNKNOWN = 'export_format_unknown';
+    case EXPORT_FORMULA_MISSING = 'export_formula_missing';
+    case EXPORT_FORMULA_NAME_MISSING = 'export_formula_name_missing';
+    // the reference rows that the confirm of a phrase change writes too (see url_var::REF_ROW)
+    case INFO_CONFIRM_REFS = 'info_confirm_refs';
+    case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';
+    case REF_ROW_TYPE_USED = 'ref_row_type_used';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
     case READ = 'read';
@@ -266,6 +310,14 @@ enum messages: string
     // the sub headers of the edit menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';
+    case TABLE_MENU_DESIGN = 'table_menu_design';
+    case TABLE_UNMATCHED_SHOW = 'table_unmatched_show';
+    case TABLE_UNMATCHED_HIDE = 'table_unmatched_hide';
+    case TABLE_DESIGN_PLAIN = 'table_design_plain';
+    case TABLE_DESIGN_BORDERED = 'table_design_bordered';
+    case TABLE_DESIGN_UNKNOWN = 'table_design_unknown';
+    case TABLE_EXPORT_CSV = 'table_export_csv';
+    case TABLE_CSV_EMPTY = 'table_csv_empty';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
@@ -800,6 +852,8 @@ enum messages: string
         . ' differs from the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated with the values of this page, which is shown instead';
+    // a measured value and its formula result of the same phrases, e.g. a GDP and the sum of its expenditure parts
+    case RESULT_DIFFERS_FROM_VALUE = 'result_differs_from_value';
     case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" for the context "'
@@ -966,6 +1020,125 @@ enum messages: string
         . '" is not imported, because the name of its wikidata criterion "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be read';
+    // a wikidata claim that is not imported, named by its entity, its property, its claim id and its number
+    case WIKIDATA_NO_VALUE = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because wikidata names no number for it e.g. because the value is unknown';
+    case WIKIDATA_DEPRECATED = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because wikidata marks it as deprecated';
+    case WIKIDATA_QUALIFIER_UNKNOWN = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its qualifier "'
+        . self::VAR_START . self::VAR_FIELD_NAME . self::VAR_END
+        . '" may change what the number means';
+    case WIKIDATA_TIME_TWICE = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because it has more than one point in time';
+    case WIKIDATA_TIME_UNKNOWN = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its point in time "'
+        . self::VAR_START . self::VAR_TIME . self::VAR_END
+        . '" cannot be read';
+    case WIKIDATA_TIME_PRECISION = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because its point in time "'
+        . self::VAR_START . self::VAR_TIME . self::VAR_END
+        . '" is less precise than a year';
+    case WIKIDATA_SAME_WORDS = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because another value has the same words "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '", so the import cannot know which number is meant';
+    case WIKIDATA_ID_TWICE = 'the values of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" with the wikidata id "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" are not imported, because the id is the reference of more than one phrase "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '"; please keep the wikidata reference only at one of them';
+    // the price of a currency in another currency is a value of the listed currency pair e.g. "EUR per USD"
+    case WIKIDATA_CURRENCY_PAIR_MISSING = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because no currency pair of it and the currency "'
+        . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
+        . '" is listed, so the import cannot know which currency is the base; please ask the admin to add the pair';
+    case WIKIDATA_CURRENCY_PRICE_ZERO = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is not imported, because a price of zero has no inverse for the listed reverse currency pair "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '"';
+    case WIKIDATA_CURRENCY_PAIR_INVERTED = 'the "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" (wikidata claim "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '") is imported as its inverse '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' of the currency pair "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '", because only this reverse pair is listed; the inverse is rounded to the digits of wikidata';
+    // only an offline test reads the wikidata answers from a folder, so a missing file is a missing test resource
+    case WIKIDATA_FIXTURE_MISSING = 'the wikidata answer of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" is not read, because the test file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" is missing; please add it to the test resources';
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
@@ -1174,6 +1347,12 @@ enum messages: string
         . '" has no code id of a known chart type, so the chart is not shown';
     case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    // the query of a list load has no order, so a list that fills the row limit misses a random part
+    case LIST_ROW_LIMIT_REACHED = 'the list of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' has reached the row limit of '
+        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
+        . ' rows, so some may be missing';
     case SORT_CONDITION_UNKNOWN = 'the sort condition "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known condition, so the default order is not used';
@@ -1868,6 +2047,8 @@ enum messages: string
     case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
     case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
     case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
+    // the last line of the tooltip of a result, because the link leads to the page of the result
+    case RESULT_TOOLTIP_DETAILS = 'result_tooltip_details';
     // the tag behind the label of an assumption field: a number with a source or an estimate
     case FIELD_TAG_MEASURED = 'field_tag_measured';
     case FIELD_TAG_ASSUMED = 'field_tag_assumed';
@@ -1911,10 +2092,29 @@ enum messages: string
     case CALC_EDITOR_TAB_PAGE = 'calc_editor_tab_page';
     case CALC_EDITOR_TAB_TEXTS = 'calc_editor_tab_texts';
     case CALC_EDITOR_TAB_CHANGES = 'calc_editor_tab_changes';
+    // the json tab of the calculator editor and its copy
+    case CALC_EDITOR_TAB_JSON = 'calc_editor_tab_json';
+    case CALC_EDITOR_JSON_NOTE = 'calc_editor_json_note';
+    case CALC_EDITOR_COPY = 'calc_editor_copy';
+    case CALC_EDITOR_COPIED = 'calc_editor_copied';
+    case CALC_EDITOR_COPY_MANUAL = 'calc_editor_copy_manual';
+    // the PDF tab of the calculator editor, which the pod creates from the data of the editor
+    case CALC_EDITOR_TAB_PDF = 'calc_editor_tab_pdf';
+    case CALC_EDITOR_PDF_NOTE = 'calc_editor_pdf_note';
+    case CALC_EDITOR_PDF_CREATE = 'calc_editor_pdf_create';
+    case CALC_EDITOR_PDF_OFFLINE = 'calc_editor_pdf_offline';
+    case CALC_EDITOR_PDF_CREATING = 'calc_editor_pdf_creating';
+    case CALC_EDITOR_PDF_CREATED = 'calc_editor_pdf_created';
+    case CALC_EDITOR_PDF_FAILED = 'calc_editor_pdf_failed';
     // the lists of a calculator page, the kinds of their items and the links to add an item
     case CALC_EDITOR_LIST_COLUMNS = 'calc_editor_list_columns';
     case CALC_EDITOR_LIST_ROWGROUPS = 'calc_editor_list_rowgroups';
     case CALC_EDITOR_LIST_DETAILS = 'calc_editor_list_details';
+    case CALC_EDITOR_LIST_ARGUMENTS = 'calc_editor_list_arguments';
+    case CALC_EDITOR_LIST_VERDICT = 'calc_editor_list_verdict';
+    case CALC_EDITOR_LIST_SENSITIVITY = 'calc_editor_list_sensitivity';
+    case CALC_EDITOR_LIST_PRESETS = 'calc_editor_list_presets';
+    case CALC_EDITOR_LIST_NOTES = 'calc_editor_list_notes';
     case CALC_EDITOR_KIND_PAGE = 'calc_editor_kind_page';
     case CALC_EDITOR_KIND_INPUT = 'calc_editor_kind_input';
     case CALC_EDITOR_KIND_ASSUMPTION = 'calc_editor_kind_assumption';
@@ -1927,6 +2127,12 @@ enum messages: string
     case CALC_EDITOR_KIND_DEXTRA = 'calc_editor_kind_dextra';
     case CALC_EDITOR_KIND_DFILTER = 'calc_editor_kind_dfilter';
     case CALC_EDITOR_KIND_SUB = 'calc_editor_kind_sub';
+    case CALC_EDITOR_KIND_ARGUMENT = 'calc_editor_kind_argument';
+    case CALC_EDITOR_KIND_VERDICT = 'calc_editor_kind_verdict';
+    case CALC_EDITOR_KIND_SAXIS = 'calc_editor_kind_saxis';
+    case CALC_EDITOR_KIND_SLEVEL = 'calc_editor_kind_slevel';
+    case CALC_EDITOR_KIND_PRESET = 'calc_editor_kind_preset';
+    case CALC_EDITOR_KIND_NOTE = 'calc_editor_kind_note';
     case CALC_EDITOR_ADD_INPUT = 'calc_editor_add_input';
     case CALC_EDITOR_ADD_ASSUMPTION = 'calc_editor_add_assumption';
     case CALC_EDITOR_ADD_COLUMN = 'calc_editor_add_column';
@@ -1936,6 +2142,56 @@ enum messages: string
     case CALC_EDITOR_ADD_DETAIL = 'calc_editor_add_detail';
     case CALC_EDITOR_ADD_DCOL = 'calc_editor_add_dcol';
     case CALC_EDITOR_ADD_DEXTRA = 'calc_editor_add_dextra';
+    case CALC_EDITOR_ADD_ARGUMENT = 'calc_editor_add_argument';
+    // the fields of a pro or contra argument: the claim triple from the reason to the claim argued about
+    case CALC_EDITOR_ARGUMENT_REASON = 'calc_editor_argument_reason';
+    case CALC_EDITOR_ARGUMENT_SIDE = 'calc_editor_argument_side';
+    case CALC_EDITOR_ARGUMENT_PRO = 'calc_editor_argument_pro';
+    case CALC_EDITOR_ARGUMENT_CONTRA = 'calc_editor_argument_contra';
+    case CALC_EDITOR_ARGUMENT_TARGET = 'calc_editor_argument_target';
+    case CALC_EDITOR_ARGUMENT_TEXT = 'calc_editor_argument_text';
+    case CALC_EDITOR_ARGUMENT_TEXT_NOTE = 'calc_editor_argument_text_note';
+    // the states of the verdict and the texts of the verdict box below them
+    case CALC_EDITOR_ADD_VERDICT = 'calc_editor_add_verdict';
+    case CALC_EDITOR_VERDICT_BOX = 'calc_editor_verdict_box';
+    case CALC_EDITOR_VERDICT_BOX_NOTE = 'calc_editor_verdict_box_note';
+    case CALC_EDITOR_VERDICT_SCALE = 'calc_editor_verdict_scale';
+    case CALC_EDITOR_VERDICT_SCALE_NOTE = 'calc_editor_verdict_scale_note';
+    case CALC_EDITOR_VERDICT_NOTE = 'calc_editor_verdict_note';
+    case CALC_EDITOR_VERDICT_RESULT = 'calc_editor_verdict_result';
+    case CALC_EDITOR_VERDICT_RESULT_NOTE = 'calc_editor_verdict_result_note';
+    case CALC_EDITOR_VERDICT_THRESHOLD = 'calc_editor_verdict_threshold';
+    case CALC_EDITOR_VERDICT_THRESHOLD_NOTE = 'calc_editor_verdict_threshold_note';
+    case CALC_EDITOR_VERDICT_SCALE_MIN = 'calc_editor_verdict_scale_min';
+    case CALC_EDITOR_VERDICT_SCALE_MAX = 'calc_editor_verdict_scale_max';
+    case CALC_EDITOR_VERDICT_SCALE_LIMIT_NOTE = 'calc_editor_verdict_scale_limit_note';
+    // the axes, their values and the cells of the sensitivity table
+    case CALC_EDITOR_ADD_SAXIS = 'calc_editor_add_saxis';
+    case CALC_EDITOR_ADD_SLEVEL = 'calc_editor_add_slevel';
+    case CALC_EDITOR_SENSITIVITY_BOX = 'calc_editor_sensitivity_box';
+    case CALC_EDITOR_SENSITIVITY_BOX_NOTE = 'calc_editor_sensitivity_box_note';
+    case CALC_EDITOR_SENSITIVITY_HINT = 'calc_editor_sensitivity_hint';
+    case CALC_EDITOR_SENSITIVITY_CELL_MAIN = 'calc_editor_sensitivity_cell_main';
+    case CALC_EDITOR_SENSITIVITY_CELL_MAIN_NOTE = 'calc_editor_sensitivity_cell_main_note';
+    case CALC_EDITOR_SENSITIVITY_CELL_CHANGE = 'calc_editor_sensitivity_cell_change';
+    case CALC_EDITOR_SENSITIVITY_CELL_CHANGE_NOTE = 'calc_editor_sensitivity_cell_change_note';
+    case CALC_EDITOR_SENSITIVITY_NUMBER = 'calc_editor_sensitivity_number';
+    case CALC_EDITOR_SENSITIVITY_NUMBER_NOTE = 'calc_editor_sensitivity_number_note';
+    // the buttons that set several inputs at once and the numbers that each of them sets
+    case CALC_EDITOR_ADD_PRESET = 'calc_editor_add_preset';
+    case CALC_EDITOR_PRESET_VALUES = 'calc_editor_preset_values';
+    case CALC_EDITOR_PRESET_VALUES_NOTE = 'calc_editor_preset_values_note';
+    case CALC_EDITOR_ADD_NOTE = 'calc_editor_add_note';
+    case CALC_EDITOR_NOTE_TEXT = 'calc_editor_note_text';
+    case CALC_EDITOR_NOTE_TEXT_NOTE = 'calc_editor_note_text_note';
+    case CALC_EDITOR_LIST_SOURCES = 'calc_editor_list_sources';
+    case CALC_EDITOR_KIND_SOURCE = 'calc_editor_kind_source';
+    case CALC_EDITOR_SOURCE_NAME = 'calc_editor_source_name';
+    case CALC_EDITOR_SOURCE_NAME_NOTE = 'calc_editor_source_name_note';
+    case CALC_EDITOR_SOURCE_DESCRIPTION = 'calc_editor_source_description';
+    case CALC_EDITOR_SOURCE_DESCRIPTION_NOTE = 'calc_editor_source_description_note';
+    case CALC_EDITOR_SOURCE_URL = 'calc_editor_source_url';
+    case CALC_EDITOR_SOURCE_DOI = 'calc_editor_source_doi';
     // where the shown label, hint or highlight of an item comes from e.g. "Empty: shows the phrase name."
     case CALC_EDITOR_FROM_ITEM = 'calc_editor_from_item';
     case CALC_EDITOR_FROM_NOTHING = 'calc_editor_from_nothing';
@@ -1971,6 +2227,8 @@ enum messages: string
     case CALC_EDITOR_READ_FROM = 'calc_editor_read_from';
     case CALC_EDITOR_PAGE_TITLE = 'calc_editor_page_title';
     case CALC_EDITOR_LEAD_TEXT = 'calc_editor_lead_text';
+    case CALC_EDITOR_MORE_TEXT = 'calc_editor_more_text';
+    case CALC_EDITOR_MORE_TEXT_NOTE = 'calc_editor_more_text_note';
     case CALC_EDITOR_LIST_HEADINGS = 'calc_editor_list_headings';
     case CALC_EDITOR_NO_HEADING = 'calc_editor_no_heading';
     case CALC_EDITOR_LABEL_OF = 'calc_editor_label_of';
@@ -2064,6 +2322,7 @@ enum messages: string
     case CALC_EDITOR_VALUES = 'calc_editor_values';
     case CALC_EDITOR_NEW_WORDS = 'calc_editor_new_words';
     case CALC_EDITOR_CHANGED_FORMULAS = 'calc_editor_changed_formulas';
+    case CALC_EDITOR_CHANGED_SOURCES = 'calc_editor_changed_sources';
     // the notices and toasts of the load, the save, the undo and the draft
     case CALC_EDITOR_REMOVED = 'calc_editor_removed';
     case CALC_EDITOR_DISCARDED = 'calc_editor_discarded';
@@ -2079,6 +2338,8 @@ enum messages: string
     case CALC_EDITOR_SAVE_NOT_CONFIRMED = 'calc_editor_save_not_confirmed';
     case CALC_EDITOR_NO_LISTS = 'calc_editor_no_lists';
     case CALC_EDITOR_PHRASE_NOT_FOUND = 'calc_editor_phrase_not_found';
+    // a list answer with each phrase once names a phrase id that its phrase list does not contain
+    case API_PHRASE_ID_MISSING = 'api_phrase_id_missing';
     case CALC_EDITOR_VERB_UNKNOWN = 'calc_editor_verb_unknown';
     case CALC_EDITOR_READ_FAILED = 'calc_editor_read_failed';
     case CALC_EDITOR_ENTER_NAME = 'calc_editor_enter_name';
@@ -2221,6 +2482,7 @@ enum messages: string
     // the label of the field for the name of a case above the save button and the reason if the api does not name one
     case CALCULATOR_CASE_NAME = 'calculator_case_name';
     case CALCULATOR_CASE_FAILED = 'calculator_case_failed';
+    case CALCULATOR_CASE_NO_JS = 'calculator_case_no_js';
     // the column headers of the target positions and the heading of the formulas of the pdf report of a calculator page
     case CALCULATOR_REPORT_QUANTITY = 'calculator_report_quantity';
     case CALCULATOR_REPORT_SECURITY = 'calculator_report_security';
@@ -2231,6 +2493,185 @@ enum messages: string
     case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
     case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
     case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
+    // the pdf of the definition of a calculator, which the PDF tab of the calculator editor creates (calculator_definition_report)
+    case CALCULATOR_DEFINITION_FOOTER = 'calculator_definition_footer';
+    // the page number on the right of the footer, also of the portfolio split report (calculator_report::add_footer)
+    case CALCULATOR_DEFINITION_PAGE = 'calculator_definition_page';
+    case CALCULATOR_DEFINITION_CREATED = 'calculator_definition_created';
+    case CALCULATOR_DEFINITION_NO_CALCULATOR = 'calculator_definition_no_calculator';
+    // the technical setup after the page: every object of the data that defines the page
+    case CALCULATOR_DEFINITION_SETUP = 'calculator_definition_setup';
+    case CALCULATOR_DEFINITION_VALUES_FROM = 'calculator_definition_values_from';
+    case CALCULATOR_DEFINITION_VALUES_NO_SOURCE = 'calculator_definition_values_no_source';
+    case CALCULATOR_DEFINITION_RESULTS_OF = 'calculator_definition_results_of';
+    case CALCULATOR_DEFINITION_RESULTS_NO_FORMULA = 'calculator_definition_results_no_formula';
+    case CALCULATOR_DEFINITION_SOURCES = 'calculator_definition_sources';
+    case CALCULATOR_DEFINITION_WORDS = 'calculator_definition_words';
+    case CALCULATOR_DEFINITION_TRIPLES = 'calculator_definition_triples';
+    // the limits of an input field in a pdf report e.g. "from 3000 to 20000, step 100"
+    case CALCULATOR_REPORT_LIMITS = 'calculator_report_limits';
+    // the answer of the pdf of the definition if the request has no pdf
+    case CALCULATOR_DEFINITION_NO_LOGIN = 'calculator_definition_no_login';
+    case CALCULATOR_DEFINITION_NO_JSON = 'calculator_definition_no_json';
+    // the steps that the page shows while the pdf report is created, its result and its failure
+    case CALCULATOR_REPORT_STEP_LOAD = 'calculator_report_step_load';
+    case CALCULATOR_REPORT_STEP_NUMBERS = 'calculator_report_step_numbers';
+    case CALCULATOR_REPORT_STEP_POSITIONS = 'calculator_report_step_positions';
+    case CALCULATOR_REPORT_STEP_TABLES = 'calculator_report_step_tables';
+    case CALCULATOR_REPORT_STEP_FORMULAS = 'calculator_report_step_formulas';
+    case CALCULATOR_REPORT_STEP_FILE = 'calculator_report_step_file';
+    case CALCULATOR_REPORT_READY = 'calculator_report_ready';
+    case CALCULATOR_REPORT_FAILED = 'calculator_report_failed';
+    case CALCULATOR_REPORT_NONE = 'calculator_report_none';
+    // the texts of the table editor script, which gets all messages with this prefix (see system_page::table_editor_texts)
+    case TABLE_EDITOR_SHOW_TABLE = 'table_editor_show_table';
+    case TABLE_EDITOR_NO_JS = 'table_editor_no_js';
+    case TABLE_EDITOR_REFUSED = 'table_editor_refused';
+    case TABLE_EDITOR_UNREACHABLE = 'table_editor_unreachable';
+    // the label of a parameter group or field of the table editor is table_editor_<key> and its hint table_editor_<key>_hint
+    case TABLE_EDITOR_GROUP_COLUMNS = 'table_editor_group_columns';
+    case TABLE_EDITOR_COLUMN_LEVEL = 'table_editor_column_level';
+    case TABLE_EDITOR_COLUMN_MAYOR = 'table_editor_column_mayor';
+    case TABLE_EDITOR_COLUMN_MAYOR_HINT = 'table_editor_column_mayor_hint';
+    case TABLE_EDITOR_COLUMN_MAIN = 'table_editor_column_main';
+    case TABLE_EDITOR_COLUMN_MAIN_HINT = 'table_editor_column_main_hint';
+    case TABLE_EDITOR_GROUP_COLUMN_DETAILS = 'table_editor_group_column_details';
+    case TABLE_EDITOR_COLUMN_MINOR = 'table_editor_column_minor';
+    case TABLE_EDITOR_COLUMN_MINOR_HINT = 'table_editor_column_minor_hint';
+    case TABLE_EDITOR_COLUMN_MARGINAL = 'table_editor_column_marginal';
+    case TABLE_EDITOR_COLUMN_MARGINAL_HINT = 'table_editor_column_marginal_hint';
+    case TABLE_EDITOR_COLUMN_ORDER_RULE = 'table_editor_column_order_rule';
+    case TABLE_EDITOR_COLUMN_FROZEN = 'table_editor_column_frozen';
+    case TABLE_EDITOR_HEADER_LABEL = 'table_editor_header_label';
+    case TABLE_EDITOR_HEADER_SHOW_UNIT = 'table_editor_header_show_unit';
+    case TABLE_EDITOR_HEADER_ROTATE = 'table_editor_header_rotate';
+    case TABLE_EDITOR_COLUMN_PIVOT_PHRASE = 'table_editor_column_pivot_phrase';
+    case TABLE_EDITOR_COLUMN_PIVOT_PHRASE_HINT = 'table_editor_column_pivot_phrase_hint';
+    case TABLE_EDITOR_GROUP_ROWS = 'table_editor_group_rows';
+    case TABLE_EDITOR_ROW_PHRASE = 'table_editor_row_phrase';
+    case TABLE_EDITOR_ROW_PHRASE_HINT = 'table_editor_row_phrase_hint';
+    case TABLE_EDITOR_GROUP_ROW_DETAILS = 'table_editor_group_row_details';
+    case TABLE_EDITOR_ROW_VERB = 'table_editor_row_verb';
+    case TABLE_EDITOR_ROW_DIRECTION = 'table_editor_row_direction';
+    case TABLE_EDITOR_ROW_FILTER = 'table_editor_row_filter';
+    case TABLE_EDITOR_ROW_FILTER_HINT = 'table_editor_row_filter_hint';
+    case TABLE_EDITOR_ROW_ORDER = 'table_editor_row_order';
+    case TABLE_EDITOR_ROW_ORDER_HINT = 'table_editor_row_order_hint';
+    case TABLE_EDITOR_ROW_LIMIT = 'table_editor_row_limit';
+    case TABLE_EDITOR_ROW_SHOW_ALL = 'table_editor_row_show_all';
+    case TABLE_EDITOR_ROW_PAGE_SIZE = 'table_editor_row_page_size';
+    case TABLE_EDITOR_ROW_EMPTY = 'table_editor_row_empty';
+    case TABLE_EDITOR_ROW_LABEL_MODE = 'table_editor_row_label_mode';
+    case TABLE_EDITOR_ROW_PINNED = 'table_editor_row_pinned';
+    case TABLE_EDITOR_ROW_PINNED_HINT = 'table_editor_row_pinned_hint';
+    case TABLE_EDITOR_GROUP_HIERARCHY = 'table_editor_group_hierarchy';
+    case TABLE_EDITOR_HIERARCHY_VERB = 'table_editor_hierarchy_verb';
+    case TABLE_EDITOR_HIERARCHY_EXPAND = 'table_editor_hierarchy_expand';
+    case TABLE_EDITOR_HIERARCHY_MAX_DEPTH = 'table_editor_hierarchy_max_depth';
+    case TABLE_EDITOR_HIERARCHY_INDENT = 'table_editor_hierarchy_indent';
+    case TABLE_EDITOR_HIERARCHY_PARENT_VALUE = 'table_editor_hierarchy_parent_value';
+    case TABLE_EDITOR_HIERARCHY_ORPHANS = 'table_editor_hierarchy_orphans';
+    case TABLE_EDITOR_HIERARCHY_SORT_SCOPE = 'table_editor_hierarchy_sort_scope';
+    case TABLE_EDITOR_GROUP_VALUES = 'table_editor_group_values';
+    case TABLE_EDITOR_VALUE_FORMAT = 'table_editor_value_format';
+    case TABLE_EDITOR_VALUE_FORMAT_HINT = 'table_editor_value_format_hint';
+    case TABLE_EDITOR_VALUE_SCALE = 'table_editor_value_scale';
+    case TABLE_EDITOR_VALUE_SCALE_ONE = 'table_editor_value_scale_one';
+    case TABLE_EDITOR_VALUE_SCALE_BILLION = 'table_editor_value_scale_billion';
+    case TABLE_EDITOR_VALUE_SCALE_THOUSAND = 'table_editor_value_scale_thousand';
+    case TABLE_EDITOR_VALUE_UNIT = 'table_editor_value_unit';
+    case TABLE_EDITOR_VALUE_MISSING = 'table_editor_value_missing';
+    case TABLE_EDITOR_VALUE_DELTA = 'table_editor_value_delta';
+    case TABLE_EDITOR_VALUE_SHOW_SOURCE = 'table_editor_value_show_source';
+    case TABLE_EDITOR_VALUE_SHOW_CONFIDENCE = 'table_editor_value_show_confidence';
+    case TABLE_EDITOR_VALUE_CONDITIONAL_STYLE = 'table_editor_value_conditional_style';
+    case TABLE_EDITOR_VALUE_ALIGN = 'table_editor_value_align';
+    case TABLE_EDITOR_VALUE_TIME = 'table_editor_value_time';
+    case TABLE_EDITOR_VALUE_SOURCE_MODE = 'table_editor_value_source_mode';
+    case TABLE_EDITOR_GROUP_AGGREGATION = 'table_editor_group_aggregation';
+    case TABLE_EDITOR_TOTALS_ROW = 'table_editor_totals_row';
+    case TABLE_EDITOR_TOTALS_COLUMN = 'table_editor_totals_column';
+    case TABLE_EDITOR_SUBTOTALS = 'table_editor_subtotals';
+    case TABLE_EDITOR_AGGREGATION_SCOPE = 'table_editor_aggregation_scope';
+    case TABLE_EDITOR_GROUP_LAYOUT = 'table_editor_group_layout';
+    case TABLE_EDITOR_TITLE = 'table_editor_title';
+    case TABLE_EDITOR_CAPTION = 'table_editor_caption';
+    case TABLE_EDITOR_DENSITY = 'table_editor_density';
+    case TABLE_EDITOR_STRIPED = 'table_editor_striped';
+    case TABLE_EDITOR_BORDERS = 'table_editor_borders';
+    case TABLE_EDITOR_MAX_WIDTH = 'table_editor_max_width';
+    case TABLE_EDITOR_MAX_WIDTH_HINT = 'table_editor_max_width_hint';
+    case TABLE_EDITOR_TRANSPOSE = 'table_editor_transpose';
+    case TABLE_EDITOR_RESPONSIVE_MODE = 'table_editor_responsive_mode';
+    case TABLE_EDITOR_GROUP_INTERACTION = 'table_editor_group_interaction';
+    case TABLE_EDITOR_SORTABLE = 'table_editor_sortable';
+    case TABLE_EDITOR_SEARCHABLE = 'table_editor_searchable';
+    case TABLE_EDITOR_SELECTABLE = 'table_editor_selectable';
+    case TABLE_EDITOR_DRILLDOWN = 'table_editor_drilldown';
+    case TABLE_EDITOR_REFRESH_MODE = 'table_editor_refresh_mode';
+    case TABLE_EDITOR_GROUP_CONTEXT = 'table_editor_group_context';
+    case TABLE_EDITOR_LANGUAGE = 'table_editor_language';
+    case TABLE_EDITOR_TIME_REFERENCE = 'table_editor_time_reference';
+    case TABLE_EDITOR_PROFILE = 'table_editor_profile';
+    case TABLE_EDITOR_VIEW_OWNER = 'table_editor_view_owner';
+    case TABLE_EDITOR_VIEW_SHARED = 'table_editor_view_shared';
+    case TABLE_EDITOR_GROUP_EXPORT = 'table_editor_group_export';
+    case TABLE_EDITOR_EXPORT_FORMATS = 'table_editor_export_formats';
+    case TABLE_EDITOR_EXPORT_SCOPE = 'table_editor_export_scope';
+    case TABLE_EDITOR_EXPORT_INCLUDE_SOURCES = 'table_editor_export_include_sources';
+    case TABLE_EDITOR_GROUP_STATE = 'table_editor_group_state';
+    case TABLE_EDITOR_PERSIST_USER_CHANGES = 'table_editor_persist_user_changes';
+    case TABLE_EDITOR_VIEW_VERSION = 'table_editor_view_version';
+    // the texts of the top bar, the rail, the tabs and the table of the table editor (script/table_editor.js)
+    case TABLE_EDITOR_EXPORT_TIP = 'table_editor_export_tip';
+    case TABLE_EDITOR_OPEN_GROUPS = 'table_editor_open_groups';
+    case TABLE_EDITOR_CLOSE_GROUPS = 'table_editor_close_groups';
+    case TABLE_EDITOR_RAIL_NOTE = 'table_editor_rail_note';
+    case TABLE_EDITOR_TOKEN_PLACEHOLDER = 'table_editor_token_placeholder';
+    case TABLE_EDITOR_TOKEN_FIND = 'table_editor_token_find';
+    case TABLE_EDITOR_TOKEN_HINT = 'table_editor_token_hint';
+    case TABLE_EDITOR_TOKEN_EMPTY = 'table_editor_token_empty';
+    case TABLE_EDITOR_TOKEN_REMOVE = 'table_editor_token_remove';
+    case TABLE_EDITOR_NO_MATCH = 'table_editor_no_match';
+    case TABLE_EDITOR_TAB_TABLE = 'table_editor_tab_table';
+    case TABLE_EDITOR_TAB_JSON = 'table_editor_tab_json';
+    case TABLE_EDITOR_TEXTS_INTRO = 'table_editor_texts_intro';
+    case TABLE_EDITOR_COL_PART = 'table_editor_col_part';
+    case TABLE_EDITOR_TEXTS_COLUMN = 'table_editor_texts_column';
+    case TABLE_EDITOR_TEXTS_ROW = 'table_editor_texts_row';
+    case TABLE_EDITOR_CHANGED_PARAMS = 'table_editor_changed_params';
+    case TABLE_EDITOR_REMOVED = 'table_editor_removed';
+    case TABLE_EDITOR_JSON_NOTE = 'table_editor_json_note';
+    case TABLE_EDITOR_APPLY_JSON = 'table_editor_apply_json';
+    case TABLE_EDITOR_COPY = 'table_editor_copy';
+    case TABLE_EDITOR_APPLIED = 'table_editor_applied';
+    case TABLE_EDITOR_JSON_INVALID = 'table_editor_json_invalid';
+    case TABLE_EDITOR_COPIED = 'table_editor_copied';
+    case TABLE_EDITOR_COPY_MANUAL = 'table_editor_copy_manual';
+    case TABLE_EDITOR_CSV_ALL_ROWS = 'table_editor_csv_all_rows';
+    case TABLE_EDITOR_CSV_SOURCES = 'table_editor_csv_sources';
+    case TABLE_EDITOR_NO_ROWS = 'table_editor_no_rows';
+    case TABLE_EDITOR_SUM_TIP = 'table_editor_sum_tip';
+    case TABLE_EDITOR_LEVEL = 'table_editor_level';
+    case TABLE_EDITOR_SUBTOTAL = 'table_editor_subtotal';
+    case TABLE_EDITOR_TOTAL = 'table_editor_total';
+    case TABLE_EDITOR_COUNT = 'table_editor_count';
+    case TABLE_EDITOR_ROW = 'table_editor_row';
+    case TABLE_EDITOR_SELECT_ROW = 'table_editor_select_row';
+    case TABLE_EDITOR_TOGGLE_TIP = 'table_editor_toggle_tip';
+    case TABLE_EDITOR_ROWS_SHOWN = 'table_editor_rows_shown';
+    case TABLE_EDITOR_META_LEVEL = 'table_editor_meta_level';
+    case TABLE_EDITOR_AS_OF = 'table_editor_as_of';
+    case TABLE_EDITOR_SELECTED = 'table_editor_selected';
+    case TABLE_EDITOR_SEARCH_ROWS = 'table_editor_search_rows';
+    case TABLE_EDITOR_EXPAND_ALL = 'table_editor_expand_all';
+    case TABLE_EDITOR_COLLAPSE_ALL = 'table_editor_collapse_all';
+    case TABLE_EDITOR_PREVIOUS = 'table_editor_previous';
+    case TABLE_EDITOR_NEXT = 'table_editor_next';
+    case TABLE_EDITOR_PAGE = 'table_editor_page';
+    case TABLE_EDITOR_ROWS_HIDDEN = 'table_editor_rows_hidden';
+    case TABLE_EDITOR_NUMBER_INVALID = 'table_editor_number_invalid';
+    case TABLE_EDITOR_MEASURED = 'table_editor_measured';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page
@@ -2638,12 +3079,17 @@ enum messages: string
     case REQUEST_NOT_PERMITTED = 'request_not_permitted';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
+    // shown if an api write is rejected because it does not carry the anti csrf token of the session e.g. after the session has expired
+    case CHANGE_BLOCKED_SESSION_TOKEN = 'change_blocked_session_token';
     // shown if an update put message names another user than the one of the session e.g. a page loaded before a login
     case UPDATE_PUT_OTHER_USER = 'update_put_other_user';
     // shown if an update put stops at a problem, with the number of the changes that are not saved
     case UPDATE_PUT_SKIPPED = 'update_put_skipped';
     // shown if an object of an update put is not changed by the save, so that a lost change is never confirmed as saved
     case UPDATE_PUT_UNCHANGED = 'update_put_unchanged';
+    // shown if a request sends another from, predicate or to for an existing link e.g. a triple, which is
+    // never changed, because another link is another object (the do not update a link guard, docs/llm/architecture.md)
+    case LINK_CHANGE_REFUSED = 'link_change_refused';
 
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
@@ -2665,10 +3111,17 @@ enum messages: string
     // if a database row of a term misses the id that selects the word, triple, formula or verb
     case TERM_ROW_ID_MISSING = 'term_row_id_missing';
 
+    // if the row mapper gets no database row or a row without its id, so that it cannot map it (see db_object_seq_id::row_mapper)
+    case DB_ROW_ID_MISSING = 'db_row_id_missing';
+
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
+
+    // if a delete has only excluded the object for the user, because it is still used
+    // always added with ok = true, because the exclusion is the normal answer to the delete of a used object
+    case DELETE_EXCLUDED_IN_USE = 'delete_excluded_in_use';
 
 
     /*
@@ -2714,6 +3167,7 @@ enum messages: string
     case FORM_FIELD_URL = 'form_field_url';
     case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
+    case FORM_FIELD_REF_DELETE = 'form_field_ref_delete';
 
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
@@ -2770,6 +3224,7 @@ enum messages: string
     case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
+    case FORM_REF_ROWS = 'form_ref_rows';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
 
     // value and result select fields
@@ -2867,13 +3322,12 @@ enum messages: string
     // the button beside the expression and the latex field of the formula form that asks the
     // backend to read the entered text and to name the terms that it selects
     case FORM_BUTTON_VALIDATE = 'form_button_validate';
-    // the tooltips of the views tab of an object page: show the object with the view, set the view
-    // as the default view of the object and change the view itself (see view::open_link)
+    // the tooltips of the views in the edit menu of the navbar: show the object with the view and
+    // set the view as the default view of the object (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
     case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
     // the tooltip of the grey entry in the edit menu of the navbar of the view that shows the page
     case BUTTON_VIEW_USED_TIP = 'button_view_used_tip';
-    case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     // the button that links the selected object to the shown object e.g. a formula to a phrase
@@ -2910,6 +3364,20 @@ enum messages: string
     // around the counted seconds of the loading text e.g. "since 3 sec"
     case PAGE_LOADING_SINCE = 'page_loading_since';
     case PAGE_LOADING_SECONDS = 'page_loading_seconds';
+    // the step that a slow page is doing now, shown below the loading text (see rest_call::send_loading_step)
+    case PAGE_LOADING_STEP_DATA = 'page_loading_step_data';
+    case PAGE_LOADING_STEP_VALUES = 'page_loading_step_values';
+    case PAGE_LOADING_STEP_RESULTS = 'page_loading_step_results';
+    case PAGE_LOADING_STEP_PHRASES = 'page_loading_step_phrases';
+    case PAGE_LOADING_STEP_PHRASE_DATA = 'page_loading_step_phrase_data';
+    case PAGE_LOADING_STEP_VIEW = 'page_loading_step_view';
+    case PAGE_LOADING_STEP_FORMULAS = 'page_loading_step_formulas';
+    // the step of a call for one named object e.g. the phrase data of a calculator page
+    case PAGE_LOADING_STEP_DATA_OF = 'page_loading_step_data_of';
+    case PAGE_LOADING_STEP_VALUES_OF = 'page_loading_step_values_of';
+    case PAGE_LOADING_STEP_RESULTS_OF = 'page_loading_step_results_of';
+    case PAGE_LOADING_STEP_FORMULAS_OF = 'page_loading_step_formulas_of';
+    case PAGE_LOADING_STEP_PHRASES_OF = 'page_loading_step_phrases_of';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';
@@ -2931,6 +3399,8 @@ enum messages: string
     // added to the tooltip above with the name of the shown object
     case NAVBAR_ADD_VIEW_FOR_TIP = 'navbar_add_view_for_tip';
     case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
+    // the sub header of the im- and export entries at the end of the edit menu
+    case NAVBAR_IM_EXPORT = 'navbar_im_export';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     // the switch between the dark and the light mode of the user menu (see html_base::theme_switch)
@@ -2952,6 +3422,17 @@ enum messages: string
     case ABOUT_PORTFOLIO_MGMT = 'about_portfolio_mgmt';
     case ABOUT_TREAM_DEMO = 'about_tream_demo';
     case ABOUT_GITHUB_LINK = 'about_github_link';
+    // the links of the about page to the entry documents of /docs/ (see http/docs.php)
+    case ABOUT_DOCS = 'about_docs';
+    case ABOUT_DOC_INTRO = 'about_doc_intro';
+    case ABOUT_DOC_CONCEPT = 'about_doc_concept';
+    case ABOUT_DOC_FAQ = 'about_doc_faq';
+    // the text before the bank account for a donation on the about page
+    case ABOUT_DONATION = 'about_donation';
+    // the title and text of http/docs.php if the url names no document of /docs/
+    case DOC_NOT_FOUND = 'doc_not_found';
+    // the tooltip of the grey edit icon of http/docs.php for a user who is no admin
+    case DOC_CHANGE_ADMIN_ONLY = 'doc_change_admin_only';
 
     case UNDO = 'undo';
     case FIND = 'find';

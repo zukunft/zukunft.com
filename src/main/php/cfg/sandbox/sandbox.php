@@ -334,11 +334,11 @@ class sandbox extends db_object_seq_id_user
      * this row_mapper_sandbox function should be used for all user sandbox objects
      *
      * @param array|null $db_row with the data directly from the database
-     * @param user_message $msg to enrich with any mapping problem; a missing row is normal-empty and adds no message
+     * @param user_message $msg an earlier error stops the mapping before the id is set (docs/llm/dependent-errors.md)
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if a row has been loaded and the mapping can continue; problems are reported via $msg
+     * @return bool $msg->is_ok(), so that a child mapper continues with if ($result); a missing row or a row without id is reported
      */
     function row_mapper_sandbox(
         ?array       $db_row,
@@ -351,10 +351,8 @@ class sandbox extends db_object_seq_id_user
         if ($id_fld == '') {
             $id_fld = $this->id_field();
         }
-        parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields whenever the row has been mapped (id set), not based on $msg->is_ok(),
-        // because an error left on $msg by an earlier operation must not lead to a half mapped object
-        if ($this->id() != 0) {
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
+        if ($result) {
             // e.g. a row without user sandbox join does not include the user id field
             $usr_id_fld = sql_db::TBL_USER_PREFIX . $id_fld;
             if (!$load_std and array_key_exists($usr_id_fld, $db_row)) {
@@ -1077,6 +1075,16 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * only for link objects
+     * @return array the fields that define what the link connects, which a user overlay row never has,
+     *               because a user who changes them means another link e.g. the from, verb and to of a triple
+     */
+    function link_key_fields(): array
+    {
+        return [$this->from_field(), verb_db::FLD_ID, $this->to_field()];
+    }
+
+    /**
+     * only for link objects
      * the name of the destination object
      * to be overwritten by the child object
      * @return string|null
@@ -1163,7 +1171,7 @@ class sandbox extends db_object_seq_id_user
         // reset the id first, so that a missing database row is reported with id 0 as documented
         // and never with the stale id of e.g. a row that another user has deleted in the meantime,
         // because e.g. del() decides between delete and user exclude based on the reloaded id
-        // (a found row sets the id again in the row_mapper independent of the message state)
+        // (a found row sets the id again in the row_mapper, but only if the message carries no earlier error)
         $this->id = 0;
         $db_row = $db_con->get1($qp, $msg);
         // a false db row means that the query itself failed
@@ -1636,6 +1644,10 @@ class sandbox extends db_object_seq_id_user
             // to recreate the calling object
             $std = $this->clone_reset(true);
             $std->load_standard($this->id(), $msg);
+            // the standard load sets only the ids of the linked objects, but the update checks that they are valid
+            if ($std->is_link_obj()) {
+                $std->reload_objects($msg);
+            }
             $std->owner_id = $new_owner_id;
             $std->update_standard_fields($db_con, $std, $msg);
             $this->set_owner_id($new_owner_id);
@@ -2342,163 +2354,148 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * save all updated fields with one sql function
-     * similar to the sandbox_multi save_fields_func function but for only one table
+     * write the changes to the standard row, which the user may change e.g. because no other user has used it,
+     * and remove the user row that is not needed any more
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
-     * @param sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database row before saving the changes whereas $this is the row with the changes
+     * @param sandbox $std_rec the database row defined as standard because it is used by most users
      * @param user_message $msg the user message object that collects any issues during the sql creation
-     * @return bool true if everything has been fine
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
      */
-    function save_fields_func(
-        sql_db         $db_con,
-        sandbox        $db_obj,
-        sandbox        $norm_obj,
-        user_message   $msg,
-        ?sql_type_list $sc_par_lst = null
-    ): bool
+    private function save_standard_row(
+        sql_db        $db_con,
+        sandbox       $db_rec,
+        sandbox       $std_rec,
+        user_message  $msg,
+        sql_type_list $sc_par_lst
+    ): void
     {
-        // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
-        // the sql function should include the log of the changes
-        if ($sc_par_lst == null) {
-            $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $usr_par_lst = clone $sc_par_lst;
+        $usr_par_lst->add(sql_type::USER);
+        $no_diff = $this->no_diff($std_rec, $msg, $sc_par_lst);
+        $qp = null;
+        if (!$no_diff) {
+            // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
+            // null if no field has changed or e.g. if the do not update a link guard has refused the update
+            $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
+            if ($qp != null) {
+                $obj_name = new library()->class_to_name($this::class);
+                $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+            }
         }
-        // get a list of all fields that could potentially be updated
-        $all_fields = $this->db_fields_all();
-        // get the object name for the log messages
-        $lib = new library();
-        $obj_name = $lib->class_to_name($this::class);
+        // the user row is kept if the update of the standard row has not been written
+        if ($this->has_usr_cfg() and ($no_diff or $qp != null)) {
+            $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
+            $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+        }
+        if ($msg->is_ok()) {
+            // check if some user overwrites can be removed
+            $this->del_usr_cfg_if_not_needed($msg); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+        }
+        /*
+        // check if renaming this object breaks any user's sandbox
+        if ($usr_msg->is_ok() and $this->is_key_updated($db_rec)) {
+            $this->fix_user_overwrites_after_rename($db_rec, $usr_msg);
+        }
+        */
+    }
 
-        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
-        if ($this->can_change($msg)) {
-            // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $msg, $sc_par_lst)) {
-                if ($this->has_usr_cfg()) {
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
-                }
+    /**
+     * write the changes of a user, who may not change the standard row, to the user row
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox $db_rec the database row as the user sees it before saving the changes
+     * @param sandbox $std_rec the database row defined as standard because it is used by most users
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     */
+    private function save_user_row(
+        sql_db        $db_con,
+        sandbox       $db_rec,
+        sandbox       $std_rec,
+        user_message  $msg,
+        sql_type_list $sc_par_lst
+    ): void
+    {
+        $sc = $db_con->sql_creator();
+        $obj_name = new library()->class_to_name($this::class);
+        $usr_par_lst = clone $sc_par_lst;
+        $usr_par_lst->add(sql_type::USER);
+        $this->sync_code_ids($std_rec);
+        // TODO Prio 2 check why $this seems to be here updated but not in the sandbox multi object
+        if ($this->has_usr_cfg()) {
+            if ($this->no_diff($std_rec, $msg, $usr_par_lst)) {
+                $qp = $this->sql_delete($sc, $msg, $usr_par_lst);
+                $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
             } else {
-                // apply the changes directly to the norm db record
-                // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
-                $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
-                if (!$fvt_lst->is_empty_except_internal_fields()) {
-                    $sc_par_lst->add(sql_type::UPDATE);
-                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
-                    // delete the user overwrite db row because it is not needed any more
-                    if ($this->has_usr_cfg()) {
-                        $sc_par_lst->add(sql_type::USER);
-                        $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
-                        $db_con->delete($qp, 'del user ' . $obj_name, $msg);
-                    }
-                }
-            }
-            if ($msg->is_ok()) {
-                // check if some user overwrites can be removed
-                $this->del_usr_cfg_if_not_needed($msg); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-            }
-            /*
-            // check if renaming this object breaks any user's sandbox
-            if ($usr_msg->is_ok() and $this->is_key_updated($db_obj)) {
-                $this->fix_user_overwrites_after_rename($db_obj, $usr_msg);
-            }
-            */
-
-        } else {
-            $sc_par_lst->add(sql_type::USER);
-            // make sure that the code id never differs between the standard row and the user row
-            if (in_array($this::class, def::CODE_ID_CLASSES)) {
-                if ($this->get_code_id() != $norm_obj->get_code_id()) {
-                    // a local buffer for the permission check; this only syncs the two rows internally
-                    $this->set_code_id($norm_obj->get_code_id(), new user_message($this->get_user())); // not reported, see above
-                    log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
-                }
-            }
-            // make sure that the ui msg code id never differs between the standard row and the user row
-            if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
-                // a local buffer for the permission checks; this only syncs the two rows internally
-                $ui_msg = new user_message($this->get_user()); // not reported, see above
-                if ($this->get_ui_msg_code_id() != $norm_obj->get_ui_msg_code_id()) {
-                    $this->set_ui_msg_code_id($norm_obj->get_ui_msg_code_id(), $ui_msg);
-                    log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
-                }
-                if ($this->get_ui_msg_code_id_vars() != $norm_obj->get_ui_msg_code_id_vars()) {
-                    $this->set_ui_msg_code_id_vars($norm_obj->get_ui_msg_code_id_vars(), $ui_msg);
-                    log_warning('ui variable message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
-                }
-                if ($this->get_ui_msg_code_id_exception() != $norm_obj->get_ui_msg_code_id_exception()) {
-                    $this->set_ui_msg_code_id_exception($norm_obj->get_ui_msg_code_id_exception(), $ui_msg);
-                    log_warning('ui exception message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
-                }
-                if ($this->get_ui_msg_value_exception() !== $norm_obj->get_ui_msg_value_exception()) {
-                    $this->set_ui_msg_value_exception($norm_obj->get_ui_msg_value_exception(), $ui_msg);
-                    log_warning('ui exception value has been changed in ' . $this->dsp_id() . ' with is not expected');
-                }
-            }
-            // TODO Prio 2 check why $this seems to be here updated but not in the sandbox multi object
-            if ($this->has_usr_cfg()) {
-                if ($this->no_diff($norm_obj, $msg, $sc_par_lst)) {
-                    // remove the user sandbox row because it is not needed any more
-                    $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
+                if ($this->is_excluded()) {
+                    // compared with the row of the user, so that only the changed fields are written
+                    $qp = $this->sql_exclude($sc, $db_rec, $msg);
                 } else {
-                    // update the user sandbox row with the changes
-                    $sc_par_lst->add(sql_type::UPDATE);
-                    // force logging the deletion
-                    if ($this->is_excluded()) {
-                        $sc_par_lst->add(sql_type::EXCLUDE);
-                        // to check which fields needs to be updated in the user db_row
-                        $fvt_lst = $this->db_fields_changed($norm_obj, $msg, $sc_par_lst);
-                        // for a new user record compare with the norm db_row
-                        $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-                    } else {
-                        // to update the user sandbox db row
-                        // create the user overwrite object
-                        $usr_chg_obj = $this->clone_reset(true);
-                        // set the target db row by comparing the user sandbox db_row with the norm db_row
-                        $usr_chg_obj = $this->delta($norm_obj, $usr_chg_obj);
-                        // create the user database object
-                        $usr_db = $this->clone_reset(true);
-                        // load the user db_row
-                        $usr_db->load_user_changes($this->id(), $msg);
-                        // to check which fields needs to be updated in the user db_row
-                        $fvt_lst = $usr_chg_obj->db_fields_changed($usr_db, $msg, $sc_par_lst);
-                        // for a new user record compare with the norm db_row
-                        $qp = $usr_db->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-                    }
-                    if ($qp != null) {
-                        $db_con->update($qp, 'update user ' . $obj_name, $msg);
-                    }
-                    // remove the user overlay row if the update has cleared the last user
-                    // overwrite, e.g. after a rename back to the standard name; the same
-                    // janitor call as in the norm branch, and it keeps the row if any real
-                    // overwrite (e.g. an exclusion) is left
-                    if ($msg->is_ok()) {
-                        $this->del_usr_cfg_if_not_needed($msg);
-                    }
+                    // the overwrites of the user compared with the user row as it is in the database
+                    $usr_chg = $this->delta($std_rec, $this->clone_reset(true));
+                    $usr_db = $this->clone_reset(true);
+                    $usr_db->load_user_changes($this->id(), $msg);
+                    $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
                 }
-            } else {
-                if (!$this->no_diff($norm_obj, $msg, $sc_par_lst)) {
-                    // create a new user sandbox row with the changes
-                    $sc_par_lst->add(sql_type::INSERT);
-                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
-                    $fvt_lst = $this->db_fields_changed($norm_obj, $msg, $sc_par_lst);
-                    $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-                    if ($db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true)) {
-                        // remember that the user now has sandbox rows, so the pages for this user
-                        // must be created from the user sandbox and not from the standard page cache
-                        $this->get_user()->set_uses_sandbox($msg);
-                    }
+                if ($qp != null) {
+                    $db_con->update($qp, 'update user ' . $obj_name, $msg);
+                }
+                // remove the user overlay row if the update has cleared the last user
+                // overwrite, e.g. after a rename back to the standard name; the same
+                // janitor call as in the norm branch, and it keeps the row if any real
+                // overwrite (e.g. an exclusion) is left
+                if ($msg->is_ok()) {
+                    $this->del_usr_cfg_if_not_needed($msg);
                 }
             }
+        } elseif (!$this->no_diff($std_rec, $msg, $usr_par_lst)) {
+            $qp = $this->sql_insert_user($sc, $std_rec, $msg, $sc_par_lst);
+            if ($db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true)) {
+                // remember that the user now has sandbox rows, so the pages for this user
+                // must be created from the user sandbox and not from the standard page cache
+                $this->get_user()->set_uses_sandbox($msg);
+            }
         }
+    }
 
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $msg->is_ok();
+    /**
+     * make sure that the code ids never differ between the standard row and the user row
+     *
+     * @param sandbox $std_rec the database row defined as standard because it is used by most users
+     */
+    private function sync_code_ids(sandbox $std_rec): void
+    {
+        if (in_array($this::class, def::CODE_ID_CLASSES)) {
+            if ($this->get_code_id() != $std_rec->get_code_id()) {
+                // a local buffer for the permission check; this only syncs the two rows internally
+                $this->set_code_id($std_rec->get_code_id(), new user_message($this->get_user())); // not reported, see above
+                log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+            }
+        }
+        // make sure that the ui msg code id never differs between the standard row and the user row
+        if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
+            // a local buffer for the permission checks; this only syncs the two rows internally
+            $ui_msg = new user_message($this->get_user()); // not reported, see above
+            if ($this->get_ui_msg_code_id() != $std_rec->get_ui_msg_code_id()) {
+                $this->set_ui_msg_code_id($std_rec->get_ui_msg_code_id(), $ui_msg);
+                log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+            }
+            if ($this->get_ui_msg_code_id_vars() != $std_rec->get_ui_msg_code_id_vars()) {
+                $this->set_ui_msg_code_id_vars($std_rec->get_ui_msg_code_id_vars(), $ui_msg);
+                log_warning('ui variable message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+            }
+            if ($this->get_ui_msg_code_id_exception() != $std_rec->get_ui_msg_code_id_exception()) {
+                $this->set_ui_msg_code_id_exception($std_rec->get_ui_msg_code_id_exception(), $ui_msg);
+                log_warning('ui exception message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+            }
+            if ($this->get_ui_msg_value_exception() !== $std_rec->get_ui_msg_value_exception()) {
+                $this->set_ui_msg_value_exception($std_rec->get_ui_msg_value_exception(), $ui_msg);
+                log_warning('ui exception value has been changed in ' . $this->dsp_id() . ' with is not expected');
+            }
+        }
     }
 
     /*
@@ -2522,7 +2519,6 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * save all updated fields on the standard db row with one sql function
-     * similar to save_fields_func function but for only for the norm not the user sandbox table
      * TODO Prio 0 create unit test
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -2552,10 +2548,42 @@ class sandbox extends db_object_seq_id_user
         if (!$fvt_lst->is_empty_except_internal_fields()) {
             $sc_par_lst->add(sql_type::UPDATE);
             $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-            $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+            // null e.g. if the do not update a link guard has refused the update
+            if ($qp != null) {
+                $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+            }
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * the rule for saving a code id of any object: an object without a code id keeps the code id of
+     * the database, e.g. a triple of an import file that repeats the triple of its home file, and
+     * an existing code id is only replaced by a user that can_overwrite_code_id; that a user may
+     * set a code id at all is checked by set_code_id
+     *
+     * @param string|null $db_code_id the code id in the database
+     * @param string|null $code_id the code id of this object
+     * @param user_message $msg with the requesting user to report a refused overwrite
+     * @return bool true if the code id of this object should be saved
+     */
+    protected function save_code_id(?string $db_code_id, ?string $code_id, user_message $msg): bool
+    {
+        $result = false;
+        if ($code_id != '' and $code_id !== $db_code_id) {
+            if ($db_code_id == '' or $msg->usr?->can_overwrite_code_id()) {
+                $result = true;
+            } else {
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $msg->usr?->name() ?? '',
+                    msg_id::VAR_USER_PROFILE => $msg->usr?->profile_code_id() ?? '',
+                    msg_id::VAR_NAME => fields::FLD_CODE_ID,
+                    msg_id::VAR_CLASS_NAME => new library()->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -3099,6 +3127,7 @@ class sandbox extends db_object_seq_id_user
                 if (!$this->has_usr_cfg() and $db_rec->has_usr_cfg()) {
                     $this->usr_cfg_id = $db_rec->usr_cfg_id;
                 }
+                $this->refuse_link_change($db_rec, $msg);
             }
         }
 
@@ -3217,6 +3246,9 @@ class sandbox extends db_object_seq_id_user
                     // load the common object
                     $std_rec = $this->get_standard($msg);
 
+                    // also if the database row has been found by the name e.g. of an import
+                    $this->refuse_link_change($db_rec, $msg);
+
                     // check if the id parameters are supposed to be changed
                     if ($msg->is_ok()) {
                         if ($this->is_key_updated($db_rec)) {
@@ -3234,7 +3266,7 @@ class sandbox extends db_object_seq_id_user
                             // the name of a named object and of a named link object (e.g. a triple)
                             // is a normal sandbox field: a user that cannot change the standard row
                             // renames only for himself via the name in the user overlay row written
-                            // by save_fields_func below, so the database id and with it the related
+                            // by save_user_row below, so the database id and with it the related
                             // values, formulas and links stay; the delete and recreate of the row
                             // (delete_old_key_row) is only needed if the changed fields identify the
                             // database row (see is_id_key_updated), e.g. the from, verb and to of a
@@ -3250,7 +3282,15 @@ class sandbox extends db_object_seq_id_user
                     if ($msg->is_ok()) {
                         // make sure that only an admin user reduces the protection level
                         $this->check_protection_change($db_rec, $msg);
-                        $this->save_fields_func($db_con, $db_rec, $std_rec, $msg, $sc_par_lst);
+                        // e.g. rename the formula word together with the formula
+                        if ($this->save_related($msg, $db_rec)) {
+                            // if the user may change the standard row e.g. because no other user has used it
+                            if ($this->can_change($msg)) {
+                                $this->save_standard_row($db_con, $db_rec, $std_rec, $msg, $sc_par_lst);
+                            } else {
+                                $this->save_user_row($db_con, $db_rec, $std_rec, $msg, $sc_par_lst);
+                            }
+                        }
                     }
                 }
             }
@@ -3269,9 +3309,10 @@ class sandbox extends db_object_seq_id_user
      * TODO Prio 0 use it for import
      *
      * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param sandbox|null $db_rec the object as it is in the database before the change e.g. to see the old name
      * @return bool true if everything has been successful
      */
-    function save_related(user_message $msg): bool
+    function save_related(user_message $msg, ?sandbox $db_rec = null): bool
     {
         return true;
     }
@@ -3280,6 +3321,22 @@ class sandbox extends db_object_seq_id_user
     /*
      * save parts
      */
+
+    /**
+     * the do not update a link guard of the save: refuse another from, predicate or to for an existing link,
+     * because the link is what the object is (docs/llm/architecture.md), so the client removes the old link
+     * and adds the one with the other link instead
+     *
+     * @param sandbox $db_rec the database row of the link as the requesting user sees it
+     * @param user_message $msg to tell the user why nothing is saved and what to do instead
+     * @return void
+     */
+    private function refuse_link_change(sandbox $db_rec, user_message $msg): void
+    {
+        if ($this->is_link_obj() and $db_rec->has_id() and $this->is_link_changed($db_rec)) {
+            $this->add_link_change_refused($msg);
+        }
+    }
 
     /**
      * read the database values to be able to check if something has been changed;
@@ -3360,6 +3417,50 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the user row of this object itself already excludes the object, so the
+     *              object is already deleted for the user and an exclude has nothing to write; read from
+     *              the user row, because the excluded of a loaded object falls back to the standard row
+     */
+    private function usr_row_excluded(user_message $msg): bool
+    {
+        global $db_con;
+        $db_con->usr_id = $this->get_user()->id;
+        $usr_row = $db_con->get1($this->load_sql_user_changes($db_con->sql_creator()), $msg);
+        return ($usr_row[fields::FLD_EXCLUDED] ?? null) == 1;
+    }
+
+    /**
+     * exclude the object only for the user, so that the standard row and the other users keep it
+     *
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return bool true if the exclusion has been written including its change log entry
+     */
+    private function exclude_exe(user_message $msg): bool
+    {
+        global $db_con;
+
+        // reloaded, because an owner change before may have removed the user row
+        $db_rec = $this->clone_reset(true);
+        $db_rec->load_by_id($this->id(), $msg);
+        // already excluded as the user sees it, so there is no change to write
+        if ($db_rec->is_excluded() or ($db_rec->has_usr_cfg() and $this->usr_row_excluded($msg))) {
+            return $msg->is_ok();
+        }
+        $this->exclude();
+        $qp = $this->sql_exclude($db_con->sql_creator(), $db_rec, $msg);
+        if ($qp == null) {
+            log_err_msg('the exclude of ' . $this->dsp_id() . ' could not be created', $msg);
+        } elseif ($db_rec->has_usr_cfg()) {
+            $db_con->update($qp, 'exclude ' . $this->dsp_id(), $msg);
+        } elseif ($db_con->insert($qp, 'exclude ' . $this->dsp_id(), $msg, new sql_message(), true)) {
+            // the pages for this user must be created from the user sandbox and not from the standard page cache
+            $this->get_user()->set_uses_sandbox($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
      * exclude or delete an object
      * TODO Prio 2 if the owner deletes it, change the owner to the new median user
      * TODO Prio 2 check if all have deleted the object
@@ -3429,7 +3530,8 @@ class sandbox extends db_object_seq_id_user
                             // set owner
                             if (!$this->set_owner($new_owner_id, $msg)) {
                                 $msg_txt .= 'Setting of owner while deleting ' . $class_name . ' failed';
-                                log_err($msg_txt, $class_name . '->del');
+                                // reported with $msg_txt at the end of del
+                                log_err_reported($msg_txt, $class_name . '->del');
 
                             }
 
@@ -3450,30 +3552,13 @@ class sandbox extends db_object_seq_id_user
                         $this->del_exe($msg);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
-                        $this->exclude();
-
-                        // simple version TODO Prio 2 combine with save function
-
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->set_user($this->get_user());
-                        if ($db_rec->load_by_id($this->id(), $msg)) {
-                            log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
-                            if ($this->is_link_obj()) {
-                                if (!$db_rec->reload_objects($msg)) {
-                                    $msg_txt .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
-                                }
-                            }
-                        }
-                        if ($msg_txt == '') {
-                            $std_rec = $this->clone_reset(true);
-                            if (!$std_rec->load_standard($this->id(), $msg)) {
-                                $msg_txt .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
-                            }
-                        }
-                        if ($msg_txt == '') {
-                            log_debug('loaded standard ' . $std_rec->dsp_id());
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                        $name = $this->name();
+                        if ($this->exclude_exe($msg)) {
+                            // ok = true, because the exclusion is the normal answer to the delete of a used object
+                            $msg->add(msg_id::DELETE_EXCLUDED_IN_USE, [
+                                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                                msg_id::VAR_NAME => $name
+                            ], true);
                         }
                     }
                 }
@@ -3736,6 +3821,87 @@ class sandbox extends db_object_seq_id_user
         }
 
         return $qp;
+    }
+
+    /**
+     * create the sql function that excludes this object only for the user and logs the change,
+     * as an update of the user row if the user has one and else as an insert of the user row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $db_rec the object as the user sees it in the database before the exclusion
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @return sql_par|null the SQL function and its call, or null if the update has been refused
+     */
+    function sql_exclude(sql_creator $sc, sandbox $db_rec, user_message $msg): sql_par|null
+    {
+        $sc_par_lst = new sql_type_list([sql_type::LOG, sql_type::USER]);
+        if ($db_rec->has_usr_cfg()) {
+            $sc_par_lst->add(sql_type::UPDATE);
+            $sc_par_lst->add(sql_type::EXCLUDE);
+        } else {
+            $sc_par_lst->add(sql_type::INSERT);
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
+            // the new user row has no old excluded value, also if the standard row has e.g. excluded 0,
+            // so the function has the same parameters as the prepared one of the same name
+            $db_rec = clone $db_rec;
+            $db_rec->excluded = null;
+        }
+        // compared with the row of the user, so that only the excluded field is written
+        $fvt_lst = $this->db_fields_changed($db_rec, $msg, $sc_par_lst);
+        $all_fields = $this->db_fields_all();
+        if ($db_rec->has_usr_cfg()) {
+            $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        } else {
+            $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        }
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update the user row with the delta of this user overwrites to the user row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $usr_db the user row as it is in the database
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par|null the sql statement or null if no field of the user row has changed
+     */
+    function sql_update_user(
+        sql_creator   $sc,
+        sandbox       $usr_db,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par|null
+    {
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::UPDATE);
+        $fvt_lst = $this->db_fields_changed($usr_db, $msg, $par_lst);
+        return $usr_db->sql_update_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
+    }
+
+    /**
+     * create the sql statement to insert the user row with the fields that differ from the standard row
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $norm the standard row
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. with log
+     * @return sql_par the sql statement to insert the user row
+     */
+    function sql_insert_user(
+        sql_creator   $sc,
+        sandbox       $norm,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list([sql_type::LOG])
+    ): sql_par
+    {
+        $par_lst = clone $sc_par_lst;
+        $par_lst->add(sql_type::USER);
+        $par_lst->add(sql_type::INSERT);
+        $par_lst->add(sql_type::NO_ID_RETURN);
+        $fvt_lst = $this->db_fields_changed($norm, $msg, $par_lst);
+        return $this->sql_insert_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $par_lst);
     }
 
     /**
@@ -4083,9 +4249,9 @@ class sandbox extends db_object_seq_id_user
             // TODO Prio 2 remove this exception e.g. by adding the $sc_par_lst to the call
             if ($this->is_link_obj()) {
                 if ($sc_par_lst->is_usr_tbl()) {
-                    $fvt_lst->del($this->from_field());
-                    $fvt_lst->del(verb_db::FLD_ID);
-                    $fvt_lst->del($this->to_field());
+                    foreach ($this->link_key_fields() as $fld) {
+                        $fvt_lst->del($fld);
+                    }
                 }
             }
             // add the child object specific fields and values
@@ -4238,11 +4404,14 @@ class sandbox extends db_object_seq_id_user
                 if ($usr_tbl) {
                     // insert a new row in the user table
                     $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user_db::FLD_ID], $fld_lst_ex_log);
-                    // TODO Prio 2 remove this exception e.g. by adding the $sc_par_lst to the call
-                    if ($this::class == triple::class) {
-                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
-                    } elseif ($this->is_link_obj()) {
-                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
+                    // without the fields that define the link, but e.g. with the external key of a reference
+                    if ($this->is_link_obj()) {
+                        $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $this->link_key_fields());
+                        // the to of a link has an own parameter only if it is logged as an own field, e.g. the
+                        // changed external key of a reference, but not as the text of the link log of an exclusion
+                        if (!in_array($this->to_field(), $fld_lst_log)) {
+                            $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->to_field()]);
+                        }
                     }
                     $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
                     $sc_insert = clone $sc;
@@ -4358,6 +4527,13 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
+        // the do not update a link guard of the sql layer, so that no path writes another link into an existing row;
+        // checked first, because the empty check below takes the verb of a triple as an internal field
+        if ($this->is_link_obj() and $this->is_link_field_changed($fvt_lst)) {
+            $this->add_link_change_refused($msg);
+            return null;
+        }
+
         // if no field has changed, no database update is needed
         // and an update statement without any fields to set would be invalid
         if ($fvt_lst->is_empty_except_internal_fields()) {
@@ -4583,7 +4759,6 @@ class sandbox extends db_object_seq_id_user
         return new sql_par_field_list();
     }
 
-    // TODO Prio 2 deprecate
     function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         log_missing_overwrite_warning('sql_key_fields_id_old', $this::class);
@@ -4710,7 +4885,7 @@ class sandbox extends db_object_seq_id_user
     function set_code_id(?string $code_id, user_message $msg): bool
     {
         $txt = 'code id change has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4724,7 +4899,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4738,7 +4913,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend after message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4752,7 +4927,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user_message $msg): bool
     {
         $txt = 'frontend exception message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }
@@ -4766,7 +4941,7 @@ class sandbox extends db_object_seq_id_user
     function set_ui_msg_value_exception(?float $ui_msg_value_exception, user_message $msg): bool
     {
         $txt = 'frontend exception message value has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($txt);
+        log_err_reported($txt);
         $msg->add_warning_text($txt);
         return false;
     }

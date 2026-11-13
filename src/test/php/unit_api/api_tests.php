@@ -83,18 +83,24 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -125,6 +131,16 @@ class api_tests
     const string PHP_DEFAULT_FILENAME = 'index.php';
     // a walk value of the phrase data api that names no walk, built from the field name like the real values
     const string UNKNOWN_PHRASE_DATA_WALK = 'pwx';
+    // an export format value that names no format, built from the field name like the real values
+    const string UNKNOWN_EXPORT_FORMAT = 'efo';
+    // the answer of the pdf of the calculator editor: the http status codes, the start of a pdf file,
+    // a token that is not the token of the session and a body that is no json
+    const string HTTP_OK = '200';
+    const string HTTP_BAD_REQUEST = '400';
+    const string HTTP_FORBIDDEN = '403';
+    const string PDF_START = '%PDF-';
+    const string WRONG_TOKEN = 'system_test_wrong_token';
+    const string NO_JSON = 'system test no json';
 
 
     /*
@@ -160,7 +176,8 @@ class api_tests
         $t->assert_api_get_not_permitted(url_var::NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $t->assert_api_get_not_permitted(url_var::EMAIL, users::SYSTEM_TEST_EMAIL, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, url_var::WORD);
+        $this->run_export($t, $ts);
+        $this->run_export_views($t, $ts);
         $t->assert_api_get_by_text(word::class, word_names::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);
@@ -254,6 +271,7 @@ class api_tests
         $err_txt = $phd_json[json_fields::MSG] ?? '';
         $t->assert_text_contains($test_name, $err_txt, self::UNKNOWN_PHRASE_DATA_WALK);
         $msg->reset();
+        $this->run_calculator_pdf($t, $ts);
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO Prio 2 add value_list tests for prime, normal and big value tables
         // TODO Prio 2 add a test case for empty list, no key found, and more  values than the page size
@@ -328,6 +346,179 @@ class api_tests
         $phr_zh->load_by_id($phr_zh->id(), $msg_ui);
         $t->assert($test_name, $phr_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
+    }
+
+    /**
+     * the export api of the phrases given by name with all related phrases as json and xml, and the csv of the
+     * results of a formula, each compared with its fixture; the time and the requesting user of the export header
+     * depend on the run (and on the admin login), so both are replaced by fixed values before the compare
+     *
+     * @param test_cleanup $t the test environment with the admin session of api_login
+     * @param string $ts the name of the test section
+     */
+    private function run_export(test_cleanup $t, string $ts): void
+    {
+        $url = new html_base()->url_api(rest_ctrl::JSON);
+        $t->subheader($ts . 'export');
+
+        $test_name = 'the json export of a word with its related phrases';
+        $par = [url_var::WORDS => word_names::PI];
+        $json = json_decode($t->api_call_timed(rest_ctrl::GET, $url, $par), true) ?? [];
+        $json[json_fields::TIME] = test_const::DUMMY_DATETIME;
+        $json[json_fields::USER] = users::SYSTEM_TEST_NAME;
+        // the export reads the related phrases, values, formulas and views like an import, so the import timeout is used
+        $json_txt = library::json_for_humans($json);
+        $t->assert_file($test_name, $json_txt, test_files::EXPORT_JSON_PI, test_files::JSON, '', $t::TIMEOUT_LIMIT_IMPORT);
+
+        $test_name = 'the xml export of the same word';
+        $par = [url_var::WORDS => word_names::PI, url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_XML];
+        $xml = $t->api_call_timed(rest_ctrl::GET, $url, $par);
+        $xml = $this->with_fixed_xml_field($xml, json_fields::TIME, test_const::DUMMY_DATETIME);
+        $xml = $this->with_fixed_xml_field($xml, json_fields::USER, users::SYSTEM_TEST_NAME);
+        $t->assert_file($test_name, $xml, test_files::EXPORT_XML_PI, '', '', $t::TIMEOUT_LIMIT_IMPORT);
+
+        $test_name = '... but without a phrase the message says that nothing is selected';
+        $json = json_decode($t->api_call_timed(rest_ctrl::GET, $url, []), true) ?? [];
+        $err_txt = $json[json_fields::MSG] ?? '';
+        $t->assert_text_contains($test_name, $err_txt, msg_id::EXPORT_PHRASE_MISSING->text());
+
+        $test_name = '... and an unknown format is named';
+        $par = [url_var::WORDS => word_names::PI, url_var::EXPORT_FORMAT => self::UNKNOWN_EXPORT_FORMAT];
+        $json = json_decode($t->api_call_timed(rest_ctrl::GET, $url, $par), true) ?? [];
+        $err_txt = $json[json_fields::MSG] ?? '';
+        $t->assert_text_contains($test_name, $err_txt, self::UNKNOWN_EXPORT_FORMAT);
+
+        $test_name = 'the csv of the results of a formula';
+        $par = [url_var::WORDS => formula_names::SCALE_TO_SEC, url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_CSV];
+        $csv = $t->api_call_timed(rest_ctrl::GET, $url, $par);
+        $t->assert_file($test_name, $csv, test_files::EXPORT_CSV_SCALE_TO_SEC, '', '', $t::TIMEOUT_LIMIT_REST);
+
+        $test_name = '... but a word is no formula';
+        $par = [url_var::WORDS => word_names::PI, url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_CSV];
+        $json = json_decode($t->api_call_timed(rest_ctrl::GET, $url, $par), true) ?? [];
+        $err_txt = $json[json_fields::MSG] ?? '';
+        $t->assert_text_contains($test_name, $err_txt, word_names::PI);
+    }
+
+    /**
+     * the export button of an export view gives the file of the selected phrase with its name and its format,
+     * which selects the mime type of the download, via the export api
+     *
+     * @param test_cleanup $t the test environment with the admin session of api_login
+     * @param string $ts the name of the test section
+     */
+    private function run_export_views(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        $lib = new library();
+        $ui = new frontend('');
+        $msg_ui = new user_message_ui();
+        $t->subheader($ts . 'export views');
+
+        $test_name = 'the json export view gives the file named by the phrase';
+        $dto = new data_object_ui();
+        $url = [url_var::MASK => views::EXPORT_JSON_ID, url_var::PHRASE => word_names::PI,
+            url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_JSON, url_var::EXPORT_FILE => url_var::TRUE];
+        $ui->export_file($url, $msg_ui, $dto);
+        $t->assert($test_name, $dto->download_name, word_names::PI, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... with the json mime type';
+        $mime = rest_ctrl::EXPORT_MIME_TYPES[$dto->download_format] ?? '';
+        $t->assert($test_name, $mime, rest_ctrl::EXPORT_MIME_TYPES[url_var::EXPORT_FORMAT_JSON]);
+        $test_name = '... and the json of the phrase';
+        $t->assert_text_contains($test_name, $dto->download, word_names::PI);
+        $msg_ui->reset();
+
+        $test_name = 'the xml export view gives the file named by the selection name';
+        $dto = new data_object_ui();
+        $url = [url_var::MASK => views::EXPORT_XML_ID, url_var::PHRASE => word_names::PI,
+            url_var::NAME => word_names::MATH, url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_XML,
+            url_var::EXPORT_FILE => url_var::TRUE];
+        $ui->export_file($url, $msg_ui, $dto);
+        $t->assert($test_name, $dto->download_name, word_names::MATH, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... with the xml mime type';
+        $mime = rest_ctrl::EXPORT_MIME_TYPES[$dto->download_format] ?? '';
+        $t->assert($test_name, $mime, rest_ctrl::EXPORT_MIME_TYPES[url_var::EXPORT_FORMAT_XML]);
+        $msg_ui->reset();
+
+        $test_name = 'the csv export view gives the results of the formula';
+        $dto = new data_object_ui();
+        $url = [url_var::MASK => views::EXPORT_CSV_ID, url_var::PHRASE => formula_names::SCALE_TO_SEC,
+            url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_CSV, url_var::EXPORT_FILE => url_var::TRUE];
+        $ui->export_file($url, $msg_ui, $dto);
+        $t->assert_text_contains($test_name, $dto->download, formula_names::SCALE_TO_SEC, $t::TIMEOUT_LIMIT_REST);
+        $test_name = '... with the csv mime type';
+        $mime = rest_ctrl::EXPORT_MIME_TYPES[$dto->download_format] ?? '';
+        $t->assert($test_name, $mime, rest_ctrl::EXPORT_MIME_TYPES[url_var::EXPORT_FORMAT_CSV]);
+        $msg_ui->reset();
+
+        $test_name = 'the export view without a phrase gives no file';
+        $dto = new data_object_ui();
+        $url = [url_var::MASK => views::EXPORT_JSON_ID, url_var::PHRASE => '',
+            url_var::EXPORT_FORMAT => url_var::EXPORT_FORMAT_JSON, url_var::EXPORT_FILE => url_var::TRUE];
+        $ui->export_file($url, $msg_ui, $dto);
+        $t->assert($test_name, $dto->download, '', $t::TIMEOUT_LIMIT_REST);
+        $test_name = '... but the message that nothing is selected';
+        $t->assert_text_contains($test_name, $msg_ui->text(), msg_id::EXPORT_PHRASE_MISSING->text());
+        $msg_ui->reset();
+
+        $test_name = 'the ods export view has no format, so it gives no file';
+        $dto = new data_object_ui();
+        $url = [url_var::MASK => views::EXPORT_ODS_ID, url_var::PHRASE => word_names::PI,
+            url_var::EXPORT_FILE => url_var::TRUE];
+        $ui->export_file($url, $msg_ui, $dto);
+        $t->assert($test_name, $dto->download, '');
+        $test_name = '... but the message that the format is not available';
+        $unknown_txt = $lib->msg_var_text([[msg_id::EXPORT_FORMAT_UNKNOWN, [msg_id::VAR_VALUE => '']]], $mtr);
+        $t->assert($test_name, $msg_ui->text(), $unknown_txt);
+        $msg_ui->reset();
+    }
+
+    /**
+     * @param string $xml the xml of an export
+     * @param string $field the json field of the export header e.g. the time of the export
+     * @param string $value the fixed test value that replaces the value of the field
+     * @return string the xml with the fixed value of the field
+     */
+    private function with_fixed_xml_field(string $xml, string $field, string $value): string
+    {
+        $pattern = '/<' . $field . '>[^<]*<\/' . $field . '>/';
+        return preg_replace($pattern, '<' . $field . '>' . $value . '</' . $field . '>', $xml, 1);
+    }
+
+    /**
+     * the pdf of the calculator editor is created only for a logged-in user with the token of the session
+     * and only from json, because the entry point creates a pdf for any posted page data
+     *
+     * @param test_cleanup $t the test environment with the admin session of api_login
+     * @param string $ts the name of the test section
+     */
+    private function run_calculator_pdf(test_cleanup $t, string $ts): void
+    {
+        $t->subheader($ts . 'calculator pdf');
+        $token = $t->api_session_token();
+        if ($token == '') {
+            // the admin login may time out during a full run (see test_base::login_admin_cookie)
+            $t->dsp_warning('the calculator pdf tests are skipped, because the admin login has not been possible');
+        } else {
+            $url = THIS_URL . api::CALCULATOR_PDF_SCRIPT;
+            $pv_json = file_get_contents(test_files::PHRASE_DATA_PV_INSTALL);
+            $test_name = 'the pdf of the calculator editor is created from the posted data of the page';
+            [$status, $answer] = $t->post_with_session($url, $pv_json, $token);
+            $t->assert($test_name, $status, self::HTTP_OK, $t::TIMEOUT_LIMIT_IMPORT);
+            $t->assert_text_starts($test_name, $answer, self::PDF_START);
+            // negative: a request without the token of the session could come from another site
+            $test_name = '... but not without the token of the session';
+            [$status, $answer] = $t->post_with_session($url, $pv_json, '');
+            $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
+            $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_LOGIN->text());
+            $test_name = '... and not with another token';
+            [$status] = $t->post_with_session($url, $pv_json, self::WRONG_TOKEN);
+            $t->assert($test_name, $status, self::HTTP_FORBIDDEN);
+            $test_name = '... and not from a body that is no json';
+            [$status, $answer] = $t->post_with_session($url, self::NO_JSON, $token);
+            $t->assert($test_name, $status, self::HTTP_BAD_REQUEST);
+            $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_JSON->text());
+        }
     }
 
     /**

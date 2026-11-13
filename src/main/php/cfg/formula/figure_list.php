@@ -137,9 +137,12 @@ class figure_list extends sandbox_list
                         $res = new result($this->get_user());
                         $fig = new figure($res);
                     }
-                    $fig->row_mapper($db_row, $msg, $qp->ext);
-                    $this->add_obj($fig);
-                    $result = true;
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    if ($fig->row_mapper($db_row, $row_msg, $qp->ext)) {
+                        $this->add_obj($fig);
+                        $result = true;
+                    }
+                    $msg->merge($row_msg);
                 }
             }
         }

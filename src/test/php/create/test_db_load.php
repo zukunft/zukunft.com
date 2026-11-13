@@ -503,13 +503,15 @@ class test_db_load
                         string $to_name
     ): bool
     {
-        $trp = $this->load_triple($msg, $from_name, $verb_code_id, $to_name);
+        $del_msg = new user_message($this->env->usr1); // a fresh message per try that is merged into $msg, see docs/llm/dependent-errors.md
+        $trp = $this->load_triple($del_msg, $from_name, $verb_code_id, $to_name);
+        $result = false;
         if ($trp->id() <> 0) {
-            $trp->del(new user_message($this->env->usr1));
-            return true;
-        } else {
-            return false;
+            $trp->del($del_msg);
+            $result = true;
         }
+        $msg->merge($del_msg);
+        return $result;
     }
 
     function del_triple_by_name(string $name): bool
@@ -893,7 +895,12 @@ class test_db_load
         return $phr_grp->del($msg);
     }
 
-    function load_value_by_id(user $usr, int $id): value
+    /**
+     * @param user $usr the user for whom the value is loaded
+     * @param int|string $id the group id of the value: the 64-bit integer of a prime group or the text key
+     * @return value the loaded value
+     */
+    function load_value_by_id(user $usr, int|string $id): value
     {
         $msg = new user_message();
         $val = new value($this->env->usr1);
@@ -961,8 +968,12 @@ class test_db_load
     function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
-        $result = $val->get_value();
-        $this->env->assert(', value->load for ' . $val->name(), $result, $target);
+        // reloaded, because the number of the added object is the one that has been set and not the one in the database
+        $val_db = $this->load_value($array_of_word_str);
+        $result = $val_db->get_value();
+        $db_info = $val_db->is_saved() ? '' : 'no row found for user ' . $this->env->usr1->name;
+        $this->env->assert(', value->load for ' . $val->name(), $result, $target,
+            test_base::TIMEOUT_LIMIT_DB_MULTI, $db_info);
         return $val;
     }
 
@@ -1346,6 +1357,7 @@ class test_db_load
         new component_write_tests()->create_test_components($t);
         new component_link_write_tests()->create_test_component_links($t);
         new value_write_tests()->create_test_values($t);
+        $t->remember_created_rows();
     }
 
     /**
@@ -1417,7 +1429,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1452,7 +1464,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_chg_list($class, $id, $fld);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1491,7 +1503,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get($ui_cfg, $msg, [api_types::HEADER, api_types::INCL_COMPONENTS]);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the message timestamp before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1509,7 +1521,7 @@ class test_db_load
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
             $created = $t->assert_result_api_get_list(type_lists::class);
-            if ($this->api_json_usable($created)) {
+            if ($t->api_json_usable($created)) {
                 // remove the volatile fields e.g. the message timestamp before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
                 // the volatile fields anyway (see test_api::json_remove_volatile)
@@ -1520,28 +1532,6 @@ class test_db_load
         }
 
         return $result;
-    }
-
-    /**
-     * true if the api response json can be used to update the expected test resource:
-     * the response must exist and must contain more than just a message,
-     * because e.g. the login rejection of the pod ("This pod does not allow changes
-     * without a login ...") or an unreachable deployment must never overwrite
-     * a type list resource with the error message
-     * the failure itself is already reported by the assert of the calling function
-     *
-     * @param array|null $created the decoded json of the api response or null if the call failed
-     * @return bool true if the json is a usable api object and not just an error message
-     */
-    private function api_json_usable(?array $created): bool
-    {
-        $usable = false;
-        if ($created !== null) {
-            if (array_keys($created) != [json_fields::MSG]) {
-                $usable = true;
-            }
-        }
-        return $usable;
     }
 
     /**
@@ -1616,7 +1606,9 @@ class test_db_load
         $result = '';
         if (in_array($class, self::LOGGED_ROW_CLASSES)) {
             $chg_lst = new change_log_list();
-            $chg_lst->load_by_obj_fld($class, $msg, $lib->csv_line_to_array($row)[0], $this->env->usr1);
+            // a csv cell is a text, but the row id of the change log is a number
+            $id = $lib->csv_line_to_array($row)[0];
+            $chg_lst->load_by_obj_fld($class, $msg, is_numeric($id) ? (int)$id : $id, $this->env->usr1);
             foreach ($chg_lst->lst() as $chg) {
                 $result .= ' logged: ' . $chg->dsp();
             }

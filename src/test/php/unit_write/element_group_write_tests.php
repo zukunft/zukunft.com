@@ -138,7 +138,7 @@ class element_group_write_tests
             /*
             $result = $elm_grp_ui->dsp_values();
             $fig_lst = $elm_grp->figures();
-            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.67">8.67</a>';
+            $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode(group_id_url::to_url($fig_lst->get_first_id())) . '">8.67</a>';
             $t->assert('element_group->dsp_values', $result, $target);
             */
 
@@ -165,7 +165,6 @@ class element_group_write_tests
                     $t->assert('figure->display', $result, $target);
 
                     $result = $fig_ui->display_linked($msg_ui);
-                    //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     // a group id can contain a '+', so the link names it in its short url form
                     // (see html_base::url_back and group_id_url)
                     $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode(group_id_url::to_url($fig->id())) . '">8.67</a>';

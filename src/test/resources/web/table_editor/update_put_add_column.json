@@ -1,0 +1,37 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [
+            {
+                "name": "2021"
+            }
+        ],
+        "triples": [
+            {
+                "name": "sector of revenue columns 2021",
+                "from": "sector of revenue columns",
+                "verb": "has a",
+                "to": "2021"
+            },
+            {
+                "from": "sector of revenue columns 2021",
+                "verb": "is follower of",
+                "to": "sector of revenue columns confidence"
+            },
+            {
+                "name": "sector of revenue columns 2021 marginal",
+                "from": "sector of revenue columns 2021",
+                "verb": "has a",
+                "to": "marginal"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": []
+    }
+}

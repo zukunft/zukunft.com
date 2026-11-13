@@ -73,7 +73,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Metre per second",
+          "name": "Metre_per_second",
           "type": "wikipedia"
         }
       ]

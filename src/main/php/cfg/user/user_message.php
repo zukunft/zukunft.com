@@ -158,6 +158,8 @@ class user_message extends Message
     {
         $msg = new user_message();
         $msg->usr = $this->usr;
+        // a buffer of a test that expects an internal error expects it too
+        $msg->log_test_only = $this->log_test_only;
         return $msg;
     }
 

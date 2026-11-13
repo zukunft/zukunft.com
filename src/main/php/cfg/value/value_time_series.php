@@ -162,6 +162,22 @@ class value_time_series extends sandbox_value
         $this->source = null;
     }
 
+
+    /*
+     * set and get
+     */
+
+    /**
+     * a time series has no single value, because its numbers are the data rows (value_ts_data),
+     * so the header row has no value field to compare or to write (see sandbox_value::db_fields_changed)
+     * @return null always
+     */
+    function get_value(): null
+    {
+        return null;
+    }
+
+
     /*
      * database load functions that reads the object from the database
      */
@@ -352,7 +368,8 @@ class value_time_series extends sandbox_value
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), false, true);
 
-        if ($this->id() > 0) {
+        // the id is the group id, an integer or a text key, so it is never compared with a number
+        if ($this->is_id_set()) {
             // create an empty db_rec element to force saving of all set fields
             $db_vts = new value_time_series($this->get_user());
             //$db_vts->id = $this->id();
@@ -385,17 +402,18 @@ class value_time_series extends sandbox_value
         $db_con->set_class(value_time_series::class);
         $db_con->set_usr($this->get_user()->id);
 
-        // check if a new time series is supposed to be added
-        if ($this->id() <= 0) {
+        // check if a new time series is supposed to be added; the id is the group id, an integer or a text
+        // key, so it is never compared with a number
+        if (!$this->is_id_set()) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->get_user());
             $db_chk->load_by_grp($this->grp(), $msg);
-            if ($db_chk->id() > 0) {
+            if ($db_chk->is_id_set()) {
                 $this->id = $db_chk->id();
             }
         }
 
-        if ($this->id() <= 0) {
+        if (!$this->is_id_set()) {
             $this->add($msg);
         } else {
             // update a value
@@ -413,16 +431,11 @@ class value_time_series extends sandbox_value
                 $this->set_owner_id($std_rec->owner_id());
             }
 
-            // check if the id parameters are supposed to be changed
-            // TODO Prio 2 review
-            //$this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
-
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            // TODO Prio 2 add function based db saving
             if ($msg->is_ok()) {
-                // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                // the standard row if the user is the owner and no other user has adjusted the time series, else the user row
+                $this->save_changes($db_con, $db_rec, $std_rec, $msg);
             }
 
         }

@@ -1,10 +1,8 @@
-Installation
--------------
+# Installation
 
 At the moment only the [development installation](../README.md) is recommended.
 
-Fix development installation:
------------------------------
+## Fix development installation:
 
 If you get errors or the message "Only admin users are allowed to reset the database" and the database does not you contain any relevant data the best is probably to recreate the database:
 
@@ -37,8 +35,9 @@ To run all build in tests start from bash
 To check open the frontpage again at [localhost/http/view.php]()
 
 
-Production installation (to be reviewed):
------------------------------------------
+## Production installation (to be reviewed):
+
+A pod with many users runs on several layers of servers, see [server structure](server_structure.md).
 
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
@@ -50,8 +49,7 @@ To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wik
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
    (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
 
-Environment file (.env) location
---------------------------------
+## Environment file (.env) location
 
 The `.env` file holds the deployment secrets (database credentials, the initial login passwords,
 the server-admin hashes). `src/main/php/cfg/const/env.php` looks for it in two places, in order:
@@ -88,8 +86,7 @@ The program-update script `script/update.sh` (run by the server-admin page to pu
 lookup, so it keeps working after `.env` has moved above the web root. Any other reader of `.env`
 must use the same order; do not hard-code `<web root>/.env`.
 
-Docker Installation
--------------------
+## Docker Installation
 
 Recommended only for dedicated pod servers due to potential security issues ( https://wiki.debian.org/Docker )
 
@@ -154,8 +151,7 @@ To view logs:
 docker compose logs -f
 ```
 
-Target installation
--------------------
+## Target installation
 
 In the final version the installation on debian should be
 
@@ -173,8 +169,7 @@ and beginning with an increasing minute based interval,
 but at least once a day a status message should be shown with the system usage and a summery if the usage.
 
 
-Pod Installation
-----------------
+## Pod Installation
 
 To install a pod on a server a solution is to use the
 docker installation that will be created (see issue #134)

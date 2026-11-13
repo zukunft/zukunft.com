@@ -10,8 +10,59 @@
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
         <style>
-            :root { --font-page: sans-serif; }
-:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
         </style>
     </head>
     <body>
@@ -77,6 +128,11 @@
                                 <li>
                                     <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
                                         Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=it" title="Italian">
+                                        Italiano
                                     </a>
                                 </li>
                                 <li>
@@ -195,7 +251,7 @@
                                 <a href="https://www.wikidata.org/wiki/Q395">
                                     wikidata
                                 </a>
-                                <a href="http://localhost/http/view.php?m=141&amp;id=2" title="reloading" class="heading-icon-inline">
+                                <a href="http://localhost/http/view.php?m=48&amp;id=1&amp;fr=frd" title="import the values of wikidata that this pod can assign" class="heading-icon-inline">
                                     <i class="fas fa-arrows-rotate">
                                     </i>
                                 </a>
@@ -207,7 +263,7 @@
                                 <a href="https://en.wikipedia.org/wiki/Mathematics">
                                     wikipedia
                                 </a>
-                                <a href="http://localhost/http/view.php?m=141&amp;id=1" title="reloading" class="heading-icon-inline">
+                                <a href="http://localhost/http/view.php?m=48&amp;id=1&amp;fr=frw" title="take over the description and the wikidata link from wikipedia" class="heading-icon-inline">
                                     <i class="fas fa-arrows-rotate">
                                     </i>
                                 </a>
@@ -245,20 +301,21 @@
                                 <ul class="value-items">
                                     <li>
                                         <span class="value-name">
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=464" title="The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=468" title="The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.">
                                                 2022
                                             </a>
                                             ,
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=959" title="OECD Programme for International Student Assessment">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=966" title="OECD Programme for International Student Assessment">
                                                 PISA
                                             </a>
                                             ,
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=983" title="number representing change relative to a base">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=990" title="number representing change relative to a base">
                                                 index
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=276694021010620417">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=285727057641940" title="OECD
+https://www.oecd.org">
                                                 508
                                             </a>
                                         </span>
@@ -323,31 +380,6 @@
                 </div>
                 <div class="col" style="min-width: 700px">
                     <div class="css-tabs">
-                        <div class="css-tab" id="views">
-                            <a href="#views" class="css-tab-label">
-                                Views
-                            </a>
-                            <div class="css-tab-pane">
-                                <div class="container">
-                                    <div>
-                                        <div class="col-md-12">
-                                            view preview
-                                        </div>
-                                        <a href="http://localhost/http/view.php?m=3&amp;id=1" title="show &#039;mathematics&#039; with the &#039;Word (default)&#039; view">
-                                            Word (default)
-                                        </a>
-                                        <a href="http://localhost/http/view.php?m=48&amp;id=1&amp;d=3" title="adjust &#039;mathematics&#039; so that it is always shown with the &#039;Word (default)&#039; view">
-                                            <i class="fas fa-shuffle">
-                                            </i>
-                                        </a>
-                                        <a href="http://localhost/http/view.php?m=85&amp;id=3" title="change the &#039;Word (default)&#039; view">
-                                            <i class="fas fa-edit">
-                                            </i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="css-tab" id="changes">
                             <a href="#changes" class="css-tab-label">
                                 Changes

@@ -47,6 +47,8 @@ include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -76,6 +78,8 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
@@ -131,6 +135,18 @@ class test_formulas extends test_objects
         $frm->set_latex(formula_names::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, new user_message($this->env->usr1));
         return $frm;
+    }
+
+    /**
+     * @return array the database row of the formula for testing e.g. for the row mapper tests
+     */
+    function formula_row(): array
+    {
+        $frm = $this->formula();
+        return [
+            formula_fields::FLD_ID => $frm->id(),
+            formula_fields::FLD_NAME => $frm->name(),
+        ];
     }
 
     /**
@@ -277,7 +293,7 @@ class test_formulas extends test_objects
         $frm->set_view_id(views::START_ID);
         $frm->usage = test_const::DUMMY_USAGE_FORMULA;
         $frm->impact = test_const::DUMMY_IMPACT;
-        $frm->exclude();
+        $frm->include();
         $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
@@ -501,6 +517,21 @@ class test_formulas extends test_objects
         return $lst;
     }
 
+    /**
+     * @return formula_list_ui the web formula "annual damage in money", which calculates the
+     *         potential loss of a problem of the start page from its annual share of the world GDP
+     */
+    function formula_list_annual_damage_ui(): formula_list_ui
+    {
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::ANNUAL_DAMAGE_ID);
+        $frm->set_name(formula_names::ANNUAL_DAMAGE);
+        $frm->set_usr_text(formula_names::ANNUAL_DAMAGE_EXP);
+        $lst = new formula_list_ui();
+        $lst->add($frm, new user_message_ui()); // a test builder is an entry point, so it creates the message
+        return $lst;
+    }
+
     function formula_list_ui(): formula_list_ui
     {
         $tl = new test_lib();
@@ -528,6 +559,43 @@ class test_formulas extends test_objects
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(2, $this->formula_increase(), $t_wrd->word()->phrase());
         return $lnk;
+    }
+
+    /**
+     * @return array the database row of the formula link for testing with the joined names as the list query returns it
+     */
+    function formula_link_row(): array
+    {
+        return $this->formula_link_to_row($this->formula_link());
+    }
+
+    /**
+     * @return array the database row of another formula link whose joined formula name ends with a space,
+     *               which the row mapper reports as an error, e.g. to test a list with a row that cannot be mapped
+     */
+    function formula_link_row_untrimmed(): array
+    {
+        $db_row = $this->formula_link_to_row($this->formula_link_increase());
+        $db_row[formula_link::FLD_FORMULA_NAME_JOINED] .= ' ';
+        return $db_row;
+    }
+
+    /**
+     * @param formula_link $lnk the formula link that should be converted
+     * @return array the database row of the link with the joined names as the list query returns it
+     */
+    private function formula_link_to_row(formula_link $lnk): array
+    {
+        return [
+            formula_link::FLD_ID => $lnk->id(),
+            formula_link::FLD_FROM => $lnk->formula()->id(),
+            formula_link::FLD_TO => $lnk->phrase()->id(),
+            formula_link::FLD_PREDICATE => $lnk->predicate_id(),
+            formula_link::FLD_ORDER => $lnk->order_nbr,
+            fields::FLD_DESCRIPTION => $lnk->description,
+            formula_link::FLD_FORMULA_NAME_JOINED => $lnk->formula()->name(),
+            formula_link::FLD_PHRASE_NAME_JOINED => $lnk->phrase()->name(),
+        ];
     }
 
     /**

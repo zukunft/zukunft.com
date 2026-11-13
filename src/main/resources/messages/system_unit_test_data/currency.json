@@ -28,7 +28,7 @@
       "description": "The process of changing something from one form to another. Currency conversion refers to exchanging an amount of money in one currency for the equivalent value in another currency, typically using an exchange rate.",
       "refs": [
         {
-          "name": "Currency converter",
+          "name": "Currency_converter",
           "type": "wikipedia"
         }
       ]
@@ -38,7 +38,7 @@
       "description": "The price at which a buyer is willing to purchase a currency or other asset. In a quoted currency pair, the bid is the lower of the two prices and represents what a dealer will pay to buy the base currency.",
       "refs": [
         {
-          "name": "Bid price",
+          "name": "Bid_price",
           "type": "wikipedia"
         }
       ]
@@ -48,7 +48,7 @@
       "description": "The price at which a seller is willing to sell a currency or other asset. In a quoted currency pair, the ask is the higher of the two prices and represents what a dealer will accept to sell the base currency.",
       "refs": [
         {
-          "name": "Ask price",
+          "name": "Ask_price",
           "type": "wikipedia"
         }
       ]
@@ -58,7 +58,7 @@
       "description": "The difference between two prices, rates, or yields. In foreign exchange, the bid-ask spread is the difference between the ask price (at which a dealer sells) and the bid price (at which a dealer buys), and represents a transaction cost.",
       "refs": [
         {
-          "name": "Bid–ask spread",
+          "name": "Bid–ask_spread",
           "type": "wikipedia"
         }
       ]
@@ -68,7 +68,7 @@
       "description": "In a currency pair, the quote currency (also called the counter currency) is the second currency listed and indicates how much of it is required to buy one unit of the base currency. For example, in EUR/USD, USD is the quote currency.",
       "refs": [
         {
-          "name": "Currency pair",
+          "name": "Currency_pair",
           "type": "wikipedia"
         }
       ]
@@ -78,7 +78,7 @@
       "description": "Relating to a future date. A forward exchange rate is the rate agreed today for a currency transaction to be settled on a specified future date, derived from the spot rate and the interest rate differential between the two currencies.",
       "refs": [
         {
-          "name": "Forward exchange rate",
+          "name": "Forward_exchange_rate",
           "type": "wikipedia"
         }
       ]
@@ -88,7 +88,7 @@
       "description": "A spot transaction is a foreign exchange deal in which two parties agree to exchange currencies at the current market rate, with settlement typically occurring within two business days.",
       "refs": [
         {
-          "name": "Spot contract",
+          "name": "Spot_contract",
           "type": "wikipedia"
         }
       ]
@@ -145,6 +145,10 @@
         {
           "name": "Price",
           "type": "wikipedia"
+        },
+        {
+          "name": "P2284",
+          "type": "wikidata_property"
         }
       ]
     },
@@ -205,7 +209,7 @@
       "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
       "refs": [
         {
-          "name": "Exchange rate",
+          "name": "Exchange_rate",
           "type": "wikipedia"
         },
         {
@@ -250,7 +254,7 @@
       "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
       "refs": [
         {
-          "name": "Currency converter",
+          "name": "Currency_converter",
           "type": "wikipedia"
         }
       ]
@@ -284,7 +288,7 @@
       "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
       "refs": [
         {
-          "name": "Bid–ask spread",
+          "name": "Bid–ask_spread",
           "type": "wikipedia"
         }
       ]
@@ -332,7 +336,7 @@
       "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
       "refs": [
         {
-          "name": "Forward exchange rate",
+          "name": "Forward_exchange_rate",
           "type": "wikipedia"
         }
       ]
@@ -352,7 +356,7 @@
       "description": "The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.",
       "refs": [
         {
-          "name": "Interest rate",
+          "name": "Interest_rate",
           "type": "wikipedia"
         },
         {
@@ -517,7 +521,7 @@
       "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
       "refs": [
         {
-          "name": "Currency converter",
+          "name": "Currency_converter",
           "type": "wikipedia"
         }
       ]
@@ -535,7 +539,7 @@
       "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
       "refs": [
         {
-          "name": "Bid–ask spread",
+          "name": "Bid–ask_spread",
           "type": "wikipedia"
         }
       ]
@@ -559,7 +563,7 @@
       "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
       "refs": [
         {
-          "name": "Forward exchange rate",
+          "name": "Forward_exchange_rate",
           "type": "wikipedia"
         }
       ]

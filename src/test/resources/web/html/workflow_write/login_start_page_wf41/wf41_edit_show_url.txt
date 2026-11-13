@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?9ix=1&m=13&z=0
+/http/view.php?9ix=1&m=13&z=0
+/http/view.php?mask_id=signup&step=no&
+{
+    "mask_id": "signup",
+    "step": "no",
+    "url_part_back": []
+}

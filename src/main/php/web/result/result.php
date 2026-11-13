@@ -110,6 +110,8 @@ class result extends sandbox_value
     public ?result_list $results_used = null;
     // the right side of the formula as operator texts and the figures used, only for the result page
     public ?array $expression_parts = null;
+    // the formula expression with the numbers used and with the term names, set by the table that has repeated the calculation (see ui_list::check_results)
+    public string $expression_numbers = '';
 
 
     /*
@@ -183,6 +185,19 @@ class result extends sandbox_value
         }
         */
         return $msg->is_ok();
+    }
+
+    /**
+     * set the phrases and the context of this result that a list answer names only once
+     * @param array $phr_of_fld the phrase objects by json field e.g. json_fields::CONTEXT, which are shared with other results
+     * @return void
+     */
+    function set_phrases_of_fields(array $phr_of_fld): void
+    {
+        parent::set_phrases_of_fields($phr_of_fld);
+        if (array_key_exists(json_fields::CONTEXT, $phr_of_fld) and $this->src_grp != null) {
+            $this->src_grp->set_lst($phr_of_fld[json_fields::CONTEXT]);
+        }
     }
 
     /**
@@ -276,6 +291,21 @@ class result extends sandbox_value
     protected function default_view_id(): int
     {
         return views::RESULT_ID;
+    }
+
+    /**
+     * the formula expression with the numbers used, below it with the term names (see
+     * formula_calc::expression_with_numbers) and the hint that the link shows the details on the page of the result
+     *
+     * @return string the tooltip of the link to the result, empty if the calculation is not known
+     */
+    protected function link_title(): string
+    {
+        $result = '';
+        if ($this->expression_numbers != '') {
+            $result = $this->expression_numbers . "\n" . msg_id::RESULT_TOOLTIP_DETAILS->text();
+        }
+        return $result;
     }
 
     /**
@@ -496,7 +526,7 @@ class result extends sandbox_value
                 log_debug('words set ' . $elm_grp->phrase_list()->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values_old($msg, $url_arr);
+                $result .= ' = ' . $elm_grp->dsp_values($msg, $url_arr);
                 $result .= '</br>';
                 log_debug('next element');
                 $elm_nbr++;

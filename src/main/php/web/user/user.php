@@ -45,6 +45,7 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+//include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -139,6 +141,7 @@ class user extends db_object
     public ?term $trm = null;       // the last term that the user has been looking at
     public ?view $msk = null;             // the last view that the user has been looking at
     public ?source $src = null;           // the last source that the user has been looking at
+    public ?verb $vrb = null;             // the last verb that the user has saved, the default of the next triple
 
     // the changes done by this user as loaded with the user for its page, so that the
     // all user overwrites column can be filled without a second backend call
@@ -192,6 +195,7 @@ class user extends db_object
         $this->trm = null;
         $this->msk = null;
         $this->src = null;
+        $this->vrb = null;
 
         $this->profile = null;
     }
@@ -391,6 +395,13 @@ class user extends db_object
             $this->src = $src;
         } else {
             $this->src = null;
+        }
+        if (array_key_exists(json_fields::VERB, $json_array)) {
+            $vrb = new verb();
+            $vrb->set_id($json_array[json_fields::VERB]);
+            $this->vrb = $vrb;
+        } else {
+            $this->vrb = null;
         }
 
         return $msg->is_ok();
@@ -774,6 +785,7 @@ class user extends db_object
         $vars[json_fields::TERM_ID] = $this->trm?->id();
         $vars[json_fields::VIEW_ID] = $this->msk?->id();
         $vars[json_fields::SOURCE_ID] = $this->src?->id();
+        $vars[json_fields::VERB] = $this->vrb?->id();
 
         // TODO Prio 1 use vars filter for all api array creation functions
         // TODO Prio 1 check if password should be included and in which form
@@ -802,9 +814,10 @@ class user extends db_object
      *
      * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and 9-prefixed back params
      * @param string $back_url when non-empty an "or go back" link is appended after "or signup"
+     * @param string $signup_url the url of the "or signup" link e.g. with the back params of the login
      * @return string the complete login form HTML followed by an "or signup" link
      */
-    function form_login(string $extra_hidden = '', string $back_url = ''): string
+    function form_login(string $extra_hidden = '', string $back_url = '', string $signup_url = api::SIGNUP_SCRIPT): string
     {
         global $mtr;
 
@@ -818,7 +831,7 @@ class user extends db_object
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
-        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
+        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref($signup_url, $mtr->txt(msg_id::SIGNUP));
         $or_back = '';
         if ($back_url !== '') {
             $or_back = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::GO) . ' ' . $html->ref($back_url, $mtr->txt(msg_id::BACK_LINK));

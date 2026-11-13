@@ -104,12 +104,14 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
@@ -194,6 +196,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -292,6 +295,7 @@ include_once test_paths::UNIT . 'change_log_tests.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UNIT . 'import_tests.php';
 include_once test_paths::UNIT . 'wikidata_tests.php';
+include_once test_paths::UNIT . 'wikipedia_tests.php';
 include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
@@ -330,12 +334,14 @@ include_once test_paths::UNIT_READ . 'formula_read_tests.php';
 include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'expression_read_tests.php';
 include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'result_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'component_read_tests.php';
 include_once test_paths::UNIT_READ . 'component_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'source_read_tests.php';
 include_once test_paths::UNIT_READ . 'ref_read_tests.php';
+include_once test_paths::UNIT_READ . 'wikidata_read_tests.php';
 include_once test_paths::UNIT_READ . 'share_read_tests.php';
 include_once test_paths::UNIT_READ . 'protection_read_tests.php';
 include_once test_paths::UNIT_READ . 'language_read_tests.php';
@@ -376,6 +382,8 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_upload_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'export_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';
@@ -410,6 +418,9 @@ class test_base
     const string TEST_TYPE_NOT = 'not';
     // the chars shown before and after an unexpected hit of assert_text_not_contains
     const int NOT_CONTAINS_CONTEXT = 100;
+    // the chars shown of the diff, the actual and the expected part of a failed test, so that a long json does not
+    // flood the console; only the display is cut, the test always compares the complete result
+    const int ERROR_PART_MAX_CHARS = 2000;
     const string FILE_EXT = '.sql';
     const string FILE_MYSQL = '_mysql';
 
@@ -455,6 +466,9 @@ class test_base
     // TODO Prio 1 reduce!
     const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
     const int TIMEOUT_LIMIT_REST = 5;  // max seconds for a REST api call over http including the connection warmup of the first call and the config loading
+    // the memory_limit of the php.ini of the served pod, above which a page ends without a message
+    // because the pod does not display errors; the test run itself has no memory limit
+    const int POD_MEMORY_LIMIT = 128 * 1024 * 1024;
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
     const int TEST_LOADING_SECONDS = 3; // fixed seconds since the request start of a loading page snapshot
@@ -717,6 +731,39 @@ class test_base
     }
 
     /**
+     * switch the debug level e.g. on for one slow test step, so that the steps of the frontend and
+     * each api call are logged with their seconds, and back to the level before after the step
+     *
+     * @param int $level the new debug level e.g. url_var::DEBUG_LEVEL_COMPLEX_FUNCTION
+     * @return int the debug level before, to switch back to it
+     */
+    function set_debug(int $level): int
+    {
+        global $debug;
+        global $ui_sys;
+        $before = (int)$debug;
+        $debug = $level;
+        // the frontend reads the level from its request cache, like http/view.php sets it
+        if ($ui_sys != null) {
+            $ui_sys->debug = $level;
+        }
+        return $before;
+    }
+
+    /**
+     * write a progress line of a long test step to the test log
+     * with the seconds since the previous log line, so that a slow step is visible
+     *
+     * @param string $step_text the description of the step that has just been done
+     * @return void
+     */
+    function step(string $step_text): void
+    {
+        global $log_txt;
+        $log_txt->echo_text_log($step_text . ' (' . $log_txt->since_last() . ')');
+    }
+
+    /**
      * report a time section that the tests before the given header have left open, because
      * it would count the time of all following tests e.g. a switch(X) without its switch()
      *
@@ -917,6 +964,10 @@ class test_base
             $msg_txt = $usr_msg instanceof user_message
                 ? $usr_msg->all_message_text()
                 : $usr_msg->text();
+            // e.g. a plain text of the backend, which the shared text() does not include yet
+            if ($msg_txt == '' and $usr_msg instanceof user_message_ui) {
+                $msg_txt = $usr_msg->get_last_message();
+            }
             return $this->assert_dsp($msg, false, true, $msg_txt, '', $exe_max_time);
         }
     }
@@ -946,6 +997,25 @@ class test_base
         $msg_txt = $usr_msg->text();
         $usr_msg->reset();
         return $this->assert_text_contains($msg, $msg_txt, $expected, $exe_max_time);
+    }
+
+    /**
+     * check that a call reports the expected internal error on its message, which is then neither written to the
+     * system log nor counted as an internal error of the test run (see Message::log_test_only)
+     *
+     * @param string $test_name (unique) description of the test
+     * @param callable $call the call that is expected to report the internal error on the given message
+     * @param string $expected the text that the reported error is expected to contain
+     * @param user_message|user_message_ui $msg the message that the call reports to, which carries the test-only flag
+     * @return bool true if the expected error has been reported
+     */
+    function assert_log_err(string $test_name, callable $call, string $expected, user_message|user_message_ui $msg): bool
+    {
+        $msg->log_test_only = true;
+        $msg->log_test_txt = '';
+        $call();
+        $msg->log_test_only = false;
+        return $this->assert_text_contains($test_name, $msg->log_test_txt, $expected);
     }
 
     /**
@@ -1039,6 +1109,29 @@ class test_base
             $result = $haystack;
         }
         return $this->assert($msg, $result, $needle, $exe_max_time, $comment);
+    }
+
+    /**
+     * check that the result text starts with the target text
+     * e.g. that an answer is a pdf file and not an error page
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result
+     * @param string $needle the text that is expected at the start of the haystack
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true if the haystack starts with the needle
+     */
+    function assert_text_starts(
+        string $msg,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT): bool
+    {
+        $result = $haystack;
+        if (str_starts_with($haystack, $needle)) {
+            $result = $needle;
+        }
+        return $this->assert($msg, $result, $needle, $exe_max_time);
     }
 
     /**
@@ -1203,6 +1296,25 @@ class test_base
     }
 
     /**
+     * check if the actual number is smaller than the given max and show both numbers if not
+     *
+     * @param string $msg (unique) description of the test
+     * @param int $max the number that the actual number must stay below
+     * @param int $actual the actual number e.g. the bytes that a step has used
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true is the result is fine
+     */
+    function assert_below(string $msg, int $max, int $actual, float $exe_max_time = self::TIMEOUT_LIMIT): bool
+    {
+        $target = '< ' . $max;
+        $received = (string)$actual;
+        if ($actual < $max) {
+            $received = $target;
+        }
+        return $this->assert($msg, $received, $target, $exe_max_time);
+    }
+
+    /**
      * check if the test results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
@@ -1228,7 +1340,9 @@ class test_base
             $needles = $needle;
         }
         // the array keys are not relevant if only a few elements should be checked
-        $haystack = array_values(array_intersect($haystack, $needles));
+        $found = array_intersect($haystack, $needles);
+        // a needle that the haystack holds several times is contained once
+        $haystack = array_values(array_unique($found));
         return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
@@ -1431,13 +1545,13 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view_by_name(
-        string          $view_name,
-        user            $usr,
+        string           $view_name,
+        user             $usr,
         db_object_seq_id $dbo,
-        string          $obj_name,
-        ?data_object_ui $cfg = null,
-        string          $file_path = '',
-        array           $url_array = []
+        string           $obj_name,
+        ?data_object_ui  $cfg = null,
+        string           $file_path = '',
+        array            $url_array = []
     ): bool
     {
         $msg = new user_message();
@@ -1572,6 +1686,7 @@ class test_base
             $sys->times->switch(system_time_type::LOAD_VIEW);
             $msk->load_components($msg);
             $sys->times->switch();
+            log_debug('components of the view ' . $view_key . ' loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         }
 
         // build the api message and the ui objects the frontend would receive;
@@ -1595,10 +1710,15 @@ class test_base
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $msg_ui);
         $sys->times->switch();
+        log_debug('api message of the view ' . $view_key . ' mapped', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
 
         // a new context for each view, because the rendering fills e.g. the phrases of the page into it
         if ($cfg == null) {
             $cfg = $this->view_context($msg_ui);
+        }
+        // the live page context always has the type cache, so a context of a test without one gets the fixed one
+        if ($cfg->typ_lst_cache == null) {
+            $cfg->typ_lst_cache = $this->view_context($msg_ui)->typ_lst_cache;
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();
@@ -1610,18 +1730,28 @@ class test_base
         $msg_ui->usr = $cfg->usr;
         // render in test mode so that the result is reproducible without backend calls
         // the wait for the backend is part of the rendering, but not frontend work
+        // the phrases and the type cache of the page are those of this context, because http/view.php renders with
+        // $ui_sys as the page context; else e.g. the meaning of an ambiguous symbol depends on the tests before
+        global $ui_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $typ_lst_keep = $ui_sys->typ_lst_cache;
+        $ui_sys->phr_lst = $cfg->phr_lst;
+        $ui_sys->typ_lst_cache = $cfg->typ_lst_cache;
         frontend::book_times();
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
+        // the page title is the one the live page shows (see frontend::url_to_html), the object name and the view name
+        $title = $dsp_html->title($dbo_dsp, $msg_ui);
         frontend::book_times();
+        $ui_sys->phr_lst = $phr_lst_keep;
+        $ui_sys->typ_lst_cache = $typ_lst_keep;
+        log_debug('html of the view ' . $view_key . ' created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         // continue with the section of the caller for the following tests
         $sys->times->switch();
 
-        // check if the created view matches the expected view; the page title is the one the
-        // live page shows (see frontend::url_to_html), the object name and the view name
+        // check if the created view matches the expected view
         return $this->assert_html_body(
-            $this->name . ' view ' . $view_key,
-            $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $dsp_html->title($dbo_dsp, $msg_ui));
+            $this->name . ' view ' . $view_key, $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $title);
     }
 
     /**
@@ -1852,8 +1982,8 @@ class test_base
     }
 
     /**
-     * the phrase data that a calculator editor page embeds as its seed carries the time of its
-     * creation, so the time is replaced by the fixed test time before the page is compared;
+     * the phrase data that a calculator or table editor page embeds as its seed carries the time
+     * of its creation, so the time is replaced by the fixed test time before the page is compared;
      * only for the snapshot, the real page keeps the time of the phrase data
      *
      * @param string $html the rendered html page
@@ -1861,6 +1991,7 @@ class test_base
      */
     function fix_volatile_phrase_data_time(string $html): string
     {
+        // the table editor embeds its seed with the id of the calculator editor seed
         $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
         return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
     }
@@ -1871,12 +2002,16 @@ class test_base
      * so the count is replaced by the fixed test seconds for both the actual page and the snapshot
      * before an html page is compared and when a snapshot is written (see assert_typed and
      * file_content); only for the test compare, the real page keeps the seconds of the request
+     * the steps below the loading text (html_base::loading_step) depend on the speed of the api
+     * calls and name their seconds, so they are removed
      *
      * @param string $html the html page as received from the pod
-     * @return string the html page with the loading count of self::TEST_LOADING_SECONDS
+     * @return string the html page with the loading count of self::TEST_LOADING_SECONDS and without loading steps
      */
     function fix_volatile_loading_seconds(string $html): string
     {
+        $step_pattern = '/<' . html_base::P . ' ' . html_base::CLASS_HTML . '="' . html_base::CLASS_LOADING_STEP . '">[^<]*<\/' . html_base::P . '>/';
+        $html = preg_replace($step_pattern, '', $html);
         $steps = html_base::LOADING_COUNT_LIMIT - self::TEST_LOADING_SECONDS;
         $start_pattern = '/(' . preg_quote('@property --' . html_base::LOADING_COUNTER, '/') . ' \{[^}]*initial-value: )\d+/';
         $html = preg_replace($start_pattern, '${1}' . self::TEST_LOADING_SECONDS, $html, 1);
@@ -1926,16 +2061,58 @@ class test_base
     }
 
     /**
-     * @return array the pinned views of config.yaml by url name, each with the url or the view name
+     * @return array the active pinned views of config.yaml by url name, each with the url or the view name
      *               and the phrase name and with the name and the tooltip (see html_base::start_page)
      */
     function pinned_views(): array
     {
+        return array_filter($this->pinned_views_all(), fn(array $pin) => $this->pin_is_active($pin));
+    }
+
+    /**
+     * @return array the pinned views of config.yaml by url name that have no url and no view name
+     */
+    function pinned_views_inactive(): array
+    {
+        return array_diff_key($this->pinned_views_all(), $this->pinned_views());
+    }
+
+    /**
+     * @param array $pin a pinned view of config.yaml
+     * @return bool true if the pinned view has a url or a view name, so it has a target to open
+     */
+    function pin_is_active(array $pin): bool
+    {
+        return ($pin[words::URL] ?? '') != '' or ($pin[triples::VIEW_NAME] ?? '') != '';
+    }
+
+    /**
+     * @return array the active and the inactive pinned views of config.yaml by url name
+     */
+    private function pinned_views_all(): array
+    {
         $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
         $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
-            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
+        [words::STARTUP][triples::PINNED_VIEWS] ?? [];
         unset($pin_lst[words::TOOLTIP_COMMENT]);
         return $pin_lst;
+    }
+
+    /**
+     * check that a generated file that is no longer used does not exist
+     * and remove it if test_files::AUTO_UPDATE_TEST_FILES is true
+     *
+     * @param string $test_name the description of the test
+     * @param string $file_path the full path of the file that should not exist
+     * @return bool true if the file does not exist
+     */
+    function assert_no_file(string $test_name, string $file_path): bool
+    {
+        $result = $this->assert($test_name, file_exists($file_path), false);
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            unlink($file_path);
+        }
+        return $result;
     }
 
     /**
@@ -1982,6 +2159,7 @@ class test_base
         $result = $this->assert_typed($test_name, $actual, $expected, $file_type, $exe_max_time);
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_path_file($file_path, $this->file_content($actual, $file_type));
+            $this->step('updated ' . $file_path);
         }
         return $result;
     }
@@ -2225,22 +2403,51 @@ class test_base
     ): bool
     {
         $msg = new user_message();
-        // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
-        $sc_par_lst->add(sql_type::INSERT);
-        $sc_par_lst->add(sql_type::NO_ID_RETURN);
-        $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_user($sc, $norm_obj, $msg, $sc_par_lst);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the sql statement creation to update the user row with the delta to the user row in the database
+     * for all allowed sql database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_multi $usr_chg the user overwrites as they should be after the change
+     * @param sandbox|sandbox_multi $usr_db the user row as it is in the database before the change
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update_user(
+        sql_creator           $sc,
+        sandbox|sandbox_multi $usr_chg,
+        sandbox|sandbox_multi $usr_db,
+        array                 $sc_par_lst_in = [sql_type::LOG]
+    ): bool
+    {
+        $msg = new user_message($this->usr1);
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_chg->sql_update_user($sc, $usr_db, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2347,6 +2554,76 @@ class test_base
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
+    }
+
+    /**
+     * check the sql function that excludes an object for the user,
+     * once as the insert of a new user row and once as the update of an existing user row,
+     * and that a user row which already excludes the object leads to no sql
+     *
+     * @param sql_creator $sc the test database connection
+     * @param sandbox $usr_obj the object that should be excluded for the user
+     * @return bool true if all sql statements match the expected fixtures
+     */
+    function assert_sql_exclude(sql_creator $sc, sandbox $usr_obj): bool
+    {
+        $msg = new user_message($this->usr1);
+        $obj_excl = clone $usr_obj;
+        $obj_excl->exclude();
+        $db_rec_usr = clone $usr_obj;
+        $db_rec_usr->usr_cfg_id = $usr_obj->id();
+        $result = true;
+        foreach ([$usr_obj, $db_rec_usr] as $db_rec) {
+            foreach ([sql_db::POSTGRES, sql_db::MYSQL] as $db_type) {
+                $sc->reset($db_type);
+                $qp = $obj_excl->sql_exclude($sc, $db_rec, $msg);
+                $result = ($result and $qp != null and $this->assert_qp($qp, $sc->db_type));
+            }
+        }
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // a standard row loaded from the database with excluded 0 must give the same insert function,
+        // because both are prepared with the same name
+        $db_rec_std = clone $usr_obj;
+        $db_rec_std->include();
+        $sc->reset(sql_db::POSTGRES);
+        $qp_fixture = $obj_excl->sql_exclude($sc, $usr_obj, $msg);
+        $sc->reset(sql_db::POSTGRES);
+        $qp_loaded = $obj_excl->sql_exclude($sc, $db_rec_std, $msg);
+        $this->assert('the ' . $class . ' exclude insert with excluded 0 of the standard row', $qp_loaded->sql, $qp_fixture->sql);
+        $this->assert('... and its parameters', $qp_loaded->par, $qp_fixture->par);
+        // the user row already excludes the object, so the exclude of a repeated delete has nothing to write
+        $db_rec_excl = clone $db_rec_usr;
+        $db_rec_excl->exclude();
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $obj_excl->sql_exclude($sc, $db_rec_excl, $msg);
+        $this->assert_true('the ' . $class . ' exclude of a user row that already excludes it has no sql', $qp == null);
+        return $result;
+    }
+
+    /**
+     * check the do not update a link guard of one link class: a link with a database id never gets another
+     * from, predicate or to, neither by the save (is_link_changed) nor by the sql update creation
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox_link $lnk a link with a database id as it is in the database
+     * @param array $changed_lst the copies of the link with another part, e.g. 'from' => the link with another from
+     * @return void
+     */
+    function assert_link_guard(sql_creator $sc, sandbox_link $lnk, array $changed_lst): void
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $same = clone $lnk;
+        $this->assert_false('the ' . $class . ' guard accepts the same link', $same->is_link_changed($lnk));
+        foreach ($changed_lst as $part => $changed) {
+            $this->assert_true('the ' . $class . ' guard refuses another ' . $part, $changed->is_link_changed($lnk));
+            $msg = new user_message($this->usr1);
+            $sc->reset(sql_db::POSTGRES);
+            $qp = $changed->sql_update($sc, $lnk, $msg);
+            $refused = ($qp === null and !$msg->is_ok());
+            $this->assert_true('... also in the sql update of another ' . $part, $refused);
+        }
     }
 
     /**
@@ -3898,11 +4175,9 @@ class test_base
             $new_name = $this->write_named_rename($sbx, $id, $this->usr1);
         }
 
-        // check the log
-        if ($id != 0) {
+        // check the log (only if the rename has been done, because the rename log of a skipped rename cannot exist)
+        if ($result) {
             $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, msg_id::LOG_UPDATE->value, $msg, $name);
-        } else {
-            $result = false;
         }
 
 
@@ -4434,14 +4709,34 @@ class test_base
     }
 
     /**
-     * delete all change log entries of one test object using the change log entry ids
+     * remove the change log entries that a test user has written on a row of the base data, after the cleanup has
+     * removed the user overlay of this user, so that the change log of the row shows no earlier test run
+     *
+     * @param string $class the class of the row of the base data e.g. triple::class
+     * @param int|string $id the database id of the row of the base data e.g. of the triple Geneva (city), or the group id of a value
+     * @param user $usr the test user whose overlay has been removed e.g. $this->usr1
+     * @return void
+     */
+    function cleanup_change_log_of_user(string $class, int|string $id, user $usr): void
+    {
+        if ($usr->id() == $this->usr_system->id()) {
+            log_err('the change log of the system user on ' . $class . ' ' . $id
+                . ' is the history of the base data, so a test cleanup never removes it');
+        } else {
+            $this->delete_change_log_of_obj($class, $id, $usr);
+        }
+    }
+
+    /**
+     * delete the change log entries of one test object using the change log entry ids
      * the entries are loaded via the model so they are correctly filtered by the object's table and row
      *
      * @param string $class the class of the test object e.g. word::class, ref::class or group::class
      * @param int|string $id the database (or group) id of the test object whose change log to remove
+     * @param user|null $chg_usr null to remove the entries of every user, or only those of this test user
      * @return void
      */
-    private function delete_change_log_of_obj(string $class, int|string $id): void
+    private function delete_change_log_of_obj(string $class, int|string $id, ?user $chg_usr = null): void
     {
         global $db_con;
         $msg = new user_message();
@@ -4453,7 +4748,7 @@ class test_base
         // change log ids by their change log class and delete each group from its own table
         $ids_by_class = [];
         foreach ($log_lst->lst() as $chg) {
-            if ($chg->id() != 0) {
+            if ($chg->id() != 0 and $this->is_change_of($chg, $chg_usr)) {
                 $ids_by_class[$chg::class][] = $chg->id();
             }
         }
@@ -4462,6 +4757,20 @@ class test_base
             $qp = $db_con->sql_creator()->del_sql_list_without_log($chg_class, change_log::FLD_ID, $ids);
             $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $msg);
         }
+    }
+
+    /**
+     * @param change_log $chg a change log entry of the row that the cleanup removes
+     * @param user|null $chg_usr null for the entries of every user, or the test user whose entries are removed
+     * @return bool true if the entry has been written by the given user or no user is given
+     */
+    private function is_change_of(change_log $chg, ?user $chg_usr): bool
+    {
+        $result = true;
+        if ($chg_usr != null) {
+            $result = ($chg->get_user_id() == $chg_usr->id());
+        }
+        return $result;
     }
 
     /**
@@ -4505,6 +4814,31 @@ class test_base
         $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * remove the change log entries of rows that a test has added and deleted again, identified by their
+     * database id, because e.g. an added order triple or a value of seed phrases has no reserved test name;
+     * a row that can still be loaded keeps its change log, so that the log of a live row is never removed
+     *
+     * @param array $dbo_lst the deleted words, triples or values as loaded before their delete
+     * @return void
+     */
+    function cleanup_change_log_of_deleted(array $dbo_lst): void
+    {
+        foreach ($dbo_lst as $dbo) {
+            $class = $dbo::class;
+            $chk = new $class($this->usr_system);
+            $msg = new user_message($this->usr_system);
+            $deleted = $chk->load_by_id($dbo->id(), $msg) == 0;
+            if ($deleted and $dbo instanceof value) {
+                $this->delete_value_change_log($dbo->id());
+                $this->delete_value_link_change_log($dbo->id());
+                $this->delete_value_time_series_change_log($dbo->grp());
+            } elseif ($deleted) {
+                $this->delete_change_log_of_obj($class, $dbo->id());
+            }
+        }
     }
 
     /**
@@ -4707,6 +5041,147 @@ class test_base
     }
 
     /**
+     * remove the references that a test run has left on a phrase without references in the base
+     * data, e.g. on Bern (city), whose wikipedia refresh must tell that it has no wikipedia reference;
+     * the overlay rows of the test users are removed first, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else), and the change log of the removed test row last
+     *
+     * @param phrase $phr the phrase that has no references in the base data
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    function cleanup_leftover_refs(phrase $phr, user_message $msg): void
+    {
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            $this->cleanup_test_ref($ref, $msg);
+        }
+    }
+
+    /**
+     * undo the reference rows that a test has confirmed on a phrase of the base data: the overlay
+     * rows of the test users on its references are removed, e.g. a changed external key or the
+     * exclusion of a deleted reference, and the reference that the test has added is deleted
+     *
+     * @param phrase $phr the phrase of the base data whose references the test has changed
+     * @param string $added_key the external key of the reference that the test has added
+     * @param user_message $msg to report a reference or an overlay row that cannot be removed
+     * @return void
+     */
+    function cleanup_ref_rows_of(phrase $phr, string $added_key, user_message $msg): void
+    {
+        // loaded by the system user, so that a reference excluded by a test user is found too
+        $ref_lst = new ref_list($this->usr_system);
+        $ref_lst->load_by_phr_id($phr->id(), $msg);
+        foreach ($ref_lst->lst() as $ref) {
+            // a reference of the system user is base data, also if it has the key that the test adds
+            $is_added = ($ref->get_external_key() == $added_key and $ref->owner_id() != $this->usr_system->id());
+            if ($is_added) {
+                $this->cleanup_test_ref($ref, $msg);
+            } else {
+                $this->cleanup_ref_overlays($ref->id(), $msg);
+            }
+        }
+    }
+
+    /**
+     * delete a reference that a test has written by the logged delete of its owner and remove its
+     * change log, after the overlay rows of the test users, because only the owner deletes the row
+     * itself (see sandbox::used_by_someone_else)
+     *
+     * @param ref $ref the test reference that should be removed
+     * @param user_message $msg to report a reference that cannot be removed
+     * @return void
+     */
+    private function cleanup_test_ref(ref $ref, user_message $msg): void
+    {
+        $this->cleanup_ref_overlays($ref->id(), $msg);
+        $owner = $this->ref_owner($ref);
+        // the message names the requesting user, whose permission the delete checks
+        $del_msg = new user_message($owner);
+        $ref->set_user($owner);
+        $ref->del($del_msg);
+        $msg->merge($del_msg);
+        // a delete by a user that does not own the reference only writes an exclusion, and the
+        // change log may only be removed for a deleted test row
+        if ($this->ref_is_removed($ref->id(), $msg)) {
+            $this->delete_change_log_of_obj(ref::class, $ref->id());
+        } else {
+            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => ref::class]);
+        }
+    }
+
+    /**
+     * @param int $id the database id of the reference that should have been deleted
+     * @param user_message $msg to report a failed read, which never counts as removed
+     * @return bool true if the standard row of the reference is no longer in the database
+     */
+    private function ref_is_removed(int $id, user_message $msg): bool
+    {
+        // load_standard is also ok without a row, so only the loaded id tells if the row is still there
+        $std_msg = new user_message($this->usr_system);
+        $ref = new ref($this->usr_system);
+        $ref->load_standard($id, $std_msg);
+        $msg->merge($std_msg);
+        return ($std_msg->is_ok() and $ref->id() == 0);
+    }
+
+    /**
+     * @param int $id the database id of the reference whose user overlay rows are removed
+     * @param user_message $msg to report an overlay row that cannot be removed
+     * @return void
+     */
+    private function cleanup_ref_overlays(int $id, user_message $msg): void
+    {
+        foreach ($this->ref_test_users() as $usr) {
+            $usr_msg = new user_message($usr);
+            $usr_ref = new ref($usr);
+            $usr_ref->load_by_id($id, $usr_msg);
+            if ($usr_ref->has_usr_cfg()) {
+                $usr_ref->del_usr_cfg($usr_msg);
+                // the overlay and its removal must not stay in the change log of the reference of the base data
+                $this->cleanup_change_log_of_user(ref::class, $id, $usr);
+            }
+            $msg->merge($usr_msg);
+        }
+    }
+
+    /**
+     * @param ref $ref the reference whose owner deletes it
+     * @return user the test user that owns the reference, the system user if no test user owns it
+     */
+    private function ref_owner(ref $ref): user
+    {
+        $result = $this->usr_system;
+        foreach ($this->ref_test_users() as $usr) {
+            if ($usr->id() == $ref->owner_id()) {
+                $result = $usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the users of the test run that can own or overwrite a test reference
+     */
+    private function ref_test_users(): array
+    {
+        $result = [
+            $this->usr1,
+            $this->usr2,
+            $this->usr_normal,
+            $this->usr_admin,
+            $this->usr_system,
+        ];
+        // only the unit test setup creates the test admin, e.g. not test/test_full_load.php
+        if (isset($this->usr_test_admin)) {
+            $result[] = $this->usr_test_admin;
+        }
+        return $result;
+    }
+
+    /**
      * remove the change log entries of a test group before the group is deleted, but only if at least
      * one phrase of the group is a test row (so a group of real phrases is never touched)
      *
@@ -4727,6 +5202,23 @@ class test_base
                 $this->delete_change_log_of_obj(group::class, $grp->id());
             }
         }
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases loaded from the database
+     * @return array the names of the phrases without the rows created by a write test e.g. a leftover of a stopped run,
+     *               so that a read test compares only the seed data; the reserved names e.g. "mathematics" are seed words
+     *               and stay in the list
+     */
+    function phrase_names_without_test_rows(phrase_list $phr_lst): array
+    {
+        $result = [];
+        foreach ($phr_lst->names() as $name) {
+            if (!str_contains($name, self::TEST_ROW_NAME_PART)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -4842,14 +5334,19 @@ class test_base
             $sbx_sys->set_user($this->usr_system);
             $sbx_sys->load_by_name($name, $msg);
             if ($sbx_sys->id() != 0) {
-                // remove the overlay rows of all test users, so that the delete below is not
+                // remove the overlay rows of all test users and of the system user, so that the delete below is not
                 // diverted to yet another exclusion overlay by the used by someone else check
-                foreach ([$this->usr1, $this->usr2, $this->usr_normal] as $usr) {
+                $owner = $sbx_sys->owner($msg);
+                if ($owner == null) {
+                    $owner = $this->usr_system;
+                }
+                foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
                     $sbx_sys->set_user($usr);
                     $sbx_sys->del_usr_cfg($msg);
                 }
-                $sbx_sys->set_user($this->usr_system);
-                $sbx_sys->del($msg);
+                // deleted by the owner, because the delete of any other user is only an exclusion for this user
+                $sbx_sys->set_user($owner);
+                $sbx_sys->del(new user_message($owner));
             }
         }
     }
@@ -5679,6 +6176,53 @@ class test_base
     }
 
     /**
+     * check that the row mapper does not start if the message already carries an error, so that not even
+     * the id is set, and that it maps the same row with a clean message (docs/llm/dependent-errors.md)
+     *
+     * @param sandbox $sbx an object of the class whose row mapper is tested
+     * @param array $db_row a database row of the object as the load returns it
+     * @return bool true if the row is mapped only with the clean message
+     */
+    function assert_row_mapper_guard(sandbox $sbx, array $db_row): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $msg_err = new user_message($this->usr1); // carries the earlier error that stops the mapping
+        $msg_err->add(msg_id::FAILED, []);
+        $sbx_err = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper does not start after an earlier error';
+        $mapped = $sbx_err->row_mapper_sandbox($db_row, $msg_err);
+        $result = $this->assert_false($test_name, $mapped);
+        $test_name = '... so not even the id of the ' . $class . ' is set';
+        $id_err = $sbx_err->id();
+        $result = ($this->assert($test_name, $id_err, 0) and $result);
+        $msg = new user_message($this->usr1); // the clean message of the negative test
+        $sbx_ok = $sbx->clone_reset(true);
+        $test_name = 'the ' . $class . ' row mapper maps the row with a clean message';
+        $mapped = $sbx_ok->row_mapper_sandbox($db_row, $msg);
+        $result = ($this->assert_true($test_name, $mapped) and $result);
+        $test_name = '... including the id of the ' . $class;
+        $id_ok = $sbx_ok->id();
+        return ($this->assert($test_name, $id_ok, $sbx->id()) and $result);
+    }
+
+    /**
+     * map database rows into a list like its load does, which only the protected rows mapper of the list can do
+     *
+     * @param sandbox_list $lst the list that is filled
+     * @param array $db_rows the database rows e.g. with a row that cannot be mapped
+     * @param user_message $msg collects the problems of all rows
+     * @return bool true if at least one object has been added
+     */
+    function map_list_rows(sandbox_list $lst, array $db_rows, user_message $msg): bool
+    {
+        $rows_mapper = function (array $rows, user_message $row_msg): bool {
+            return $this->rows_mapper($rows, $row_msg);
+        };
+        return $rows_mapper->call($lst, $db_rows, $msg);
+    }
+
+    /**
      * check if all mandatory vars of the given object are set so that it can be saved in the database
      * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with all vars
      * @return bool true if the test was successful
@@ -5893,10 +6437,10 @@ class test_base
                 $final_msg .= '<p>' . $test_name . ': ' . "\n";
             }
             if ($diff_msg != '') {
-                $final_msg .= 'diff: ' . $diff_msg . ', ' . "\n";
+                $final_msg .= 'diff: ' . $this->error_part($diff_msg) . ', ' . "\n";
             }
-            $final_msg .= 'actual: ' . $result . ', ' . "\n";
-            $final_msg .= 'expected: ' . $target . "\n";
+            $final_msg .= 'actual: ' . $this->error_part((string)$result) . ', ' . "\n";
+            $final_msg .= 'expected: ' . $this->error_part((string)$target) . "\n";
             $this->error_counter++;
             // TODO Prio 3 create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }
@@ -5912,6 +6456,21 @@ class test_base
         $this->section_start($new_start_time);
 
         return $test_result;
+    }
+
+    /**
+     * @param string $txt the diff, the actual or the expected part of a failed test
+     * @return string the part cut after ERROR_PART_MAX_CHARS with the number of the chars not shown
+     */
+    private function error_part(string $txt): string
+    {
+        $result = $txt;
+        $len = mb_strlen($txt);
+        if ($len > self::ERROR_PART_MAX_CHARS) {
+            $result = mb_substr($txt, 0, self::ERROR_PART_MAX_CHARS)
+                . ' ... (' . ($len - self::ERROR_PART_MAX_CHARS) . ' more chars)';
+        }
+        return $result;
     }
 
     /**
@@ -6132,9 +6691,58 @@ class test_base
 
         $sys->times->switch(system_time_type::API_WAIT);
         $ctrl = new rest_call();
-        $result = $ctrl->api_call($method, $url, $data, $extra_headers);
+        $msg_api = new user_message_ui(); // the internal errors of the answer, reported below as an error of the run
+        $result = $ctrl->api_call($method, $url, $data, $msg_api, $extra_headers);
         $sys->times->switch();
+        // the api has its own process, so its internal errors reach the run only with the answer
+        if (!$msg_api->is_ok()) {
+            log_err('the api ' . $url . ' has answered with: ' . $msg_api->var_message_text());
+        }
         return $result;
+    }
+
+    /**
+     * @return string the anti csrf token of the admin session of api_login, empty if the login has not been possible
+     */
+    function api_session_token(): string
+    {
+        return $this->api_login_token;
+    }
+
+    /**
+     * post a body to an entry point of this pod with the session cookie of api_login,
+     * like the script of a page that posts e.g. the json of the calculator editor for its pdf
+     *
+     * @param string $url the complete url of the entry point
+     * @param string $body the posted body
+     * @param string $token the anti csrf token sent in its header, empty to send none
+     * @return array the http status code as text e.g. "403", which an assert compares, and the answer
+     */
+    function post_with_session(string $url, string $body, string $token): array
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $headers = ['Content-Type: application/json'];
+        if ($token != '') {
+            $headers[] = api::CSRF_TOKEN_HEADER . ': ' . $token;
+        }
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $this->api_login_cookie_file);
+        curl_setopt($curl, CURLOPT_TIMEOUT, self::TIMEOUT_LIMIT_LONG);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $answer = curl_exec($curl);
+        if ($answer === false) {
+            $this->dsp_warning('posting to ' . $url . ' failed due to ' . curl_error($curl));
+            $answer = '';
+        }
+        $status = (string)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        curl_close($curl);
+        $sys->times->switch();
+        return [$status, $answer];
     }
 
     /**
@@ -6232,6 +6840,11 @@ class test_base
         echo "\n";
         echo $sys->errors . ' internal errors';
         echo "\n";
+        // the system log rows are removed by the database recreation of the run, so the texts are listed here,
+        // each with the keyword of the test errors, so that a search of the run output for ERROR finds them all
+        foreach ($sys->error_texts as $error_text) {
+            echo 'ERROR internal ' . $error_text . "\n";
+        }
     }
 
     /**
@@ -6423,18 +7036,18 @@ class test_base
     }
 
     /**
-     * short text description of the last change of the given user
-     * @param user|null $usr the user for whom the log entries should be selected
+     * short text description of the last change of the given user with the fixed time of the test mode
+     * @param user|null $usr the user for whom the log entries should be selected, by default the first test user
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_user(?user $usr = null): string
     {
-        $msg = new user_message();
         if ($usr == null) {
             $usr = $this->usr1;
         }
-        $log = new change($this->usr1);
-        $log->load_by_user($this->usr1, $msg);
+        $msg = new user_message($usr);
+        $log = new change($usr);
+        $log->load_by_user($usr, $msg);
         $log_ui = new change_log_ui($log->api_json());
         return $log_ui->dsp(true);
     }
@@ -6626,17 +7239,33 @@ class test_base
      * a snapshot is named by the database id of the shown object, so re-baselining a phrase id
      * leaves the snapshot of the old id behind, where it is never checked again; the same
      * cleanup as for the views_by_id folder, but based on the files that assert_view has
-     * collected in updated_files
+     * collected in updated_files; only the subfolders that assert_view has written in this run are cleaned,
+     * so that a snapshot of another test e.g. the admin page of system_view_ui_tests is never removed,
+     * also if that test is not part of the run
      *
      * @param string $path the resource folder to clean e.g. test_paths::VIEWS
      * @return void
      */
     function delete_unused_files(string $path): void
     {
+        $this->delete_unused_files_in(test_paths::RESOURCE . test_paths::HTML . $path, $this->updated_files);
+    }
+
+    /**
+     * remove the html snapshots below the folder that the test has not written in this run, but only in the
+     * subfolders that it has written, so that a snapshot of another test is never removed
+     *
+     * @param string $dir the complete path of the folder to clean e.g. of views_by_id
+     * @param array $updated_files the complete paths of the snapshots that the test has written in this run
+     * @return void
+     */
+    function delete_unused_files_in(string $dir, array $updated_files): void
+    {
         $lib = new library();
-        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . $path) as $file_path) {
-            if (str_ends_with($file_path, test_files::HTML)
-                and !in_array($file_path, $this->updated_files)) {
+        $own_dirs = array_unique(array_map('dirname', $updated_files));
+        foreach ($lib->dir_files($dir) as $file_path) {
+            $unused = (str_ends_with($file_path, test_files::HTML) and !in_array($file_path, $updated_files));
+            if ($unused and in_array(dirname($file_path), $own_dirs)) {
                 $this->delete_path_file($file_path);
             }
         }

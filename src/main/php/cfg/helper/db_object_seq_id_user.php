@@ -145,15 +145,15 @@ class db_object_seq_id_user extends db_object_seq_id
      * to be extended by the child functions
      *
      * @param array|null $db_row with the data directly from the database
+     * @param user_message $msg an earlier error stops the mapping before the id is set (see db_object_seq_id::row_mapper)
      * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
+     * @return bool $msg->is_ok(), so that a child mapper continues with if ($result)
      */
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $result = parent::row_mapper($db_row, $msg, $id_fld);
-        // map the fields if the id has been set from a found row, independent of the message state
-        // (a set id also implies that $db_row is an array, because the id is only set from a row)
-        if ($this->id() != 0 and array_key_exists(user_db::FLD_ID, $db_row)) {
+        // a mapped row implies that $db_row is an array, because the id is only set from a row
+        if ($result and array_key_exists(user_db::FLD_ID, $db_row)) {
             $obj_usr_id = $this->get_user_id();
             $db_usr_id = $db_row[user_db::FLD_ID];
             if ($obj_usr_id != $db_usr_id) {

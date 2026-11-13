@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -101,13 +102,15 @@ class value_write_tests
         $lib = new library();
         $msg = new user_message($t->usr1);
         $msg_ui = new user_message_ui();
+        // the values that this test adds, which it removes itself before its test words (see the cleanup at the end)
+        $val_ids = [];
 
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
         // cleanup any leftovers of a previous failed test run (values first because they use words)
         $t_val->cleanup($ts);
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         $t->subheader($ts . 'prepare');
         $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD, $msg);
@@ -124,8 +127,10 @@ class value_write_tests
             word_names::MIO,
             word_names::YEAR_2020))->get_grp($msg);
         $chk_val = new value($t->usr1);
+        // the id is set by the group also if no row is found, so the found row is remembered for the assert
+        $chk_found = false;
         if ($chk_phr_grp != null) {
-            $chk_val->load_by_grp($chk_phr_grp, $msg);
+            $chk_found = $chk_val->load_by_grp($chk_phr_grp, $msg);
         }
         if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t_db->load_word_list(array(
@@ -135,7 +140,7 @@ class value_write_tests
                 word_names::MIO))->get_grp($msg);
             $chk_val = new value($t->usr1);
             if ($chk_phr_grp != null) {
-                $chk_val->load_by_grp($chk_phr_grp, $msg);
+                $chk_found = $chk_val->load_by_grp($chk_phr_grp, $msg);
             }
         }
         if (!$chk_val->is_id_set()) {
@@ -148,7 +153,22 @@ class value_write_tests
             // ... and check the number
             $result = $chk_val->number();
             $target = values::CANTON_ZH_INHABITANTS_2020_IN_MIO;
-            $t->assert(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $result, $target);
+            $load_info = '';
+            if ($result != $target) {
+                $load_info = $chk_found ? 'row found' : 'no row found';
+                $load_info .= ', excluded: ' . var_export($chk_val->is_excluded(), true) . ' ' . $msg->text();
+                // the group of create_test_values is based on a phrase list and not on a word list
+                $phr_lst_create = $t_db->load_phrase_list([word_names::CANTON, word_names::ZH,
+                    word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020]);
+                $load_info .= ', group of create_test_values: ' . $phr_lst_create->get_grp_id(false)?->id();
+                // the values that really exist for the canton Zurich
+                $info_msg = new user_message($t->usr1);
+                $zh_val_lst = new value_list($t->usr1);
+                $zh_val_lst->load_by_phr($t_db->load_word($info_msg, word_names::ZH)->phrase(), $info_msg);
+                $load_info .= ', values of ' . word_names::ZH . ': ' . $zh_val_lst->dsp_id() . ' ' . $info_msg->text();
+            }
+            $t->assert(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $result, $target,
+                $t::TIMEOUT_LIMIT, $load_info);
 
             // ... and check the words loaded
             $result = $chk_val->name();
@@ -260,7 +280,6 @@ class value_write_tests
 
         // test the HTML code creation including the hyperlink
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
-        //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         // followed by the quality mark of the value e.g. the "-" of a missing source (see sandbox_value::quality_mark)
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>'
             . $mio_val_ui->quality_mark();
@@ -269,7 +288,6 @@ class value_write_tests
         // change the number to force using the thousand separator
         $mio_val_ui->number = values::SAMPLE_INT;
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
-        //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">123\'456</a>'
             . $mio_val_ui->quality_mark();
         $t->assert(', value->display_linked', $result, $target);
@@ -306,6 +324,7 @@ class value_write_tests
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $t->test_val_ids[] = $add_val->id();
+        $val_ids[] = $add_val->id();
 
 
         // ... check if the value adding has been logged
@@ -331,6 +350,7 @@ class value_write_tests
         // remember the added value id to be able to remove the test
         $added_val_id = $added_val->id();
         $t->test_val_ids[] = $added_val->id();
+        $val_ids[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
         $phr_grp2 = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
@@ -373,10 +393,17 @@ class value_write_tests
         $t->assert(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $t->test_val_ids[] = $added_val2->id();
+        $val_ids[] = $added_val2->id();
 
         // check if the value can be changed
+        // the user who has added the value owns it and has no user row, so a change goes to the standard row
+        $test_name = 'the added value is owned by the user who has added it';
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id, $msg);
+        $owner_id = $added_val->owner_id();
+        $t->assert($test_name, $owner_id, $t->usr1->id());
+        $test_name = '... and the user has no user row of it';
+        $t->assert_false($test_name, $added_val->has_usr_cfg());
         $added_val->set_number(self::NUMBER_ADD);
         $added_val->save($msg);
         $result = $msg->get_last_message();
@@ -387,13 +414,20 @@ class value_write_tests
         if ($added_val->is_id_set()) {
             $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
-        // TODO Prio 2 fix it
-        $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
-        if ($result != $target) {
-            $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
-        }
-        // TODO Prio 2 activate
-        //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
+        // the change of the owner is logged for the standard row, so without the user marker
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME
+            . ' changed to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_TEST . '"';
+        $test_name = '... and the change of the value is logged';
+        $t->assert($test_name, $result, $target);
+        // tell if the change has gone to the user row or only its log names the user table
+        $test_name = 'the change of the owner is written to the standard row';
+        $std_val = new value($t->usr1);
+        $std_val->load_standard($added_val_id, $msg);
+        $t->assert($test_name, $std_val->number(), self::NUMBER_ADD);
+        $test_name = '... and not to a user row of the owner';
+        $chg_val = new value($t->usr1);
+        $chg_val->load_by_id($added_val_id, $msg);
+        $t->assert_false($test_name, $chg_val->has_usr_cfg());
 
         // ... check if the value has really been updated
         $added_val = new value($t->usr1);
@@ -532,6 +566,7 @@ class value_write_tests
         $named_val->set_number(values::SAMPLE_INT);
         $named_val->save($msg);
         $t->test_val_ids[] = $named_val->id();
+        $val_ids[] = $named_val->id();
         $t->assert_msg($test_name, $msg);
         $msg->reset();
         $test_name = '... and the group row has the given name';
@@ -583,9 +618,12 @@ class value_write_tests
         $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);
         $db_grp->del($msg);
 
+        // cleanup - the values of this test first, because a test word that a value uses is only excluded and not
+        // deleted by the word cleanup below (see word::used_by_data)
+        $t->cleanup_test_values($val_ids, $msg);
         // cleanup - fallback delete
         $t_val->cleanup($ts);
-        $t_wrd->cleanup($ts);
+        $t_wrd->cleanup_without_created($ts);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($msg, library::class_to_name(value::class));

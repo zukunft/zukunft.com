@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?id=141&m=4&z=0
+/http/view.php?id=141&m=4&z=0
+/http/view.php?id=141&mask_id=triple_default&step=no&
+{
+    "id": "141",
+    "mask_id": "triple_default",
+    "step": "no"
+}

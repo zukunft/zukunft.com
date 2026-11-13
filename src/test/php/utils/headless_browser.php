@@ -129,12 +129,37 @@ class headless_browser
                 . ' --virtual-time-budget=' . self::DUMP_TIME_BUDGET
                 . ' --dump-dom ' . escapeshellarg($url) . ' 2>/dev/null';
             $dom = shell_exec($cmd) ?? '';
-            $match = [];
-            if (preg_match('#<[a-z]+ id="' . preg_quote($id, '#') . '">(.*?)</[a-z]+>#s', $dom, $match)) {
-                $result = html_entity_decode($match[1]);
+            $text = $this->element_text($dom, $id);
+            if ($text !== null) {
+                $result = html_entity_decode($text);
             }
         }
         return $result;
+    }
+
+    /**
+     * the raw text of the first element whose only attribute is the id, up to the next closing tag;
+     * a string search and not a regex, because a lazy regex over a large element hits the pcre backtrack limit
+     *
+     * @param string $dom the html of the page after its scripts have run
+     * @param string $id the id of the element e.g. putMessage
+     * @return string|null the text of the element still with its html entities or null if the page has no such element
+     */
+    function element_text(string $dom, string $id): ?string
+    {
+        $attr = ' id="' . $id . '">';
+        $pos = 0;
+        while (($found = strpos($dom, $attr, $pos)) !== false) {
+            $tag_start = strrpos($dom, '<', $found - strlen($dom));
+            $name = $tag_start === false ? '' : substr($dom, $tag_start + 1, $found - $tag_start - 1);
+            if ($name != '' and ctype_lower($name)) {
+                $start = $found + strlen($attr);
+                $end = strpos($dom, '</', $start);
+                return $end === false ? null : substr($dom, $start, $end - $start);
+            }
+            $pos = $found + 1;
+        }
+        return null;
     }
 
     /**

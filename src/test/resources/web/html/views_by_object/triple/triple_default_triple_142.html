@@ -10,8 +10,59 @@
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
         <style>
-            :root { --font-page: sans-serif; }
-:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
         </style>
     </head>
     <body>
@@ -77,6 +128,11 @@
                                 <li>
                                     <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
                                         Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=it" title="Italian">
+                                        Italiano
                                     </a>
                                 </li>
                                 <li>
@@ -200,7 +256,7 @@
                                 <a href="https://www.wikidata.org/wiki/Q11943">
                                     wikidata
                                 </a>
-                                <a href="http://localhost/http/view.php?m=141&amp;id=277" title="reloading" class="heading-icon-inline">
+                                <a href="http://localhost/http/view.php?m=51&amp;id=142&amp;fr=frd" title="import the values of wikidata that this pod can assign" class="heading-icon-inline">
                                     <i class="fas fa-arrows-rotate">
                                     </i>
                                 </a>
@@ -209,10 +265,10 @@
                                     </i>
                                 </a>
                                 <br>
-                                <a href="https://en.wikipedia.org/wiki/canton_of_Zürich">
+                                <a href="https://en.wikipedia.org/wiki/Canton_of_Zurich">
                                     wikipedia
                                 </a>
-                                <a href="http://localhost/http/view.php?m=141&amp;id=276" title="reloading" class="heading-icon-inline">
+                                <a href="http://localhost/http/view.php?m=51&amp;id=142&amp;fr=frw" title="take over the description and the wikidata link from wikipedia" class="heading-icon-inline">
                                     <i class="fas fa-arrows-rotate">
                                     </i>
                                 </a>
@@ -245,7 +301,7 @@
                                 <ul class="value-items">
                                     <li>
                                         <span class="value-name">
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=687" title="the year 2025">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=691" title="the year 2025">
                                                 2025
                                             </a>
                                             ,
@@ -254,7 +310,8 @@
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=2950661963918">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=2967841833102" title="Statistisches Amt Kanton Zuerich 2025
+https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2026/02/bevoelkerung-im-kanton-zuerich-waechst-weiter-jedoch-langsamer.html">
                                                 1'628'081
                                             </a>
                                         </span>
@@ -270,14 +327,15 @@
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=1314279424142">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=1314279424142" title="Statistisches Amt Kanton Zuerich 2025
+https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2026/02/bevoelkerung-im-kanton-zuerich-waechst-weiter-jedoch-langsamer.html">
                                                 1'615'112
                                             </a>
                                         </span>
                                     </li>
                                     <li>
                                         <span class="value-name">
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=464" title="The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=468" title="The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.">
                                                 2022
                                             </a>
                                             ,
@@ -286,10 +344,11 @@
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=135109981705896078">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=0C-2k_5I_5Y_" title="BFS cantonal GDP 2022
+https://www.bfs.admin.ch/">
                                                 159'800'000'000
                                             </a>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=-403" title="The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d&#039;Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland&#039;s political stability and low inflation.">
+                                            <a href="http://localhost/http/view.php?m=4&amp;id=-408" title="The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d&#039;Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland&#039;s political stability and low inflation.">
                                                 CHF
                                             </a>
                                         </span>
@@ -300,19 +359,20 @@
                                                 area
                                             </a>
                                             ,
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=925">
+                                            <a href="http://localhost/http/view.php?m=3&amp;id=932">
                                                 km2
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=3972852187278">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=4002916958350" title="Wikipedia canton of Zurich
+https://de.wikipedia.org/wiki/Kanton_Z%C3%BCrich">
                                                 1'729
                                             </a>
                                         </span>
                                     </li>
                                     <li>
                                         <span class="value-name">
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=855">
+                                            <a href="http://localhost/http/view.php?m=4&amp;id=871">
                                                 foreign share
                                             </a>
                                             ,
@@ -321,7 +381,8 @@
                                             </a>
                                         </span>
                                         <span class="value-num">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=689351590743">
+                                            <a href="http://localhost/http/view.php?m=5&amp;id=689351590759" title="Statistisches Amt Kanton Zuerich 2025
+https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2026/02/bevoelkerung-im-kanton-zuerich-waechst-weiter-jedoch-langsamer.html">
                                                 29 %
                                             </a>
                                         </span>
@@ -386,31 +447,6 @@
                 </div>
                 <div class="col" style="min-width: 700px">
                     <div class="css-tabs">
-                        <div class="css-tab" id="views">
-                            <a href="#views" class="css-tab-label">
-                                Views
-                            </a>
-                            <div class="css-tab-pane">
-                                <div class="container">
-                                    <div>
-                                        <div class="col-md-12">
-                                            view preview
-                                        </div>
-                                        <a href="http://localhost/http/view.php?m=4&amp;id=142" title="show &#039;Zurich (canton)&#039; with the &#039;Triple (default)&#039; view">
-                                            Triple (default)
-                                        </a>
-                                        <a href="http://localhost/http/view.php?m=51&amp;id=142&amp;d=4" title="adjust &#039;Zurich (canton)&#039; so that it is always shown with the &#039;Triple (default)&#039; view">
-                                            <i class="fas fa-shuffle">
-                                            </i>
-                                        </a>
-                                        <a href="http://localhost/http/view.php?m=85&amp;id=4" title="change the &#039;Triple (default)&#039; view">
-                                            <i class="fas fa-edit">
-                                            </i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="css-tab" id="changes">
                             <a href="#changes" class="css-tab-label">
                                 Changes

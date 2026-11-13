@@ -119,6 +119,15 @@ class def
     const int MODE_LIGHT = 1;
     const int MODE_DARK = 2;
     const int FALLBACK_MODE = self::MODE_LIGHT;
+    // the table designs of config.yaml frontend.layout.table.designs: the design name => the colour of the
+    // text, of the lines and of every second row as the name of a colour of frontend.layout.colours.page,
+    // each with the same value as in config.yaml
+    const string TABLE_DESIGN_NONE = 'none';
+    const string TABLE_DESIGN_DEFAULT = words::PLAIN;
+    const array TABLE_DESIGNS = [
+        words::PLAIN => [words::GREY, self::TABLE_DESIGN_NONE, self::TABLE_DESIGN_NONE],
+        words::BORDERED => [words::GREY, words::RULE, words::PANEL],
+    ];
     // fallback for the colours of the pages in the light and in the dark mode, which the page head
     // sets as css variables (html_base::theme_style) for style_html.css; the css variable => the
     // config.yaml key below frontend.layout.colours.page, the light colour and the dark colour of
@@ -141,6 +150,8 @@ class def
         '--page-label' => [words::LABEL, '#777', '#8492ad'], // the sub header of a menu
         '--page-file' => [words::FILE, '#6e706e', '#b4c1da'], // a setting with the value of config.yaml
         '--page-negative' => [words::NEGATIVE, '#dc3545', '#f08a80'], // a negative number
+        '--page-success' => [words::SUCCESS, '#198754', '#7fd1a3'], // the green of a positive decision
+        '--page-warning' => [words::WARNING, '#ffc107', '#e9b45a'], // the yellow of an open decision
         '--page-hover' => [words::HOVER, '#7a9fbf', '#4f6fa8'], // a button when the mouse is over it
         '--page-black' => [words::BLACK, 'black', '#e3eaf7'], // the fraction line of a formula
     ];
@@ -211,6 +222,9 @@ class def
     const string LINK_GITHUB = 'https://github.com/zukunft/zukunft.com';
     const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
     const string LINK_GITHUB_TREAM = 'https://github.com/zukunft/tream';
+    // the bank account for donations to the project, shown on the about page
+    const string DONATION_IBAN = 'CH20 0900 0000 8927 4297 2';
+    const string DONATION_RECEIVER = 'zukunft.com AG';
     const string LINK_TREAM_DEMO = 'https://tream.biz/p4a/applications/tream/';
     const string LINK_DOI = 'https://doi.org/'; // the base url to create the link of a doi e.g. of a source
     const string LINK_PAPER_DELPHI = 'https://dx.doi.org/10.2139/ssrn.6497759';

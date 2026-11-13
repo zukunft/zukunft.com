@@ -468,6 +468,7 @@ CREATE TABLE IF NOT EXISTS users
     term_id            bigint       DEFAULT NULL,
     view_id            bigint       DEFAULT NULL,
     source_id          bigint       DEFAULT NULL,
+    verb_id            smallint     DEFAULT NULL,
     user_status_id     smallint     DEFAULT NULL,
     uses_sandbox       smallint     DEFAULT NULL,
     created            timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -495,6 +496,7 @@ COMMENT ON COLUMN users.official_id IS 'e.g. the number of the passport';
 COMMENT ON COLUMN users.term_id IS 'the last term that the user had used';
 COMMENT ON COLUMN users.view_id IS 'the last mask that the user has used';
 COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have a default for the next value';
+COMMENT ON COLUMN users.verb_id IS 'the last verb used by this user to have a default for the next triple';
 COMMENT ON COLUMN users.user_status_id IS 'e.g. to exclude inactive users';
 COMMENT ON COLUMN users.uses_sandbox IS 'true if the user has changed any data, so the pages for this user cannot be served from the cache of the standard pages';
 
@@ -7344,6 +7346,7 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT users_verb_fk FOREIGN KEY (verb_id) REFERENCES verbs (verb_id),
     ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuum (user_status_id);
 
 --

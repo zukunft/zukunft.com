@@ -1,0 +1,21 @@
+{
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "description": "the description and the wikidata reference that the refresh takes from the wikipedia page Health",
+    "words": [
+        {
+            "name": "health",
+            "description": "Health has a variety of definitions which have been used for different purposes over time and is a multidimensional concept. It commonly refers to physical and emotional well-being. Good health is associated with normal functioning of the human body in day to day life, absent of disease, pain, or injury.",
+            "refs": [
+                {
+                    "name": "Health",
+                    "type": "wikipedia"
+                },
+                {
+                    "name": "Q12147",
+                    "type": "wikidata"
+                }
+            ]
+        }
+    ]
+}

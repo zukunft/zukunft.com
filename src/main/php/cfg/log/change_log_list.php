@@ -968,7 +968,9 @@ class change_log_list extends list_db_read
             // and a shared name with different parameter types is rejected by the database
             $query_ext .= sql::NAME_SEP . 'with_usr';
         }
-        if ($class == value::class) {
+        // a result change is logged like a value change (see load_sql_obj_last)
+        $by_group_id = ($class == value::class or $class == result::class);
+        if ($by_group_id) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
             if ($typ == sql_type::PRIME) {
@@ -1006,7 +1008,7 @@ class change_log_list extends list_db_read
                 $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
             }
         }
-        if ($class == value::class) {
+        if ($by_group_id) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
             $sc->add_where(change_log::FLD_ROW_ID, $id);
@@ -1133,12 +1135,15 @@ class change_log_list extends list_db_read
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row, $msg, '', $usr);
-                    // allow duplicates, because the change id is unique per change table only:
-                    // a list that merges the changes of the named objects with the changes of
-                    // the value tables (see load_by_user) always has repeated ids
-                    $this->add_obj($chg, true);
-                    $result = true;
+                    $row_msg = new user_message($msg->usr); // a buffer per row, merged below, see docs/llm/dependent-errors.md
+                    if ($chg->row_mapper($db_row, $row_msg, '', $usr)) {
+                        // allow duplicates, because the change id is unique per change table only:
+                        // a list that merges the changes of the named objects with the changes of
+                        // the value tables (see load_by_user) always has repeated ids
+                        $this->add_obj($chg, true);
+                        $result = true;
+                    }
+                    $msg->merge($row_msg);
                 }
             }
         }

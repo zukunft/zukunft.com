@@ -54,7 +54,6 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
-include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
@@ -80,7 +79,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -227,7 +225,6 @@ class view extends view_exe
      */
     private function dsp_navbar_bs(bool $show_view, user $usr, array $url_arr): string
     {
-        $lib = new library();
         $html = new html_base();
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
@@ -250,9 +247,7 @@ class view extends view_exe
         if ($show_view) {
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($url_arr);
-            $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr);
-            $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id());
             // TODO Prio 2 fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
@@ -261,7 +256,6 @@ class view extends view_exe
             // TODO Prio 2 fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url_back(views::VIEW_ADD_ID, 0, $url_arr);
-            $url_add = $html->url_old($class . rest_ctrl::CREATE);
             // TODO Prio 2 fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
             $result .= $this->btn_add($url_arr);
@@ -278,7 +272,7 @@ class view extends view_exe
         // $result .= '      <li><a href="' . $html->url_with_back(api::FIND_SCRIPT, $url_arr) . '"><span class="glyphicon glyphicon-search"></span></a></li>';
         $result .= '      <li class="nav-item dropdown">';
         $result .= '        <a class="nav-link dropdown-toggle" ';
-        $result .= '          href="' . $html->url_with_back('/http/view_select.php?id=' . $this->id, $url_arr) . '"';
+        $result .= '          href="#"';
         $result .= '          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         $result .= '          '.$this->name.'';
         $result .= '        </a>';
@@ -631,7 +625,7 @@ class view extends view_exe
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {
-                $url = $html->url_old(api::DSP_COMPONENT_LINK, $this->id(), $url_arr, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url_back(views::COMPONENT_LINK_ADD_ID, 0, $url_arr, url_var::VIEW . url_var::EQ . $this->id());
                 $result .= (new button($url, $url_arr))->add(msg_id::COMPONENT_ADD);
             }
         }
@@ -734,7 +728,7 @@ class view extends view_exe
 
     /**
      * the view name as a link that opens the given object rendered with this view, used by the
-     * views tab of an object page (see ui_list::view_previews)
+     * edit menu of the navbar (see sandbox::menu_view_items_ui)
      * TODO Prio 3 add the back trace url so the user can return after opening the view
      *
      * @param int|string $dbo_id the id of the object to open in this view, a string for a value
@@ -797,21 +791,7 @@ class view extends view_exe
     }
 
     /**
-     * the edit icon that opens the edit form of this view itself, used beside the switch icon
-     * in the views tab of an object page
-     *
-     * @return string the html link with the edit icon and the tooltip
-     */
-    function edit_link(): string
-    {
-        $html = new html_base();
-        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::VIEW_EDIT_ID
-            . url_var::ADD . url_var::ID . url_var::EQ . $this->id();
-        return $html->change_icon($url, icons::EDIT, $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '');
-    }
-
-    /**
-     * the tooltip of a views tab link with the object and the view name filled in; ref() escapes
+     * the tooltip of a view link of the edit menu with the object and the view name filled in; ref() escapes
      * the tooltip, so the user given names are handed over raw
      *
      * @param msg_id $msg_id the tooltip message with the name placeholders

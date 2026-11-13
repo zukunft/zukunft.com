@@ -867,31 +867,6 @@ class expression extends shared_expression
 
 
     /*
-     * extract helper
-     */
-
-    private
-    function element_part_list_old(
-        string       $exp_part,
-        element_list $elm_lst,
-        user_message $msg,
-        ?term_list   $trm_lst = null
-    ): bool
-    {
-        $lib = new library();
-        $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
-        while ($obj_sym != '') {
-            $elm = $this->element_from_symbol($obj_sym, $msg, $trm_lst);
-            $elm->frm = $this->frm;
-            $elm_lst->add($elm);
-            $exp_part = $lib->str_right_of($exp_part, chars::TERM_END);
-            $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
-        }
-        return true;
-    }
-
-
-    /*
      * internal functions
      */
 

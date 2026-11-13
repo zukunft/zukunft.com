@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -126,16 +127,20 @@ class word_read_tests
 
 
         $t->subheader($ts . 'load with a message that already carries an error');
-        // regression test for sandbox_named::row_mapper_sandbox: a load must map the fields (here the
-        // name) even if the message is already not ok before the load, so an error left on the message
-        // by an earlier operation never silently drops the name - which made an imported triple
-        // unreachable by its name in the import cache and let the whole triple import fail
-        $test_name = 'the word name is mapped even if the message is not ok before the load';
-        $msg_err = new user_message();
-        $msg_err->add_message_text('unrelated error from an earlier operation');
+        // an earlier error stops the mapping, so a load never returns a half mapped word e.g. with the id
+        // but without the name; an independent entry such as an import row needs its own message
+        // (docs/llm/dependent-errors.md)
+        $test_name = 'a word is not loaded if the message is not ok before the load';
+        $msg_err = new user_message($t->usr1);
+        $msg_err->add(msg_id::FAILED, []);
         $wrd_err = new word($t->usr1);
-        $wrd_err->load_by_name(word_names::MATH, $msg_err);
-        $t->assert($test_name, $wrd_err->name(), word_names::MATH);
+        $wrd_id = $wrd_err->load_by_name(word_names::MATH, $msg_err);
+        $t->assert($test_name, $wrd_id, 0);
+        $test_name = '... but it is loaded with its name with a clean message';
+        $msg_ok = new user_message($t->usr1);
+        $wrd_ok = new word($t->usr1);
+        $wrd_ok->load_by_name(word_names::MATH, $msg_ok);
+        $t->assert($test_name, $wrd_ok->name(), word_names::MATH);
 
 
         $t->subheader($ts . 'load related');
@@ -352,16 +357,21 @@ class word_read_tests
         $t->assert_export_reload($ts . $test_name, $trp);
 
         $t->subheader($ts . 'load with a message that already carries an error');
-        // regression test for triple::row_mapper_sandbox: the verb (and the other triple fields)
-        // must be mapped even if the message is already not ok before the load, so an error left
-        // on the message by an earlier operation never produces a half mapped triple that fails
-        // later e.g. with "The verb must be set before it can be loaded."
-        $test_name = 'the triple verb is mapped even if the message is not ok before the load';
-        $msg_err = new user_message();
-        $msg_err->add_message_text('unrelated error from an earlier operation');
+        // an earlier error stops the mapping, so the load never returns a half mapped triple that fails
+        // later e.g. with "The verb must be set before it can be loaded." (docs/llm/dependent-errors.md)
+        $test_name = 'a triple is not loaded if the message is not ok before the load';
+        $msg_err = new user_message($t->usr1);
+        $msg_err->add(msg_id::FAILED, []);
         $trp_err = new triple($t->usr1);
-        $trp_err->load_by_name(triple_names::PI_NAME, $msg_err);
-        $t->assert_true($test_name, $trp_err->has_verb());
+        $trp_id = $trp_err->load_by_name(triple_names::PI_NAME, $msg_err);
+        $t->assert($test_name, $trp_id, 0);
+        $test_name = '... and has no verb either';
+        $t->assert_false($test_name, $trp_err->has_verb());
+        $test_name = '... but it is loaded completely with a clean message';
+        $msg_ok = new user_message($t->usr1);
+        $trp_ok = new triple($t->usr1);
+        $trp_ok->load_by_name(triple_names::PI_NAME, $msg_ok);
+        $t->assert_true($test_name, $trp_ok->has_verb());
     }
 
     /**

@@ -89,6 +89,8 @@ class table_model
     public array $tier_names = [];
     // the keys of the rows shown, in the order of the impact or of the orders below
     public array $shown_keys = [];
+    // the keys of all rows in the same order, also of the rows behind the limit, for the export of the complete table
+    public array $all_keys = [];
     // the orders of the rows: per order the phrase id of the column and the condition
     // (table_orders), the prime order first; empty for the impact order
     public array $orders = [];
@@ -163,6 +165,23 @@ class table_model
             }
         }
         return [$centre, $low, $high, $conf];
+    }
+
+    /**
+     * @param string $row_key the key of the row
+     * @param int|string $col_id the id of the value column
+     * @return array the values of the cell without the low bound, the high bound and the confidence
+     */
+    function cell_centres(string $row_key, int|string $col_id): array
+    {
+        $qualifiers = [words::CONFIDENCE, triples::SYSTEM_VARIANCE_LOW, triples::SYSTEM_VARIANCE_HIGH];
+        $result = [];
+        foreach ($this->cells[$row_key][$col_id] ?? [] as $val) {
+            if (array_intersect($qualifiers, $val->grp->phr_lst()->names()) == []) {
+                $result[] = $val;
+            }
+        }
+        return $result;
     }
 
     /**

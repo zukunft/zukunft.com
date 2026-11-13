@@ -81,7 +81,7 @@ class sandbox extends db_object
     // the number of views that the tooltip of "... more" of the edit menu names as examples
     const int MENU_MORE_NAMES = 3;
     // false for an object without an edit view of its own e.g. a group, which inherits the word
-    // edit view of db_object, so that the edit menu and the views tab offer no switch icon that
+    // edit view of db_object, so that the edit menu offers no switch icon that
     // would change the object as a word
     const bool HAS_EDIT_VIEW = true;
 
@@ -301,7 +301,7 @@ class sandbox extends db_object
 
     /**
      * the entries of the edit menu of the navbar for the suggested views of this object, each with
-     * the view name and behind it the switch icon like in the views tab; the view itself is
+     * the view name and behind it the switch icon; the view itself is
      * changed by the "change this view" entry of the menu, so the entries have no edit icon;
      * the view that shows the page is grey and the own view of the object has no switch icon,
      * because the object is already always shown with it; an object without an edit view of its

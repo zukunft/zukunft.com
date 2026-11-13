@@ -388,11 +388,13 @@ class change_log extends db_object_seq_id_user
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
                     } else {
-                        $tbl = new type_object(
+                        $tbl = new change_field(
                             $this->table_id . $field_name,
                             $this->table_id . $field_name,
                             $field_name,
                             $this->field_id);
+                        // the table of a change log row is taken from here (docs/llm/architecture.md)
+                        $tbl->tbl_id = $this->table_id;
                         $sys->typ_lst->cng_fld->add($tbl);
                         $db_changed = true;
                     }
@@ -404,6 +406,26 @@ class change_log extends db_object_seq_id_user
             log_err('Table not yet set when trying to set the field ' . $field_name);
         }
         return $db_changed;
+    }
+
+    /**
+     * set the table of this change log row to the table of its preloaded change field, because the change field id
+     * is unique including the table (docs/llm/architecture.md); called by the row mappers after the field id is set
+     *
+     * @param user_message $msg to report a change field that is not preloaded with its table
+     * @return void
+     */
+    protected function set_table_by_field(user_message $msg): void
+    {
+        global $sys;
+        $fld = $sys->typ_lst->cng_fld->get($this->field_id);
+        if ($fld instanceof change_field and $fld->tbl_id > 0) {
+            $this->table_id = $fld->tbl_id;
+        } else {
+            // never the table that the loading object has set before; the preload is complete, so this is a program error
+            $this->table_id = null;
+            log_err_msg('the change field ' . $this->field_id . ' of a change log row is not preloaded with its table', $msg);
+        }
     }
 
     /**
@@ -554,7 +576,8 @@ class change_log extends db_object_seq_id_user
             $db_changed = $this->set_table($table_name, $msg);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
-                foreach (user_db::FLD_NAMES as $field_name) {
+                $usr_fld_lst = array_diff(user_db::FLD_NAMES, user_db::FLD_NAMES_HELPER);
+                foreach ($usr_fld_lst as $field_name) {
                     $db_changed = $this->set_field($field_name, $msg, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD) {
@@ -804,12 +827,17 @@ class change_log extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
-     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
+     * @param int|string|null $row_id the database id of the row of the changes, for a value the group id which is a string for a norm or big group
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, int|string|null $row_id = null): sql_par
     {
+        $lib = new library();
         $qp = $this->load_sql($sc, 'field_row');
+        // e.g. the prime, norm and big value change classes share the query base name but not the table,
+        // so the name is set from the class to keep one prepared statement name per table
+        $qp->name = $lib->class_to_name($this::class) . sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP . 'field_row';
+        $sc->set_name($qp->name);
         if ($field_id != null) {
             $sc->add_where(change::FLD_FIELD_ID, $field_id);
         }

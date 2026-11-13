@@ -94,4 +94,6 @@ PREPARE value_list_t_by_source (bigint, bigint, bigint, bigint, bigint) AS
      LEFT JOIN user_values_text_big u ON s.group_id = u.group_id
                                      AND u.user_id = $3
          WHERE (u.source_id = $1 OR (s.source_id = $1
-           AND u.source_id IS NULL)) LIMIT $4 OFFSET $5;
+           AND u.source_id IS NULL))
+         LIMIT $4
+        OFFSET $5;

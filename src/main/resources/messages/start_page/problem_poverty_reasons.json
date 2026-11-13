@@ -6,7 +6,7 @@
   "selection": [
     "poverty reasons that cause costs"
   ],
-  "description": "The most relevant reasons why poverty causes costs, each linked to poverty with 'can cause' and quantified by the studies that report it for the world and per country: the social cost of the child poverty in the United States (McLaughlin & Rank 2018, National Academies 2019) and the public cost of poverty in the United Kingdom (Joseph Rowntree Foundation 2016) as the summary of all reasons, split into crime, health costs and lost income; the gap of the life expectancy between the rich and the poor (Chetty et al. 2016); the childhood stunting and the income it costs (UNICEF/WHO/World Bank 2023, Galasso & Wagstaff 2019); the hunger (SOFI 2024); and the deaths caused by the household air pollution of cooking with polluting fuels (WHO) and by unsafe drinking water, sanitation and hygiene (WHO 2023). The extreme poverty line and the solution are stated in problem_poverty.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of poverty and its own metric, so numbers of different studies are not comparable without reading the source description; a count of the world e.g. of the stunted children or of the hungry people is the total reported by the source, of which poverty is the main but not the only cause. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to poverty' and not the word 'poverty' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons why poverty causes costs, each linked to poverty with 'can cause' and quantified by the studies that report it for the world and per country: the social cost of the child poverty in the United States (McLaughlin & Rank 2018, National Academies 2019) and the public cost of poverty in the United Kingdom (Joseph Rowntree Foundation 2016) as the summary of all reasons, split into crime, health costs and lost income; the gap of the life expectancy between the rich and the poor (Chetty et al. 2016); the childhood stunting and the income it costs (UNICEF/WHO/World Bank 2023, Galasso & Wagstaff 2019); the hunger (SOFI 2024); and the deaths caused by the household air pollution of cooking with polluting fuels (WHO) and by unsafe drinking water, sanitation and hygiene (WHO 2023). The extreme poverty line and the solution are stated in problem_poverty.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of poverty and its own metric, so numbers of different studies are not comparable without reading the source description; a count of the world e.g. of the stunted children or of the hungry people is the total reported by the source, of which poverty is the main but not the only cause. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to poverty' and not the word 'poverty' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The table of the poverty reasons has its own columns, the reason and the potential loss in EUR that it causes, sorted by the biggest potential loss on top.",
   "words": [
     {
       "name": "poverty"
@@ -168,6 +168,30 @@
     },
     {
       "name": "2023"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "sort"
+    },
+    {
+      "name": "order"
+    },
+    {
+      "name": "descending"
+    },
+    {
+      "name": "numeric"
     }
   ],
   "triples": [
@@ -328,6 +352,144 @@
       "from": "poverty",
       "verb": "can cause",
       "to": "unsafe WASH"
+    },
+    {
+      "name": "poverty reason",
+      "description": "a reason of the potential loss of poverty; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "poverty"
+    },
+    {
+      "name": "hunger (poverty reason)",
+      "from": "hunger",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "social cost (poverty reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "crime (poverty reason)",
+      "from": "crime",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "health cost (poverty reason)",
+      "from": "health cost",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "income loss (poverty reason)",
+      "from": "income loss",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "life expectancy gap (poverty reason)",
+      "from": "life expectancy gap",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "stunting (poverty reason)",
+      "from": "stunting",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "household air pollution (poverty reason)",
+      "from": "household air pollution",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "unsafe WASH (poverty reason)",
+      "from": "unsafe WASH",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "sort order",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "order"
+    },
+    {
+      "name": "numeric descending",
+      "from": "descending",
+      "verb": "kind of",
+      "to": "numeric"
+    },
+    {
+      "name": "table column",
+      "from": "table",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "table sort",
+      "from": "table",
+      "verb": "has a",
+      "to": "sort order"
+    },
+    {
+      "from": "potential loss",
+      "verb": "in",
+      "to": "EUR"
+    },
+    {
+      "name": "poverty reason columns",
+      "description": "the own columns of the table of the poverty reasons",
+      "from": "poverty reason",
+      "verb": "has a",
+      "to": "table column"
+    },
+    {
+      "name": "poverty reason columns reason",
+      "from": "poverty reason columns",
+      "verb": "has a",
+      "to": "reason"
+    },
+    {
+      "name": "poverty reason columns potential loss in EUR",
+      "from": "poverty reason columns",
+      "verb": "has a",
+      "to": "potential loss in EUR"
+    },
+    {
+      "from": "poverty reason columns potential loss in EUR",
+      "verb": "is follower of",
+      "to": "poverty reason columns reason"
+    },
+    {
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss in EUR"
+    },
+    {
+      "name": "poverty reason sort",
+      "description": "the own default sorting of the table of the poverty reasons, the biggest potential loss on top",
+      "from": "poverty reason",
+      "verb": "has a",
+      "to": "table sort"
+    },
+    {
+      "name": "poverty reason sort numeric descending of potential loss in EUR",
+      "from": "poverty reason sort",
+      "verb": "has a",
+      "to": "numeric descending of potential loss in EUR"
     }
   ],
   "sources": [

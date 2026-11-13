@@ -39,7 +39,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::API_OBJECT . 'controller.php';
-include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -273,7 +273,7 @@ class job extends db_object
                 json_fields::ACTION => $action,
                 json_fields::USER_ID => $msg->usr->id()
             ];
-            $json_body = $rest->api_put(self::class, $data);
+            $json_body = $rest->api_put(self::class, $data, $msg);
             if (array_key_exists(json_fields::MSG, $json_body)) {
                 $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
             }
@@ -440,7 +440,7 @@ class job extends db_object
     function display_linked(array $url_arr = [], string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_old(rest_ctrl::VIEW, $this->id(), $url_arr, url_var::WORDS);
+        $url = $this->obj_url(views::JOB_DETAIL_ID, $url_arr);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 

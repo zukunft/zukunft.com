@@ -196,11 +196,14 @@ class data_object
             $this->res_lst = $value;
             // a new list holds none of the loaded results of a phrase
             $this->res_phr_ids = [];
+            $this->res_ctx_by_phr = [];
         }
     }
     public view_list $msk_lst;
     // the ids of the phrases whose results are in the result list (see add_results_of)
     private array $res_phr_ids = [];
+    // per phrase id the contexts within which its results are in the result list (see add_results_within)
+    private array $res_ctx_by_phr = [];
     // the children of the list triples of the start page table e.g. every reason that "populism
     // reason" links, kept out of the phrase list, because it also fills e.g. the phrase selectors
     // of later pages; null if not yet loaded (see ui_list::add_start_page_data)
@@ -247,6 +250,16 @@ class data_object
     // the column names per column tier selection of the value tables of the page
     // (value_list::tier_names), which the tooltips of the column menu of the navbar name
     public array $tier_names = [];
+    // true if a value table of the page has own columns, so that the column menu of the navbar offers the values that fit none of them
+    public bool $table_own_columns = false;
+    // the csv of the value tables of the page, which the entry point sends as a download, and the name of the first table for the file name
+    public string $table_csv = '';
+    public string $table_csv_name = '';
+    // the export of the selected phrases that the entry point sends as a download (see frontend::export_file),
+    // its file name without the extension and its format, one of the url_var::EXPORT_FORMAT_* values
+    public string $download = '';
+    public string $download_name = '';
+    public string $download_format = '';
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
@@ -258,6 +271,11 @@ class data_object
     // the seconds per component type that the html creation has taken without the api wait and
     // that are not yet booked to the time report (see start_html_step)
     public array $html_steps = [];
+    // the start of the request if the loading text has been sent (see frontend::send_loading_start),
+    // so that each api call shows its step below it; 0 if no loading text has been sent
+    public float $loading_since = 0;
+    // the step that has been sent last, so that the same step of the next api call is not sent again
+    public string $loading_step = '';
     // per component that is being rendered its start, the api wait at the start and the time of
     // the components within it, the outermost first
     private array $html_step_starts = [];
@@ -528,6 +546,47 @@ class data_object
     function add_results_of(int $phr_id, result_list $res_lst): void
     {
         $this->res_phr_ids[] = $phr_id;
+        $this->add_results($res_lst);
+    }
+
+    /**
+     * @param int $phr_id the id of the phrase of a missing operand
+     * @param array $ctx_ids the phrase ids that the needed results may have at most; empty for any context
+     * @return bool true if all results of the phrase or its results within a context that includes the given one are loaded
+     */
+    function has_results_within(int $phr_id, array $ctx_ids): bool
+    {
+        $result = $this->has_results_of($phr_id);
+        foreach ($this->res_ctx_by_phr[$phr_id] ?? [] as $loaded_ids) {
+            if (array_diff($ctx_ids, $loaded_ids) == []) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add the loaded results of phrases within a context, e.g. of the missing operands of a table
+     *
+     * @param array $phr_ids the ids of the phrases whose results within the context have been loaded completely
+     * @param array $ctx_ids the phrase ids that the loaded results have at most
+     * @param result_list $res_lst the loaded results
+     * @return void
+     */
+    function add_results_within(array $phr_ids, array $ctx_ids, result_list $res_lst): void
+    {
+        foreach ($phr_ids as $phr_id) {
+            $this->res_ctx_by_phr[$phr_id][] = $ctx_ids;
+        }
+        $this->add_results($res_lst);
+    }
+
+    /**
+     * @param result_list $res_lst the loaded results that are added to the result list of the page
+     * @return void
+     */
+    private function add_results(result_list $res_lst): void
+    {
         foreach ($res_lst->lst() as $res) {
             // add_result skips a result that the list has already
             $this->res_lst->add_result($res);
@@ -710,6 +769,20 @@ class data_object
     {
         foreach ($chg_log->lst() as $log) {
             $this->chg_log->add($log, $msg);
+        }
+    }
+
+    /**
+     * add the csv of a value table of the page; several tables are separated by an empty line
+     *
+     * @param string $csv the csv of the table, empty if the url does not ask for the export
+     * @param string $name the name of the phrase of the table, of which the first names the file
+     */
+    function add_table_csv(string $csv, string $name): void
+    {
+        if ($csv != '') {
+            $this->table_csv .= ($this->table_csv == '' ? '' : "\n") . $csv;
+            $this->table_csv_name = $this->table_csv_name == '' ? $name : $this->table_csv_name;
         }
     }
 

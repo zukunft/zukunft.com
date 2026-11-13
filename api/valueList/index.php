@@ -40,7 +40,9 @@ include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'api.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -52,7 +54,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -74,15 +78,20 @@ if ($db_con->is_open()) {
     // TODO Prio 2 add load by formula and source
     $id_lst = $_GET[url_var::ID_LST] ?? '';
     $phr_ids = $_GET[api::JSON_LIST_PHRASE_IDS] ?? '';
+    $page = (int)($_GET[api::JSON_LIST_PAGE] ?? 0);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     $cac_key = '';
-    $cac_page = '';
+    // an object also without a user, so that the cache header can read why nothing has been cached
+    $cac_page = new db_cache_page();
     if ($usr->id > 0) {
-        $cac_par = [url_var::ID_LST => $id_lst, api::JSON_LIST_PHRASE_IDS => $phr_ids];
+        $cac_par = [url_var::ID_LST => $id_lst, api::JSON_LIST_PHRASE_IDS => $phr_ids, api::JSON_LIST_PAGE => $page];
         $cac_key = db_cache_page::api_key(value_list::class, $cac_par, $usr->id);
         $cac_page = new db_cache_page();
+        // each step in a section of its own, so that the time report of the frontend splits the wait for this answer
+        $sys->times->switch(system_time_type::API_CACHE);
         $result = $cac_page->json_by_key($cac_key, $msg);
+        $sys->times->switch();
     }
     // without a user the result stays empty, which is no cached answer
     $cac_hit = ($usr->id > 0 and $result !== null);
@@ -92,18 +101,27 @@ if ($db_con->is_open()) {
         $snap_time = new DateTime();
 
         if ($phr_ids != '') {
+            // the loads book their database read and mapping themselves, so that their other work stays api_ctrl
             $phr_lst = new phrase_list($usr);
             $phr_lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)), $msg);
             $lst = new value_list($usr);
             // any value of any of the given phrases, e.g. the values of all global problems,
             // because a value normally names only one of the requested phrases
-            $lst->load_by_phr_lst($phr_lst, $msg, true);
+            // paged, so that the values of many phrases are complete: the answer names a next page if it is full
+            $lst->load_by_phr_lst($phr_lst, $msg, true, page: $page, paged: true);
             // drop the values the requesting user may not read (idor); see value::is_readable_by
+            $sys->times->switch(system_time_type::API_FILTER);
             $lst->filter_readable_by($usr);
+            $sys->times->switch();
             // the frontend names the rows and the columns of a value table by the phrases of each
-            // value, so the group phrases are loaded and emitted with the values
+            // value, so the group phrases are loaded and emitted with the values, and the source
+            // of each value is the tooltip of its number (api_type_list::VALUES_RELATED); each phrase once
+            $sys->times->switch(system_time_type::LOAD_RELATED);
             $lst->load_phrases($msg);
-            $result = $lst->api_json([api_types::INCL_PHRASES], $msg);
+            $sys->times->switch();
+            $sys->times->switch(system_time_type::MAP_JSON);
+            $result = $lst->api_json([...api_type_list::VALUES_RELATED, api_types::PHRASES_ONCE], $msg);
+            $sys->times->switch();
         } elseif ($id_lst != '') {
             $lst = new value_list($usr);
             $lst->load_by_ids(explode(",", $id_lst), $msg);
@@ -114,11 +132,13 @@ if ($db_con->is_open()) {
         } else {
             $msg->add_message_text('value or phrase id list is missing');
         }
+        $sys->times->switch(system_time_type::API_CACHE);
         $cac_page->save_json($cac_key, $result, $snap_time, $msg);
+        $sys->times->switch();
     }
 
     $ctrl = new controller();
-    $ctrl->cache_header($cac_hit);
+    $ctrl->cache_header($cac_hit, $cac_page->not_saved);
     $ctrl->get_json($result, $msg);
 
 

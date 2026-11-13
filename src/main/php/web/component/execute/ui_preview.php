@@ -50,9 +50,14 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+// after the triple, which loads the reference classes in the order they need
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -65,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -76,9 +82,12 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -265,9 +274,11 @@ class ui_preview extends ui_base
         // carry the pending change forward as hidden inputs so the confirm submit re-posts every edited
         // field; without this url_mapper would reset the fields not posted (e.g. the plural or the
         // share) to their default. the keys owned by the back / confirm components (the view mask, the
-        // object id, the process step, the origin mask, the 7-prefixed link vars and the 9-prefixed
-        // back targets) are emitted there (see system_form::form_back), and the 8-prefixed old values
-        // are shown only in the diff, so skip those
+        // object id, the process step, the origin mask, the 7-prefixed link vars, the 6-prefixed
+        // reference rows and the 9-prefixed back targets) are emitted there (see
+        // system_form::form_back), so skip those; the 8-prefixed
+        // old values are carried as well, so that a confirm page shown again after a failed write
+        // still lists only the changed fields (the write itself never reads them)
         // a url array is expected to carry only scalar values, so report a non scalar value
         // as an internal inconsistency and drop it instead of failing with a fatal on a cast
         foreach ($url_array as $key => $val) {
@@ -281,7 +292,7 @@ class ui_preview extends ui_base
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
                 and !str_starts_with($key, url_var::LINK)
-                and !str_starts_with($key, url_var::PRE)
+                and !str_starts_with($key, url_var::REF_ROW)
                 and !str_starts_with($key, url_var::BACK)) {
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
@@ -330,15 +341,83 @@ class ui_preview extends ui_base
         global $mtr, $ui_sys;
         $html = new html_base();
         $result = '';
+        $lnk_txt = '';
         if ($dbo instanceof formula) {
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $frm = new formula();
             $frm->set_name($url_array[url_var::NAME] ?? '');
             $lnk = $frm->link_of_new($url_array, $msg, $ui_sys);
             $lnk_txt = $lnk?->link_preview($msg, $test_mode) ?? '';
-            if ($lnk_txt != '') {
-                $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
-                $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
+        }
+        if ($lnk_txt != '') {
+            $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
+            $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
+        }
+        // the references that the confirm of a phrase change writes too
+        if ($dbo instanceof word or $dbo instanceof triple) {
+            $result .= $this->ref_rows_section($url_array, $msg, $test_mode);
+        }
+        return $result;
+    }
+
+    /**
+     * the table of the reference rows that the same confirm button writes (see url_var::REF_ROW)
+     *
+     * @param array $url_array the pending change url with the '6'-prefixed rows and their '86' stored values
+     * @param user_message $msg to report a problem while reading e.g. the name of a source
+     * @param bool $test_mode true to build the table without a backend call
+     * @return string the html code of the reference changes, empty if the confirm changes no reference
+     */
+    private function ref_rows_section(array $url_array, user_message $msg, bool $test_mode): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $pre_rows = url_var::ref_row_pre_values($url_array);
+        $rows = '';
+        foreach (url_var::ref_rows($url_array) as $row => $fields) {
+            $rows .= $this->ref_row_changes($fields, $pre_rows[$row] ?? [], $msg, $test_mode);
+        }
+        if ($rows != '') {
+            $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_REFS));
+            $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
+                . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO));
+            $tbl = $html->tbl($html->thead($html->tr($head_row)) . $rows);
+            $result = $html->div($title . $tbl, styles::CHANGE_PREVIEW);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
+     * @param array $pre_fields the stored values of the reference e.g. ['ek' => 'Q72']
+     * @param user_message $msg to report a problem while reading e.g. the name of a source
+     * @param bool $test_mode true to build the rows without a backend call
+     * @return string one table row per changed field, labelled with the reference type and the action
+     */
+    private function ref_row_changes(array $fields, array $pre_fields, user_message $msg, bool $test_mode): string
+    {
+        global $mtr;
+        $action = $fields[url_var::ACTION];
+        $action_txt = match ($action) {
+            url_var::CRUD_CREATE => $mtr->txt(msg_id::LOG_ADD),
+            url_var::CRUD_DELETE => $mtr->txt(msg_id::LOG_DEL),
+            default => $mtr->txt(msg_id::LOG_UPDATE),
+        };
+        $type_id = (string)($fields[url_var::REF_TYPE] ?? $pre_fields[url_var::REF_TYPE] ?? '');
+        $type_txt = $this->field_value(ref_fields::FLD_TYPE, $type_id, $msg, url_var::REF_TYPE, $test_mode);
+        // a deleted reference shows its stored values as from and nothing as to
+        $new_fields = $fields;
+        if ($action == url_var::CRUD_DELETE) {
+            $new_fields = [];
+        }
+        $flat = array_merge($new_fields, html_base::pre_url_array($pre_fields));
+        $result = '';
+        foreach (new ref()->db_fld_to_url() as $db_fld => $url_key) {
+            if (in_array($url_key, url_var::REF_ROW_VARS)) {
+                $label = $type_txt . ' ' . $action_txt . ': ' . $mtr->text_db_field($db_fld);
+                $result .= $this->change_row($flat, $url_key, $label, $msg, $db_fld, false, $test_mode);
             }
         }
         return $result;
@@ -417,6 +496,7 @@ class ui_preview extends ui_base
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
                 and !str_starts_with($key, url_var::LINK)
+                and !str_starts_with($key, url_var::REF_ROW)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)
                 and (string)$val != (string)($url_array[url_var::PRE . $key] ?? '')) {
@@ -814,7 +894,9 @@ class ui_preview extends ui_base
         global $mtr;
         $html = new html_base();
         $result = '';
-        if (count($this->changed_fields($url_array)) > 0) {
+        // a confirm that changes only references is a change too
+        $has_change = ($this->changed_fields($url_array) != [] or url_var::ref_rows($url_array) != []);
+        if ($has_change) {
             $update_url = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
             $line = $mtr->txt(msg_id::POPUP_IMPACT)
                 . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK)

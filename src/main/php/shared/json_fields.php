@@ -53,12 +53,18 @@ class json_fields
     const string BODY = 'body';
     // the seconds per backend step of a slow api answer, which the frontend may use or ignore (see controller::with_time)
     const string API_TIME = 'api_time';
+    // only if an internal error has been logged: the log link per error and the answer as a json string
+    // (see controller::json_with_internal_errors)
+    const string INTERNAL_ERRORS = 'internal_errors';
+    const string API_ANSWER = 'api_answer';
     // subarrays of the json url representation: the '7'-prefixed link vars (the link created with a new
     // object), the '8'-prefixed pre values (the db values when the edit view was opened) and the
     // '9'-prefixed back targets (where cancel / confirm return to)
     const string URL_PART_LINK = 'url_part_link';
     const string URL_ORIGINAL_DATA = 'url_part_original_data';
     const string URL_PART_BACK = 'url_part_back';
+    // the references that the confirm of a phrase change writes too, by row number (see url_var::REF_ROW)
+    const string URL_PART_REF_ROW = 'url_part_ref_row';
     // the messages that should be shown to the user e.g. name already used. please use another name
     // TODO Prio 0 add unit test case
     const string MSG = 'message';
@@ -103,6 +109,8 @@ class json_fields
     const string GEO_VALUE = 'geo_value'; // a geolocation value or result
 
     const string LAST_UPDATE = 'last_update';
+    // the time of the last change of an external page e.g. of wikipedia, which only a refresh sends
+    const string PAGE_TIME = 'page_time';
 
     // the code id of the view style of a view, component or component_link
     const string STYLE = 'style';
@@ -451,6 +459,21 @@ class json_fields
     // the name of the value source
     const string SOURCE_NAME = 'source';
 
+    // the preview of an import e.g. from wikidata (see cfg/import/import_wikidata_preview.php):
+    // the names of the new words and triples, the new values, the values that are already in line,
+    // the values with another number with their old number and the word that keeps them apart,
+    // the claims that are not imported and the import json that the confirm writes
+    const string PREVIEW_WORDS_NEW = 'words_new';
+    const string PREVIEW_TRIPLES_NEW = 'triples_new';
+    const string PREVIEW_VALUES_NEW = 'values_new';
+    const string PREVIEW_VALUES_SAME = 'values_same';
+    const string PREVIEW_VALUES_CONFLICT = 'values_conflict';
+    const string PREVIEW_NUMBER_OLD = 'number_old';
+    const string PREVIEW_CONFLICT_WORD = 'conflict_word';
+    const string PREVIEW_IMPORT_VALUE = 'import_value';
+    const string PREVIEW_PROBLEMS = 'problems';
+    const string PREVIEW_IMPORT = 'import_json';
+
     // to assign e.g. words, triples or formulas to a view
     const string ASSIGNED = 'assigned';
 
@@ -505,6 +528,8 @@ class json_fields
     const string FORMULAS = 'formulas';
     const string PARENT_FORMULAS = 'parent_formulas'; // formulas of the ancestor phrases, grouped per ancestor
     const string RESULTS = 'results';
+    // true if a value or result list answer has filled its page, so that the next page has to be asked for
+    const string NEXT_PAGE = 'next_page';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
     //             use phrase_type (without id) for im- and export where the name is used

@@ -1,0 +1,41 @@
+CREATE OR REPLACE FUNCTION view_relation_update_log_0000020001
+    (_user_id             bigint,
+     _change_action_id    smallint,
+     _field_id_start_pos  smallint,
+     _start_pos_old       bigint,
+     _start_pos           bigint,
+     _view_relation_id    bigint,
+     _field_id_protect_id smallint,
+     _protect_id_old      smallint,
+     _protect_id          smallint) RETURNS void AS
+$$
+BEGIN
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_start_pos, _start_pos_old, _start_pos, _view_relation_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_protect_id,_view_relation_id ;
+
+    UPDATE view_relations
+       SET start_pos  = _start_pos,
+           protect_id = _protect_id
+     WHERE view_relation_id = _view_relation_id;
+
+END
+$$ LANGUAGE plpgsql;
+
+PREPARE view_relation_update_log_0000020001_call
+        (bigint, smallint, smallint, bigint, bigint, bigint, smallint, smallint, smallint) AS
+SELECT view_relation_update_log_0000020001
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9);
+
+SELECT view_relation_update_log_0000020001
+       (3::bigint,
+        2::smallint,
+        738::smallint,
+        15::bigint,
+        null::bigint,
+        1::bigint,
+        742::smallint,
+        null::smallint,
+        2::smallint);

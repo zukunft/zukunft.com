@@ -122,6 +122,9 @@ class component_types
     const int FORM_SELECT_REF_ID = 159;
     const string FORM_SELECT_REFS = "form_select_multi_refs";
     const int FORM_SELECT_REFS_ID = 160;
+    // the references of a phrase as '6'-prefixed rows of its edit form (see url_var::REF_ROW)
+    const string FORM_REF_ROWS = "system_form_ref_rows";
+    const int FORM_REF_ROWS_ID = 295;
     const string FORM_FIELD_VALUE = "system_form_field_value";
     const int FORM_FIELD_VALUE_ID = 133;
     const string FORM_SELECT_VALUE = "form_select_value";
@@ -725,6 +728,13 @@ class component_types
     // the read only tree of the system configuration with search and scope (see system_page::config_tree)
     const string SYSTEM_BODY_CONFIG_TREE = "system_body_config_tree";
     const int SYSTEM_BODY_CONFIG_TREE_ID = 265;
+    // the words, triples and values that an import e.g. from wikidata would add with the confirm of the import
+    // (see system_page::import_preview)
+    const string SYSTEM_BODY_IMPORT_PREVIEW = "system_body_import_preview";
+    const int SYSTEM_BODY_IMPORT_PREVIEW_ID = 296;
+    // the wikidata id of the entity whose values the admin imports (see system_form::form_wikidata_id)
+    const string FORM_WIKIDATA_ID = "system_form_wikidata_id";
+    const int FORM_WIKIDATA_ID_ID = 297;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
     const int SHOW_PHRASE_ROW_ID = 109;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
@@ -877,6 +887,7 @@ class component_types
         self::FORM_SELECT_SOURCES,
         self::FORM_SELECT_REF,
         self::FORM_SELECT_REFS,
+        self::FORM_REF_ROWS,
         self::FORM_SELECT_FORMULA,
         self::FORM_SELECT_FORMULAS,
         self::FORM_SELECT_TERM,
@@ -983,7 +994,9 @@ class component_types
         self::SYSTEM_BODY_NOT_YET_AVAILABLE,
         self::SYSTEM_BODY_USER_JOBS,
         self::SYSTEM_BODY_ALL_JOBS,
-        self::SYSTEM_BODY_CONFIG_TREE
+        self::SYSTEM_BODY_CONFIG_TREE,
+        self::SYSTEM_BODY_IMPORT_PREVIEW,
+        self::FORM_WIKIDATA_ID
     );
 
     // list of component types that are a button
@@ -1118,6 +1131,7 @@ class component_types
         [self::FORM_SELECT_SOURCES, self::FORM_SELECT_SOURCES_ID],
         [self::FORM_SELECT_REF, self::FORM_SELECT_REF_ID],
         [self::FORM_SELECT_REFS, self::FORM_SELECT_REFS_ID],
+        [self::FORM_REF_ROWS, self::FORM_REF_ROWS_ID],
         [self::FORM_SELECT_FORMULA, self::FORM_SELECT_FORMULA_ID],
         [self::FORM_SELECT_FORMULAS, self::FORM_SELECT_FORMULAS_ID],
         [self::FORM_SELECT_TERM, self::FORM_SELECT_TERM_ID],
@@ -1345,7 +1359,9 @@ class component_types
         [self::SYSTEM_BODY_NOT_YET_AVAILABLE, self::SYSTEM_BODY_NOT_YET_AVAILABLE_ID],
         [self::SYSTEM_BODY_USER_JOBS, self::SYSTEM_BODY_USER_JOBS_ID],
         [self::SYSTEM_BODY_ALL_JOBS, self::SYSTEM_BODY_ALL_JOBS_ID],
-        [self::SYSTEM_BODY_CONFIG_TREE, self::SYSTEM_BODY_CONFIG_TREE_ID]
+        [self::SYSTEM_BODY_CONFIG_TREE, self::SYSTEM_BODY_CONFIG_TREE_ID],
+        [self::SYSTEM_BODY_IMPORT_PREVIEW, self::SYSTEM_BODY_IMPORT_PREVIEW_ID],
+        [self::FORM_WIKIDATA_ID, self::FORM_WIKIDATA_ID_ID]
     );
 
 }

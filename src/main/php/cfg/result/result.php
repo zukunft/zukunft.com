@@ -2301,6 +2301,27 @@ class result extends sandbox_value
         $res_lst->db_delete_no_log($msg, null, result::class);
     }
 
+    /**
+     * refuse the delete of a single result, because the delete of the sandbox deletes only values
+     * (see sandbox_multi::del_exe) and a result is derived data that is removed without change log
+     * by result_list::db_delete_no_log e.g. via formula::delete_results
+     *
+     * @param user_message $msg to report the refused delete to the requesting user
+     * @param bool $must_exist not used, because nothing is deleted
+     * @param sql_type_list $sc_par_lst not used, because nothing is deleted
+     * @return bool always false, because the result is not deleted
+     */
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        log_err_msg('delete of ' . $this->dsp_id() . ' refused, because a result is removed'
+            . ' without change log by result_list::db_delete_no_log', $msg);
+        return false;
+    }
+
 
     /*
      * sql write fields

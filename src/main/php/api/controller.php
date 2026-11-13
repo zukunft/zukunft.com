@@ -276,7 +276,7 @@ class controller
             // closes the same_origin both-headers-absent fail-open); a forged cross-site write
             // cannot supply it. see server_guard::csrf_token_valid
             $permitted = false;
-            $msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $msg->add(msg_id::CHANGE_BLOCKED_SESSION_TOKEN, []);
             $this->not_permitted($msg);
         } elseif ($msg->usr == null or $msg->usr->is_blocked()) {
             $permitted = false;
@@ -299,13 +299,18 @@ class controller
      * (see rest_call::api_call); only if def::DEBUG_API_CACHE is switched on
      *
      * @param bool $is_cached true if the answer has been read from the cache, false if it has been created
+     * @param string $not_saved why a created answer has not been cached (db_cache_page::not_saved); empty if it has been
      * @return void
      */
-    function cache_header(bool $is_cached): void
+    function cache_header(bool $is_cached, string $not_saved = ''): void
     {
         if (def::DEBUG_API_CACHE and !headers_sent()) {
             $state = $is_cached ? api::CACHE_HIT : api::CACHE_MISS;
-            header(api::CACHE_HEADER . ': ' . $state);
+            if ($not_saved != '') {
+                $state .= ', ' . $not_saved;
+            }
+            // a line break in a message text would end the header
+            header(api::CACHE_HEADER . ': ' . str_replace(["\r", "\n"], ' ', $state));
         }
     }
 
@@ -342,6 +347,39 @@ class controller
         $is_filled_object = (str_starts_with($json, '{') and !str_starts_with($fields, '}'));
         if ($steps != [] and $is_filled_object) {
             $result = '{"' . json_fields::API_TIME . '":' . json_encode($steps) . ',' . $fields;
+        }
+        return $result;
+    }
+
+    /**
+     * send the internal errors of this api request that no message has reported together with the answer,
+     * so that the frontend shows them to the user (see rest_call::without_internal_errors); added after the
+     * cache like the time, so that a cached answer never carries the errors of its creation
+     *
+     * @param string $api_json the answer as it has been created
+     * @return string the answer with the log links of the internal errors, unchanged without such an error
+     */
+    private function with_internal_errors(string $api_json): string
+    {
+        global $sys;
+        $links = [];
+        if (log_in_api_answer()) {
+            $links = $sys->error_links;
+        }
+        return self::json_with_internal_errors($api_json, $links);
+    }
+
+    /**
+     * @param string $api_json the answer as it has been created, which can also be a list, an error message or empty
+     * @param array $links the log link of each internal error, empty if no error has been logged
+     * @return string the answer as a json string next to the links, so that the frontend gets it back exactly; unchanged without links
+     */
+    static function json_with_internal_errors(string $api_json, array $links): string
+    {
+        $result = $api_json;
+        if ($links != []) {
+            $wrap = [json_fields::INTERNAL_ERRORS => $links, json_fields::API_ANSWER => $api_json];
+            $result = json_encode($wrap, JSON_INVALID_UTF8_SUBSTITUTE);
         }
         return $result;
     }
@@ -401,7 +439,7 @@ class controller
                 array(json_fields::MSG => $msg)
             );
         }
-        echo $this->with_time(ob_get_clean());
+        echo $this->with_internal_errors($this->with_time(ob_get_clean()));
     }
 
     /**
@@ -530,7 +568,7 @@ class controller
                 }
                 break;
         }
-        echo $this->with_time(ob_get_clean());
+        echo $this->with_internal_errors($this->with_time(ob_get_clean()));
     }
 
     /**

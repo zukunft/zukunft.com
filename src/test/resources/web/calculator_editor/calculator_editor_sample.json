@@ -146,6 +146,52 @@
     },
     {
       "name": "expected"
+    },
+    {
+      "name": "budget case"
+    },
+    {
+      "name": "heat pump switch",
+      "description": "the decision that the arguments of the page are about"
+    },
+    {
+      "name": "low running cost"
+    },
+    {
+      "name": "quiet operation"
+    },
+    {
+      "name": "high purchase price"
+    },
+    {
+      "name": "annual saving"
+    },
+    {
+      "name": "saving threshold"
+    },
+    {
+      "name": "stay"
+    },
+    {
+      "name": "switch"
+    },
+    {
+      "name": "undecided"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "heated area 100"
+    },
+    {
+      "name": "heated area 200"
+    },
+    {
+      "name": "oil price low"
+    },
+    {
+      "name": "oil price high"
     }
   ],
   "triples": [
@@ -846,6 +892,363 @@
       "from": "house heating note sizing",
       "verb": "has a",
       "to": "calculator label"
+    },
+    {
+      "name": "house heating more",
+      "description": "proposed: The page compares the running cost only; a subsidy for the purchase is not included {source:sample fuel price statistic}.",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator more"
+    },
+    {
+      "name": "house heating input heated area tag",
+      "description": "measured 50-500",
+      "from": "house heating input heated area",
+      "verb": "has a",
+      "to": "calculator tag"
+    },
+    {
+      "name": "house heating input heated area slider",
+      "description": "proposed: the input also shows a slider, here with a larger step than the number field",
+      "from": "house heating input heated area",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "house heating rows saving hint",
+      "description": "proposed: {result:saving heat pump:0} CHF in the first year with the prices of {source:sample fuel price statistic}",
+      "from": "house heating rows saving",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating presets",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator preset"
+    },
+    {
+      "name": "house heating preset budget case",
+      "from": "house heating presets",
+      "verb": "has a",
+      "to": "budget case"
+    },
+    {
+      "name": "house heating preset budget case label",
+      "description": "Small budget",
+      "from": "house heating preset budget case",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating preset budget case hint",
+      "description": "a small house with a simple heat pump",
+      "from": "house heating preset budget case",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating arguments",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator argument"
+    },
+    {
+      "name": "house heating arguments label",
+      "description": "For the heat pump | Against the heat pump",
+      "from": "house heating arguments",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "low running cost argument",
+      "description": "proposed: Electricity for a heat pump costs about {num:820 CHF} less per year {source:sample fuel price statistic}.",
+      "from": "low running cost",
+      "verb": "supports",
+      "to": "heat pump switch"
+    },
+    {
+      "name": "low running cost argument label",
+      "description": "Low running cost",
+      "from": "low running cost argument",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "quiet operation argument",
+      "description": "A modern outdoor unit is hardly audible.",
+      "from": "quiet operation",
+      "verb": "supports",
+      "to": "heat pump switch"
+    },
+    {
+      "name": "high purchase price argument",
+      "description": "The purchase costs several times the price of a new boiler.",
+      "from": "high purchase price",
+      "verb": "limits",
+      "to": "heat pump switch"
+    },
+    {
+      "name": "house heating argument low running cost",
+      "from": "house heating arguments",
+      "verb": "has a",
+      "to": "low running cost argument"
+    },
+    {
+      "name": "house heating argument quiet operation",
+      "from": "house heating arguments",
+      "verb": "has a",
+      "to": "quiet operation argument"
+    },
+    {
+      "name": "house heating argument quiet operation order",
+      "from": "house heating argument quiet operation",
+      "verb": "is follower of",
+      "to": "house heating argument low running cost"
+    },
+    {
+      "name": "house heating argument high purchase price",
+      "from": "house heating arguments",
+      "verb": "has a",
+      "to": "high purchase price argument"
+    },
+    {
+      "name": "house heating verdict",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator verdict"
+    },
+    {
+      "name": "house heating verdict result",
+      "from": "house heating verdict",
+      "verb": "with",
+      "to": "annual saving"
+    },
+    {
+      "name": "house heating verdict threshold",
+      "from": "house heating verdict",
+      "verb": "with",
+      "to": "saving threshold"
+    },
+    {
+      "name": "house heating verdict threshold order",
+      "from": "house heating verdict threshold",
+      "verb": "is follower of",
+      "to": "house heating verdict result"
+    },
+    {
+      "name": "house heating verdict stay",
+      "from": "house heating verdict",
+      "verb": "has a",
+      "to": "stay"
+    },
+    {
+      "name": "house heating verdict stay label",
+      "description": "Keep the current heating",
+      "from": "house heating verdict stay",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating verdict stay hint",
+      "description": "proposed: The heat pump costs {result:annual saving:0} CHF per year compared with today.",
+      "from": "house heating verdict stay",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating verdict switch",
+      "from": "house heating verdict",
+      "verb": "has a",
+      "to": "switch"
+    },
+    {
+      "name": "house heating verdict switch order",
+      "from": "house heating verdict switch",
+      "verb": "is follower of",
+      "to": "house heating verdict stay"
+    },
+    {
+      "name": "house heating verdict switch label",
+      "description": "Switch to the heat pump",
+      "from": "house heating verdict switch",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating verdict undecided",
+      "from": "house heating verdict",
+      "verb": "has a",
+      "to": "undecided"
+    },
+    {
+      "name": "house heating verdict undecided order",
+      "from": "house heating verdict undecided",
+      "verb": "is follower of",
+      "to": "house heating verdict switch"
+    },
+    {
+      "name": "house heating verdict undecided label",
+      "description": "Undecided on cost",
+      "from": "house heating verdict undecided",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating verdict scale",
+      "description": "keep the heating | -500 ... 0 ... +500 CHF | switch",
+      "from": "house heating verdict",
+      "verb": "has a",
+      "to": "calculator scale"
+    },
+    {
+      "name": "house heating verdict note",
+      "description": "The verdict compares the running cost only.",
+      "from": "house heating verdict",
+      "verb": "has a",
+      "to": "calculator note"
+    },
+    {
+      "name": "house heating column difference",
+      "from": "house heating result columns",
+      "verb": "has a",
+      "to": "difference"
+    },
+    {
+      "name": "house heating column difference order",
+      "from": "house heating column difference",
+      "verb": "is follower of",
+      "to": "house heating column lifetime"
+    },
+    {
+      "name": "house heating column difference flag",
+      "description": "proposed: the column shows the first year minus the lifetime column",
+      "from": "house heating column difference",
+      "verb": "has a",
+      "to": "calculator difference"
+    },
+    {
+      "name": "house heating row annual heat demand cells",
+      "from": "house heating row annual heat demand",
+      "verb": "has a",
+      "to": "calculator cell"
+    },
+    {
+      "name": "house heating row annual heat demand cell lifetime",
+      "description": "proposed: the lifetime column of the row shows the number of heat demand",
+      "from": "house heating row annual heat demand cells",
+      "verb": "has a",
+      "to": "heat demand"
+    },
+    {
+      "name": "house heating row annual heat demand cell lifetime column",
+      "from": "house heating row annual heat demand cell lifetime",
+      "verb": "with",
+      "to": "lifetime"
+    },
+    {
+      "name": "house heating sensitivity",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator sensitivity"
+    },
+    {
+      "name": "house heating sensitivity label",
+      "description": "Sensitivity of the saving",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating sensitivity hint",
+      "description": "Each cell: the heat demand and the saving with all other assumptions as set above.",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating sensitivity section",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "calculator section"
+    },
+    {
+      "name": "house heating sensitivity rows",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "heated area"
+    },
+    {
+      "name": "house heating sensitivity columns",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "oil price"
+    },
+    {
+      "name": "house heating sensitivity columns order",
+      "from": "house heating sensitivity columns",
+      "verb": "is follower of",
+      "to": "house heating sensitivity rows"
+    },
+    {
+      "name": "house heating sensitivity column low",
+      "from": "house heating sensitivity columns",
+      "verb": "has a",
+      "to": "oil price low"
+    },
+    {
+      "name": "house heating sensitivity column high",
+      "from": "house heating sensitivity columns",
+      "verb": "has a",
+      "to": "oil price high"
+    },
+    {
+      "name": "house heating sensitivity column high order",
+      "from": "house heating sensitivity column high",
+      "verb": "is follower of",
+      "to": "house heating sensitivity column low"
+    },
+    {
+      "name": "house heating sensitivity row 100",
+      "from": "house heating sensitivity rows",
+      "verb": "has a",
+      "to": "heated area 100"
+    },
+    {
+      "name": "house heating sensitivity row 200",
+      "from": "house heating sensitivity rows",
+      "verb": "has a",
+      "to": "heated area 200"
+    },
+    {
+      "name": "house heating sensitivity row 200 order",
+      "from": "house heating sensitivity row 200",
+      "verb": "is follower of",
+      "to": "house heating sensitivity row 100"
+    },
+    {
+      "name": "house heating sensitivity cells",
+      "from": "house heating sensitivity",
+      "verb": "has a",
+      "to": "calculator cell"
+    },
+    {
+      "name": "house heating sensitivity cell demand",
+      "from": "house heating sensitivity cells",
+      "verb": "has a",
+      "to": "annual heat demand"
+    },
+    {
+      "name": "house heating sensitivity cell saving",
+      "from": "house heating sensitivity cells",
+      "verb": "has a",
+      "to": "annual saving"
+    },
+    {
+      "name": "house heating sensitivity cell saving order",
+      "from": "house heating sensitivity cell saving",
+      "verb": "is follower of",
+      "to": "house heating sensitivity cell demand"
     }
   ],
   "formulas": [
@@ -956,6 +1359,51 @@
       "number": "5700",
       "source": "sample energy certificate",
       "description": "proposed: a value with the word expected is a row of the check table, which compares it with the result that has the same phrases"
+    },
+    {
+      "words": ["house heating input heated area slider", "field step"],
+      "number": "50",
+      "description": "proposed: the step of the slider if it differs from the field step of the input"
+    },
+    {
+      "words": ["budget case", "heated area", "living space", "square metre"],
+      "number": "100",
+      "description": "proposed: the preset button sets the input of these phrases to this number"
+    },
+    {
+      "words": ["budget case", "heat pump efficiency"],
+      "number": "2.8"
+    },
+    {
+      "words": ["sample house", "saving threshold", "CHF", "assumed"],
+      "number": "100",
+      "description": "proposed: within this distance from zero the verdict is undecided"
+    },
+    {
+      "words": ["house heating verdict scale", "field limit down"],
+      "number": "-500",
+      "description": "proposed: the left end of the meter"
+    },
+    {
+      "words": ["house heating verdict scale", "field limit up"],
+      "number": "500"
+    },
+    {
+      "words": ["house heating sensitivity", "heated area 100", "square metre"],
+      "number": "100",
+      "description": "proposed: the number of the input in this row of the sensitivity table"
+    },
+    {
+      "words": ["house heating sensitivity", "heated area 200", "square metre"],
+      "number": "200"
+    },
+    {
+      "words": ["house heating sensitivity", "oil price low", "CHF per litre"],
+      "number": "0.8"
+    },
+    {
+      "words": ["house heating sensitivity", "oil price high", "CHF per litre"],
+      "number": "1.4"
     }
   ],
   "results": [
@@ -1006,6 +1454,15 @@
     {
       "words": ["sample house", "heat pump capacity gap", "kWh per year"],
       "number": -1300
+    },
+    {
+      "words": ["sample house", "annual saving", "CHF"],
+      "formula": "saving formula",
+      "number": 820
+    },
+    {
+      "words": ["sample house", "heat demand", "lifetime", "kWh"],
+      "number": 114000
     }
   ]
 }

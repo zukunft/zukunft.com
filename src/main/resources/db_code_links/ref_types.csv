@@ -2,3 +2,4 @@ ref_type_id, type_name, code_id, description, base_url
 1, 'wikipedia', 'wikipedia', 'wikipedia', 'https://en.wikipedia.org/wiki/'
 2, 'wikidata', 'wikidata', 'wikidata', 'https://www.wikidata.org/wiki/'
 3, 'conceptnet', 'conceptnet', 'conceptnet', 'http://api.conceptnet.io/'
+4, 'wikidata property', 'wikidata_property', 'a property of wikidata e.g. P1082 for the population, which wikidata links on another page than an item', 'https://www.wikidata.org/wiki/Property:'
