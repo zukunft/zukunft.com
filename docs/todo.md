@@ -10,8 +10,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add new ch npp (AKW) example as test on smartvote for initiatives
     TODO add table editor
     TODO add on results a latex formula tooltip with the calculation
-    TODO clean up http_old - deprecate the http_old scripts
-    TODO cleaup *_old - deprecate *_old functions
     TODO fix all Prio 0
     TODO add job dashboard to normal users 
     TODO the admin dashboard the x most changed user settings
@@ -277,27 +275,12 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create the test objects always based on functions in create_test_objects
     TODO use with-log for insert links e.g. triple
     TODO use with-log for insert values
-    TODO Step 26: deprecate the get_old in result
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
-    TODO Step 25: deprecate the get_old in group_list
     TODO Substeps: move all display functions from the backend objects to the frontend
-    TODO Step 24: deprecate the get_old in user_list
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
     TODO Step 23: deprecate the get_old in value_ui
     TODO remove backend classes from frontend
-    TODO Step 22: deprecate the get_old in value_list
     TODO remove frontend classes from backend
-    TODO Step 21: deprecate the get_old in ???
-    TODO review the main unit tests
-    TODO Step 20: deprecate the get_old in ???
-    TODO review the remaining unit tests
-    TODO Step 19: deprecate the get_old in ???
-    TODO review the main db read tests
-    TODO Step 18: deprecate the get_old in ???
-    TODO review the remaining db read tests
-    TODO Step 17: deprecate the get_old in ???
-    TODO review the main db write tests
-    TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
 
@@ -390,7 +373,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO base the html frontend objects (_ui) on the api JSON using the set_from_json function
     TODO check that in the API            messages the database id is used for all preloaded types e.g. phrase type
     TODO check that in the im- and export messages the     code id is used for all preloaded types e.g. phrase type
-    TODO refactor the web classes (dismiss all _old classes)
     TODO always use a function of the test_new_obj class to create a object for testing
     TODO create unit tests for all display object functions
     TODO remove the set and get functions from the api objects and make them as simple as possible

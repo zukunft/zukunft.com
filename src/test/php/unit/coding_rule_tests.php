@@ -1481,7 +1481,6 @@ class coding_rule_tests
         $this->php_global_vars(TEST_PHP_PATH, $glb_lst, $glb_area_lst, $glb_add_lst);
         $this->php_global_vars(paths::API, $glb_lst, $glb_area_lst, $glb_add_lst);
         $this->php_global_vars(html_paths::HTTP, $glb_lst, $glb_area_lst, $glb_add_lst);
-        $this->php_global_vars(html_paths::HTTP_OLD, $glb_lst, $glb_area_lst, $glb_add_lst);
         ksort($glb_lst, SORT_STRING);
 
         $suggested = $this->php_suggested_var_names(paths::PHP_LIB);
@@ -1647,8 +1646,7 @@ class coding_rule_tests
             or str_starts_with($path, paths::API_OBJECT)) {
             $result = self::AREA_BACKEND;
         } elseif (str_starts_with($path, html_paths::WEB)
-            or str_starts_with($path, html_paths::HTTP)
-            or str_starts_with($path, html_paths::HTTP_OLD)) {
+            or str_starts_with($path, html_paths::HTTP)) {
             $result = self::AREA_FRONTEND;
         } elseif (str_starts_with($path, TEST_PHP_PATH)) {
             $result = '';

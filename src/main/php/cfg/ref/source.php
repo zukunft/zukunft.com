@@ -811,24 +811,26 @@ class source extends sandbox_code_id
      */
     function del_links(user_message $msg): bool
     {
-        // the default of a user would else block the delete by the foreign key of the users table
+        // the default of a user would else block the delete by the foreign key of the users table,
+        // so like verb::del nothing is deleted if the default cannot be removed
         $usr = new user();
-        $usr->clear_last_used(user_db::FLD_SOURCE, $this->id(), $msg);
+        if ($usr->clear_last_used(user_db::FLD_SOURCE, $this->id(), $msg)) {
 
-        // collect all phrase groups where this word is used
-        // TODO Prio 2 activate
-        //$grp_lst = new group_list($this->get_user());
-        //$grp_lst->load_by_phr($this->phrase());
+            // collect all phrase groups where this word is used
+            // TODO Prio 2 activate
+            //$grp_lst = new group_list($this->get_user());
+            //$grp_lst->load_by_phr($this->phrase());
 
-        // collect all references where this source is used
-        $ref_lst = new ref_list($this->get_user());
-        // TODO Prio 1 activate
-        $ref_lst->load_sql_by_source($this);
-
-        // if there are still triples, ask if they really should be deleted
-        if (!$ref_lst->is_empty()) {
+            // collect all references where this source is used
+            $ref_lst = new ref_list($this->get_user());
             // TODO Prio 1 activate
-            $ref_lst->del($msg);
+            $ref_lst->load_sql_by_source($this);
+
+            // if there are still triples, ask if they really should be deleted
+            if (!$ref_lst->is_empty()) {
+                // TODO Prio 1 activate
+                $ref_lst->del($msg);
+            }
         }
 
         return $msg->is_ok();

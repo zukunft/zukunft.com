@@ -60,11 +60,6 @@ RedirectMatch 404 ^/vendor/
 # non-existent even if a cache file gets an allowed file extension.
 RedirectMatch 404 ^/cache/
 
-# The /http_old folder holds legacy controllers no longer used by the frontend
-# (the modern UI routes through /http/view.php). They are kept for reference
-# only and must never be served. Return 404 so the folder looks non-existent.
-RedirectMatch 404 ^/http_old/
-
 # The top-level /test folder holds the CLI test runners (test.php, test_unit.php, ...) and
 # helpers that reset the database. They run only from a shell (each script additionally
 # refuses a non-cli request), never over the web. Block the whole folder as defense-in-depth

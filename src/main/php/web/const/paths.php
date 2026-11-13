@@ -84,9 +84,8 @@ class paths
     // (the leading backslash selects the global const of the entry scripts, not this class const)
     const string WEB = \WEB;
 
-    // path of the html frontend entry scripts and the deprecated predecessor scripts
+    // path of the html frontend entry scripts
     const string HTTP = ROOT_PATH . 'http' . DIRECTORY_SEPARATOR;
-    const string HTTP_OLD = ROOT_PATH . 'http_old' . DIRECTORY_SEPARATOR;
     // the markdown documents that http/docs.php shows
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;
 
