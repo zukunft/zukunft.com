@@ -890,7 +890,6 @@ class test_mappers
             case component_types::RANKING_LIST:
             case component_types::RESULTS_RELATED:
             case component_types::PHRASES_RELATED:
-            case component_types::MAIN_VALUE:
             case component_types::BUTTON_REQUEST:
             case component_types::SYSTEM_ADMIN_URL_DELAY:
             case component_types::SYSTEM_ADMIN_LOGIN_FAILS:

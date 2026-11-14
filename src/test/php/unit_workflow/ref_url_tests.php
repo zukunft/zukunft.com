@@ -474,7 +474,7 @@ class ref_url_tests extends url_test_base
         // confirmed: the user confirms the description
         $test_name = 'the confirmed refresh writes the description';
         $cnf_url[url_var::POST_SUBMIT] = '';
-        $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $this->ui->url_to_action($cnf_url, $ui_msg, $this->req->dto, true);
         $db_trp = new triple($this->t->usr1);
         $db_trp->load_by_id(triple_names::CITY_GE_ID, $msg);
         $db_description = $db_trp->get_description();
@@ -509,7 +509,7 @@ class ref_url_tests extends url_test_base
         $test_name = 'a reference row of another phrase is refused with a message';
         $other_row = [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => refs::MATH_ID];
         $other_url = array_merge($cnf_url, url_var::ref_row_url_array([self::TYPED_ROW => $other_row]));
-        $this->ui->url_to_action($other_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $this->ui->url_to_action($other_url, $ui_msg, $this->req->dto, true);
         $this->t->assert_text_contains($test_name, $ui_msg->var_message_text(), triple_names::CITY_GE);
         $ui_msg->reset();
 
@@ -658,7 +658,7 @@ class ref_url_tests extends url_test_base
         // confirmed: the user confirms the description and the wikidata reference
         $test_name = 'the confirmed refresh adds the wikidata reference';
         $cnf_url[url_var::POST_SUBMIT] = '';
-        $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $this->ui->url_to_action($cnf_url, $ui_msg, $this->req->dto, true);
         $ref_lst = new ref_list($this->t->usr1);
         $ref_lst->load_by_phr_id($wrd_id, $msg);
         $db_key = $ref_lst->get_by_type_code_id(ref_types::WIKIDATA)?->get_external_key();
@@ -755,7 +755,7 @@ class ref_url_tests extends url_test_base
         $cnf_url[url_var::STEP] = url_var::STEP_CONFIRMED;
         $cnf_url[url_var::IMPORT_CHECKSUM] = $imp_ui->checksum();
         $cnf_url[url_var::POST_SUBMIT] = '';
-        $next_url = $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $next_url = $this->ui->url_to_action($cnf_url, $ui_msg, $this->req->dto, true);
         $back_id = $next_url[url_var::ID] ?? 0;
         $this->t->assert($test_name, $back_id, $trp_id);
 
@@ -929,7 +929,7 @@ class ref_url_tests extends url_test_base
 
         // confirmed: the user confirms the description and the three reference rows at once
         $test_name = 'the confirm of a description with three reference rows is written without a message';
-        $this->ui->url_to_action($cnf_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $this->ui->url_to_action($cnf_url, $ui_msg, $this->req->dto, true);
         $this->t->assert_msg($test_name, $ui_msg);
         $ui_msg->reset();
 
@@ -983,7 +983,7 @@ class ref_url_tests extends url_test_base
             url_var::EXTERNAL_KEY => refs::CHANGE_NEW_KEY,
         ];
         $dup_url = array_merge($desc_url, url_var::ref_row_url_array([self::ROW_ADD => $dup_row]));
-        $this->ui->url_to_action($dup_url, $this->req->usr_backend, $ui_msg, $this->req->dto, true);
+        $this->ui->url_to_action($dup_url, $ui_msg, $this->req->dto, true);
         $this->t->assert_text_contains($test_name, $ui_msg->var_message_text(), triple_names::CANTON_ZURICH);
         $ui_msg->reset();
     }

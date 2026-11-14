@@ -359,7 +359,7 @@ class element_group extends list_db_write
     {
         $has_prior = false;
         foreach ($this->lst() as $elm) {
-            if ($elm->type() == formula::class and $elm->obj?->type_cl == formula_type::PREV) {
+            if ($elm->type() == formula::class and $elm->obj?->type_code_id() == formula_type::PREV) {
                 $has_prior = true;
             }
         }

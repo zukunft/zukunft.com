@@ -274,14 +274,14 @@ class triple_names
     // a populism solution with only a few results, so that the load of its context values is fast
     const string ONE_CLICK_HIDE_POPULISM = 'one-click hide (populism solution)';
     const int ONE_CLICK_HIDE_POPULISM_ID = 1635;
-    const int POPULISM_SOLUTION_ID = 1602;
+    const int POPULISM_SOLUTION_ID = 1616;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 240;
     // the config.yaml switch of the javascript of the calculator pages
     const string USE_JAVASCRIPT = shared_triples::USE_JAVASCRIPT;
-    const int USE_JAVASCRIPT_ID = 824;
+    const int USE_JAVASCRIPT_ID = 840;
     const string FOR_CALCULATOR = shared_triples::FOR_CALCULATOR;
-    const int FOR_CALCULATOR_ID = 825;
+    const int FOR_CALCULATOR_ID = 841;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
@@ -294,23 +294,23 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 3498;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 3512;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 3499;
+    const int GAIN_AND_LOSS_ID = 3513;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 3500;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 3514;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 3501;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 3515;
     // the field types and properties of process_catch_fields.json, appended like the chart
     // triples above, so they move with them; check them in the triple list.csv
     const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
-    const int FIELD_NUMBER_WITH_LIMITS_ID = 3632;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 3646;
     const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
-    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 3634;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 3648;
     const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
-    const int FIELD_LIMIT_DOWN_ID = 3618;
+    const int FIELD_LIMIT_DOWN_ID = 3632;
     const string FIELD_STEP = shared_triples::FIELD_STEP;
-    const int FIELD_STEP_ID = 3619;
+    const int FIELD_STEP_ID = 3633;
     // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
     // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
     const string FIELD_INHABITANTS = 'field inhabitants';
@@ -441,7 +441,7 @@ class triple_names
     const string SCATTER_PLOT = 'scatter plot';
     const int SCATTER_PLOT_ID = 162;
     const string LEVERAGE_PLOT = 'leverage plot';
-    const int LEVERAGE_PLOT_ID = 3497;
+    const int LEVERAGE_PLOT_ID = 3511;
     const string NUMERIC_DESCENDING = 'numeric descending';
     const int NUMERIC_DESCENDING_ID = 164;
     const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
@@ -532,30 +532,30 @@ class triple_names
     const int COLUMN_LOSS_OF_REASON_EXPLAINS_REASON_ID = 335;
     // the reasons of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string GLOBAL_WARMING_REASON = 'global warming reason';
-    const int GLOBAL_WARMING_REASON_ID = 1326;
+    const int GLOBAL_WARMING_REASON_ID = 1342;
     const string HEAT_MORTALITY = 'heat mortality';
-    const int HEAT_MORTALITY_ID = 1198;
+    const int HEAT_MORTALITY_ID = 1214;
     const string HEAT_MORTALITY_REASON = 'heat mortality (reason)';
-    const int HEAT_MORTALITY_REASON_ID = 1328;
+    const int HEAT_MORTALITY_REASON_ID = 1344;
     const string CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON = 'climate gas emissions (global warming reason)';
-    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1350;
+    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1366;
     const string HEAT_MORTALITY_GLOBAL_WARMING_REASON = 'heat mortality (global warming reason)';
-    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1352;
+    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1368;
     // the solutions of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string CLIMATE_ADAPTATION = 'climate adaptation';
-    const int CLIMATE_ADAPTATION_ID = 1330;
+    const int CLIMATE_ADAPTATION_ID = 1346;
     const string CLIMATE_ADAPTATION_SOLUTION = 'climate adaptation (solution)';
-    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1361;
+    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1377;
     const string GLOBAL_WARMING_SOLUTION = 'global warming solution';
-    const int GLOBAL_WARMING_SOLUTION_ID = 1331;
+    const int GLOBAL_WARMING_SOLUTION_ID = 1347;
     // a result that the potential gain of a global warming solution is calculated from
     const string AVOIDED_EMISSION = 'avoided emission';
     // the unit of the social cost of carbon, which the potential gain names as an operand of its own
     const string EUR_PER_TONNE = 'EUR per tonne';
     const string REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION = 'reduce climate gas emissions (global warming solution)';
-    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1362;
+    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1378;
     const string CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION = 'climate adaptation (global warming solution)';
-    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1364;
+    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1380;
     const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
     const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 324;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
@@ -565,7 +565,7 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 2983;
+    const int GRAM_PER_KWH_ID = 2997;
     // TODO Prio 2 use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
@@ -668,7 +668,7 @@ class triple_names
     const int PERCENT_SYMBOL_ID = 104;
     // the share of the happy time points of the start page problem files, one number type per value
     const string PERCENT_HTP = 'percent htp';
-    const int PERCENT_HTP_ID = 1203;
+    const int PERCENT_HTP_ID = 1219;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
     const int CHF_SYMBOL_ID = 511;
     // the currency names are built in currencies.json from the genus word and the issuing
@@ -701,9 +701,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 451;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 3743;
+    const int SHARE_RATIO_ID = 3757;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 3795;
+    const int SHARE_SYMBOL_ID = 3809;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 461;
     const string IN_EUR = "in EUR";
@@ -713,7 +713,6 @@ class triple_names
     const string COMPANY_ABB = "ABB (company)";
     const int COMPANY_ABB_ID = 683;
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
-    const string TAXES_OF_CF = "income taxes is part of cash flow statement";
 
     // list of often used triples used as a default selection e.g. for the phrase selection
     // TODO Prio 2 to be filled up

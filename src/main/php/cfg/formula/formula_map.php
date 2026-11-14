@@ -221,8 +221,6 @@ class formula_map extends sandbox_code_id
     private ?formula_link_list $lnk_lst = null;
     // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
-    // TODO Prio 0 deprecate
-    public ?string $type_cl = '';       // the code id of the formula type
     public ?phrase $name_phr = null;    // the triple object for the formula name:
     //                                     because values can only be assigned to phrases, also for the formula name a triple must exist
     public bool $needs_res_upd = false; // true if the formula results needs to be updated
@@ -265,7 +263,6 @@ class formula_map extends sandbox_code_id
 
         $this->lnk_lst = null;
         $this->phr_lst = null;
-        $this->type_cl = '';
         $this->name_phr = null;
 
         $this->needs_res_upd = false;
@@ -293,7 +290,6 @@ class formula_map extends sandbox_code_id
         string       $name_fld = formula_fields::FLD_NAME,
         string       $type_fld = formula_fields::FLD_TYPE): bool
     {
-        global $sys;
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
@@ -321,9 +317,6 @@ class formula_map extends sandbox_code_id
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
 
-            if ($this->type_id > 0) {
-                $this->type_cl = $sys->typ_lst->frm_typ->code_id($this->type_id);
-            }
             /*
             if ($this->id() > 0) {
                 // TODO Prio 2 check the exclusion handling

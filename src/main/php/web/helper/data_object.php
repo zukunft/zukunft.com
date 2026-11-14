@@ -308,7 +308,8 @@ class data_object
         }
     }
 
-    // TODO Prio 0 add missing objects like view_link_list
+    // TODO Prio 2 add the view link lists to the cache when a page shows them
+    //      (docs/llm/pending_prio_2.md "### view add, view select and view edit")
     function reset(): void
     {
         $this->usr = new user();

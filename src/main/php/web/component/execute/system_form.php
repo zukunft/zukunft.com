@@ -666,7 +666,7 @@ class system_form extends component
         return $html->input(
             url_var::LANGUAGE_SYMBOL,
             msg_id::FORM_FIELD_LANGUAGE_SYMBOL,
-            'symbol field missing',
+            $dbo->wiki_code,
             html_base::INPUT_TEXT);
     }
 
@@ -675,8 +675,7 @@ class system_form extends component
      */
     function show_language_symbol(language|db_object $dbo): string
     {
-        // TODO Prio 0 add system to web language
-        return $this->esc($dbo->name);
+        return $this->esc($dbo->wiki_code);
     }
 
 
@@ -815,7 +814,7 @@ class system_form extends component
      * @param msg_id $ui_msg_code_id the message id of the field label
      * @return string the html behind its label
      */
-    private function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
+    function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
     {
         global $mtr;
 
@@ -3152,13 +3151,21 @@ class system_form extends component
     }
 
     /**
-     * TODO Prio 0 wire up the request action
-     * @return string the html code for a button that requests a new e.g. type item
+     * TODO Prio 2 let a user who is no admin request a new language that an admin confirms
+     * @param user_message $msg with the requesting user, because only an admin can add a language
+     * @return string the html code of the link to the language add view for an admin, else an empty string
      */
-    function button_request(): string
+    function button_request(user_message $msg): string
     {
-        $html = new html_base();
-        return $html->button_bs('Request');
+        global $mtr;
+        $result = '';
+        $usr = $msg->usr;
+        if ($usr != null and $usr->is_admin()) {
+            $html = new html_base();
+            $url = html_base::url(views::LANGUAGE_ADD_ID);
+            $result = $html->ref($url, $mtr->txt(msg_id::BUTTON_ADD_LANGUAGES), '', html_base::BS_BTN);
+        }
+        return $result;
     }
 
     /**

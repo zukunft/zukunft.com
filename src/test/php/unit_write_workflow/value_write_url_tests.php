@@ -199,7 +199,7 @@ class value_write_url_tests extends value_url_tests
         ];
 
         $test_name = 'the calculator save confirms the saved number with the label';
-        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+        $this->ui->url_to_action($form, $msg_ui, $this->req->dto, true);
         $info = $msg_ui->get_last_info_html();
         $t->assert_text_contains($test_name, $info, word_names::TEST_ADD);
         $test_name = '... and the new number as a link';
@@ -216,7 +216,7 @@ class value_write_url_tests extends value_url_tests
         // negative: the same number again is no change, so nothing is saved or confirmed
         $test_name = 'a save of the shown number saves nothing';
         $form[$shown_key] = (string)values::SAMPLE_INT;
-        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+        $this->ui->url_to_action($form, $msg_ui, $this->req->dto, true);
         $t->assert($test_name, $msg_ui->get_last_info(), $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
         $test_name = '... and confirms no saved number';
         $t->assert($test_name, $msg_ui->get_last_info_html(), '');

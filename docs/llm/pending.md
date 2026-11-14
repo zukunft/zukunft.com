@@ -1,5 +1,39 @@
 # pending - list of planned llm prompts with prio 1
 
+## to review
+
+the findings of the review of the uncommitted changes of #247; each line is one prompt:
+
+fix before the commit:
+- the preview of the component edit view is outside the edit form: `system_views.json` places "system form preview
+  change component" before "system form end" and `system_page::preview` (`web/component/execute/system_page.php:574`)
+  renders the entries of the component, so a previewed form component posts a second `n` / `8n` with the values of the
+  sample phrase and the save takes them instead of the typed name; render the preview after the form end or without
+  its input fields, with a test that the save of the edited component keeps the typed name
+- `sandbox::set_owner` (`cfg/sandbox/sandbox.php:1660`) uses the result of `update_standard_fields()` and sets the new
+  owner in memory only if the update has been written, with a negative test for a refused owner update
+- an error text is escaped exactly once: `text_log_functions.php:866` sends the api answer text unescaped, because the
+  frontend escapes it in `html_base::dsp_notification` (`html_base.php:931`); with a test that a quoted name of an
+  error is shown with quotes; the developer confirms that the api answer may carry the internal error text
+- the check that each phrase of a new value is in the database moves from the save path (`value_base::phrases_in_db`
+  called by `save_for_user`, against "loading and saving are separated" of `coding.md`) to the place where the group of
+  the value is built from the url or api ids; the message names the value also if no phrase is found
+- `AUTO_UPDATE_TEST_FILES` in `src/test/php/const/files.php` is false
+- the resources created with the database that misses the component type row 59 are created again after
+  `/test/reset_db.php`: `api/type_lists/type_lists.json`, `api/ui_config/ui_config.json`, the type ids of
+  `unit/component/list.csv` and the `web/html` snapshots
+
+clean up:
+- `cfg/const/files.php:345`: the comment of `ASSIGNED_VIEWS_FILE` names the words and triples it adds and the id shift
+- `cfg/sandbox/sandbox.php:4568`: `and` instead of `&&`
+- `sandbox_list_named.php:1427`: the reason of the `$rdy_msg` buffer is on the same line as its creation
+- the wrong password workflow test (`unit_write_workflow/word_write_url_tests.php:607`) removes its failed login
+  sys_log row, so the test user never reaches the login fail limit of the admin dashboard
+- `unit_ui/system_view_ui_tests.php:685-693`: the commented out logout block with `$logout_backend` is deleted, and the
+  saving of `last_logoff` by `frontend::action_logout` gets a positive and a negative write test; an anonymous logout
+  without a user id starts no user query
+- `INTERNAL_WARNING` (`messages.php:539` and `de.yaml`) is worded like `INTERNAL` without the link promise
+
 ## fix Prio 0
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
@@ -62,11 +96,238 @@ deleted, so that no later fix is spent on code that goes; then the fixes of the 
 
 ### suggested code changes for activate the disabled tests
 
-... to be filled
+The line numbers are those of the files when this suggestion was written (commit `e37ac5a28`); the paths start at
+`src/test/php/`, or at `src/main/php/` for `web/` and `cfg/`. Today: 26 sites. The six "activate db write" TODOs of
+`unit/` are stale, because the sql creation tests below them run with their fixtures already; fourteen tests need a
+named fix before they can run; six disabled parts test or call a function or const that no longer exists, or that no
+test reads, and are deleted. Several disabled tests would end in a fatal as written: a missing `$msg` parameter, a
+removed `msg_id` case or a removed url var. One change with one log file (`docs/llm/log/fix_prio0_2026-11-13.md`).
+
+Decide first with the developer:
+- `cfg/sandbox/sandbox.php:4686` ("activate or remove", the "link removed" log entry of a link excluded by an update):
+  activate for the symmetry with the named branch and `sql_delete_and_log` (suggested) or remove, if the field log of
+  `excluded` is enough for a link
+- `cfg/const/files.php:347` (`zurich_htp_impact.json` in `files::SYSTEM_DATA_FILES`): delete the line and write the gap
+  "`FULL_LOAD_FILES` is imported by no script" into `pending_prio_2.md` (suggested, no id shift), or activate it with
+  the reset and the re-pin
+- `web/component/component.php:994`: delete `component::linked_views` and `btn_unlink` now (suggested), although
+  `pending_prio_2.md` "### component edit view" says to remove them once the component edit view has the parts
+- `xbrl_write_tests`: where the large import (721 words, 2875 triples, 2396 values) runs: in `test/test.php`, only by
+  `test_part.php`, or behind `INTEGRATION_TEST` like `wikidata_write_tests`
+- `formula_trigger_tests`: keep the `values::SALES_INCREASE_2017_FORM` fallback, which lets a second result pass, or
+  remove it with its Prio 2 TODO
+- `api_write_tests`: whether setting `$_SERVER[api::CSRF_TOKEN_SERVER_KEY]` in the simulated call is the accepted test
+  pattern or `test_api` gets a helper for it
+
+the stale "activate db write" TODOs:
+- `unit/group_tests.php:540`, `unit/value_tests.php:797`, `unit/result_tests.php:180`, `:189`, `:218` and
+  `unit/triple_tests.php:149`: the insert, update and delete sql of group, value, result and triple are tested against
+  their fixtures already; only the six TODO lines go, no db write is needed
+
+the write tests:
+- `unit_write/formula_trigger_tests.php:134`: the result of the formula `increase` of the CH inhabitants; switched off
+  while the target was the old "0.79%", the seed values give "0.75 %"; activate the assert (cause unclear, check first)
+- `unit_write/api_write_tests.php:88`: the api post, put and delete and the refused write of an ip user and of a
+  request without a user; three causes: `controller::change_permitted` checks `server_guard::csrf_token_valid` before
+  the user, so every simulated write is refused with `CHANGE_BLOCKED_SESSION_TOKEN`; the loop over `def::MAIN_CLASSES`
+  calls `test_mappers::class_to_add_filled_object` without `$cac`, which fatals for a triple; `test_api::assert_api_post`
+  never posts; the two blocked tests set the csrf header to `test_const::DUMMY_SESSION_TOKEN` and remove it again, and
+  `assert_api_post_direct` and `assert_api_del_direct` run for `word::class` only with `cleanup_change_log_of_deleted`;
+  the rest call part becomes a Prio 1 that names the missing api login
+- `unit_write/import_write_tests.php:521` (`assert_import_json_named`): the `*_undo.json` files only set
+  `"excluded": true` and an excluded row is loaded with its id, so `id() == 0` can never hold; assert `is_excluded()`
+  instead (likely, check first, also for `users_undo.json`)
+- `unit_write/all_unit_write_tests.php:152`: `horizontal_write_tests::run` has never run; activate it in
+  `a_selected_test` first, replace its "TODO Prio 2 delete changes caused by the test" by
+  `cleanup_change_log_of_deleted` after each `assert_delete`, then activate the line (cause unclear, check first)
+- `unit_write/term_write_tests.php:95`: the target `A word with the name "" already exists` describes the old bug of an
+  empty verb name; the target becomes the "A verb with the name "is" already exists" text of
+  `msg_id::NAME_ALREADY_EXISTS` inside `<span class="text-danger">`, like the triple case
+- `unit_write/view_relation_write_tests.php:57`: `test_views::view_relation_filled_add` links two seed views, which
+  `assert_write_link` would delete or exclude through `write_named_cleanup`; it links two test views with reserved names
+  instead (a second reserved view name in `views::RESERVED_NAMES`)
+- `unit_write/view_relation_write_tests.php:76` (`create_base_view_relations`): uses the undefined `$usr_msg`, and no
+  read test uses a view relation; the function and its call in `test_db_load::create_unit_test_db_entries` go
+- `unit_write/element_write_tests.php:125`: the target has `title="<name>"`, but `sandbox_named::name_link` sets the
+  title from the description; the target without the title (likely, check first)
+- `unit_write/xbrl_write_tests.php:88`, `:95`: born switched off; `$usr_msg` becomes `$msg`, the cleanup checks the
+  owner for every class, drops the `continue` and calls `cleanup_change_log_of_deleted`, then the three lines run where
+  the developer decides
+- `unit_write/expression_write_tests.php:157`: `phr_verb_lst` needs the `user_message $msg` now; call
+  `phr_verb_lst($msg)` and activate the assert with the target in element order (`"country","canton","System Test Word
+  Total"`, check first); it writes a `log_warning` for the verb element on every run
+- `unit_write/element_group_write_tests.php:196`: the class is not run ("TODO Prio 1 activate" of
+  `all_unit_write_tests.php:174`) and the target `"8.67 "` has a trailing space that `figure_list::display` never writes;
+  activate the class in `a_selected_test` first, then the target `"8.67"`
+- `unit_write/triple_write_tests.php:487` (`create_test_triples`): the call lacks the `$msg` of
+  `test_db_load::test_triple`, no test reads the triple and the Prio 2 above it doubts its direction; the line and the
+  Prio 2 go, and the then unused `triple_names::TAXES_OF_CF` with them
+
+the read, api and ui tests:
+- `unit_read/formula_list_read_tests.php:83`: `words::SECOND_TIME` no longer exists since the word "second" is split
+  into triples, and the active block below with `load_by_triple_ref` covers the test; the commented block goes
+- `unit_read/value_list_read_tests.php:93`: the guard `if ($e->id != 0)` and the two order fallbacks let the assert
+  pass with pi alone; they go, and the sorted ids of the loaded list are compared with `[values::E_ID,
+  values::PI_MATH_ID]`; if it fails, the fix goes into `value_list::load_by_ids` with its sql fixture
+- `unit_api/api_tests.php:242`: the `sys_log_list` api is admin only now and ignores `url_var::ID_LST`, and
+  `test_api::assert_api_sys_log_list_admin_only` covers it; the commented block goes (the fixture
+  `sys_log_list_api.json` stays, a test resource is never changed by the LLM)
+- `unit_ui/localhost_ui_tests.php:114`: the case `msg_id::FORM_VERB_ADD_TITLE` is now `FORM_TITLE_VERB_ADD`; written
+  like the word edit test above it: without a login `CHANGE_BLOCKED_FOR_IP_USER`, with
+  `test_base::web_page_with_login` the title (check first that the verb add view is blocked for an ip user)
+
+the disabled source parts:
+- `web/component/component.php:994` (`component::linked_views`): `url_var::COMPONENT_LINK_LONG` no longer exists, and
+  the private function and the placeholder `component::btn_unlink` have no other caller; by the decision both go, and
+  `pending_prio_2.md` "### component edit view" names them as gone
+- `cfg/sandbox/sandbox.php:4686` (`sandbox::sql_update_named_and_log`): if activated, the call gets the `$msg` of
+  `sql_creator::sql_func_log_link`, the key fields of `sql_key_fields_text_old` and `sql_key_fields_id_old`, and the
+  log sql is appended like `sql_delete_and_log` does, but only if `excluded` is a changed field, so that the reorder of
+  an excluded link (`component_link_update_log_000200000_user.sql`) gets no removal entry; with an sql creation test
+  of the exclusion of an included link in `unit/formula_link_tests.php`
+- `cfg/const/files.php:347`: by the decision; the file has no `impact` field, it declares seed words again with new
+  descriptions, and appending it shifts the ids of every later file
+
+Tests: no new test functions except the sql creation test of the link exclusion; each activated assert is the test of
+its fix, with reserved names and a logged delete with `cleanup_change_log_of_deleted` for every test object.
+
+Test runs: no import and no id changes, except `files.php:347` if it is activated; a `test/test_part.php` run with the
+changed test classes switched on in `a_selected_test::run`, then the full `test/test.php`, which also writes the new
+fixture of the link exclusion; the api and localhost tests need the backend fixes synced to the served copy; if
+`files.php:347` is activated, `/test/reset_db.php` and the re-pin first.
 
 ### suggested code changes for stubs and missing tests
 
-... to be filled
+The line numbers are those of the files when this suggestion was written (commit `e37ac5a28`); the paths start at
+`src/main/php/`, or at `src/test/php/` for the tests. Today: 18 "fill with real code" stubs, ten other frontend stubs
+and 15 missing unit tests. Every stub component except `main value` is linked by a view, but most of these views are
+linked from no page (only `frontend::view_id_to_dbo_ui`, `web/frontend.php:3712-3727`, names them). The component
+types map in `web/component/component_exe.php` (`:358`, `:445-463`, `:513`, `:554-555`, `:564`); the components are
+in `messages/system_views.json` unless noted. Decided by the developer: the result explain, the formula test, the user
+settings and the job views have a low priority (`pending_prio_2.md` "## the remaining parts of the retired http_old
+scripts"), and the error log entry by its id is declined ("## the sys_log id shown to the user"). One change with one
+log file; the removals that shift ids are a second commit after the first run.
+
+Decide first with the developer:
+- the views that no page links: setup (168), search_full (108), value_detail (117), sandbox (118) and undo (104):
+  remove each with its title, body and component type (suggested), fill, or Prio 2; each removal shifts the view and
+  component ids; a removed component type moves the later type ids down by one, because the setup inserts the rows
+  of `db_code_links/component_types.csv` without their id, so its row stays as a type without code
+- the preview of the component edit view: Prio 2 like `ui_preview::view_after` (suggested) or fill now
+- the ranking view (177): fill with the impact ranking without a backend change (suggested), Prio 2, or remove
+- `phrases_related`: keep the one list with a Prio 2 per component (suggested) or a selection per component now
+- the request button of the language select view for a user who is no admin: Prio 2 or the button only for an admin
+- the functions without a caller (`ListOfIdNamedCodeObjects::diff_by_code_id` and `unset_by_code_id`,
+  `phrase_list::sort_rev_by_id`, `triple::load_standard_by_link`): delete (suggested) or test
+- the dead frontend code (`formula::dsp_used4words`, the comment block of `value::dsp_samples`, `value::dsp_edit`,
+  `view_exe::selector_page`): delete now (suggested) or in "### the legacy code of the retired http_old scripts" of
+  `pending_prio_2.md`
+- `sandbox::update_standard_fields`: a possible bug (the owner may never be written); fix it in this prompt or as a
+  Prio 1
+
+the "fill with real code" stubs:
+- `system_page::preview` (`web/component/execute/system_page.php:505`): the component "system form preview change
+  component" of the component edit view (89); the preview needs a sample phrase in the url, which the view has not yet
+  (`pending_prio_2.md` "### component edit view"); by the decision a Prio 2 that names it
+- `system_page::about_body` (`:516`): already returns the real page `html_base::about_body`, as the snapshot
+  `views_by_id/static/167_about.html` shows; only the TODO goes
+- `system_page::setup_body` (`:523`), view setup (168): the setup runs in `http/setup.php` before the database and the
+  views exist, and the docblock wants the admin password and the `.env` values on a web page; by the decision the
+  view, its body and title component and the type go (check `views.php:1077` "TODO Prio 1 review SETUP_ID" first)
+- `system_page::body_search_full` (`:760`), view search_full (108): a fill needs filter parameters (term type, share,
+  protection) in the term list api; by the decision removed
+- `system_page::value_details` (`:771`), view value_detail (117): `value_default` already shows the source, the related
+  values and the results of a value; by the decision removed (check first whether the formulas that use the value
+  belong to `value_default`)
+- `system_page::result_explain` (`:782`) and `formula_test` (`:788`): a Prio 2 that names "### result explain and
+  formula test view" of `pending_prio_2.md`
+- `system_page::sandbox` (`:794`), view sandbox (118): the user view lists the own overwrites with an undo per row
+  (`ui_log::all_user_overwrites`); by the decision removed
+- `system_page::undo` (`:800`), view undo (104): by the decision the view stays and the placeholder is a Prio 2 that
+  names "## the undo and the error log page" of `pending_prio_2.md`
+- `system_page::user_setting` (`:806`): a Prio 2 that names "### user view" of the same section
+- `system_page::process` (`:812`, view job_check 143), `process_progress` (`:986`, view job_async 141, linked from
+  `ref::refresh_job_link`) and `process_list` (`:992`, view job_control 142): a Prio 2 that names "### the import of
+  the system data and the recalculation of all results as admin jobs"; that section says that the job control view
+  shows `process_progress`, but it is the async view: corrected in the same change
+- `system_page::error_log` (`:818`), view error_log (133): by the decision the view stays and the placeholder is a
+  Prio 2 that names "## the undo and the error log page" of `pending_prio_2.md`; the link of `log_msg` with the
+  sys_log id goes as "## the sys_log id shown to the user" says
+- `ui_rank::ranking_parameters` and `ranking_list` (`web/component/execute/ui_rank.php:61`, `:71`): the components of
+  the view `Ranking` (177, `base_views.json:210`, assigned to "country"); no backend calculates a ranking; by the
+  decision `ranking_list` shows the related phrases with the highest impact first (`ui_list::phrases_related_ex_verbs`
+  not grouped) and `ranking_parameters` names the impact as the criterion with a new `msg_id` in en and de
+- `ui_base::main_value` (`web/component/execute/ui_base.php:117`): the component "main value" is linked by no view, so
+  the function, `component_exe.php:513`, the consts of the type (`component_types.php:542-543`, `:1264`), the
+  component, `test_mappers.php:893` and the test rows of the type go; the row 59 of `db_code_links/component_types.csv`
+  stays as a type without code, because the setup inserts the types without their id, so a gap would move all later
+  type ids down by one
+- `ui_list::phrases_related` (`web/component/execute/ui_list.php:6470`): has real code already, but its five
+  components of the views `global_problem` (186) and `currency` (187) show the same list ("Pi (math), 𝑒" three times
+  in `phrase/186_phrase_global_problem_1.html`); the TODO becomes a Prio 2 "select the phrases per component, e.g. by
+  the row phrase of the component"
+
+the other frontend stubs:
+- `system_form::show_language_symbol` (`web/component/execute/system_form.php:678`) shows the name: it shows the
+  escaped `wiki_code` of the frontend language, and `admin_form_language_symbol` (`:663-671`) uses the same value
+  instead of the text 'symbol field missing' (check first that the language views carry the `wiki_code`)
+- `system_form::button_request` (`:3155`) shows 'Request' without an action: for an admin a link to
+  `views::LANGUAGE_ADD_ID` with the text of `msg_id::BUTTON_ADD_LANGUAGES`; for any other user by the decision
+- `system_page::body_search` (`system_page.php:691`): the title is shown by `system_page::search_title` already; the
+  text `system_title_search_result` of `en.yaml` and `de.yaml` becomes "search results for 'z$VarPattern$z*'", because
+  the search finds the names that start with the pattern (`sql_par_type::LIKE_R`)
+- `data_object::reset` (`web/helper/data_object.php:311`): no component reads a view link list from the cache yet; a
+  Prio 2 "add these lists to the cache when a page shows them" that names "### view add, view select and view edit"
+- `formula::dsp_used4words` (`web/formula/formula.php:911`) has no caller since `formula::dsp_edit` is gone; it goes
+  with `direct_assigned_phrases` (`:988`) and `dsp_unlink_phr` (`:1000`), which only it calls; `dsp_test_and_samples`
+  stays for the formula test view
+- `value::dsp_samples` (`web/value/value.php:1037`) is inside the comment block `:1031-1112`; the block goes
+- `value::dsp_edit` (`value.php:1360`, `:1133-1405`) has no caller, and the value add and edit views have the source
+  selector; it goes, and `dsp_hist`, `dsp_hist_links` and `dsp_add_fast` too if they lose their last caller
+- `view_exe::selector_page` (`web/view/view_exe.php:734`, `:713-743`) has no caller; it goes, its gap is step 3 of
+  "### view add, view select and view edit"
+- `word::to_url_array` (`web/word/word.php:288`): the code id and the excluded flag, which the url mappers read, are
+  missing; the code id goes into a new `sandbox_code_id::to_url_array`, the excluded flag into
+  `sandbox::to_url_array` only if true
+- `web/system/sys_log.php:71`: every field of the backend api is mapped already; only `$log_text` (`:78`) is never set,
+  because the text goes to `log::$text`; `$log_text` and the TODO go
+
+the missing unit tests:
+- `json_fields::MSG` (`shared/json_fields.php:69`, the refusal of the api): `user_log_sum_list::api_load` in
+  `unit_ui/system_view_ui_tests.php`: a json with `MSG` returns false with the text; the negative: a json without it
+- `ListOfIdNamedCodeObjects::diff_by_code_id` (`:204`) and `unset_by_code_id` (`:276`): no caller, by the decision
+- `ListOfIdNamedObjects::diff_by_name` (`:206`): the positive case is tested (`unit/base_object_tests.php:300-303`); the
+  negative, a diff with other names keeps all, goes to "name list"
+- `sandbox::update_standard_fields` (`cfg/sandbox/sandbox.php:2522`) writes with `$db_con->update`: the statement moves
+  into `sandbox::sql_update_standard` with an sql creation test in `unit/sandbox_tests.php` (a word with another owner
+  gives the statement, equal objects give null); check first: `set_owner` passes the same object twice (`:1652`) and
+  the diff compares the user, not `owner_id`
+- `phrase_list::sort_by_id` (`cfg/phrase/phrase_list.php:2265`): in `unit/phrase_list_tests.php` a triple and two words
+  come out with ascending ids, the triple first; the negative: an empty list; the docblock "sorted by name" is
+  corrected; `sort_rev_by_id` (`:2283`) has no caller, by the decision
+- `triple::load_standard_by_link` (`cfg/word/triple.php:2286`) is never reached, because `sandbox_link` loads a triple
+  by its verb; by the decision
+- `triple::load_standard_by_type_link` (`:2307`): its sql is tested; the load in `unit_read/triple_read_tests.php`: the
+  standard of `triple_names::MATH_CONST` by its from, verb and to id; the negative: the reversed link loads none
+- `unit/base_object_tests.php:580` (add and unset): `ListOfIdObjects::add_by_key` and `add_by_link` are untested: an
+  object without id is added by its key, the negative, the same key again, is not added and gives the message (check
+  first that this is what the TODO means)
+- `unit/element_list_tests.php:98` (fail cases): a formula with a term id that is not in the term list reports the
+  missing term in `$msg`
+- `unit/type_tests.php:647`, `:648`: the language and the position type are tested with log already; the system time
+  type gets a factory `test_types::system_time_type()` and `assert_sql_insert` with `sql_type::LOG` and a new fixture
+- `utils/test_base.php:3689` (`assert_load_by_id` skips `view_relation`): the view relations are imported now; check
+  that id 1 of `test_views::view_relation()` exists after the reset, then the skip goes and
+  `unit_read/horizontal_read_tests.php` loads it; the negative: an unknown id loads none
+
+Tests: the html snapshots of the changed views (`views_by_id/language/164_*` to `166_*`,
+`search/158_language_select.html`, `phrase/177_phrase_ranking_1.html`), the snapshots of the removed views deleted,
+`object_pages/all_component_types.html` without the removed types, and the unit, ui and read tests above, each with
+its positive and negative case; the coding rule tests show that nothing calls the deleted functions.
+
+Test runs: the Prio 2, the delete and the test changes change no id, so a `test/test_part.php` run with the unit, ui
+and read tests and `run_html_snapshots`; the removed views, components and component types shift the later ids, so
+then `/test/reset_db.php`, the re-pin and the full `test/test.php`.
 
 ### suggested code changes for deprecate
 
@@ -136,6 +397,22 @@ swapped (`is_result()` gives `views::VALUE_EDIT_ID`)
 - add the negative: the figure of a result links to `RESULT_EDIT_ID` (`test_figures::figure_result`)
 - the `element_group::dsp_values` link (`web/element/element_group.php:310`) uses the same function and changes
   with it
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
+## improve the new word / triple process
+
+if the user searches for a word that does not jet exist, suggest to add the word (or the triple, if the word contains spaces)
+check, if the word or triples exist in wikipedia, wikidata or conceptnet.io and if yes, suggest to include the references
+including the description and an 'is a' triple to define the group / parent of the new word
+
+## create JavaScript based add, edit and del views
+
+
 
 if done remove this prompt from pending.md
 
@@ -1975,9 +2252,6 @@ term_views and any missing main or link class
 Worth fixing
 formula button tooltips lost their object name
 button is now btn_edit () with no $url_arr at view.php:171 and word.php:751.
-Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back (...) but no longer
-used, since btn_edit ()/btn_del () build their own url. The buttons also lost the word= and back context those urls
-carried.
 Unused additions in tests: graph_tests.php:60-62 adds $base_url, $
 lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
 Tooltip regression, visible in base_ui_tests.php:512: the delete title went from delete this formula of scale minute to sec to delete this formula — the object name dropped out of the button title. Intentional?

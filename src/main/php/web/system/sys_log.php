@@ -68,14 +68,12 @@ class sys_log extends log
      * object vars
      */
 
-    // TODO Prio 0 add the missing backend object fields
     public ?DateTime $log_time = null;
     public int $user_id = 0;
     public ?int $function_id = null;
     private ?string $trace = null;
     public ?int $level_id = null;
     public ?DateTime $update_time = null;
-    public ?string $log_text = null;
     public ?string $description = null;
     // TODO Prio 2 use a simple user object instead of the id
     // the user or user group who is supposed to fix the issue

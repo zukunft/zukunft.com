@@ -78,8 +78,6 @@ include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\html\button;
-use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -94,14 +92,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\def;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_exe extends view_base
@@ -485,184 +478,6 @@ class view_exe extends view_base
      */
 
     /**
-     * HTML code to edit all word fields
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    function dsp_edit(int $add_cmp, word $wrd, array $url_arr, user_message $msg): string
-    {
-        global $ui_sys;
-        $usr = $ui_sys->usr;
-
-        $result = '';
-        $html = new html_base();
-
-        // use the default settings if needed
-        if ($this->type_id($msg) <= 0) {
-            $this->set_type_id($ui_sys->typ_lst_cache->msk_typ->id(view_types::DEFAULT));
-        }
-
-        // the header to add or change a view
-        if ($this->id() <= 0) {
-            $this->log_debug('create a view');
-            $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for '
-                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
-        } else {
-            $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $html->page_url($url_arr) . ')');
-            $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $html->esc($this->name) . '" (used for '
-                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
-        }
-        $result .= '<div class="row">';
-
-        // when changing a view show the fields only on the left side
-        if ($this->id() > 0) {
-            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
-        }
-
-        // show the edit fields
-        $result .= $html->dsp_form_start($script);
-        $result .= $html->dsp_form_id($this->id());
-        $result .= $html->dsp_form_hidden("word", $wrd->id);
-        // the calling page travels with the form as the '9'-prefixed hidden fields
-        foreach (html_base::back_url_array($url_arr) as $key => $val) {
-            $result .= $html->dsp_form_hidden($key, $val);
-        }
-        $result .= $html->dsp_form_hidden("confirm", '1');
-        $result .= '<div class="form-row">';
-        if ($add_cmp < 0 or $add_cmp > 0) {
-            // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8, "disabled");
-            //$result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
-            $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION, "", "disabled");
-        } else {
-            // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8);
-            $result .= $this->dsp_type_selector($script);
-            $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', $url_arr,
-                $html->url_back(views::VIEW_DEL_ID, $this->id(), $url_arr));
-        }
-
-        // in edit mode show the assigned words and the hist on the right
-        if ($this->id() > 0) {
-            $result .= '</div>';
-
-            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $url_arr, $msg);
-            if ($ui_sys?->cfg !== null) {
-                $row_limit = $ui_sys->cfg->get_by([triples::ROW_LIMIT, words::DATABASE], $msg, def::FALLBACK_DB_PAGE_ROWS);
-            } else {
-                $row_limit = def::FALLBACK_DB_PAGE_ROWS;
-            }
-
-            // collect the history
-            $changes = $this->dsp_hist(0, $row_limit, '', $msg, $url_arr);
-            if (trim($changes) <> "") {
-                $hist_html = $changes;
-            } else {
-                $hist_html = 'Nothing changed yet.';
-            }
-            $changes = $this->dsp_hist_links(0, $row_limit, '', $url_arr, $msg);
-            if (trim($changes) <> "") {
-                $link_html = $changes;
-            } else {
-                $link_html = 'No component have been added or removed yet.';
-            }
-
-            // display the tab box with the links and changes
-            $result .= $html->dsp_link_hist_box('Components', $comp_html,
-                '', '',
-                'Changes', $hist_html,
-                'Component changes', $link_html);
-
-            $this->log_debug('done');
-        }
-
-        $result .= '</div>';   // of row
-        $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
-
-        return $result;
-    }
-
-    /**
-     * @param string $form the name of the html form
-     * @return string the html code for the view type selector
-     */
-    private function dsp_type_selector(string $form): string
-    {//$sel->bs_class = $class;
-        //$sel->attribute = $attribute;
-        global $ui_sys;
-        return $ui_sys->typ_lst_cache->msk_typ->selector($form);
-    }
-
-    /**
-     * lists of all view components which are used by this view
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    private function linked_components($add_cmp, $wrd, string $script, array $url_arr, user_message $msg): string
-    {
-        $html = new html_base();
-        global $ui_sys;
-
-        $result = '';
-
-        if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= $html->dsp_tbl_start_hist();
-        }
-
-        // show the view components and allow the user to change them
-        $this->log_debug('load');
-        if (!$this->load_components()) {
-            $this->log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
-        } else {
-            $this->log_debug('loaded');
-            $dsp_list = new display_list;
-            $dsp_list->lst = $this->cmp_lst->lst();
-            $back_part = html_base::back_url_part($url_arr);
-            $dsp_list->script_parameter = $this->id() . '&word=' . $wrd->id()
-                . ($back_part == '' ? '' : '&' . $back_part);
-            $result .= $dsp_list->display(view_exe::class, $this->id(), $url_arr);
-            $this->log_debug('displayed');
-            if (html_base::UI_USE_BOOTSTRAP) {
-                $result .= '<tr><td>';
-            }
-
-            // check if the add button has been pressed and ask the user what to add
-            if ($add_cmp > 0) {
-                $result .= 'View component to add: ';
-                $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), $url_arr, word::class . '=' . $wrd->id() . '&add_entry=-1');
-                $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
-                $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, $msg, '', $id_selected, $ui_sys->component_list());
-
-                $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
-            } elseif ($add_cmp < 0) {
-                $result .= 'Name of the new component: ';
-                $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
-                // TODO Prio 2 ??? should this not be the default entry type
-                $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
-                $result .= $html->dsp_form_end('',
-                    $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
-            } else {
-                $url = $html->url_back(views::COMPONENT_LINK_ADD_ID, 0, $url_arr, url_var::VIEW . url_var::EQ . $this->id());
-                $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
-            }
-        }
-        if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= '</td></tr>';
-        }
-
-        if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= $html->dsp_tbl_end();
-        }
-
-        return $result;
-    }
-
-    /**
      * display the history of a view
      * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
@@ -697,48 +512,6 @@ class view_exe extends view_base
         $result .= $log_ui->dsp_hist_links($msg);
 
         $this->log_debug("done");
-        return $result;
-    }
-
-    private function load_components(): bool
-    {
-        return true;
-    }
-
-    /**
-     * create a selection page where the user can select a view
-     * that should be used for a term
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    function selector_page($wrd_id, array $url_arr = []): string
-    {
-        $this->log_debug($this->id() . ',' . $wrd_id);
-
-        $result = '';
-        $html = new html_base();
-
-        $msk_lst = new view_list();
-
-        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
-        $field = 'new_id';
-
-        foreach ($msk_lst as $msk) {
-            $view_id = $msk->id();
-            // the link escapes the name itself
-            $view_name = $msk->name();
-            if ($view_id == $this->id()) {
-                $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
-            } else {
-                $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
-            }
-            // TODO Prio 0 add the tooltip 'design the view' resp. 'delete the view' and the url
-            //             context of the calling word ('word=' . $wrd_id) with the back trace
-            $result .= $msk->btn_edit() . ' ';
-            $result .= $msk->btn_del() . ' ';
-            $result .= '<br>';
-        }
-
-        $this->log_debug('done');
         return $result;
     }
 

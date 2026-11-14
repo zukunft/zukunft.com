@@ -285,7 +285,6 @@ class word extends sandbox_code_id
     }
 
     /**
-     * TODO Prio 0 make sure that all fields are mapped to the url
      * @return array parent url array extended with the plural and view of this word, without empty strings
      */
     function to_url_array(user_message $msg): array

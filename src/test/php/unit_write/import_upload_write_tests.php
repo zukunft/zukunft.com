@@ -127,11 +127,10 @@ class import_upload_write_tests
         $t->subheader($ts . 'imported');
         $test_name = 'the upload of a json file shows the import result view';
         $ui = new frontend('');
-        $usr_backend = $t->usr1;
         $msg_ui = new user_message_ui();
         $msg_ui->usr = new user_ui($t->usr1->api_json());
         $url = [url_var::MASK => views::IMPORT_ID, url_var::POST_SUBMIT => url_var::TRUE];
-        $next = $ui->url_to_action($url, $usr_backend, $msg_ui, $ui->dto, true, $upload, true);
+        $next = $ui->url_to_action($url, $msg_ui, $ui->dto, true, $upload, true);
         $next_mask = $next[url_var::MASK] ?? 0;
         $t->assert($test_name, $next_mask, views::IMPORT_RESULT_ID, $t::TIMEOUT_LIMIT_IMPORT);
 
@@ -185,12 +184,11 @@ class import_upload_write_tests
     ): bool
     {
         $ui = new frontend('');
-        $usr_backend = $usr;
         $msg_ui = new user_message_ui();
         $msg_ui->usr = new user_ui($usr->api_json());
         $msg = new user_message($t->usr1);
         $url = [url_var::MASK => views::IMPORT_ID, url_var::POST_SUBMIT => url_var::TRUE];
-        $next = $ui->url_to_action($url, $usr_backend, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
+        $next = $ui->url_to_action($url, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
         $next_mask = $next[url_var::MASK] ?? 0;
         $result = $t->assert($test_name . ' shows the import view again', $next_mask, views::IMPORT_ID, $t::TIMEOUT_LIMIT_DB);
         $msg_txt = $msg_ui->text();

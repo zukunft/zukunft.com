@@ -107,6 +107,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -188,6 +189,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -213,6 +215,11 @@ class test_types
 
     // the action that leads to the "assigned" sys log status of sys_log_statuum.csv
     const string SYS_LOG_ASSIGNED_ACTION = 'assign to';
+
+    // the default system time type of system_time_types.csv
+    const string SYSTEM_TIME_DEFAULT_NAME = 'not classified';
+    const string SYSTEM_TIME_DEFAULT_COM = 'the execution time not yet assigned to any other group';
+    const int SYSTEM_TIME_DEFAULT_ID = 1;
 
     function __construct(test_cleanup $env) {
         $this->env = $env;
@@ -691,6 +698,18 @@ class test_types
             language_forms::PLURAL_NAME,
             language_forms::PLURAL_COM,
             language_forms::PLURAL_ID);
+    }
+
+    /**
+     * @return system_time_type "not classified" as the default system time type for unit testing
+     */
+    function system_time_type(): system_time_type
+    {
+        return new system_time_type(
+            system_time_type::DEFAULT,
+            self::SYSTEM_TIME_DEFAULT_NAME,
+            self::SYSTEM_TIME_DEFAULT_COM,
+            self::SYSTEM_TIME_DEFAULT_ID);
     }
 
 

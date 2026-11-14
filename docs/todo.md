@@ -278,7 +278,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
     TODO Substeps: move all display functions from the backend objects to the frontend
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
-    TODO Step 23: deprecate the get_old in value_ui
     TODO remove backend classes from frontend
     TODO remove frontend classes from backend
     TODO review the remaining db write tests

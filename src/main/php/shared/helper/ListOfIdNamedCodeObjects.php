@@ -201,7 +201,6 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
 
     /**
      * get all objects that are not in the given list based on the code id
-     * TODO Prio 0 add unit test
      *
      * @param ListOfIdNamedCodeObjects|ListOfIdObjects $lst the list to compare with
      * @return ListOfIdNamedCodeObjects|ListOfIdObjects the list of objects that are only in this list
@@ -273,7 +272,6 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
     /**
      * remove / unset a code id object of the list
      * and set the cache to dirty
-     * TODO Prio 0 add unit test
      *
      * @param string $code_id the unique code id of the entry
      * @returns bool true if the object has been added

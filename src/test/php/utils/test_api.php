@@ -88,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -999,7 +1000,8 @@ class test_api extends test_base
         $dbo_ui->set_from_json($dbo->api_json(), $msg_ui);
         // replacement for the api call
         $name = $dbo->name();
-        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
+        $api_json = $dbo_ui->api_array([], $msg_ui);
+        $this->api_write_with_csrf_token(fn() => $ctrl->post_json($api_json, $dbo, $msg));
         $dbo->load_by_name($name, $msg);
 
         return $this->assert_greater_zero($test_name, $dbo->id());
@@ -1032,7 +1034,7 @@ class test_api extends test_base
         $dbo->load_by_name($dbo->name(), $msg);
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
-        $ctrl->delete($dbo_ui->id(), $dbo, $msg);
+        $this->api_write_with_csrf_token(fn() => $ctrl->delete($dbo_ui->id(), $dbo, $msg));
 
         $dbo->load_by_name($dbo->name(), $msg);
         return $this->assert($test_name, $dbo->id(), 0);
@@ -1070,16 +1072,13 @@ class test_api extends test_base
         $msg->usr = $usr;
 
         // simulate the api post (add) call and capture the echoed rejection
-        ob_start();
-        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
-        $post_response = ob_get_clean();
+        $api_json = $dbo_ui->api_array([], $msg_ui);
+        $post_response = $this->api_write_with_csrf_token(fn() => $ctrl->post_json($api_json, $dbo, $msg));
         $test_name = 'the api post of a ' . $class_name . ' by an ip user is refused';
         $post_blocked = $this->assert_text_contains($test_name, $post_response, $blocked_txt);
 
         // simulate the api delete call and capture the echoed rejection
-        ob_start();
-        $ctrl->delete($dbo_ui->id(), $dbo, $msg);
-        $del_response = ob_get_clean();
+        $del_response = $this->api_write_with_csrf_token(fn() => $ctrl->delete($dbo_ui->id(), $dbo, $msg));
         $test_name = 'the api delete of a ' . $class_name . ' by an ip user is refused';
         $del_blocked = $this->assert_text_contains($test_name, $del_response, $blocked_txt);
 
@@ -1115,11 +1114,28 @@ class test_api extends test_base
         $msg = new user_message();
 
         // simulate the api post (add) call and capture the echoed rejection
-        ob_start();
-        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
-        $response = ob_get_clean();
+        $api_json = $dbo_ui->api_array([], $msg_ui);
+        $response = $this->api_write_with_csrf_token(fn() => $ctrl->post_json($api_json, $dbo, $msg));
         $test_name = 'the api post of a ' . $class_name . ' without a requesting user is refused';
         return $this->assert_text_contains($test_name, $response, $blocked_txt);
+    }
+
+    /**
+     * simulate an api write with the csrf header that the browser of a logged-in user sends, so that
+     * controller::change_permitted passes the session token check and reaches the user check;
+     * the header is removed again, so that no later test sends it unintended
+     *
+     * @param callable $api_call the simulated api write e.g. controller::post_json or controller::delete
+     * @return string the answer that the api write has echoed
+     */
+    private function api_write_with_csrf_token(callable $api_call): string
+    {
+        $_SERVER[api::CSRF_TOKEN_SERVER_KEY] = test_const::DUMMY_SESSION_TOKEN;
+        ob_start();
+        $api_call();
+        $response = ob_get_clean();
+        unset($_SERVER[api::CSRF_TOKEN_SERVER_KEY]);
+        return $response;
     }
 
 

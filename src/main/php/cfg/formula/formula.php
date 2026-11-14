@@ -575,14 +575,14 @@ class formula extends formula_map
         $val = null;
 
         if ($this->type_id > 0) {
-            log_debug("type (" . $this->type_cl . ")");
-            if ($this->type_cl == formula_type::THIS) {
+            log_debug("type (" . $this->type_code_id() . ")");
+            if ($this->type_code_id() == formula_type::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("this (" . $time_phr->name() . ")");
                 $val = $val_phr_lst->value_scaled($msg);
             }
-            if ($this->type_cl == formula_type::NEXT) {
+            if ($this->type_code_id() == formula_type::NEXT) {
                 $val_phr_lst = clone $phr_lst;
                 $next_wrd = $time_phr->next($msg);
                 if ($next_wrd->id() > 0) {
@@ -591,7 +591,7 @@ class formula extends formula_map
                     $val = $val_phr_lst->value_scaled($msg);
                 }
             }
-            if ($this->type_cl == formula_type::PREV) {
+            if ($this->type_code_id() == formula_type::PREV) {
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior($msg);
                 if ($prior_wrd->id() > 0) {
@@ -613,22 +613,22 @@ class formula extends formula_map
      */
     function special_time_phr(phrase $time_phr, user_message $msg): phrase
     {
-        log_debug($this->type_cl . ' for ' . $time_phr->dsp_id());
+        log_debug($this->type_code_id() . ' for ' . $time_phr->dsp_id());
         $result = $time_phr;
 
         if ($this->type_id > 0) {
             if ($time_phr->id() <= 0) {
                 log_err('No time defined for ' . $time_phr->dsp_id() . '.', 'formula->special_time_phr');
             } else {
-                if ($this->type_cl == formula_type::THIS) {
+                if ($this->type_code_id() == formula_type::THIS) {
                     $result = $time_phr;
                 }
-                if ($this->type_cl == formula_type::NEXT) {
+                if ($this->type_code_id() == formula_type::NEXT) {
                     $this_wrd = $time_phr->main_word($msg);
                     $next_wrd = $this_wrd->next($msg);
                     $result = $next_wrd->phrase();
                 }
-                if ($this->type_cl == formula_type::PREV) {
+                if ($this->type_code_id() == formula_type::PREV) {
                     $this_wrd = $time_phr->main_word($msg);
                     $prior_wrd = $this_wrd->prior($msg);
                     $result = $prior_wrd->phrase();

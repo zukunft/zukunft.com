@@ -94,7 +94,6 @@ include_once html_paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
@@ -873,67 +872,6 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * list all words linked to the formula and allow to unlink or add new words
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    function dsp_used4words($add, $wrd, array $url_arr, user_message $msg): string
-    {
-        log_debug($this->ref_text . " for " . $wrd->name());
-        $result = '';
-
-        $html = new html_base();
-
-        $phr_lst = $this->direct_assigned_phrases($msg);
-        log_debug("words linked loaded");
-
-        // list all linked words
-        $result .= $html->dsp_tbl_start_half();
-        if ($phr_lst != null) {
-            foreach ($phr_lst->lst() as $phr_linked) {
-                $result .= '  <tr>' . "\n";
-                $result .= $phr_linked->dsp_tbl(0);
-                $result .= $this->dsp_unlink_phr($phr_linked->id(), $url_arr);
-                $result .= '  </tr>' . "\n";
-            }
-        }
-
-        // give the user the possibility to add a similar word
-        log_debug("user");
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        if ($add == 1 or $wrd->id() > 0) {
-            //$sel->dummy_text = 'select a word where the formula should also be used';
-            if ($wrd->id() > 0) {
-                $selected = $wrd->id();
-            } else {
-                $selected = 0;
-            }
-            // TODO Prio 0 create the html code for formula links and add it to the formula mask
-            // TODO Prio 1 fill phrase list with ui fallback list
-            /*
-            $phr_lst = new phrase_list();
-            $result .= $this->phrase_selector($phr_lst, url_var::PHRASE_LINK_FORMULA_LONG, $selected);
-            $result .= $this->phrase_selector_old('link_phrase', "formula_edit",
-                    '', $selected) . ' ';
-            */
-        } else {
-            if ($this->id() > 0) {
-                $url = $this->obj_url(views::FORMULA_ADD_ID);
-                // TODO Prio 3 check if 'add_link=1' is needed
-                $result .= (new button($url, $url_arr))->add(msg_id::FORMULA_ADD);
-            }
-        }
-        $result .= '    </td>';
-        $result .= '  </tr>';
-
-        $result .= $html->dsp_tbl_end();
-
-        log_debug("done");
-        return $result;
-    }
-
-
-    /**
      * test and refresh the formula and show some sample values by returning the HTML code
      * @param array $url_arr the url vars of the calling page for the back link
      */
@@ -980,33 +918,6 @@ class formula extends sandbox_code_id
         $exp->set_user_text($this->get_usr_text(), $msg, $trm_lst);
         log_debug('->expression ' . $exp->ref_text_ui($msg));
         return $exp;
-    }
-
-    /**
-     * the user-specific list of a phrases assigned to a formula
-     */
-    function direct_assigned_phrases(user_message $msg): ?phrase_list
-    {
-        $phr_lst = new phrase_list();
-        $phr_lst->load_by_formula($this, $msg);
-        return $phr_lst;
-    }
-
-
-    /**
-     * allow the user to unlink a word
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    function dsp_unlink_phr($phr_id, array $url_arr = []): string
-    {
-        log_debug($phr_id);
-        $html = new html_base();
-        $result = '    <td>' . "\n";
-        $url = $html->url_with_back(rest_ctrl::PATH_FIXED . self::class . rest_ctrl::UPDATE . rest_ctrl::EXT
-            . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id, $url_arr);
-        $result .= (new button($url, $url_arr))->del(msg_id::FORMULA_UNLINK);
-        $result .= '    </td>' . "\n";
-        return $result;
     }
 
 }

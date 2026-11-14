@@ -1422,8 +1422,12 @@ class sandbox_list_named extends sandbox_list
                 // do not overwrite db values not set by the import
                 $sbx->fill($db_row, $usr_req);
 
-                if (!$sbx->db_ready($msg)) {
-                    log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
+                // a per item buffer like for the update below, because the check returns the state of
+                // the message, so one object that is not ready would block all later objects of the list
+                $rdy_msg = new user_message();
+                if (!$sbx->db_ready($rdy_msg)) {
+                    log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par because '
+                        . $rdy_msg->all_message_text());
                 } else {
                     if (!$sbx->needs_db_update($db_row, $msg)) {
                         log_info($sbx->dsp_id() . ' has no database relevant difference so db update is skipped');
@@ -1431,13 +1435,11 @@ class sandbox_list_named extends sandbox_list
                         // check always user sandbox and normal name, because reading from database for check would take longer
                         $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                         $sc_par_lst->add(sql_type::LOG);
-                        // a per item buffer, because one failing object must not stop the list;
-                        // it is merged into the request message below
+                        // a per item buffer, because one failing object must not stop the list
                         $upd_usr_msg = new user_message();
                         $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
                         if (!$upd_usr_msg->is_ok()) {
-                            $msg->merge($upd_usr_msg);
-                            log_err('Internal import error: ' . $msg->all_message_text());
+                            log_err('Internal import error: ' . $upd_usr_msg->all_message_text());
                         } elseif ($qp != null) {
                             $qp->obj_name = $sbx->name();
                             $sql_list->add($qp);

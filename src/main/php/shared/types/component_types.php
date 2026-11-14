@@ -539,8 +539,6 @@ class component_types
     const int GROUP_NAME_ID = 66;
     const string VALUE_NUMERIC = "value_numeric";
     const int VALUE_NUMERIC_ID = 65;
-    const string MAIN_VALUE = "main_value";
-    const int MAIN_VALUE_ID = 59;
 
     // show the user-specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
@@ -1261,7 +1259,6 @@ class component_types
         [self::VALUE_NAME, self::VALUE_NAME_ID],
         [self::GROUP_NAME, self::GROUP_NAME_ID],
         [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],
-        [self::MAIN_VALUE, self::MAIN_VALUE_ID],
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],

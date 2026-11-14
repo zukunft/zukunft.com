@@ -1804,6 +1804,7 @@
     \-- log_fatal_db - section for function log_fatal_db is expected to be log in /log_text/text_log_functions.php
     \-- log_fatal - section for function log_fatal is expected to be log in /log_text/text_log_functions.php
     \-- critical_error_html - section for function critical_error_html missing in /log_text/text_log_functions.php
+    \-- admin_informed_text - section for function admin_informed_text missing in /log_text/text_log_functions.php
     \-- sys_log_insert_allowed - section for function sys_log_insert_allowed missing in /log_text/text_log_functions.php
     \-- log_msg - section for function log_msg is expected to be log in /log_text/text_log_functions.php
 \-- sql_type_list
@@ -3265,6 +3266,8 @@
              should be save fields in /sandbox/sandbox.php
     \-- update_standard_fields - section for function update_standard_fields not yet defined that it should be save fiel
             ds in /sandbox/sandbox.php
+    \-- sql_update_standard - section for function sql_update_standard not yet defined that it should be save fields in 
+            /sandbox/sandbox.php
     \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox.php
     \-- no_diff - section for function no_diff not yet defined that it should be save fields in /sandbox/sandbox.php
     \-- no_non_id_diff - section for function no_non_id_diff not yet defined that it should be save fields in /sandbox/s
@@ -4674,10 +4677,12 @@
         \--  - try to write the error message to any possible out device if database connection is lost
     \-- critical_error_html
         \--  - build the html shown to the user for a critical internal error with the (possibly request
+    \-- admin_informed_text
+        \--  - @return string the line below a critical error that tells the user that the admin is informed,
     \-- sys_log_insert_allowed
         \--  - cross-request throttle for the sys_log inserts: allow at most text_log::INSERT_LIMIT inserts
     \-- log_msg
-        \--  - write a log message to the database and return the message that should be shown to the user
+        \--  - write a log message to the database and return the message that should be shown to the user,
     \-- read
         \-- ref_link_wikidata - 
     \-- refresh_from_url
@@ -6639,8 +6644,6 @@
             nt.php
     \-- word_name - section for function word_name not yet defined that it should be to review in /component/component.p
             hp
-    \-- btn_unlink - section for function btn_unlink not yet defined that it should be to review in /component/component
-            .php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /component/component.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /component/c
             omponent.php
@@ -6812,6 +6815,8 @@
             how password but without auto fill in /component/execute/system_form.php
     \-- show_name_in_formulas - section for function show_name_in_formulas not yet defined that it should be optional wi
             th show password but without auto fill in /component/execute/system_form.php
+    \-- label_with_html - section for function label_with_html not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_style - section for function show_style not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- show_formula - section for function show_formula not yet defined that it should be optional with show password b
@@ -7136,7 +7141,6 @@
     \-- value_name - section for function value_name missing in /component/execute/ui_base.php
     \-- group_name - section for function group_name missing in /component/execute/ui_base.php
     \-- num_value - section for function num_value missing in /component/execute/ui_base.php
-    \-- main_value - section for function main_value missing in /component/execute/ui_base.php
     \-- source_name - section for function source_name missing in /component/execute/ui_base.php
     \-- source_doi_link - section for function source_doi_link missing in /component/execute/ui_base.php
     \-- source_url_link - section for function source_url_link missing in /component/execute/ui_base.php
@@ -7369,15 +7373,9 @@
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
-    \-- dsp_used4words - section for function dsp_used4words not yet defined that it should be to review in /formula/for
-            mula.php
     \-- dsp_test_and_samples - section for function dsp_test_and_samples not yet defined that it should be to review in 
             /formula/formula.php
     \-- expression - section for function expression not yet defined that it should be to review in /formula/formula.php
-    \-- direct_assigned_phrases - section for function direct_assigned_phrases not yet defined that it should be to revi
-            ew in /formula/formula.php
-    \-- dsp_unlink_phr - section for function dsp_unlink_phr not yet defined that it should be to review in /formula/for
-            mula.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
     \-- __construct - section for function __construct is expected to be construct and map in /formula/formula_calc.php
@@ -7877,10 +7875,6 @@
             tml_base.php
     \-- dsp_form_hidden - section for function dsp_form_hidden not yet defined that it should be to dismiss / replace in
              /html/html_base.php
-    \-- dsp_form_text - section for function dsp_form_text not yet defined that it should be to dismiss / replace in /ht
-            ml/html_base.php
-    \-- dsp_form_text_big - section for function dsp_form_text_big not yet defined that it should be to dismiss / replac
-            e in /html/html_base.php
     \-- dsp_form_fld_checkbox - section for function dsp_form_fld_checkbox not yet defined that it should be to dismiss 
             / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / 
@@ -8520,10 +8514,12 @@
 \-- sandbox_code_id
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_code_id.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /sandbox
+            /sandbox_code_id.php
     \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /sandbox/s
             andbox_code_id.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_code_id.php
-    \-- order error - order of section construct and map has difference at input_valid should be before api_mapper
+    \-- order error - order of section construct and map has difference at to_url_array should be before api_mapper
 \-- sandbox_link
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_link.php
@@ -8916,17 +8912,7 @@
     \-- dsp_tbl_std - section for function dsp_tbl_std not yet defined that it should be to review in /value/value.php
     \-- dsp_tbl_usr - section for function dsp_tbl_usr not yet defined that it should be to review in /value/value.php
     \-- dsp_tbl - section for function dsp_tbl not yet defined that it should be to review in /value/value.php
-    \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /value/value.php
-    \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /value/value
-            .php
-    \-- dsp_samples - section for function dsp_samples not yet defined that it should be TODO Prio 2 recreate based on t
-            he group in /value/value.php
-    \-- dsp_add_fast - section for function dsp_add_fast not yet defined that it should be TODO Prio 2 recreate based on
-             the group in /value/value.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be TODO Prio 2 recreate based on the gro
-            up in /value/value.php
-    \-- display - section for function display not yet defined that it should be TODO Prio 2 recreate based on the group
-             in /value/value.php
+    \-- display - section for function display not yet defined that it should be to review in /value/value.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper,
             order of section base has difference at name_link should be before name_tip
 \-- value_list
@@ -9014,17 +9000,14 @@
             hp
     \-- dsp_navbar_html_no_view - section for function dsp_navbar_html_no_view not yet defined that it should be to revi
             ew / deprecate in /view/view.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /view/view.php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /view/view.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view.p
             hp
-    \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view.php
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
-    \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_b
             ase.php
@@ -9042,12 +9025,9 @@
     \-- show - section for function show not yet defined that it should be execute in /view/view_exe.php
     \-- add_page_cache - section for function add_page_cache not yet defined that it should be execute in /view/view_exe
             .php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view_e
             xe.php
-    \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view_exe
-            .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
     \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
@@ -9239,7 +9219,8 @@
     \-- __construct
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
-        \-- user_request - @param user_backend $usr_backend the backend user, updated in place e.g. on login
+        \-- user_request - @param user_message $msg the message buffer enriched with potential errors; must carry the re
+                questing frontend user as $msg->usr
         \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
@@ -9260,6 +9241,7 @@
         \-- sys_log_list - @return array the json message array to send the updated data to the backend
     \-- load_by_id_with_related
         \-- component - load the component by id AND ask the backend to include the owner, the change log and the
+        \-- view - load the view by id AND ask the backend to include the owner, the change log and the user
     \-- api_get
         \-- frontend - get an api json as a string from the backend
     \-- load
@@ -9270,6 +9252,20 @@
     \-- checksum
         \-- wikidata_import - @return string the checksum of the import json,
                  so that the confirm imports only what the user has seen
+    \-- url_mapper
+        \-- view - set the vars of this view bases on the url array
+    \-- to_url_array
+        \-- view - @return array parent url array with the type and the style url vars of the view form,
+    \-- sandbox_fld_order
+        \-- view - @return array the ordered db field names of a view used for the change preview order
+    \-- db_fld_to_url
+        \-- view - @return array all sandbox view db field names mapped to their url var key so that the undo
+    \-- dsp_navbar
+        \-- view - show the navigation bar, which allow the user to search, to log in or change the settings
+    \-- dsp_navbar_no_view
+        \-- view - same as dsp_navbar, but without the view change used for the view editors
+    \-- dsp_navbar_simple
+        \-- view - the basic zukunft top elements that should be shown always
 \-- base
     \-- name_link
         \-- component - create the html code to show the component name with the link to change the component parameters
@@ -9447,18 +9443,17 @@
         \-- component - @return string the end of the collapsed block that details_start has opened
     \-- word_name
         \-- component - @return string the name of a phrase and give the user the possibility to change the phrase name
-    \-- btn_unlink
-        \-- component - lists of all views where this component is used
-    \-- 1
-        \-- view_exe - HTML code to edit all word fields
     \-- dsp_hist
         \-- component - display the history of a view component
+        \-- view - display the history of a view
         \-- view_exe - display the history of a view
     \-- dsp_hist_links
         \-- component - display the link history of a view component
+        \-- view - display the link history of a view
         \-- view_exe - display the link history of a view
     \-- log_err
         \-- component - display the link history of a view component
+        \-- view - display the link history of a view
     \-- log_debug
         \-- component - display the link history of a view component
     \-- phrase_selector
@@ -9475,8 +9470,6 @@
         \-- sys_log_list - @return string the HTML code for the table headline
     \-- get_html_footer
         \-- sys_log_list - @return string the HTML code for the table headline
-    \-- selector_page
-        \-- view_exe - create a selection page where the user can select a view
 \-- load
     \-- add_page_cache
         \-- component_exe - fill the request cache with the data that this component shows, before the html of the
@@ -9628,8 +9621,11 @@
         \-- sandbox_link - the children overwrite this with the type list of their own link type
     \-- link_preview
         \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
+    \-- 3
+        \-- view - the switch icon that opens the edit view of the shown object with this view preselected as
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
+        \-- view - return the html code to display a view name with the link
     \-- display_with_actions
         \-- job_list - @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
     \-- pending_first
@@ -9841,7 +9837,8 @@
     \-- url_mapper
         \-- sandbox - set the vars of this object bases on the url array
     \-- to_url_array
-        \-- sandbox - @return array parent url array extended with the share and protection of this sandbox object
+        \-- sandbox - @return array parent url array extended with the share, protection, owner and, only if set,
+                 the exclusion
     \-- set_owner_name
         \-- sandbox - set the owner by the user name e.g. as sent by the api message or the page url
     \-- owner_name
@@ -9939,9 +9936,9 @@
     \-- system_sub_tile_var
         \-- system_page - HTML for a subtitle
     \-- preview
-        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+        \-- system_page - the preview of the edited component for the sample phrase of the url (url_var::SAMPLE_PHRASE),
     \-- about_body
-        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+        \-- system_page - @param int $phr_id the id of the sample phrase of the url, 0 if the url has none
     \-- setup_body
         \-- system_page - request from the user the values relevant for the initial setup
     \-- signup_body
@@ -9960,21 +9957,29 @@
     \-- body_search_full
         \-- system_page - like body_search but with all possible fields
     \-- value_details
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - all details of one value on one page: the fields of the value,
+                 the formulas whose results depend on
     \-- result_explain
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the formulas that have calculated a result from the given value,
+                 so these are the formulas whose
     \-- formula_test
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the formulas that have calculated a result from the given value,
+                 so these are the formulas whose
     \-- sandbox
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- undo
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- user_setting
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- process
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- error_log
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- error_update
         \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
     \-- not_yet_available
@@ -10010,8 +10015,6 @@
         \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- num_value
         \-- ui_base - TODO Prio 2 move to a component exe part class
-    \-- main_value
-        \-- ui_base - TODO Prio 0 fill with real code
     \-- source_name
         \-- ui_base - @param db_object|type_object|null $dbo the source whose name should be shown
     \-- source_doi_link
@@ -10247,7 +10250,7 @@
     \-- triples_of_types
         \-- ui_list - the triples that point to the given type, one column per sub type of the type below its name,
     \-- phrases_related
-        \-- ui_list - TODO Prio 0 fill with real code
+        \-- ui_list - the phrases related to the given phrase with the highest impact first, e.g. the global problems
     \-- list_sort
         \-- ui_list - @return string the html code of a sortable list
         \-- list_sort - @param phrase $phr the start phrase to select the rows
@@ -10284,9 +10287,10 @@
     \-- system_phrases
         \-- ui_rank - the triple names that are used by the system
     \-- ranking_parameters
-        \-- ui_rank - TODO Prio 0 fill with real code
+        \-- ui_rank - the criterion of the ranking list, which is the impact,
+                 because no backend calculates another ranking
     \-- ranking_list
-        \-- ui_rank - TODO Prio 0 fill with real code
+        \-- ui_rank - the phrases related to the given phrase with the highest impact first
     \-- phrase_select
         \-- ui_select - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- view_select
@@ -10633,6 +10637,8 @@
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_name_in_formulas
         \-- system_form - @param verb|db_object $dbo the verb
+    \-- label_with_html
+        \-- system_form - like show_field_labeled, but for a value that is html already, e.g. the link of a formula,
     \-- show_style
         \-- system_form - @param view|component|component_link|term_view|db_object $dbo the object whose display style i
                 s shown
@@ -10860,7 +10866,7 @@
         \-- system_form - the export button of an export view,
                  which shows the same view again with the request to download the export
     \-- button_request
-        \-- system_form - TODO Prio 0 wire up the request action
+        \-- system_form - TODO Prio 2 let a user who is no admin request a new language that an admin confirms
     \-- form_end
         \-- system_form - @return string that simply closes the form
     \-- row_start
@@ -11457,10 +11463,6 @@
         \-- html_base - centre a html page
     \-- dsp_form_hidden
         \-- html_base - html hidden field
-    \-- dsp_form_text
-        \-- html_base - html hidden field
-    \-- dsp_form_text_big
-        \-- html_base - html hidden field
     \-- dsp_form_fld_checkbox
         \-- html_base - add the field to a form
     \-- dsp_form_file_select
@@ -11671,5 +11673,8 @@
 \-- chart
     \-- svg
         \-- table_chart - the table as a chart of the given type
+\-- to review / deprecate
+    \-- dsp_navbar_html_no_view
+        \-- view - same as dsp_navbar, but without the view change used for the view editors
 ```
 

@@ -43,6 +43,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
@@ -484,6 +486,31 @@ class word_tests
         $t->assert($test_name . ' and the impact', $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
         $t->assert($test_name . ' and the view', $url_arr[url_var::VIEW], views::WORD_ID);
 
+        // the url mappers read the code id and the exclusion, so the url array carries them too,
+        // the code id only for a user who may see it, because a link url is part of the page
+        $test_name = 'the url array of a word contains the code id for an admin';
+        $wrd_ui->code_id = word_names::MATH;
+        $wrd_ui->excluded = true;
+        $msg_admin = new user_message_ui(new user_ui($t->usr_admin->api_json()));
+        $url_arr = $wrd_ui->to_url_array($msg_admin);
+        $code_id = $url_arr[url_var::CODE_ID] ?? '';
+        $t->assert($test_name, $code_id, word_names::MATH);
+        $test_name = '... and the exclusion';
+        $excluded = $url_arr[url_var::EXCLUDED] ?? '';
+        $t->assert($test_name, $excluded, url_var::TRUE);
+
+        // negative: a normal user never gets the code id in a url
+        $test_name = 'the url array of a word contains no code id for a normal user';
+        $msg_normal = new user_message_ui(new user_ui($t->usr_normal->api_json()));
+        $url_arr = $wrd_ui->to_url_array($msg_normal);
+        $t->assert_key_not_exists($test_name, url_var::CODE_ID, $url_arr);
+
+        // negative: a word that is not excluded leaves the exclusion out instead of posting false
+        $test_name = 'the url array of a word that is not excluded has no exclusion';
+        $wrd_ui->excluded = false;
+        $url_arr = $wrd_ui->to_url_array($msg_ui);
+        $t->assert_key_not_exists($test_name, url_var::EXCLUDED, $url_arr);
+
         // the add form starts with a word where no field is set, so its url array carries only the
         // id, which is still zero because the word is created by the confirm submit
         $test_name = 'the url array of a new word contains only the id';
@@ -491,7 +518,8 @@ class word_tests
         $t->assert($test_name, $url_arr[url_var::ID], 0);
         $t->assert_contains_not($test_name . ' and no unset field', array_keys($url_arr), [
             url_var::NAME, url_var::DESCRIPTION, url_var::TYPE, url_var::SHARE, url_var::PROTECTION,
-            url_var::OWNER, url_var::PLURAL, url_var::USAGE, url_var::IMPACT, url_var::VIEW]);
+            url_var::OWNER, url_var::PLURAL, url_var::USAGE, url_var::IMPACT, url_var::VIEW,
+            url_var::CODE_ID, url_var::EXCLUDED]);
 
 
         $t->subheader($ts . 'subtitle with phrase limit');

@@ -896,10 +896,8 @@ class frontend
     /**
      * execute the user request e.g. a database update and create the url for the next page
      * the execution should be done via api
-     * TODO Prio 0 deprecate $usr_backend and find another way to switch the user after login or signup
      *
      * @param array $url_array the parsed url as an array
-     * @param user_backend $usr_backend the backend user object updated in-place on successful login
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
@@ -909,7 +907,6 @@ class frontend
      */
     function url_to_action(
         array           $url_array,
-        user_backend    &$usr_backend,
         user_message_ui $msg_ui,
         data_object     $dto = new data_object(),
         bool            $do_it = true,
@@ -993,10 +990,10 @@ class frontend
         }
 
         match (true) {
-            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg_ui, $do_it, $url_array),
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_ui, $msg_ui, $do_it, $url_array),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg_ui, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg_ui, $do_it),
             // a button of the job lists changes the priority of a job or cancels it without a confirm view
@@ -2224,7 +2221,7 @@ class frontend
      * This is the two step dispatch of http/view.php wrapped in one call for the workflow tests.
      *
      * @param array $url_arr the parsed url of the user action e.g. the submitted edit form
-     * @param user_request $req the bundled request context (users, message, cache and the do_it flag)
+     * @param user_request $req the bundled request context (message with the requesting user, cache and the do_it flag)
      * @return string the html code of the next page shown to the user
      */
     function execute_and_next(
@@ -2238,7 +2235,7 @@ class frontend
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
+        $next_url = $this->url_to_action($url_arr, $req->msg, $req->dto, $req->do_it);
         $sys->times->switch();
         // url_to_html counts the rendering and the api wait itself
         return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
@@ -2255,7 +2252,6 @@ class frontend
      *
      * @param array $url_array the normalised URL params including username and password
      * @param user_message_ui $msg_ui collects errors if login fails
-     * @param user_backend $usr_backend updated in-place with the logged-in user on success
      * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the session
      * @return array URL array pointing to the back page (or the start view if no back target) on success, or the original login URL (minus credentials) on failure
@@ -2263,7 +2259,6 @@ class frontend
     private function action_login(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2280,7 +2275,6 @@ class frontend
             $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
             if ($logged_in) {
                 $this->start_user_session($db_usr->id(), $db_usr->name());
-                $usr_backend = $db_usr;
                 $usr_ui->set_from_json($db_usr->api_json([], $login_msg), $msg_ui);
             } else {
                 $msg_login_ui = new user_message_ui();
@@ -2291,7 +2285,7 @@ class frontend
 
         if ($logged_in) {
             // reject at once if a user whitelist is active and this user is not on it
-            server_guard::enforce_user((string)$usr_backend->id(), $usr_name);
+            server_guard::enforce_user((string)$usr_ui->id(), $usr_name);
             // without a back target show the start view after the login, not the login view again
             $back_array = html_base::url_par_from_back_part($url_array);
             $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
@@ -2310,7 +2304,6 @@ class frontend
      *
      * @param array $url_array the normalised URL params including username, email, and passwords
      * @param user_message_ui $msg_ui collects validation errors or save failures
-     * @param user_backend $usr_backend updated in-place with the new user on success
      * @param user_ui $usr_ui updated in-place from the new user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the signup page (minus passwords) on failure
@@ -2318,7 +2311,6 @@ class frontend
     private function action_signup(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2389,7 +2381,6 @@ class frontend
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
                         $this->start_user_session($usr_id, $usr_name);
-                        $usr_backend = $usr_by_name;
                         $usr_ui->set_from_json($usr_by_name->api_json([], $signup_msg), $msg_ui);
                         $signed_up = true;
                         $this->send_signup_mail($usr_by_name, $key, $msg_ui);
@@ -2504,7 +2495,6 @@ class frontend
      * validate the activation key, confirm the email, set the new password if given and auto-login the user
      * @param array $url_array the normalised URL params; expects id, key and optionally the two password fields
      * @param user_message_ui $msg_ui collects validation and save errors shown to the user
-     * @param user_backend $usr_backend updated in-place with the activated user on success
      * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the activate page (minus passwords) on failure
@@ -2512,7 +2502,6 @@ class frontend
     private function action_login_activate(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2570,7 +2559,6 @@ class frontend
                                 $this->start_user_session($usr_id, $usr_by_id->name());
                                 // reject at once if a user whitelist is active and this user is not on it
                                 server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
-                                $usr_backend = $usr_by_id;
                                 $usr_ui->set_from_json($usr_by_id->api_json([], $activate_msg), $msg_ui);
                                 $activated = true;
                             } else {
@@ -2607,16 +2595,14 @@ class frontend
     }
 
     /**
-     * record the logoff time, clear the session and reset both user objects to anonymous IP-only state
-     * mirrors the login process: on login the users are set to the DB user; on logout they are reset to empty
-     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is saved and object is reset
-     * @param user_ui $usr_ui the frontend user object; reset to an empty (IP-only) object after logout
+     * record the logoff time, clear the session and reset the requesting user to the anonymous IP-only state
+     * mirrors the login process: on login the user is set to the DB user; on logout it is reset to empty
+     * @param user_ui $usr_ui the requesting user whose account gets the last_logoff; reset to an empty (IP-only) object after logout
      * @param user_message_ui $msg_ui collects errors from saving the logoff time
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the logout confirmation view
      */
     private function action_logout(
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         user_message_ui $msg_ui,
         bool            $do_it,
@@ -2624,20 +2610,22 @@ class frontend
     ): array
     {
         if ($do_it) {
-            if ($usr_backend->has_db_id()) {
-                $logoff_msg = new backend_user_message($usr_backend);
-                $usr_backend->last_logoff = new DateTime();
-                $usr_backend->save($logoff_msg);
-                $msg_logoff_ui = new user_message_ui();
-                $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
-                $msg_ui->merge($msg_logoff_ui);
+            // the account is loaded by the id of the requesting user like in action_login_activate
+            $usr = new user_backend();
+            $logoff_msg = new backend_user_message($usr); // the user saves its own logoff time, merged into $msg_ui below
+            $usr->load_by_id($usr_ui->id(), $logoff_msg);
+            if ($usr->has_db_id()) {
+                $usr->last_logoff = new DateTime();
+                $usr->save($logoff_msg);
             }
+            $msg_logoff_ui = new user_message_ui();
+            $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
+            $msg_ui->merge($msg_logoff_ui);
             if (isset($_SESSION)) {
                 $_SESSION = [];
                 session_destroy();
             }
         }
-        $usr_backend = new user_backend();
         $usr_ui = new user_ui();
         // keep the '9'-prefixed back target of the logout request in the logout page url, so the
         // logout page (and a login from there) can send the user back to the original page

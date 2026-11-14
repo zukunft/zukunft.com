@@ -230,7 +230,7 @@ class sandbox extends db_object
     }
 
     /**
-     * @return array parent url array extended with the share and protection of this sandbox object
+     * @return array parent url array extended with the share, protection, owner and, only if set, the exclusion
      */
     function to_url_array(user_message $msg): array
     {
@@ -239,6 +239,9 @@ class sandbox extends db_object
         $url_array[url_var::PROTECTION] = $this->protection_id;
         if ($this->owner_name() != '') {
             $url_array[url_var::OWNER] = $this->owner_name();
+        }
+        if ($this->is_excluded()) {
+            $url_array[url_var::EXCLUDED] = url_var::TRUE;
         }
         return $url_array;
     }

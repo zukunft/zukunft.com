@@ -66,7 +66,6 @@ class json_fields
     // the references that the confirm of a phrase change writes too, by row number (see url_var::REF_ROW)
     const string URL_PART_REF_ROW = 'url_part_ref_row';
     // the messages that should be shown to the user e.g. name already used. please use another name
-    // TODO Prio 0 add unit test case
     const string MSG = 'message';
 
 

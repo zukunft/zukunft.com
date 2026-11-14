@@ -111,6 +111,9 @@ class signup_url_tests extends url_test_base
         if ($do_it) {
             $test_name = 'the signup tells the new user to confirm the email';
             $t->assert_text_contains($test_name, $html, $mtr->txt(msg_id::SIGNUP_MAIL_SENT));
+            $test_name = '... and switches the requesting user to the new user';
+            $sgn_usr_name = $this->msg->usr->name();
+            $t->assert($test_name, $sgn_usr_name, users::TEST_SIGNUP_NAME);
             $this->wf_id = $this->assert_signed_up($t);
         }
         $this->msg->reset();

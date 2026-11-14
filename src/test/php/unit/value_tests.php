@@ -794,7 +794,6 @@ class value_tests
         $t->assert_sql_changing_users_by_ids($sc, $val_3);
         $t->assert_sql_changing_users_by_ids($sc, $val_17);
 
-        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
         $val = $t_val->value($msg);
         $db_val = $val->cloned(values::SAMPLE_FLOAT);

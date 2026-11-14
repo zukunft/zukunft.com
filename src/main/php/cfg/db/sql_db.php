@@ -580,6 +580,7 @@ class sql_db
         element::class,
         component_link::class,
         term_view::class,
+        view_relation::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_rank;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -771,6 +772,17 @@ class word_ui_tests
         $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ABB, triple_names::COMPANY_ZURICH);
         $test_name = 'the stock with the lowest market capitalisation is last';
         $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ZURICH, triple_names::COMPANY_VESTAS);
+
+        $t->subheader($ts . 'ranking by impact');
+        $test_name = 'the ranking lists the stock with the highest market capitalisation first';
+        $rank = new ui_rank();
+        $rank_html = $rank->ranking_list($msg, $wrd_company_rel);
+        $t->assert_text_order($test_name, $rank_html, triple_names::COMPANY_ABB, triple_names::COMPANY_VESTAS);
+        // negative: a word without related phrases has nothing to rank
+        $test_name = 'a word without related phrases ranks nothing';
+        $t->assert($test_name, $rank->ranking_list($msg, $wrd_zh), '');
+        $test_name = 'the ranking names the impact as its criterion';
+        $t->assert($test_name, $rank->ranking_parameters(), $mtr->txt(msg_id::RANKING_BY_IMPACT));
 
         $t->subheader($ts . 'related values sorted by impact');
         $val_html = $list->values_by_word($wrd_zh, $msg, $dto);

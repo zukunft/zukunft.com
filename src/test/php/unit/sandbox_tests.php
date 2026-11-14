@@ -1918,6 +1918,25 @@ class sandbox_tests
         $sc->db_type = sql_db::MYSQL;
         $qp = $wrd->load_sql_changer($sc);
         $t->assert_qp($qp, $sc->db_type);
+
+        // the owner is the user of the standard row, so a change of the owner is a change of the user
+        $test_name = 'the standard row of a word with another owner is updated';
+        $wrd = $t_wrd->word();
+        $wrd_owned = clone $wrd;
+        $wrd_owned->set_user($t->usr2);
+        foreach ([sql_db::POSTGRES, sql_db::MYSQL] as $db_type) {
+            $sc->reset($db_type);
+            $qp = $wrd_owned->sql_update_standard($sc, $wrd, $msg);
+            if ($t->assert_true($test_name, $qp != null)) {
+                $t->assert_qp($qp, $sc->db_type);
+            }
+        }
+        $msg->reset();
+        $test_name = 'the standard row of an unchanged word is not updated';
+        $qp = $wrd->sql_update_standard($sc, clone $wrd, $msg);
+        $qp_sql = $qp?->sql;
+        $t->assert_null($test_name, $qp_sql);
+        $msg->reset();
     }
 
     /**

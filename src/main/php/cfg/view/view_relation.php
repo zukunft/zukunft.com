@@ -905,6 +905,7 @@ class view_relation extends sandbox_link
         return array_merge(
             view_relation_db::FLD_NAMES,
             view_relation_db::FLD_NAMES_USR,
+            view_relation_db::FLD_NAMES_NUM_USR,
             array(user_db::FLD_ID));
     }
 

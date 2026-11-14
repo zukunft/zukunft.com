@@ -238,6 +238,30 @@ class phrase_list_tests
         $phr_lst->remove_terms($del_lst);
         $t->assert($test_name, $phr_lst->count(), 2);
 
+        $t->subheader($ts . 'sort');
+
+        // a triple has a negative phrase id, so it comes before the words
+        // the ids in the order of the list, because the id list itself is sorted
+        $test_name = 'sort by id puts the triple first';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($t_wrd->word_pi()->phrase());
+        $phr_lst->add($t_trp->triple()->phrase());
+        $phr_lst->add($t_wrd->word_const()->phrase());
+        $sorted_ids = $phr_lst->sort_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, [-triple_names::MATH_CONST_ID, word_names::CONST_ID, word_names::PI_ID]);
+        $test_name = 'sort by id in reverse order puts the triple last';
+        $sorted_ids = $phr_lst->sort_rev_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, [word_names::PI_ID, word_names::CONST_ID, -triple_names::MATH_CONST_ID]);
+        // negative: an empty list stays empty
+        $test_name = 'sort by id of an empty list gives an empty list';
+        $empty_lst = new phrase_list($t->usr1);
+        $sorted_ids = $empty_lst->sort_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, []);
+        $test_name = 'sort by id in reverse order of an empty list gives an empty list';
+        $sorted_ids = $empty_lst->sort_rev_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, []);
+        $msg->reset();
+
 
         $t->subheader($ts . 'FOAF');
 

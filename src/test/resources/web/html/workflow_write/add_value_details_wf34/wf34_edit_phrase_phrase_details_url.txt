@@ -1,10 +1,10 @@
 GET
-http://localhost/http/view.php?id=0&9m=1&pl=203%2C2928%2C2929&m=53&z=0
-/http/view.php?id=0&9m=1&pl=203%2C2928%2C2929&m=53&z=0
-/http/view.php?id=0&9mask_id=entry_view&phrase_ids=203%2C2928%2C2929&mask_id=value_add&step=no&
+http://localhost/http/view.php?id=0&9m=1&pl=203%2C2934%2C2935&m=53&z=0
+/http/view.php?id=0&9m=1&pl=203%2C2934%2C2935&m=53&z=0
+/http/view.php?id=0&9mask_id=entry_view&phrase_ids=203%2C2934%2C2935&mask_id=value_add&step=no&
 {
     "id": "0",
-    "phrase_ids": "203,2928,2929",
+    "phrase_ids": "203,2934,2935",
     "mask_id": "value_add",
     "step": "no",
     "url_part_back": {

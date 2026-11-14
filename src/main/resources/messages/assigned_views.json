@@ -12,6 +12,33 @@
     },
     {
       "name": "mathematics"
+    },
+    {
+      "name": "problem"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "solution"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "exchange"
+    },
+    {
+      "name": "currency"
+    },
+    {
+      "name": "conversion"
     }
   ],
   "triples": [
@@ -21,6 +48,62 @@
       "verb": "is part of",
       "to": "mathematics",
       "view": "Mathematical constant"
+    },
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "exchange rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "exchange"
+    },
+    {
+      "name": "currency conversion",
+      "from": "currency",
+      "verb": "can have",
+      "to": "conversion"
+    }
+  ],
+  "components": [
+    {
+      "name": "problem definition",
+      "description": "show the most relevant definitions related to a problem",
+      "type": "phrases_related",
+      "row": "global problem"
+    },
+    {
+      "name": "problem size",
+      "description": "show the estimations of the size of a problem",
+      "type": "phrases_related",
+      "row": "potential loss"
+    },
+    {
+      "name": "problem solutions",
+      "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
+      "type": "phrases_related",
+      "row": "solution"
+    },
+    {
+      "name": "exchange rates",
+      "description": "show the most relevant exchange rates",
+      "type": "phrases_related",
+      "row": "exchange rate"
+    },
+    {
+      "name": "currency formulas",
+      "description": "show the formulas related to a currency",
+      "type": "phrases_related",
+      "row": "currency conversion"
     }
   ]
 }

@@ -1327,7 +1327,6 @@ class test_db_load
      */
     function create_unit_test_db_entries(test_cleanup $t): void
     {
-        new view_relation_write_tests()->create_base_view_relations($t);
         new view_link_write_tests()->create_base_view_links($t);
     }
 

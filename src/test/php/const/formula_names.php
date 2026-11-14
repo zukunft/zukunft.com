@@ -146,7 +146,7 @@ class formula_names
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     // the potential loss of a problem in money from its annual share of the world GDP (problem_*.json)
     const string ANNUAL_DAMAGE = 'annual damage in money';
-    const int ANNUAL_DAMAGE_ID = 107;
+    const int ANNUAL_DAMAGE_ID = 109;
     const string ANNUAL_DAMAGE_EXP = '"' . triple_names::POTENTIAL_LOSS . '","' . word_names::TRILLION . '","' . word_names::EUR . '"'
         . ' = "' . word_names::WORLD . '","' . word_names::GDP . '","' . word_names::TRILLION . '","' . word_names::EUR . '"'
         . ' * "' . words::PCT . '","' . word_names::GDP . '","' . word_names::ANNUAL . '"';

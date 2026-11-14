@@ -9,7 +9,7 @@
         "words": [],
         "triples": [
             {
-                "id": 4030,
+                "id": 4044,
                 "name": "new NPP more",
                 "description": "The Swiss electorate decides whether the ban on building new nuclear power plants (NPP), in force since 2018, is lifted again. Parliament passed the amendment of the Nuclear Energy Act as the indirect counter-proposal to the \"Blackout stoppen\" initiative; the referendum against it was filed with about 132'000 signatures in October 2026 {source:SRF Blackout initiative 2026}{source:20 Minuten referendum filed 2026}. A yes only allows new plants; the build decision would follow in the 2030s and a plant would run from about 2050 {source:ETH PSI white paper 2026}{source:BAK economiesuisse balance study 2026}. Below are the arguments of both sides with their numbers, then a calculator: set your own assumptions with the sliders and see whether a new plant, under these assumptions, lowers or raises the average electricity cost in 2050 - and what that suggests for your vote.",
                 "from": "new NPP",
@@ -17,7 +17,7 @@
                 "to": "calculator more"
             },
             {
-                "id": 4124,
+                "id": 4138,
                 "name": "supply gap supports lifting the NPP ban",
                 "description": "The four existing plants deliver {num:36 %} of Swiss electricity and almost half of the winter electricity; the last one (Leibstadt) is expected to stop around 2044, while demand rises to about {num:76 TWh} by 2050. Without new plants the winter net import grows to {num:7.5 TWh} in 2050; one EPR cuts it to {num:3.2 TWh}. {source:BAK economiesuisse balance study 2026}",
                 "from": "supply gap",
@@ -25,7 +25,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4126,
+                "id": 4140,
                 "name": "price stability supports lifting the NPP ban",
                 "description": "A new plant lowers the average wholesale price by {num:7 to 9 CHF/MWh} and dampens winter peaks of {num:130 to 135 CHF/MWh}; the avoided price volatility, outage and shortage risks are valued at about {num:520 million CHF} per year. {source:BAK economiesuisse balance study 2026}",
                 "from": "price stability",
@@ -33,7 +33,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4127,
+                "id": 4141,
                 "name": "value added supports lifting the NPP ban",
                 "description": "About {num:1.6 billion CHF} value added and {num:2'900 full-time jobs} per year over 60 years of operation (study commissioned by economiesuisse). {source:BAK economiesuisse balance study 2026}",
                 "from": "value added",
@@ -41,7 +41,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4129,
+                "id": 4143,
                 "name": "subsidy need limits lifting the NPP ban",
                 "description": "Even the pro study calculates a levelised cost of {num:115.5 CHF/MWh} against a market price of {num:64 CHF/MWh}: the market pays 55 %, the state about {num:625 million CHF} per year. No Western new build of the last twenty years was financed without state support. {source:BAK economiesuisse balance study 2026}",
                 "from": "subsidy need",
@@ -49,7 +49,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4131,
+                "id": 4145,
                 "name": "timing limits lifting the NPP ban",
                 "description": "About {num:23 years} from the vote to commercial operation (2050); the existing plants stop in the 2030s and 2040s. The head of the largest nuclear operator fears ten years of debate with nothing built. {source:BAK economiesuisse balance study 2026}{source:SRF Axpo energy report 2026}",
                 "from": "timing",
@@ -57,7 +57,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4133,
+                "id": 4147,
                 "name": "cluster risk limits lifting the NPP ban",
                 "description": "A residual risk and a single large unit (1.6 GW, about 16 % of demand) whose outage must be covered - the pro study leaves the risk side out; an insurance study prices the risk below 0.0001 Rp/kWh, the opponents call it uninsurable. {source:BAK economiesuisse balance study 2026}{source:SSES position paper 2025}",
                 "from": "cluster risk",
@@ -65,7 +65,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4135,
+                "id": 4149,
                 "name": "new NPP input overnight construction cost hint",
                 "description": "Olkiluoto 3: 6'875 EUR/kW nominal; Flamanville 3: about 10'000 CHF/kW; BAK base case 8'826 CHF/kW incl. 11 % Swiss surcharge {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP input overnight construction cost",
@@ -73,7 +73,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4142,
+                "id": 4156,
                 "name": "new NPP input construction time hint",
                 "description": "Olkiluoto 3 took 18 years, Flamanville 3 about 17; BAK assumes 10 {source:Swiss Academies NPP cost report 2026}{source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP input construction time",
@@ -81,7 +81,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4146,
+                "id": 4160,
                 "name": "new NPP input capacity hint",
                 "description": "One EPR 1.63 GW, one AP1000 1.157 GW, two AP1000 2.314 GW {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP input capacity",
@@ -89,7 +89,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4150,
+                "id": 4164,
                 "name": "new NPP input alternative cost hint",
                 "description": "Levelised cost 2050 of the PV and wind that would replace the nuclear kilowatt-hours: rooftop PV 50-130, wind 60-100 CHF/MWh {source:BAK economiesuisse balance study 2026}; Fraunhofer: PV 41-50, wind 43-92 EUR/MWh in Germany {source:Fraunhofer ISE LCOE 2024 via Faktenfackel}",
                 "from": "new NPP input alternative cost",
@@ -97,7 +97,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4154,
+                "id": 4168,
                 "name": "new NPP input system cost hint",
                 "description": "Storage, backup and grid cost per renewable MWh beyond the plant itself; no Swiss figure exists {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP input system cost",
@@ -105,7 +105,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4158,
+                "id": 4172,
                 "name": "new NPP input security value hint",
                 "description": "Per MWh of avoided winter import: 0 counts only the cost; BAK's 520 million CHF per year for 4.3 TWh is about 120 CHF/MWh {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP input security value",
@@ -113,7 +113,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4175,
+                "id": 4189,
                 "name": "generation cost supports lifting the NPP ban",
                 "description": "Levelised cost 2050 of a new plant {num:80 to 155 CHF/MWh} versus {num:60 to 130 CHF/MWh} for rooftop PV and {num:60 to 100 CHF/MWh} for Swiss onshore wind - before the storage, backup and grid cost that intermittent sources add. {source:BAK economiesuisse balance study 2026}",
                 "from": "generation cost",
@@ -121,7 +121,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4176,
+                "id": 4190,
                 "name": "climate and land supports lifting the NPP ban",
                 "description": "{num:10 to 20 g CO₂-eq/kWh} over the life cycle against about {num:198 g} for today's winter import mix; about {num:7'500 GWh per km²} and year, 54 times the density of rooftop PV. {source:BAK economiesuisse balance study 2026}",
                 "from": "climate and land",
@@ -129,7 +129,7 @@
                 "to": "lifting the NPP ban"
             },
             {
-                "id": 4200,
+                "id": 4214,
                 "name": "new NPP assumption capacity factor hint",
                 "description": "Swiss plants 85-90 % historically, OECD median 88 %; BAK uses 85 % {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption capacity factor",
@@ -137,7 +137,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4205,
+                "id": 4219,
                 "name": "new NPP assumption operating cost hint",
                 "description": "BAK: 39.3 CHF/MWh for the EPR, 37 for the AP1000; existing plants produce at 44 to 49 CHF/MWh all-in {source:BAK economiesuisse balance study 2026}{source:Nuklearforum production cost}",
                 "from": "new NPP assumption operating cost",
@@ -145,7 +145,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4208,
+                "id": 4222,
                 "name": "new NPP assumption interest-during-construction factor hint",
                 "description": "Share of the construction time over which the full capital is on average financed (S-curve); 0.4 reproduces BAK's 2'868 million CHF of interest {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption interest-during-construction factor",
@@ -153,7 +153,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4211,
+                "id": 4225,
                 "name": "new NPP assumption electricity demand hint",
                 "description": "Energy Perspectives 2050+ ZERO basis: 76 TWh; VSE: up to 90 TWh {source:Swiss Academies NPP cost report 2026}{source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption electricity demand",
@@ -161,7 +161,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4214,
+                "id": 4228,
                 "name": "new NPP assumption winter share hint",
                 "description": "Revisions fall into summer, so 55 % of the output is winter output (October to March) {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption winter share",
@@ -169,7 +169,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4220,
+                "id": 4234,
                 "name": "new NPP assumption import price hint",
                 "description": "Winter peaks of 130-135 CHF/MWh against an annual average of about 90 CHF/MWh in the model year 2050 without new plants {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption import price",
@@ -177,7 +177,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4226,
+                "id": 4240,
                 "name": "new NPP assumption market price hint",
                 "description": "Axpo market simulation in prices of 2024; only used for the subsidy need, not for the verdict {source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption market price",
@@ -185,7 +185,7 @@
                 "to": "calculator hint"
             },
             {
-                "id": 4229,
+                "id": 4243,
                 "name": "new NPP assumption winter net import hint",
                 "description": "BAK balance model 7.5 TWh; the four ETH/PSI models 5.4 to 12.4 TWh {source:ETH PSI white paper 2026}{source:BAK economiesuisse balance study 2026}",
                 "from": "new NPP assumption winter net import",
@@ -198,7 +198,7 @@
         "delete": [],
         "sources": [
             {
-                "id": 478,
+                "id": 484,
                 "name": "BAK economiesuisse balance study 2026"
             }
         ]

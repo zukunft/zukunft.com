@@ -75,6 +75,7 @@ include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 
 class all_unit_write_tests extends all_unit_read_tests
 {
@@ -149,8 +150,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 new user_log_write_tests()->run($t);
                 new sys_log_write_tests()->run($t);
                 new db_cache_page_write_tests()->run($t);
-                // TODO Prio 0 activate
-                //new horizontal_write_tests()->run($t);
+                new horizontal_write_tests()->run($t);
 
                 // run object specific db write tests
                 $t_db->create_test_db_entries($t);
@@ -172,8 +172,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 new expression_write_tests()->run($t);
                 new element_write_tests()->run($t);
                 new element_write_tests()->run_list($t);
-                // TODO Prio 1 activate
-                //new element_group_write_tests()->run($t);
+                new element_group_write_tests()->run($t);
                 new formula_write_tests()->run($t);
                 new formula_write_tests()->run_list($t);
                 new formula_link_write_tests()->run($t);
@@ -192,6 +191,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
+                // the large import of a real XBRL fileset, which removes its rows again
+                new xbrl_write_tests()->run($t);
                 new import_upload_write_tests()->run($t);
                 new export_write_tests()->run($t);
                 // reads the live wikidata and refreshes the captured json of the wikidata cache folder

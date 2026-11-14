@@ -12462,7 +12462,7 @@
                 "components": [
                     {
                         "link_id": 1621,
-                        "id": 483,
+                        "id": 482,
                         "name": "title calculator",
                         "description": "the calculator label of the phrase as the title, else the phrase name, and the calculator hint as the lead text",
                         "type_id": 287,
@@ -12472,7 +12472,7 @@
                     },
                     {
                         "link_id": 1622,
-                        "id": 484,
+                        "id": 483,
                         "name": "calculator input",
                         "description": "the input fields and the assumptions that the calculator triples of the phrase select, in their order, with the save button",
                         "type_id": 288,
@@ -12482,7 +12482,7 @@
                     },
                     {
                         "link_id": 1623,
-                        "id": 485,
+                        "id": 484,
                         "name": "calculation result",
                         "description": "the result table and the detail tables that the calculator triples of the phrase select, with the notes of the formulas and the sources of the values",
                         "type_id": 289,
@@ -29271,7 +29271,7 @@
                     },
                     {
                         "link_id": 1554,
-                        "id": 430,
+                        "id": 429,
                         "name": "related phrases",
                         "description": "show all words and triples that are a this phrase e.g. all mathematical constants",
                         "type_id": 46,
@@ -29280,7 +29280,7 @@
                     },
                     {
                         "link_id": 1555,
-                        "id": 424,
+                        "id": 423,
                         "name": "formulas",
                         "description": "simply show all related formulas",
                         "type_id": 81,
@@ -29388,7 +29388,7 @@
                 "components": [
                     {
                         "link_id": 1564,
-                        "id": 431,
+                        "id": 430,
                         "protection": 3,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -29400,7 +29400,7 @@
                     },
                     {
                         "link_id": 1565,
-                        "id": 432,
+                        "id": 431,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 55,
@@ -29420,7 +29420,7 @@
                 "components": [
                     {
                         "link_id": 1578,
-                        "id": 440,
+                        "id": 439,
                         "name": "system title table editor",
                         "description": "show the language specific title of the table editor",
                         "type_id": 268,
@@ -29431,7 +29431,7 @@
                     },
                     {
                         "link_id": 1579,
-                        "id": 442,
+                        "id": 441,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",
                         "type_id": 146,
@@ -29441,7 +29441,7 @@
                     },
                     {
                         "link_id": 1580,
-                        "id": 445,
+                        "id": 444,
                         "name": "button show editor phrase",
                         "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
                         "type_id": 275,
@@ -29451,7 +29451,7 @@
                     },
                     {
                         "link_id": 1581,
-                        "id": 443,
+                        "id": 442,
                         "name": "column tiers",
                         "description": "the columns of each column tier that are related to the phrase of the table",
                         "type_id": 269,
@@ -29461,7 +29461,7 @@
                     },
                     {
                         "link_id": 1582,
-                        "id": 444,
+                        "id": 443,
                         "name": "table editor table",
                         "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
                         "type_id": 55,
@@ -29479,7 +29479,7 @@
                 "components": [
                     {
                         "link_id": 1583,
-                        "id": 446,
+                        "id": 445,
                         "name": "calculator editor",
                         "description": "the editor of the calculator page of the phrase with its own phrase selector, built by a script from the phrase data of the phrase",
                         "type_id": 290,
@@ -29497,7 +29497,7 @@
                 "components": [
                     {
                         "link_id": 1584,
-                        "id": 447,
+                        "id": 446,
                         "name": "title process catch start",
                         "description": "the translated title of the start page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29507,7 +29507,7 @@
                     },
                     {
                         "link_id": 1585,
-                        "id": 448,
+                        "id": 447,
                         "name": "text explain process catch start",
                         "description": "the translated text that explains the start page of a process catch",
                         "type_id": 270,
@@ -29517,7 +29517,7 @@
                     },
                     {
                         "link_id": 1586,
-                        "id": 449,
+                        "id": 448,
                         "name": "process catch initial input fields",
                         "description": "the one easy to answer question of the start page, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -29526,7 +29526,7 @@
                     },
                     {
                         "link_id": 1587,
-                        "id": 450,
+                        "id": 449,
                         "name": "button next process catch start",
                         "description": "opens the main page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29544,7 +29544,7 @@
                 "components": [
                     {
                         "link_id": 1588,
-                        "id": 451,
+                        "id": 450,
                         "name": "title process catch main",
                         "description": "the translated title of the main page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29554,7 +29554,7 @@
                     },
                     {
                         "link_id": 1589,
-                        "id": 452,
+                        "id": 451,
                         "name": "text explain process catch main",
                         "description": "the translated text that explains the main page of a process catch",
                         "type_id": 270,
@@ -29564,7 +29564,7 @@
                     },
                     {
                         "link_id": 1590,
-                        "id": 453,
+                        "id": 452,
                         "name": "process catch main input fields",
                         "description": "the about three input fields that are most relevant for the result, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -29573,7 +29573,7 @@
                     },
                     {
                         "link_id": 1591,
-                        "id": 454,
+                        "id": 453,
                         "name": "button next process catch main",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29591,7 +29591,7 @@
                 "components": [
                     {
                         "link_id": 1592,
-                        "id": 455,
+                        "id": 454,
                         "name": "title process catch detail",
                         "description": "the translated title of the detail page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29601,7 +29601,7 @@
                     },
                     {
                         "link_id": 1593,
-                        "id": 456,
+                        "id": 455,
                         "name": "text explain process catch detail",
                         "description": "the translated text that explains the detail page of a process catch",
                         "type_id": 270,
@@ -29611,7 +29611,7 @@
                     },
                     {
                         "link_id": 1594,
-                        "id": 457,
+                        "id": 456,
                         "name": "process catch detail tab one",
                         "description": "tab 1 of the detail page of a process catch",
                         "type_id": 272,
@@ -29621,7 +29621,7 @@
                     },
                     {
                         "link_id": 1595,
-                        "id": 458,
+                        "id": 457,
                         "name": "process catch detail tab two",
                         "description": "tab 2 of the detail page of a process catch",
                         "type_id": 272,
@@ -29631,7 +29631,7 @@
                     },
                     {
                         "link_id": 1596,
-                        "id": 459,
+                        "id": 458,
                         "name": "process catch detail tab three",
                         "description": "tab 3 of the detail page of a process catch",
                         "type_id": 272,
@@ -29641,7 +29641,7 @@
                     },
                     {
                         "link_id": 1597,
-                        "id": 460,
+                        "id": 459,
                         "name": "process catch detail tab four",
                         "description": "tab 4 of the detail page of a process catch",
                         "type_id": 272,
@@ -29651,7 +29651,7 @@
                     },
                     {
                         "link_id": 1598,
-                        "id": 461,
+                        "id": 460,
                         "name": "process catch detail tab five",
                         "description": "tab 5 of the detail page of a process catch",
                         "type_id": 272,
@@ -29661,7 +29661,7 @@
                     },
                     {
                         "link_id": 1599,
-                        "id": 462,
+                        "id": 461,
                         "name": "process catch detail tab one fields",
                         "description": "the input fields of tab 1 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29671,7 +29671,7 @@
                     },
                     {
                         "link_id": 1600,
-                        "id": 463,
+                        "id": 462,
                         "name": "process catch detail tab two fields",
                         "description": "the input fields of tab 2 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29681,7 +29681,7 @@
                     },
                     {
                         "link_id": 1601,
-                        "id": 464,
+                        "id": 463,
                         "name": "process catch detail tab three fields",
                         "description": "the input fields of tab 3 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29691,7 +29691,7 @@
                     },
                     {
                         "link_id": 1602,
-                        "id": 465,
+                        "id": 464,
                         "name": "process catch detail tab four fields",
                         "description": "the input fields of tab 4 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29701,7 +29701,7 @@
                     },
                     {
                         "link_id": 1603,
-                        "id": 466,
+                        "id": 465,
                         "name": "process catch detail tab five fields",
                         "description": "the input fields of tab 5 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29711,7 +29711,7 @@
                     },
                     {
                         "link_id": 1604,
-                        "id": 481,
+                        "id": 480,
                         "name": "button refresh process catch detail",
                         "description": "shows the detail page of the process catch again with the changed assumptions",
                         "type_id": 275,
@@ -29721,7 +29721,7 @@
                     },
                     {
                         "link_id": 1605,
-                        "id": 467,
+                        "id": 466,
                         "name": "button next process catch detail",
                         "description": "opens the result page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -29739,7 +29739,7 @@
                 "components": [
                     {
                         "link_id": 1606,
-                        "id": 468,
+                        "id": 467,
                         "name": "title process catch result",
                         "description": "the translated title of the result page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -29749,7 +29749,7 @@
                     },
                     {
                         "link_id": 1607,
-                        "id": 469,
+                        "id": 468,
                         "name": "text explain process catch result",
                         "description": "the translated text that explains the result page of a process catch",
                         "type_id": 270,
@@ -29759,7 +29759,7 @@
                     },
                     {
                         "link_id": 1608,
-                        "id": 470,
+                        "id": 469,
                         "name": "process catch result tab one",
                         "description": "tab 1 of the result page of a process catch",
                         "type_id": 272,
@@ -29769,7 +29769,7 @@
                     },
                     {
                         "link_id": 1609,
-                        "id": 471,
+                        "id": 470,
                         "name": "process catch result tab two",
                         "description": "tab 2 of the result page of a process catch",
                         "type_id": 272,
@@ -29779,7 +29779,7 @@
                     },
                     {
                         "link_id": 1610,
-                        "id": 472,
+                        "id": 471,
                         "name": "process catch result tab three",
                         "description": "tab 3 of the result page of a process catch",
                         "type_id": 272,
@@ -29789,7 +29789,7 @@
                     },
                     {
                         "link_id": 1611,
-                        "id": 473,
+                        "id": 472,
                         "name": "process catch result tab four",
                         "description": "tab 4 of the result page of a process catch",
                         "type_id": 272,
@@ -29799,7 +29799,7 @@
                     },
                     {
                         "link_id": 1612,
-                        "id": 474,
+                        "id": 473,
                         "name": "process catch result tab five",
                         "description": "tab 5 of the result page of a process catch",
                         "type_id": 272,
@@ -29809,7 +29809,7 @@
                     },
                     {
                         "link_id": 1613,
-                        "id": 475,
+                        "id": 474,
                         "name": "process catch result tab one fields",
                         "description": "the input fields of tab 1 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29819,7 +29819,7 @@
                     },
                     {
                         "link_id": 1614,
-                        "id": 476,
+                        "id": 475,
                         "name": "process catch result tab two fields",
                         "description": "the input fields of tab 2 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29829,7 +29829,7 @@
                     },
                     {
                         "link_id": 1615,
-                        "id": 477,
+                        "id": 476,
                         "name": "process catch result tab three fields",
                         "description": "the input fields of tab 3 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29839,7 +29839,7 @@
                     },
                     {
                         "link_id": 1616,
-                        "id": 478,
+                        "id": 477,
                         "name": "process catch result tab four fields",
                         "description": "the input fields of tab 4 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29849,7 +29849,7 @@
                     },
                     {
                         "link_id": 1617,
-                        "id": 479,
+                        "id": 478,
                         "name": "process catch result tab five fields",
                         "description": "the input fields of tab 5 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -29859,7 +29859,7 @@
                     },
                     {
                         "link_id": 1618,
-                        "id": 480,
+                        "id": 479,
                         "name": "button back process catch result",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 274,
@@ -29906,7 +29906,7 @@
                 "components": [
                     {
                         "link_id": 1624,
-                        "id": 487,
+                        "id": 486,
                         "name": "formula selector",
                         "description": "the formulas of the page of the phrase to select the formula that the formula editor shows",
                         "type_id": 292,
@@ -29916,7 +29916,7 @@
                     },
                     {
                         "link_id": 1625,
-                        "id": 486,
+                        "id": 485,
                         "name": "formula editor",
                         "description": "the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase",
                         "type_id": 291,
@@ -29926,7 +29926,7 @@
                     },
                     {
                         "link_id": 1626,
-                        "id": 488,
+                        "id": 487,
                         "name": "formula result compare",
                         "description": "the results of the page of the phrase until now against the results after the save of the formula editor",
                         "type_id": 293,
@@ -30459,11 +30459,11 @@
                 "class": "triple"
             },
             {
-                "id": 3002,
+                "id": 3016,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2045,
+                "from_id": 2053,
                 "from_phrase": {
-                    "id": 2045,
+                    "id": 2053,
                     "name": "9 780674 000780",
                     "description": null,
                     "type_id": 1,
@@ -30483,9 +30483,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2998,
+                "to_id": -3012,
                 "to_phrase": {
-                    "id": 2998,
+                    "id": 3012,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -30496,11 +30496,11 @@
                 "class": "triple"
             },
             {
-                "id": 3001,
+                "id": 3015,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2044,
+                "from_id": 2052,
                 "from_phrase": {
-                    "id": 2044,
+                    "id": 2052,
                     "name": "978-0-674-00078-0",
                     "description": null,
                     "type_id": 1,
@@ -30520,9 +30520,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2998,
+                "to_id": -3012,
                 "to_phrase": {
-                    "id": 2998,
+                    "id": 3012,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": null,
@@ -30533,11 +30533,11 @@
                 "class": "triple"
             },
             {
-                "id": 2991,
+                "id": 3005,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
-                "from_id": 2042,
+                "from_id": 2050,
                 "from_phrase": {
-                    "id": 2042,
+                    "id": 2050,
                     "name": "978-0-679-73373-7",
                     "description": null,
                     "type_id": 1,
@@ -30557,9 +30557,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 2048,
+                "to_id": 2056,
                 "to_phrase": {
-                    "id": 2048,
+                    "id": 2056,
                     "name": "The Myth of Sisyphus",
                     "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                     "type_id": 1,
@@ -30570,11 +30570,11 @@
                 "class": "triple"
             },
             {
-                "id": 2993,
+                "id": 3007,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
-                "from_id": 2043,
+                "from_id": 2051,
                 "from_phrase": {
-                    "id": 2043,
+                    "id": 2051,
                     "name": "978-0-8021-3098-3",
                     "description": null,
                     "type_id": 1,
@@ -30594,9 +30594,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 2049,
+                "to_id": 2057,
                 "to_phrase": {
-                    "id": 2049,
+                    "id": 2057,
                     "name": "Rhinoceros and Other Plays",
                     "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                     "type_id": 1,
@@ -30644,12 +30644,12 @@
                 "class": "triple"
             },
             {
-                "id": 5216,
+                "id": 5230,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2578,
+                "from_id": 2586,
                 "from_phrase": {
-                    "id": 2578,
+                    "id": 2586,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -30851,44 +30851,44 @@
                 "class": "triple"
             },
             {
-                "id": 2045,
+                "id": 2053,
                 "name": "9 780674 000780",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2998,
+                "id": 3012,
                 "name": "A Theory of Justice, revised edition",
                 "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                 "class": "triple"
             },
             {
-                "id": 2044,
+                "id": 2052,
                 "name": "978-0-674-00078-0",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2042,
+                "id": 2050,
                 "name": "978-0-679-73373-7",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2048,
+                "id": 2056,
                 "name": "The Myth of Sisyphus",
                 "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2043,
+                "id": 2051,
                 "name": "978-0-8021-3098-3",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2049,
+                "id": 2057,
                 "name": "Rhinoceros and Other Plays",
                 "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                 "type_id": 1,
@@ -30908,7 +30908,7 @@
                 "class": "triple"
             },
             {
-                "id": 2578,
+                "id": 2586,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30996,11 +30996,11 @@
                 "class": "triple"
             },
             {
-                "id": 3837,
+                "id": 3851,
                 "name": "a is symbol for year (duration unit)",
-                "from_id": 1186,
+                "from_id": 1195,
                 "from_phrase": {
-                    "id": 1186,
+                    "id": 1195,
                     "name": "a",
                     "description": null,
                     "type_id": 1,
@@ -31020,9 +31020,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3794,
+                "to_id": -3808,
                 "to_phrase": {
-                    "id": 3794,
+                    "id": 3808,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -31483,11 +31483,11 @@
                 "class": "triple"
             },
             {
-                "id": 3003,
+                "id": 3017,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
-                "from_id": 2047,
+                "from_id": 2055,
                 "from_phrase": {
-                    "id": 2047,
+                    "id": 2055,
                     "name": "CH0038863350",
                     "description": null,
                     "type_id": 1,
@@ -31507,9 +31507,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2999,
+                "to_id": -3013,
                 "to_phrase": {
-                    "id": 2999,
+                    "id": 3013,
                     "name": "Nestl\u00e9 registered share",
                     "description": "the registered share of Nestl\u00e9 S.A.",
                     "type_id": null,
@@ -31694,13 +31694,13 @@
                 "class": "triple"
             },
             {
-                "id": 1186,
+                "id": 1195,
                 "name": "a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3794,
+                "id": 3808,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -31847,13 +31847,13 @@
                 "class": "word"
             },
             {
-                "id": 2047,
+                "id": 2055,
                 "name": "CH0038863350",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2999,
+                "id": 3013,
                 "name": "Nestl\u00e9 registered share",
                 "description": "the registered share of Nestl\u00e9 S.A.",
                 "class": "triple"
@@ -32010,11 +32010,11 @@
                 "class": "triple"
             },
             {
-                "id": 3000,
+                "id": 3014,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
-                "from_id": 2046,
+                "from_id": 2054,
                 "from_phrase": {
-                    "id": 2046,
+                    "id": 2054,
                     "name": "DE0007100000",
                     "description": null,
                     "type_id": 1,
@@ -32034,9 +32034,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2988,
+                "to_id": -3002,
                 "to_phrase": {
-                    "id": 2988,
+                    "id": 3002,
                     "name": "Mercedes-Benz Group share",
                     "description": "the registered share of Mercedes-Benz Group AG",
                     "type_id": null,
@@ -32236,7 +32236,7 @@
                 "class": "triple"
             },
             {
-                "id": 978,
+                "id": 994,
                 "name": "GDP is symbol for gross domestic product",
                 "from_id": 304,
                 "from_phrase": {
@@ -32260,9 +32260,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -963,
+                "to_id": -979,
                 "to_phrase": {
-                    "id": 963,
+                    "id": 979,
                     "name": "gross domestic product",
                     "description": "total market value of goods and services produced",
                     "type_id": null,
@@ -32273,11 +32273,11 @@
                 "class": "triple"
             },
             {
-                "id": 3744,
+                "id": 3758,
                 "name": "g\/kWh is symbol for gram per kWh",
-                "from_id": 2395,
+                "from_id": 2403,
                 "from_phrase": {
-                    "id": 2395,
+                    "id": 2403,
                     "name": "g\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32297,9 +32297,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2983,
+                "to_id": -2997,
                 "to_phrase": {
-                    "id": 2983,
+                    "id": 2997,
                     "name": "gram per kWh",
                     "description": "the unit of the emission intensity of electricity",
                     "type_id": 2,
@@ -32678,13 +32678,13 @@
                 "class": "triple"
             },
             {
-                "id": 2046,
+                "id": 2054,
                 "name": "DE0007100000",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2988,
+                "id": 3002,
                 "name": "Mercedes-Benz Group share",
                 "description": "the registered share of Mercedes-Benz Group AG",
                 "class": "triple"
@@ -32753,19 +32753,19 @@
                 "class": "word"
             },
             {
-                "id": 963,
+                "id": 979,
                 "name": "gross domestic product",
                 "description": "total market value of goods and services produced",
                 "class": "triple"
             },
             {
-                "id": 2395,
+                "id": 2403,
                 "name": "g\/kWh",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2983,
+                "id": 2997,
                 "name": "gram per kWh",
                 "description": "the unit of the emission intensity of electricity",
                 "type_id": 2,
@@ -32941,11 +32941,11 @@
                 "class": "triple"
             },
             {
-                "id": 3796,
+                "id": 3810,
                 "name": "kg\/kWh is symbol for kg per kWh",
-                "from_id": 2396,
+                "from_id": 2404,
                 "from_phrase": {
-                    "id": 2396,
+                    "id": 2404,
                     "name": "kg\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32965,9 +32965,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3709,
+                "to_id": -3723,
                 "to_phrase": {
-                    "id": 3709,
+                    "id": 3723,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -33243,11 +33243,11 @@
                 "class": "triple"
             },
             {
-                "id": 3792,
+                "id": 3806,
                 "name": "kWh\/a is symbol for kilowatthours per year",
-                "from_id": 2393,
+                "from_id": 2401,
                 "from_phrase": {
-                    "id": 2393,
+                    "id": 2401,
                     "name": "kWh\/a",
                     "description": null,
                     "type_id": 1,
@@ -33267,9 +33267,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3740,
+                "to_id": -3754,
                 "to_phrase": {
-                    "id": 3740,
+                    "id": 3754,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -33280,11 +33280,11 @@
                 "class": "triple"
             },
             {
-                "id": 3793,
+                "id": 3807,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
-                "from_id": 2394,
+                "from_id": 2402,
                 "from_phrase": {
-                    "id": 2394,
+                    "id": 2402,
                     "name": "kWh\/kWp\u00b7a",
                     "description": null,
                     "type_id": 1,
@@ -33304,9 +33304,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3741,
+                "to_id": -3755,
                 "to_phrase": {
-                    "id": 3741,
+                    "id": 3755,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -33629,13 +33629,13 @@
                 "class": "word"
             },
             {
-                "id": 2396,
+                "id": 2404,
                 "name": "kg\/kWh",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3709,
+                "id": 3723,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -33714,26 +33714,26 @@
                 "class": "word"
             },
             {
-                "id": 2393,
+                "id": 2401,
                 "name": "kWh\/a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3740,
+                "id": 3754,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
                 "class": "triple"
             },
             {
-                "id": 2394,
+                "id": 2402,
                 "name": "kWh\/kWp\u00b7a",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 3741,
+                "id": 3755,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -34811,7 +34811,7 @@
                 "class": "triple"
             },
             {
-                "id": 3795,
+                "id": 3809,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -34835,9 +34835,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -3743,
+                "to_id": -3757,
                 "to_phrase": {
-                    "id": 3743,
+                    "id": 3757,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -35537,7 +35537,7 @@
                 "class": "word"
             },
             {
-                "id": 3743,
+                "id": 3757,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,
@@ -35779,7 +35779,7 @@
                 "class": "triple"
             },
             {
-                "id": 1061,
+                "id": 1077,
                 "name": "global warming is alias of climate change",
                 "from_id": -167,
                 "from_phrase": {
@@ -35803,9 +35803,9 @@
                     "impact": null,
                     "id": 19
                 },
-                "to_id": -1055,
+                "to_id": -1071,
                 "to_phrase": {
-                    "id": 1055,
+                    "id": 1071,
                     "name": "climate change",
                     "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                     "type_id": null,
@@ -36265,7 +36265,7 @@
                 "class": "triple"
             },
             {
-                "id": 1055,
+                "id": 1071,
                 "name": "climate change",
                 "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                 "class": "triple"
@@ -36547,7 +36547,7 @@
                 "class": "word"
             },
             {
-                "id": 1051,
+                "id": 1060,
                 "name": "GWh",
                 "description": "gigawatt hour, unit of energy",
                 "type_id": 2,
@@ -36610,7 +36610,7 @@
                 "class": "word"
             },
             {
-                "id": 933,
+                "id": 716,
                 "name": "HTP",
                 "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit",
                 "type_id": 2,
@@ -36673,7 +36673,7 @@
                 "class": "word"
             },
             {
-                "id": 932,
+                "id": 943,
                 "name": "km2",
                 "type_id": 2,
                 "class": "word"
@@ -36687,7 +36687,7 @@
                 "class": "word"
             },
             {
-                "id": 2060,
+                "id": 2068,
                 "name": "kWp",
                 "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
                 "type_id": 2,
@@ -36742,7 +36742,7 @@
                 "class": "word"
             },
             {
-                "id": 989,
+                "id": 998,
                 "name": "millimetre",
                 "description": "one thousandth of a metre",
                 "type_id": 2,
@@ -36812,6 +36812,7 @@
                 "name": "person",
                 "description": "an individual human being",
                 "type_id": 2,
+                "plural": "persons",
                 "class": "word"
             },
             {
@@ -37087,12 +37088,12 @@
                 "latex": "\\text{htp} = \\text{htp},\\text{%} \\cdot \\text{global},\\text{human},\\text{population}"
             },
             {
-                "id": 117,
+                "id": 119,
                 "name": "person years per billion USD by the carbon border tariff",
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1260},{w163}={t206},{t208}\/(({t206},{w1249}+{t206},{w1246})\/2)",
+                "ref_text": "{t1276},{w163}={t206},{t208}\/(({t206},{w1258}+{t206},{w1255})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]

@@ -223,6 +223,19 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name,
             $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut), msg_id::MORE->text());
 
+        $t->subheader($ts . 'related phrases of the row phrase');
+        // a related phrases component with a row phrase lists the phrases of that phrase instead of the
+        // page phrase, e.g. the global problems for the problem definition of the global problem view
+        $test_name = 'the related phrases of the row phrase are listed';
+        $cmp_rel = new component_ui($t_cmp->component_phrases_related_global_problem()->api_json());
+        $rel_html = $cmp_rel->dsp_entries($t_trp->global_warming_ui(), $msg, '', 0, $dto_prio, null, '', true);
+        // the list shows only the first config::LIMIT_NAME_LIST phrases by impact and name, so the check uses
+        // one of them that is not the page phrase
+        $t->assert_text_contains($test_name, $rel_html, triple_names::POPULISM_PROBLEM);
+        // negative: the cache holds the column definitions of the table too, which link no row phrase
+        $test_name = '... and not a phrase that is not linked to the row phrase';
+        $t->assert_text_not_contains($test_name, $rel_html, triple_names::COLUMN_COST);
+
         $t->subheader($ts . 'table with related columns');
         $tbl_html = $list->table_with_related_columns($trp_zh_city, $msg, $dto);
         $test_name = 'the values of a triple are shown as a table';

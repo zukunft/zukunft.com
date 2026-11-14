@@ -430,12 +430,22 @@ class triple_write_tests
         $usr2_msg = new user_message($t->usr2);
         $t->subheader('db write triple delete by the owner');
 
-        $test_name = 'the owner removes a triple that another user has changed';
+        $test_name = 'the new owner is written to the standard row';
         $trp = $t_db->test_triple($msg, word_names::TEST_ADD_VIA_FUNC, verbs::IS, word_names::TEST_PARENT);
         $trp_usr2 = new triple($t->usr2);
         $trp_usr2->load_by_id($trp->id(), $usr2_msg);
         $trp_usr2->description = self::OWNER_CHANGE_COM;
         $trp_usr2->save($usr2_msg);
+        $trp_owned = clone $trp;
+        $trp_owned->set_owner($t->usr2->id, $usr2_msg);
+        $trp_std = new triple($t->usr1);
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr2->id);
+        $test_name = '... and the first owner again';
+        $trp_owned->set_owner($t->usr1->id, $usr2_msg);
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr1->id);
+        $test_name = 'the owner removes a triple that another user has changed';
         $trp->del($msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $test_name = '... is removed for the owner';
@@ -483,9 +493,6 @@ class triple_write_tests
         //$t->test_triple(w$msg, ords::TN_VESTAS, verbs::IS_A, TEST_WORD, words::TN_VESTAS, words::TN_VESTAS);
         $t_db->test_triple($msg, word_names::VESTAS, verbs::IS, word_names::COMPANY, triple_names::COMPANY_VESTAS, triple_names::COMPANY_VESTAS);
         $t_db->test_triple($msg, word_names::YEAR_2014, verbs::FOLLOW, word_names::YEAR_2013, triple_names::YEAR_2013_FOLLOW);
-        // TODO Prio 2 check direction
-        // TODO Prio 0 activate
-        //$t_db->test_triple(triple_names::INCOME_TAX, verbs::PART_NAME, triple_names::CASH_FLOW_STATEMENT, triple_names::TAXES_OF_CF);
 
         $t->subheader($ts . 'base phrases');
         $t_db->test_phrase(triple_names::COMPANY_ZURICH, $msg);

@@ -2269,6 +2269,37 @@ class value_base extends sandbox_value
     }
 
     /**
+     * check that each phrase of a new value is a word or triple of the database, because the
+     * database has no foreign key on the phrases of a value; e.g. a url with the fixed snapshot id
+     * of a test word would else add a number that each later page shows with a phrase without name
+     * a phrase is reloaded even if it has a name, because a form sends the name next to the id
+     *
+     * @param user_message $msg to report the phrase that is not in the database
+     * @return bool true if all phrases of the value can be loaded from the database
+     */
+    private function phrases_in_db(user_message $msg): bool
+    {
+        $ids = $this->ids();
+        $db_phr_lst = new phrase_list($this->get_user());
+        $db_phr_lst->load_names_by_ids(new phr_ids($ids), $msg);
+        $missing = false;
+        $names = [];
+        foreach ($ids as $id) {
+            $phr = $db_phr_lst->get($id);
+            if ($phr == null or $phr->name() == '') {
+                $missing = true;
+            } else {
+                $names[] = $phr->name();
+            }
+        }
+        if ($missing) {
+            // the ids are never shown to the user, so the message names the phrases that are found
+            $msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => implode(', ', $names)]);
+        }
+        return !$missing;
+    }
+
+    /**
      * a setting of the pod below "system configuration > system" in config.yaml can only be changed by an
      * admin or the system user e.g. when importing config.yaml; the settings below "user" and "select"
      * can be changed by each logged-in user as the own overwrite
@@ -2331,7 +2362,9 @@ class value_base extends sandbox_value
                 // make sure that only an admin user sets the admin protection also on a new value
                 $this->check_protection_change(null, $msg);
                 log_debug('add ' . $this->dsp_id());
-                $this->add($msg);
+                if ($this->phrases_in_db($msg)) {
+                    $this->add($msg);
+                }
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value

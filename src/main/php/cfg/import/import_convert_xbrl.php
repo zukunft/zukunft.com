@@ -564,7 +564,7 @@ class import_convert_xbrl
      * build the complete zukunft.com style data array from the extracted facts.
      *
      * Structure follows the existing ABB_<year>.json sample: a time word, the
-     * company, the measure, the currency, the scale and one word per sector;
+     * company, the sales, the currency as the measure unit, the scale and one word per sector;
      * one "is a sector" triple per sector; one value per sector plus the
      * income statement facts; one formula stating the total is the sum of the
      * sector sales and one check formula per calculation linkbase parent
@@ -603,14 +603,15 @@ class import_convert_xbrl
         $src_json = $this->source_json($year);
         $source_name = $src_json[json_fields::NAME];
 
-        // only the year and the measure have a fixed phrase type
+        // only the year and the currency have a fixed phrase type
+        // the currency is the measure unit of the numbers e.g. USD for the sales
         // the other words are declared name-only like in the ABB_<year>.json sample
         // so that an import never overwrites the phrase types of the base words
         $words = [];
         $words[] = [json_fields::NAME => $year, json_fields::TYPE_NAME => phrase_type_shared::TIME];
         $words[] = [json_fields::NAME => self::ISSUER_ABB];
-        $words[] = [json_fields::NAME => self::MEASURE_SALES, json_fields::TYPE_NAME => phrase_type_shared::MEASURE];
-        $words[] = [json_fields::NAME => $currency];
+        $words[] = [json_fields::NAME => self::MEASURE_SALES];
+        $words[] = [json_fields::NAME => $currency, json_fields::TYPE_NAME => phrase_type_shared::MEASURE];
         $words[] = [json_fields::NAME => self::SCALE_MILLION];
         $words[] = [json_fields::NAME => self::SECTOR];
 

@@ -203,7 +203,6 @@ class ListOfIdNamedObjects extends ListOfIdObjects
 
     /**
      * get all objects that are not in the given list based on the name
-     * TODO Prio 0 add unit test
      *
      * @param ListOfIdNamedObjects|ListOfIdObjects $lst the list to compare with
      * @return ListOfIdNamedObjects|ListOfIdObjects the list of objects that are only in this list

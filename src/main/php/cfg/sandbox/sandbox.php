@@ -1643,16 +1643,22 @@ class sandbox extends db_object_seq_id_user
         if ($this->id() > 0 and $new_owner_id > 0) {
             // to recreate the calling object
             $std = $this->clone_reset(true);
-            $std->load_standard($this->id(), $msg);
+            // without the standard row the owner cannot be changed, and the message of the load says why
+            $result = $std->load_standard($this->id(), $msg);
             // the standard load sets only the ids of the linked objects, but the update checks that they are valid
-            if ($std->is_link_obj()) {
-                $std->reload_objects($msg);
+            if ($result and $std->is_link_obj()) {
+                $result = $std->reload_objects($msg);
             }
-            $std->owner_id = $new_owner_id;
-            $std->update_standard_fields($db_con, $std, $msg);
-            $this->set_owner_id($new_owner_id);
             $new_owner = new user;
-            if ($new_owner->load_by_id($new_owner_id, $msg)) {
+            if ($result and $new_owner->load_by_id($new_owner_id, $msg)) {
+                // the owner is the user of the standard row, so the update compares the new with the old owner
+                $old_owner = new user;
+                $old_owner->id = (int)$std->owner_id();
+                $std->set_user($old_owner);
+                $std_owned = clone $std;
+                $std_owned->set_user($new_owner);
+                $std_owned->update_standard_fields($db_con, $std, $msg);
+                $this->set_owner_id($new_owner_id);
                 $this->set_user($new_owner);
             } else {
                 $result = false;
@@ -2519,7 +2525,6 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * save all updated fields on the standard db row with one sql function
-     * TODO Prio 0 create unit test
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox $norm_obj the database record defined as standard because it is used by most users
@@ -2532,29 +2537,36 @@ class sandbox extends db_object_seq_id_user
         user_message $msg
     ): bool
     {
-        // the sql creator is used more than once, so create it upfront
-        $sc = $db_con->sql_creator();
-        // the sql function should include the log of the changes
-        $sc_par_lst = new sql_type_list([sql_type::LOG]);
-        // get a list of all fields that could potentially be updated
-        $all_fields = $this->db_fields_all();
         // get the object name for the log messages
         $lib = new library();
         $obj_name = $lib->class_to_name($this::class);
 
         // apply the changes directly to the norm db record
         // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
-        $fvt_lst = $this->db_fields_changed($norm_obj, $msg, $sc_par_lst);
-        if (!$fvt_lst->is_empty_except_internal_fields()) {
-            $sc_par_lst->add(sql_type::UPDATE);
-            $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
-            // null e.g. if the do not update a link guard has refused the update
-            if ($qp != null) {
-                $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
-            }
+        $qp = $this->sql_update_standard($db_con->sql_creator(), $norm_obj, $msg);
+        // null if no field has changed or e.g. if the do not update a link guard has refused the update
+        if ($qp != null) {
+            $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * create the sql function that writes the changed fields of this object to the standard db row including the log
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $norm_obj the standard db row before the change, whose user is the owner
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @return sql_par|null the sql function and its call or null if no field has changed
+     */
+    function sql_update_standard(sql_creator $sc, sandbox $norm_obj, user_message $msg): ?sql_par
+    {
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $fvt_lst = $this->db_fields_changed($norm_obj, $msg, $sc_par_lst);
+        $sc_par_lst->add(sql_type::UPDATE);
+        $qp = $this->sql_update_switch($sc, $fvt_lst, $this->db_fields_all(), $msg, $sc_par_lst, true);
+        return $qp;
     }
 
     /**
@@ -3795,13 +3807,7 @@ class sandbox extends db_object_seq_id_user
         // set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used);
         $sc->set_name($qp->name);
-        // fields and values that the word has additional to the standard named user sandbox object
-        $sbx_empty = $this->clone_reset();
-        // for a new sandbox object the owner should be set, so remove the user id to force writing the user
-        $sbx_empty->set_user($this->get_user()->clone_reset());
-        // to get the list of the changed fields,
-        // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-        $fvt_lst = $sbx_empty->db_fields_changed($this, $msg, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_removed($msg, $sc_par_lst_used);
         // delete the user overwrite,
         // but if the excluded user overwrites should be deleted, the overwrites for all users should be deleted
         if ($sc_par_lst_used->incl_log()) {
@@ -3821,6 +3827,26 @@ class sandbox extends db_object_seq_id_user
         }
 
         return $qp;
+    }
+
+    /**
+     * the fields of this object as removed, so with the values of this object as the old values,
+     * e.g. for the change log entry of a delete or of an exclusion of a link
+     *
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation including the delete type
+     * @return sql_par_field_list the fields of this object with the values as old values
+     */
+    private function db_fields_removed(user_message $msg, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        // fields and values that the word has additional to the standard named user sandbox object
+        $sbx_empty = $this->clone_reset();
+        // for a new sandbox object the owner should be set, so remove the user id to force writing the user
+        $sbx_empty->set_user($this->get_user()->clone_reset());
+        // to get the list of the changed fields,
+        // the list of all fields is not needed because only the id fields are written to the log in case of a delete
+        $fvt_lst = $sbx_empty->db_fields_changed($this, $msg, $sc_par_lst);
+        return $fvt_lst;
     }
 
     /**
@@ -4516,6 +4542,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param bool $owner_change true if the user id is the owner of the standard row, so that a new owner alone is a change
      * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
      *                      or null if no field has changed and no database update is needed
      */
@@ -4524,7 +4551,8 @@ class sandbox extends db_object_seq_id_user
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
         user_message       $msg,
-        sql_type_list      $sc_par_lst = new sql_type_list()
+        sql_type_list      $sc_par_lst = new sql_type_list(),
+        bool               $owner_change = false
     ): sql_par|null
     {
         // the do not update a link guard of the sql layer, so that no path writes another link into an existing row;
@@ -4535,8 +4563,10 @@ class sandbox extends db_object_seq_id_user
         }
 
         // if no field has changed, no database update is needed
-        // and an update statement without any fields to set would be invalid
-        if ($fvt_lst->is_empty_except_internal_fields()) {
+        // and an update statement without any fields to set would be invalid;
+        // the user id counts as internal, except if it is the new owner of the standard row
+        $is_new_owner = ($owner_change && $fvt_lst->has_name(user_db::FLD_ID));
+        if ($fvt_lst->is_empty_except_internal_fields() and !$is_new_owner) {
             return null;
         }
 
@@ -4646,8 +4676,11 @@ class sandbox extends db_object_seq_id_user
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
+        // the removal is logged only by the update that excludes the row, not e.g. by the reorder of an excluded link
+        $is_excluded_now = ($this->is_excluded() and $fvt_lst->has_name(fields::FLD_EXCLUDED));
+
         // add the name field if it is missing and the object should be excluded
-        if ($this->is_excluded() and $sc_par_lst->is_update()) {
+        if ($is_excluded_now and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
                     $table_id = $sc->table_id($this::class, $sc_par_lst);
@@ -4666,7 +4699,7 @@ class sandbox extends db_object_seq_id_user
         }
 
         // add additional log entry if the row has been excluded
-        if ($this->is_excluded()) {
+        if ($is_excluded_now) {
             // TODO Prio 2 use a common function for this part with in sql_delete_and_log
             $sc_par_lst_log = clone $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
@@ -4683,15 +4716,22 @@ class sandbox extends db_object_seq_id_user
                     $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
-                // TODO Prio 0 activate or remove
-                //$qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log);
-                //$par_lst_out->add_list($qp_log->par_fld_lst);
-                // TODO Prio 1 use these functions more often
-                /*
-                $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
-                $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
-                $sql .= ' ' . $qp_log->sql;
-                */
+                // logged like the delete of the link, so only with the old link fields
+                $sc_par_lst_del = $sc_par_lst_sub->remove(sql_type::UPDATE);
+                $sc_par_lst_del->add(sql_type::DELETE);
+                $sc_par_lst_del->add(sql_type::DELETE_PART);
+                $sc_par_lst_del->add(sql_type::SELECT_FOR_INSERT);
+                $par_lst_out->add_field(
+                    change_table::FLD_ID,
+                    $sc->table_id($this::class, $sc_par_lst),
+                    sql_par_type::INT_SMALL);
+                $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_del, $msg);
+                $sc_par_lst_rmv = $sc_par_lst->remove(sql_type::UPDATE);
+                $sc_par_lst_rmv->add(sql_type::DELETE);
+                $fvt_lst_del = $this->db_fields_removed($msg, $sc_par_lst_rmv);
+                $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst_del));
+                $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst_del));
+                $sql .= ' ' . $qp_log->sql . ';';
             } else {
                 log_err_msg('Only named and link objects are supported in sandbox::sql_delete_and_log', $msg);
             }

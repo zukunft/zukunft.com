@@ -847,6 +847,7 @@ class test_cleanup extends test_api
      */
     function term_list_for_tests(array $names): term_list
     {
+        global $sys;
 
         $trm_lst = new term_list($this->usr1);
         $pos = 1;
@@ -864,14 +865,14 @@ class test_cleanup extends test_api
 
             // set types of some special terms
             if ($name == formula_names::THIS_NAME) {
-                $trm->obj()->type_cl = formula_type::THIS;
+                $trm->obj()->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
                 $trm->set_obj_id(formula_names::THIS_ID);
                 $wrd = new word($this->usr1);
                 $wrd->set(word_names::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_phr = $wrd->phrase();
             }
             if ($name == formula_names::PRIOR) {
-                $trm->obj()->type_cl = formula_type::PREV;
+                $trm->obj()->type_id = $sys->typ_lst->frm_typ->id(formula_type::PREV);
                 $trm->set_obj_id(formula_names::PRIOR_ID);
                 $wrd = new word($this->usr1);
                 $wrd->set(word_names::PRIOR_ID, formula_type::PREV);

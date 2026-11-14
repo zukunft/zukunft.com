@@ -89,40 +89,16 @@ class value_list_read_tests
         $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
-        // load by ids
-        // TODO Prio 0 fix the test so that it loads both values
+        // load by ids; a list loaded by ids has no order, so the ids are compared sorted
+        $test_name = 'Loading pi and e via value list loads both values';
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_ids([values::PI_MATH_ID,values::E_ID], $msg);
-        $pi = new value($t->usr1);
-        $pi->load_by_id(values::PI_MATH_ID, $msg);
-        $e = new value($t->usr1);
-        $e->load_by_id(values::E_ID, $msg);
-        $target_lst = new value_list($t->usr1);
-        $target_lst->add($pi);
-        if ($e->id != 0) {
-            $target_lst->add($e);
-        }
-        $test_name = 'Loading pi and e via value list is the same as single loading';
-        $target = $target_lst->dsp_id();
-        $result = $val_lst->dsp_id();
-        // TODO Prio 2 check why order may changes
-        if ($target != $result) {
-            $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
-        }
-        if ($target != $result) {
-            $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
-        }
+        $val_lst->load_by_ids([values::PI_MATH_ID, values::E_ID], $msg);
+        $result = $val_lst->ids();
+        sort($result);
+        $target = [values::E_ID, values::PI_MATH_ID];
+        sort($target);
         $t->assert($test_name, $result, $target);
-        $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-            . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
-        if ($target != $result) {
-            $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
-                . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
-        }
-        $test_name = 'A value list with pi and e matches the expected result';
-        $t->assert($test_name, $val_lst->dsp_id(), $target);
+        $msg->reset();
 
         // load values related to all phrases of a list
         $test_name = 'Load the the inhabitants of canton Zurich over time';

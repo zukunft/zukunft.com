@@ -702,19 +702,11 @@ every display function of `src/main/php/web` takes the url parameters of the cal
   dropped - it works today only because the callers already put the back part into `$url`
   with `url_back()`; either let the button functions fall back to the property or remove the
   second constructor parameter
-- `component::btn_unlink()` is a placeholder ('Missing unlink') without parameters;
-  `component::linked_views` called it with three arguments that were silently dropped and
-  now calls it without - the button to unlink a view from a component still has to be
-  written like `word::btn_unlink($link_id, $url_arr)`
 - `hist_log::dsp_log_view` calls `word::dsp_hist($msg, 1, 20, '', $url_arr)`, which exists
   nowhere in the frontend word class, so the view change log of a word is dead code until
   `word::dsp_hist` is written like `formula::dsp_hist`
 - the review functions `result::explain` and `formula_list::tbl` are not tested - decide whether
   the two are rebuilt on the frontend objects or removed
-- `value::dsp_edit` calls `dsp_share` and `dsp_protection`, which name functions that exist
-  nowhere in the frontend, so the legacy pages `http_old/value_edit.php` and `value_add.php`
-  end in an uncaught fatal - decide whether the value mask is rebuilt on the form components
-  or `dsp_edit` is removed
 - `page_url` and the back url builders are tested in `unit_ui/base_ui_tests` only, which the
   coverage report (`docs/code_test_coverage.md`, unit tests only) does not count
 
@@ -1435,7 +1427,7 @@ complete the component list of the view edit view (views::VIEW_EDIT_ID): it link
 
 add the sample word to the view edit view as well ('word' url parameter of the old controller, the term used to simulate how the view looks with real data), see the view add view section above
 
-remove the now unreachable legacy view designer code: web/view/view.php and web/view/view_exe.php contain a nearly identical private linked_components() (a DRY violation) plus dsp_edit(), which were only called by http_old/view_add.php and http_old/view_edit.php. Their remaining buttons link to api::DSP_COMPONENT_LINK / DSP_COMPONENT_ADD, i.e. to controllers that are also already retired to /http_old, so these links are dead. Remove dsp_edit / linked_components (and the DSP_COMPONENT_* consts in shared/api.php) once the component list is part of the view edit view. The same applies to view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and to view::selector_page and view::dsp_navbar_no_view, which have no caller at all since http_old/view_select.php is retired
+remove what is left of the legacy view designer code: the DSP_COMPONENT_* consts in shared/api.php, which no code uses since view::dsp_edit and linked_components are deleted, view::dsp_navbar_no_view without caller and view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false)
 
 ### view del view (missing parts of the retired http_old/view_del.php)
 
@@ -1447,7 +1439,7 @@ add an in-use check to the delete of a view: web/view/view.php has no input_vali
 
 The following parts have no equivalent yet and block the removal (see the TODO Prio 0 at component.php:883).
 
-add a sample phrase context to the component edit view to simulate the result: dsp_edit carried the word it has been called for as a hidden 'word' field (component.php:875) and showed it in the title ('Edit the view component "<name>" (used for <word>)', component.php:861, with a ref_view link to the phrase page). The new view knows only the component id, so a component opened from a word page loses the word, and the preview (component_types::FORM_PREVIEW -> web/component/execute/system_page.php::preview, still a 'preview placeholder') has no phrase to render the component for. Add the phrase to the url resp. as a hidden field and use it for the title and the preview
+the preview of the component edit view renders the component for the sample phrase of the url (`url_var::SAMPLE_PHRASE`, posted again as a hidden field); open: no page link carries the sample phrase yet (e.g. the component list of the view edit view or a word page that opens a component), and the title does not name it ('Edit the view component "<name>" (used for <word>)' of the old page)
 
 add the list of the views that use a component to the component edit view: dsp_edit showed it with component::linked_views (component.php:1024) as a table with one row per view (view::name_linked), an unlink button per row and an 'add new' button that reopened the edit mask with 'add_link=1&word=<id>' to link a further view. The component_edit view has no such component, and the 'system form linked views' component of component_add is not a replacement, because component_types::FORM_TABLE_LINKED_VIEWS resolves via system_form::form_table_linked_view to sandbox::view_selector, i.e. to a single dropdown to pick one view. Reuse the component_link views (views::COMPONENT_LINK_ADD_ID ff) for the link and the unlink step and add a test per step. The unlink button of the old function was a placeholder anyway, see the component::btn_unlink entry in the '$back parameter' section above
 
@@ -1457,7 +1449,7 @@ add the link change log to the component edit view: dsp_edit showed it with comp
 
 add a delete button to the component edit view: dsp_edit rendered it via dsp_form_end with url_back(views::COMPONENT_DEL_ID, ...) (component.php:899), the component_edit view ends with the cancel and the save button only. This is not only a missing button: the only other links to views::COMPONENT_DEL_ID are in view.php resp. view_exe.php::linked_components, which are dead as well (see the view edit view section above), so the component del view has no live caller and a component cannot be deleted from the frontend at all
 
-remove web/component/component.php::linked_views, btn_unlink, dsp_hist and dsp_hist_links once the parts above are part of the component_edit view; dsp_hist and dsp_hist_links of the component have no caller besides dsp_edit
+remove web/component/component.php::dsp_hist and dsp_hist_links once the parts above are part of the component_edit view (linked_views and btn_unlink are deleted; the unlink button of a linked view is written like `word::btn_unlink($link_id, $url_arr)`); dsp_hist and dsp_hist_links of the component have no caller
 
 ### formula add view (missing parts of the retired http_old/formula_add.php)
 
@@ -1551,7 +1543,7 @@ fill web/component/execute/system_page.php::formula_test() with the real code of
 
 decide if the 'user' url parameter of the old formula test page is still wanted (it showed the formula calculation as another user sees it, to debug a user specific overwrite). If yes, allow it only for an admin user, because it shows the data of another user
 
-remove the dead formula edit render path: web/formula/formula.php::dsp_edit and the functions that only it calls (dsp_test_and_samples with its links to the retired formula_test.php, dsp_used4words, dsp_hist, dsp_hist_links) have no caller any more since http_old/formula_add.php and http_old/formula_edit.php are retired. This is the same clean up as for view::dsp_edit and linked_components (see the view edit view section above)
+remove the last part of the dead formula edit render path: web/formula/formula.php::dsp_test_and_samples with its links to the retired formula_test.php has no caller
 
 ### import view (missing parts of the retired http_old/import.php)
 
@@ -1682,8 +1674,6 @@ scan of 2026-06-13: the frontend must never open or query the database (see docs
 
 1. (live) web/frontend.php open_db()/start() bootstrap opens the database connection directly (already marked "TODO Prio 1 to be deprecated and use the api only for the frontend"); it is the only file excluded from coding_rule_tests::php_web_only_allowed_globals_tests. Move the bootstrap behind the API so web/ no longer needs $sys/$db_con/$cac/$cfg, then remove the 'frontend.php' exception from that coded check.
 
-2. (dead) web/value/value.php::dsp_samples() uses `new sql_db()` + raw SQL but sits entirely inside a /* ... */ block comment (from line ~763). Remove it, or rebuild via the group/value API if the sample display is still wanted.
-
 3. fix web/log/user_log_display.php::dsp_hist(): it builds $result from change_log_list::tbl() and then returns '' (left over from the api migration of dsp_hist / dsp_hist_links), so the change history is loaded and thrown away.
 
 after each step src/main/php/web must stay free of `new sql_db` / `new sql_creator` / `global $db_con`.
@@ -1733,9 +1723,7 @@ raw into alt="..."; all current callers pass constant/translated titles so it is
 user data today (the html_fa() add/edit/del path escapes via ref()); escape the alt as defense in
 depth. (2) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
 legacy display()/result-explain paths that are effectively dead (the live render uses name_link());
-latent stored xss if revived. (3) the legacy web-side raw-sql builders
-view_list::selector_page and value::dsp_samples are dead/commented - recommend deleting.
-(4) object-level admin/no-change protection is enforced only for changes to the protection field
+latent stored xss if revived. (3) object-level admin/no-change protection is enforced only for changes to the protection field
 itself (check_protection_change), not consulted in the general edit/delete authz - not exploitable
 today (a normal user's edit of an admin-protected system-owned object is routed to their own overlay),
 becomes relevant only when a pod-level config must be read from the system value not the user overlay
@@ -2836,15 +2824,10 @@ No code was changed by the review.
 ## the sys_log id shown to the user
 
 The user never sees a database id if it can be avoided (`docs/llm/frontend.md`), so the error log entry by the url
-id of the retired `http_old/error_log.php` is declined. Two places still show the sys_log id to the user:
+id of the retired `http_old/error_log.php` is declined, and a critical error tells the user that the admin is informed
+without a link. One place still shows the sys_log id to the user:
 
-1. **The link of a critical error:** `log_msg` (`cfg/log_text/text_log_functions.php:850-865`) gives the user
-   "You can track the solving of the error with this link:" with the link `/http/view.php?m=<views::ERROR_LOG_ID>&id=<sys_log id>`,
-   whose visible text is the url with the id, and the api answer sends the same link
-   (`controller::with_internal_errors`). The message tells the user what went wrong and that the admin is informed,
-   without the id; the tracking of the solving goes to the list of the own issues of the user view (`dsp_errors`,
-   see "#### user.php" of `pending.md`), where the entry is named by its text.
-2. **The admin dashboard prompt of `pending.md`** ("fill the sys_log_detail view ...", "## admin dashboard" →
+- **The admin dashboard prompt of `pending.md`** ("fill the sys_log_detail view ...", "## admin dashboard" →
    "### errors"): the page of one sys_log entry is opened by its id from the dashboard tables, which is fine for an
    admin, but "a normal user may only see their own errors" opens it for a normal user too; the page of one entry
    is only for an admin, and a normal user sees the own errors only in the list of the user view.
@@ -3046,9 +3029,8 @@ unknown id gives the message; the snapshot `63_result_*.html`.
   and the job control view shows its progress, instead of deleting and calculating all results in the request
 - the 'user' url parameter of the old page (the calculation as another user sees it): ask the developer whether it
   is still wanted; if yes, only for an admin
-- the formula page gets a 'test' link to the view, and the dead formula edit render path goes, which had the old
-  buttons (`web/formula/formula.php::dsp_edit` with `dsp_test_and_samples`, whose links still point to the retired
-  `formula_test.php`, `dsp_used4words`, `dsp_hist` and `dsp_hist_links`, `### formula test view`)
+- the formula page gets a 'test' link to the view, and `web/formula/formula.php::dsp_test_and_samples` goes, the last
+  part of the dead formula edit render path, whose links still point to the retired `formula_test.php`
 
 Tests: an api test of the calculation steps of a seed formula for given phrases, compared with the stored result,
 and that nothing is written; a ui test of the test view with the steps and of the 'more details' link; a write test
@@ -3085,12 +3067,9 @@ through the confirm step. Open:
 - the description of the component type "view tab box" still names the related views and their buttons
   (`component_types::VIEW_TAB_BOX_COM`, `shared/types/component_types.php:495`, `db_code_links/component_types.csv:26`,
   `messages/base_views.json:48`, `system_views.json:1098`), but the tab box shows only the change log
-- the legacy designer code has no caller of the frontend: `view::dsp_edit` (`view.php:475`) and
-  `view_exe::dsp_edit` (`view_exe.php:491`), the two nearly identical private `linked_components` (`view.php:585`,
-  `view_exe.php:604`), `selector_page` (`view.php:691`, `view_exe.php:713`) and `dsp_navbar_no_view` (`view.php:301`),
-  whose buttons link to the retired `api::DSP_COMPONENT_*` pages (`shared/api.php:183-187`); `dsp_navbar_html`
-  and `dsp_navbar_html_no_view` (`view.php:354`, `:452`) are reached only if `html_base::UI_USE_BOOTSTRAP` is false
-  (`view.php:213`, `:313`)
+- what is left of the legacy designer code has no caller of the frontend: `view::dsp_navbar_no_view`, `dsp_hist` and
+  `dsp_hist_links` of `view` and `view_exe`, and the then unused `api::DSP_COMPONENT_*` consts (`shared/api.php:183-187`);
+  `dsp_navbar_html` and `dsp_navbar_html_no_view` are reached only if `html_base::UI_USE_BOOTSTRAP` is false
 
 Four changes, each with its own log file:
 
@@ -3135,9 +3114,9 @@ last one not down.
 
 #### step 4: remove the legacy designer code
 
-Remove `dsp_edit`, `linked_components`, `selector_page` and `dsp_navbar_no_view` of `view` and `view_exe` and the
-`api::DSP_COMPONENT_*` consts, if no caller is left after step 3; ask the developer whether the render without
-bootstrap (`UI_USE_BOOTSTRAP` false, `dsp_navbar_html`) is kept, else it goes too.
+Remove `dsp_navbar_no_view`, `dsp_hist` and `dsp_hist_links` of `view` and `view_exe` and the `api::DSP_COMPONENT_*`
+consts, if no caller is left after step 3; ask the developer whether the render without bootstrap
+(`UI_USE_BOOTSTRAP` false, `dsp_navbar_html`) is kept, else it goes too.
 
 Tests: the coding rule tests (the generated function list) and a full run show that nothing calls the removed
 functions.
@@ -3170,9 +3149,10 @@ calculated it (`formula::calc`) and printed the progress every response time. To
   so this job stays new; as soon as `job::exe` can run it, the runner would import the system data a second time
 - a job has no field for its progress (`job.php:171-190`: status, request, start and end time, parameter, row id)
 - `api/job` changes the priority of a job or cancels it (PUT), but creates none
-- the job control view (`views::JOB_CONTROL_ID`, 142) shows only the placeholders `process_list` and
-  `process_progress` (`web/component/execute/system_page.php:954-963`); the all jobs view (`views::ALL_JOBS_ID`,
-  138) lists the jobs for an admin (`system_page::all_jobs`, `:925`)
+- the job control view (`views::JOB_CONTROL_ID`, 142) shows only the placeholder `process_list`, the async view
+  (`views::JOB_ASYNC_ID`, 141, linked from `ref::refresh_job_link`) only `process_progress` and the job check view
+  (`views::JOB_CHECK_ID`, 143) only `process` (`web/component/execute/system_page.php`); the all jobs view
+  (`views::ALL_JOBS_ID`, 138) lists the jobs for an admin (`system_page::all_jobs`)
 
 Two changes, each with its own log file:
 
@@ -3185,7 +3165,7 @@ Two changes, each with its own log file:
 - `api/job` creates a job with POST, only for an admin and only for the job types that an admin may start, with
   the request user as the owner; add it to `src/main/resources/openapi/zukunft_com_api.yaml`
 - the job control view shows an admin button that creates the import job and the list of the jobs with their
-  status, start and end time instead of the two placeholders (reusing the list of `all_jobs`); a user who is no
+  status, start and end time instead of its placeholder (reusing the list of `all_jobs`); a user who is no
   admin sees neither
 
 Tests: a write test that the button resp. the api creates one `BASE_IMPORT` job for an admin and that the
@@ -3240,17 +3220,68 @@ and `sql_key_fields_id_old` with their `sandbox_link` versions, `user_log::load_
      `display`)
    - `src/test/php/unit_write/test_word_display.php` (the commented block of `run_word_display_test`, also
      `display_old`)
-   - `web/value/value.php` (`dsp_hist_old` of the value history)
-   - `cfg/result/result.php::update_depending` (no caller) and `cfg/value/value_list.php::check_all`, both with a
+   - `cfg/result/result.php::update_depending` (no caller) and `cfg/value/value_list.php::check_all`, each with a
      commented block that reads with the removed `sql_db::get_old`
-   - `web/value/value.php::dsp_samples` is no comment, but live code that calls the removed `sql_db::get_old` and builds
-     its own `sql_db` in the frontend; its only caller in `value::dsp_edit` is commented out, so the function is dead:
-     delete it ("Step 23: deprecate the get_old in value_ui" of `docs/todo.md`, and the `TODO Prio 0` of the
-     database part)
-   - `web/formula/formula.php::dsp_used4words` (`phrase_selector_old`) goes with the dead formula edit path of
-     "### formula test view"
    - `cfg/group/group.php::generic_name` (`sql_db::update_old`) is part of "## given group name: two producers of
      TN_READ and a generic name that is always empty"
 
 Tests: the coding rule tests (the generated function list) show that nothing calls the deleted functions, and the
 moved triple tests run in `unit/triple_tests.php` with their sql fixtures.
+
+## open points of "fix Prio 0" steps 1 to 3
+
+Found while solving the disabled tests, the stubs and the deprecate step of "## fix Prio 0" (`pending.md`); each
+one is less urgent than a Prio 0:
+
+1. **the sandbox page** (`system_page::sandbox`, view 118) shows one table per object type, but not yet the count per
+   type, the paging and the "all rows" version: `change_log_list::load_by_user` asks only for the row limit, an
+   offset over its merged per-table queries is not correct, and the count per table needs a prepared statement in
+   `user_list` (from `load_sql_count_all_rows`) with its fixture and an api field
+2. **the change history of the value detail page** (view 117) has no paging: `api/changeLogList` does not read
+   `url_var::LOG_PAGE`, and `change_log_list::tr_page_nav` has no links yet (see "### change log table paging")
+3. **the setup page** (view 168) and **the full search** (view 108) stay placeholders with a Prio 2: the setup status
+   without passwords, and the filter parameters term type, share and protection of the term list api
+4. **the exclusion log of a value or result:** `sandbox_multi::sql_update_named_and_log` writes the removal entry
+   whenever the object is excluded, also for an update of an already excluded one, and its link branch appends the
+   last field log a second time; the same changed-field check as `sandbox::sql_update_named_and_log`
+5. **`FULL_LOAD_FILES`** still lists `zurich_htp_impact.json`, which `SYSTEM_DATA_FILES` imports now, so a full load
+   would import it twice
+6. **`phrase::description_url_of_refresh`** combines urls with `array_merge`, which renumbers the integer keys of
+   `url_var::EXCLUDED` ('0') and of the pre values ('80'); for an excluded phrase the refresh confirm url loses the
+   exclusion; `array_replace` or `+` keeps them
+7. **the sql creation test of `triple_norm_by_link_ids`:** `unit/triple_tests.php` tests the standard by type link,
+   not by link (`assert_sql_standard_by_link`)
+8. **the leftovers of the activated write tests:** the xbrl import of `usr1` may write user overlay rows on system
+   owned base words, which its cleanup and `check_cleanup` do not see, and its names are no reserved test names
+9. **now callerless frontend functions** that no TODO names: `html_base::dsp_link_hist_box`, `dsp_form_id`,
+   `dsp_form_hidden`, `verb::dsp_edit`, and the `use` of `view_relation_write_tests` in `test_db_load.php`
+10. **`values::SALES_INCREASE_2017_FORM`** has no user since the fallback of `formula_trigger_tests` is gone
+11. **`expression::phr_verb_lst`:** a triple element that passes the phrase selection falls into the "unexpected type"
+    branch, and the formula and verb branches can never be reached
+
+## the undo and the error log page
+
+The system views "Undo" (`views::UNDO_ID`, 104) and "Error Log" (`views::ERROR_LOG_ID`, 133) stay, and their
+bodies `system_page::undo` and `system_page::error_log` (`web/component/execute/system_page.php`) are placeholders
+that the developer fills with more details later:
+
+- **Undo:** shows the last changes of the user and offers a selective undo
+- **Error Log:** the confirm page for a new error that has been logged in the database; the page does not show the
+  sys_log id to the user ("## the sys_log id shown to the user")
+
+## which phrase of a currency is the measure unit
+
+Define how a currency is set up as a measure unit: is the ISO 4217 code e.g. `USD` the word with the type
+`measure_unit`, or the currency triple e.g. `US dollar` (dollar of US)? The rule then applies to all import
+files, the XBRL converter and the docs, and the other phrase links to the measure unit e.g. by a "symbol" or "code"
+verb, so that a value with `US dollar` and a value with `USD` have the same unit.
+
+Where a currency is a measure unit today:
+
+- `system_unit_test_data/currencies.json`: `USD` has the type `measure_unit`, `US dollar` is a triple without a
+  phrase type, and `US$` is a word of its own
+- `solution_prio.json`: `EUR` has the type `measure_unit`
+- `import_convert_xbrl::build_data`: the reported currency of the facts e.g. `USD` gets the type `measure_unit`,
+  which writes it into `import/xbrl/abb-2013-xbrl_fileset-20131231/abb-2013-xbrl_fileset-20131231.json`
+- the other import files e.g. `use_cases/portfolio_split_calculator.json` and the `start_page/problem_*.json` files
+  name `USD` without a phrase type

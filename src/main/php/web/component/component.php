@@ -156,6 +156,8 @@ class component extends sandbox_code_id
     // the component that this component links to and the type that says how the two are linked
     public ?int $linked_component_id = null;
     public ?int $component_link_type_id = null;
+    // the phrase for which the component edit view shows the preview of the component; only page context, never saved
+    public ?int $sample_phrase = null;
 
 
     /*
@@ -258,6 +260,9 @@ class component extends sandbox_code_id
         }
         if (array_key_exists(url_var::COMPONENT_LINK_TYPE, $url_array)) {
             $this->component_link_type_id = $url_array[url_var::COMPONENT_LINK_TYPE];
+        }
+        if (array_key_exists(url_var::SAMPLE_PHRASE, $url_array)) {
+            $this->sample_phrase = (int)$url_array[url_var::SAMPLE_PHRASE];
         }
         // the ui message links posted by the component form of a system or developer user;
         // an empty submitted field clears the link, a missing field keeps the loaded one
@@ -951,66 +956,6 @@ class component extends sandbox_code_id
         } else {
             return 'Missing component type';
         }
-    }
-
-    /**
-     * lists of all views where this component is used
-     * @param array $url_arr the url vars of the calling page for the back link
-     */
-    private function linked_views($add_link, word $wrd, user_message $msg, array $url_arr): string
-    {
-        $this->log_debug("id " . $this->id() . " (word " . $wrd->id() . ", add " . $add_link . ").");
-
-        $html = new html_base();
-        $result = '';
-
-        $form = 'component_view_links';
-
-        if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= $html->dsp_tbl_start_hist();
-        } else {
-            $result .= $html->dsp_tbl_start_half();
-        }
-
-        $msk_lst = new view_list();
-        $msk_lst->load_by_component_id($this->id(), $msg);
-
-        foreach ($msk_lst as $msk) {
-            $result .= '  <tr>' . "\n";
-            $result .= '    <td>' . "\n";
-            $result .= '      ' . $msk->name_linked($wrd, $url_arr) . "\n";
-            $result .= '    </td>' . "\n";
-            // TODO Prio 2 create the button to unlink the view from this component (see pending_prio_2.md)
-            $result .= $this->btn_unlink();
-            $result .= '  </tr>' . "\n";
-        }
-
-        // give the user the possibility to add a view
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        if ($add_link == 1) {
-            // $sel->dummy_text = 'select a view where the view component should also be used';
-            $msk_lst = new view_list();
-            // TODO Prio 0 activate
-            //$result .= $msk_lst->selector($form, 0, url_var::COMPONENT_LINK_LONG);
-
-            $result .= $html->dsp_form_end('', $url_arr);
-        } else {
-            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\html\btn_add('add new',
-                    $html->url_back(views::COMPONENT_EDIT_ID, $this->id(), $url_arr, 'add_link=1&word=' . $wrd->id));
-        }
-        $result .= '    </td>';
-        $result .= '  </tr>';
-
-        $result .= $html->dsp_tbl_end();
-        $result .= '  <br>';
-
-        return $result;
-    }
-
-    function btn_unlink(): string
-    {
-        return 'Missing unlink';
     }
 
     /**

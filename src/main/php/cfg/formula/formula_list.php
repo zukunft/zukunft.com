@@ -847,10 +847,6 @@ class formula_list extends sandbox_list_named
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
-                    // TODO Prio 0 remove
-                    if ($frm->name() == 'Financial income/expense, net') {
-                        log_info('Financial income/expense, net');
-                    }
                     // try to reload missing terms
                     // only for the formulas that are not yet in the database
                     if ($frm->id == 0) {

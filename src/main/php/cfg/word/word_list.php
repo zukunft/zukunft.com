@@ -1544,7 +1544,7 @@ class word_list extends sandbox_list_named
         } else {
             $time_lst = new word_list($this->get_user());
             foreach ($trm_lst->lst() as $trm) {
-                if ($trm->is_time()) {
+                if ($trm->is_time($msg)) {
                     $time_lst->add($trm->get_word());
                 }
             }

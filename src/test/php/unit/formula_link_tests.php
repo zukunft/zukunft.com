@@ -142,6 +142,17 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the exclusion of an included link is logged as the removal of the link
+        $lnk_excluded = clone $lnk;
+        $lnk_excluded->exclude();
+        $t->assert_sql_update($sc, $lnk_excluded, $lnk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $lnk_excluded, $lnk, [sql_type::LOG, sql_type::USER]);
+        $test_name = 'the reorder of an excluded link does not log the removal of the link again';
+        $lnk_excl_reordered = clone $lnk_excluded;
+        $lnk_excl_reordered->order_nbr = 1;
+        $sc_par_lst = new sql_type_list([sql_type::LOG, sql_type::USER]);
+        $reorder_sql = $lnk_excl_reordered->sql_update($sc, $lnk_excluded, $msg, $sc_par_lst)->sql;
+        $t->assert_text_not_contains($test_name, $reorder_sql, change_link::FLD_OLD_FROM_TEXT);
         // the do not update a link guard: the link type of a formula link is a normal field, so only the
         // formula and the phrase identify the link
         $t_wrd = new test_words($t);

@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_select;
@@ -81,8 +82,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -896,6 +899,48 @@ class value_ui_tests
         $t->assert($test_name,
             $lst_ui->results_by_value($tl->ui_value($t_val->value_pi()), $msg_ui, $dto_res),
             $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
+
+
+        $t->subheader($ts . 'value detail');
+
+        // the value detail page shows the fields of the value, the formulas whose results use it, the change
+        // history and the numbers of the other users; the test mode takes the formulas from the cache
+        $t_frm = new test_formulas($t);
+        $page = new system_page();
+        $dto_frm = new data_object();
+        $dto_frm->frm_lst = $t_frm->formula_list_ui();
+        $val_frm = $t_val->value_page_formula_ui($msg);
+        $dtl_html = $page->value_details($val_frm, $msg_ui, $dto_frm, true, []);
+        $test_name = 'the value detail page names the formula whose result uses the value';
+        $t->assert_text_contains($test_name, $dtl_html, formula_names::SCALE_TO_SEC);
+        $test_name = '... and shows the number of the value with its label';
+        $t->assert_text_contains($test_name, $dtl_html, $mtr->txt(msg_id::FORM_FIELD_VALUE));
+        $test_name = '... and the phrases of the value';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SELECT_MULTI_PHRASES), triple_names::PI_SYMBOL_NAME);
+        $test_name = '... and the share and the protection, also if they are the default';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SELECT_SHARE_TYPE), $mtr->txt(msg_id::FORM_SELECT_PROTECTION_TYPE));
+        $test_name = '... and the owner';
+        $t->assert_text_contains($test_name, $dtl_html, $mtr->txt(msg_id::FORM_FIELD_OWNER));
+        $test_name = '... and the change history and the values of the other users';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SUB_TITLE_LOG), $mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS));
+        $msg_ui->reset();
+
+        // negative: a value whose results have no formula is not used for formulas
+        $test_name = 'a value without a formula result says that it is not used for formulas';
+        $t->assert_text_contains($test_name,
+            $page->value_details($val_rel, $msg_ui, $dto_frm, true, []),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS));
+        $msg_ui->reset();
+
+        // negative: an object that is no value shows no details and reports why
+        $test_name = 'the value detail page of a word reports that it is no value';
+        $wrd_no_val = $t_wrd->zh_ui();
+        $call = fn() => $page->value_details($wrd_no_val, $msg_ui, $dto_frm, true, []);
+        $t->assert_log_err($test_name, $call, system_page::VALUE_DETAILS_NO_VALUE, $msg_ui);
+        $msg_ui->reset();
 
 
         $t->subheader($ts . 'view tab box');

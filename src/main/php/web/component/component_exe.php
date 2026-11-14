@@ -355,7 +355,8 @@ class component_exe extends component
             component_types::FORM_FIELD_DOI => $form->form_field_doi($dbo, $style),
 
             // preview of the changes if confirmed
-            component_types::FORM_PREVIEW => $page->preview(),
+            component_types::FORM_PREVIEW => $page->preview(
+                $dbo, $msg, $this->ui_msg_code_id, $form_name, $msk_id, $cfg, $test_mode, $url_arr),
 
             // hidden - only used for formatting without functional behaviour
             component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $url_arr),
@@ -451,10 +452,10 @@ class component_exe extends component
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body($url_arr),
             component_types::SYSTEM_BODY_SEARCH => $page->body_search($msg, $url_arr),
             component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
-            component_types::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
+            component_types::SYSTEM_BODY_VALUE_DETAIL => $page->value_details($dbo, $msg, $cfg, $test_mode, $url_arr),
             component_types::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
             component_types::SYSTEM_BODY_FORMULA_TEST => $page->formula_test(),
-            component_types::SYSTEM_BODY_SANDBOX => $page->sandbox(),
+            component_types::SYSTEM_BODY_SANDBOX => $page->sandbox($msg, $log_lst, $test_mode, $url_arr),
             component_types::SYSTEM_BODY_UNDO => $page->undo(),
             component_types::SYSTEM_BODY_USER_SETTINGS => $page->user_setting(),
             component_types::SYSTEM_BODY_PROCESS => $page->process(),
@@ -510,7 +511,6 @@ class component_exe extends component
             component_types::VALUE_NAME => $base->value_name($dbo),
             component_types::GROUP_NAME => $base->group_name($dbo),
             component_types::VALUE_NUMERIC => $base->num_value($msg, $dbo),
-            component_types::MAIN_VALUE => $base->main_value($dbo),
 
             // other
             component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $msg, $select->view_list_for($dbo, $msg, $cfg)),
@@ -551,8 +551,8 @@ class component_exe extends component
             component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_types::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_types::RANK_PHRASE => $rank->system_phrases($dbo),
-            component_types::RANKING_PARAMETERS => $rank->ranking_parameters($dbo),
-            component_types::RANKING_LIST => $rank->ranking_list($dbo),
+            component_types::RANKING_PARAMETERS => $rank->ranking_parameters(),
+            component_types::RANKING_LIST => $rank->ranking_list($msg, $dbo, $cfg),
 
             // name display components for admin-editable system objects
             component_types::SOURCE_NAME => $base->source_name($dbo),
@@ -561,8 +561,8 @@ class component_exe extends component
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
             component_types::RESULTS_RELATED => $list->results_related($dbo, $msg, $cfg, $url_arr),
-            component_types::PHRASES_RELATED => $list->phrases_related($msg, $dbo, $cfg),
-            component_types::BUTTON_REQUEST => $form->button_request(),
+            component_types::PHRASES_RELATED => $list->phrases_related($msg, $this->list_phrase($dbo, $cfg, $msg, $test_mode), $cfg),
+            component_types::BUTTON_REQUEST => $form->button_request($msg),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $url_arr, $test_mode),
             component_types::CHANGE_LOG_TABLE_PURE => $log->change_log_table_pure($dbo, $log_lst, $msg, $test_mode),
             component_types::USER_SYSTEM_ERRORS => $log->user_system_errors($err_lst, $msg, $this->ui_msg_code_id),
@@ -671,6 +671,34 @@ class component_exe extends component
     ): db_object|type_object|combine_named|sandbox_list|null
     {
         return $this->layout_phrase($this->row_phrase, $cfg, $msg) ?? $dbo;
+    }
+
+    /**
+     * the phrase whose related phrases a list component shows: the row phrase of the component, e.g.
+     * "solution" for the problem solutions of the global problem view, else the phrase of the page;
+     * a test renders without a backend, so it takes the row phrase from the request cache only
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param data_object|null $cfg the request cache of the page with the phrases
+     * @param user_message $msg to report a problem of the load
+     * @param bool $test_mode true to use the request cache only without a backend call
+     * @return db_object|type_object|combine_named|sandbox_list|null the phrase of the list, null if the row phrase is missing
+     */
+    private function list_phrase(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg,
+        user_message                                          $msg,
+        bool                                                  $test_mode
+    ): db_object|type_object|combine_named|sandbox_list|null
+    {
+        $result = $dbo;
+        if ($this->row_phrase != null and $this->row_phrase != 0) {
+            $result = null;
+            if (!$test_mode or $cfg?->phr_lst->has_id($this->row_phrase)) {
+                $result = $this->layout_phrase($this->row_phrase, $cfg, $msg);
+            }
+        }
+        return $result;
     }
 
     /**

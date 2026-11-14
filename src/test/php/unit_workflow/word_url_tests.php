@@ -236,8 +236,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = word_names::MATH_ID;
-        $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $msg, $ui->dto, false, true);
+        $req = new user_request($msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_to_action returns the confirm change view
         $url_arr[url_var::ACTION] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -253,7 +252,7 @@ class word_url_tests extends url_test_base
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
-        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $msg, $ui->dto, false);
+        $confirm_url = $ui->url_to_action($url_arr, $msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
     }
 

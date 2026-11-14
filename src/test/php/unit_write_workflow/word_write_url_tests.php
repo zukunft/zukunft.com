@@ -49,6 +49,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -148,7 +150,7 @@ class word_write_url_tests extends word_url_tests
         $msg = new user_message();
         $t->subheader($this->ts . 'url_to_action & next url');
 
-        $req = new user_request($t->usr1, $this->msg, $this->ui->dto, true, true);
+        $req = new user_request($this->msg, $this->ui->dto, true, true);
 
         $test_name = 'a confirmed add url writes the word to the database';
         $url_arr = [];
@@ -165,7 +167,7 @@ class word_write_url_tests extends word_url_tests
         // an own message like the new http request of the delete, so that an error of the add does
         // not stop the reload of the word by the delete (docs/llm/dependent-errors.md); the url has
         // the name but not the id of the just added word, so this tests the delete by name
-        $del_req = new user_request($t->usr1, new user_message_ui($this->usr), $this->ui->dto, true, true);
+        $del_req = new user_request(new user_message_ui($this->usr), $this->ui->dto, true, true);
         $this->ui->execute_and_next($url_arr, $del_req);
         $t->assert_msg($test_name, $del_req->msg);
         $wrd_chk = new word($t->usr1);
@@ -475,7 +477,7 @@ class word_write_url_tests extends word_url_tests
 
         // usr2 logs in and changes the word owned by usr1, which creates the usr2 sandbox
         // overlay and flips and persists the usr2 uses_sandbox flag (see sandbox::add_usr_cfg)
-        $changer = $this->login_as($t, 'user 2 can log in before the change', users::SYSTEM_TEST_PARTNER_NAME);
+        $changer = $this->db_user($this->login_as($t, 'user 2 can log in before the change', users::SYSTEM_TEST_PARTNER_NAME));
         $wrd = new word($changer);
         $wrd->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the logged in user 2 can load the base word';
@@ -500,7 +502,7 @@ class word_write_url_tests extends word_url_tests
         // usr2 logs out and in again, which fails if the password hash has been overwritten,
         // and still sees the changed description
         $this->logout();
-        $changer = $this->login_as($t, 'user 2 can log in again after the change', users::SYSTEM_TEST_PARTNER_NAME);
+        $changer = $this->db_user($this->login_as($t, 'user 2 can log in again after the change', users::SYSTEM_TEST_PARTNER_NAME));
         $wrd_changer = new word($changer);
         $wrd_changer->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'user 2 sees the changed description after the re-login';
@@ -508,7 +510,7 @@ class word_write_url_tests extends word_url_tests
 
         // usr2 logs out and the owner logs in and still sees the unchanged original
         $this->logout();
-        $owner_in = $this->login_as($t, 'the owner can log in', users::SYSTEM_TEST_NAME);
+        $owner_in = $this->db_user($this->login_as($t, 'the owner can log in', users::SYSTEM_TEST_NAME));
         $wrd_owner = new word($owner_in);
         $wrd_owner->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the owner sees the unchanged description';
@@ -602,6 +604,24 @@ class word_write_url_tests extends word_url_tests
         $this->ensure_test_password($t, users::SYSTEM_TEST_NAME);
         $this->ensure_test_password($t, users::SYSTEM_TEST_PARTNER_NAME);
 
+        // negative: a wrong password neither logs in nor switches the requesting user
+        $test_name = 'a login with a wrong password is refused';
+        $wrong_url = [
+            url_var::MASK => views::LOGIN_ID,
+            url_var::USERNAME => users::SYSTEM_TEST_NAME,
+            url_var::USER_PASSWORD => strrev(users::TEST_USER_PASSWORD),
+        ];
+        $wrong_msg = new user_message_ui();
+        $this->ui->url_to_action($wrong_url, $wrong_msg, $this->ui->dto, true);
+        // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
+        $t->reset_section_timer();
+        $t->assert_true($test_name, $wrong_msg->has_msg_id(msg_id::PASSWORD_WRONG));
+        $test_name = '... the requesting user stays the ip only user';
+        $t->assert_true($test_name, $wrong_msg->usr->is_ip_only());
+        $test_name = '... and the next requests have no session user';
+        $session_usr_id = $_SESSION[url_var::SESSION_USER_ID] ?? 0;
+        $t->assert($test_name, $session_usr_id, 0);
+
         // the 'normal page' the flow starts from: the default word view of the math word
         $page_url = [
             url_var::MASK => views::WORD_ID,
@@ -614,11 +634,8 @@ class word_write_url_tests extends word_url_tests
         $t->assert_text_contains($test_name, $html_page, $login_to_page, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // user 1 logs in and the page then shows the logout link with the same back target
-        $usr1 = $this->login_as($t, 'user 1 can log in from the normal page', users::SYSTEM_TEST_NAME);
         $msg1 = new user_message_ui();
-        $usr1_ui = new user_ui();
-        $usr1_ui->set_from_json($usr1->api_json(), $msg1);
-        $msg1->usr = $usr1_ui;
+        $msg1->usr = $this->login_as($t, 'user 1 can log in from the normal page', users::SYSTEM_TEST_NAME);
         $test_name = '... and after the login the logout link keeps the page as back target';
         $html_logged = $this->ui->url_to_html($page_url, $msg1, $this->ui->dto, true);
         $t->assert_text_contains($test_name, $html_logged,
@@ -633,7 +650,7 @@ class word_write_url_tests extends word_url_tests
             url_var::BACK . url_var::MASK => (string)views::WORD_ID,
             url_var::BACK . url_var::ID => (string)word_names::MATH_ID,
         ];
-        $next_url = $this->ui->url_to_action($logout_request, $usr1, $msg1, $this->ui->dto, false);
+        $next_url = $this->ui->url_to_action($logout_request, $msg1, $this->ui->dto, false);
         $t->assert($test_name, (string)($next_url[url_var::BACK . url_var::MASK] ?? ''), (string)views::WORD_ID);
         $t->assert($test_name . ' id', (string)($next_url[url_var::BACK . url_var::ID] ?? ''), (string)word_names::MATH_ID);
         $this->logout();
@@ -657,9 +674,9 @@ class word_write_url_tests extends word_url_tests
      * @param test_cleanup $t the test environment
      * @param string $test_name the name of the login check shown in the test log
      * @param string $usr_name the name of the user to log in
-     * @return user the logged in user e.g. to load the word as this user
+     * @return user_ui the logged in user, to which the login has switched the requesting user of the message
      */
-    private function login_as(test_cleanup $t, string $test_name, string $usr_name): user
+    private function login_as(test_cleanup $t, string $test_name, string $usr_name): user_ui
     {
         $login_url = [
             url_var::MASK => views::LOGIN_ID,
@@ -667,13 +684,29 @@ class word_write_url_tests extends word_url_tests
             url_var::USER_PASSWORD => users::TEST_USER_PASSWORD,
         ];
         $login_msg = new user_message_ui();
-        $db_usr = new user();
-        $this->ui->url_to_action($login_url, $db_usr, $login_msg, $this->ui->dto, true);
+        $this->ui->url_to_action($login_url, $login_msg, $this->ui->dto, true);
         // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
         $t->reset_section_timer();
         // assert via the login message so a failed login shows the reason, not just a false
         $t->assert_msg($test_name, $login_msg);
-        $t->assert($test_name . ' for the next requests', $_SESSION[url_var::SESSION_USER_ID] ?? 0, $db_usr->id());
+        $usr_ui = $login_msg->usr;
+        $t->assert($test_name . ' as the requesting user', $usr_ui->name(), $usr_name);
+        $session_usr_id = $_SESSION[url_var::SESSION_USER_ID] ?? 0;
+        $t->assert($test_name . ' for the next requests', $session_usr_id, $usr_ui->id());
+        return $usr_ui;
+    }
+
+    /**
+     * the backend user of a logged in frontend user, because the test checks the database
+     * with backend objects such as word, which need the backend user
+     *
+     * @param user_ui $usr_ui the logged in user as the frontend knows it
+     * @return user the same user loaded from the database
+     */
+    private function db_user(user_ui $usr_ui): user
+    {
+        $db_usr = new user();
+        $db_usr->load_by_id($usr_ui->id(), new user_message());
         return $db_usr;
     }
 

@@ -40,13 +40,20 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+// after component.php, because component_exe extends component and includes this file before its own class
+include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::EXECUTE . 'ui_log.php';
+include_once html_paths::EXECUTE . 'ui_preview.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'number_format.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_data.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -60,13 +67,16 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
 include_once html_paths::SYSTEM . 'wikidata_import.php';
 include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED_ENUM . 'change_log_actions.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED . 'api.php';
@@ -85,16 +95,20 @@ include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
@@ -108,6 +122,7 @@ use Zukunft\ZukunftCom\main\php\web\system\wikidata_import;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -118,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -143,6 +159,15 @@ class system_page extends component
     ];
     // the tab that a process catch page shows if the url selects none
     const int PROCESS_CATCH_TAB_DEFAULT = 1;
+    // the sandbox page shows one table per object type, each overwrite with its undo and the icon to the
+    // values of the other users (see ui_log::all_user_overwrites)
+    const array SANDBOX_TYPES_AND_ACTIONS = [
+        change_log_actions::GROUP_BY_TYPE,
+        change_log_actions::UNDO,
+        change_log_actions::OTHERS_LINK,
+    ];
+    // the system log text if the value detail component is linked to a view of another object
+    const string VALUE_DETAILS_NO_VALUE = ' is not a value, so the value details cannot be shown';
     // the html ids of the hosts that the formula editor script fills (script/formula_editor.js)
     const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
     const string FORMULA_SELECTOR_HOST_ID = 'formulaSelector';
@@ -314,7 +339,7 @@ class system_page extends component
         $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            // on the search page show "search result for <pattern>" instead of the plain "search" title
+            // on the search page show "search results for '<pattern>*'" instead of the plain "search" title
             if ($ui_msg_code_id == msg_id::FORM_TITLE_SEARCH) {
                 $result .= $html->text_h2($this->search_title($url_array));
             } else {
@@ -382,7 +407,8 @@ class system_page extends component
     }
 
     /**
-     * build the search page title; with a pattern it reads "search result for <pattern>",
+     * build the search page title; with a pattern it reads "search results for '<pattern>*'",
+     * because the search finds the names that start with the pattern (sql_par_type::LIKE_R);
      * without a pattern it falls back to the plain search title
      * @param array $url_array the URL params; the pattern is read from url_var::PATTERN with the
      *                         human-readable url_var::PATTERN_HUMAN as fallback (see body_search)
@@ -502,33 +528,91 @@ class system_page extends component
         return $result;
     }
 
-    // TODO Prio 0 fill with real code
-
     /**
-     * show a view zoomed to 1/3 of its original size as a preview so that the user can see a
-     * preview of the original page based on a different view mask
+     * the preview of the edited component for the sample phrase of the url (url_var::SAMPLE_PHRASE),
+     * so that the user sees how the changed component shows a real phrase before the change is saved;
+     * the sample phrase is posted again with the form, so that the preview stays after the confirm step
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the edited component with the sample phrase of the url
+     * @param user_message $msg to report a problem of the phrase load
+     * @param msg_id|null $ui_msg_code_id the message id of the preview title e.g. "Preview"
+     * @param string $form_name the name of the component edit form, of which the preview is a part
+     * @param int $msk_id the database id of the component edit view
+     * @param data_object|null $cfg the request cache with the phrases that the test mode uses
+     * @param bool $test_mode true to take the sample phrase from the request cache without a backend call
+     * @param array $url_arr the url parameters of the component edit view
+     * @return string the html code of the preview or the hint why no preview is shown
      */
-    function preview(): string
+    function preview(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?msg_id                                               $ui_msg_code_id,
+        string                                                $form_name,
+        int                                                   $msk_id,
+        ?data_object                                          $cfg,
+        bool                                                  $test_mode,
+        array                                                 $url_arr
+    ): string
     {
-        return 'preview placeholder';
+        global $mtr;
+
+        $html = new html_base();
+        // only a component has a sample phrase, which also ends the preview of the preview component
+        // itself, because its second call gets the sample phrase instead of the component
+        $phr_id = 0;
+        if ($dbo instanceof component_exe) {
+            $phr_id = (int)$dbo->sample_phrase;
+        }
+        $phr = $this->sample_phrase($phr_id, $msg, $cfg, $test_mode);
+        if ($phr_id == 0) {
+            $result = $html->p($mtr->txt(msg_id::COMPONENT_PREVIEW_NO_SAMPLE));
+        } elseif ($phr == null) {
+            $result = $html->p($mtr->txt(msg_id::COMPONENT_PREVIEW_SAMPLE_NOT_FOUND));
+        } else {
+            $result = $html->form_hidden(url_var::SAMPLE_PHRASE, (string)$phr_id);
+            $result .= $this->title_for_phrase($ui_msg_code_id, $phr);
+            $result .= $dbo->dsp_entries(
+                $phr, $msg, $form_name, $msk_id, $cfg, $dbo->style_id, '', $test_mode, $url_arr);
+        }
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
+    /**
+     * @param int $phr_id the id of the sample phrase of the url, 0 if the url has none
+     * @param user_message $msg to report a problem of the phrase load
+     * @param data_object|null $cfg the request cache with the phrases that the test mode uses
+     * @param bool $test_mode true to take the phrase from the request cache without a backend call
+     * @return phrase|null the sample phrase or null if the url has none or the phrase has not been found
+     */
+    private function sample_phrase(int $phr_id, user_message $msg, ?data_object $cfg, bool $test_mode): ?phrase
+    {
+        $result = null;
+        if ($phr_id != 0) {
+            $phr_lst = new phrase_list();
+            if ($test_mode) {
+                $phr_lst = $cfg?->phrase_list() ?? new phrase_list();
+            } else {
+                $phr_lst->load_by_ids([$phr_id], $msg);
+            }
+            $result = $phr_lst->get($phr_id);
+        }
+        return $result;
+    }
+
     function about_body(): string
     {
         $html = new html_base();
         return $html->about_body();
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 fill the setup page without passwords: the setup runs in http/setup.php before the database and
+    //      the views exist, so the page shows the admin username and the .env values that are no secret for the
+    //      confirm, and a password is never shown on a web page (no pending_prio_2.md section yet)
 
     /**
      * request from the user the values relevant for the initial setup
-     * so the main question ist that the user confirms the admin username and password from the .env for
-     * or fill the admin user of the .env file entry is empty
-     *
-     * additional all values from the .env.example file should be show and be changeable
-     *
+     * so the main question ist that the user confirms the admin username from the .env
+     * or fills the admin user if the .env file entry is empty
      */
     function setup_body(): string
     {
@@ -688,8 +772,6 @@ class system_page extends component
         // the search input field is part of the navbar search form, so it is not repeated here
         $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
 
-        // TODO Prio 0: if the search pattern is 'global' show the title 'search results for 'global*'
-
         // show the terms (word, triple, formula or verb) that match the search pattern,
         // most relevant (highest impact) first
         if ($trm_lst === null and $pattern != '') {
@@ -757,7 +839,8 @@ class system_page extends component
         return $html->ref($url, $btn_text, '', html_base::CLASS_BUTTON . ' ' . html_base::BS_BTN_SUCCESS);
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 fill: the term list api (term_list::get_by_pattern) needs the filter parameters term type, share
+    //      and protection, which this page adds as fields to the search of body_search (no pending_prio_2.md section yet)
 
     /**
      * like body_search but with all possible fields
@@ -768,54 +851,239 @@ class system_page extends component
         return 'body_search_full placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 page the change history: api/changeLogList reads url_var::LOG_PAGE into the offset of the list and
+    //      change_log_list::tr_page_nav links the back and forward icon with url_var::DISPLAY_LIST_PAGE, so that the
+    //      complete history and not only the configured rows can be read (no pending_prio_2.md section yet)
 
     /**
-     * @return string with the HTML code to show all relations of a value
-     * e.g. where it is used and are it causes an impact
+     * all details of one value on one page: the fields of the value, the formulas whose results depend on
+     * the value, the change history and the numbers that the other users have set for the same phrases;
+     * each part reuses the renderer of the value default page or of its tab box
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the value of the page
+     * @param user_message $msg to report a problem of the load or an object that is no value
+     * @param data_object|null $cfg the request cache with the sources and formulas that the test mode uses
+     * @param bool $test_mode true to create the page from the given objects without a backend call
+     * @param array $url_arr the url parameters of the page, which the links return to
+     * @return string the html code of the value details
      */
-    function value_details(): string
+    function value_details(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        bool                                                  $test_mode,
+        array                                                 $url_arr
+    ): string
     {
-        return 'value_details placeholder';
+        global $mtr;
+
+        $html = new html_base();
+        $result = '';
+        // guarded by class, because a mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof value) {
+            $result .= $this->value_fields($dbo, $msg, $cfg, $url_arr);
+            $result .= $html->text_h3($mtr->txt(msg_id::FORM_SUB_TITLE_FORMULAS));
+            $result .= $this->value_formulas($dbo, $msg, $cfg, $test_mode);
+            $result .= $html->text_h3($mtr->txt(msg_id::FORM_SUB_TITLE_LOG));
+            $result .= new ui_log()->change_log_table_pure($dbo, new change_log_list(), $msg, $test_mode);
+            $result .= $html->text_h3($mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS));
+            $result .= new ui_preview()->other_overwrites_table($dbo, $msg, $url_arr, $test_mode);
+        } else {
+            log_err_msg_ui($dbo?->dsp_id() . self::VALUE_DETAILS_NO_VALUE, $msg);
+        }
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
+    /**
+     * the fields of a value one below the other, each behind its label: the number with its quality mark,
+     * the phrases with their types, the source, the share and the protection, the last update and the owner;
+     * a value has no usage field, its use is the list of formulas below
+     *
+     * @param value $val the value of the page
+     * @param user_message $msg to report a problem of the number format or the type cache
+     * @param data_object|null $cfg the request cache with the sources of a value built from the url
+     * @param array $url_arr the url parameters of the page, which the links return to
+     * @return string the html code of the labeled fields
+     */
+    private function value_fields(value $val, user_message $msg, ?data_object $cfg, array $url_arr): string
+    {
+        global $ui_sys;
+
+        $html = new html_base();
+        $form = new system_form();
+        $shr_name = $this->type_name($ui_sys?->typ_lst_cache?->shr_typ, $val->share_id());
+        $ptc_name = $this->type_name($ui_sys?->typ_lst_cache?->ptc_typ, $val->protection_id());
+        $fields = [
+            $form->label_with_html($val->value_edit($msg, $url_arr), msg_id::FORM_FIELD_VALUE),
+            $form->label_with_html($this->phrases_with_types($val, $msg), msg_id::FORM_SELECT_MULTI_PHRASES),
+            $form->show_source($val, $cfg?->source_list()),
+            $form->label_with_html($html->esc($shr_name), msg_id::FORM_SELECT_SHARE_TYPE),
+            $form->label_with_html($html->esc($ptc_name), msg_id::FORM_SELECT_PROTECTION_TYPE),
+            $form->show_last_update($val),
+            $form->label_with_html($form->show_owner($val), msg_id::FORM_FIELD_OWNER),
+        ];
+        $result = '';
+        foreach ($fields as $field) {
+            // the last update of a never saved value is empty and gets no line
+            if ($field != '') {
+                $result .= $html->div($field);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param value $val the value whose phrases are shown in the order of the value name
+     * @param user_message $msg to report a problem of the phrase type cache
+     * @return string the linked phrases each with its type in brackets e.g. "Zurich (city)"
+     */
+    private function phrases_with_types(value $val, user_message $msg): string
+    {
+        $html = new html_base();
+        $phr_typ = type_lists::phrase_types($msg);
+        $parts = [];
+        foreach ($val->grp->phr_lst()->lst() as $phr) {
+            $part = $phr->name_link();
+            $type_id = $phr->type_id($msg);
+            if ($type_id !== null and $phr_typ != null) {
+                $part .= ' (' . $html->esc($phr_typ->name($type_id)) . ')';
+            }
+            $parts[] = $part;
+        }
+        return implode(', ', $parts);
+    }
+
+    /**
+     * @param type_list|null $typ_lst the cached type list e.g. the share types, null if the cache is not loaded
+     * @param int|null $type_id the type of the object e.g. its share id, null for the default
+     * @return string the name of the type or of the default type of the list if the object has none
+     */
+    private function type_name(?type_list $typ_lst, ?int $type_id): string
+    {
+        $result = '';
+        if ($typ_lst != null) {
+            $result = $typ_lst->name($type_id ?? $typ_lst->default_id());
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas that have calculated a result from the given value, so these are the formulas whose
+     * results change if the value changes
+     *
+     * @param value $val the value whose results name the formulas
+     * @param user_message $msg to report a problem of the formula load
+     * @param data_object|null $cfg the request cache with the formulas that the test mode uses
+     * @param bool $test_mode true to take the formulas from the request cache without a backend call
+     * @return string the linked formula names or the message that the value is not used for formulas
+     */
+    private function value_formulas(value $val, user_message $msg, ?data_object $cfg, bool $test_mode): string
+    {
+        global $mtr;
+
+        // the results of a value carry only the id of their formula
+        $frm_ids = [];
+        if ($val->results_related != null) {
+            foreach ($val->results_related->lst() as $res) {
+                if ($res->formula_id() != null) {
+                    $frm_ids[] = $res->formula_id();
+                }
+            }
+        }
+        $frm_ids = array_values(array_unique($frm_ids));
+        $frm_lst = new formula_list();
+        if ($test_mode) {
+            $cache = $cfg?->formula_list() ?? new formula_list();
+            foreach ($cache->lst() as $frm) {
+                if (in_array($frm->id(), $frm_ids)) {
+                    $frm_lst->add($frm, $msg);
+                }
+            }
+        } elseif ($frm_ids != []) {
+            $frm_lst->load_by_ids($frm_ids, $msg);
+        }
+        // name_link sorts the formulas by impact, so the most relevant one is named first
+        $result = $frm_lst->name_link();
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
+        }
+        return $result;
+    }
+
+    // TODO Prio 2 show the explanation of the result of the url: the api of a result answers with the formula, the
+    //      source phrases and the values per element group (pending_prio_2.md "## the remaining parts of the retired
+    //      http_old scripts" -> "### result explain and formula test view" -> "#### step 1: the result explain view")
     function result_explain(): string
     {
         return 'result_explain placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 show the calculation steps of the formula of the url without saving, with the 'more details' link
+    //      and the refresh button as a job (pending_prio_2.md "## the remaining parts of the retired http_old scripts"
+    //      -> "### result explain and formula test view" -> "#### step 2: the formula test view")
     function formula_test(): string
     {
         return 'formula_test placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function sandbox(): string
+    // TODO Prio 2 show all overwrites with the count per type and paging: api/changeLogList answers all rows of the
+    //      user up to the max frontend list size instead of the row limit (change_log_list::load_by_user), the
+    //      backend counts the user sandbox rows per table (user_list::load_sql_count_all_rows keeps the per-table
+    //      counts instead of summing them) and sends them, each type group names its count and gets the back and
+    //      forward icon (change_log_list::tr_page_nav) and all_user_overwrites skips its row limit for this page
+    //      (pending.md "## user page")
+
+    /**
+     * the overwrites of the requesting user grouped by the type of the changed object, each with its undo,
+     * so that the user sees the own sandbox and can set one overwrite back to the standard
+     *
+     * @param user_message $msg with the requesting user whose overwrites are shown
+     * @param change_log_list $log_lst the changes of the user that the test mode shows
+     * @param bool $test_mode true to show the given changes without a backend call
+     * @param array $url_arr the url parameters of the page, which the undo links return to
+     * @return string the html code with one table of overwrites per object type or the no-changes message
+     */
+    function sandbox(user_message $msg, change_log_list $log_lst, bool $test_mode, array $url_arr): string
     {
-        return 'sandbox placeholder';
+        global $mtr;
+
+        $usr = $msg->usr;
+        if ($usr == null) {
+            $result = $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE);
+        } else {
+            if (!$test_mode) {
+                $log_lst = new change_log_list();
+                $log_lst->load_by_user($usr->id(), $msg);
+            }
+            $result = new ui_log()->all_user_overwrites(
+                $usr, $log_lst, $msg, $test_mode, null, $url_arr, self::SANDBOX_TYPES_AND_ACTIONS);
+        }
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 fill with the details of the undo page (pending_prio_2.md "## the undo and the error log page")
     function undo(): string
     {
         return 'undo placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 show the settings form of the user of the view (web/user/user.php::form_edit) with the confirm step
+    //      (pending_prio_2.md "## the remaining parts of the retired http_old scripts" -> "### user view" ->
+    //      "#### step 1: the settings form of the user view")
     function user_setting(): string
     {
         return 'user_setting placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 show the admin buttons that start the system consistency check and the recalculation of all results
+    //      as jobs (pending_prio_2.md "## the remaining parts of the retired http_old scripts" -> "### the import of
+    //      the system data and the recalculation of all results as admin jobs")
     function process(): string
     {
         return 'process placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 fill with the details of the error log page (pending_prio_2.md "## the undo and the error log page")
     function error_log(): string
     {
         return 'error_log placeholder';
@@ -983,13 +1251,17 @@ class system_page extends component
         return $result;
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 show the progress of the job of the url in percent, which needs the progress fields of the job
+    //      (pending_prio_2.md "## the remaining parts of the retired http_old scripts" -> "### the import of the
+    //      system data and the recalculation of all results as admin jobs" -> "#### step 2")
     function process_progress(): string
     {
         return 'process_progress placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    // TODO Prio 2 show the admin button that creates the import job and the list of the jobs with their status, start
+    //      and end time (pending_prio_2.md "## the remaining parts of the retired http_old scripts" -> "### the import
+    //      of the system data and the recalculation of all results as admin jobs" -> "#### step 1")
     function process_list(): string
     {
         return 'process_list placeholder';

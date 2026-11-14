@@ -6,9 +6,9 @@
     -----------------------------------
 
     the api is used mostly for reading (get); the write path (post/put/delete) needs an
-    authenticated session with an anti-csrf token (see controller::change_permitted), so this
-    test focuses on the get calls that can run standalone against the served api. it reads each
-    main object type by its default id and compares the json to the committed fixture.
+    authenticated session with an anti-csrf token (see controller::change_permitted), so the
+    served api is only read: each main object type by its default id compared to the committed
+    fixture. the writes are simulated by calling the controller with the token of the test session.
 
 
     This file is part of zukunft.com - calc with words
@@ -48,10 +48,13 @@ include_once paths::MODEL_COMPONENT . 'component.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class api_write_tests
@@ -84,15 +87,14 @@ class api_write_tests
         $t->assert_api_get(view::class);
         $t->assert_api_get(component::class);
 
-        /*
-         * TODO Prio 0 activate
-        $t->subheader($ts . ' direct');
-        foreach (def::MAIN_CLASSES as $class) {
-            $t->assert_api_post($class, $t);
-            $t->assert_api_post_direct(word::class, $t->usr1, $t);
-            $t->assert_api_put(word::class, $t);
-            $t->assert_api_del_direct(word::class, $t->usr1, $t);
-        }
+        $t->subheader($ts . 'direct');
+        $msg = new user_message();
+        $t->assert_api_post_direct(word::class, $t->usr1, $t);
+        // the added word with its id, because the change log of the deleted word is removed by its id
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::TEST_ADD, $msg);
+        $t->assert_api_del_direct(word::class, $t->usr1, $t);
+        $t->cleanup_change_log_of_deleted([$wrd]);
 
         // a user without login (ip user) must be refused, because the ip user change block is
         // enforced centrally in the model save/del, not only in the http/view.php frontend
@@ -102,18 +104,9 @@ class api_write_tests
         // a request without a requesting user on the message must be refused the same way
         $t->assert_api_write_blocked_without_user(word::class, $t);
 
-        $t->subheader($ts . ' api login');
-
-        // TODO Prio 1 add an api login
-
-        $t->subheader($ts . ' via api call');
-        foreach (def::MAIN_CLASSES as $class) {
-            $t->assert_api_post($class, $t);
-            $t->assert_api_post(word::class, $t);
-            $t->assert_api_put(word::class, $t);
-            $t->assert_api_del(word::class);
-        }
-        */
+        // TODO Prio 1 add an api login and then test the REST write via assert_api_post, assert_api_put and
+        //      assert_api_del for each of def::MAIN_CLASSES: the served api refuses every write without the
+        //      session and its csrf token of a login, and assert_api_post does not yet post (add_via_api)
 
     }
 

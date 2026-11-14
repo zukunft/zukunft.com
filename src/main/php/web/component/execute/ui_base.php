@@ -114,16 +114,6 @@ class ui_base
     }
 
     /**
-     * TODO Prio 0 fill with real code
-     * @param db_object|null $dbo the term whose main value should be shown
-     * @return string the html code with the most relevant value related to $dbo
-     */
-    function main_value(?db_object $dbo = null): string
-    {
-        return 'main_value placeholder';
-    }
-
-    /**
      * @param db_object|type_object|null $dbo the source whose name should be shown
      * @return string the name of the given source (admin users can change it via the related form)
      */

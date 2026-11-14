@@ -141,7 +141,8 @@ class sandbox_named extends sandbox
     function api_mapper(array $json_array, user_message $msg): bool
     {
         parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::NAME, $json_array)) {
+        // a name sent as null is as missing as a name that is not sent
+        if (($json_array[json_fields::NAME] ?? null) !== null) {
             $this->set_name($json_array[json_fields::NAME]);
         } else {
             $this->set_name('');

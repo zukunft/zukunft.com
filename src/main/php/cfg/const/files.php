@@ -344,8 +344,7 @@ class files
         self::COMPANIES,
         // last, because it only links phrases and views of the files above, so no id shifts
         self::ASSIGNED_VIEWS_FILE,
-        // TODO Prio 0 activate
-        //self::ZURICH_HTP_IMPACT_FILE,
+        self::ZURICH_HTP_IMPACT_FILE,
     ];
 
     // to load the default system data for a standard pod

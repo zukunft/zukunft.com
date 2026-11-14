@@ -190,7 +190,7 @@ class url_test_base
         // a write run ($do_it) is a real deployment with a real object row, so it renders the real
         // pages including the backend filled views, my and others tabs, and the snapshot
         // reproducibility comes from the normalizers (normalize_ids, normalize_change_log_time, ...)
-        $this->req = new user_request($this->t->usr1, $this->msg, $this->ui->dto, $do_it, !$do_it);
+        $this->req = new user_request($this->msg, $this->ui->dto, $do_it, !$do_it);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
@@ -276,8 +276,7 @@ class url_test_base
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $url_arr;
         if (!$submit_acts or workflows::is_form_submit($step)) {
-            $next_url = $this->ui->url_to_action($url_arr,
-                $this->req->usr_backend, $this->req->msg,
+            $next_url = $this->ui->url_to_action($url_arr, $this->req->msg,
                 $this->req->dto, $this->req->do_it);
         }
         $this->next_url = $next_url;

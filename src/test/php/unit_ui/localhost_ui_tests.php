@@ -107,12 +107,22 @@ class localhost_ui_tests
             // so the generous import timeout is used to avoid a false timeout
             $t->assert_text_contains($test_name, $page, word_names::MATH, test_base::TIMEOUT_LIMIT_IMPORT);
         }
-        $test_name = 'verb add by url';
+        // the verb add view changes data like the word edit view, so it is blocked the same way
+        $test_name = 'verb add by url is blocked for a user without login';
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::VERB_ADD_ID);
         $sys->times->switch();
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
+        $t->assert_text_contains(
+            $test_name, $page, $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER), test_base::TIMEOUT_LIMIT_IMPORT);
+        $test_name = 'verb add by url with a login';
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $page = $t->web_page_with_login(
+            api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::VERB_ADD_ID);
+        $sys->times->switch();
+        if ($page != '') {
+            $t->assert_text_contains(
+                $test_name, $page, $mtr->txt(msg_id::FORM_TITLE_VERB_ADD), test_base::TIMEOUT_LIMIT_IMPORT);
+        }
 
         $this->run_start_page($t);
     }

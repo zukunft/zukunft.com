@@ -644,8 +644,8 @@ class type_tests
         $typ = $t_typ->user_profile();
         $t->assert_sql_insert($sc, $typ);
 
-        // TODO Prio 0 add language
-        // TODO Prio 0 add  position_types, system_time_types
+        // TODO Prio 1 add language
+        // TODO Prio 1 add  position_types, system_time_types
         // TODO Prio 3 revert [sql_type::LOG] to [sql_type::NO_LOG]
 
         $t->subheader($ts . 'sql write insert with log e.g. for system setup');
@@ -698,6 +698,8 @@ class type_tests
         $typ = $t_typ->component_link_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->position_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->system_time_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->language();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);

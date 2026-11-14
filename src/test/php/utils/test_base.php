@@ -3686,15 +3686,8 @@ class test_base
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset(true);
         $usr_obj->id = 0;
-        // TODO Prio 0 add test view relation
-        //      but first finish the dto based import
-        //      and before that use the global $cac as the main backend cache var
-        if ($usr_obj::class == view_relation::class) {
-            return true;
-        } else {
-            $usr_obj->load_by_id($id, $msg);
-            return $this->assert($test_name, $usr_obj->id(), $id);
-        }
+        $usr_obj->load_by_id($id, $msg);
+        return $this->assert($test_name, $usr_obj->id(), $id);
     }
 
     /**
@@ -4577,6 +4570,7 @@ class test_base
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
         } elseif ($lnk::class == term_view::class
+            or $lnk::class == view_relation::class
             or $lnk::class == ref::class
             or $lnk::class == triple::class) {
             $old_description = $lnk->description;
@@ -4828,7 +4822,12 @@ class test_base
     {
         foreach ($dbo_lst as $dbo) {
             $class = $dbo::class;
-            $chk = new $class($this->usr_system);
+            // a verb is a type object without user, so its constructor takes the id and not the user
+            if ($dbo instanceof verb) {
+                $chk = new verb();
+            } else {
+                $chk = new $class($this->usr_system);
+            }
             $msg = new user_message($this->usr_system);
             $deleted = $chk->load_by_id($dbo->id(), $msg) == 0;
             if ($deleted and $dbo instanceof value) {
@@ -5499,6 +5498,12 @@ class test_base
                 log_warning('cleanup of type row ' . $typ->dsp_id() . ' is not allowed');
             } elseif ($msg->is_ok()) {
                 $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $msg);
+                // like verb::del, so that a later test does not find the removed test verb in the
+                // verb cache of the test run and links a triple to an id that no longer exists
+                if ($msg->is_ok() and $typ instanceof verb) {
+                    global $sys;
+                    $sys->typ_lst->vrb->unset_by_id($typ->id());
+                }
             }
         }
     }
@@ -5980,7 +5985,7 @@ class test_base
     }
 
     private
-    function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
+    function write_link_update_description(term_view|view_relation|ref|triple $lnk, user $usr, string $new_description): bool
     {
         $msg = new user_message($usr);
         $id = $lnk->id();
@@ -6000,7 +6005,7 @@ class test_base
     }
 
     private
-    function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
+    function write_link_check_description(term_view|view_relation|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $msg = new user_message();
         $id = $lnk->id();

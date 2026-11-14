@@ -153,12 +153,10 @@ class expression_write_tests
         $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting the phrases if the formula contains a verb
-        // not sure if test is correct!
-        // TODO Prio 0 activate
-        //$phr_lst = $exp_sector->phr_verb_lst();
-        //$result = $phr_lst->dsp_name();
-        $target = '"canton","country","System Test Word Total"';
-        // TODO Prio 1 $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
+        $phr_lst = $exp_sector->phr_verb_lst($msg);
+        $result = $phr_lst->dsp_name();
+        $target = '"' . words::COUNTRY . '","' . word_names::CANTON . '","' . word_names::TEST_TOTAL . '"';
+        $t->assert('phr_verb_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting special phrases
         $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);

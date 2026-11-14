@@ -537,7 +537,6 @@ class group_tests
         $t->assert_sql_user_changes($sc, $t_grp->group_17_plus());
         $this->assert_sql_by_phrase_list($t, $db_con);
 
-        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql statements - write');
         $grp = new group($t->usr1);
         $grp->set_phrase_list($t_phr->phrase_list_prime());

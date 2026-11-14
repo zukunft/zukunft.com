@@ -113,17 +113,17 @@ class element_write_tests
                 $elm_ui = new element($elm->api_json());
                 $result = $elm_ui->link([]);
                 $url = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&amp;' . url_var::ID . '=';
+                // the title of a word link is its description, so the test word without one has no title
                 if ($pos == 0) {
-                    $target = $url . $wrd_country->id . '" title="country">country</a>';
+                    $target = $url . $wrd_country->id . '" title="' . $wrd_country->get_description() . '">country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = $url . $wrd_canton->id . '" title="canton">canton</a>';
+                    $target = $url . $wrd_canton->id . '" title="' . $wrd_canton->get_description() . '">canton</a>';
                 } elseif ($pos == 3) {
-                    $target = $url . $wrd_total->id . '" title="System Test Word Total">System Test Word Total</a>';
+                    $target = $url . $wrd_total->id . '">System Test Word Total</a>';
                 }
-                // TODO Prio 0 activate
-                //$t->assert('element->dsp_id', $result, $target);
+                $t->assert('element->link', $result, $target);
 
                 $pos++;
             }

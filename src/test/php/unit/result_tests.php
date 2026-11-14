@@ -177,7 +177,6 @@ class result_tests
         $t->assert_sql_insert($sc, $res_big);
         $res = $t_res->result_incomplete();
         $t->assert_sql_insert_fail($sc, $res);
-        // TODO Prio 0 activate db write
         // TODO Prio 2 add tests for text, time and geo values
         $res = $t_res->result();
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
@@ -186,7 +185,6 @@ class result_tests
         $db_res_filled = $res_filled->cloned(results::TV_FLOAT);
         $db_res = $res->cloned(results::TV_FLOAT);
         $db_res_big = $res_big->cloned(results::TV_FLOAT);
-        // TODO Prio 0 activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
@@ -215,7 +213,6 @@ class result_tests
         $t->assert_sql_save_fields($sc, $res_prime_max, $db_res_prime_max);
         $t->assert_sql_save_fields($sc, $res_main, $db_res_main);
         $t->assert_sql_save_fields($sc, $res_big, $db_res_big);
-        // TODO Prio 0 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
         // is covered already by the horizontal tests

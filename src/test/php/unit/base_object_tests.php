@@ -301,6 +301,10 @@ class base_object_tests
         $del_lst = new ListOfIdNamedObjects([$wrd2_no_id]);
         $lst = $lst->diff_by_name($del_lst);
         $t->assert($test_name, $lst->names(), [word_names::MATH]);
+        $test_name = 'diff with other names keeps all';
+        $other_lst = new ListOfIdNamedObjects([$t_wrd->word_2020()]);
+        $diff_lst = $lst->diff_by_name($other_lst);
+        $t->assert($test_name, $diff_lst->names(), [word_names::MATH]);
         $test_name = 'unset by name can empty the list';
         $lst->unset_by_name(word_names::MATH);
         $t->assert_true($test_name, $lst->is_empty());
@@ -387,6 +391,24 @@ class base_object_tests
         $test_name = 'unset by name can empty the list';
         $lst->unset_by_name(phrase_types::NORMAL_NAME);
         $t->assert_true($test_name, $lst->is_empty());
+        $test_name = 'diff by code id removes the types with the same code id';
+        $lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_time()]);
+        $del_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type_measure()]);
+        $diff_lst = $lst->diff_by_code_id($del_lst);
+        $t->assert($test_name, $diff_lst->code_ids(), [phrase_types::NORMAL, phrase_types::TIME]);
+        $test_name = 'diff by code id with other code ids keeps all';
+        $other_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type_scaling()]);
+        $diff_lst = $lst->diff_by_code_id($other_lst);
+        $t->assert($test_name, $diff_lst->code_ids(), [phrase_types::NORMAL, phrase_types::MEASURE, phrase_types::TIME]);
+        $test_name = 'unset by code id removes all types with the code id';
+        $lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_measure()]);
+        $lst->unset_by_code_id(phrase_types::MEASURE);
+        $t->assert($test_name, $lst->code_ids(), [phrase_types::NORMAL]);
+        $test_name = 'unset by a missing code id does not change the list';
+        $unset = $lst->unset_by_code_id(phrase_types::CALC);
+        $t->assert_false($test_name, $unset);
+        $test_name = '... and keeps the type';
+        $t->assert($test_name, $lst->code_ids(), [phrase_types::NORMAL]);
 
         // the id base classes are only reached through a concrete child, so each block maps
         // the api json of a test object and checks the id that the base class maps
@@ -577,7 +599,21 @@ class base_object_tests
         $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
 
-        // TODO Prio 0 add add and unset tests
+        // the add of an object without id, which only a child list can do; the base list function is not
+        // called, because it reports the missing overwrite as a program error to the system log (log_err)
+        $t->subheader($ts . 'add by key');
+        $msg->reset();
+        $test_name = 'a word without id is added by its name';
+        $wrd_lst = $t_wrd->word_list();
+        $wrd_no_id = $t_wrd->word_2020();
+        $wrd_no_id->id = 0;
+        $added = $wrd_lst->add_by_key($wrd_no_id, false, $msg);
+        $t->assert_true($test_name, $added);
+        $test_name = 'a word without id and without name is not added';
+        $wrd_no_key = $wrd_no_id->clone_reset(true);
+        $added = $wrd_lst->add_by_key($wrd_no_key, false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
 
         // TODO Prio 2 add tests fpr CombineObject, Config, IdObject, ListOfIdObjects, MapObjects, TextIdObjects, Translator and Workflow
 

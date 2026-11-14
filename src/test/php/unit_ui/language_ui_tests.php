@@ -40,15 +40,20 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -108,6 +113,42 @@ class language_ui_tests
         $lan_no_name = new language(languages::DEFAULT_ID, languages::DEFAULT);
         $dsp = $lan_no_name->dsp_id();
         $t->assert_text_not_contains($test_name, $dsp, languages::DEFAULT_NAME);
+
+        $t->subheader($ts . 'symbol');
+
+        // the symbol of a language is its wikimedia code e.g. "de" for German
+        $test_name = 'the language del view shows the wikimedia code as the symbol';
+        $sfm = new system_form();
+        $lan_trn = $t_lan->language_translate();
+        $lan_de = new language($lan_trn->id(), $lan_trn->code_id, $lan_trn->name, $lan_trn->description);
+        $lan_de->wiki_code = $lan_trn->wiki_code;
+        $t->assert($test_name, $sfm->show_language_symbol($lan_de), languages::TRANSLATE_WIKI);
+        // negative: a language without wikimedia code shows no symbol and not its name instead
+        $test_name = 'a language without wikimedia code shows no symbol';
+        $t->assert($test_name, $sfm->show_language_symbol($src), '');
+        $test_name = 'the admin symbol field of a language is filled with the wikimedia code';
+        $sym_fld = $sfm->admin_form_language_symbol($lan_de);
+        $t->assert_text_contains($test_name, $sym_fld, 'value="' . languages::TRANSLATE_WIKI . '"');
+        // negative: the field of a language without wikimedia code is empty
+        $test_name = 'the admin symbol field of a language without wikimedia code is empty';
+        $sym_fld = $sfm->admin_form_language_symbol($src);
+        $t->assert_text_not_contains($test_name, $sym_fld, 'value=');
+
+        $t->subheader($ts . 'request');
+
+        // only an admin can add a language, so only an admin gets the link to the language add view
+        global $mtr;
+        $test_name = 'an admin gets the link to the language add view';
+        $msg_ui->usr = new user_ui($t->usr_admin->api_json());
+        $req_html = $sfm->button_request($msg_ui);
+        $t->assert_text_contains($test_name, $req_html, url_var::MASK . url_var::EQ . views::LANGUAGE_ADD_ID);
+        $test_name = '... with the text to add languages';
+        $t->assert_text_contains($test_name, $req_html, $mtr->txt(msg_id::BUTTON_ADD_LANGUAGES));
+        // negative: a user who is no admin sees no button
+        $test_name = 'a user who is no admin gets no language request button';
+        $msg_ui->usr = new user_ui($t->usr1->api_json());
+        $t->assert($test_name, $sfm->button_request($msg_ui), '');
+        $msg_ui->usr = null;
     }
 
 }

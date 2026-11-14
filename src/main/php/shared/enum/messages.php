@@ -533,10 +533,13 @@ enum messages: string
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
 
-    case INTERNAL = 'an internal system error has occurred that you can track with this link: '
+    // the var is the text of the error without the sys_log id (log_msg)
+    case INTERNAL = 'an internal system error has occurred and the admin has been informed: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
     case INTERNAL_WARNING = 'a system warning has been logged that you can track with this link: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    // the line below a critical error that the log writer shows (log_msg)
+    case INTERNAL_ADMIN_INFORMED = 'internal_admin_informed';
     case BACKEND_OLDER_THAN_DB = 'The zukunft.com backend is older than the database used. '
         . 'This may cause damage on the database. Please upgrade the backend program.';
 
@@ -3003,6 +3006,8 @@ enum messages: string
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
     // an empty text has nothing to store and its api message would have no text, so e.g. the config could not be read
     case VALUE_TEXT_EMPTY = 'value_text_empty';
+    // the database has no foreign key on the phrases of a value, so a phrase id that names no word or triple is refused before the insert
+    case VALUE_PHRASE_NOT_FOUND = 'value_phrase_not_found';
     // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
     case CONFIG_FONT_INVALID = 'config_font_invalid';
     // the font selection of the settings page and its entries (see web/helper/config_tree::FONT_OPTIONS)
@@ -3094,6 +3099,8 @@ enum messages: string
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
     case SOLUTION_PRIO_RANKING_TABLE = 'solution_prio_ranking_table';
+    // the ranking view, which lists the related phrases of a phrase with the highest impact first
+    case RANKING_BY_IMPACT = 'ranking_by_impact';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';
@@ -3154,6 +3161,8 @@ enum messages: string
 
     // value and result fields
     case FORM_FIELD_VALUE = 'form_field_value';
+    // the label of the user who owns the object e.g. on the value detail page
+    case FORM_FIELD_OWNER = 'form_field_owner';
     case FORM_FIELD_GROUP = 'form_field_group';
     // the label of the field for the name or the first chars of a word or triple of a new value
     case FORM_FIELD_PHRASE_PATTERN = 'form_field_phrase_pattern';
@@ -3298,6 +3307,9 @@ enum messages: string
 
     // TODO Prio 2 review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
+    // the hints of the component preview without a sample phrase (system_page::preview)
+    case COMPONENT_PREVIEW_NO_SAMPLE = 'component_preview_no_sample';
+    case COMPONENT_PREVIEW_SAMPLE_NOT_FOUND = 'component_preview_sample_not_found';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';

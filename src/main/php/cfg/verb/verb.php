@@ -1287,6 +1287,12 @@ class verb extends type_object
                     // TODO Prio 1 include deleting of user excludes in the sql function
                     $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
                     $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+                    // the verb cache of the process is loaded once, so without this a later triple of
+                    // the same process would still find the deleted verb by its name and its id
+                    if ($msg->is_ok()) {
+                        global $sys;
+                        $sys->typ_lst->vrb->unset_by_id($this->id());
+                    }
                 }
             } else {
                 // TODO Prio 2 create a new verb and request to delete the old

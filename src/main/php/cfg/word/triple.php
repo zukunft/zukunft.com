@@ -2283,7 +2283,6 @@ class triple extends sandbox_link_named
 
     /**
      * load the object parameters for all users by the standard formula link from the database
-     * TODO Prio 0 add unit test
      *
      * @param int $from_id the id of the from link object
      * @param int $to_id the id of the to link object
@@ -2304,7 +2303,6 @@ class triple extends sandbox_link_named
 
     /**
      * load the object parameters for all users by the standard formula link from the database
-     * TODO Prio 0 add unit test
      *
      * @param int $from_id the id of the from link object
      * @param int $typ_id the id of the verb object

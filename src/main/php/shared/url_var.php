@@ -250,6 +250,7 @@ class url_var
     const string PHRASE_FROM = 'pf';
     const string PHRASE_LIST = 'pl'; // a list of phrase ids
     const string POSITION = 'po'; // a order number or a position
+    const string SAMPLE_PHRASE = 'ps'; // the id of the phrase for which the component edit view shows the preview
     const string PHRASE_TO = 'pt';
     const string LEVELS = 'px'; // the number of search levels'
     const string PHRASE_TYPE = 'py';
@@ -623,6 +624,7 @@ class url_var
     const string PHRASE_POS_HUMAN = 'phrase_id_pos_'; // used for a list of phrases where the list position is added to the name
     const string LINK_PHRASE_HUMAN = 'link_phrase';
     const string UNLINK_PHRASE_HUMAN = 'unlink_phrase';
+    const string SAMPLE_PHRASE_HUMAN = 'sample_phrase_id';
 
     // list display
     const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
@@ -903,6 +905,7 @@ class url_var
         [self::PHRASE_CLASS_HUMAN, self::PHRASE_CLASS],
         [self::PHRASE_LIST_HUMAN, self::PHRASE_LIST],
         [self::PHRASE_POS_HUMAN, self::PHRASE_POS],
+        [self::SAMPLE_PHRASE_HUMAN, self::SAMPLE_PHRASE],
 
         // list display
         [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],

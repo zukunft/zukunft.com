@@ -1863,7 +1863,7 @@ class base_ui_tests
             url_var::NAME => word_names::TEST_ADD,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         $test_name = 'a confirm carries the mask of the change as origin mask';
@@ -1873,7 +1873,7 @@ class base_ui_tests
             url_var::MASK => views::WORD_ADD_DETAIL_ID,
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::NAME => word_names::TEST_ADD
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
         $cfm_msg->reset();
         $test_name = 'a change from the start page returns to the own view of the object';
@@ -1883,7 +1883,7 @@ class base_ui_tests
             url_var::ID => word_names::MINUTE_ID,
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::START_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
         $cfm_msg->reset();
         $test_name = 'a change from the start page returns to the id of the object';
@@ -1898,7 +1898,7 @@ class base_ui_tests
             url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         $test_name = 'a confirmed change from the own page shows the changed object';
@@ -1910,7 +1910,7 @@ class base_ui_tests
             url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
         $cfm_msg->reset();
         // a url without origin mask (e.g. of a workflow test) takes the back mask as the own view
@@ -1922,7 +1922,7 @@ class base_ui_tests
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
         $cfm_msg->reset();
         $test_name = 'a confirmed change without origin mask keeps the id of another object';
@@ -1933,7 +1933,7 @@ class base_ui_tests
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         // the add form that has opened the detailed add form of the same object is done with the add
@@ -1946,7 +1946,7 @@ class base_ui_tests
             url_var::NUMERIC_VALUE => values::SAMPLE_INT,
             url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID,
             url_var::BACK . url_var::PATTERN => word_names::ZH
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_DEFAULT_ID);
         $test_name = '... without the vars of the add form';
         $t->assert($test_name, $cfm_url[url_var::PATTERN] ?? '', '');
@@ -1957,7 +1957,7 @@ class base_ui_tests
             url_var::STEP => url_var::STEP_CONFIRMED,
             url_var::ORIGIN_MASK => views::FORMULA_ADD_ID,
             url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_ADD_NO_JS_ID);
         $cfm_msg->reset();
 
@@ -2022,7 +2022,7 @@ class base_ui_tests
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
         ];
-        $cfm_url = $ui->url_to_action($frm_url, $t->usr1, $cfm_msg, $ui->dto, false);
+        $cfm_url = $ui->url_to_action($frm_url, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
         $test_name = '... on the confirm view';
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::CONFIRM_ADD_ID);
@@ -2035,7 +2035,7 @@ class base_ui_tests
             url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? '', '');
         $cfm_msg->reset();
 

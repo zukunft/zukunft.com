@@ -171,6 +171,8 @@ class term extends combine_named
     const array TBL_WORD_WHERE = ['<> ' . phrase_type_shared::FORMULA_LINK_ID, sql::IS_NULL]; // to exclude the formula words from the term view
     const string TBL_COM = 'terms with an id that is not prime';
     const string FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
+    // the biggest word, triple, formula or verb id whose term id (about twice the id) still fits into an int
+    const int OBJ_ID_MAX = PHP_INT_MAX >> 1;
     const string FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
     const string FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
     const string FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id

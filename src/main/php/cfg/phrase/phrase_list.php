@@ -2262,9 +2262,9 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO Prio 0 add a unit test
      * sort the phrase object list by id
-     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
+     * @param user_message $msg to report a phrase that is missing in the list
+     * @return phrase_list a new list with the phrases sorted by the phrase id, so the triples with the negative id first
      */
     function sort_by_id(user_message $msg): phrase_list
     {
@@ -2280,9 +2280,9 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO Prio 0 add a unit test
      * sort the phrase object list by id in reverse order
-     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
+     * @param user_message $msg to report a phrase that is missing in the list
+     * @return phrase_list a new list with the phrases sorted by the phrase id descending, so the words first
      */
     function sort_rev_by_id(user_message $msg): phrase_list
     {

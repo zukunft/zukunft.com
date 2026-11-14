@@ -3013,37 +3013,6 @@ class html_base
             '" ' . self::VALUE . '="' . $id . '">';
     }
 
-    // TODO Prio 0 easy deprecate and use
-// add the text field to a form
-    function dsp_form_text($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
-        } else {
-            $result .= '' . $field .
-                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
-                '" ' . self::NAME . '="' . $field .
-                '" ' . self::VALUE . '="' . $txt_value . '">';
-        }
-        return $result;
-    }
-
-// add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
-        } else {
-            $result .= '' . $field .
-                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
-                '" ' . self::NAME . '="' . $field .
-                '" ' . self::CLASS_HTML . '="resizedTextbox" ' . self::VALUE . '="' . $txt_value . '">';
-        }
-        return $result;
-    }
-
     /**
      * add the field to a form
      */

@@ -37,11 +37,7 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 4365
-            },
-            {
-                "class": "triple",
-                "id": 4284
+                "id": 4379
             },
             {
                 "class": "triple",
@@ -49,7 +45,11 @@
             },
             {
                 "class": "triple",
-                "id": 4124
+                "id": 4312
+            },
+            {
+                "class": "triple",
+                "id": 4138
             }
         ]
     }

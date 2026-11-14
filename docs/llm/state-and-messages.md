@@ -61,11 +61,11 @@ independently testable.
 Any object a function may update is declared as an explicit parameter; the caller
 owns it and observes the change after the call. Use pass-by-reference (`&`) only
 when the function must replace the variable itself (reassigning
-`$usr_backend = $db_usr`); update-in-place via method calls
+`$usr_ui = new user_ui()` on logout); update-in-place via method calls
 (`$usr_ui->set_from_json(...)`) does not need `&` because objects are passed by
 handle.
 
-- **Right**: `function action_login(..., user_backend &$usr_backend, user_ui &$usr_ui, ...)`
+- **Right**: `function action_logout(user_ui &$usr_ui, user_message_ui $msg_ui, ...)`
 - **Wrong**: reading or writing a global to propagate the change
 
 ### Don't pass a stateless helper — instantiate it locally

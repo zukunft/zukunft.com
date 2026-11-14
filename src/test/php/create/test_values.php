@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -69,6 +70,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -189,6 +191,20 @@ class test_values extends test_objects
         $similar->remove($val);
         $val->values_similar = $similar;
         $val->results_related = $t_res->result_list();
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the standard test value as sent for its page with one result whose formula is known,
+     *                  so that the value detail page can name the formulas that use the value
+     */
+    function value_page_formula_ui(user_message $msg): value_ui
+    {
+        $t_res = new test_results($this->env);
+        $val = $this->value_pi();
+        $res_lst = new result_list($this->env->usr1);
+        $res_lst->add($t_res->result_main_max());
+        $val->results_related = $res_lst;
         return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
     }
 

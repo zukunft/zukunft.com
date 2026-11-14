@@ -6467,10 +6467,13 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO Prio 0 fill with real code
-     * @param db_object|combine_named|null $dbo the term whose related phrases should be listed
+     * the phrases related to the given phrase with the highest impact first, e.g. the global problems
+     * for the row phrase "global problem" of the component "problem definition" (component_exe::list_phrase)
+     *
+     * @param user_message $msg to report a problem of the related phrases
+     * @param db_object|combine_named|null $dbo the phrase whose related phrases should be listed
      * @param data_object|null $cfg the context used to create the view
-     * @return string the html code listing the related phrases with details
+     * @return string the html code listing the related phrases
      */
     function phrases_related(user_message $msg, db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {

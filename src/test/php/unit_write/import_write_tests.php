@@ -514,12 +514,12 @@ class import_write_tests
         $test_name = 'remove the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
-        $test_name = 'test if the test ' . $name . ' has been deleted from the database';
+        // the undo file only sets "excluded": true, so the row stays with its id and is loaded as excluded
+        $test_name = 'test if the test ' . $name . ' has been excluded in the database';
         $sbx->load_by_name($add_name, $msg);
         if ($sbx::class != verb::class) {
-            // TODO Prio 3 maybe activate also for verbs but at least should be activated for normal sandbox objects
-            // TODO Prio 0 activate
-            //$t->assert($test_name, $sbx->id(), 0);
+            // TODO Prio 3 maybe check also for verbs, which as a type object have no is_excluded yet
+            $t->assert($test_name, $sbx->is_excluded(), true, test_base::TIMEOUT_LIMIT_DB);
         }
 
         $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';

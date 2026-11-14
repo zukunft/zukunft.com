@@ -1,37 +1,37 @@
 [
     {
-        "id": 982,
+        "id": 991,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 1848,
+        "id": 1862,
         "name": "biased information reason",
         "description": "a reason of the potential loss of biased information; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 1871,
+        "id": 1885,
         "name": "biased information solution",
         "description": "a measure that reduces the loss of decisions based on biased information, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 1968,
+        "id": 1982,
         "name": "black-box AI reason",
         "description": "a reason of the potential loss of black-box AI; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 1989,
+        "id": 2003,
         "name": "black-box AI solution",
         "description": "a measure that reduces the loss of decisions based on black-box AI, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 4394,
+        "id": 4408,
         "name": "bond (finance)",
         "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
         "class": "triple"
@@ -50,25 +50,25 @@
         "class": "word"
     },
     {
-        "id": 3394,
+        "id": 3408,
         "name": "CBAM good",
         "description": "a good listed in Annex I of the CBAM regulation, whose import into the EU needs CBAM certificates for its embedded emission",
         "class": "triple"
     },
     {
-        "id": 4480,
+        "id": 4494,
         "name": "child portfolio",
         "description": "the part of the original portfolio that one child receives; every child portfolio is a child portfolio, so that the page shows one input and one column per child",
         "class": "triple"
     },
     {
-        "id": 2091,
+        "id": 2105,
         "name": "citizen participation reason",
         "description": "a reason of the potential loss of citizen participation; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2115,
+        "id": 2129,
         "name": "citizen participation solution",
         "description": "a solution of citizen participation; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
@@ -81,13 +81,13 @@
         "class": "word"
     },
     {
-        "id": 1158,
+        "id": 1174,
         "name": "climate solution",
         "description": "A mitigation option that reduces global greenhouse gas emissions, ranked here by effort return score.",
         "class": "triple"
     },
     {
-        "id": 3418,
+        "id": 3432,
         "name": "CN code",
         "class": "triple"
     },
@@ -127,7 +127,7 @@
         "class": "word"
     },
     {
-        "id": 3005,
+        "id": 3019,
         "name": "country code",
         "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes",
         "class": "triple"
@@ -140,57 +140,64 @@
         "class": "word"
     },
     {
-        "id": 2191,
+        "id": 2205,
         "name": "disinformation reason",
         "description": "a reason of the potential loss of disinformation; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2211,
+        "id": 2225,
         "name": "disinformation solution",
         "description": "a solution of disinformation; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
     },
     {
-        "id": 2038,
+        "id": 2046,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 2288,
+        "id": 2302,
         "name": "education reason",
         "description": "a reason of the potential loss of education; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2310,
+        "id": 2324,
         "name": "education solution",
         "description": "a solution of education; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
     },
     {
-        "id": 2434,
+        "id": 710,
+        "name": "entity",
+        "description": "an organisation or administrative body that can influence people",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 2442,
         "name": "EPR",
         "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 3944,
+        "id": 3958,
         "name": "existing NPP",
         "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
         "class": "triple"
     },
     {
-        "id": 2403,
+        "id": 2417,
         "name": "GDP mismeasurement reason",
         "description": "a reason of the potential loss of GDP mismeasurement; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2429,
+        "id": 2443,
         "name": "GDP mismeasurement solution",
         "description": "a solution of GDP mismeasurement; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
@@ -202,63 +209,63 @@
         "class": "triple"
     },
     {
-        "id": 3352,
+        "id": 3366,
         "name": "global problem reason",
         "description": "a reason of the potential loss of a global problem; each list of the reasons of one problem, e.g. populism reason, is a global problem reason",
         "class": "triple"
     },
     {
-        "id": 3353,
+        "id": 3367,
         "name": "global problem solution",
         "description": "a solution of a global problem; each list of the solutions of one problem, e.g. populism solution, is a global problem solution",
         "class": "triple"
     },
     {
-        "id": 1326,
+        "id": 1342,
         "name": "global warming reason",
         "description": "a reason of the potential loss of global warming; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 1331,
+        "id": 1347,
         "name": "global warming solution",
         "description": "a solution of global warming; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
     },
     {
-        "id": 1056,
+        "id": 1072,
         "name": "greenhouse gas",
         "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
         "class": "triple"
     },
     {
-        "id": 2524,
+        "id": 2538,
         "name": "health reason",
         "description": "a reason of the potential loss of health; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2545,
+        "id": 2559,
         "name": "health solution",
         "description": "a solution of health; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
     },
     {
-        "id": 2518,
+        "id": 2526,
         "name": "holding",
         "description": "the quantity of one security or currency in a portfolio, also called a position",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2036,
+        "id": 2044,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 2037,
+        "id": 2045,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -271,13 +278,13 @@
         "class": "triple"
     },
     {
-        "id": 2642,
+        "id": 2656,
         "name": "market power reason",
         "description": "a reason of the potential loss of market power; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2664,
+        "id": 2678,
         "name": "market power solution",
         "description": "a solution of market power; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
@@ -317,7 +324,7 @@
         "class": "triple"
     },
     {
-        "id": 3943,
+        "id": 3957,
         "name": "new NPP",
         "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
         "class": "triple"
@@ -331,31 +338,31 @@
         "class": "triple"
     },
     {
-        "id": 1577,
+        "id": 1591,
         "name": "populism reason",
         "description": "a reason of the potential loss of populism; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 1602,
+        "id": 1616,
         "name": "populism solution",
         "description": "a measure that reduces the GDP decline of populism, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 3004,
+        "id": 3018,
         "name": "postal code",
         "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950",
         "class": "triple"
     },
     {
-        "id": 1727,
+        "id": 1741,
         "name": "poverty reason",
         "description": "a reason of the potential loss of poverty; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 1747,
+        "id": 1761,
         "name": "poverty solution",
         "description": "a measure that reduces the loss of poverty, ranked here by its share of the avoided loss",
         "class": "triple"
@@ -368,13 +375,13 @@
         "class": "word"
     },
     {
-        "id": 2755,
+        "id": 2769,
         "name": "proprietary software reason",
         "description": "a reason of the potential loss of proprietary software; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2772,
+        "id": 2786,
         "name": "proprietary software solution",
         "description": "a solution of proprietary software; the page of this phrase shows the table of the solutions with the gain that each reaches",
         "class": "triple"
@@ -387,14 +394,14 @@
         "class": "word"
     },
     {
-        "id": 1000,
+        "id": 1009,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 3732,
+        "id": 3746,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"
@@ -422,7 +429,14 @@
         "class": "word"
     },
     {
-        "id": 5624,
+        "id": 644,
+        "name": "sector",
+        "description": "a distinct part of a whole",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 5638,
         "name": "sector of revenue",
         "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case",
         "class": "triple"
@@ -442,7 +456,7 @@
         "class": "word"
     },
     {
-        "id": 1730,
+        "id": 1739,
         "name": "stock",
         "type_id": 1,
         "class": "word"
@@ -469,13 +483,13 @@
         "class": "word"
     },
     {
-        "id": 2864,
+        "id": 2878,
         "name": "wealth concentration reason",
         "description": "a reason of the potential loss of wealth concentration; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
-        "id": 2890,
+        "id": 2904,
         "name": "wealth concentration solution",
         "description": "a measure that reduces the loss of wealth concentration, ranked here by its share of the avoided loss",
         "class": "triple"

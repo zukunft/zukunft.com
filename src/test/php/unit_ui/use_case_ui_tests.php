@@ -2149,10 +2149,9 @@ class use_case_ui_tests
         $test_name = 'a save without a changed number shows the calculator page again';
         $same_form = $form;
         $same_form[url_var::NUMERIC_VALUE . $changed] = (string)values::CITY_ZH_INHABITANTS_2019;
-        $act_backend = clone $t->usr1;
         $act_msg = new user_message();
         $act_msg->usr = new user_ui();
-        $next_url = $ui->url_to_action($same_form, $act_backend, $act_msg, $ui->dto, false);
+        $next_url = $ui->url_to_action($same_form, $act_msg, $ui->dto, false);
         $t->assert($test_name, $next_url, [url_var::MASK => views::CALCULATOR_ID, url_var::ID => -triple_names::CITY_ZH_ID]);
         $test_name = '... and tells the user that nothing has been saved';
         $info = $act_msg->get_last_info();

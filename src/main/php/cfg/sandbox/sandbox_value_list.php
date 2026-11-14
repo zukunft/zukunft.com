@@ -749,7 +749,11 @@ class sandbox_value_list extends sandbox_list
             $phr_json[json_fields::VERB] = $phr_json[json_fields::VERB][json_fields::ID] ?? 0;
         }
         $phr_id = library::phrase_id_of_json($phr_json);
-        $phr_by_id[$phr_id] = $phr_json;
+        // a phrase can come more than once, e.g. as the phrase of a value and as the side of a triple,
+        // and a side may come without its name, so the json with the name is kept
+        if (($phr_by_id[$phr_id][json_fields::NAME] ?? null) === null) {
+            $phr_by_id[$phr_id] = $phr_json;
+        }
         return $phr_id;
     }
 

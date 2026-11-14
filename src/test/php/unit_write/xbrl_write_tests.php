@@ -85,19 +85,17 @@ class xbrl_write_tests
         $test_name = 'import the XBRL fileset json';
         $json_array = json_decode(file_get_contents($json_path), true);
         $imf = new import_file();
-        // TODO Prio 0 activate
-        //$imp_msg = $imf->json_file($json_path, $t->usr1, false);
-        //$t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $imp_msg = $imf->json_file($json_path, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
 
         // check that the imported values can be loaded from the database
         $test_name = 'load the imported total sales value';
         $total_json = end($json_array[json_fields::VALUES]);
-        // TODO Prio 0 activate
-        //$val = $this->load_value_by_names($t, $total_json[json_fields::WORDS]);
-        //$t->assert($test_name, $val->number(), floatval($total_json[json_fields::NUMBER]));
+        $val = $this->load_value_by_names($t, $total_json[json_fields::WORDS]);
+        $t->assert($test_name, $val->number(), floatval($total_json[json_fields::NUMBER]));
 
         // remove the imported test data so that the database stays unchanged
-        //$this->cleanup($t, $json_array, $usr_msg);
+        $this->cleanup($t, $json_array, $msg);
     }
 
     /**
@@ -159,7 +157,7 @@ class xbrl_write_tests
 
     /**
      * remove the data imported from the XBRL fileset json
-     * only the words and triples that the test user owns are removed
+     * only the rows that the test user owns are removed
      * so that the base words like the year, the currency and the scale
      * that are owned by the system users are kept
      * leftovers of a previous incomplete cleanup are removed as well
@@ -173,22 +171,25 @@ class xbrl_write_tests
     private function cleanup(test_cleanup $t, array $json_array, user_message $msg): void
     {
         $test_name = 'cleanup the imported XBRL data';
+        // the deleted rows, whose change log is removed after the delete
+        $deleted = [];
 
         // remove the values
         foreach ($json_array[json_fields::VALUES] as $val_json) {
             $val = $this->load_value_by_names($t, $val_json[json_fields::WORDS]);
-            if (!$val->is_id_set()) {
-                continue;
+            if ($val->is_id_set() and $val->owner_id() == $t->usr1->id()) {
+                $val->del($msg);
+                $deleted[] = $val;
             }
-            $val->del($msg);
         }
 
         // remove the formula
         foreach ($json_array[json_fields::FORMULAS] as $frm_json) {
             $frm = new formula($t->usr1);
             $frm->load_by_name($frm_json[json_fields::NAME], $msg);
-            if ($frm->id() > 0) {
+            if ($frm->id() > 0 and $frm->owner_id() == $t->usr1->id()) {
                 $frm->del($msg);
+                $deleted[] = $frm;
             }
         }
 
@@ -196,8 +197,9 @@ class xbrl_write_tests
         foreach ($json_array[json_fields::SOURCES] as $src_json) {
             $src = new source($t->usr1);
             $src->load_by_name($src_json[json_fields::NAME], $msg);
-            if ($src->id() > 0) {
+            if ($src->id() > 0 and $src->owner_id() == $t->usr1->id()) {
                 $src->del($msg);
+                $deleted[] = $src;
             }
         }
 
@@ -207,6 +209,7 @@ class xbrl_write_tests
             $trp = $this->load_triple_by_any_name($t, $this->triple_name($trp_json));
             if ($trp->id() != 0 and $trp->owner_id() == $t->usr1->id()) {
                 $trp->del($msg);
+                $deleted[] = $trp;
             }
         }
 
@@ -216,8 +219,10 @@ class xbrl_write_tests
             $wrd->load_by_name($wrd_json[json_fields::NAME], $msg);
             if ($wrd->id() > 0 and $wrd->owner_id() == $t->usr1->id()) {
                 $wrd->del($msg);
+                $deleted[] = $wrd;
             }
         }
+        $t->cleanup_change_log_of_deleted($deleted);
 
         $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
     }

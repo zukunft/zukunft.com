@@ -148,9 +148,6 @@ class user extends db_object
     // (like the chg_log of a word, see ui_log::all_user_overwrites)
     public ?change_log_list $chg_log = null;
 
-    // TODO Prio 0 deprecate
-    public ?string $profile;
-
     /*
      * construct and map
      */
@@ -196,8 +193,6 @@ class user extends db_object
         $this->msk = null;
         $this->src = null;
         $this->vrb = null;
-
-        $this->profile = null;
     }
 
     /**
