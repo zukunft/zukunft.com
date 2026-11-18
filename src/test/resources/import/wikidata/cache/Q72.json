@@ -4,8 +4,8 @@
             "pageid": 200,
             "ns": 0,
             "title": "Q72",
-            "lastrevid": 2561618009,
-            "modified": "2026-10-28T07:44:25Z",
+            "lastrevid": 2570569831,
+            "modified": "2026-11-16T22:22:23Z",
             "type": "item",
             "id": "Q72",
             "labels": {
@@ -43253,6 +43253,69 @@
                         ],
                         "id": "Q72$88BB4038-BA62-411B-BEC7-97BCFB847F77",
                         "rank": "normal"
+                    }
+                ],
+                "P7704": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P7704",
+                            "hash": "380b2b66675326d692ec3bff5aceb85f0084810e",
+                            "datavalue": {
+                                "value": "place/base/216115",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q72$09384FEC-E6FF-4170-A5AB-25E75826BDA9",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "ae4855f9b921641cac67c34d3ac40273be06f5c2",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "9ccf205ab8b85e52a3cff50f50db5efa9284a467",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 234110,
+                                                    "id": "Q234110"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ],
+                                    "P813": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P813",
+                                            "hash": "55e1f210cd3306353863fb311c966d271fb32615",
+                                            "datavalue": {
+                                                "value": {
+                                                    "time": "+2026-11-16T00:00:00Z",
+                                                    "timezone": 0,
+                                                    "before": 0,
+                                                    "after": 0,
+                                                    "precision": 11,
+                                                    "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                                },
+                                                "type": "time"
+                                            },
+                                            "datatype": "time"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248",
+                                    "P813"
+                                ]
+                            }
+                        ]
                     }
                 ]
             },

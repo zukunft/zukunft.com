@@ -462,6 +462,7 @@ messages:
   wikipedia_refresh: "take over the description and the wikidata link from wikipedia"
   wikipedia_ref_missing: "z$VarObjName$z has no wikipedia reference, so nothing can be taken from wikipedia; please add the reference first."
   wikipedia_read_failed: "The wikipedia page z$VarObjName$z cannot be read; please check the external key of the wikipedia reference or try again later."
+  connection_missing: "The pod has no connection to z$VarObjName$z, so nothing can be read from it; please check the internet connection of the pod or try again later."
   wikipedia_no_description: "The wikipedia page z$VarObjName$z has no lead text that can be used as description e.g. because it is a disambiguation page; please set the external key of the wikipedia reference to the specific page."
   wikipedia_no_wikidata: "No wikidata link has been found on the wikipedia page of z$VarObjName$z, so nothing is taken from wikipedia."
   wikipedia_in_line: "The description and the wikidata link of z$VarObjName$z are in line with the wikipedia page from z$VarTime$z. No update needed."

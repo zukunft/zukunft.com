@@ -3890,7 +3890,7 @@ class test_base
             $db_obj = $dbo->clone_reset();
             $db_obj->load_by_id($dbo->id(), $msg);
             $diff = $db_obj->diff_msg($dbo);
-            $this->assert_true($test_name, $diff->is_ok());
+            $this->assert_msg($test_name, $diff);
         }
         return $msg->is_ok();
     }

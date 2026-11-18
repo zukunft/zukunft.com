@@ -271,7 +271,8 @@ class value_write_tests
         // the group id of the value contains a '+', so the link names it in its short url form
         // without the '+' (see html_base::url_back and group_id_url)
         $grp_id_url = rawurlencode(group_id_url::to_url($mio_val_ui->id()));
-        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>';
+        // the figure of a value opens the value edit view
+        $target = '<a href="/http/view.php?m=' . views::VALUE_EDIT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation

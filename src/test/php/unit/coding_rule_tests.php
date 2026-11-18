@@ -69,7 +69,10 @@ include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_differences.php';
 include_once test_paths::UTILS . 'test_object_overview.php';
+include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
+include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
@@ -104,6 +107,9 @@ use Zukunft\ZukunftCom\test\php\utils\test_differences;
 use Zukunft\ZukunftCom\test\php\utils\test_object_overview;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\unit_workflow\url_test_base;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use ReflectionClass;
 use ReflectionClassConstant;
 
@@ -412,6 +418,75 @@ class coding_rule_tests
         $t->subheader($ts . 'retired scripts');
         $this->retired_script_link_tests($t);
 
+        $t->subheader($ts . 'workflow snapshot ids');
+        $this->workflow_id_list_tests($t);
+
+        $t->subheader($ts . 'test value registration');
+        $this->test_word_name_tests($t);
+
+    }
+
+    /**
+     * check that a value found by test_db_load::add_value is registered for the cleanup only if
+     * it has a test word, so that a value left by a stopped run is removed, but never a seed value
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function test_word_name_tests(test_cleanup $t): void
+    {
+        $t_db = new test_db_load($t);
+
+        $test_name = 'a value of test words is a test value';
+        $names = [word_names::TEST_SHARE, word_names::TEST_CHF];
+        $t->assert_true($test_name, $t_db->has_test_word_name($names));
+        $test_name = '... also with only one test word among seed words';
+        $names = [words::CH, word_names::INHABITANTS, word_names::TEST_INCREASE, words::PCT, word_names::YEAR_2020];
+        $t->assert_true($test_name, $t_db->has_test_word_name($names));
+        // negative: a seed value must never be registered, because the cleanup would delete it
+        $test_name = 'a value of only seed words is no test value';
+        $names = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020];
+        $t->assert_false($test_name, $t_db->has_test_word_name($names));
+        $test_name = '... and nor is a value without words';
+        $t->assert_false($test_name, $t_db->has_test_word_name([]));
+    }
+
+    /**
+     * check that the workflow snapshots replace the db ids also within a list of ids, because only
+     * the first id of a list follows the '=', so e.g. the second phrase id of a value would change
+     * the snapshot whenever the test words get other db ids (see url_test_base::normalize_ids)
+     * TODO Prio 2 use existing const for the id
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function workflow_id_list_tests(test_cleanup $t): void
+    {
+        $wf = new url_test_base();
+        // the db ids of the two test words of a value and their fixed snapshot ids
+        $norm_ids = [3271 => 999, 3272 => 997];
+
+        $test_name = 'each known db id of a list is replaced by its fixed id';
+        $t->assert($test_name, $wf->normalize_list_ids('5,3271,3272', $norm_ids), '5,999,997');
+        $test_name = '... also with the url encoded separator';
+        $t->assert($test_name, $wf->normalize_list_ids('3271%2C3272', $norm_ids), '999%2C997');
+        $test_name = '... and the negative phrase id of a triple';
+        $t->assert($test_name, $wf->normalize_list_ids('-3271,3272', [-3271 => -998]), '-998,3272');
+        // negative: only a whole id is replaced, never a part of another id
+        $test_name = 'an id that only contains a known db id is kept';
+        $t->assert($test_name, $wf->normalize_list_ids('32712,13271', $norm_ids), '32712,13271');
+        $test_name = '... and without a fixed id the db id is kept';
+        $t->assert($test_name, $wf->normalize_list_ids('3271,3272', [3271 => 0]), '3271,3272');
+
+        $test_name = 'the lists of an url, a html link and a json text are found';
+        $content = 'pl=999%2C3272&n=1' . "\n"
+            . '<a href="view.php?pl=3271,3272&amp;p-=999">' . "\n"
+            . '"phrase_ids": "3271,3272",';
+        $expected = 'pl=999%2C997&n=1' . "\n"
+            . '<a href="view.php?pl=999,997&amp;p-=999">' . "\n"
+            . '"phrase_ids": "999,997",';
+        $t->assert($test_name, $wf->normalize_id_lists($content, $norm_ids), $expected);
+        // negative: a single id is no list, so it is left to the replacement of normalize_ids
+        $test_name = 'a single id is kept';
+        $t->assert($test_name, $wf->normalize_id_lists('id=3271&pl=3272', $norm_ids), 'id=3271&pl=3272');
     }
 
     /**
@@ -1108,6 +1183,17 @@ class coding_rule_tests
             $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
             $t->assert($test_name, array_keys($hits), []);
         }
+
+        // the number of a table keyword is a setting of the table e.g. the row limit of table_editor_sample.json
+        $test_name = 'a table setting without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, triples::SYSTEM_ROW_LIMIT];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+        $test_name = '... because every table keyword exempts a value from the source check';
+        $t->assert_true($test_name, in_array(triples::SYSTEM_VIEW_VERSION, $chk->source_exempt_phrases()));
+        // negative: a phrase that is no table keyword and no estimate still needs a source
+        $test_name = '... but a measured value next to the table setting phrases still needs a source';
+        $t->assert_false($test_name, in_array(words::YEAR, $chk->source_exempt_phrases()));
 
         $test_name = 'a value with a source of the file is not listed';
         $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];

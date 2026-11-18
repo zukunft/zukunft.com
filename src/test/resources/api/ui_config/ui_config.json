@@ -30461,9 +30461,9 @@
             {
                 "id": 3016,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2053,
+                "from_id": 2050,
                 "from_phrase": {
-                    "id": 2053,
+                    "id": 2050,
                     "name": "9 780674 000780",
                     "description": null,
                     "type_id": 1,
@@ -30498,9 +30498,9 @@
             {
                 "id": 3015,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2052,
+                "from_id": 2049,
                 "from_phrase": {
-                    "id": 2052,
+                    "id": 2049,
                     "name": "978-0-674-00078-0",
                     "description": null,
                     "type_id": 1,
@@ -30535,9 +30535,9 @@
             {
                 "id": 3005,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
-                "from_id": 2050,
+                "from_id": 2047,
                 "from_phrase": {
-                    "id": 2050,
+                    "id": 2047,
                     "name": "978-0-679-73373-7",
                     "description": null,
                     "type_id": 1,
@@ -30557,9 +30557,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 2056,
+                "to_id": 2053,
                 "to_phrase": {
-                    "id": 2056,
+                    "id": 2053,
                     "name": "The Myth of Sisyphus",
                     "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                     "type_id": 1,
@@ -30572,9 +30572,9 @@
             {
                 "id": 3007,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
-                "from_id": 2051,
+                "from_id": 2048,
                 "from_phrase": {
-                    "id": 2051,
+                    "id": 2048,
                     "name": "978-0-8021-3098-3",
                     "description": null,
                     "type_id": 1,
@@ -30594,9 +30594,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 2057,
+                "to_id": 2054,
                 "to_phrase": {
-                    "id": 2057,
+                    "id": 2054,
                     "name": "Rhinoceros and Other Plays",
                     "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                     "type_id": 1,
@@ -30647,9 +30647,9 @@
                 "id": 5230,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2586,
+                "from_id": 2583,
                 "from_phrase": {
-                    "id": 2586,
+                    "id": 2583,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -30851,7 +30851,7 @@
                 "class": "triple"
             },
             {
-                "id": 2053,
+                "id": 2050,
                 "name": "9 780674 000780",
                 "type_id": 1,
                 "class": "word"
@@ -30863,32 +30863,32 @@
                 "class": "triple"
             },
             {
-                "id": 2052,
+                "id": 2049,
                 "name": "978-0-674-00078-0",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2050,
+                "id": 2047,
                 "name": "978-0-679-73373-7",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2056,
+                "id": 2053,
                 "name": "The Myth of Sisyphus",
                 "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2051,
+                "id": 2048,
                 "name": "978-0-8021-3098-3",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2057,
+                "id": 2054,
                 "name": "Rhinoceros and Other Plays",
                 "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                 "type_id": 1,
@@ -30908,7 +30908,7 @@
                 "class": "triple"
             },
             {
-                "id": 2586,
+                "id": 2583,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30998,9 +30998,9 @@
             {
                 "id": 3851,
                 "name": "a is symbol for year (duration unit)",
-                "from_id": 1195,
+                "from_id": 1192,
                 "from_phrase": {
-                    "id": 1195,
+                    "id": 1192,
                     "name": "a",
                     "description": null,
                     "type_id": 1,
@@ -31485,9 +31485,9 @@
             {
                 "id": 3017,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
-                "from_id": 2055,
+                "from_id": 2052,
                 "from_phrase": {
-                    "id": 2055,
+                    "id": 2052,
                     "name": "CH0038863350",
                     "description": null,
                     "type_id": 1,
@@ -31694,7 +31694,7 @@
                 "class": "triple"
             },
             {
-                "id": 1195,
+                "id": 1192,
                 "name": "a",
                 "type_id": 1,
                 "class": "word"
@@ -31847,7 +31847,7 @@
                 "class": "word"
             },
             {
-                "id": 2055,
+                "id": 2052,
                 "name": "CH0038863350",
                 "type_id": 1,
                 "class": "word"
@@ -32012,9 +32012,9 @@
             {
                 "id": 3014,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
-                "from_id": 2054,
+                "from_id": 2051,
                 "from_phrase": {
-                    "id": 2054,
+                    "id": 2051,
                     "name": "DE0007100000",
                     "description": null,
                     "type_id": 1,
@@ -32275,9 +32275,9 @@
             {
                 "id": 3758,
                 "name": "g\/kWh is symbol for gram per kWh",
-                "from_id": 2403,
+                "from_id": 2400,
                 "from_phrase": {
-                    "id": 2403,
+                    "id": 2400,
                     "name": "g\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32678,7 +32678,7 @@
                 "class": "triple"
             },
             {
-                "id": 2054,
+                "id": 2051,
                 "name": "DE0007100000",
                 "type_id": 1,
                 "class": "word"
@@ -32759,7 +32759,7 @@
                 "class": "triple"
             },
             {
-                "id": 2403,
+                "id": 2400,
                 "name": "g\/kWh",
                 "type_id": 1,
                 "class": "word"
@@ -32943,9 +32943,9 @@
             {
                 "id": 3810,
                 "name": "kg\/kWh is symbol for kg per kWh",
-                "from_id": 2404,
+                "from_id": 2401,
                 "from_phrase": {
-                    "id": 2404,
+                    "id": 2401,
                     "name": "kg\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -33245,9 +33245,9 @@
             {
                 "id": 3806,
                 "name": "kWh\/a is symbol for kilowatthours per year",
-                "from_id": 2401,
+                "from_id": 2398,
                 "from_phrase": {
-                    "id": 2401,
+                    "id": 2398,
                     "name": "kWh\/a",
                     "description": null,
                     "type_id": 1,
@@ -33282,9 +33282,9 @@
             {
                 "id": 3807,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
-                "from_id": 2402,
+                "from_id": 2399,
                 "from_phrase": {
-                    "id": 2402,
+                    "id": 2399,
                     "name": "kWh\/kWp\u00b7a",
                     "description": null,
                     "type_id": 1,
@@ -33629,7 +33629,7 @@
                 "class": "word"
             },
             {
-                "id": 2404,
+                "id": 2401,
                 "name": "kg\/kWh",
                 "type_id": 1,
                 "class": "word"
@@ -33714,7 +33714,7 @@
                 "class": "word"
             },
             {
-                "id": 2401,
+                "id": 2398,
                 "name": "kWh\/a",
                 "type_id": 1,
                 "class": "word"
@@ -33727,7 +33727,7 @@
                 "class": "triple"
             },
             {
-                "id": 2402,
+                "id": 2399,
                 "name": "kWh\/kWp\u00b7a",
                 "type_id": 1,
                 "class": "word"
@@ -36547,7 +36547,7 @@
                 "class": "word"
             },
             {
-                "id": 1060,
+                "id": 1057,
                 "name": "GWh",
                 "description": "gigawatt hour, unit of energy",
                 "type_id": 2,
@@ -36673,7 +36673,7 @@
                 "class": "word"
             },
             {
-                "id": 943,
+                "id": 940,
                 "name": "km2",
                 "type_id": 2,
                 "class": "word"
@@ -36687,7 +36687,7 @@
                 "class": "word"
             },
             {
-                "id": 2068,
+                "id": 2065,
                 "name": "kWp",
                 "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
                 "type_id": 2,
@@ -36742,7 +36742,7 @@
                 "class": "word"
             },
             {
-                "id": 998,
+                "id": 995,
                 "name": "millimetre",
                 "description": "one thousandth of a metre",
                 "type_id": 2,
@@ -37093,7 +37093,7 @@
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1276},{w163}={t206},{t208}\/(({t206},{w1258}+{t206},{w1255})\/2)",
+                "ref_text": "{t1276},{w163}={t206},{t208}\/(({t206},{w1255}+{t206},{w1252})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]

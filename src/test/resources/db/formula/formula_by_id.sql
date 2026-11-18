@@ -11,6 +11,7 @@ PREPARE formula_by_id (bigint, bigint) AS
                CASE WHEN (u.all_values_needed    IS     NULL) THEN s.all_values_needed ELSE u.all_values_needed END AS all_values_needed,
                CASE WHEN (u.last_update          IS     NULL) THEN s.last_update       ELSE u.last_update       END AS last_update,
                CASE WHEN (u.view_id              IS     NULL) THEN s.view_id           ELSE u.view_id           END AS view_id,
+               CASE WHEN (u.usage                IS     NULL) THEN s.usage             ELSE u.usage             END AS usage,
                CASE WHEN (u.impact               IS     NULL) THEN s.impact            ELSE u.impact            END AS impact,
                CASE WHEN (u.excluded             IS     NULL) THEN s.excluded          ELSE u.excluded          END AS excluded,
                CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id     ELSE u.share_type_id     END AS share_type_id,

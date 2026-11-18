@@ -660,6 +660,9 @@ class test_cleanup extends test_api
                 if ($val->load_by_id($val_id, $val_msg) != 0) {
                     $this->del_value($val, $val_msg);
                     $this->assert_msg('value->del test value ' . $val_id, $val_msg, self::TIMEOUT_LIMIT_DB_MULTI);
+                    // the phrases of a workflow value get the same ids in the next run, because the cleanup
+                    // resets the sequences, so the history of the next value would show this delete
+                    $this->cleanup_change_log_of_deleted([$val]);
                 } else {
                     // a test that has removed its value itself may have left the group row behind
                     $this->del_group_row($val_id, $val_msg);

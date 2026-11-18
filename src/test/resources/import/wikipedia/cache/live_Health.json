@@ -1,0 +1,39 @@
+{
+    "type": "standard",
+    "title": "Health",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Health</span></span>",
+    "namespace": {
+        "id": 0,
+        "text": ""
+    },
+    "wikibase_item": "Q12147",
+    "titles": {
+        "canonical": "Health",
+        "normalized": "Health",
+        "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Health</span></span>"
+    },
+    "pageid": 80381,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1384242166",
+    "tid": "8826228d-da82-11f1-bd11-69257c57f1b4",
+    "timestamp": "2026-11-07T08:09:19Z",
+    "description": "Desirable level of functional or metabolic efficiency of a living being",
+    "description_source": "local",
+    "content_urls": {
+        "desktop": {
+            "page": "https://en.wikipedia.org/wiki/Health",
+            "revisions": "https://en.wikipedia.org/wiki/Health?action=history",
+            "edit": "https://en.wikipedia.org/wiki/Health?action=edit",
+            "talk": "https://en.wikipedia.org/wiki/Talk:Health"
+        },
+        "mobile": {
+            "page": "https://en.wikipedia.org/wiki/Health",
+            "revisions": "https://en.wikipedia.org/wiki/Special:History/Health",
+            "edit": "https://en.wikipedia.org/wiki/Health?action=edit",
+            "talk": "https://en.wikipedia.org/wiki/Talk:Health"
+        }
+    },
+    "extract": "\nHealth has a variety of definitions which have been used for different purposes over time and is a multidimensional concept. It commonly refers to physical and emotional well-being. Good health is associated with normal functioning of the human body in day to day life, absent of disease, pain, or injury.",
+    "extract_html": "<p>\n<b>Health</b> has a variety of definitions which have been used for different purposes over time and is a multidimensional concept. It commonly refers to physical and emotional well-being. Good health is associated with normal functioning of the human body in day to day life, absent of disease, pain, or injury.</p>"
+}

@@ -240,6 +240,9 @@ enum messages: string
     case WIKIPEDIA_REFRESH = 'wikipedia_refresh';
     case WIKIPEDIA_REF_MISSING = 'wikipedia_ref_missing';
     case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
+    // a request to an external server e.g. wikipedia or wikidata without any answer, e.g. because the
+    // pod has no internet connection or no dns server, instead of the read failed message of the page
+    case CONNECTION_MISSING = 'connection_missing';
     case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
     case WIKIPEDIA_NO_WIKIDATA = 'wikipedia_no_wikidata';
     // the info that a refresh has found nothing to update, with and without the time of the wikipedia page

@@ -197,13 +197,27 @@ class ref_link_wikipedia
         $page_name = str_replace(self::NAME_SPACE, self::PAGE_SPACE, $page);
         $url = self::SUMMARY_URL . rawurlencode($page_name);
         $context = import_wikidata::request_context();
-        // the @ suppresses the php warning of a failed request, which the user gets as message instead
+        // the @ suppresses the php warning of a failed request, which the user gets as message instead;
+        // the last request is cleared, so that the log below never names an older error
+        import_wikidata::request_clear();
         $json = @file_get_contents($url, false, $context);
         $result = [];
+        $missing_host = '';
         if ($json !== false) {
             $result = json_decode($json, true) ?? [];
+        } else {
+            // checked before the log, so that it names this request
+            if (import_wikidata::no_answer()) {
+                $missing_host = (string)parse_url($url, PHP_URL_HOST);
+            }
+            // the reason for the developer e.g. a http 429 or a failed dns lookup, the user gets the message
+            log_warning('the wikipedia request for ' . $page . ' via ' . $url . ' failed with '
+                . import_wikidata::request_failure(), 'ref_link_wikipedia->summary');
         }
-        if (!is_array($result) or $result == []) {
+        if ($missing_host != '') {
+            // without an answer the page is not wrong, so the user should check the connection and not the key
+            $msg->add(msg_id::CONNECTION_MISSING, [msg_id::VAR_NAME => $missing_host]);
+        } elseif (!is_array($result) or $result == []) {
             $result = [];
             $msg->add(msg_id::WIKIPEDIA_READ_FAILED, [msg_id::VAR_NAME => $page]);
         }

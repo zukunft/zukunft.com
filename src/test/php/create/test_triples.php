@@ -150,6 +150,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @param int $depth the number of triple levels e.g. 8
+     * @return triple a triple whose from and to phrase is the triple one level below, down to the
+     *                main test triple, like the nested concepts of an XBRL import
+     */
+    function triple_nested(int $depth): triple
+    {
+        $trp = $this->triple();
+        for ($lvl = 1; $lvl < $depth; $lvl++) {
+            $upper = $this->triple();
+            $upper->set_from($trp->phrase());
+            $upper->set_to($trp->phrase());
+            $trp = $upper;
+        }
+        return $trp;
+    }
+
+    /**
      * @return triple "mathematical constant" used for unit testing
      */
     function triple_impact(): triple

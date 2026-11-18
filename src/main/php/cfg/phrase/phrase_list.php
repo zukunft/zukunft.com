@@ -543,26 +543,27 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @returns array with all unique names of this list with the keys within this list
+     * a phrase is found by the name of its word or triple, a word also by its plural and a triple
+     * also by its generated name; used by the rebuild and the add of the name hash table
+     *
+     * @param object $obj a phrase of this list
+     * @return array the names of the phrase e.g. ["city", "cities"]
      */
-    function name_pos_lst(): array
+    protected function name_index_keys(object $obj): array
     {
-        $result = array();
-        if ($this->is_name_list_dirty()) {
-            foreach ($this->lst() as $key => $phr) {
-                $obj = $phr->obj();
-                $result[$obj->name()] = $key;
-                // TODO Prio 2 add the language forms of words and triples
-                if ($obj::class == word::class) {
-                    $result[$obj->plural] = $key;
-                }
-                if ($obj::class == triple::class) {
-                    $result[$obj->name_generated()] = $key;
-                }
-            }
-            $this->set_name_pos_list($result);
+        $phr_obj = $obj->obj();
+        if ($phr_obj == null) {
+            // e.g. a phrase that is only named by the import yet
+            $result = [$obj->name()];
         } else {
-            $result = parent::name_pos_lst();
+            $result = [$phr_obj->name()];
+            // TODO Prio 2 add the language forms of words and triples
+            if ($phr_obj::class == word::class) {
+                $result[] = $phr_obj->plural;
+            }
+            if ($phr_obj::class == triple::class) {
+                $result[] = $phr_obj->name_generated();
+            }
         }
         return $result;
     }

@@ -326,6 +326,7 @@ class formula_url_tests extends url_test_base
         // formula is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_formula_removed('del_formula workflow has removed the formula');
+            $this->cleanup_change_log_of_removed($frm);
         }
     }
 

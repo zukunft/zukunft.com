@@ -653,7 +653,9 @@ class triple extends sandbox_link_named
         }
 
         // finally generate the name if needed
-        if ($this->name() == null and $this->name_given() == null) {
+        // incl. the excluded, because the name of a triple that the import excludes names the triple
+        // to delete (docs/llm/delete.md), and without the from and to the generated name is empty
+        if ($this->name(true) == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
         }
@@ -1941,25 +1943,13 @@ class triple extends sandbox_link_named
             $trp = $obj->obj();
         }
         if ($trp != null) {
-            // fill to link objects
-            if ($this->from_empty()) {
-                if (!$trp->from_empty()) {
-                    $this->set_from($trp->get_from());
-                }
-            } else {
-                $this->get_from()->fill($trp->get_from(), $usr_req);
-            }
+            // the from and to phrases are already filled by sandbox_link::fill of the parent; a second
+            // fill here would fill each nested triple twice per level, so that the fill of a triple whose
+            // from is a triple of a triple ... takes 4^depth fills e.g. minutes for the XBRL import
             if ($this->verb_empty()) {
                 if (!$trp->verb_empty()) {
                     $this->set_verb($trp->get_verb());
                 }
-            }
-            if ($this->to_empty()) {
-                if (!$trp->to_empty()) {
-                    $this->set_to($trp->get_to());
-                }
-            } else {
-                $this->get_to()->fill($trp->get_to(), $usr_req);
             }
 
             // fill the names, but not the given name of the database if another name is requested,

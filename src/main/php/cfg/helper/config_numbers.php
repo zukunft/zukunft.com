@@ -263,9 +263,9 @@ class config_numbers extends value_list
         [words::AVERAGE_COM, words::AVERAGE],
         [words::DEFAULT_COM, words::DEFAULT],
         [words::DATABASE_COM, words::DATABASE],
-        [words::LISTS, words::LISTS_COM],
-        [words::MOST, words::MOST_COM],
-        [words::RELEVANT, words::RELEVANT_COM],
+        [words::LISTS_COM, words::LISTS],
+        [words::MOST_COM, words::MOST],
+        [words::RELEVANT_COM, words::RELEVANT],
     ];
 
 

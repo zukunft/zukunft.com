@@ -191,7 +191,6 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
-                // the large import of a real XBRL fileset, which removes its rows again
                 new xbrl_write_tests()->run($t);
                 new import_upload_write_tests()->run($t);
                 new export_write_tests()->run($t);
@@ -261,6 +260,10 @@ class all_unit_write_tests extends all_unit_read_tests
         // because this is a system call
         $setup_msg = new user_message(user::system());
         $db_con->setup_db($setup_msg);
+
+        // the converted XBRL fileset of ABB 2013 is imported by setup_db itself as its last import
+        // (import_file::import_xbrl_data), so a pod and every development reset have the same data
+        // and the workflow tests do not depend on whether reset_db.php or test.php has run before
 
         // the complete database recreation above is a known one-time heavy operation, so reset the
         // section timer to avoid charging its duration to the next test section as a false timeout

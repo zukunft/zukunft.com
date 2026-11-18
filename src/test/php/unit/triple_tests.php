@@ -54,6 +54,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_tests
 {
+    // the levels of the nested triple of the fill test: 2^8 fills take milliseconds, but the 4^8
+    // fills of a fill that repeats the from and to fill on each level exceed the time limit
+    const int FILL_DEPTH = 8;
+
     function run(test_cleanup $t): void
     {
         $msg = new user_message();
@@ -349,6 +353,46 @@ class triple_tests
         $trp_ren->fill($trp_db, $t->usr1);
         $test_name = 'the fill of a renamed triple does not take over the old given name';
         $t->assert_null($test_name, $trp_ren->name_given());
+        // the from and to phrases are filled once per level, so that a nested triple e.g. of an
+        // XBRL import is filled in a time that grows with its triples and not with 4^depth
+        $test_name = 'the fill of a nested triple reaches the deepest triple within the time limit';
+        $trp_db = $t_trp->triple_nested(self::FILL_DEPTH);
+        $trp_req = $t_trp->triple_nested(self::FILL_DEPTH);
+        $deepest = $trp_req;
+        for ($lvl = 1; $lvl < self::FILL_DEPTH; $lvl++) {
+            $deepest = $deepest->get_from()->obj();
+        }
+        $deepest->description = null;
+        $trp_req->fill($trp_db, $t->usr1);
+        $t->assert($test_name, $deepest->description, triple_names::MATH_CONST_COM);
+
+        // the no update import fills a clone of each import triple (see sandbox_list_named::update),
+        // so the clone has its own from and to phrases and the fill never changes the original
+        $test_name = 'the fill of a cloned triple fills the from triple of the clone';
+        $trp_org = $t_trp->triple_nested(2);
+        $from_org = $trp_org->get_from()->obj();
+        $from_org->description = null;
+        $trp_cpy = $trp_org->clone_all();
+        $trp_cpy->fill($t_trp->triple_nested(2), $t->usr1);
+        $t->assert($test_name, $trp_cpy->get_from()->obj()->description, triple_names::MATH_CONST_COM);
+        // negative: the from triple of the original is the one of other import triples, so it keeps its empty field
+        $test_name = '... but not the from triple of the original';
+        $t->assert($test_name, $from_org->description ?? '', '');
+
+        $t->subheader($ts . 'import of an excluded triple');
+        // the undo import names the triple to delete only by its name (see triples_undo.json),
+        // so the generated name of the missing from and to must not replace the name
+        $test_name = 'the import of an excluded triple without from and to keeps the name';
+        $trp = new triple($t->usr1);
+        $trp->import_mapper([
+            json_fields::NAME => triple_names::SYSTEM_TEST_ADD,
+            json_fields::EXCLUDED => true
+        ], $msg);
+        $t->assert($test_name, $trp->name(true), triple_names::SYSTEM_TEST_ADD);
+        // negative: the excluded triple is nevertheless hidden by the name without the excluded
+        $test_name = '... but the name without the excluded is empty';
+        $t->assert($test_name, $trp->name(), '');
+        $msg->reset();
 
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();

@@ -565,6 +565,17 @@ class phrase_list_tests
         $test_name = 'both names of the import are in the phrase list';
         $t->assert($test_name, $phr_lst->count(), 2);
 
+        // the add updates the name hash table without a rebuild, so it must add the plural like the rebuild
+        $test_name = 'a word added to a phrase list is found by its plural';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add_by_key($t_wrd->word_inhabitant()->phrase());
+        // the lookup builds the name hash table, so that the next add updates it
+        $phr_lst->get_by_name(word_names::INHABITANTS, $msg);
+        $phr_lst->add_by_key($t_wrd->word_filled_add()->phrase());
+        $phr = $phr_lst->get_by_name(word_names::TEST_ADD_PLURAL, $msg);
+        $t->assert($test_name, $phr?->name(), word_names::TEST_ADD);
+        $t->assert_msg($test_name, $msg);
+
 
         $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 

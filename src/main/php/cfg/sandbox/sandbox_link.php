@@ -200,6 +200,56 @@ class sandbox_link extends sandbox
         $this->predicate_id = null;
     }
 
+    /**
+     * clone this link with a clone of the linked objects, so that e.g. a fill of the clone never
+     * changes the from or to phrase that the original shares with other objects of the import
+     * (see sandbox_list_named::update); a linked triple is cloned with its own links
+     *
+     * @return $this a clone of this link including clones of the linked objects
+     */
+    function clone_all(): sandbox_link
+    {
+        $lnk = parent::clone_all();
+        if ($lnk->fob != null) {
+            $lnk->fob = $this->clone_linked($lnk->fob);
+        }
+        // an external key of a reference is a string and needs no clone
+        if ($lnk->tob != null and !is_string($lnk->tob)) {
+            $lnk->tob = $this->clone_linked($lnk->tob);
+        }
+        return $lnk;
+    }
+
+    /**
+     * without the clone of the linked objects, because the reset removes them anyway
+     *
+     * @param bool $keep_user set to true to keep the original user
+     * @return $this an almost empty clone of this link
+     */
+    function clone_reset(bool $keep_user = false): sandbox_link
+    {
+        $lnk = parent::clone_all();
+        $lnk->reset($keep_user);
+        return $lnk;
+    }
+
+    /**
+     * @param sandbox_named|combine_named $obj the from or to object of this link e.g. a phrase
+     * @return sandbox_named|combine_named a clone of the object, for a phrase also of its word or triple
+     */
+    private function clone_linked(sandbox_named|combine_named $obj): sandbox_named|combine_named
+    {
+        if ($obj instanceof combine_named) {
+            // a phrase has no clone_all, so its word or triple is cloned here
+            $cpy = clone $obj;
+            if ($cpy->obj != null) {
+                $cpy->obj = $cpy->obj->clone_all();
+            }
+            return $cpy;
+        }
+        return $obj->clone_all();
+    }
+
     // the row_mapper_sandbox function is not added here
     // because the db field name for the predicate differs for all objects
     // so the setting of the predicate anyway needs to be done in the overwrite function of each link

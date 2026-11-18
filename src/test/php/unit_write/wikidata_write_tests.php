@@ -93,7 +93,9 @@ class wikidata_write_tests
         $ts = 'wikidata import ';
         $t->header($ts);
 
-        $imp = new import_wikidata();
+        // without live data from wikidata the answers saved in the cache folder by the last run are used,
+        // so that a slow or refusing wikidata does not fail the tests of the converter
+        $imp = new import_wikidata('', test_paths::IMPORT_WIKIDATA_CACHE);
 
         // positive: retrieve the wikidata json for two example entities and store them as test fixtures
         $this->assert_capture($t, $imp, refs::PI_KEY);

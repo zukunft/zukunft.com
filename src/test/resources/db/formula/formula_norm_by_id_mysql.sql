@@ -9,6 +9,7 @@ PREPARE formula_norm_by_id FROM
                all_values_needed,
                last_update,
                view_id,
+               `usage`,
                impact,
                excluded,
                share_type_id,

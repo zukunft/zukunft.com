@@ -632,6 +632,28 @@ class triple_names
     // income statement concepts that the base setup defines as a triple (re-declared on XBRL import)
     const string GROSS_PROFIT = 'gross profit';
     const string COST_OF_REVENUE = 'cost of revenue';
+    const string EXCHANGE_RATE = 'exchange rate';
+    const string COMMON_STOCK = 'common stock';
+    const string RETAINED_EARNINGS = 'retained earnings';
+    const string ACCOUNTS_PAYABLE = 'accounts payable';
+    const string ACCOUNTS_RECEIVABLE = 'accounts receivable';
+    const string GOODS_SOLD = 'goods sold';
+    const string INCOME_LOSS = 'income loss';
+    // the singular, next to INCOME_TAX for "income taxes"
+    const string INCOME_TAX_ONE = 'income tax';
+    const string NET_INCOME = 'net income';
+    const string EQUITY_METHOD = 'equity method';
+    const string EQUITY_METHOD_INVESTMENTS = 'equity method investments';
+    const string DEFERRED_INCOME = 'deferred income';
+    const string INTEREST_RATE = 'interest rate';
+    const string ACCUMULATED_DEPRECIATION = 'accumulated depreciation';
+    const string TAX_CREDIT = 'tax credit';
+    const string SHARE_CAPITAL = 'share capital';
+    // defined by the use case share_buy_sell_abb.json, which is imported before the XBRL fileset
+    const string ORDER_BACKLOG = 'order backlog';
+    const string SHARES_OUTSTANDING = 'shares outstanding';
+    // the XBRL concept part of "CashCashEquivalents", which has the same link as "cash" "and" "cash" of "CashAndCash"
+    const string CASH_CASH = 'cash cash';
     // the US GAAP accounting standard, built from the words "US" and "GAAP",
     // and its lower case XBRL taxonomy namespace prefix used in the concept ids e.g. "us-gaap_Revenues"
     const string US_GAAP = 'US GAAP';

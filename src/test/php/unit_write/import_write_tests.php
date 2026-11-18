@@ -511,14 +511,41 @@ class import_write_tests
         $sbx->load_by_name($add_name, $msg);
         $t->assert($test_name, $sbx->description, $description, test_base::TIMEOUT_LIMIT_DB);
 
+        // the undo file sets "excluded": true, which the import handles like a del() of the object
+        // (docs/llm/delete.md): an object that nobody else uses is deleted, a used one only excluded
+        // for the requesting user; checked before the undo, like del() does
+        // a user is deleted the same way by user::del, if the user has never been used
+        $is_used = false;
+        if ($sbx instanceof sandbox_named or $sbx instanceof sandbox_link_named) {
+            $is_used = $sbx->used_by_someone_else($msg);
+        } elseif ($sbx instanceof user) {
+            $is_used = !$sbx->never_used();
+        }
         $test_name = 'remove the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
-        // the undo file only sets "excluded": true, so the row stays with its id and is loaded as excluded
-        $test_name = 'test if the test ' . $name . ' has been excluded in the database';
         $sbx->load_by_name($add_name, $msg);
-        if ($sbx::class != verb::class) {
+        if ($sbx::class == verb::class) {
             // TODO Prio 3 maybe check also for verbs, which as a type object have no is_excluded yet
+            log_debug('the removal of a verb via import is not checked');
+        } elseif (!$is_used) {
+            $test_name = 'test if the unused test ' . $name . ' has been deleted from the database';
+            // a row that is left names its state, so that the failing run shows if del() has only
+            // excluded it, has refused it or has not been reached at all
+            $left_reason = '';
+            if ($sbx->id() != 0) {
+                $left_reason = 'excluded: ' . var_export($sbx->is_excluded(), true);
+                if ($sbx instanceof sandbox_named or $sbx instanceof sandbox_link_named) {
+                    $left_reason .= ', owner id: ' . $sbx->owner_id()
+                        . ', user id: ' . $sbx->get_user()->id()
+                        . ', used by someone else now: ' . var_export($sbx->used_by_someone_else($msg), true);
+                }
+                $left_reason .= ', import message: ' . $imp_msg->all_message_text();
+            }
+            $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB, $left_reason);
+        } else {
+            // a sandbox object that someone else uses stays for the others and is only excluded for the user
+            $test_name = 'test if the test ' . $name . ' has been excluded in the database';
             $t->assert($test_name, $sbx->is_excluded(), true, test_base::TIMEOUT_LIMIT_DB);
         }
 

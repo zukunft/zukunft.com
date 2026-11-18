@@ -10,6 +10,7 @@ PREPARE formula_user_sandbox (bigint) AS
                all_values_needed,
                last_update,
                view_id,
+               usage,
                impact,
                excluded,
                share_type_id,

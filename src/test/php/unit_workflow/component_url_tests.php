@@ -324,6 +324,7 @@ class component_url_tests extends url_test_base
         // check the component is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_component_removed('del_component workflow has removed the component');
+            $this->cleanup_change_log_of_removed($cmp);
         }
     }
 

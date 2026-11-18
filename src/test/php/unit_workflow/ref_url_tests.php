@@ -137,6 +137,10 @@ class ref_url_tests extends url_test_base
     // the snapshot set of the ref_rows_form save without a change
     const string CASE_UNCHANGED = 'unchanged';
 
+    // the import json that the wikidata_import workflow has confirmed, so that its cleanup removes
+    // the written values without a second live read of wikidata (see cleanup_wikidata_import)
+    private array $wd_import = [];
+
     function run(test_cleanup $t): void
     {
         // load the shared frontend run state and print the section header
@@ -396,6 +400,7 @@ class ref_url_tests extends url_test_base
         // check the reference is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_ref_removed('del_ref workflow has removed the reference');
+            $this->cleanup_change_log_of_removed($ref);
         }
     }
 
@@ -564,8 +569,11 @@ class ref_url_tests extends url_test_base
      * read the live wikipedia page of each wikipedia refresh workflow and compare the description and
      * the wikidata id that the refresh takes from it with the import json of the last run, so that a
      * change of the live page is reported as such and not only as a failed assert of a workflow
+     *
+     * @return bool true if both live pages could be read, because else the refresh workflows, whose
+     *              backend reads the live pages too, can only fail and are skipped
      */
-    protected function wikipedia_page_tests(): void
+    protected function wikipedia_page_tests(): bool
     {
         $this->t->subheader($this->ts . 'wikipedia pages of the refresh workflows');
         $ge_trp = [
@@ -574,11 +582,12 @@ class ref_url_tests extends url_test_base
             json_fields::EX_VERB => verbs::IS_NAME,
             json_fields::EX_TO => word_names::CITY,
         ];
-        $this->assert_wikipedia_page(json_fields::TRIPLES, $ge_trp, refs::GENEVA_WIKIPEDIA_KEY,
-            test_files::IMPORT_WIKIPEDIA_REFRESH_GENEVA);
+        $ge_live = $this->assert_wikipedia_page(json_fields::TRIPLES, $ge_trp, refs::GENEVA_WIKIPEDIA_KEY,
+            test_files::IMPORT_WIKIPEDIA_REFRESH_GENEVA, test_files::IMPORT_WIKIPEDIA_LIVE_GENEVA);
         $health = [json_fields::NAME => word_names::HEALTH];
-        $this->assert_wikipedia_page(json_fields::WORDS, $health, refs::HEALTH_WIKIPEDIA_KEY,
-            test_files::IMPORT_WIKIPEDIA_REFRESH_HEALTH);
+        $health_live = $this->assert_wikipedia_page(json_fields::WORDS, $health, refs::HEALTH_WIKIPEDIA_KEY,
+            test_files::IMPORT_WIKIPEDIA_REFRESH_HEALTH, test_files::IMPORT_WIKIPEDIA_LIVE_HEALTH);
+        return $ge_live and $health_live;
     }
 
     /**
@@ -586,12 +595,35 @@ class ref_url_tests extends url_test_base
      * @param array $phr_json the import json of the phrase without the values taken from wikipedia
      * @param string $page the name of the wikipedia page e.g. "Health"
      * @param string $file the import json of the last run e.g. test_files::IMPORT_WIKIPEDIA_REFRESH_HEALTH
+     * @param string $copy the summary of the page as the last run has read it e.g. test_files::IMPORT_WIKIPEDIA_LIVE_HEALTH
+     * @return bool true if the live page could be read, false if the copy of the last run is used
      */
-    private function assert_wikipedia_page(string $list_key, array $phr_json, string $page, string $file): void
+    private function assert_wikipedia_page(
+        string $list_key,
+        array  $phr_json,
+        string $page,
+        string $file,
+        string $copy
+    ): bool
     {
         $msg = new user_message($this->t->usr1);
         $wik = new ref_link_wikipedia();
         $summary = $wik->summary($page, $msg);
+        $live = $summary != [];
+        if ($live) {
+            // the copy of the live page is the fallback of a later run without network
+            $this->t->update_path_file($copy, json_encode($summary,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        } elseif (file_exists($copy)) {
+            // the reason e.g. a failed dns lookup is shown, because the live page is not checked
+            $this->t->step('the live wikipedia page ' . $page . ' cannot be read ('
+                . import_wikidata::request_failure() . '), so the copy ' . basename($copy) . ' is compared');
+            $summary = json_decode(file_get_contents($copy), true) ?? [];
+            // the failed read is no error of the page, if the copy of the last run can be compared
+            if ($summary != []) {
+                $msg->reset();
+            }
+        }
         $phr_json[json_fields::DESCRIPTION] = $wik->description($summary);
         $phr_json[json_fields::REFS] = [
             [json_fields::NAME => $page, json_fields::TYPE_NAME => ref_types::WIKIPEDIA],
@@ -605,8 +637,15 @@ class ref_url_tests extends url_test_base
         ];
         $json = json_encode($import, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $test_name = 'the live wikipedia page ' . $page . ' gives the description and the wikidata id of the last run';
-        $this->t->assert_file($test_name, $json, $file, test_files::JSON);
+        if ($summary == []) {
+            // an unreadable page without a copy is no change of the page, so the file of the last run is
+            // neither compared nor updated with the empty values; the reason names e.g. the http status
+            $test_name .= ' (' . import_wikidata::request_failure() . ')';
+        } else {
+            $this->t->assert_file($test_name, $json, $file, test_files::JSON);
+        }
         $this->t->assert_msg($test_name, $msg);
+        return $live;
     }
 
     /**
@@ -750,6 +789,8 @@ class ref_url_tests extends url_test_base
         // confirmed: the user confirms the preview, whose checksum the confirm form carries
         $test_name = 'the confirmed import shows the page of the triple again';
         $import = $imp_ui->preview[json_fields::PREVIEW_IMPORT] ?? [];
+        // remembered before the confirm, so that the cleanup also removes a partly written import
+        $this->wd_import = $import;
         $cnf_url = $pv_url;
         $cnf_url[url_var::ACTION] = url_var::ACTION_IMPORT;
         $cnf_url[url_var::STEP] = url_var::STEP_CONFIRMED;
@@ -794,17 +835,46 @@ class ref_url_tests extends url_test_base
     }
 
     /**
+     * check that the live wikidata entity of the wikidata_import workflow can be read, because the
+     * backend of the workflow reads it too, so without it e.g. offline every step would fail as a follow-up
+     *
+     * @return bool true if the entity of Zurich (city) can be read from wikidata
+     */
+    protected function wikidata_import_live(): bool
+    {
+        $msg = new user_message($this->t->usr1); // only a fixture read reports to it, which the pod never uses
+        $live = new import_wikidata()->get_entity_json(refs::ZURICH_CITY_WIKIDATA_KEY, $msg) != '';
+        if (!$live) {
+            $this->t->step('the wikidata_import workflow wf' . workflows::WF_WIKIDATA_IMPORT_NBR
+                . ' is skipped, because the live wikidata item ' . refs::ZURICH_CITY_WIKIDATA_KEY
+                . ' cannot be read (' . import_wikidata::request_failure() . ')');
+        }
+        return $live;
+    }
+
+    /**
      * undo the wikidata_import workflow on Zurich (city): the values and the words that usr1 has imported are
-     * deleted and the overlays of usr1 on a value or a word of the base data are removed, found by the live convert of the
-     * entity, which gives the same values as the import before, so that the base data has never been changed
+     * deleted and the overlays of usr1 on a value or a word of the base data are removed, found by the import that
+     * the workflow has confirmed, so that the base data has never been changed even if wikidata cannot be read again;
+     * the cleanup before the workflow has no import of this run, so it finds the leftovers of an interrupted earlier
+     * run by the live convert of the entity, which gives the same values as the import of that run
      */
     protected function cleanup_wikidata_import(): void
     {
         $msg = new user_message($this->t->usr1);
-        $claim_msg = new user_message($this->t->usr1); // not reported, because wikidata_write_tests compares the live claims
-        $entity_json = new import_wikidata()->get_entity_json(refs::ZURICH_CITY_WIKIDATA_KEY);
-        $preview = new import_wikidata_preview($this->t->usr1);
-        $import = $preview->import_of_entity($entity_json, triple_names::CITY_ZH, $msg, $claim_msg);
+        $import = $this->wd_import;
+        if ($import == []) {
+            $claim_msg = new user_message($this->t->usr1); // not reported, because wikidata_write_tests compares the live claims
+            $entity_json = new import_wikidata()->get_entity_json(refs::ZURICH_CITY_WIKIDATA_KEY, $msg);
+            // an unreadable entity gives no import, which the workflow reports as a failed read,
+            // so the empty json is not converted to the misleading message that no value is imported
+            if ($entity_json != '') {
+                $preview = new import_wikidata_preview($this->t->usr1);
+                $import = $preview->import_of_entity($entity_json, triple_names::CITY_ZH, $msg, $claim_msg);
+            }
+        }
+        // used once, so that a later cleanup without a new import reads the leftovers live again
+        $this->wd_import = [];
         $deleted = [];
         foreach ($import[json_fields::VALUES] ?? [] as $val_json) {
             $names = $val_json[json_fields::WORDS];

@@ -157,10 +157,15 @@ class import_wikidata_preview
         $vars = [msg_id::VAR_NAME => $name, msg_id::VAR_ID => $wikidata_id];
         // the id is part of the url that is read, so only an item id of wikidata is read
         $entity_json = '';
+        $missing_host = '';
         if (preg_match(self::WIKIDATA_ITEM_PATTERN, $wikidata_id) === 1) {
-            $entity_json = $this->imp->get_entity_json($wikidata_id);
+            $entity_json = $this->imp->get_entity_json($wikidata_id, $msg);
+            $missing_host = $this->imp->missing_host();
         }
-        if ($entity_json == '') {
+        if ($missing_host != '') {
+            // without an answer the item is not wrong, so the user should check the connection and not the key
+            $msg->add(msg_id::CONNECTION_MISSING, [msg_id::VAR_NAME => $missing_host]);
+        } elseif ($entity_json == '') {
             $msg->add(msg_id::WIKIDATA_READ_FAILED, $vars);
         } else {
             // the problems of single claims are part of the preview, because the other values can still be imported
@@ -324,9 +329,13 @@ class import_wikidata_preview
         $result[json_fields::EX_FROM] = $from->name();
         $result[json_fields::EX_VERB] = $trp->get_verb()?->name() ?? '';
         $result[json_fields::EX_TO] = $to->name();
-        $type = $trp->type_code_id($msg) ?? '';
-        if ($type != '') {
-            $result[json_fields::TYPE_NAME] = $type;
+        // a triple of the pod without phrase type e.g. "Zurich (city)" is declared without it, so
+        // the code id is only read for a set type, because else type_code_id reports it as missing
+        if ($trp->type_id($msg) !== null) {
+            $type = $trp->type_code_id($msg) ?? '';
+            if ($type != '') {
+                $result[json_fields::TYPE_NAME] = $type;
+            }
         }
         return $result;
     }

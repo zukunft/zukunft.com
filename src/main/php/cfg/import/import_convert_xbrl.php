@@ -99,10 +99,6 @@ class import_convert_xbrl
     const string SECTOR = word_names::SECTOR;
     const string VERB_IS_A = verbs::IS_NAME;
 
-    // non-standard formula fields of the check formula
-    const string FORMULA_RESULT = json_fields::RESULT;
-    const string FORMULA_COMPONENTS = json_fields::COMPONENTS;
-
     // the us-gaap concepts of the main income statement facts
     // and the related zukunft.com word names
     // the concept names follow the locator labels of the calculation linkbase
@@ -130,6 +126,129 @@ class import_convert_xbrl
             json_fields::EX_FROM => word_names::COST,
             json_fields::EX_VERB => verbs::OF_NAME,
             json_fields::EX_TO => word_names::REVENUE,
+        ],
+        // the two token concepts that the seed defines with its own link, which the import cannot change
+        triple_names::EXCHANGE_RATE => [
+            json_fields::NAME => triple_names::EXCHANGE_RATE,
+            json_fields::EX_FROM => word_names::RATE,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::EXCHANGE,
+        ],
+        triple_names::INCOME_TAX => [
+            json_fields::NAME => triple_names::INCOME_TAX,
+            json_fields::EX_FROM => word_names::TAX,
+            json_fields::EX_VERB => verbs::ON_NAME,
+            json_fields::EX_TO => word_names::INCOME,
+        ],
+        triple_names::COMMON_STOCK => [
+            json_fields::NAME => triple_names::COMMON_STOCK,
+            json_fields::EX_FROM => word_names::STOCK,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::COMMON,
+        ],
+        triple_names::RETAINED_EARNINGS => [
+            json_fields::NAME => triple_names::RETAINED_EARNINGS,
+            json_fields::EX_FROM => word_names::EARNINGS,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::RETAINED,
+        ],
+        triple_names::ACCOUNTS_PAYABLE => [
+            json_fields::NAME => triple_names::ACCOUNTS_PAYABLE,
+            json_fields::EX_FROM => word_names::ACCOUNTS,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::PAYABLE,
+        ],
+        triple_names::ACCOUNTS_RECEIVABLE => [
+            json_fields::NAME => triple_names::ACCOUNTS_RECEIVABLE,
+            json_fields::EX_FROM => word_names::ACCOUNTS,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::RECEIVABLE,
+        ],
+        triple_names::GOODS_SOLD => [
+            json_fields::NAME => triple_names::GOODS_SOLD,
+            json_fields::EX_FROM => word_names::GOODS,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::SOLD,
+        ],
+        triple_names::INCOME_LOSS => [
+            json_fields::NAME => triple_names::INCOME_LOSS,
+            json_fields::EX_FROM => word_names::LOSS,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::INCOME,
+        ],
+        triple_names::INCOME_TAX_ONE => [
+            json_fields::NAME => triple_names::INCOME_TAX_ONE,
+            json_fields::EX_FROM => word_names::TAX,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::INCOME,
+        ],
+        triple_names::NET_INCOME => [
+            json_fields::NAME => triple_names::NET_INCOME,
+            json_fields::EX_FROM => word_names::INCOME,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::NET,
+        ],
+        triple_names::EQUITY_METHOD => [
+            json_fields::NAME => triple_names::EQUITY_METHOD,
+            json_fields::EX_FROM => word_names::METHOD,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::EQUITY,
+        ],
+        // the to is the triple "equity method" above
+        triple_names::EQUITY_METHOD_INVESTMENTS => [
+            json_fields::NAME => triple_names::EQUITY_METHOD_INVESTMENTS,
+            json_fields::EX_FROM => word_names::INVESTMENTS,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => triple_names::EQUITY_METHOD,
+        ],
+        triple_names::DEFERRED_INCOME => [
+            json_fields::NAME => triple_names::DEFERRED_INCOME,
+            json_fields::EX_FROM => word_names::INCOME,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::DEFERRED,
+        ],
+        triple_names::INTEREST_RATE => [
+            json_fields::NAME => triple_names::INTEREST_RATE,
+            json_fields::EX_FROM => word_names::RATE,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::INTEREST,
+        ],
+        triple_names::CASH_FLOW => [
+            json_fields::NAME => triple_names::CASH_FLOW,
+            json_fields::EX_FROM => word_names::CASH,
+            json_fields::EX_VERB => verbs::CAN_NAME,
+            json_fields::EX_TO => word_names::FLOW,
+        ],
+        triple_names::ACCUMULATED_DEPRECIATION => [
+            json_fields::NAME => triple_names::ACCUMULATED_DEPRECIATION,
+            json_fields::EX_FROM => word_names::DEPRECIATION,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::ACCUMULATED,
+        ],
+        triple_names::TAX_CREDIT => [
+            json_fields::NAME => triple_names::TAX_CREDIT,
+            json_fields::EX_FROM => word_names::CREDIT,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::TAX,
+        ],
+        triple_names::SHARE_CAPITAL => [
+            json_fields::NAME => triple_names::SHARE_CAPITAL,
+            json_fields::EX_FROM => word_names::CAPITAL,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::SHARE,
+        ],
+        // the concepts that the use case share_buy_sell_abb.json defines with its own link
+        triple_names::ORDER_BACKLOG => [
+            json_fields::NAME => triple_names::ORDER_BACKLOG,
+            json_fields::EX_FROM => word_names::BACKLOG,
+            json_fields::EX_VERB => verbs::OF_NAME,
+            json_fields::EX_TO => word_names::ORDERS,
+        ],
+        triple_names::SHARES_OUTSTANDING => [
+            json_fields::NAME => triple_names::SHARES_OUTSTANDING,
+            json_fields::EX_FROM => word_names::SHARE,
+            json_fields::EX_VERB => verbs::KIND_OF_NAME,
+            json_fields::EX_TO => word_names::OUTSTANDING,
         ],
     ];
 
@@ -193,7 +312,9 @@ class import_convert_xbrl
         }
         $folder = rtrim($target_root, DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR . $basename . DIRECTORY_SEPARATOR;
-        if (!mkdir($folder, 0777, true) && !is_dir($folder)) {
+        // the folder of a fixed name (empty suffix) exists from the run before, so it is created
+        // only if missing, because else mkdir warns "File exists"; the extract overwrites the files
+        if (!is_dir($folder) && !mkdir($folder, 0777, true) && !is_dir($folder)) {
             throw new RuntimeException("cannot create XBRL extraction folder: $folder");
         }
 
@@ -617,7 +738,6 @@ class import_convert_xbrl
 
         $triples = [];
         $values = [];
-        $components = [];
         $total = 0;
 
         foreach ($segments as $segment) {
@@ -639,7 +759,6 @@ class import_convert_xbrl
                 json_fields::SOURCE => $source_name,
             ];
 
-            $components[] = $sector;
             $total = $total + intval($millions);
         }
 
@@ -660,10 +779,7 @@ class import_convert_xbrl
                 if (key_exists($wrd_name, self::CONCEPT_TRIPLES)) {
                     // re-declare the base concept triple e.g. "gross profit"
                     // instead of creating a word with the same name
-                    $trp_json = self::CONCEPT_TRIPLES[$wrd_name];
-                    $words[] = [json_fields::NAME => $trp_json[json_fields::EX_FROM]];
-                    $words[] = [json_fields::NAME => $trp_json[json_fields::EX_TO]];
-                    $triples[] = $trp_json;
+                    $this->decompose_concept(explode(' ', $wrd_name), $words, $triples);
                 } else {
                     $words[] = [json_fields::NAME => $wrd_name];
                 }
@@ -710,13 +826,15 @@ class import_convert_xbrl
         $words = $this->unique_words($words);
         $triples = $this->unique_triples($triples);
 
+        // only fields that the import reads: the sectors are already declared by their
+        // "is a sector" triples and the reported total is already the value of the sales above;
+        // the total is no calc-validation check, because the sum of the segment sales includes
+        // the sales between the segments and so differs from the reported total
         $formulas = [];
         $formulas[] = [
             json_fields::NAME        => self::ISSUER_ABB . ' ' . words::TOTAL_PRE . ' ' . self::MEASURE_SALES . ' ' . $year,
             json_fields::EXPRESSION  => self::ISSUER_ABB . ' ' . self::MEASURE_SALES . ' ' . $year
                 . ' = sum of ' . self::ISSUER_ABB . ' ' . self::MEASURE_SALES . ' ' . $year . ' per ' . self::SECTOR,
-            self::FORMULA_RESULT     => $total_text,
-            self::FORMULA_COMPONENTS => $components,
         ];
 
         $check_results = [];
@@ -790,6 +908,7 @@ class import_convert_xbrl
     /**
      * remove the triples with a from, verb and to combination that is already in the list
      * because the from, verb and to key must be unique within an import
+     * the first entry without a name takes the name of a removed one (docs/llm/pending_prio_2.md for two names)
      *
      * @param array $triples list of the import triples that may contain duplicates
      * @return array the list of the import triples with a unique from, verb and to key
@@ -803,6 +922,10 @@ class import_convert_xbrl
                 . ' ' . $trp_json[json_fields::EX_TO];
             if (!key_exists($key, $result)) {
                 $result[$key] = $trp_json;
+            } elseif (!key_exists(json_fields::NAME, $result[$key]) and key_exists(json_fields::NAME, $trp_json)) {
+                // the link of a verb token e.g. "cash" "and" "cash" of "CashAndCash" has no name, so it takes
+                // the name that other triples use e.g. "cash cash" of "CashCashEquivalents"
+                $result[$key][json_fields::NAME] = $trp_json[json_fields::NAME];
             }
         }
         return array_values($result);
@@ -832,8 +955,11 @@ class import_convert_xbrl
             // re-declare the base setup triple e.g. "gross profit"
             // instead of creating a second triple with the same name
             $trp_json = self::CONCEPT_TRIPLES[$result];
-            $words[] = [json_fields::NAME => $trp_json[json_fields::EX_FROM]];
-            $words[] = [json_fields::NAME => $trp_json[json_fields::EX_TO]];
+            // a single token side is a word, and a side that the base setup defines as a triple too
+            // e.g. "equity method" of "equity method investments" is re-declared as that triple
+            foreach ([$trp_json[json_fields::EX_FROM], $trp_json[json_fields::EX_TO]] as $side) {
+                $this->decompose_concept(explode(' ', $side), $words, $triples);
+            }
             $triples[] = $trp_json;
         } elseif (count($tokens) == 1) {
             if (!in_array($tokens[0], self::CONCEPT_NAME_VERBS)) {
@@ -962,12 +1088,14 @@ class import_convert_xbrl
         array        &$triples,
         user_message $msg): array
     {
-        // keep one fact per concept and context
+        // keep one fact per concept, context and unit
         // and report a fact that is repeated with a different value
+        // the unit is part of the key, because a filing can report the same fact in two currencies,
+        // e.g. "abb:ShareCapital" of "I2013_ParentCompanyMember" in CHF and in USD, which is no conflict
         $base = [];
         foreach ($facts as $fact) {
             if ($this->is_year_context($fact[xbrl::FACT_CONTEXT])) {
-                $key = $fact[xbrl::FACT_CONCEPT] . ' ' . $fact[xbrl::FACT_CONTEXT];
+                $key = $fact[xbrl::FACT_CONCEPT] . ' ' . $fact[xbrl::FACT_CONTEXT] . ' ' . $fact[xbrl::FACT_UNIT];
                 if (key_exists($key, $base)) {
                     if ($base[$key][xbrl::FACT_VALUE] != $fact[xbrl::FACT_VALUE]) {
                         $this->report_fact_conflict($fact, $base[$key][xbrl::FACT_VALUE], $msg);

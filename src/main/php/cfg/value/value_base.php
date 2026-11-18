@@ -2340,6 +2340,8 @@ class value_base extends sandbox_value
         $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
+        // an update keeps the phrases of the stored value, so only an add checks them
+        $phr_in_db = true;
 
         // check if a new value is supposed to be added or updated
         // TODO Prio 2 combine this db call with the add or update to one SQL sequence with one commit at the end
@@ -2362,7 +2364,8 @@ class value_base extends sandbox_value
                 // make sure that only an admin user sets the admin protection also on a new value
                 $this->check_protection_change(null, $msg);
                 log_debug('add ' . $this->dsp_id());
-                if ($this->phrases_in_db($msg)) {
+                $phr_in_db = $this->phrases_in_db($msg);
+                if ($phr_in_db) {
                     $this->add($msg);
                 }
             } else {
@@ -2419,7 +2422,8 @@ class value_base extends sandbox_value
                 $this->grp()->save($msg);
             }
 
-            if (!$msg->is_ok()) {
+            // a phrase that is not in the database is a user input problem that the message explains
+            if (!$msg->is_ok() and $phr_in_db) {
                 log_err_msg($msg->text(), $msg);
             }
         }

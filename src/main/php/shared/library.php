@@ -3160,6 +3160,35 @@ class library
     }
 
     /**
+     * remove the rows of a csv list whose value of the given column is one of the given values
+     * e.g. the guest users, which a call from localhost creates on demand with the next free id
+     *
+     * @param array $csv the csv lines starting with the header line
+     * @param string $col the name of the column to check
+     * @param array $values the values of the rows to remove
+     * @return array the csv lines without the removed rows, unchanged if the column is unknown
+     */
+    function csv_remove_rows(array $csv, string $col, array $values): array
+    {
+        if (count($csv) < 2) {
+            return $csv;
+        }
+        $header_cols = $this->csv_line_to_array($csv[0]);
+        $idx = array_search($col, $header_cols);
+        if ($idx === false) {
+            return $csv;
+        }
+        $result = [$csv[0]];
+        for ($i = 1; $i < count($csv); $i++) {
+            $fields = $this->csv_line_to_array($csv[$i]);
+            if (!in_array($fields[$idx] ?? '', $values, true)) {
+                $result[] = $csv[$i];
+            }
+        }
+        return $result;
+    }
+
+    /**
      * combine the values of one database row to a csv line
      *
      * @param array $fields the values of one row in the order of the csv header

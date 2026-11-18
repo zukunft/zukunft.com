@@ -1132,6 +1132,18 @@ class lib_tests
         $result = $lib->csv_clear_col($csv, 'email');
         $t->assert($test_name, $result, ["id,password\n", "1,secret\n"]);
 
+        // the rows with one of the given values in the named column are removed
+        $test_name = 'csv_remove_rows';
+        $csv = ["user_id,user_name\n", "1,system\n", "14,::1\n", "15,127.0.0.1\n"];
+        $result = $lib->csv_remove_rows($csv, 'user_name', ['::1', '127.0.0.1']);
+        $t->assert($test_name, $result, ["user_id,user_name\n", "1,system\n"]);
+
+        // negative: a column that is not in the header changes nothing
+        $test_name = 'csv_remove_rows unknown column';
+        $csv = ["user_id,user_name\n", "14,::1\n"];
+        $result = $lib->csv_remove_rows($csv, 'ip_address', ['::1']);
+        $t->assert($test_name, $result, ["user_id,user_name\n", "14,::1\n"]);
+
         // a value with the delimiter is enclosed and the quote is doubled
         $test_name = 'csv_field';
         $result = $lib->csv_field('a,"b"');

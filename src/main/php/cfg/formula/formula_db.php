@@ -127,6 +127,8 @@ class formula_db
         formula_fields::FLD_ALL_NEEDED,
         fields::FLD_LAST_UPDATE,
         fields::FLD_VIEW,
+        // the usage is written like the other fields of FLD_LST_USER_CAN_CHANGE, so it is also loaded
+        fields::FLD_USAGE,
         fields::FLD_IMPACT,
         fields::FLD_EXCLUDED,
         fields::FLD_SHARE,

@@ -2499,6 +2499,7 @@
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
 \-- import
     \-- __construct - section for function __construct is expected to be construct and map in /import/import.php
+    \-- __destruct - section for function __destruct missing in /import/import.php
     \-- set_start_time - section for function set_start_time is expected to be set and get in /import/import.php
     \-- display_progress - section for function display_progress not yet defined that it should be use to apply the time
              of the parent process for continuous timestamp reporting in /import/import.php
@@ -2517,6 +2518,10 @@
             e parent process for continuous timestamp reporting in /import/import.php
     \-- step_start - section for function step_start not yet defined that it should be use to apply the time of the pare
             nt process for continuous timestamp reporting in /import/import.php
+    \-- step_note - section for function step_note not yet defined that it should be use to apply the time of the parent
+             process for continuous timestamp reporting in /import/import.php
+    \-- show_pending_note - section for function show_pending_note not yet defined that it should be use to apply the ti
+            me of the parent process for continuous timestamp reporting in /import/import.php
     \-- step_end - section for function step_end not yet defined that it should be use to apply the time of the parent p
             rocess for continuous timestamp reporting in /import/import.php
     \-- calc_total_time - section for function calc_total_time not yet defined that it should be use to apply the time o
@@ -2581,6 +2586,8 @@
             n /import/import_file.php
     \-- import_system_data_appended - section for function import_system_data_appended not yet defined that it should be
              set and get in /import/import_file.php
+    \-- import_xbrl_data - section for function import_xbrl_data not yet defined that it should be set and get in /impor
+            t/import_file.php
     \-- echo - section for function echo not yet defined that it should be set and get in /import/import_file.php
 \-- import_wikidata
     \-- __construct - section for function __construct is expected to be construct and map in /import/import_wikidata.ph
@@ -2589,6 +2596,8 @@
             php
     \-- get_property_json - section for function get_property_json is expected to be set and get in /import/import_wikid
             ata.php
+    \-- missing_host - section for function missing_host missing in /import/import_wikidata.php
+    \-- live_or_saved_json - section for function live_or_saved_json missing in /import/import_wikidata.php
     \-- store_json - section for function store_json missing in /import/import_wikidata.php
     \-- store_text - section for function store_text missing in /import/import_wikidata.php
     \-- convert - section for function convert not yet defined that it should be convert in /import/import_wikidata.php
@@ -2855,8 +2864,6 @@
     \-- term_list - section for function term_list not yet defined that it should be cast in /phrase/phrase_list.php
     \-- fill_missing_verbs - section for function fill_missing_verbs not yet defined that it should be set and get in /p
             hrase/phrase_list.php
-    \-- name_pos_lst - section for function name_pos_lst not yet defined that it should be set and get in /phrase/phrase
-            _list.php
     \-- max_impact - section for function max_impact not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- import_lst - section for function import_lst not yet defined that it should be im- and export in /phrase/phrase_
@@ -3064,8 +3071,6 @@
             order of section info has difference at is_valid should be before db_ready,
             order of section im- and export has difference at export_json should be before import_mapper
 \-- term_list
-    \-- name_pos_lst - section for function name_pos_lst not yet defined that it should be set and get in /phrase/term_l
-            ist.php
     \-- id_lst - section for function id_lst not yet defined that it should be get function in /phrase/term_list.php
     \-- ids_txt - section for function ids_txt not yet defined that it should be get function in /phrase/term_list.php
     \-- term_ids - section for function term_ids not yet defined that it should be get function in /phrase/term_list.php
@@ -3364,6 +3369,10 @@
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_code_id.php
     \-- order error - order of section info has difference at diff_msg should be before is_similar
 \-- sandbox_link
+    \-- clone_all - section for function clone_all not yet defined that it should be construct and map in /sandbox/sandb
+            ox_link.php
+    \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /sandbox/s
+            andbox_link.php
     \-- fob - section for function fob not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- from_id - section for function from_id not yet defined that it should be set and get in /sandbox/sandbox_link.ph
             p
@@ -3433,7 +3442,8 @@
     \-- add_link_change_refused - section for function add_link_change_refused not yet defined that it should be do not 
             update a link guard in /sandbox/sandbox_link.php
     \-- link_id - section for function link_id is expected to be link in /sandbox/sandbox_link.php
-    \-- order error - order of section info has difference at is_valid should be before db_ready
+    \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset,
+            order of section info has difference at is_valid should be before db_ready
 \-- sandbox_link_list
     \-- add - section for function add not yet defined that it should be modify in /sandbox/sandbox_link_list.php
     \-- add_link - section for function add_link not yet defined that it should be modify in /sandbox/sandbox_link_list.
@@ -3517,11 +3527,7 @@
     \-- sql_insert - section for function sql_insert is expected to be sql write in /sandbox/sandbox_list_named.php
     \-- sql_update - section for function sql_update not yet defined that it should be save in /sandbox/sandbox_list_nam
             ed.php
-    \-- sql_delete - section for function sql_delete not yet defined that it should be save in /sandbox/sandbox_list_nam
-            ed.php
     \-- sql_update_call_with_par - section for function sql_update_call_with_par not yet defined that it should be save 
-            in /sandbox/sandbox_list_named.php
-    \-- sql_delete_call_with_par - section for function sql_delete_call_with_par not yet defined that it should be save 
             in /sandbox/sandbox_list_named.php
     \-- save - section for function save is expected to be save in /sandbox/sandbox_list_named.php
     \-- names - section for function names is expected to be info in /sandbox/sandbox_list_named.php
@@ -4591,6 +4597,8 @@
         \-- import_convert_xbrl - end-to-end conversion: read the zip, extract the sales, build the data,
     \-- convert_wiki_json
         \-- convert_wikipedia_table - convert a wikitable2json to a zukunft.com json
+    \-- __destruct
+        \-- import - stop the note timer, so that a finished import never shows its skipped step note
     \-- convert_folder
         \-- import_convert_xbrl - convert an unpacked XBRL fileset folder into the zukunft.com import JSON.
     \-- convert_to_file
@@ -4606,6 +4614,10 @@
     \-- get_property_json
         \-- import_wikidata - retrieve the property data json from wikidata for the given property id e.g. "P2284" for p
                 rice
+    \-- missing_host
+        \-- import_wikidata - @return string the host of the last request of this object that has got no answer e.g.
+    \-- live_or_saved_json
+        \-- import_wikidata - the live answer of wikidata, which is also saved in the fallback folder if one is set,
     \-- store_json
         \-- import_wikidata - retrieve and store the json received from wikidata for the given entity or property id as 
                 a test resource file
@@ -4655,8 +4667,7 @@
     \-- log_link_count
         \--  - @return int the number of the kept log links, to find the link that the next log call adds
     \-- log_take_reported
-        \--  - take out the link that a log call has added after the given count,
-                 because the caller reports the error itself
+        \--  - TODO Prio 1 review / rename and add samples
     \-- log_err_msg
         \--  - log an error message and inform the user about the error
     \-- log_err_msg_ui
@@ -5443,6 +5454,8 @@
         \-- import_file - import the use case data, which shows how a question is answered with the data
     \-- import_system_data_appended
         \-- import_file - import the system data that has been added after the database ids of the tested phrases
+    \-- import_xbrl_data
+        \-- import_file - import the converted XBRL fileset of ABB for 2013 as the very last step of the db setup, so
     \-- echo
         \-- import_file - display a message immediately to the user
     \-- set_action
@@ -5467,8 +5480,6 @@
         \-- change_log - get the field name base on the field_id
     \-- start_time
         \-- text_log - 
-    \-- name_pos_lst
-        \-- term_list - @returns array with all unique names of this list with the keys within this list
     \-- key_list
         \-- ref_list - map the database rows of one load to the refs of this list
     \-- get_by_type_code_id
@@ -6348,7 +6359,7 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
-        \-- import - 
+        \-- import - stop the note timer, so that a finished import never shows its skipped step note
     \-- display_progress
         \-- import - show the progress of an import process
     \-- put_yaml
@@ -6368,6 +6379,10 @@
         \-- import - remember how much is done by adding the estimated time done
     \-- step_start
         \-- import - remember how much is done by adding the estimated time done
+    \-- step_note
+        \-- import - write the start of a step of a long import, so that a hang shows the step that has not ended
+    \-- show_pending_note
+        \-- import - show the step note that the throttle has skipped, if its step is still running; called by the
     \-- step_end
         \-- import - @param int $nbr the number of precessed objects e.g. count(word)
     \-- calc_total_time

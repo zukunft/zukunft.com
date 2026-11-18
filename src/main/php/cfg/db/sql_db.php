@@ -1270,6 +1270,9 @@ class sql_db
             $import->import_system_data_appended($usr);
             // and the use cases that build on the appended system data e.g. the calculator keywords
             $import->import_use_case_data($usr, false, files::USE_CASE_FILES_APPENDED);
+            // the XBRL fileset of a company as the last import, because it adds about 700 words and
+            // 2900 triples, which would shift every later id
+            $import->import_xbrl_data($usr);
             // a types api call during the imports may have cached the system phrases without the
             // symbol triples imported after it e.g. "g/kWh is symbol for gram per kWh"
             new db_cache(user::system())->del_types($sys_msg);

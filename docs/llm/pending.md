@@ -1,5 +1,185 @@
 # pending - list of planned llm prompts with prio 1
 
+## to confirm by the next run: the fixes of 2026-11-16
+
+The issues 7 to 13 of `docs/llm/log/xbrl_import_reset_2026-11-14.md`, all coded but not yet confirmed by a test run
+of the developer. Remove an item once a run after `test/reset_db.php` has passed its check.
+
+Status 2026-11-16 19:30, checked by the llm from the files that the runs of the day have written (no run of its
+own, no database read):
+- 7: the `*_confirmed` pages of wf31 to wf33 (19:21) and the wf35 pages (18:17) have no "deleted" history row any
+  more; open: a run that leaves them unchanged
+- 8: the live copies `live_Geneva.json` and `live_Health.json` were written at 19:20, so the run had network; the
+  wf42 and wf45 pages are unchanged since 2026-11-15, so the workflows ran and matched; open: the seed gap after
+  the run, which only the next run shows by an unchanged `wf42_show.html` and `wf45_show.html`
+- 9: the reset finished the XBRL import (the 2401 XBRL rows of `unit/value/list.csv`, 17:50), and `xbrl_write_tests`
+  converted the fileset at 19:23; open: the duration of the no-update import and the deep `sandbox_link::clone_all`
+  and the import by `sql_db::setup_db`, which were coded after these runs
+- 10: the id lists of the wf31 to wf35 snapshots hold only the fixed ids (999, 997) and seed ids (203, 201); but
+  the wf31 page was rewritten at 19:21, because the group id of the test value (`id=192351094` instead of
+  `221908281`) is built from the test word ids, which `url_test_base::normalize_ids` does not replace, so the
+  snapshot changes with every shift of the test word ids; decided: normalized too, `value_url_tests::set_value_norm_id`
+  maps the group id of the saved value of wf31 to wf33 to the group id of the fixed test ids, like wf35 does, so the
+  `*_confirmed` pages change once and then stay
+- 11: `unit/value/list.csv` (17:50), `unit/word/list.csv` (17:16) and `type_lists.json` (17:08) were not rewritten
+  by the later runs, so these runs matched them; open: a reset with the XBRL import of `sql_db::setup_db`, which
+  should leave them unchanged
+- 12, 13 and the verb rename: no file shows the result; open: the output of the next `a_selected_test` and unit
+  test run
+
+7. **Extra history rows in the workflow snapshots** (wf31 to wf33, wf35: "deleted 123456" of 07-06-1997):
+   `test_cleanup::cleanup_test_values` removes the change log of each deleted test value. Check: the `*_confirmed`
+   pages show no row of the run before.
+8. **Live wikipedia and wikidata reads without a network**: copies of the live pages
+   (`import/wikipedia/cache/live_<page>.json`) as fallback, wf42, wf45 and wf47 skipped with a step line, the message
+   `connection_missing`. Check: with network the copies are rewritten and the workflows run; after the run Geneva
+   has no description and health no wikidata reference again (the seed gap, `testing.md`).
+9. **The XBRL import in the reset "hangs"**: the note timer (`import::step_note`), the hash update of
+   `sandbox_list_named::add_by_name_direct` and `add_by_key`, the single from and to fill of `triple::fill` and the
+   deep `sandbox_link::clone_all`. Check: the reset and the no-update import of `xbrl_write_tests` pass "update the
+   changed of 2875 triples" within seconds, and `xbrl_write_tests` reports no change.
+10. **Ids in a list of ids in the workflow snapshots** (",3377" against ",3272"):
+    `url_test_base::normalize_id_lists`. Check: the wf31 snapshots stay the same after a shift of the test word ids.
+11. **The id shift after the XBRL import works in the reset**: `type_lists.json`, the `list.csv` baselines and the
+    coverage doc have been rewritten by the run. Check: the next run matches them. Commit an expected html page only
+    from a run after a reset, because a page written while leftovers were in the database (e.g. Zurich "... and 149
+    more" or the inhabitants page with Switzerland) is wrong.
+12. **Test values left by a stopped run** (the words "Share", "Earnings", "Increase" and "CHF" only hidden):
+    `test_db_load::add_value` registers an existing value of a test word (`has_test_word_name`). Check: the final
+    cleanup of `a_selected_test` leaves no test word, also after a run that was stopped with ^C.
+13. **A unit test that expected a wrong behaviour**: `triple_list_tests` expects no message for a repeated triple
+    without id, and the doc comment of `add_by_name_direct` names the silent skip. Check: the unit tests pass.
+
+Also from 2026-11-16 and to confirm by the same run: `verb::can_be_renamed_by` checks the user only for a rename and
+works with a message without user; the XBRL data is imported by `sql_db::setup_db` (see the planned change below),
+so the workflow snapshots are the same after `reset_db.php` with `test_part.php` and after `test.php`.
+And on 2026-11-17, decided by the developer: an import with `"excluded": true` follows `docs/llm/delete.md`, so
+`sandbox_list_named::delete` calls `del()` of each object instead of a direct sql delete; `import_write_tests`
+expects an unused test object to be deleted and a used one to be excluded. Check: no "has been excluded" or "has been
+deleted" error of the import tests; the then unused list helpers `sandbox_list_named::sql_delete`,
+`sql_delete_call_with_par` and `delete_depending` (also of `formula_list`) are removed on request.
+
+## planned change: load the XBRL fileset with the test database setup
+
+Found 2026-11-14: `xbrl_write_tests` imports the ABB 2013 fileset (722 words, 2875 triples, 2396 values, 2 formulas,
+1 source) and removes it again with `xbrl_write_tests::cleanup`. Any row that the cleanup misses changes the tests that
+run before the XBRL test in the next run, e.g. the triples "research and development", "research and development
+expense" and "taxes payable" appeared in the phrase search list of eleven expected html pages
+(`views_by_id/triple/50_triple_add_1.html`, `views_by_id/im_export/151_export_json.html`, ...), so these pages flip
+between two versions from run to run without any code change.
+
+Status 2026-11-14: steps 1 to 4 are coded and the re-pin is done (`words::VERBS_ID` 835); what is left is the
+confirming `test/test_part.php` run with the XBRL test switched on in `a_selected_test`, then switch it off again and
+remove this section (the log is `docs/llm/log/xbrl_import_reset_2026-11-14.md`). Step 1 found that the cleanup used the message of the converter, which the nine facts in two
+currencies had made not ok, so every value delete was skipped; the converter now keeps a fact per unit
+(`import_convert_xbrl::facts_json`). Steps 2 and 3 were done together on request, so that `reset_db.php` gives the same
+database as `test.php` and `test_part.php` and a re-pin is consistent.
+
+Changed 2026-11-16, decided by the developer: the XBRL data is part of the initial load of every pod, not only of the
+development reset, because otherwise the workflow test files differ depending on whether `reset_db.php` and then
+`test_part.php`, or `test.php` has run before. `sql_db::setup_db` imports a copy of the converted json in the main
+resources (`files::XBRL_ABB_2013_FILE`, `messages/base_data/`) as its last import (`import_file::import_xbrl_data`);
+`all_unit_write_tests::run_db_recreate` no longer imports it, and `xbrl_write_tests` checks that the copy is the
+converted fileset, so a converter change also updates the copy with the auto update of the test files. This replaces
+"never loaded on a pod" and "the json stays where the converter writes it" of step 2.
+
+The plan:
+1. Before the move, find and fix why the cleanup leaves the source "ABB XBRL files for 2013" and three of its values
+   behind (`del()` is called without an error but the rows stay), because after the move no test deletes these
+   values any more and the bug, which users can hit as well, would be hidden.
+2. Import the converted json in the test code right after `$db_con->setup_db()` in
+   `all_unit_write_tests::run_db_recreate`, which every development reset uses (`test/test.php` via
+   `all_tests.php`, `test/reset_db.php` and `test/test_re_pin.php`). Decided 2026-11-14:
+   - start only when step 1 is fixed, because after the move the leftover bug cannot be observed any more
+   - never loaded on a pod, because a pod is set up by `sql_db::setup_db` alone (`db_check.php`, `sql_db.php`),
+     so no environment check is needed
+   - the json stays where the converter writes it,
+     `src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/abb-2013-xbrl_fileset-20131231.json`,
+     because test code may read the test resources
+   - imported as the system user like the rest of the setup, so that the test user owns no XBRL rows
+   - as the last import after everything `setup_db` loads, so that the pinned ids stay unchanged
+   - `test/reset_db_forced.php` drops the config table and then includes `test/reset_db.php`, so it uses the
+     same `run_db_recreate` and needs no import of its own
+3. Change `xbrl_write_tests` from a fresh import with cleanup to: convert the zip to the json (unchanged), then import
+   the json again in the no update mode (`import_file::json_file` with `$no_upd`, like the selected system data files
+   of `a_selected_test`) and expect no change; remove `xbrl_write_tests::cleanup` and its helpers.
+4. The fresh import path stays tested by `setup_db` on every database reset.
+
+Expected effects: a longer database reset; the generated `unit/word/list.csv` and `unit/triple/list.csv` and the
+pages with a phrase search list change once and are regenerated by the test run; pinned ids stay as long as the
+import is the last one.
+
+## bug fixing
+
+### word
+
+replacing the description with an empty string does not work,
+1. a user changes the description, so that a user word entry is created
+2. if the user removes his description, that original text is shown, but actually it would be more correct if the user_word entry contains an empty string for the description
+
+create a workflow test for this using e.g. something like http://localhost/http/view.php?m=101&id=2072&9m=3&9id=2072&z=2&k=Basel&8k=Basel&py=1&8py=1&o=&8o=Basel+or+Basle+is+a+city+in+northwestern+Switzerland+on+the+river+Rhine%2C+at+the+transition+from+the+High+Rhine+to+the+Upper+Rhine.+Basel+is+Switzerland%27s+third+most+populous+city%2C+with+177%2C595+inhabitants+within+the+city+municipality+limits.&lp=&8lp=&d=3&8d=3&s=1&8s=1&sp=1&8sp=1&6a1=u&6l1=801&6ek1=Q78&86ek1=Q78&6ur1=&86ur1=&6o1=&86o1=&6so1=0&86so1=0&6a2=u&6l2=684&6ek2=Basel&86ek2=Basel&6ur2=&86ur2=&6o2=&86o2=&6so2=0&86so2=0&6a3=a&6lt3=2&6ek3=&6ur3=&6o3=&6so3=0&mo=48&u=11
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### triple
+
+edit triple does not set the from and to phrase
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### add ref
+
+the add ref view called from a new word is not filled with the word to be referenced
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### add word
+
+when adding a new word conceptnet should be used to suggest triples
+and wikipedia should be used to suggest a description and a wikidata link
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### conceptnet.io link
+
+get the phrases of 'is a type of' from conceptnet.io and use them to create a triple
+use add Hamburg as a sample
+
+#### suggested code changes
+
+... replace this with the suggested code changes
+
+### figure link
+
+the link of a figure opens the edit view of the other object type: a value links to the result edit view and a
+result to the value edit view, because the two branches of `web/figure/figure.php::display_linked` (227-236) are
+swapped (`is_result()` gives `views::VALUE_EDIT_ID`)
+
+#### suggested code changes
+
+- `display_linked`: a result links to `views::RESULT_EDIT_ID`, a value to `views::VALUE_EDIT_ID`
+- the tests that expect the swapped view, both with the figure of a value: `unit/figure_tests.php:189` and
+  `unit_write/value_write_tests.php:273` expect `VALUE_EDIT_ID`; the active assert of
+  `unit_write/element_group_write_tests.php:170` checks which object its first figure has and expects the view of
+  that type; the snapshot of `unit_ui/figure_ui_tests.php` (figure of a value) is regenerated by the run
+- add the negative: the figure of a result links to `RESULT_EDIT_ID` (`test_figures::figure_result`)
+- the `element_group::dsp_values` link (`web/element/element_group.php:310`) uses the same function and changes
+  with it
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
+
 ## to review
 
 the findings of the review of the uncommitted changes of #247; each line is one prompt:
@@ -112,8 +292,10 @@ Decide first with the developer:
   the reset and the re-pin
 - `web/component/component.php:994`: delete `component::linked_views` and `btn_unlink` now (suggested), although
   `pending_prio_2.md` "### component edit view" says to remove them once the component edit view has the parts
-- `xbrl_write_tests`: where the large import (721 words, 2875 triples, 2396 values) runs: in `test/test.php`, only by
-  `test_part.php`, or behind `INTEGRATION_TEST` like `wikidata_write_tests`
+- `xbrl_write_tests`: where the large import (721 words, 2875 triples, 2396 values) runs: decided 2026-11-14, in
+  every development reset; changed 2026-11-16 to the initial load of every pod (`sql_db::setup_db`); the XBRL test
+  only converts, compares with the copy of the setup and imports again without change (see "planned change: load
+  the XBRL fileset with the test database setup")
 - `formula_trigger_tests`: keep the `values::SALES_INCREASE_2017_FORM` fallback, which lets a second result pass, or
   remove it with its Prio 2 TODO
 - `api_write_tests`: whether setting `$_SERVER[api::CSRF_TOKEN_SERVER_KEY]` in the simulated call is the accepted test
@@ -150,9 +332,8 @@ the write tests:
   read test uses a view relation; the function and its call in `test_db_load::create_unit_test_db_entries` go
 - `unit_write/element_write_tests.php:125`: the target has `title="<name>"`, but `sandbox_named::name_link` sets the
   title from the description; the target without the title (likely, check first)
-- `unit_write/xbrl_write_tests.php:88`, `:95`: born switched off; `$usr_msg` becomes `$msg`, the cleanup checks the
-  owner for every class, drops the `continue` and calls `cleanup_change_log_of_deleted`, then the three lines run where
-  the developer decides
+- `unit_write/xbrl_write_tests.php:88`, `:95`: obsolete since 2026-11-14, the cleanup has been removed together with
+  the fresh import of the XBRL test
 - `unit_write/expression_write_tests.php:157`: `phr_verb_lst` needs the `user_message $msg` now; call
   `phr_verb_lst($msg)` and activate the assert with the target in element order (`"country","canton","System Test Word
   Total"`, check first); it writes a `log_warning` for the verb element on every run
@@ -332,77 +513,6 @@ then `/test/reset_db.php`, the re-pin and the full `test/test.php`.
 ### suggested code changes for deprecate
 
 ... to be filled
-
-## bug fixing
-
-### word
-
-replacing the description with an empty string does not work,
-1. a user changes the description, so that a user word entry is created
-2. if the user removes his description, that original text is shown, but actually it would be more correct if the user_word entry contains an empty string for the description
-
-create a workflow test for this using e.g. something like http://localhost/http/view.php?m=101&id=2072&9m=3&9id=2072&z=2&k=Basel&8k=Basel&py=1&8py=1&o=&8o=Basel+or+Basle+is+a+city+in+northwestern+Switzerland+on+the+river+Rhine%2C+at+the+transition+from+the+High+Rhine+to+the+Upper+Rhine.+Basel+is+Switzerland%27s+third+most+populous+city%2C+with+177%2C595+inhabitants+within+the+city+municipality+limits.&lp=&8lp=&d=3&8d=3&s=1&8s=1&sp=1&8sp=1&6a1=u&6l1=801&6ek1=Q78&86ek1=Q78&6ur1=&86ur1=&6o1=&86o1=&6so1=0&86so1=0&6a2=u&6l2=684&6ek2=Basel&86ek2=Basel&6ur2=&86ur2=&6o2=&86o2=&6so2=0&86so2=0&6a3=a&6lt3=2&6ek3=&6ur3=&6o3=&6so3=0&mo=48&u=11
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### triple
-
-edit triple does not set the from and to phrase
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### add ref
-
-the add ref view called from a new word is not filled with the word to be referenced
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### add word
-
-when adding a new word conceptnet should be used to suggest triples
-and wikipedia should be used to suggest a description and a wikidata link
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### conceptnet.io link
-
-get the phrases of 'is a type of' from conceptnet.io and use them to create a triple
-use add Hamburg as a sample
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### figure link
-
-the link of a figure opens the edit view of the other object type: a value links to the result edit view and a
-result to the value edit view, because the two branches of `web/figure/figure.php::display_linked` (227-236) are
-swapped (`is_result()` gives `views::VALUE_EDIT_ID`)
-
-#### suggested code changes
-
-- `display_linked`: a result links to `views::RESULT_EDIT_ID`, a value to `views::VALUE_EDIT_ID`
-- the tests that expect the swapped view, both with the figure of a value: `unit/figure_tests.php:189` and
-  `unit_write/value_write_tests.php:273` expect `VALUE_EDIT_ID`; the active assert of
-  `unit_write/element_group_write_tests.php:170` checks which object its first figure has and expects the view of
-  that type; the snapshot of `unit_ui/figure_ui_tests.php` (figure of a value) is regenerated by the run
-- add the negative: the figure of a result links to `RESULT_EDIT_ID` (`test_figures::figure_result`)
-- the `element_group::dsp_values` link (`web/element/element_group.php:310`) uses the same function and changes
-  with it
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 ## improve the new word / triple process
 

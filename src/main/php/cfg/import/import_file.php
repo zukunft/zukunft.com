@@ -486,6 +486,17 @@ class import_file
     }
 
     /**
+     * import the converted XBRL fileset of ABB for 2013 as the very last step of the db setup, so
+     * that every pod and every development reset has the same data and no pinned database id moves
+     * @param user $usr the owner of the XBRL data e.g. the system user of the setup
+     * @return string any error or warning message during import
+     */
+    function import_xbrl_data(user $usr): string
+    {
+        return $this->json_file(files::XBRL_ABB_2013_FILE, $usr, false)->get_last_message();
+    }
+
+    /**
      * display a message immediately to the user
      * @param string $txt the text that should be should to the user
      */

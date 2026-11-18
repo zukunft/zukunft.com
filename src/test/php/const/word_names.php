@@ -291,6 +291,33 @@ class word_names
     const string COST = 'cost';
     const int COST_ID = 339;
     const string REVENUE = 'revenue';
+    // the parts of the concepts that the base setup defines as a triple, so that the XBRL import
+    // re-declares the triple instead of joining the two tokens with "and" (import_convert_xbrl::CONCEPT_TRIPLES)
+    const string RATE = 'rate';
+    const string EXCHANGE = 'exchange';
+    const string STOCK = 'stock';
+    const string COMMON = 'common';
+    const string EARNINGS = 'earnings';
+    const string RETAINED = 'retained';
+    const string ACCOUNTS = 'accounts';
+    const string PAYABLE = 'payable';
+    const string RECEIVABLE = 'receivable';
+    const string GOODS = 'goods';
+    const string SOLD = 'sold';
+    const string NET = 'net';
+    const string METHOD = 'method';
+    const string EQUITY = 'equity';
+    const string INVESTMENTS = 'investments';
+    const string DEFERRED = 'deferred';
+    const string INTEREST = 'interest';
+    const string DEPRECIATION = 'depreciation';
+    const string ACCUMULATED = 'accumulated';
+    const string CREDIT = 'credit';
+    const string CAPITAL = 'capital';
+    // the parts of the concepts that the use case share_buy_sell_abb.json defines as a triple
+    const string BACKLOG = 'backlog';
+    const string ORDERS = 'orders';
+    const string OUTSTANDING = 'outstanding';
 
     const string LAYOUT_COM = 'the settings to position the components on the screen';
     const string COUNT = 'count';

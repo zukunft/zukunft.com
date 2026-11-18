@@ -1169,6 +1169,11 @@ class verb extends type_object
             }
         }
 
+        // the privilege comes first, because a user who cannot rename the verb cannot solve a duplicate name either
+        if ($msg->is_ok() and $this->has_id()) {
+            $this->can_be_renamed_by($db_rec, $msg);
+        }
+
         // check possible duplicates
         $sim = null;
         $sim_msg = new user_message(); // the duplicate messages only steer the branch below
@@ -1219,6 +1224,37 @@ class verb extends type_object
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * the triples of every user show the verb name, so only an admin or the system can rename a verb
+     * (def::ONLY_ADMIN_CAN_RENAME_CLASSES)
+     *
+     * @param verb|db_object_seq_id $db_rec the verb as it is in the database before the change
+     * @param user_message $msg with the requesting user and to report the refused rename
+     * @return bool true if the name is unchanged or the requesting user may rename the verb
+     */
+    private function can_be_renamed_by(verb|db_object_seq_id $db_rec, user_message $msg): bool
+    {
+        // the user is only checked for a rename, because a message may have no user, and an
+        // unchanged name e.g. of a description change needs no privilege
+        if ($db_rec->name() == $this->name()) {
+            return true;
+        }
+        $usr = $msg->usr;
+        // the test profile passes is_system e.g. to use the reserved names, but renames a verb like a
+        // normal user, so that the test user can check the refused rename (horizontal_write_tests)
+        $result = ($usr?->is_admin() or ($usr?->is_system() and !$usr?->is_system_test()));
+        if (!$result) {
+            $lib = new library();
+            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $db_rec->name(),
+                msg_id::VAR_USER_NAME => $usr?->name() ?? '',
+                msg_id::VAR_USER_PROFILE => $usr?->profile_name() ?? ''
+            ]);
+        }
+        return $result;
     }
 
 

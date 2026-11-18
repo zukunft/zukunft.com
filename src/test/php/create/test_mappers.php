@@ -608,6 +608,9 @@ class test_mappers
                 break;
             case word::class:
                 $obj = $t_wrd->word_add();
+                // an insert writes a new row, so without the fixed snapshot id of the unit tests
+                // (word_names::TEST_ADD_ID), which is the id of another word in the database, e.g. "index"
+                $obj->id = 0;
                 break;
             case verb::class:
                 $obj = $t_vrb->verb_add();

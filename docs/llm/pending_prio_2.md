@@ -2,6 +2,15 @@
 
 ## data review
 
+### xbrl data
+
+src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/abb-2013-xbrl_fileset-20131231.json should not add a company specific description
+e.g. 'abb:CapitalReserve' if there is a more general description
+
+### data cleanup
+
+check that all test data e.g. 'System Test Scaling Word e.g. billions' is removed after each test block
+
 ### 1950
 
 create the triples '1950 (year)', '1950 (PLZ)'
@@ -3285,3 +3294,41 @@ Where a currency is a measure unit today:
   which writes it into `import/xbrl/abb-2013-xbrl_fileset-20131231/abb-2013-xbrl_fileset-20131231.json`
 - the other import files e.g. `use_cases/portfolio_split_calculator.json` and the `start_page/problem_*.json` files
   name `USD` without a phrase type
+
+## the XBRL converter does not know the triples of the pod
+
+Found 2026-11-14 with the ABB 2013 fileset: `import_convert_xbrl::decompose_concept` joins every two token concept
+with "and", e.g. "ExchangeRate" gives the triple `exchange` `and` `rate` with the name "exchange rate". The seed
+defines 18 of these names as a triple with another link, e.g. "exchange rate" as `rate` `of` `exchange`
+(`economics.json`), "net income" as `income` `kind of` `net` (`accounting.json`) and "cash flow" as `cash` `can`
+`flow`. The import finds the seed triple by its name and refuses to change its link (`sandbox::refuse_link_change`),
+so the import of the fileset failed. The 18 triples are now listed in `import_convert_xbrl::CONCEPT_TRIPLES` with the
+link of the seed, like "gross profit" and "cost of revenue" before, and `xbrl_write_tests` checks "exchange rate" and
+that "equity method" is no word.
+
+The gap: the list covers only the concepts of this fileset. Another fileset, or a seed triple added later, gives a
+concept with the name of a triple of the pod and another link again, and the import refuses it. The seed has no rule
+for such a compound (of, kind of, can, on), so the two token rule cannot be changed to fit all of them. A complete
+solution gives the converter the triples of the pod by name, like the wikidata import gets the phrases of the pod
+(`import_wikidata_preview::pod_phrases`): the caller loads the triples whose name is a concept of the fileset with one
+prepared query, and a concept with a known name re-declares the triple of the pod instead of creating its own link;
+`CONCEPT_TRIPLES` then goes. This needs a database read before the convert, a new parameter of
+`convert_folder_to_file` and the tests for a known and an unknown concept name.
+The use case `share_buy_sell_abb.json` is imported before the fileset too, so its "order backlog" and "shares
+outstanding" are in `CONCEPT_TRIPLES` as well.
+
+A second gap of the same converter: two concepts can create the same link with two names, e.g. "cash" "and" "cash"
+of "CashAndCash" (no name) and "cash cash" of "CashCashEquivalents". `import_convert_xbrl::unique_triples` keeps one
+triple per link, and an entry without a name now takes the name of the removed one. If both have a different name, or
+the kept name differs from the generated name that another triple uses, one name is still lost and the import
+reports the triples that use it as "Cannot find word or triple". A complete solution replaces the lost name with
+the kept one in every triple and value of the converted json and tells the user about the merge.
+
+A third gap: a dimension member with the name of the concept gives the phrase twice, e.g. the fact
+"ShortTermInvestments" with the member "ShortTermInvestmentsMember" gives the json value `ABB`, `short term
+investments`, `short term investments`, `USD`, `2013` (9000000). `facts_json` builds the value key from the names with
+the repeated phrase, so it does not see that the import stores it with the same group as the total `ABB`, `short term
+investments`, `USD`, `2013` (464000000), and the later fact overwrites the total. Removing the repeated name only
+moves the problem into a fact conflict (`report_fact_conflict` marks the convert message as not ok). A complete
+solution names the member differently from the concept, e.g. with the axis of the member, so that both facts keep
+their own phrase group.

@@ -111,13 +111,13 @@ class horizontal_write_tests
                 $check_obj = $obj->clone_reset(true);
                 $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' by name and check differences';
                 $check_obj->reset(true);
                 $check_obj->load_by_name($obj->name(), $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
             }
         }
 
@@ -144,7 +144,7 @@ class horizontal_write_tests
                 $check_obj = $obj->clone_reset(true);
                 $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
 
                 $msg_upd = $msg->clone_reset();
                 if (in_array($obj::class, def::ONLY_ADMIN_CAN_RENAME_CLASSES)) {

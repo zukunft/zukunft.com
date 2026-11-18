@@ -1011,14 +1011,6 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    protected function delete_depending(user_message $msg): void
-    {
-        foreach ($this->lst() as $frm) {
-            $frm->del_links($msg);
-        }
-    }
-
-
     /*
      * convert
      */

@@ -96,6 +96,19 @@ class triple_url_tests extends url_test_base
     }
 
     /**
+     * a triple is named as a phrase by its negative id e.g. the hidden field pf=-8645 of the add
+     * phrase form or the add reference link p=-8645, so the negative id is normalized like the id
+     * of the triple, else the snapshot changes with every run that has not reset the database
+     *
+     * @param int $id the current db id of the workflow triple (0 if not known)
+     * @return array the real phrase id => the fixed phrase id e.g. -8645 => -998
+     */
+    protected function phrase_norm_ids(int $id): array
+    {
+        return [-$id => -$this->wf_fixed_id, -$this->wf_id => -$this->wf_fixed_id];
+    }
+
+    /**
      * set the additional snapshot id normalization for the from and to test words of the test triple,
      * so a write run snapshot shows the fixed test ids instead of the dynamically assigned word ids
      * (in a read-only run the words are not in the db and the urls already carry the fixed ids)
@@ -594,6 +607,7 @@ class triple_url_tests extends url_test_base
         // triple is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_triple_removed('del_triple workflow has removed the triple');
+            $this->cleanup_change_log_of_removed($trp);
         }
     }
 

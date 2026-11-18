@@ -803,7 +803,7 @@ class a_selected_test extends all_unit_tests
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
-            //new xbrl_write_tests()->run($this);
+            new xbrl_write_tests()->run($this);
             new wikidata_write_tests()->run($this);
             //new update_put_write_tests()->run($this);
             //run_export_test($this);

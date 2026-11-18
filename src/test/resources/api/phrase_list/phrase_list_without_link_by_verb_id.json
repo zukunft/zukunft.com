@@ -1,6 +1,6 @@
 [
     {
-        "id": 991,
+        "id": 988,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -152,7 +152,7 @@
         "class": "triple"
     },
     {
-        "id": 2046,
+        "id": 2043,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -178,7 +178,7 @@
         "class": "word"
     },
     {
-        "id": 2442,
+        "id": 2439,
         "name": "EPR",
         "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
         "type_id": 1,
@@ -251,21 +251,21 @@
         "class": "triple"
     },
     {
-        "id": 2526,
+        "id": 2523,
         "name": "holding",
         "description": "the quantity of one security or currency in a portfolio, also called a position",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2044,
+        "id": 2041,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 2045,
+        "id": 2042,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -394,7 +394,7 @@
         "class": "word"
     },
     {
-        "id": 1009,
+        "id": 1006,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
@@ -456,7 +456,7 @@
         "class": "word"
     },
     {
-        "id": 1739,
+        "id": 1736,
         "name": "stock",
         "type_id": 1,
         "class": "word"
@@ -498,7 +498,7 @@
         "id": 105,
         "protection": 3,
         "name": "year",
-        "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
+        "description": "A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.",
         "type_id": 11,
         "class": "word"
     },

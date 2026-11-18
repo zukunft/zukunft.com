@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1695 of 6501 public functions have at least 2 unit test calls; the 4595 functions below do not; the 211 functions of the last section are called nowhere
+1704 of 6509 public functions have at least 2 unit test calls; the 4594 functions below do not; the 211 functions of the last section are called nowhere
 
-## 1900 functions of main backend have no test at all
+## 1896 functions of main backend have no test at all
 
 ```
 \-- application
@@ -559,10 +559,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- put_yaml - 0 unit test calls
     \-- save_per_sec - 0 unit test calls
     \-- set_start_time - 0 unit test calls shared by 2 classes
+    \-- show_pending_note - 0 unit test calls
     \-- status_text - 0 unit test calls shared by 2 classes
     \-- step_end - 0 unit test calls
     \-- step_main_end - 0 unit test calls
     \-- step_main_start - 0 unit test calls
+    \-- step_note - 0 unit test calls
     \-- step_start - 0 unit test calls
     \-- summary - 0 unit test calls shared by 2 classes
     \-- yaml_data_object_map_triple - 0 unit test calls
@@ -588,11 +590,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- import_system_data - 0 unit test calls
     \-- import_system_data_appended - 0 unit test calls
     \-- import_use_case_data - 0 unit test calls
+    \-- import_xbrl_data - 0 unit test calls
     \-- yaml_file - 0 unit test calls
 \-- import_wikidata
     \-- cleanup_file - 0 unit test calls
     \-- entity_id - 0 unit test calls
-    \-- get_entity_json - 0 unit test calls
 \-- import_wikidata_preview
     \-- preview_of_phrase - 0 unit test calls
 \-- ip_range
@@ -925,7 +927,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- type_field - 0 unit test calls shared by 7 classes
     \-- type_name_field - 0 unit test calls shared by 2 classes
     \-- update_standard_fields - 0 unit test calls
-    \-- used_by_someone_else - 0 unit test calls shared by 4 classes
 \-- sandbox_code_id
     \-- delta - 0 unit test calls shared by 32 classes
     \-- load_sql_by_code_id - 0 unit test calls shared by 5 classes
@@ -998,7 +999,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_user_changes - 0 unit test calls shared by 2 classes
     \-- same_user - 0 unit test calls
 \-- sandbox_list_named
-    \-- add_by_name_direct - 0 unit test calls
     \-- add_id_by_name - 0 unit test calls
     \-- code_id_list - 0 unit test calls
     \-- delete - 0 unit test calls shared by 2 classes
@@ -1091,7 +1091,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_write - 0 unit test calls shared by 3 classes
     \-- sql_write_with_log - 0 unit test calls
     \-- take_ownership - 0 unit test calls shared by 2 classes
-    \-- used_by_someone_else - 0 unit test calls shared by 4 classes
     \-- usr_cfg_cleanup - 0 unit test calls
     \-- value_type - 0 unit test calls shared by 3 classes
 \-- sandbox_named
@@ -1460,7 +1459,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- sql_par_list
     \-- add_by_name - 0 unit test calls shared by 2 classes
     \-- exe - 0 unit test calls shared by 3 classes
-    \-- exe_delete - 0 unit test calls
     \-- exe_direct - 0 unit test calls shared by 2 classes
     \-- exe_update - 0 unit test calls
     \-- object_names - 0 unit test calls
@@ -1677,7 +1675,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- to_field - 0 unit test calls shared by 7 classes
     \-- type_field - 0 unit test calls shared by 7 classes
     \-- type_name_field - 0 unit test calls shared by 2 classes
-    \-- used_by_someone_else - 0 unit test calls shared by 4 classes
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- triple_list
     \-- fill_by_name - 0 unit test calls shared by 4 classes
@@ -2030,7 +2027,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- save_view - 0 unit test calls shared by 2 classes
     \-- type_name_or_null - 0 unit test calls shared by 2 classes
     \-- update_usage - 0 unit test calls
-    \-- used_by_someone_else - 0 unit test calls shared by 4 classes
     \-- view_sql - 0 unit test calls
 \-- word_list
     \-- are_and_contains - 0 unit test calls shared by 3 classes
@@ -2172,7 +2168,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 894 functions of frontend have no test at all
+## 895 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2304,6 +2300,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- ref_list_cloned - 0 unit test calls
     \-- set_component_list - 0 unit test calls
     \-- set_ref_list - 0 unit test calls
+    \-- set_source_list - 0 unit test calls
     \-- set_view_list - 0 unit test calls shared by 2 classes
     \-- sys_log_list - 0 unit test calls
 \-- db_object
@@ -3171,7 +3168,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1138 functions of main backend have incomplete tests
+## 1142 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3204,11 +3201,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- change_value
     \-- row_mapper - 8 unit test calls shared by 22 classes
 \-- combine_named
-    \-- exclude - 5 unit test calls shared by 4 classes
+    \-- exclude - 6 unit test calls shared by 4 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- get_description - 35 unit test calls shared by 21 classes
     \-- include - 2 unit test calls shared by 4 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- obj_id - 4 unit test calls shared by 6 classes
     \-- set_description - 10 unit test calls shared by 10 classes
     \-- set_share - 1 unit test calls shared by 2 classes
@@ -3220,9 +3217,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_style_id - 2 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- link - 3 unit test calls shared by 2 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
@@ -3233,12 +3230,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- component_link
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_component - 2 unit test calls shared by 2 classes
     \-- get_key - 2 unit test calls shared by 3 classes
     \-- get_style_id - 2 unit test calls shared by 8 classes
     \-- get_view - 7 unit test calls shared by 7 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- load_by_link - 2 unit test calls shared by 2 classes
     \-- load_standard_by_link - 2 unit test calls shared by 6 classes
@@ -3250,7 +3247,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_style - 1 unit test calls shared by 4 classes
     \-- view_id - 5 unit test calls shared by 3 classes
 \-- component_link_list
-    \-- add_by_key - 4 unit test calls shared by 5 classes
+    \-- add_by_key - 6 unit test calls shared by 5 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_components - 1 unit test calls shared by 2 classes
@@ -3274,10 +3271,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_word - 2 unit test calls shared by 2 classes
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- formula_link_list - 2 unit test calls shared by 2 classes
     \-- formula_list - 6 unit test calls shared by 4 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- ip_range_list - 1 unit test calls
     \-- load - 6 unit test calls shared by 18 classes
     \-- load_system_formulas - 1 unit test calls
@@ -3313,26 +3310,26 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- db_id_object_non_sandbox
     \-- del - 29 unit test calls shared by 22 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_by_email - 1 unit test calls shared by 2 classes
     \-- set_from_api - 2 unit test calls shared by 4 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
 \-- db_object
     \-- row_mapper - 8 unit test calls shared by 22 classes
 \-- db_object_key
     \-- row_mapper - 8 unit test calls shared by 22 classes
 \-- db_object_multi
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- fill - 17 unit test calls shared by 37 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_id_set - 4 unit test calls shared by 6 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- row_mapper_multi - 1 unit test calls shared by 3 classes
 \-- db_object_multi_user
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- fill - 17 unit test calls shared by 37 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- set_user - 11 unit test calls shared by 15 classes
 \-- db_object_no_id
     \-- row_mapper - 8 unit test calls shared by 22 classes
@@ -3342,41 +3339,41 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- has_id - 4 unit test calls shared by 4 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_id_key_updated - 2 unit test calls shared by 3 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
 \-- db_object_seq_id_user
-    \-- clone_all - 2 unit test calls shared by 5 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- fill - 17 unit test calls shared by 37 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- is_same_std - 2 unit test calls shared by 6 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
     \-- set_user - 11 unit test calls shared by 15 classes
 \-- element
-    \-- clone_all - 2 unit test calls shared by 5 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- exclude - 5 unit test calls shared by 4 classes
+    \-- exclude - 6 unit test calls shared by 4 classes
     \-- include - 2 unit test calls shared by 4 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- is_triple - 1 unit test calls shared by 5 classes
     \-- is_word - 2 unit test calls shared by 5 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- set_type - 2 unit test calls shared by 14 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
 \-- element_list
@@ -3397,7 +3394,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- expression
     \-- phrases - 1 unit test calls shared by 3 classes
 \-- figure
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- obj_id - 4 unit test calls shared by 6 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
 \-- figure_list
@@ -3416,9 +3413,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- formula_link
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- formula_id - 1 unit test calls shared by 4 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_by_link - 2 unit test calls shared by 2 classes
     \-- load_standard_by_link - 2 unit test calls shared by 6 classes
     \-- phrase_id - 4 unit test calls shared by 3 classes
@@ -3432,7 +3429,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- formula_link_type
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- formula_link_type_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -3452,10 +3449,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_ref_text - 1 unit test calls
     \-- get_view_id - 7 unit test calls shared by 5 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_phrases - 2 unit test calls shared by 7 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
@@ -3472,12 +3469,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get - 19 unit test calls shared by 14 classes
     \-- get_description - 35 unit test calls shared by 21 classes
     \-- id_fvt_lst - 3 unit test calls shared by 3 classes
     \-- id_lst - 8 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_big - 1 unit test calls shared by 6 classes
     \-- is_id_set - 4 unit test calls shared by 6 classes
     \-- is_prime - 6 unit test calls shared by 6 classes
@@ -3516,6 +3513,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- instance_file_name - 1 unit test calls
 \-- import_wikidata
     \-- convert_to_file - 1 unit test calls shared by 2 classes
+    \-- get_entity_json - 1 unit test calls
+    \-- missing_host - 1 unit test calls
+    \-- no_answer - 1 unit test calls
     \-- property_ids - 1 unit test calls
     \-- property_json - 1 unit test calls
 \-- import_wikidata_preview
@@ -3524,8 +3524,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
     \-- set_user - 11 unit test calls shared by 15 classes
@@ -3556,7 +3556,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- job_status
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- job_status_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -3567,12 +3567,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- language
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- language_form
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- language_form_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -3582,26 +3582,26 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- list_db_write
     \-- diff - 4 unit test calls shared by 3 classes
-    \-- sql_delete_call_with_par - 1 unit test calls shared by 2 classes
+    \-- sql_delete_call_with_par - 1 unit test calls
 \-- object_mapper
     \-- get_source - 2 unit test calls shared by 4 classes
     \-- get_view - 7 unit test calls shared by 7 classes
 \-- phrase
     \-- can_be_ready - 2 unit test calls shared by 8 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- direct_children - 1 unit test calls shared by 3 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- fob - 1 unit test calls shared by 3 classes
     \-- from_id - 1 unit test calls shared by 3 classes
     \-- get_description - 35 unit test calls shared by 21 classes
     \-- get_impact - 1 unit test calls shared by 4 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- get_verb_id - 2 unit test calls shared by 3 classes
     \-- get_view_id - 7 unit test calls shared by 5 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is - 1 unit test calls shared by 3 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- is_measure - 2 unit test calls shared by 6 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_scaling - 5 unit test calls shared by 6 classes
@@ -3613,7 +3613,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- load_sql_by_name - 6 unit test calls shared by 8 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
-    \-- owner_id - 6 unit test calls shared by 5 classes
+    \-- owner_id - 7 unit test calls shared by 5 classes
     \-- phrases - 1 unit test calls shared by 3 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- set_obj_from_id - 2 unit test calls shared by 2 classes
@@ -3626,14 +3626,14 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- val_lst - 1 unit test calls shared by 2 classes
     \-- value_selection - 1 unit test calls
 \-- phrase_list
-    \-- add_id - 4 unit test calls shared by 4 classes
+    \-- add_id - 5 unit test calls shared by 4 classes
     \-- add_name - 1 unit test calls shared by 2 classes
     \-- are - 2 unit test calls shared by 3 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- direct_children - 1 unit test calls shared by 3 classes
     \-- ex_time - 1 unit test calls shared by 5 classes
     \-- id_lst - 8 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is - 1 unit test calls shared by 3 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_by_phr - 4 unit test calls shared by 5 classes
@@ -3642,7 +3642,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_sql_by_ids - 5 unit test calls shared by 18 classes
     \-- load_sql_by_phr_lst - 1 unit test calls shared by 5 classes
     \-- load_sql_by_verb - 2 unit test calls shared by 2 classes
-    \-- name_pos_lst - 1 unit test calls shared by 3 classes
     \-- parents - 1 unit test calls shared by 7 classes
     \-- remove - 3 unit test calls shared by 9 classes
     \-- term_list - 6 unit test calls shared by 7 classes
@@ -3652,7 +3651,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- phrase_types
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -3668,13 +3667,13 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- from_id - 1 unit test calls shared by 3 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- get_description - 35 unit test calls shared by 21 classes
     \-- get_key - 2 unit test calls shared by 3 classes
     \-- get_source - 2 unit test calls shared by 4 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_standard_by_type_link - 2 unit test calls shared by 4 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- phrase_id - 4 unit test calls shared by 3 classes
@@ -3703,7 +3702,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- ref_type
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- ref_type_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -3712,13 +3711,13 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- formula_id - 1 unit test calls shared by 4 classes
     \-- get_value - 8 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_big - 1 unit test calls shared by 6 classes
     \-- is_prime - 6 unit test calls shared by 6 classes
-    \-- load_by_grp - 5 unit test calls shared by 5 classes
+    \-- load_by_grp - 6 unit test calls shared by 5 classes
     \-- load_by_phr_lst - 7 unit test calls shared by 6 classes
     \-- load_phrases - 2 unit test calls shared by 7 classes
     \-- load_sql_by_grp - 6 unit test calls shared by 4 classes
@@ -3731,7 +3730,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- diff_msg - 48 unit test calls shared by 28 classes
     \-- load - 6 unit test calls shared by 18 classes
     \-- load_by_frm - 1 unit test calls shared by 2 classes
-    \-- load_by_grp - 5 unit test calls shared by 5 classes
+    \-- load_by_grp - 6 unit test calls shared by 5 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_by_phrase - 3 unit test calls shared by 2 classes
     \-- load_by_phrase_list - 2 unit test calls shared by 2 classes
@@ -3746,20 +3745,20 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- exclude - 5 unit test calls shared by 4 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- exclude - 6 unit test calls shared by 4 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- fob - 1 unit test calls shared by 3 classes
     \-- from_name - 1 unit test calls shared by 2 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- include - 2 unit test calls shared by 4 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_same_std - 2 unit test calls shared by 6 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- other_overwrites_api_array - 2 unit test calls shared by 2 classes
-    \-- owner_id - 6 unit test calls shared by 5 classes
+    \-- owner_id - 7 unit test calls shared by 5 classes
     \-- reload_objects - 1 unit test calls shared by 8 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- row_mapper_std - 1 unit test calls shared by 2 classes
@@ -3768,7 +3767,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_owner - 2 unit test calls shared by 2 classes
     \-- set_share - 1 unit test calls shared by 2 classes
     \-- set_share_id - 3 unit test calls shared by 2 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_insert_switch - 1 unit test calls shared by 3 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
@@ -3777,14 +3776,15 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- tob - 1 unit test calls shared by 3 classes
     \-- type_name - 1 unit test calls shared by 13 classes
     \-- update - 2 unit test calls shared by 5 classes
+    \-- used_by_someone_else - 1 unit test calls shared by 4 classes
     \-- user_overwrites_api_array - 1 unit test calls shared by 2 classes
 \-- sandbox_code_id
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
@@ -3794,10 +3794,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_code_id_db - 6 unit test calls shared by 4 classes
 \-- sandbox_link
     \-- can_be_ready - 2 unit test calls shared by 8 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- cloned - 5 unit test calls shared by 4 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- fob - 1 unit test calls shared by 3 classes
     \-- from_id - 1 unit test calls shared by 3 classes
     \-- from_name - 1 unit test calls shared by 2 classes
@@ -3821,9 +3823,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_description - 35 unit test calls shared by 21 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_id_key_updated - 2 unit test calls shared by 3 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
@@ -3834,18 +3836,16 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_type_id - 1 unit test calls shared by 7 classes
     \-- type_id - 17 unit test calls shared by 10 classes
 \-- sandbox_list
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- set_user - 11 unit test calls shared by 15 classes
     \-- table_extension - 5 unit test calls shared by 7 classes
 \-- sandbox_list_named
-    \-- add_by_key - 4 unit test calls shared by 5 classes
+    \-- add_by_key - 6 unit test calls shared by 5 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
     \-- filter_readable_by - 1 unit test calls shared by 4 classes
     \-- merge - 7 unit test calls shared by 12 classes
-    \-- name_pos_lst - 1 unit test calls shared by 3 classes
+    \-- name_pos_lst - 1 unit test calls
     \-- sort_by_name - 3 unit test calls shared by 4 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
-    \-- sql_delete_call_with_par - 1 unit test calls shared by 2 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
     \-- update - 2 unit test calls shared by 5 classes
@@ -3856,15 +3856,15 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- exclude - 5 unit test calls shared by 4 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- exclude - 6 unit test calls shared by 4 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- has_id - 4 unit test calls shared by 4 classes
     \-- id_fvt_lst - 3 unit test calls shared by 3 classes
     \-- id_lst - 8 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- include - 2 unit test calls shared by 4 classes
     \-- is_big - 1 unit test calls shared by 6 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- is_prime - 6 unit test calls shared by 6 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_same_std - 2 unit test calls shared by 6 classes
@@ -3874,20 +3874,21 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_objects - 2 unit test calls shared by 2 classes
     \-- needs_similar_check - 2 unit test calls shared by 2 classes
     \-- other_overwrites_api_array - 2 unit test calls shared by 2 classes
-    \-- owner_id - 6 unit test calls shared by 5 classes
+    \-- owner_id - 7 unit test calls shared by 5 classes
     \-- row_mapper_sandbox_multi - 5 unit test calls shared by 3 classes
     \-- row_mapper_std - 1 unit test calls shared by 2 classes
     \-- set_from_api - 2 unit test calls shared by 4 classes
     \-- set_owner - 2 unit test calls shared by 2 classes
     \-- set_saved - 1 unit test calls shared by 2 classes
     \-- set_share_id - 3 unit test calls shared by 2 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_insert_switch - 1 unit test calls shared by 3 classes
     \-- sql_update_user - 3 unit test calls shared by 2 classes
     \-- table_extension - 5 unit test calls shared by 7 classes
     \-- table_type - 6 unit test calls shared by 5 classes
     \-- type_name - 1 unit test calls shared by 13 classes
+    \-- used_by_someone_else - 1 unit test calls shared by 4 classes
     \-- user_overwrites_api_array - 1 unit test calls shared by 2 classes
 \-- sandbox_named
     \-- can_be_ready - 2 unit test calls shared by 8 classes
@@ -3895,9 +3896,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_description - 35 unit test calls shared by 21 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_id_key_updated - 2 unit test calls shared by 3 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
@@ -3911,8 +3912,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_insert_switch - 1 unit test calls shared by 3 classes
 \-- sandbox_typed
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- fill - 17 unit test calls shared by 37 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- set_type - 2 unit test calls shared by 14 classes
@@ -3922,13 +3923,13 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- type_name - 1 unit test calls shared by 13 classes
 \-- sandbox_value
     \-- changer - 1 unit test calls shared by 3 classes
-    \-- clone_all - 2 unit test calls shared by 5 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
     \-- cloned - 5 unit test calls shared by 4 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
     \-- dsp - 5 unit test calls shared by 4 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- formula_id - 1 unit test calls shared by 4 classes
     \-- get_description - 35 unit test calls shared by 21 classes
     \-- get_source - 2 unit test calls shared by 4 classes
@@ -3939,7 +3940,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- is_id_set - 4 unit test calls shared by 6 classes
     \-- is_prime - 6 unit test calls shared by 6 classes
     \-- is_saved - 2 unit test calls shared by 3 classes
-    \-- load_by_grp - 5 unit test calls shared by 5 classes
+    \-- load_by_grp - 6 unit test calls shared by 5 classes
     \-- load_phrases - 2 unit test calls shared by 7 classes
     \-- load_sql_by_grp - 6 unit test calls shared by 4 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
@@ -3947,7 +3948,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_description - 10 unit test calls shared by 10 classes
     \-- set_last_update - 3 unit test calls shared by 2 classes
     \-- set_value - 2 unit test calls shared by 6 classes
-    \-- sql_delete - 1 unit test calls shared by 7 classes
+    \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
     \-- table_extension - 5 unit test calls shared by 7 classes
@@ -3964,9 +3965,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_view_id - 7 unit test calls shared by 5 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- load_values_related - 1 unit test calls shared by 3 classes
     \-- load_views_related - 4 unit test calls shared by 5 classes
@@ -4013,7 +4014,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_message_text - 1 unit test calls shared by 3 classes
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- checksum - 1 unit test calls shared by 3 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- get_last_message - 4 unit test calls shared by 3 classes
     \-- merge - 7 unit test calls shared by 12 classes
     \-- url - 4 unit test calls shared by 7 classes
@@ -4035,7 +4036,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- sys_log
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
     \-- set - 2 unit test calls shared by 16 classes
@@ -4047,13 +4048,13 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- sys_log_list
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- load - 6 unit test calls shared by 18 classes
     \-- set_user - 11 unit test calls shared by 15 classes
 \-- sys_log_status
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
 \-- sys_log_status_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -4072,12 +4073,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- term
     \-- can_be_ready - 2 unit test calls shared by 8 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_impact - 1 unit test calls shared by 4 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- get_verb - 1 unit test calls shared by 6 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- is_triple - 1 unit test calls shared by 5 classes
@@ -4085,7 +4086,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- load_sql_by_name - 6 unit test calls shared by 8 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
-    \-- owner_id - 6 unit test calls shared by 5 classes
+    \-- owner_id - 7 unit test calls shared by 5 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- set_obj_from_id - 2 unit test calls shared by 2 classes
@@ -4096,16 +4097,15 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_like - 9 unit test calls shared by 6 classes
     \-- load_sql_by_ids - 5 unit test calls shared by 18 classes
-    \-- name_pos_lst - 1 unit test calls shared by 3 classes
     \-- remove - 3 unit test calls shared by 9 classes
     \-- verb_list - 1 unit test calls shared by 2 classes
 \-- term_view
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_style_id - 2 unit test calls shared by 8 classes
     \-- get_view - 7 unit test calls shared by 7 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_standard_by_link - 2 unit test calls shared by 6 classes
     \-- reload_objects - 1 unit test calls shared by 8 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
@@ -4126,17 +4126,16 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- get_description - 35 unit test calls shared by 21 classes
-    \-- get_from - 4 unit test calls shared by 3 classes
     \-- get_impact - 1 unit test calls shared by 4 classes
     \-- get_verb - 1 unit test calls shared by 6 classes
     \-- get_verb_id - 2 unit test calls shared by 3 classes
     \-- get_view - 7 unit test calls shared by 7 classes
     \-- get_view_id - 7 unit test calls shared by 5 classes
     \-- has_verb - 2 unit test calls shared by 3 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_measure - 2 unit test calls shared by 6 classes
     \-- is_same - 6 unit test calls shared by 14 classes
@@ -4165,6 +4164,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- type_code_id - 3 unit test calls shared by 14 classes
     \-- type_id - 17 unit test calls shared by 10 classes
     \-- type_name - 1 unit test calls shared by 13 classes
+    \-- used_by_someone_else - 1 unit test calls shared by 4 classes
 \-- triple_list
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
@@ -4190,10 +4190,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- check - 1 unit test calls shared by 6 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- get_description - 35 unit test calls shared by 21 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
@@ -4211,18 +4211,18 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- can_change - 4 unit test calls shared by 4 classes
     \-- can_set_code_id - 2 unit test calls shared by 2 classes
     \-- check - 1 unit test calls shared by 6 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- cloned - 5 unit test calls shared by 4 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get - 19 unit test calls shared by 14 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_developer - 2 unit test calls shared by 2 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- is_system - 2 unit test calls shared by 3 classes
@@ -4243,7 +4243,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- update_last_used - 1 unit test calls
 \-- user_list
     \-- get - 19 unit test calls shared by 14 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- id_lst - 8 unit test calls shared by 8 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
@@ -4266,14 +4266,14 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_message_text - 1 unit test calls shared by 3 classes
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- checksum - 1 unit test calls shared by 3 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- get_last_message - 4 unit test calls shared by 3 classes
     \-- merge - 7 unit test calls shared by 12 classes
     \-- url - 4 unit test calls shared by 7 classes
 \-- user_profile
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_system - 2 unit test calls shared by 3 classes
     \-- row_mapper - 8 unit test calls shared by 22 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 12 classes
@@ -4281,7 +4281,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- user_service
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- set_user - 11 unit test calls shared by 15 classes
 \-- user_status_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -4290,7 +4290,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- value
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_value - 8 unit test calls shared by 8 classes
     \-- load_views_related - 4 unit test calls shared by 5 classes
     \-- set_value - 2 unit test calls shared by 6 classes
@@ -4300,19 +4300,19 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_source - 2 unit test calls shared by 4 classes
     \-- get_source_id - 2 unit test calls shared by 2 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_empty_text - 3 unit test calls shared by 2 classes
-    \-- load_by_grp - 5 unit test calls shared by 5 classes
+    \-- load_by_grp - 6 unit test calls shared by 5 classes
     \-- load_objects - 2 unit test calls shared by 2 classes
     \-- load_phrases - 2 unit test calls shared by 7 classes
     \-- row_mapper_sandbox_multi - 5 unit test calls shared by 3 classes
     \-- save_as_default - 1 unit test calls
     \-- set_source_id - 4 unit test calls shared by 3 classes
 \-- value_geo
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_value - 8 unit test calls shared by 8 classes
     \-- set_value - 2 unit test calls shared by 6 classes
 \-- value_list
@@ -4326,17 +4326,17 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- value_obj
     \-- get - 19 unit test calls shared by 14 classes
 \-- value_text
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_value - 8 unit test calls shared by 8 classes
     \-- is_empty_text - 3 unit test calls shared by 2 classes
     \-- set_value - 2 unit test calls shared by 6 classes
 \-- value_time
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_value - 8 unit test calls shared by 8 classes
     \-- set_value - 2 unit test calls shared by 6 classes
 \-- value_time_series
     \-- get_value - 8 unit test calls shared by 8 classes
-    \-- load_by_grp - 5 unit test calls shared by 5 classes
+    \-- load_by_grp - 6 unit test calls shared by 5 classes
     \-- load_sql_by_grp - 6 unit test calls shared by 4 classes
     \-- row_mapper_sandbox_multi - 5 unit test calls shared by 3 classes
 \-- verb
@@ -4346,11 +4346,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- del - 29 unit test calls shared by 22 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- get_description - 35 unit test calls shared by 21 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
     \-- load_sql_by_id - 5 unit test calls shared by 13 classes
     \-- load_sql_by_name - 6 unit test calls shared by 8 classes
@@ -4359,7 +4359,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_user - 11 unit test calls shared by 15 classes
 \-- verb_list
     \-- fill_from_api_rows - 1 unit test calls shared by 2 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- get_verb - 1 unit test calls shared by 6 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
     \-- set_user - 11 unit test calls shared by 15 classes
@@ -4369,9 +4369,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_style_id - 2 unit test calls shared by 8 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_by_phrase - 3 unit test calls shared by 2 classes
     \-- load_by_term - 1 unit test calls shared by 2 classes
     \-- load_components - 1 unit test calls shared by 2 classes
@@ -4387,7 +4387,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- view_list
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- load_by_component_id - 1 unit test calls shared by 2 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_by_type - 2 unit test calls shared by 4 classes
@@ -4398,15 +4398,15 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- child - 1 unit test calls shared by 2 classes
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
-    \-- fill - 15 unit test calls shared by 37 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- fill - 17 unit test calls shared by 37 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- load_standard_by_link - 2 unit test calls shared by 6 classes
     \-- reload_objects - 1 unit test calls shared by 8 classes
     \-- row_mapper_sandbox - 11 unit test calls shared by 19 classes
     \-- set - 2 unit test calls shared by 16 classes
     \-- set_predicate - 2 unit test calls shared by 3 classes
 \-- view_relation_list
-    \-- add_by_key - 4 unit test calls shared by 5 classes
+    \-- add_by_key - 6 unit test calls shared by 5 classes
     \-- del - 29 unit test calls shared by 22 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
     \-- load_sql_by_ids - 5 unit test calls shared by 18 classes
@@ -4420,7 +4420,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- view_sys_list
     \-- default_id - 1 unit test calls shared by 46 classes
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
     \-- load - 6 unit test calls shared by 18 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
     \-- set_user - 11 unit test calls shared by 15 classes
@@ -4433,10 +4433,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_all - 2 unit test calls shared by 43 classes
     \-- db_fields_changed - 28 unit test calls shared by 44 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
     \-- get_view - 7 unit test calls shared by 7 classes
     \-- get_view_id - 7 unit test calls shared by 5 classes
-    \-- import_mapper - 16 unit test calls shared by 38 classes
+    \-- import_mapper - 17 unit test calls shared by 38 classes
     \-- is_measure - 2 unit test calls shared by 6 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_scaling - 5 unit test calls shared by 6 classes
@@ -4453,8 +4453,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_view_id - 5 unit test calls shared by 6 classes
     \-- type_code_id - 3 unit test calls shared by 14 classes
     \-- type_name - 1 unit test calls shared by 13 classes
+    \-- used_by_someone_else - 1 unit test calls shared by 4 classes
 \-- word_list
-    \-- add_id - 4 unit test calls shared by 4 classes
+    \-- add_id - 5 unit test calls shared by 4 classes
     \-- add_name - 1 unit test calls shared by 2 classes
     \-- are - 2 unit test calls shared by 3 classes
     \-- direct_children - 1 unit test calls shared by 3 classes
@@ -4479,31 +4480,31 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- has_id - 4 unit test calls shared by 4 classes
     \-- set_obj - 1 unit test calls shared by 2 classes
 \-- IdObject
-    \-- clone_all - 2 unit test calls shared by 5 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- needs_db_update - 6 unit test calls shared by 17 classes
 \-- ListOf
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedCodeObjects
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedObjects
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- id_by_name - 3 unit test calls shared by 3 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdObjects
-    \-- add_by_key - 4 unit test calls shared by 5 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- add_by_key - 6 unit test calls shared by 5 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
     \-- diff - 4 unit test calls shared by 3 classes
     \-- get - 19 unit test calls shared by 14 classes
     \-- has_id - 4 unit test calls shared by 4 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- Message
-    \-- add_id - 4 unit test calls shared by 4 classes
+    \-- add_id - 5 unit test calls shared by 4 classes
     \-- merge - 7 unit test calls shared by 12 classes
 \-- TextIdObject
-    \-- clone_all - 2 unit test calls shared by 5 classes
-    \-- clone_reset - 10 unit test calls shared by 11 classes
+    \-- clone_all - 3 unit test calls shared by 6 classes
+    \-- clone_reset - 10 unit test calls shared by 12 classes
 \-- Translator
     \-- get - 19 unit test calls shared by 14 classes
 \-- api_type_list
@@ -4532,7 +4533,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 554 functions of frontend have incomplete tests
+## 552 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4704,7 +4705,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- selector - 3 unit test calls shared by 24 classes
 \-- frontend
     \-- activation_url - 1 unit test calls
-    \-- get_user - 1 unit test calls shared by 17 classes
+    \-- get_user - 2 unit test calls shared by 17 classes
 \-- group
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- is_id_set - 4 unit test calls shared by 6 classes
@@ -4776,7 +4777,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- btn_add - 3 unit test calls shared by 5 classes
     \-- display - 9 unit test calls shared by 24 classes
-    \-- get_from - 4 unit test calls shared by 3 classes
     \-- get_verb - 1 unit test calls shared by 6 classes
     \-- get_verb_id - 2 unit test calls shared by 3 classes
     \-- is_measure - 2 unit test calls shared by 6 classes
@@ -4793,7 +4793,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- url_mapper - 44 unit test calls shared by 27 classes
     \-- view_id - 5 unit test calls shared by 3 classes
 \-- phrase_data
-    \-- fill - 15 unit test calls shared by 37 classes
+    \-- fill - 17 unit test calls shared by 37 classes
 \-- phrase_list
     \-- ex_time - 1 unit test calls shared by 5 classes
     \-- load_by_ids - 7 unit test calls shared by 21 classes
@@ -4861,7 +4861,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table - 4 unit test calls shared by 5 classes
 \-- sandbox
     \-- api_array - 14 unit test calls shared by 37 classes
-    \-- is_excluded - 7 unit test calls shared by 7 classes
+    \-- is_excluded - 8 unit test calls shared by 7 classes
     \-- owner_name - 1 unit test calls shared by 2 classes
     \-- to_url_array - 27 unit test calls shared by 14 classes
     \-- url_mapper - 44 unit test calls shared by 27 classes
@@ -4879,7 +4879,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- url_mapper - 44 unit test calls shared by 27 classes
 \-- sandbox_list_named
-    \-- add_by_key - 4 unit test calls shared by 5 classes
+    \-- add_by_key - 6 unit test calls shared by 5 classes
     \-- name_link - 15 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- set_from_json - 9 unit test calls shared by 9 classes
@@ -4932,7 +4932,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- display - 9 unit test calls shared by 24 classes
     \-- get_html - 1 unit test calls shared by 3 classes
     \-- header - 2 unit test calls shared by 7 classes
-    \-- owner_id - 6 unit test calls shared by 5 classes
+    \-- owner_id - 7 unit test calls shared by 5 classes
     \-- owner_name - 1 unit test calls shared by 2 classes
 \-- sys_log_list
     \-- api_array - 14 unit test calls shared by 37 classes
@@ -4990,7 +4990,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- api_array - 14 unit test calls shared by 37 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- display - 9 unit test calls shared by 24 classes
-    \-- get_from - 4 unit test calls shared by 3 classes
     \-- get_verb - 1 unit test calls shared by 6 classes
     \-- has_verb - 2 unit test calls shared by 3 classes
     \-- is_measure - 2 unit test calls shared by 6 classes
@@ -5078,7 +5077,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load - 6 unit test calls shared by 18 classes
     \-- set_from_json_array - 1 unit test calls shared by 6 classes
 \-- user_message
-    \-- add_id - 4 unit test calls shared by 4 classes
+    \-- add_id - 5 unit test calls shared by 4 classes
     \-- add_message - 3 unit test calls shared by 2 classes
     \-- add_message_text - 1 unit test calls shared by 3 classes
     \-- api_array - 14 unit test calls shared by 37 classes
@@ -5316,6 +5315,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- esc_names
     \-- fill_from_arrays
     \-- par_names
+\-- sql_par_list
+    \-- exe_delete
 \-- sql_type_list
     \-- is_most
 \-- system_object
@@ -5414,7 +5415,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_changes
     \-- refresh_words_via_api
     \-- set_formula_link_list
-    \-- set_source_list
     \-- value_list_cloned
 \-- db_object
     \-- default_page_url

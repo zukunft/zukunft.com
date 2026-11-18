@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -44,6 +45,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -185,6 +187,79 @@ class wikidata_tests
         // start the test section (ts)
         $ts = 'wikidata ';
         $t->header($ts);
+
+        $t->subheader($ts . 'request failure');
+        // a local file that does not exist fails like a request without an answer, so no live request is sent
+        $test_name = 'a read without an answer names the php error of the read';
+        import_wikidata::request_clear();
+        $missing = test_paths::IMPORT_WIKIDATA_UNIT . 'System_Test_missing_answer.json';
+        $read = @file_get_contents($missing);
+        $failure = import_wikidata::request_failure();
+        $t->assert_text_contains($test_name, $failure, 'System_Test_missing_answer.json');
+        $test_name = '... and that no http answer has been received';
+        $t->assert_text_contains($test_name, $failure, 'no http answer');
+        $t->assert_false($test_name, $read);
+        // a request without any answer is reported to the user as a missing connection
+        $test_name = '... which counts as a request without connection';
+        $t->assert_true($test_name, import_wikidata::no_answer());
+        // negative: an offline test reads its fixture without a request, so it never reports a missing connection
+        $test_name = 'a missing fixture is no missing connection';
+        $fix_imp = new import_wikidata(test_paths::IMPORT_WIKIDATA_UNIT);
+        $fix_msg = new user_message();
+        // an item id without an answer file in the fixture folder
+        $fix_imp->get_entity_json('Q999999999', $fix_msg);
+        $t->assert($test_name, $fix_imp->missing_host(), '');
+        $test_name = '... but reported as a missing fixture';
+        $t->assert_false($test_name, $fix_msg->is_ok());
+        // negative: after the clear before the next request the old error is never named again
+        $test_name = 'the clear before a request forgets the error of the read before';
+        import_wikidata::request_clear();
+        $t->assert($test_name, import_wikidata::request_failure(), 'no http answer');
+
+        $t->subheader($ts . 'request retry');
+        // the answer headers of a failed try, so that the retry rule is checked without a live request
+        $too_many = ['HTTP/1.1 429 Too Many Requests', 'Content-Type: text/html'];
+        $test_name = 'a refused request is repeated after the pause of the first try';
+        $t->assert($test_name, import_wikidata::retry_pause($too_many, '', 1), import_wikidata::RETRY_PAUSE);
+        $test_name = '... and after the doubled pause of the second try';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 503 Service Unavailable'], '', 2),
+            2 * import_wikidata::RETRY_PAUSE);
+        // negative: the last try is not repeated
+        $test_name = '... but not after the last try';
+        $t->assert_null($test_name, import_wikidata::retry_pause($too_many, '', import_wikidata::REQUEST_TRIES));
+        $test_name = 'a refused request waits as long as wikidata asks for';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 429 Too Many Requests', 'retry-after: 5'], '', 1), 5);
+        $test_name = '... but not longer than the maximal pause';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 429 Too Many Requests', 'Retry-After: 3600'], '', 1),
+            import_wikidata::RETRY_PAUSE_MAX);
+        $test_name = 'after a redirect the status of the last answer counts';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 303 See Other', 'Retry-After: 5', 'HTTP/1.1 429 Too Many Requests'], '', 1),
+            import_wikidata::RETRY_PAUSE);
+        // negative: an unknown wikidata id gives the same 404 with the next try
+        $test_name = 'a request of an unknown id is not repeated';
+        $t->assert_null($test_name, import_wikidata::retry_pause(['HTTP/1.1 404 Not Found'], '', 1));
+        $test_name = 'a request without an answer e.g. a timeout is repeated';
+        $t->assert($test_name, import_wikidata::retry_pause(null, 'file_get_contents(): Read timed out', 1), import_wikidata::RETRY_PAUSE);
+        // negative: an offline pod would else wait for every request
+        $test_name = '... but not if the host cannot be found';
+        $t->assert_null($test_name, import_wikidata::retry_pause(null,
+            'file_get_contents(): php_network_getaddresses: getaddrinfo for www.wikidata.org failed', 1));
+
+        $t->subheader($ts . 'saved answer');
+        // only failed requests or an importer without fallback folder, so that the test never writes an answer file
+        $test_name = 'without live data the saved answer of the fallback folder is used';
+        $saved_imp = new import_wikidata('', test_paths::IMPORT_WIKIDATA_UNIT);
+        $t->assert($test_name, $saved_imp->live_or_saved_json(self::ZURICH_KEY, false),
+            file_get_contents(test_files::IMPORT_WIKIDATA_UNIT_Q72));
+        // negative: an id without a saved answer stays without data
+        $test_name = '... but an id without a saved answer gives no json';
+        $t->assert($test_name, $saved_imp->live_or_saved_json(refs::CHANGE_NEW_KEY, false), '');
+        // negative: the pod never uses an old answer
+        $test_name = 'the pod without fallback folder uses no saved answer';
+        $pod_imp = new import_wikidata();
+        $t->assert($test_name, $pod_imp->live_or_saved_json(self::ZURICH_KEY, false), '');
+        $test_name = '... but the live answer';
+        $t->assert($test_name, $pod_imp->live_or_saved_json(self::ZURICH_KEY, '{"entities":{}}'), '{"entities":{}}');
 
         $t->subheader($ts . 'convert');
         // reads the units and criteria only from the hand made answers, so the test never sends a live request

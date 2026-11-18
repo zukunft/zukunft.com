@@ -99,6 +99,12 @@ class url_test_base
         url_var::USER_TO_EDIT,
     ];
 
+    // a list of at least two ids as an url value or a json text e.g. 'pl=999%2C2935', 'pl=999,3272&amp;'
+    // or '"phrase_ids": "2934,2935"', whose ids after the first are not behind a '=' (see normalize_ids)
+    const string ID_LIST_PATTERN = '/(?<=[="])-?\d+(?:(?:,|%2C)-?\d+)+(?=[&"\s]|$)/';
+    // the separator of the ids in such a list, kept by the split, so that the list keeps its form
+    const string ID_LIST_SEPARATOR = '/(,|%2C)/';
+
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
     protected test_cleanup $t;         // the test environment
     protected string $ts;              // the test section prefix used in the headers
@@ -449,11 +455,15 @@ class url_test_base
         // beside the id of the step url also normalize the workflow object id itself, because
         // e.g. the back step after a delete has no id in the url anymore, but the page can still
         // name the removed object by its volatile id (e.g. 'the triple with id 809 cannot be found')
-        $norm_ids = [$id => $this->wf_fixed_id, $this->wf_id => $this->wf_fixed_id] + $this->wf_norm_ids;
+        $norm_ids = [$id => $this->wf_fixed_id, $this->wf_id => $this->wf_fixed_id]
+            + $this->wf_norm_ids + $this->phrase_norm_ids($id);
+        // first the ids within a list, because below only the first id of a list follows the '='
+        $content = $this->normalize_id_lists($content, $norm_ids);
         foreach ($norm_ids as $db_id => $fixed_id) {
             // both ids must be known: without a db id there is nothing to replace and without
-            // a fixed id a replacement would erase a real id with a zero
-            if ($db_id > 0 and $fixed_id > 0 and $db_id != $fixed_id) {
+            // a fixed id a replacement would erase a real id with a zero; a negative id is the
+            // phrase id of a triple (see phrase_norm_ids)
+            if ($db_id != 0 and $fixed_id != 0 and $db_id != $fixed_id) {
                 // the url form only up to a word boundary, so that e.g. the id 15 does not
                 // corrupt the unrelated id=159 of another link on the same page
                 $content = preg_replace(
@@ -471,6 +481,74 @@ class url_test_base
             }
         }
         return $content;
+    }
+
+    /**
+     * replace the db ids within each list of ids of the content, e.g. the phrase ids of a value in
+     * 'pl=999%2C2935' or '"phrase_ids": "2934,2935"', whose ids after the first are not behind a '='
+     * public only so that the unit tests can check it (see coding_rule_tests)
+     *
+     * @param string $content the url lines or the html of a workflow step
+     * @param array $norm_ids the db id => the fixed test id, like in normalize_ids
+     * @return string the content with the db ids of each list replaced by the fixed test ids
+     */
+    function normalize_id_lists(string $content, array $norm_ids): string
+    {
+        return preg_replace_callback(self::ID_LIST_PATTERN,
+            fn(array $match) => $this->normalize_list_ids($match[0], $norm_ids), $content);
+    }
+
+    /**
+     * public only so that the unit tests can check it (see coding_rule_tests)
+     *
+     * @param string $list a list of ids e.g. "2934,2935" of the phrase ids of a value
+     * @param array $norm_ids the db id => the fixed test id, like in normalize_ids
+     * @return string the list with each known db id replaced by its fixed test id e.g. "999,997"
+     */
+    function normalize_list_ids(string $list, array $norm_ids): string
+    {
+        $parts = preg_split(self::ID_LIST_SEPARATOR, $list, -1, PREG_SPLIT_DELIM_CAPTURE);
+        foreach ($parts as $pos => $part) {
+            $db_id = (int)$part;
+            // only an id is replaced and never a separator, with the same checks as normalize_ids
+            if ((string)$db_id === $part and $db_id != 0
+                and array_key_exists($db_id, $norm_ids) and $norm_ids[$db_id] != 0) {
+                $parts[$pos] = (string)$norm_ids[$db_id];
+            }
+        }
+        return implode('', $parts);
+    }
+
+    /**
+     * the phrase ids of the workflow object that are normalized beside its own id; empty here,
+     * because the phrase id of a word is the word id itself, which is already normalized
+     *
+     * @param int $id the current db id of the prime object of the workflow (0 if not known)
+     * @return array the real phrase id => the fixed phrase id
+     */
+    protected function phrase_norm_ids(int $id): array
+    {
+        return [];
+    }
+
+    /**
+     * remove the change log of the workflow object after the confirmed delete of a write run,
+     * because the cleanup resets e.g. the word and source sequence (test_cleanup::cleanup), so the
+     * next run adds the test object again with the same id and its history would show e.g. the
+     * changes of this run; the entries without the test name e.g. a changed url are not removed by
+     * the cleanup (cleanup_change_log_deleted), so they are removed by the id of the deleted object
+     * an object that still exists keeps its log (see test_base::cleanup_change_log_of_deleted)
+     *
+     * @param object $dbo the workflow object as loaded before its delete
+     * @return void
+     */
+    protected function cleanup_change_log_of_removed(object $dbo): void
+    {
+        // without a db id the object has never been written, so there is no log to remove and a
+        // delete by the id 0 must never be sent
+        if ($dbo->id() > 0) {
+            $this->t->cleanup_change_log_of_deleted([$dbo]);
+        }
     }
 
     /**

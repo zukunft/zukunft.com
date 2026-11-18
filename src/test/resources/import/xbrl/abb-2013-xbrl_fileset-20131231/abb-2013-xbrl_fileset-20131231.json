@@ -1117,13 +1117,13 @@
             "name": "Plan"
         },
         {
+            "name": "USDPerShare"
+        },
+        {
             "name": "Component"
         },
         {
             "name": "EquityBeta"
-        },
-        {
-            "name": "USDPerShare"
         },
         {
             "name": "designated"
@@ -1466,6 +1466,9 @@
         },
         {
             "name": "extraordinary"
+        },
+        {
+            "name": "orders"
         },
         {
             "name": "bank"
@@ -2267,7 +2270,8 @@
         {
             "from": "cash",
             "verb": "and",
-            "to": "cash"
+            "to": "cash",
+            "name": "cash cash"
         },
         {
             "from": "transaction",
@@ -3096,9 +3100,9 @@
         },
         {
             "name": "exchange rate",
-            "from": "exchange",
-            "verb": "and",
-            "to": "rate"
+            "from": "rate",
+            "verb": "of",
+            "to": "exchange"
         },
         {
             "name": "cash equivalents",
@@ -3161,9 +3165,9 @@
         },
         {
             "name": "income taxes",
-            "from": "income",
-            "verb": "and",
-            "to": "taxes"
+            "from": "tax",
+            "verb": "on",
+            "to": "income"
         },
         {
             "name": "income taxes paid",
@@ -3258,9 +3262,9 @@
         },
         {
             "name": "common stock",
-            "from": "common",
-            "verb": "and",
-            "to": "stock"
+            "from": "stock",
+            "verb": "kind of",
+            "to": "common"
         },
         {
             "name": "common stock including",
@@ -3287,9 +3291,9 @@
         },
         {
             "name": "retained earnings",
-            "from": "retained",
-            "verb": "and",
-            "to": "earnings"
+            "from": "earnings",
+            "verb": "kind of",
+            "to": "retained"
         },
         {
             "name": "accumulated translation",
@@ -4888,7 +4892,7 @@
         {
             "name": "accounts payable",
             "from": "accounts",
-            "verb": "and",
+            "verb": "kind of",
             "to": "payable"
         },
         {
@@ -5427,7 +5431,7 @@
         {
             "name": "goods sold",
             "from": "goods",
-            "verb": "and",
+            "verb": "kind of",
             "to": "sold"
         },
         {
@@ -5487,9 +5491,9 @@
         },
         {
             "name": "income loss",
-            "from": "income",
-            "verb": "and",
-            "to": "loss"
+            "from": "loss",
+            "verb": "of",
+            "to": "income"
         },
         {
             "name": "income loss from",
@@ -5565,9 +5569,9 @@
         },
         {
             "name": "income tax",
-            "from": "income",
-            "verb": "and",
-            "to": "tax"
+            "from": "tax",
+            "verb": "of",
+            "to": "income"
         },
         {
             "name": "income tax expense",
@@ -5974,9 +5978,9 @@
         },
         {
             "name": "net income",
-            "from": "net",
-            "verb": "and",
-            "to": "income"
+            "from": "income",
+            "verb": "kind of",
+            "to": "net"
         },
         {
             "name": "net income loss",
@@ -6058,16 +6062,15 @@
         },
         {
             "name": "equity method",
-            "from": "equity",
-            "verb": "and",
-            "to": "method"
+            "from": "method",
+            "verb": "kind of",
+            "to": "equity"
         },
         {
             "name": "equity method investments",
-            "from": "equity method",
-            "verb": "kind of",
-            "to": "investments",
-            "description": "us-gaap:EquityMethodInvestments"
+            "from": "investments",
+            "verb": "of",
+            "to": "equity method"
         },
         {
             "name": "other assets noncurrent",
@@ -6279,9 +6282,9 @@
         },
         {
             "name": "deferred income",
-            "from": "deferred",
-            "verb": "and",
-            "to": "income"
+            "from": "income",
+            "verb": "kind of",
+            "to": "deferred"
         },
         {
             "name": "deferred income tax",
@@ -7045,9 +7048,9 @@
         },
         {
             "name": "order backlog",
-            "from": "order",
-            "verb": "and",
-            "to": "backlog"
+            "from": "backlog",
+            "verb": "of",
+            "to": "orders"
         },
         {
             "name": "order backlog capitalized",
@@ -7454,9 +7457,9 @@
         },
         {
             "name": "interest rate",
-            "from": "interest",
-            "verb": "and",
-            "to": "rate"
+            "from": "rate",
+            "verb": "of",
+            "to": "interest"
         },
         {
             "name": "interest rate contract",
@@ -8364,7 +8367,7 @@
         {
             "name": "cash flow",
             "from": "cash",
-            "verb": "and",
+            "verb": "can",
             "to": "flow"
         },
         {
@@ -8805,7 +8808,7 @@
         {
             "name": "accounts receivable",
             "from": "accounts",
-            "verb": "and",
+            "verb": "kind of",
             "to": "receivable"
         },
         {
@@ -9354,9 +9357,9 @@
         },
         {
             "name": "accumulated depreciation",
-            "from": "accumulated",
-            "verb": "and",
-            "to": "depreciation"
+            "from": "depreciation",
+            "verb": "kind of",
+            "to": "accumulated"
         },
         {
             "name": "accumulated depreciation depletion",
@@ -11645,9 +11648,9 @@
         },
         {
             "name": "tax credit",
-            "from": "tax",
-            "verb": "and",
-            "to": "credit"
+            "from": "credit",
+            "verb": "of",
+            "to": "tax"
         },
         {
             "name": "tax credit carryforwards",
@@ -17316,10 +17319,9 @@
         },
         {
             "name": "share capital",
-            "from": "share",
-            "verb": "and",
-            "to": "capital",
-            "description": "abb:ShareCapital"
+            "from": "capital",
+            "verb": "of",
+            "to": "share"
         },
         {
             "name": "capital reserve",
@@ -17444,8 +17446,8 @@
         },
         {
             "name": "shares outstanding",
-            "from": "shares",
-            "verb": "and",
+            "from": "share",
+            "verb": "kind of",
             "to": "outstanding"
         },
         {
@@ -19399,16 +19401,7 @@
     "formulas": [
         {
             "name": "ABB total sales 2013",
-            "expression": "ABB sales 2013 = sum of ABB sales 2013 per sector",
-            "result": "41848",
-            "components": [
-                "discrete automation and motion",
-                "low voltage products",
-                "process automation",
-                "power products",
-                "power systems",
-                "corporate and other"
-            ]
+            "expression": "ABB sales 2013 = sum of ABB sales 2013 per sector"
         },
         {
             "name": "ABB gross profit 2013",
@@ -39277,6 +39270,17 @@
         {
             "words": [
                 "ABB",
+                "share based compensation arrangement by share based payment award options exercises in period total intrinsic value",
+                "warrants and options",
+                "CHF",
+                "2011"
+            ],
+            "number": "11000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
                 "compensation cost cash settled wa rs",
                 "warrant appreciation rights",
                 "USD",
@@ -39778,6 +39782,39 @@
                 "2011"
             ],
             "number": "15.98",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "share based compensation arrangements by share based payment award options grants in period weighted average exercise price",
+                "employee share acquisition plan",
+                "USDPerShare",
+                "2013"
+            ],
+            "number": "25.21",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "share based compensation arrangements by share based payment award options grants in period weighted average exercise price",
+                "employee share acquisition plan",
+                "USDPerShare",
+                "2012"
+            ],
+            "number": "18.30",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "share based compensation arrangements by share based payment award options grants in period weighted average exercise price",
+                "employee share acquisition plan",
+                "USDPerShare",
+                "2011"
+            ],
+            "number": "18.10",
             "source": "ABB XBRL files for 2013"
         },
         {
@@ -40799,12 +40836,34 @@
         {
             "words": [
                 "ABB",
+                "total statutory stockholders equity",
+                "parent company",
+                "CHF",
+                "2013"
+            ],
+            "number": "11637000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
                 "share capital",
                 "parent company",
                 "CHF",
                 "2013"
             ],
             "number": "2384000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "share capital",
+                "parent company",
+                "USD",
+                "2013"
+            ],
+            "number": "2679000000",
             "source": "ABB XBRL files for 2013"
         },
         {
@@ -40821,12 +40880,45 @@
         {
             "words": [
                 "ABB",
+                "capital reserve",
+                "parent company",
+                "CHF",
+                "2013"
+            ],
+            "number": "9253000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
                 "legal capital reserve restricted",
                 "parent company",
                 "USD",
                 "2013"
             ],
             "number": "333000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "legal capital reserve restricted",
+                "parent company",
+                "CHF",
+                "2013"
+            ],
+            "number": "296000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "ordinary legal capital reserve restricted",
+                "parent company",
+                "USD",
+                "2013"
+            ],
+            "number": "1124000000",
             "source": "ABB XBRL files for 2013"
         },
         {

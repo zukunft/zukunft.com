@@ -457,6 +457,10 @@ class value_ui_tests
         $t->subheader($ts . 'confirm change preview');
         $preview = new ui_preview();
         $val_chg = $t_val->value_form_ui($msg);
+        // a test render names a source only from the request cache (see ui_preview::source_name_by_id),
+        // so the source of the test is set here and not taken from what a previous test has left
+        $src_lst_keep = $ui_sys->source_list();
+        $ui_sys->set_source_list(new test_sources($t)->source_bfs_list_ui());
         $chg_url = [
             url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT,
             url_var::PRE . url_var::NUMERIC_VALUE => (string)$val_chg->number(),
@@ -477,6 +481,7 @@ class value_ui_tests
         $test_name = 'the confirm page posts the old value again, so that after a failed write it still lists only the changes';
         $pre_source = $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::BFS_ID);
         $t->assert_text_contains($test_name, $chg_html, $pre_source);
+        $ui_sys->set_source_list($src_lst_keep);
 
         // the overwrite form writes the changed number of the value without the confirm view
         $t->subheader($ts . 'value overwrite');
@@ -841,7 +846,7 @@ class value_ui_tests
 
         // a value is never listed among its own similar values (see value_list::remove)
         $test_name = 'pi is not listed among its own similar values';
-        $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
+        $t->assert_text_not_contains($test_name, $sim_html, word_names::PI_SYMBOL);
 
         // the results column lists the results that use the value like a value list, each with
         // its phrase and its formatted number
@@ -917,7 +922,7 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $dtl_html, $mtr->txt(msg_id::FORM_FIELD_VALUE));
         $test_name = '... and the phrases of the value';
         $t->assert_text_order($test_name, $dtl_html,
-            $mtr->txt(msg_id::FORM_SELECT_MULTI_PHRASES), triple_names::PI_SYMBOL_NAME);
+            $mtr->txt(msg_id::FORM_SELECT_MULTI_PHRASES), word_names::PI_SYMBOL);
         $test_name = '... and the share and the protection, also if they are the default';
         $t->assert_text_order($test_name, $dtl_html,
             $mtr->txt(msg_id::FORM_SELECT_SHARE_TYPE), $mtr->txt(msg_id::FORM_SELECT_PROTECTION_TYPE));

@@ -99,9 +99,11 @@ class words
 
     // words with a predefined functionality
     const string MOST = 'most';
-    const string MOST_COM = 'also used by the system to force selecting only one value';
+    // the same descriptions as in currency.json, because the import of this file with the system user
+    // checks that the description of the internal word is unchanged
+    const string MOST_COM = 'Denoting the greatest in quantity, extent, or degree among a group of compared items. Used in superlative constructions such as \'most relevant\' or \'most traded\'.';
     const string RELEVANT = 'relevant';
-    const string RELEVANT_COM = 'also used by the system to select some highlighted entries';
+    const string RELEVANT_COM = 'Closely connected or appropriate to the matter at hand. In this dataset, relevance is determined by trading turnover, with currencies ranked by yearly turnover being considered the most relevant.';
 
     /*
      * const string for system testing
@@ -118,7 +120,9 @@ class words
     const string ARCHIVE = 'archive';
     const string AUTOMATIC = 'automatic';
     const string AVERAGE = 'average';
-    const string AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
+    // the same description as in currency.json and zurich_htp_impact.json, because the import of these files
+    // with the system user checks that the description of the internal word is unchanged
+    const string AVERAGE_COM = 'the mean value of a set of numbers';
     const string BEHAVIOUR = 'behaviour';
     const string BLOCK = 'block';
     const string BOTTOM = 'bottom';
@@ -156,7 +160,9 @@ class words
     const string DECIMAL = 'decimal';
     const string DECODE = 'decode';
     const string DEFAULT = 'default';
-    const string DEFAULT_COM = 'The setting used if nothing else is specified.';
+    // the same description as in base_phrases.json and solution_prio.json, because the import of these files
+    // with the system user checks that the description of the internal word is unchanged
+    const string DEFAULT_COM = 'the one used if nothing else is selected';
     const string DELAY = 'delay';
     const string DELETE = 'delete';
     const string DETAIL = 'detail';
@@ -211,7 +217,9 @@ class words
     const string MATH = 'mathematics';
     const int MATH_ID = 1;
     const string MAX = 'max';
-    const string MAX_COM = 'The maximal numeric value.';
+    // the same description as in companies.json, because the import of this file with the system user
+    // checks that the description of the internal word is unchanged
+    const string MAX_COM = 'used to define the number of forecast periods';
     const string MB = 'MB';
     const string MEMORY = 'memory';
     const string MESSAGE = 'message';
@@ -322,7 +330,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 837;
+    const int VERBS_ID = 835;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';
@@ -335,7 +343,9 @@ class words
     const string WORD = 'word';
     const string WORDS = 'words';
     const string YEAR = 'year';
-    const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
+    // the same description as in units.json, because the import of this file with the system user
+    // checks that the description of the internal word is unchanged
+    const string YEAR_COM = 'A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.';
     const string YEAR_CAP = 'year';
     const int YEAR_CAP_ID = 105;
 

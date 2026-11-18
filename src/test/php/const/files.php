@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -523,6 +523,10 @@ class files
     // wikipedia refresh workflow, as an import json, so that a change of the live page is reported
     CONST string IMPORT_WIKIPEDIA_REFRESH_GENEVA = test_paths::IMPORT_WIKIPEDIA . 'refresh_geneva_city' . self::JSON;
     CONST string IMPORT_WIKIPEDIA_REFRESH_HEALTH = test_paths::IMPORT_WIKIPEDIA . 'refresh_health' . self::JSON;
+    // the summary of the live wikipedia page of a refresh workflow as the last run has read it, written
+    // by each run that reaches wikipedia and used instead of the live page if it cannot be read
+    CONST string IMPORT_WIKIPEDIA_LIVE_GENEVA = test_paths::IMPORT_WIKIPEDIA_CACHE . 'live_Geneva' . self::JSON;
+    CONST string IMPORT_WIKIPEDIA_LIVE_HEALTH = test_paths::IMPORT_WIKIPEDIA_CACHE . 'live_Health' . self::JSON;
     // the json converted from the wikidata cache that can be imported into the database
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
     // the import json that the live wikidata entity gives with the phrases of the pod, as the refresh of a wikidata

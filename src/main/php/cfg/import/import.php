@@ -111,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use WeakReference;
 
 class import
 {
@@ -125,6 +126,9 @@ class import
 
     // the bytes speeds of config.yaml are in MB per second, but the file size is in bytes
     const int BYTES_PER_MB = 1000000;
+    // an import that is expected to take longer writes the start and the end of each step,
+    // so that a hang shows the step that has started but not ended e.g. of the XBRL fileset
+    const float LONG_IMPORT_SEC = 30.0;
 
     // the config.yaml name of the store speed of the objects of a section of the import json,
     // so that the time of a direct import is estimated by the number of objects and not by the
@@ -212,6 +216,30 @@ class import
 
     // timestamp of the last message shown to the user
     public float $last_display_time;
+    // the last step note that the throttle has skipped, shown by the note timer if the step is still
+    // running after a second, so that the throttle never hides a step that hangs
+    private string $pending_note = '';
+    // the note of the step that runs at the moment and its start, repeated by the note timer with the
+    // functions that run, so that a step that loops shows where it loops
+    private string $running_note = '';
+    private float $running_time = 0;
+    // the import whose skipped note the timer shows, weak so that a freed import cancels its timer
+    private static ?WeakReference $pending_imp = null;
+    // the seconds after a skipped note until the timer shows it, an int because the timer counts seconds
+    const int NOTE_TIMER_SEC = 1;
+    // the seconds until the timer repeats the note of a step that is still running
+    const int NOTE_REPEAT_SEC = 10;
+    // the number of functions that the timer names, starting with the one that runs
+    const int NOTE_TRACE_DEPTH = 6;
+    // the frames of the timer itself at the start of the trace: the location function, the timer
+    // function and the signal handler closure
+    const int NOTE_TRACE_SKIP = 3;
+    // the seconds of the php garbage collection since the last line from which the next line names it,
+    // because during a collection no php code and no note timer runs, so a long one looks like a hang
+    const float GC_NOTE_SEC = 1.0;
+    // the garbage collection time and runs until the last line, to name only the part since then
+    private float $gc_time_shown = 0;
+    private int $gc_runs_shown = 0;
 
     // statistic data
     public ?int $users_done = 0;
@@ -250,6 +278,8 @@ class import
     {
         $this->start_time = microtime(true);
         $this->last_display_time = microtime(true);
+        // the garbage collection counts for the whole process, so only the part of this import is named
+        $this->gc_note();
         $this->msg_id = msg_id::IMPORT_JSON;
         if ($file_name != '') {
             $this->file_name = $file_name;
@@ -261,6 +291,14 @@ class import
         $this->est_time_create = 0.5;
         $this->est_time_store = 2.4;
         $this->time_exp_act = 3;
+    }
+
+    /**
+     * stop the note timer, so that a finished import never shows its skipped step note
+     */
+    function __destruct()
+    {
+        $this->stop_note_timer();
     }
 
 
@@ -308,21 +346,17 @@ class import
     ): void
     {
         global $mtr;
-        global $cfg;
 
         $lib = new library();
 
         // fix the time
         $check_time = microtime(true);
-
-        // get the updated configuration settings
-        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+        $due = $this->display_due($check_time);
 
         // calc the time statistics
-        $time_since_last_display = $check_time - $this->last_display_time;
         $total_time = 0;
         $processed_per_sec = 0;
-        if ($stat or $show or ($time_since_last_display > $ui_response_time)) {
+        if ($stat or $show or $due) {
             $total_time = $check_time - $this->start_time;
             $step_time = $check_time - $this->start_time_step;
             if ($step_time > 0) {
@@ -342,7 +376,7 @@ class import
         $times = '';
         $part = '';
         $speed = '';
-        if ($stat or $show or ($time_since_last_display > $ui_response_time)) {
+        if ($stat or $show or $due) {
             $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
             if (!is_string($this->step)) {
                 $step = ' ' . $this->step->text();
@@ -378,11 +412,34 @@ class import
 
         if ($stat) {
             echo $this->time_stamp() . $name . $final_time . $step . $speed . "\n";
-        } elseif ($show or ($time_since_last_display > $ui_response_time)) {
+        } elseif ($show or $due) {
             //echo '<br><br>import' . $progress . ' done<br>';
-            echo $this->time_stamp() . $name . $progress . $times . $part . $speed . $sample . "\n";
+            echo $this->time_stamp() . $name . $progress . $times . $part . $speed . $sample . $this->gc_note() . "\n";
             $this->last_display_time = microtime(true);
         }
+        if ($stat) {
+            // the statistic is the end of the import, so the timer has nothing to repeat anymore
+            $this->end_notes();
+        } elseif ($show or $due) {
+            // a shown line tells where the import is, so a skipped note before it is no longer needed,
+            // but the step is still running, so the timer repeats its note if no newer line follows
+            $this->pending_note = '';
+            $this->start_note_timer(self::NOTE_REPEAT_SEC);
+        }
+    }
+
+    /**
+     * the throttle of the progress messages: a message is due only if the last message has been
+     * shown longer ago than the configured frontend response time e.g. one second
+     *
+     * @param float $check_time the timestamp of the check e.g. microtime(true)
+     * @return bool true if the next progress message should be shown
+     */
+    private function display_due(float $check_time): bool
+    {
+        global $cfg;
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+        return ($check_time - $this->last_display_time) > $ui_response_time;
     }
 
     /**
@@ -621,6 +678,8 @@ class import
             $this->put($json_array, $msg);
             $this->drop_cached_answers();
         }
+        // no step runs anymore, so the note timer has nothing to show or to repeat
+        $this->end_notes();
         $sys->times->switch();
         return $msg->is_ok();
     }
@@ -1120,9 +1179,13 @@ class import
         // check that the pre-calculated results can be reproduced
         // based on the values and formulas of the import file
         if (!$dto->result_check_list()->is_empty()) {
+            // a step of its own, so that a long calculation of a check shows up in the log of a long import
+            $chk_count = $dto->result_check_list()->count();
+            $this->step_start(msg_id::CHECK, result::class, $chk_count, $step_time);
             $failed = $dto->validate_results($msg);
+            $this->step_end($chk_count, $res_per_sec);
             $this->calc_validations_failed += $failed;
-            $this->calc_validations_done += $dto->result_check_list()->count() - $failed;
+            $this->calc_validations_done += $chk_count - $failed;
         }
 
         $sys->times->switch();
@@ -1173,6 +1236,184 @@ class import
             $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
             $speed = '(' . round($total / 1000) . ' kBytes)';
             echo $this->time_stamp() . $name . ' ' . $speed . "\n";
+        } else {
+            $this->step_note($step, $class, $total);
+        }
+    }
+
+    /**
+     * @return bool true if the import is expected to take so long that each step should be shown
+     */
+    private function is_long(): bool
+    {
+        return isset($this->est_time_total) and $this->est_time_total > self::LONG_IMPORT_SEC;
+    }
+
+    /**
+     * write the start of a step of a long import, so that a hang shows the step that has not ended
+     * e.g. "import abb-2013-xbrl_fileset-20131231.json start save 2405 values"
+     * also used for the work between two steps e.g. the resolve of the phrase ids of the values
+     * a short import writes nothing, so that the many small files of the setup do not fill the log
+     * throttled like the progress messages, so a start shortly after the last message is skipped,
+     * but kept as pending note, which the note timer shows if the step is still running after
+     * NOTE_TIMER_SEC, so that a hang always shows its step; while the step runs, the timer repeats
+     * the note every NOTE_REPEAT_SEC with the functions that run (see on_note_timer)
+     *
+     * @param string|msg_id $step the step that starts e.g. count or save
+     * @param string $class the class of the objects of the step e.g. value
+     * @param float $total the number of objects of the step
+     * @return void
+     */
+    function step_note(string|msg_id $step, string $class = '', float $total = 0): void
+    {
+        if ($this->is_long()) {
+            global $mtr;
+            $lib = new library();
+            $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
+            $step_txt = is_string($step) ? $step : $step->text();
+            $objects = $class == '' ? '' : ' ' . round($total) . ' ' . $lib->class_to_table($class);
+            $note = $name . ' start ' . $step_txt . $objects;
+            $this->running_note = $note;
+            $this->running_time = microtime(true);
+            if ($this->display_due(microtime(true))) {
+                echo $this->time_stamp() . $note . $this->gc_note() . "\n";
+                $this->last_display_time = microtime(true);
+                $this->pending_note = '';
+                $this->start_note_timer(self::NOTE_REPEAT_SEC);
+            } else {
+                $this->pending_note = $note;
+                $this->start_note_timer(self::NOTE_TIMER_SEC);
+            }
+        }
+    }
+
+    /**
+     * show the step note that the throttle has skipped, if its step is still running; called by the
+     * note timer, public only so that the unit tests can check it without waiting for the timer
+     *
+     * @param string $location the functions that run at the moment e.g. "triple_list->update_list@..."
+     * @return void
+     */
+    function show_pending_note(string $location = ''): void
+    {
+        if ($this->pending_note != '') {
+            $this->echo_running($this->pending_note, $location);
+            $this->pending_note = '';
+        }
+    }
+
+    /**
+     * called by the note timer: show the skipped note or repeat the note of the step that is still
+     * running, both with the functions that run, and restart the timer for the next repeat, so that
+     * a loop shows a changing line or function and a single long call e.g. of the database no repeat
+     *
+     * @return void
+     */
+    private function on_note_timer(): void
+    {
+        $location = $this->note_location();
+        if ($this->pending_note != '') {
+            $this->show_pending_note($location);
+        } elseif ($this->running_note != '') {
+            $this->echo_running($this->running_note, $location);
+        }
+        if ($this->running_note != '') {
+            $this->start_note_timer(self::NOTE_REPEAT_SEC);
+        }
+    }
+
+    /**
+     * @param string $note the note of the step that is still running
+     * @param string $location the functions that run at the moment, empty if not known
+     * @return void
+     */
+    private function echo_running(string $note, string $location): void
+    {
+        $running = round(microtime(true) - $this->running_time, 1);
+        $where = $location == '' ? '' : ' in ' . $location;
+        echo $this->time_stamp() . $note . ' (running since ' . $running . 's' . $where . ')' . $this->gc_note() . "\n";
+        $this->last_display_time = microtime(true);
+    }
+
+    /**
+     * the php garbage collection since the last line, if it has taken long enough to explain a gap
+     * in the log, e.g. " (garbage collection 990.2s in 3 runs since the last line)"
+     *
+     * @return string the note of the collection time or an empty string if it has been short
+     */
+    private function gc_note(): string
+    {
+        $gc = gc_status();
+        $time = ($gc['collector_time'] ?? 0) + ($gc['destructor_time'] ?? 0) + ($gc['free_time'] ?? 0);
+        $runs = $gc['runs'] ?? 0;
+        $result = '';
+        if ($time - $this->gc_time_shown > self::GC_NOTE_SEC) {
+            $result = ' (garbage collection ' . round($time - $this->gc_time_shown, 1) . 's in '
+                . ($runs - $this->gc_runs_shown) . ' runs since the last line)';
+        }
+        $this->gc_time_shown = $time;
+        $this->gc_runs_shown = $runs;
+        return $result;
+    }
+
+    /**
+     * the functions that the note timer has interrupted, each with the file and line where it has
+     * been called, e.g. "microtime@triple_list.php:1055 < triple_list->update_list@sandbox_list_named.php:1195"
+     *
+     * @return string the innermost NOTE_TRACE_DEPTH functions without the frames of the timer itself
+     */
+    private function note_location(): string
+    {
+        $frames = array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), self::NOTE_TRACE_SKIP, self::NOTE_TRACE_DEPTH);
+        $parts = [];
+        foreach ($frames as $frame) {
+            $parts[] = ($frame['class'] ?? '') . ($frame['type'] ?? '') . $frame['function']
+                . '@' . basename($frame['file'] ?? '') . ':' . ($frame['line'] ?? '');
+        }
+        return implode(' < ', $parts);
+    }
+
+    /**
+     * restart the note timer of this import, so that it fires only if no newer note follows within
+     * the given seconds; without pcntl e.g. on the web server nothing is shown by a timer
+     *
+     * @param int $sec the seconds until the timer fires e.g. NOTE_TIMER_SEC for a skipped note
+     * @return void
+     */
+    private function start_note_timer(int $sec): void
+    {
+        if (PHP_SAPI === 'cli' and function_exists('pcntl_alarm')) {
+            self::$pending_imp = WeakReference::create($this);
+            // the handler is set again on each restart, because another import may have set it
+            pcntl_async_signals(true);
+            pcntl_signal(SIGALRM, static fn() => self::$pending_imp?->get()?->on_note_timer());
+            pcntl_alarm($sec);
+        }
+    }
+
+    /**
+     * forget the notes of the steps and stop the note timer at the end of the import, so that the
+     * timer never repeats the note of a step of a finished import
+     *
+     * @return void
+     */
+    private function end_notes(): void
+    {
+        $this->running_note = '';
+        $this->pending_note = '';
+        $this->stop_note_timer();
+    }
+
+    /**
+     * stop the note timer of this import, so that it never shows a note of another or a finished import
+     *
+     * @return void
+     */
+    private function stop_note_timer(): void
+    {
+        if (self::$pending_imp?->get() === $this and function_exists('pcntl_alarm')) {
+            pcntl_alarm(0);
+            self::$pending_imp = null;
         }
     }
 
@@ -1205,6 +1446,7 @@ class import
             if ($used_est_per_sec != 0) {
                 $this->time_exp_act = $this->calc_total_time($end_time, $nbr);
             }
+            // the end of a step is throttled like the progress, unless the caller forces it
             $this->display_progress($nbr, $est_per_sec, '', $show);
         }
     }
@@ -1370,6 +1612,8 @@ class import
         global $mtr;
 
         $end_time = microtime(true);
+        // no step runs anymore, so the note timer has nothing to show or to repeat
+        $this->end_notes();
 
         if ($msg->is_ok()) {
             $step = $mtr->txt(msg_id::DONE);

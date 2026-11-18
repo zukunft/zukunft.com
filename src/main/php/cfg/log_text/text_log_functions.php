@@ -278,6 +278,8 @@ function log_warning(string  $msg_text,
     );
 }
 
+// TODO Prio 1 rename to log_err_without_msg because this should be the exception
+// TODO Prio 2 add function description
 function log_err(string $msg_text,
                  string $function_name = '',
                  string $msg_description = '',
@@ -422,6 +424,7 @@ function log_link_count(): int
 }
 
 /**
+ * TODO Prio 1 review / rename and add samples
  * take out the link that a log call has added after the given count, because the caller reports the error itself
  * @param int $link_count the number of the kept log links before the log call
  * @return void
@@ -437,6 +440,7 @@ function log_take_reported(int $link_count): void
 
 /**
  * log an error message and inform the user about the error
+ * TODO Prio 1 rename this to log_err because this should be the default log_err function and not log_err_without_msg
  * TODO Prio 1 use this if even possible
  * TODO Prio 1 limit the number of error message
  * @param string $msg_txt the error message text

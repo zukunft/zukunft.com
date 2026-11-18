@@ -76,6 +76,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -136,6 +137,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -925,6 +927,20 @@ class test_db_load
         return $val;
     }
 
+    /**
+     * @param array $array_of_word_str the names of the phrases of a value
+     * @return bool true if at least one name is a test row e.g. "System Test Word Share"
+     */
+    function has_test_word_name(array $array_of_word_str): bool
+    {
+        foreach ($array_of_word_str as $wrd_txt) {
+            if (str_contains($wrd_txt, test_base::TEST_ROW_NAME_PART)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function add_value(array $array_of_word_str, float $target): value
     {
         $val = $this->load_value($array_of_word_str);
@@ -960,6 +976,11 @@ class test_db_load
                 // so that the cleanup removes the value again (see test_cleanup::cleanup)
                 $this->env->test_val_ids[] = $val->id();
             }
+        } elseif ($this->has_test_word_name($array_of_word_str)) {
+            // a value of a test word that a stopped run has left e.g. by a ^C during the xbrl write
+            // tests is not added again, so it is registered also, because otherwise the cleanup keeps
+            // the value and with it its test words; a value of only seed words is never registered
+            $this->env->test_val_ids[] = $val->id();
         }
 
         return $val;
@@ -1656,6 +1677,10 @@ class test_db_load
             $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_PASSWORD);
             $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_ACTIVATION_TIMEOUT);
             $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_USES_SANDBOX);
+            // a guest user is created on demand by a call from localhost with the next free id,
+            // so its id depends on the calls before e.g. 13 after reset_db.php and 14 after
+            // test_part.php, and it is no fixed row
+            $csv_db = $lib->csv_remove_rows($csv_db, user_db::FLD_NAME, users::TEST_GUEST_NAMES);
         }
         return $csv_db;
     }

@@ -1497,6 +1497,7 @@ messages:
   wikipedia_refresh: "Beschreibung und Wikidata-Link von Wikipedia übernehmen"
   wikipedia_ref_missing: "z$VarObjName$z hat keine Wikipedia-Referenz, deshalb kann nichts von Wikipedia übernommen werden; bitte zuerst die Referenz hinzufügen."
   wikipedia_read_failed: "Die Wikipedia-Seite z$VarObjName$z kann nicht gelesen werden; bitte den externen Schlüssel der Wikipedia-Referenz prüfen oder es später nochmals versuchen."
+  connection_missing: "Der Pod hat keine Verbindung zu z$VarObjName$z, deshalb kann von dort nichts gelesen werden; bitte die Internetverbindung des Pods prüfen oder es später nochmals versuchen."
   wikipedia_no_description: "Die Wikipedia-Seite z$VarObjName$z hat keinen Einleitungstext, der als Beschreibung verwendet werden kann, z.B. weil es eine Begriffsklärungsseite ist; bitte den externen Schlüssel der Wikipedia-Referenz auf die konkrete Seite setzen."
   wikipedia_no_wikidata: "Auf der Wikipedia-Seite von z$VarObjName$z wurde kein Wikidata-Link gefunden, deshalb wird nichts von Wikipedia übernommen."
   wikipedia_in_line: "Die Beschreibung und der Wikidata-Link von z$VarObjName$z stimmen mit der Wikipedia-Seite vom z$VarTime$z überein. Keine Aktualisierung nötig."

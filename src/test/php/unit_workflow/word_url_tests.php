@@ -865,6 +865,7 @@ class word_url_tests extends url_test_base
         // word is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_word_removed('del_word workflow has removed the word');
+            $this->cleanup_change_log_of_removed($wrd);
         }
     }
 

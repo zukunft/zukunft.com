@@ -1655,6 +1655,7 @@ class data_object
         // reject the import upfront if a formula shares its name with another term (word, verb or
         // triple), because the shared name leads to an ambiguous id assignment (the formula could
         // inherit the other term's id and the later element insert would violate elements_formula_fk)
+        $imp->step_note('check the names of', formula::class, $this->formula_list()->count());
         if (!$this->check_formula_name_collision($msg)) {
             return false;
         }
@@ -1691,6 +1692,7 @@ class data_object
         // add the id of the triples just added to the values
         if ($msg->is_ok()) {
             if ($this->save_triples($msg, $imp, $phr_lst)) {
+                $imp->step_note('resolve the phrase ids of', value::class, $this->value_list()->count());
                 $phr_lst = $this->phrase_list();
                 foreach ($this->value_list()->lst() as $val) {
                     $this->resolve_phrase_list_ids($val->phrase_list(), $phr_lst, $msg);
@@ -1706,6 +1708,7 @@ class data_object
         // add the id of the sources just added to the values so that the value source is
         // persisted; without this the value still points to the source object with id 0
         if ($msg->is_ok()) {
+            $imp->step_note('resolve the source ids of', value::class, $this->value_list()->count());
             foreach ($this->value_list()->lst() as $val) {
                 $src = $val->get_source();
                 if ($src != null) {

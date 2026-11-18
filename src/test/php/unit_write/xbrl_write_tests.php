@@ -6,7 +6,8 @@
     ----------------------------------------
 
     unpacks the XBRL fileset zip, creates the import json in the fileset folder,
-    imports the json into the database and checks that the values can be loaded
+    imports the json again into the database that the development reset has loaded it into
+    (all_unit_write_tests::run_db_recreate) and checks that nothing changes and that the values can be loaded
 
 
     This file is part of zukunft.com - calc with words
@@ -38,27 +39,40 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_base.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class xbrl_write_tests
 {
+
+    // the seed declaration of "exchange rate" (economics.json), which the converted ABB fileset must repeat
+    const array EXCHANGE_RATE_DECLARATION = [
+        json_fields::NAME => triple_names::EXCHANGE_RATE,
+        json_fields::EX_FROM => word_names::RATE,
+        json_fields::EX_VERB => verbs::OF_NAME,
+        json_fields::EX_TO => word_names::EXCHANGE,
+    ];
 
     function run(test_cleanup $t): void
     {
@@ -80,62 +94,49 @@ class xbrl_write_tests
         );
         $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), $msg, test_base::TEST_TIMESTAMP);
         $t->assert($test_name, $json_path, test_files::IMPORT_XBRL_ABB_2013);
+        $json_text = file_get_contents($json_path);
+        $json_array = json_decode($json_text, true);
 
-        // import the created json file into the database
-        $test_name = 'import the XBRL fileset json';
-        $json_array = json_decode(file_get_contents($json_path), true);
+        // every pod imports the copy of the converted json in the main resources (import_file::import_xbrl_data),
+        // so a converter change must also change this copy, which is then loaded by the next reset
+        $test_name = 'the XBRL json of the db setup is the converted fileset';
+        $t->assert_file($test_name, $json_text, files::XBRL_ABB_2013_FILE);
+
+        // the ABB 2013 fileset has no conflicting facts, so that a conflict e.g. after a change of the
+        // concept decomposition shows up; the facts in two currencies are no conflict (see facts_json)
+        $test_name = 'the convert reports no conflicting facts of the fileset';
+        $t->assert($test_name, $msg->all_message_text(), '');
+
+        // a concept that the base setup defines as a triple keeps the link of the seed, because the import cannot change it
+        $test_name = 'the import json declares "' . triple_names::EXCHANGE_RATE . '" with the link of the seed';
+        $trp_by_name = array_column($json_array[json_fields::TRIPLES] ?? [], null, json_fields::NAME);
+        $exchange_rate = $trp_by_name[triple_names::EXCHANGE_RATE] ?? [];
+        $t->assert($test_name, $exchange_rate, self::EXCHANGE_RATE_DECLARATION);
+
+        // negative: the triple "equity method", which the seed triple "equity method investments" links to, is no word
+        $test_name = '... and "' . triple_names::EQUITY_METHOD . '" is not declared as a word';
+        $wrd_names = array_column($json_array[json_fields::WORDS] ?? [], json_fields::NAME);
+        $t->assert_contains_not($test_name, $wrd_names, triple_names::EQUITY_METHOD);
+
+        // a link that two concepts create keeps the name that the other triples use
+        $test_name = 'the import json declares "' . triple_names::CASH_CASH . '"';
+        $trp_names = array_keys($trp_by_name);
+        $t->assert_contains($test_name, $trp_names, triple_names::CASH_CASH);
+
+        // the database setup has imported the json already (import_file::import_xbrl_data),
+        // so a second import as the same system user and without overwriting a filled field reports
+        // any difference between the converted json and the database e.g. after a converter change
+        // without a new reset; nothing is added, so nothing needs to be removed after the test
+        $test_name = 'the XBRL fileset json is imported again without changes';
         $imf = new import_file();
-        $imp_msg = $imf->json_file($json_path, $t->usr1, false);
-        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $imp_msg = $imf->json_file($json_path, user::system(), false, false, true);
+        $t->assert_msg($test_name, $imp_msg, $t::TIMEOUT_LIMIT_IMPORT);
 
         // check that the imported values can be loaded from the database
         $test_name = 'load the imported total sales value';
         $total_json = end($json_array[json_fields::VALUES]);
         $val = $this->load_value_by_names($t, $total_json[json_fields::WORDS]);
-        $t->assert($test_name, $val->number(), floatval($total_json[json_fields::NUMBER]));
-
-        // remove the imported test data so that the database stays unchanged
-        $this->cleanup($t, $json_array, $msg);
-    }
-
-    /**
-     * load a triple by the given or by the generated name
-     * because the import may fill either of the name fields
-     *
-     * @param test_cleanup $t the test environment with the test user
-     * @param string $trp_name the given or derived name of the triple
-     * @return triple the loaded triple with the id zero if not found
-     */
-    private function load_triple_by_any_name(test_cleanup $t, string $trp_name): triple
-    {
-        $msg = new user_message();
-        $trp = new triple($t->usr1);
-        $trp->load_by_name($trp_name, $msg);
-        if ($trp->id() == 0) {
-            $trp->load_by_name_generated($trp_name, $msg);
-        }
-        return $trp;
-    }
-
-    /**
-     * the name of an import triple as derived by the importer
-     * e.g. "Power Products (sector)" for "Power Products" "is a" "sector"
-     *
-     * @param array $trp_json the import json of one triple
-     * @return string the given or derived name of the triple
-     */
-    private function triple_name(array $trp_json): string
-    {
-        if (key_exists(json_fields::NAME, $trp_json)) {
-            $result = $trp_json[json_fields::NAME];
-        } elseif ($trp_json[json_fields::EX_VERB] == import_convert_xbrl::VERB_IS_A) {
-            $result = $trp_json[json_fields::EX_FROM] . ' (' . $trp_json[json_fields::EX_TO] . ')';
-        } else {
-            $result = $trp_json[json_fields::EX_FROM]
-                . ' ' . $trp_json[json_fields::EX_VERB]
-                . ' ' . $trp_json[json_fields::EX_TO];
-        }
-        return $result;
+        $t->assert($test_name, $val?->number(), floatval($total_json[json_fields::NUMBER]));
     }
 
     /**
@@ -143,88 +144,20 @@ class xbrl_write_tests
      *
      * @param test_cleanup $t the test environment with the test user
      * @param array $names the phrase names that select the value
-     * @return value the loaded value
+     * @return value|null the loaded value or null if the names select no value in the database
      */
-    private function load_value_by_names(test_cleanup $t, array $names): value
+    private function load_value_by_names(test_cleanup $t, array $names): ?value
     {
         $msg = new user_message();
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array_unique($names), $msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
-        return $val;
-    }
-
-    /**
-     * remove the data imported from the XBRL fileset json
-     * only the rows that the test user owns are removed
-     * so that the base words like the year, the currency and the scale
-     * that are owned by the system users are kept
-     * leftovers of a previous incomplete cleanup are removed as well
-     * because the owner check selects them again
-     *
-     * @param test_cleanup $t the test environment with the test user
-     * @param array $json_array the imported json as array to know what has been added
-     * @param user_message $msg to collect problems of the cleanup
-     * @return void
-     */
-    private function cleanup(test_cleanup $t, array $json_array, user_message $msg): void
-    {
-        $test_name = 'cleanup the imported XBRL data';
-        // the deleted rows, whose change log is removed after the delete
-        $deleted = [];
-
-        // remove the values
-        foreach ($json_array[json_fields::VALUES] as $val_json) {
-            $val = $this->load_value_by_names($t, $val_json[json_fields::WORDS]);
-            if ($val->is_id_set() and $val->owner_id() == $t->usr1->id()) {
-                $val->del($msg);
-                $deleted[] = $val;
-            }
+        // the value keeps the group id also if nothing is found, so only the load result tells
+        if ($val->load_by_grp($phr_lst->get_grp_id(), $msg)) {
+            return $val;
+        } else {
+            return null;
         }
-
-        // remove the formula
-        foreach ($json_array[json_fields::FORMULAS] as $frm_json) {
-            $frm = new formula($t->usr1);
-            $frm->load_by_name($frm_json[json_fields::NAME], $msg);
-            if ($frm->id() > 0 and $frm->owner_id() == $t->usr1->id()) {
-                $frm->del($msg);
-                $deleted[] = $frm;
-            }
-        }
-
-        // remove the source
-        foreach ($json_array[json_fields::SOURCES] as $src_json) {
-            $src = new source($t->usr1);
-            $src->load_by_name($src_json[json_fields::NAME], $msg);
-            if ($src->id() > 0 and $src->owner_id() == $t->usr1->id()) {
-                $src->del($msg);
-                $deleted[] = $src;
-            }
-        }
-
-        // remove the triples added by the import before the words
-        // because a triple may use a word that should be removed
-        foreach ($json_array[json_fields::TRIPLES] as $trp_json) {
-            $trp = $this->load_triple_by_any_name($t, $this->triple_name($trp_json));
-            if ($trp->id() != 0 and $trp->owner_id() == $t->usr1->id()) {
-                $trp->del($msg);
-                $deleted[] = $trp;
-            }
-        }
-
-        // remove the words added by the import
-        foreach ($json_array[json_fields::WORDS] as $wrd_json) {
-            $wrd = new word($t->usr1);
-            $wrd->load_by_name($wrd_json[json_fields::NAME], $msg);
-            if ($wrd->id() > 0 and $wrd->owner_id() == $t->usr1->id()) {
-                $wrd->del($msg);
-                $deleted[] = $wrd;
-            }
-        }
-        $t->cleanup_change_log_of_deleted($deleted);
-
-        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
     }
 
 }
