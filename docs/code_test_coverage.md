@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1704 of 6509 public functions have at least 2 unit test calls; the 4594 functions below do not; the 211 functions of the last section are called nowhere
+1705 of 6510 public functions have at least 2 unit test calls; the 4594 functions below do not; the 211 functions of the last section are called nowhere
 
 ## 1896 functions of main backend have no test at all
 

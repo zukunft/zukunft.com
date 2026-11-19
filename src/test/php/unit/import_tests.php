@@ -1294,6 +1294,25 @@ class import_tests
         $note = $this->step_note_text($imp, $note_step, triple::class, 8000);
         $t->assert($test_name, $note, '');
 
+        // the alarm of the note timer is held back during a blocking call e.g. a wikidata request,
+        // because the signal would break the wait for the answer or end the pause before a retry
+        $test_name = 'a call without the note timer gives the result of the call';
+        $t->assert($test_name, import::without_note_timer(fn() => 'answer'), 'answer');
+        if (function_exists('pcntl_sigprocmask')) {
+            $test_name = '... and holds back the alarm of the timer during the call';
+            $blocked = import::without_note_timer(fn() => $this->blocked_signals());
+            $t->assert_true($test_name, in_array(SIGALRM, $blocked));
+            $test_name = '... also after a nested call';
+            $blocked = import::without_note_timer(function () {
+                import::without_note_timer(fn() => null);
+                return $this->blocked_signals();
+            });
+            $t->assert_true($test_name, in_array(SIGALRM, $blocked));
+            // negative: after the call the alarm reaches the note timer again
+            $test_name = '... but not after the call';
+            $t->assert_false($test_name, in_array(SIGALRM, $this->blocked_signals()));
+        }
+
 
         $t->subheader($ts . 'merge two import json');
 
@@ -1497,6 +1516,19 @@ class import_tests
         ob_start();
         $imp->show_pending_note();
         return (string)ob_get_clean();
+    }
+
+    /**
+     * @return array the signals that are blocked at the moment e.g. [SIGALRM] during import::without_note_timer
+     */
+    private function blocked_signals(): array
+    {
+        $blocked = [];
+        // a block of the alarm gives the mask before it, which is set again at once, because a block of
+        // no signal to only read the mask is refused (ValueError since php 8.4)
+        pcntl_sigprocmask(SIG_BLOCK, [SIGALRM], $blocked);
+        pcntl_sigprocmask(SIG_SETMASK, $blocked);
+        return $blocked;
     }
 
 }

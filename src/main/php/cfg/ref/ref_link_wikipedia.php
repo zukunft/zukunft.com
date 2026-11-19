@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -200,7 +202,8 @@ class ref_link_wikipedia
         // the @ suppresses the php warning of a failed request, which the user gets as message instead;
         // the last request is cleared, so that the log below never names an older error
         import_wikidata::request_clear();
-        $json = @file_get_contents($url, false, $context);
+        // never interrupted by the note timer of a long import
+        $json = import::without_note_timer(fn() => @file_get_contents($url, false, $context));
         $result = [];
         $missing_host = '';
         if ($json !== false) {

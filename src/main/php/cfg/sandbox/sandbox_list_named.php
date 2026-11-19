@@ -536,10 +536,6 @@ class sandbox_list_named extends sandbox_list
                     $rdy_msg = new user_message(); // the verdict of this object, merged on rejection
                     if ($to_add->can_be_ready($rdy_msg)) {
                         $this->add_direct($to_add);
-                        if ($allow_duplicates) {
-                            // a rebuild keeps the first entry of an id, whereas add_direct sets the last
-                            $this->set_hash_dirty();
-                        }
                         $added = true;
                     } else {
                         $msg->merge($rdy_msg);
@@ -584,10 +580,6 @@ class sandbox_list_named extends sandbox_list
                 // quadratic; the hash of all names, because its key is the name incl. the excluded
                 if (!isset($this->name_pos_lst_all()[$name]) or $allow_duplicates) {
                     $this->add_direct($obj_to_add);
-                    if ($allow_duplicates) {
-                        // a rebuild keeps the first entry of an id, whereas add_direct sets the last
-                        $this->set_hash_dirty();
-                    }
                     $added = true;
                 } else {
                     $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);

@@ -42,6 +42,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -337,14 +338,15 @@ class import_wikidata
         $json = false;
         while ($pause !== null) {
             self::request_clear();
-            $json = @file_get_contents($url, false, $context);
+            // the request and the pause are never interrupted by the note timer of a long import
+            $json = import::without_note_timer(fn() => @file_get_contents($url, false, $context));
             $pause = null;
             if ($json === false) {
                 $pause = self::retry_pause(http_get_last_response_headers(), error_get_last()['message'] ?? '', $try);
                 if ($pause !== null) {
                     log_info('the wikidata request for ' . $id . ' failed with ' . self::request_failure()
                         . ' and is repeated in ' . $pause . ' seconds', 'import_wikidata->request_json');
-                    sleep($pause);
+                    import::without_note_timer(fn() => sleep($pause));
                     $try++;
                 }
             }
@@ -355,7 +357,12 @@ class import_wikidata
             log_warning('the wikidata request for ' . $id . ' via ' . $url . ' failed with '
                 . self::request_failure(), 'import_wikidata->request_json');
         }
-        return $this->live_or_saved_json($id, $json);
+        $result = $this->live_or_saved_json($id, $json);
+        if ($result != '') {
+            // the caller has the data of a saved answer, so the user should not check the connection
+            $this->missing_host = '';
+        }
+        return $result;
     }
 
     /**
@@ -399,7 +406,12 @@ class import_wikidata
      */
     function store_json(string $wikidata_id, string $path): user_message
     {
-        return $this->store_text($wikidata_id, $this->request_json($wikidata_id), $path);
+        $json = $this->request_json($wikidata_id);
+        if ($json != '' and $path == $this->fallback_path) {
+            // the answer is already in the fallback folder (see live_or_saved_json), so it is written only once
+            return new user_message();
+        }
+        return $this->store_text($wikidata_id, $json, $path);
     }
 
     /**

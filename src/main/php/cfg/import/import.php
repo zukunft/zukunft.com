@@ -1392,6 +1392,30 @@ class import
     }
 
     /**
+     * run a call that the alarm signal of the note timer would break, e.g. a request to wikidata,
+     * which fails if the signal interrupts its wait for the answer, or the pause before its retry,
+     * which the signal ends early; the signal is only held back, so the timer shows its note
+     * right after the call
+     *
+     * @param callable $call the blocking call e.g. fn() => @file_get_contents($url, false, $context)
+     * @return mixed the result of the call
+     */
+    static function without_note_timer(callable $call): mixed
+    {
+        if (!function_exists('pcntl_sigprocmask')) {
+            return $call();
+        }
+        $blocked_before = [];
+        pcntl_sigprocmask(SIG_BLOCK, [SIGALRM], $blocked_before);
+        try {
+            return $call();
+        } finally {
+            // the mask before the call, so that a nested call never releases the signal of the outer one
+            pcntl_sigprocmask(SIG_SETMASK, $blocked_before);
+        }
+    }
+
+    /**
      * forget the notes of the steps and stop the note timer at the end of the import, so that the
      * timer never repeats the note of a step of a finished import
      *
