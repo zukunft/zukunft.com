@@ -4,8 +4,8 @@
             "pageid": 200,
             "ns": 0,
             "title": "Q72",
-            "lastrevid": 2570569831,
-            "modified": "2026-11-16T22:22:23Z",
+            "lastrevid": 2571932441,
+            "modified": "2026-11-19T08:55:44Z",
             "type": "item",
             "id": "Q72",
             "labels": {
@@ -43316,6 +43316,23 @@
                                 ]
                             }
                         ]
+                    }
+                ],
+                "P15033": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P15033",
+                            "hash": "ccf0b5cbbffcef0260ae4b4871dd1f0d6d1a557c",
+                            "datavalue": {
+                                "value": "j2x_lgx_12b",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q72$C44FC9DB-A9E7-4733-80E9-3179D312FFE3",
+                        "rank": "normal"
                     }
                 ]
             },

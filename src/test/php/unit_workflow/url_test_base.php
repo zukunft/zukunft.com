@@ -442,6 +442,27 @@ class url_test_base
     }
 
     /**
+     * the db ids that normalize_ids replaces, each with its fixed test id: beside the id of the step url
+     * also the workflow object id itself, because e.g. the back step after a delete has no id in the
+     * url anymore, but the page can still name the removed object by its volatile id (e.g. 'the triple
+     * with id 809 cannot be found'); both only with a fixed id, because the first key wins, so e.g. the
+     * shown new value of an add value workflow, which has no fixed id, would else hide the fixed group
+     * id of value_url_tests::set_value_norm_id
+     * public only so that the unit tests can check it (see coding_rule_tests)
+     *
+     * @param int $id the current db id of the prime object of the workflow (0 if not known)
+     * @param int $wf_id the db id of the workflow object (0 for an add workflow)
+     * @param int $fixed_id the fixed test id of the workflow object (0 if the workflow has none)
+     * @param array $more_ids the other db ids => their fixed test ids e.g. of the test words
+     * @return array the db id => the fixed test id
+     */
+    function norm_id_map(int $id, int $wf_id, int $fixed_id, array $more_ids): array
+    {
+        $prime_ids = $fixed_id != 0 ? [$id => $fixed_id, $wf_id => $fixed_id] : [];
+        return $prime_ids + $more_ids;
+    }
+
+    /**
      * replace the volatile db ids with the fixed test ids so the snapshot file is stable: the prime
      * object id of the workflow and the additional ids of the related objects (e.g. the from and to
      * words of the test triple), each both in the url form ('=999') and in the json form ('"999"')
@@ -452,11 +473,8 @@ class url_test_base
      */
     private function normalize_ids(string $content, int $id): string
     {
-        // beside the id of the step url also normalize the workflow object id itself, because
-        // e.g. the back step after a delete has no id in the url anymore, but the page can still
-        // name the removed object by its volatile id (e.g. 'the triple with id 809 cannot be found')
-        $norm_ids = [$id => $this->wf_fixed_id, $this->wf_id => $this->wf_fixed_id]
-            + $this->wf_norm_ids + $this->phrase_norm_ids($id);
+        $norm_ids = $this->norm_id_map($id, $this->wf_id, $this->wf_fixed_id,
+            $this->wf_norm_ids + $this->phrase_norm_ids($id));
         // first the ids within a list, because below only the first id of a list follows the '='
         $content = $this->normalize_id_lists($content, $norm_ids);
         foreach ($norm_ids as $db_id => $fixed_id) {

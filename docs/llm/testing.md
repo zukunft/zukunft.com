@@ -147,6 +147,10 @@ its own flow does not explain, a delete earlier in the same run has failed.
   the delete ran, so the row stayed and only an exclusion was written.
 - `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
   `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+- An expected html page is committed only from a run that started on a recreated database
+  (`test.php`, or `reset_db.php` before `test_part.php`), because `test_part.php` alone keeps the
+  rows of a stopped run, and a page written while they are in the database shows them, e.g.
+  Zurich "... and 149 more" or the inhabitants page with Switzerland.
 
 ## An LLM never runs the `/test/*` scripts — the developer does
 

@@ -487,6 +487,20 @@ class coding_rule_tests
         // negative: a single id is no list, so it is left to the replacement of normalize_ids
         $test_name = 'a single id is kept';
         $t->assert($test_name, $wf->normalize_id_lists('id=3271&pl=3272', $norm_ids), 'id=3271&pl=3272');
+
+        // the group id of a new value is built from the db ids of its test words, so the add value workflows
+        // map it to the group id of the fixed test ids (value_url_tests::set_value_norm_id)
+        $real_grp_id = 3281 * 65536 + 3280;
+        $fixed_grp_id = word_names::TEST_ADD_ID * 65536 + word_names::TEST_ADD_TO_ID;
+        $test_name = 'the shown new value of a workflow without fixed id gets the fixed group id';
+        $map = $wf->norm_id_map($real_grp_id, 0, 0, [$real_grp_id => $fixed_grp_id]);
+        $t->assert($test_name, $map[$real_grp_id] ?? 0, $fixed_grp_id);
+        $test_name = '... and the object of a workflow with a fixed id gets the fixed id';
+        $map = $wf->norm_id_map(3271, 3271, word_names::TEST_ADD_ID, [3271 => word_names::TEST_ADD_TO_ID]);
+        $t->assert($test_name, $map[3271] ?? 0, word_names::TEST_ADD_ID);
+        // negative: without a fixed id the object id is not replaced at all
+        $test_name = '... but without a fixed id and no other mapping the object id is kept';
+        $t->assert_false($test_name, array_key_exists($real_grp_id, $wf->norm_id_map($real_grp_id, 0, 0, [])));
     }
 
     /**

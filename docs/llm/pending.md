@@ -1,46 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## to confirm by the next run: the fixes of 2026-11-16 to 2026-11-18
-
-The open checks of `docs/llm/log/xbrl_import_reset_2026-11-14.md`, all coded but not yet confirmed by a test run
-of the developer. Remove an item once a run after `test/reset_db.php` has passed its check.
-
-Status 2026-11-18 17:15, checked by the llm from the files that the run of 2026-11-18 (14:08 to 15:19, committed
-with b9275e741) has written and from the errors reported of it, which were none (no run of its own, no database
-read). Confirmed and removed:
-- 7: the `*_confirmed` pages of wf31 to wf33 have no "deleted" history row, and the wf35 pages are unchanged since
-  2026-11-16 18:17
-- 8: the live copies `live_Geneva.json` and `live_Health.json` were written again at 15:14, and `wf42_show.html` and
-  `wf45_show.html` are unchanged since 2026-11-15, so after two runs with network the workflows matched and the seed
-  gap is back after each run
-- 9 without the reset part (see 11): `xbrl_write_tests` converted the fileset at 15:17 and the next test,
-  `wikidata_write_tests`, wrote its first file at 15:18, so the no-update import of the 2875 triples no longer
-  hangs and reports no change
-- 13, the verb rename and the delete of an excluded import object via `del()`: no error of the unit and the import
-  tests; the unused list helpers are removed
-- the wikidata retry and the saved answers: the run saved `Q25224.json`, which only the fallback folder writes
-
-10. **Ids in a list of ids in the workflow snapshots** (",3377" against ",3272"):
-    `url_test_base::normalize_id_lists` and `value_url_tests::set_value_norm_id`. The `*_confirmed` pages of wf31 to
-    wf33 were rewritten once at 14:37 of 2026-11-18 by the normalized group id, as decided on 2026-11-16. Check: the
-    next run leaves them unchanged.
-11. **The id shift after the XBRL import works in the reset**: `unit/value/list.csv` (2026-11-16 17:50),
-    `unit/word/list.csv` (17:16) and `type_lists.json` (17:08) were not rewritten by the later runs, so these runs
-    matched them; but no file shows whether a `reset_db.php` with the XBRL import of `sql_db::setup_db` has run
-    since. Check: the next `reset_db.php` finishes the XBRL import, and the next run leaves these files unchanged and
-    gives the same workflow snapshots as `test.php`. Commit an expected html page only from a run after a reset,
-    because a page written while leftovers were in the database (e.g. Zurich "... and 149 more" or the inhabitants
-    page with Switzerland) is wrong.
-12. **Test values left by a stopped run** (the words "Share", "Earnings", "Increase" and "CHF" only hidden):
-    `test_db_load::add_value` registers an existing value of a test word (`has_test_word_name`). The final cleanup of
-    the run of 2026-11-18 reported no error. Check: the final cleanup of `a_selected_test` leaves no test word also
-    after a run that was stopped with ^C.
-14. **The fixes of the review of 2026-11-18** (not yet committed): `import::without_note_timer` holds back the alarm
-    of the note timer during a wikidata or wikipedia request and the pause before a retry, `ListOfIdObjects::add_direct`
-    keeps the first entry of an id, `missing_host` is cleared if a saved answer is used, `store_json` writes once
-    into the folder of the saved answers, and the XBRL test is switched off in `a_selected_test`. Check: the
-    "step note" unit tests of `import_tests` pass, and the unit and write tests show no new error.
-
 ## bug fixing
 
 ### word
