@@ -131,6 +131,8 @@ if ($db_con->is_open()) {
                 }
             } elseif ($wrd_name != '') {
                 $wrd->load_by_name($wrd_name, $msg);
+                // the add word button of a search asks for the suggestions of a word that does not exist yet
+                new ref_link_wikipedia()->suggest_from_url($wrd, $wrd_name, $_GET, $msg);
                 $result = $wrd->api_json($typ_lst, $msg, $load_usr);
             } else {
                 $msg->add_message_text('word id or name is missing');

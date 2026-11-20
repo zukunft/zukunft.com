@@ -63,6 +63,7 @@ the object structure is:
 ├── trm_ids - helper class for term id lists
 ├── qlever - import of qlever nt and tsv files
 ├── ref_db - the database const for reference tables
+├── ref_link_conceptnet - read the 'is a' concepts of a name from conceptnet
 ├── ref_link_wikidata - link for the reference type wikidata
 ├── ref_link_wikipedia - take over the description of a phrase from wikipedia
 ├── source_db - the database const for source tables

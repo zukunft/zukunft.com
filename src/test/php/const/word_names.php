@@ -235,6 +235,8 @@ class word_names
     const int CANTON_ID = 201;
     const string CITY = 'city';
     const int CITY_ID = 203;
+    // a city that the pod does not have, which the add word suggestions workflow adds and removes again
+    const string HAMBURG = 'Hamburg';
     const string ZH = 'Zurich';
     const int ZH_ID = 228;
     const string BE = 'Bern';

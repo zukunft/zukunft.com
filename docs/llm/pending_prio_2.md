@@ -3333,6 +3333,25 @@ moves the problem into a fact conflict (`report_fact_conflict` marks the convert
 solution names the member differently from the concept, e.g. with the axis of the member, so that both facts keep
 their own phrase group.
 
+## open points of the add word suggestions
+
+The add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
+(`docs/llm/log/add_word_suggest_2026-11-20.md`). Open:
+
+- **adjust the rows:** the add view carries the suggested reference and triple rows as hidden fields, so the user can
+  change the name and the description, but can remove a suggested reference or triple only by not confirming at all;
+  the add view should show the rows with a remove checkbox like `system_form::form_ref_rows`, with a test that a removed
+  row is not written.
+- **conceptnet without answer:** the conceptnet api answered with a http 502 on 2026-11-20, so the groups of Hamburg
+  come from the "instance of" items of wikidata instead; the conceptnet part has never got a live answer, and a saved
+  answer as fallback like the wikidata answers (`import_wikidata` fallback path) would make the workflow independent of
+  the api.
+- **speed of the wikidata groups:** the fallback reads the item of the word and one item per group, e.g. 11 requests for
+  Hamburg, while the user waits for the add view; a single `wbgetentities` request for all labels would be faster.
+- **leftover parent words:** the cleanup of the workflow removes Hamburg with its triples and references and the
+  parent words that the same run has added; a parent word added by an earlier run that stopped before its cleanup is
+  not removed, because the next run does not know whether the pod had the word before.
+
 ## write test of a cleared description per object type
 
 Since 2026-11-19 a user can clear the description of a word, source, formula, component, view, triple and ref. Only

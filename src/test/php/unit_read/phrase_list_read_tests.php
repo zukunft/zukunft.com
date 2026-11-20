@@ -361,7 +361,10 @@ class phrase_list_read_tests
     {
         $from_name = $trp->get_from()?->name();
         $to_name = $trp->get_to()?->name();
-        return (in_array($from_name, word_names::TEST_WORDS) or in_array($to_name, word_names::TEST_WORDS));
+        // Hamburg is no reserved test name, but only the add word workflow writes it with its
+        // "is a" triples e.g. "Hamburg (big city)" (see word_write_url_tests::add_word_with_suggestions)
+        $test_names = array_merge(word_names::TEST_WORDS, [word_names::HAMBURG]);
+        return (in_array($from_name, $test_names) or in_array($to_name, $test_names));
     }
 
     private function assert_names_file(test_cleanup $t, string $test_name, array $names_by_id, string $file_name): void

@@ -2,23 +2,13 @@
 
 ## bug fixing
 
-### add word
+### confirm the add word suggestions
 
-when adding a new word conceptnet should be used to suggest triples
-and wikipedia should be used to suggest a description and a wikidata link
+The add word button of a search fills the add view with the suggestions of wikipedia and conceptnet since 2026-11-20
+(`docs/llm/log/add_word_suggest_2026-11-20.md`); the next run confirms the new workflow "add word suggestions" of
+`word_write_url_tests` with Hamburg and the unit tests of `word_ui_tests` and `ref_tests`.
 
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### conceptnet.io link
-
-get the phrases of 'is a type of' from conceptnet.io and use them to create a triple
-use add Hamburg as a sample
-
-#### suggested code changes
-
-... replace this with the suggested code changes
+if done remove this prompt from pending.md
 
 **next prompt**
 
@@ -356,6 +346,42 @@ then `/test/reset_db.php`, the re-pin and the full `test/test.php`.
 ### suggested code changes for deprecate
 
 ... to be filled
+
+## create a calculator for the top 5 global problems
+
+### create a 'cost of climate change' calculator
+
+use the estimate that germany has lost around 20 billion in 2026 due to climate warming
+
+use sliders for the time period that should be included, the increase rate per 0.1 grad temperatur increase, the number of death caused by climate warming and put the costs in realtion to the GDP
+
+### link the calculators
+
+if a calculator view for a phrase is defined the calculator should be the default view for the phrase. 
+
+the calculator view should also be linked to the related number e.g. in http://localhost/http/view.php?m=1&dla=table_chart the '4' should link to the calculator instead of http://localhost/http/view.php?m=9&id=0q-22_2e_2i_3G_&9m=1&9dla=table_chart
+
+### reduce the list links
+
+in http://localhost/http/view.php?m=1&dla=table_chart the 'one-click hide, ...' link to http://localhost/http/view.php?m=4&id=1293&u=11 and the ... to 'http://localhost/http/view.php?m=2&id=-1616&9m=1&9dla=table_chart&u=11'. the link of '...' is more relevant, but very small to the user. So if a table entry has a '...' use the link for the '...' for both, the first phrase of the list and the '...'
+
+## user menu
+
+### to add
+
+#### missing parents
+
+add to the user menu in the navbar a 'to add' view that lists the words that have no linked triple and suggest to use wikipedia, wikidata and conceptnet.io to add triples
+
+missing descriptions
+
+### to check
+
+missing sources
+
+### to correct
+
+contradicting values / results
 
 ## improve the new word / triple process
 

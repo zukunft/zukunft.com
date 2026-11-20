@@ -67,6 +67,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -944,6 +945,72 @@ class word_ui_tests
         // negative: a new word has no id yet, so the simple add form never posts one
         $test_name = 'the simple add form does not post an id';
         $t->assert_text_not_contains($test_name, $simple_form->form_word_add_simple(), 'name="' . url_var::ID . '"');
+
+        // the add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
+        $t->subheader($ts . 'add word suggestions');
+        $is_a_id = $cfg->vrb->id(verbs::IS);
+        $city_row = [url_var::ACTION => url_var::CRUD_CREATE, url_var::VERB => $is_a_id, url_var::PHRASE_TO => word_names::CITY];
+        $test_name = 'a triple row is read back from its url';
+        $trp_rows = [1 => $city_row];
+        $trp_url = url_var::ref_row_url_array($trp_rows, [], url_var::TRIPLE_ROW);
+        $t->assert($test_name, url_var::triple_rows($trp_url), $trp_rows);
+        $test_name = '... but never as a reference row';
+        $t->assert($test_name, url_var::ref_rows($trp_url), []);
+        // negative: a triple cannot exist without its to phrase
+        $test_name = 'an add row without to phrase is no triple row';
+        $no_to = [1 => [url_var::ACTION => url_var::CRUD_CREATE, url_var::VERB => $is_a_id]];
+        $t->assert($test_name, url_var::triple_rows(url_var::ref_row_url_array($no_to, [], url_var::TRIPLE_ROW)), []);
+        $test_name = 'the written triple row is removed, but a reference row with the same number is kept';
+        $ref_row_url = url_var::ref_row_url_array([1 => [url_var::ACTION => url_var::CRUD_CREATE]]);
+        $both_url = array_merge($trp_url, $ref_row_url);
+        $t->assert($test_name, url_var::without_ref_row($both_url, 1, url_var::TRIPLE_ROW), $ref_row_url);
+        $t_ref = new test_refs($t);
+        $add_url = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::NAME => word_names::CITY,
+            url_var::STEP => url_var::STEP_CONFIRM];
+        $sug_wrd = new word();
+        $sug_wrd->set_description(word_names::MATH_COM);
+        $sug_wrd->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $sug_wrd->suggested_parents = [word_names::CITY];
+        $sug_step = 'get data from wikipedia ' . word_names::CITY;
+        $sug_wrd->suggest_steps = [$sug_step];
+        $sug_msg = new user_message();
+        $sug_url = $sug_wrd->url_with_suggestions($add_url, $sug_msg);
+        $test_name = 'the suggestions open the add view and not the confirm page';
+        $t->assert_false($test_name, array_key_exists(url_var::STEP, $sug_url));
+        $test_name = '... with the description of wikipedia';
+        $t->assert($test_name, $sug_url[url_var::DESCRIPTION] ?? '', word_names::MATH_COM);
+        $test_name = '... with a reference row of each suggested reference';
+        $t->assert($test_name, count(url_var::ref_rows($sug_url)), $sug_wrd->ref_lst->count());
+        $test_name = '... and an "is a" triple row of each suggested parent';
+        $t->assert($test_name, url_var::triple_rows($sug_url), $trp_rows);
+        // the steps are shown only below the loading text while the data is collected
+        $test_name = '... without the steps of the collection and without an info that a suggestion is missing';
+        $t->assert($test_name, $sug_msg->get_last_info_html(), '');
+        // negative: a description that the user has entered already is never replaced
+        $test_name = 'the suggestions never replace an entered description';
+        $own_url = array_merge($add_url, [url_var::DESCRIPTION => word_names::TEST_ADD_COM]);
+        $own_sug_url = $sug_wrd->url_with_suggestions($own_url, new user_message());
+        $t->assert($test_name, $own_sug_url[url_var::DESCRIPTION] ?? '', word_names::TEST_ADD_COM);
+        // negative: without suggestions the add view gets only the name and the user is told why
+        $test_name = 'without suggestions the add view has no reference and no triple row';
+        $none_msg = new user_message();
+        $none_url = new word()->url_with_suggestions($add_url, $none_msg);
+        $t->assert($test_name, url_var::ref_rows($none_url) + url_var::triple_rows($none_url), []);
+        $test_name = '... and tells the user that the backend has sent no suggestions';
+        $no_answer = $lib->msg_var_text([[msg_id::SUGGEST_NO_ANSWER, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $t->assert($test_name, $none_msg->get_last_info_html(), $html->esc($no_answer));
+        // negative: an answer with steps but without results names what has not been found
+        $test_name = 'an answer without a description and a group tells what has not been found, but not the steps';
+        $found_none = new word();
+        $found_none->suggest_steps = [$sug_step];
+        $found_msg = new user_message();
+        $found_none->url_with_suggestions($add_url, $found_msg);
+        $no_wiki = $lib->msg_var_text([[msg_id::SUGGEST_WIKIPEDIA_MISSING, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $no_parent = $lib->msg_var_text([[msg_id::SUGGEST_PARENTS_MISSING, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $found_lines = implode('<' . html_base::BR . '>', [$html->esc($no_wiki), $html->esc($no_parent)]);
+        $t->assert($test_name, $found_msg->get_last_info_html(), $found_lines);
+        $test_name = '... but the add of the word is still possible';
+        $t->assert_true($test_name, $none_msg->is_ok());
 
         $t->subheader($ts . 'url mapper');
 

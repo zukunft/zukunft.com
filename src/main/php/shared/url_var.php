@@ -90,6 +90,9 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
+    // prefix of the triples that the confirm of a new word adds too, the row number at the end of the key
+    // e.g. 5pt1 for the to phrase of the first triple (see TRIPLE_ROW_VARS)
+    const string TRIPLE_ROW = '5';
     // prefix of the references that the confirm of a phrase change writes too, the row number at the
     // end of the key e.g. 6ek1 for the external key of the first reference (see REF_ROW_VARS)
     const string REF_ROW = '6';
@@ -174,6 +177,18 @@ class url_var
     const string REFRESH_WIKIPEDIA = 'frw';
     // the refresh icon of a wikidata reference opens the preview of the values that wikidata would add
     const string REFRESH_WIKIDATA = 'frd';
+    // the add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
+    const string REFRESH_SUGGEST = 'frs';
+    // the frontend asks the backend for the suggestions of each source in its own request, so that the
+    // loading text shows each step while the user waits (see web/word/word::suggestion_url)
+    const string REFRESH_SUGGEST_WIKIPEDIA = 'frsw';
+    const string REFRESH_SUGGEST_CONCEPTNET = 'frsc';
+    const string REFRESH_SUGGEST_WIKIDATA = 'frsd';
+    const array REFRESH_SUGGEST_SOURCES = [
+        self::REFRESH_SUGGEST_WIKIPEDIA,
+        self::REFRESH_SUGGEST_CONCEPTNET,
+        self::REFRESH_SUGGEST_WIKIDATA,
+    ];
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -434,6 +449,7 @@ class url_var
     // the prefix chars that move a normal url key into another part of the url: the vars of the link
     // created with a new object, the db values of an edit view and the back targets
     const array PREFIXES = [
+        self::TRIPLE_ROW,
         self::REF_ROW,
         self::LINK,
         self::PRE,
@@ -456,6 +472,14 @@ class url_var
         self::URL,
         self::SOURCE,
         self::DESCRIPTION,
+    ];
+
+    // the url vars that a '5'-prefixed triple row may name; the from phrase is never a row var, because the
+    // triples always start at the confirmed word, so a typed url cannot add a triple of another phrase
+    const array TRIPLE_ROW_VARS = [
+        self::ACTION,
+        self::VERB,
+        self::PHRASE_TO,
     ];
 
     // the crud actions of a reference row; a row without one of them is no change
@@ -535,6 +559,7 @@ class url_var
     const string BACK_HUMAN = 'back';
     const string LINK_HUMAN = 'link';
     const string REF_ROW_HUMAN = 'ref_change';
+    const string TRIPLE_ROW_HUMAN = 'triple_add';
     const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
@@ -695,6 +720,10 @@ class url_var
     const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
     const string REFRESH_WIKIPEDIA_HUMAN = 'description_from_wikipedia';
     const string REFRESH_WIKIDATA_HUMAN = 'values_from_wikidata';
+    const string REFRESH_SUGGEST_HUMAN = 'suggestions_from_wikipedia_and_conceptnet';
+    const string REFRESH_SUGGEST_WIKIPEDIA_HUMAN = 'suggestions_from_wikipedia';
+    const string REFRESH_SUGGEST_CONCEPTNET_HUMAN = 'suggestions_from_conceptnet';
+    const string REFRESH_SUGGEST_WIKIDATA_HUMAN = 'suggestions_from_wikidata';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -838,6 +867,7 @@ class url_var
         [self::BACK_HUMAN, self::BACK],
         [self::LINK_HUMAN, self::LINK],
         [self::REF_ROW_HUMAN, self::REF_ROW],
+        [self::TRIPLE_ROW_HUMAN, self::TRIPLE_ROW],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
         [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
@@ -1076,6 +1106,10 @@ class url_var
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
         self::REFRESH_WIKIPEDIA => self::REFRESH_WIKIPEDIA_HUMAN,
         self::REFRESH_WIKIDATA => self::REFRESH_WIKIDATA_HUMAN,
+        self::REFRESH_SUGGEST => self::REFRESH_SUGGEST_HUMAN,
+        self::REFRESH_SUGGEST_WIKIPEDIA => self::REFRESH_SUGGEST_WIKIPEDIA_HUMAN,
+        self::REFRESH_SUGGEST_CONCEPTNET => self::REFRESH_SUGGEST_CONCEPTNET_HUMAN,
+        self::REFRESH_SUGGEST_WIKIDATA => self::REFRESH_SUGGEST_WIKIDATA_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1160,8 +1194,8 @@ class url_var
     }
 
     /**
-     * split a url key into its prefix, the url var and the row number of a reference row (see REF_ROW);
-     * the '8' value of a row field is the only compound prefix e.g. 86ek2
+     * split a url key into its prefix, the url var and the row number of a reference row (see REF_ROW) or of a
+     * triple row (see TRIPLE_ROW); the '8' value of a reference row field is the only compound prefix e.g. 86ek2
      *
      * @param string $key the url key e.g. '6ek2', '86ek2' or '9m'
      * @return array the prefix, the url var and the row number e.g. ['86', 'ek', '2'], the row number empty for a key of no row
@@ -1174,7 +1208,7 @@ class url_var
             $var = substr($var, strlen(self::REF_ROW));
         }
         $row = '';
-        if (str_ends_with($prefix, self::REF_ROW)) {
+        if (str_ends_with($prefix, self::REF_ROW) or $prefix == self::TRIPLE_ROW) {
             $field = rtrim($var, self::ROW_DIGITS);
             $row = substr($var, strlen($field));
             $var = $field;
@@ -1222,6 +1256,25 @@ class url_var
     }
 
     /**
+     * the triple rows that add a triple of the confirmed word e.g. "Hamburg" "is a" "city"
+     *
+     * @param array $url_array the url e.g. of the confirm page of a new word
+     * @return array the triple rows that add a triple e.g. [1 => ['a' => 'c', 'b' => 2, 'pt' => 'city']]
+     */
+    static function triple_rows(array $url_array): array
+    {
+        $result = [];
+        foreach (self::ref_row_fields($url_array, self::TRIPLE_ROW, self::TRIPLE_ROW_VARS) as $row => $fields) {
+            // a triple cannot exist without its to phrase, so an add row without one is no change
+            $is_add = (($fields[self::ACTION] ?? '') == self::CRUD_CREATE);
+            if ($is_add and ($fields[self::PHRASE_TO] ?? '') != '') {
+                $result[$row] = $fields;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param array $url_array the url e.g. of the confirm page of a phrase change
      * @return array the stored values of the changed or deleted references by row e.g. [1 => ['ek' => 'Q72']]
      */
@@ -1233,17 +1286,18 @@ class url_var
     /**
      * @param array $rows the reference rows e.g. [1 => ['a' => 'u', 'l' => 279, 'ek' => 'Q71']]
      * @param array $pre_rows the stored values of the rows e.g. [1 => ['ek' => 'Q72']]
+     * @param string $row_prefix REF_ROW for reference rows or TRIPLE_ROW for triple rows, which have no stored values
      * @return array the url vars of the rows e.g. ['6a1' => 'u', '6l1' => 279, '6ek1' => 'Q71', '86ek1' => 'Q72']
      */
-    static function ref_row_url_array(array $rows, array $pre_rows = []): array
+    static function ref_row_url_array(array $rows, array $pre_rows = [], string $row_prefix = self::REF_ROW): array
     {
         $result = [];
         foreach ($rows as $row => $fields) {
             foreach ($fields as $var => $val) {
-                $result[self::REF_ROW . $var . $row] = $val;
+                $result[$row_prefix . $var . $row] = $val;
             }
             foreach ($pre_rows[$row] ?? [] as $var => $val) {
-                $result[self::PRE . self::REF_ROW . $var . $row] = $val;
+                $result[self::PRE . $row_prefix . $var . $row] = $val;
             }
         }
         return $result;
@@ -1252,14 +1306,15 @@ class url_var
     /**
      * @param array $url_array the url with the reference rows
      * @param int $row the number of the row that has been written
+     * @param string $row_prefix REF_ROW for a reference row or TRIPLE_ROW for a triple row
      * @return array the url without the vars and the stored values of this row
      */
-    static function without_ref_row(array $url_array, int $row): array
+    static function without_ref_row(array $url_array, int $row, string $row_prefix = self::REF_ROW): array
     {
         $result = [];
         foreach ($url_array as $key => $val) {
             [$prefix, , $key_row] = self::split_ref_row((string)$key);
-            if (!str_ends_with($prefix, self::REF_ROW) or $key_row != (string)$row) {
+            if (!str_ends_with($prefix, $row_prefix) or $key_row != (string)$row) {
                 $result[$key] = $val;
             }
         }
@@ -1268,15 +1323,16 @@ class url_var
 
     /**
      * @param array $url_array the url with the reference rows
-     * @param string $prefix the prefix of the row part e.g. REF_ROW or PRE . REF_ROW
-     * @return array the fields of each row number that are listed in REF_ROW_VARS
+     * @param string $prefix the prefix of the row part e.g. REF_ROW, PRE . REF_ROW or TRIPLE_ROW
+     * @param array $row_vars the url vars that a row of this part may name e.g. REF_ROW_VARS
+     * @return array the fields of each row number that are listed in the row vars
      */
-    private static function ref_row_fields(array $url_array, string $prefix): array
+    private static function ref_row_fields(array $url_array, string $prefix, array $row_vars = self::REF_ROW_VARS): array
     {
         $result = [];
         foreach ($url_array as $key => $val) {
             [$key_prefix, $var, $row] = self::split_ref_row((string)$key);
-            $is_row_var = ($key_prefix == $prefix and $row != '' and in_array($var, self::REF_ROW_VARS));
+            $is_row_var = ($key_prefix == $prefix and $row != '' and in_array($var, $row_vars));
             if ($is_row_var) {
                 $result[(int)$row][$var] = $val;
             }

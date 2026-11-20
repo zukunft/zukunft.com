@@ -2606,6 +2606,10 @@
             php
     \-- property_ids - section for function property_ids not yet defined that it should be convert in /import/import_wik
             idata.php
+    \-- instance_of_names - section for function instance_of_names not yet defined that it should be convert in /import/
+            import_wikidata.php
+    \-- instance_of_ids - section for function instance_of_ids not yet defined that it should be convert in /import/impo
+            rt_wikidata.php
     \-- item_ids - section for function item_ids not yet defined that it should be convert in /import/import_wikidata.ph
             p
     \-- convert_to_file - section for function convert_to_file not yet defined that it should be convert in /import/impo
@@ -3102,8 +3106,13 @@
     \-- names - section for function names is expected to be info in /phrase/term_list.php
 \-- trm_ids
     \-- order error - order of section  has difference at count should be before __construct
+\-- ref_link_conceptnet
+    \-- is_a_names - section for function is_a_names is expected to be info in /ref/ref_link_conceptnet.php
+    \-- concept_key - section for function concept_key missing in /ref/ref_link_conceptnet.php
+    \-- names_of_answer - section for function names_of_answer missing in /ref/ref_link_conceptnet.php
 \-- ref_link_wikipedia
     \-- refresh_from_url - section for function refresh_from_url missing in /ref/ref_link_wikipedia.php
+    \-- suggest_from_url - section for function suggest_from_url missing in /ref/ref_link_wikipedia.php
     \-- description - section for function description missing in /ref/ref_link_wikipedia.php
     \-- without_pronunciation - section for function without_pronunciation missing in /ref/ref_link_wikipedia.php
     \-- wikidata_id - section for function wikidata_id missing in /ref/ref_link_wikipedia.php
@@ -4695,11 +4704,20 @@
         \--  - cross-request throttle for the sys_log inserts: allow at most text_log::INSERT_LIMIT inserts
     \-- log_msg
         \--  - write a log message to the database and return the message that should be shown to the user,
+    \-- is_a_names
+        \-- ref_link_conceptnet - @param string $name the name of the new word e.g. "Hamburg"
+    \-- concept_key
+        \-- ref_link_conceptnet - @param string $name the name of a word e.g. "New York"
+    \-- names_of_answer
+        \-- ref_link_conceptnet - public only so that the unit tests can check it with a given answer (see ref_tests)
     \-- read
         \-- ref_link_wikidata - 
     \-- refresh_from_url
         \-- ref_link_wikipedia - take over the description and the wikidata id from the wikipedia page of the phrase if 
                 the
+    \-- suggest_from_url
+        \-- ref_link_wikipedia - fill a word that does not exist yet with the suggestions of one source for its add view
+                 if the url
     \-- description
         \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
     \-- without_pronunciation
@@ -6223,6 +6241,11 @@
         \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
     \-- property_ids
         \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
+    \-- instance_of_names
+        \-- import_wikidata - the english names of the groups of an item,
+                 which the add word button of a search suggests as 'is a'
+    \-- instance_of_ids
+        \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q1055.json
     \-- item_ids
         \-- import_wikidata - the wikidata ids that the convert of the given properties names,
                  so that the caller loads the phrases of
@@ -7492,6 +7515,8 @@
             te in /frontend.php
     \-- url_with_wikipedia_refresh - section for function url_with_wikipedia_refresh not yet defined that it should be e
             xecute in /frontend.php
+    \-- url_with_word_suggestions - section for function url_with_word_suggestions not yet defined that it should be exe
+            cute in /frontend.php
     \-- url_with_wikidata_refresh - section for function url_with_wikidata_refresh not yet defined that it should be exe
             cute in /frontend.php
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
@@ -8135,6 +8160,7 @@
     \-- confirm_url_of_refresh - section for function confirm_url_of_refresh not yet defined that it should be wikipedia
              in /phrase/phrase.php
     \-- save_ref_rows - section for function save_ref_rows is expected to be save in /phrase/phrase.php
+    \-- save_triple_rows - section for function save_triple_rows is expected to be save in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
 \-- phrase_data
     \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
@@ -9157,6 +9183,9 @@
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /word/
             word.php
     \-- api_array - section for function api_array not yet defined that it should be api in /word/word.php
+    \-- suggestion_url - section for function suggestion_url not yet defined that it should be load in /word/word.php
+    \-- url_with_suggestions - section for function url_with_suggestions not yet defined that it should be load in /word
+            /word.php
     \-- impact - section for function impact not yet defined that it should be set and get in /word/word.php
     \-- word - section for function word not yet defined that it should be cast in /word/word.php
     \-- parents - section for function parents is expected to be foaf in /word/word.php
@@ -11143,6 +11172,9 @@
         \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
     \-- url_with_wikipedia_refresh
         \-- frontend - the confirm page of the description and the wikidata id that the backend takes from the
+    \-- url_with_word_suggestions
+        \-- frontend - the add view of a new word filled with the description,
+                 the references and the 'is a' triples that
     \-- url_with_wikidata_refresh
         \-- frontend - the import preview of the values that wikidata would add to a phrase,
                  because the refresh icon of a wikidata

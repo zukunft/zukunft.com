@@ -175,11 +175,11 @@ class rest_call
      * @param string $class the frontend class name that should be loaded
      * @param string $name the name of the database object that should be loaded
      * @param user_message $msg with the requesting user whose id is added to the url if logged in
+     * @param array $data additional data of the get request e.g. the request for the suggestions of a new word
      * @return array with the body json message from the backend
      */
-    function api_call_name(string $class, string $name, user_message $msg): array
+    function api_call_name(string $class, string $name, user_message $msg, array $data = []): array
     {
-        $data = array();
         $data[url_var::NAME] = $name;
         return $this->api_get($class, $data, $msg);
     }
@@ -287,12 +287,25 @@ class rest_call
      */
     private static function send_loading_step(string $url, string $step_name): void
     {
+        global $mtr;
+        self::send_loading_text(self::loading_step_text($url, $step_name, $mtr));
+    }
+
+    /**
+     * show the given step below the loading text of a slow page with the seconds since the request start,
+     * e.g. each step of the suggestions for a new word (see web/word/word::suggestion_url); nothing is sent
+     * before the start of the page (see frontend::send_loading_start) e.g. in a test run
+     *
+     * @param string $step the translated step e.g. "get data from wikipedia 'https://en.wikipedia.org/wiki/Hamburg'"
+     * @return void
+     */
+    static function send_loading_text(string $step): void
+    {
         global $ui_sys;
         global $mtr;
         if ($ui_sys == null or $ui_sys->loading_since <= 0) {
             return;
         }
-        $step = self::loading_step_text($url, $step_name, $mtr);
         if ($step != $ui_sys->loading_step) {
             $ui_sys->loading_step = $step;
             $sec = (int)round(microtime(true) - $ui_sys->loading_since);

@@ -285,6 +285,13 @@ class word extends sandbox_code_id
     // references; refs have no impact, so the frontend keeps the database (id) order
     public ?ref_list $references_related = null;
 
+    // the names of the 'is a' concepts that conceptnet suggests for a new word e.g. "city" for Hamburg,
+    // which the add view offers as triples (see ref_link_wikipedia::suggest_from_url)
+    public array $suggested_parents = [];
+    // the translated steps of the suggestions e.g. "get data from wikipedia 'https://en.wikipedia.org/wiki/Hamburg'",
+    // which the add view shows to the user in this order
+    public array $suggest_steps = [];
+
     // the views that can show this word: its own default view plus the default views of
     // its parent words; populated lazily by load_views_related() and only emitted via
     // api_json_array() when the api_types::INCL_RELATED flag is set
@@ -633,6 +640,10 @@ class word extends sandbox_code_id
                         new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
+                // a new word has no related data, but the suggestions of the add word button of a search
+                if ($this->id() == 0) {
+                    $vars = array_merge($vars, $this->suggestions_array($msg, $usr));
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -725,6 +736,26 @@ class word extends sandbox_code_id
             }
         }
         $this->parent_formulas_related = $result;
+    }
+
+    /**
+     * @param user_message $msg to collect the problems while creating the json of the references
+     * @param user|null $usr the user who has requested the suggestions
+     * @return array the suggested references and 'is a' concepts of a new word, empty without suggestions
+     */
+    private function suggestions_array(user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if ($this->references_related != null and !$this->references_related->is_empty()) {
+            $vars[json_fields::REFERENCES] = $this->references_related->api_json_array([], $msg, $usr);
+        }
+        if ($this->suggested_parents != []) {
+            $vars[json_fields::SUGGESTED_PARENTS] = $this->suggested_parents;
+        }
+        if ($this->suggest_steps != []) {
+            $vars[json_fields::SUGGEST_STEPS] = $this->suggest_steps;
+        }
+        return $vars;
     }
 
     /**

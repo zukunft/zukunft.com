@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_USER . 'user_message.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::MODEL_REF . 'ref_link_conceptnet.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_link_conceptnet;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
@@ -86,6 +88,14 @@ use DateTimeInterface;
 
 class ref_tests
 {
+    // the names of the given conceptnet answer of the 'is a' concepts of Hamburg
+    const string CN_HAMBURG = word_names::HAMBURG;
+    const string CN_PORT = 'port';
+    const string CN_STADT = 'Stadt';
+    const string CN_GERMAN = 'de';
+    const string CN_NEW_YORK = 'New York';
+    const string CN_NEW_YORK_KEY = 'new_york';
+
     function run(test_cleanup $t): void
     {
 
@@ -517,6 +527,31 @@ class ref_tests
         $pos_chf = strpos($phr_html, 'value="' . words::CHF . '"');
         $pos_pi = strpos($phr_html, 'value="' . word_names::PI . '"', strpos($phr_html, '<datalist'));
         $t->assert_true($test_name, $pos_chf !== false and $pos_pi !== false and $pos_chf < $pos_pi);
+
+        // the 'is a' concepts of conceptnet that the add word button suggests as triples; a given answer in the
+        // format of the conceptnet query api, because a unit test reads no live api
+        $t->subheader($ts . 'conceptnet is a');
+        $cpn = new ref_link_conceptnet();
+        $cn_end = fn(string $label, string $lan) => [
+            ref_link_conceptnet::CN_END => [
+                ref_link_conceptnet::CN_LABEL => $label,
+                ref_link_conceptnet::CN_LANGUAGE => $lan,
+            ]
+        ];
+        $cn_answer = [ref_link_conceptnet::CN_EDGES => [
+            $cn_end(word_names::CITY, ref_link_conceptnet::LANGUAGE),
+            $cn_end(word_names::CITY, ref_link_conceptnet::LANGUAGE),
+            $cn_end(self::CN_HAMBURG, ref_link_conceptnet::LANGUAGE),
+            $cn_end(self::CN_STADT, self::CN_GERMAN),
+            $cn_end(self::CN_PORT, ref_link_conceptnet::LANGUAGE),
+        ]];
+        $test_name = 'the english is a concepts are suggested each once';
+        $t->assert($test_name, $cpn->names_of_answer($cn_answer, self::CN_HAMBURG), [word_names::CITY, self::CN_PORT]);
+        // negative: an answer without edges e.g. of an unknown concept suggests nothing
+        $test_name = 'an answer without is a edges suggests no parent';
+        $t->assert($test_name, $cpn->names_of_answer([], self::CN_HAMBURG), []);
+        $test_name = 'the concept key is the lower case name with underscores';
+        $t->assert($test_name, $cpn->concept_key(self::CN_NEW_YORK), self::CN_NEW_YORK_KEY);
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);

@@ -1176,6 +1176,8 @@ class frontend
         $url_array = $this->url_with_wikipedia_refresh($url_array, $msg_ui, $test_mode);
         // the refresh icon of a wikidata reference leads to the preview of the values that wikidata would add
         $url_array = $this->url_with_wikidata_refresh($url_array, $msg_ui, $test_mode);
+        // the add word button of a search leads to the add view filled with the suggestions
+        $url_array = $this->url_with_word_suggestions($url_array, $msg_ui, $test_mode);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -2870,7 +2872,8 @@ class frontend
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
                 and !str_starts_with($key, url_var::BACK)
                 and !str_starts_with($key, url_var::LINK)
-                and !str_starts_with($key, url_var::REF_ROW)) {
+                and !str_starts_with($key, url_var::REF_ROW)
+                and !str_starts_with($key, url_var::TRIPLE_ROW)) {
                 $result[$key] = $val;
             }
         }
@@ -2938,10 +2941,17 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
-            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW)
+            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW),
+            // and for a new word also the suggested references and 'is a' triples (see url_var::TRIPLE_ROW),
+            // which are written after the word, because they need its id; a retry of the open rows of a
+            // new word is an update (see below)
             $open_url = $url_array;
-            if ($crud == url_var::CRUD_UPDATE and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+            $is_phrase = ($dbo instanceof word_ui or $dbo instanceof triple_ui);
+            if ($is_phrase and in_array($crud, [url_var::CRUD_CREATE, url_var::CRUD_UPDATE])) {
                 $open_url = $dbo->phrase()->save_ref_rows($url_array, $msg_ui);
+                if ($dbo instanceof word_ui) {
+                    $open_url = $dbo->phrase()->save_triple_rows($open_url, $msg_ui);
+                }
             }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
@@ -2953,8 +2963,13 @@ class frontend
                 $msg_ui->add_info($this->setting_saved_text($url_array));
             }
             // the api calls of the rows have no common transaction, so the confirm page shows the
-            // reference rows again that could not be written, together with the message why
-            if (url_var::ref_rows($open_url) != []) {
+            // reference and triple rows again that could not be written, together with the message why
+            if (url_var::ref_rows($open_url) != [] or url_var::triple_rows($open_url) != []) {
+                // the new word exists now, so the retry of its open rows changes it instead of adding it again
+                if ($crud == url_var::CRUD_CREATE) {
+                    $open_url[url_var::MASK] = views::WORD_EDIT_ID;
+                    $open_url[url_var::ID] = $dbo->id();
+                }
                 return $open_url;
             }
         }
@@ -3437,6 +3452,30 @@ class frontend
                 $result = $dbo->phrase()->wikipedia_confirm_url($url_array, $msg_ui);
             } else {
                 log_err_msg_ui('the wikipedia refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the add view of a new word filled with the description, the references and the 'is a' triples that
+     * wikipedia and conceptnet suggest, because the add word button of a search writes nothing before the
+     * user has adjusted and confirmed them (see word::suggestion_url)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell which suggestion is missing
+     * @param bool $test_mode true to render without a backend call, so the add view gets only the name
+     * @return array the url of the filled add view, unchanged if no suggestions are requested
+     */
+    function url_with_word_suggestions(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_SUGGEST) {
+            unset($result[url_var::REFRESH]);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif (!$test_mode) {
+                $result = new word_ui()->suggestion_url($result, $msg_ui);
             }
         }
         return $result;

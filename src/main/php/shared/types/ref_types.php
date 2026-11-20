@@ -44,6 +44,9 @@ class ref_types
     // links a property on another page than an item, and a phrase can have an item and a property
     const string WIKIDATA_PROPERTY = "wikidata_property";
     const string WIKIPEDIA = "wikipedia";
+    // the pages for the user, the same as the base urls of ref_types.csv, e.g. for the steps of the add word suggestions
+    const string WIKIPEDIA_PAGE_URL = 'https://en.wikipedia.org/wiki/';
+    const string WIKIDATA_ITEM_URL = 'https://www.wikidata.org/wiki/';
     // e.g. for the reference that the reference rows write test adds to a phrase without one
     const string CONCEPTNET = "conceptnet";
 

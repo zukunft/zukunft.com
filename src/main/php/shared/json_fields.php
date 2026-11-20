@@ -65,6 +65,8 @@ class json_fields
     const string URL_PART_BACK = 'url_part_back';
     // the references that the confirm of a phrase change writes too, by row number (see url_var::REF_ROW)
     const string URL_PART_REF_ROW = 'url_part_ref_row';
+    // the triples that the confirm of a new word adds too, by row number (see url_var::TRIPLE_ROW)
+    const string URL_PART_TRIPLE_ROW = 'url_part_triple_row';
     // the messages that should be shown to the user e.g. name already used. please use another name
     const string MSG = 'message';
 
@@ -496,6 +498,10 @@ class json_fields
     const string SOURCES = 'sources';
     const string GROUPS = 'groups';
     const string REFERENCES = 'references';
+    // the names of the 'is a' concepts that conceptnet knows for a new word e.g. "city" for Hamburg
+    const string SUGGESTED_PARENTS = 'suggested_parents';
+    // the translated steps of the suggestions for a new word, because an ok api answer sends no info message
+    const string SUGGEST_STEPS = 'suggest_steps';
     // the alpha key to select the internal phrase (or later the term)
     const string REF_INTERN = 'phrase';
     // the external unique key for this reference

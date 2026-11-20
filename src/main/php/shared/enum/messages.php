@@ -257,6 +257,19 @@ enum messages: string
     case WIKIDATA_IMPORTED = 'wikidata_imported';
     case WIKIDATA_NAME_USED = 'wikidata_name_used';
     case WIKIDATA_ID_FIELD = 'wikidata_id_field';
+    // the suggestions of the add word button of a search (see ref_link_wikipedia::suggest_from_url)
+    case CONCEPTNET_READ_FAILED = 'conceptnet_read_failed';
+    case SUGGEST_WIKIPEDIA_MISSING = 'suggest_wikipedia_missing';
+    case SUGGEST_PARENTS_MISSING = 'suggest_parents_missing';
+    // the steps of the suggestions that the add view shows to the user
+    case SUGGEST_READ_WIKIPEDIA = 'suggest_read_wikipedia';
+    case SUGGEST_READ_CONCEPTNET = 'suggest_read_conceptnet';
+    case SUGGEST_READ_WIKIDATA = 'suggest_read_wikidata';
+    case SUGGEST_FOUND_DESCRIPTION = 'suggest_found_description';
+    case SUGGEST_FOUND_WIKIDATA = 'suggest_found_wikidata';
+    case SUGGEST_FOUND_PARENTS = 'suggest_found_parents';
+    case SUGGEST_NO_PARENTS = 'suggest_no_parents';
+    case SUGGEST_NO_ANSWER = 'suggest_no_answer';
     case IMPORT_PREVIEW_WORDS_NEW = 'import_preview_words_new';
     case IMPORT_PREVIEW_TRIPLES_NEW = 'import_preview_triples_new';
     case IMPORT_PREVIEW_VALUES_NEW = 'import_preview_values_new';
@@ -283,6 +296,8 @@ enum messages: string
     case INFO_CONFIRM_REFS = 'info_confirm_refs';
     case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';
     case REF_ROW_TYPE_USED = 'ref_row_type_used';
+    // the triple rows that the confirm of a new word adds too (see url_var::TRIPLE_ROW)
+    case INFO_CONFIRM_TRIPLES = 'info_confirm_triples';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
     case READ = 'read';

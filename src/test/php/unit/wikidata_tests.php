@@ -68,6 +68,11 @@ class wikidata_tests
     // the wikidata ids of Zurich, of the property population and of the property price
     const string ZURICH_KEY = 'Q72';
     const string ZURICH_CITY = 'Zurich (city)';
+    // the wikidata ids of Hamburg and of two of its "instance of" items, and of a group as deprecated claim
+    const string HAMBURG_KEY = 'Q1055';
+    const string CITY_STATE_ID = 'Q133442';
+    const string PORT_CITY_ID = 'Q2264924';
+    const string DEPRECATED_GROUP_ID = 'Q515';
     const string POPULATION_PROPERTY = 'P1082';
     const string PRICE_PROPERTY = 'P2284';
     const string RESIDENT_POPULATION_WITHOUT_NAME = 'criterion "Q56229488"';
@@ -336,6 +341,31 @@ class wikidata_tests
 
         $test_name = 'the import preview finds the properties of the claims of Zurich';
         $t->assert($test_name, $imp->property_ids($entity_json), [self::POPULATION_PROPERTY]);
+
+        // the groups of an item, which the add word button suggests as 'is a' triples if conceptnet knows none
+        $test_name = 'the instance of items of an entity are found without the deprecated claim';
+        $inst_claim = fn(string $id, string $rank) => [
+            import_wikidata::WD_MAINSNAK => [
+                import_wikidata::WD_DATAVALUE => [import_wikidata::WD_VALUE => [import_wikidata::WD_ID => $id]]
+            ],
+            import_wikidata::WD_RANK => $rank,
+        ];
+        $inst_claims = [
+            $inst_claim(self::CITY_STATE_ID, ''),
+            $inst_claim(self::PORT_CITY_ID, ''),
+            $inst_claim(self::DEPRECATED_GROUP_ID, import_wikidata::WD_RANK_DEPRECATED),
+        ];
+        $inst_ent = [
+            import_wikidata::WD_ID => self::HAMBURG_KEY,
+            import_wikidata::WD_CLAIMS => [import_wikidata::WD_INSTANCE_OF => $inst_claims],
+        ];
+        $inst_json = json_encode([import_wikidata::WD_ENTITIES => [self::HAMBURG_KEY => $inst_ent]]);
+        $t->assert($test_name, $imp->instance_of_ids($inst_json), [self::CITY_STATE_ID, self::PORT_CITY_ID]);
+        // negative: an entity without an instance of claim names no group
+        $test_name = '... and none for an entity without instance of claim';
+        $no_inst_ent = [import_wikidata::WD_ID => self::HAMBURG_KEY];
+        $no_inst_json = json_encode([import_wikidata::WD_ENTITIES => [self::HAMBURG_KEY => $no_inst_ent]]);
+        $t->assert($test_name, $imp->instance_of_ids($no_inst_json), []);
 
         // so that the preview loads the phrases of the pod with these references before the convert
         $test_name = 'the import preview finds the wikidata ids of the entity and the criteria of the population';

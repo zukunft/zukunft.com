@@ -46,6 +46,10 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::MODEL_REF . 'ref_list.php';
+include_once paths::SHARED_TYPES . 'ref_types.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -56,8 +60,12 @@ include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -130,11 +138,17 @@ class word_write_url_tests extends word_url_tests
         // login of user 1, the logout and the login of user 2
         $this->login_logout_login($t);
 
+        // the add of Hamburg via the add word button of a search with the suggestions of wikipedia
+        // and conceptnet, which are read live
+        $this->add_word_with_suggestions($t);
+
 
         $t->subheader($this->ts . 'cleanup');
 
         // cleanup - fallback delete in case a workflow did not persist as expected
         $this->cleanup_test_words($t);
+        // the confirmed triples of Hamburg have set the verb "is a" as the last used verb of usr1
+        $t->cleanup_last_used();
 
     }
 
@@ -731,6 +745,148 @@ class word_write_url_tests extends word_url_tests
      *
      * @param test_cleanup $t the test environment
      */
+    /**
+     * the add of Hamburg via the add word button of a search: the button reads the description of the
+     * wikipedia page Hamburg and the 'is a' concepts of conceptnet, which fill the add view, and the
+     * confirm writes the word with its references and 'is a' triples; the suggestions are read live, so
+     * the steps are checked by their result and not by page snapshots; while the conceptnet api does not
+     * answer, the triples come from the "instance of" items of wikidata, and if neither answers, the info
+     * that no triple is suggested is checked instead of the triples
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function add_word_with_suggestions(test_cleanup $t): void
+    {
+        $msg = new user_message($t->usr1);
+        $t->subheader($this->ts . 'add word suggestions');
+        $this->cleanup_hamburg($t);
+        // usr1 requests the add and not usr2 of the login workflow before (see wf_start), because the
+        // confirmed triples set the verb as the last used verb of the requesting user
+        $usr_ui = new user_ui($t->usr1->api_json());
+
+        // the url of the add word button of the search of Hamburg (see system_page::add_word_button)
+        $btn_url = [
+            url_var::MASK => views::WORD_ADD_DETAIL_ID,
+            url_var::NAME => word_names::HAMBURG,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::REFRESH => url_var::REFRESH_SUGGEST,
+        ];
+        $sug_msg = new user_message_ui($usr_ui);
+        $add_url = $this->ui->url_with_word_suggestions($btn_url, $sug_msg, false);
+        $test_name = 'the add word button of a search opens the add view';
+        $t->assert_false($test_name, array_key_exists(url_var::STEP, $add_url));
+        // negative: the steps of the collection are shown only below the loading text, not on the add view
+        $test_name = '... without the steps of the collection e.g. the wikipedia page';
+        $wiki_url = ref_types::WIKIPEDIA_PAGE_URL . word_names::HAMBURG;
+        $t->assert_text_not_contains($test_name, $sug_msg->get_last_info_html(), $wiki_url);
+        $test_name = '... with the description of the wikipedia page ' . word_names::HAMBURG;
+        $t->assert_true($test_name, ($add_url[url_var::DESCRIPTION] ?? '') != '');
+        $test_name = '... and at least the wikipedia and the wikidata reference';
+        $t->assert_true($test_name, count(url_var::ref_rows($add_url)) >= 2);
+        $parents = array_column(url_var::triple_rows($add_url), url_var::PHRASE_TO);
+        if ($parents == []) {
+            $test_name = '... and without a group of conceptnet and wikidata the info that no triple is suggested';
+            $t->assert_text_contains($test_name, $sug_msg->get_last_info_html(), word_names::HAMBURG);
+        }
+        // only the parent words that the confirm adds are removed again, never e.g. the city of the base data
+        $new_parents = [];
+        foreach ($parents as $parent) {
+            if (!$this->is_phrase_name($parent, $t)) {
+                $new_parents[] = $parent;
+            }
+        }
+
+        // the confirm of the add view writes the word with its references and triples
+        $cnf_url = $add_url;
+        $cnf_url[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $req = new user_request(new user_message_ui($usr_ui), $this->ui->dto, true, true);
+        $this->ui->execute_and_next($cnf_url, $req);
+        $test_name = 'the confirm of the suggestions writes the word ' . word_names::HAMBURG;
+        $t->assert_msg($test_name, $req->msg);
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::HAMBURG, $msg);
+        $t->assert_true($test_name, $wrd->id() > 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $test_name = '... with the description of wikipedia';
+        $t->assert($test_name, $wrd->description ?? '', $add_url[url_var::DESCRIPTION] ?? '');
+        $test_name = '... and the suggested references';
+        $ref_lst = new ref_list($t->usr1);
+        $ref_lst->load_by_phr_id($wrd->phrase()->id(), $msg);
+        $t->assert($test_name, $ref_lst->count(), count(url_var::ref_rows($add_url)));
+        $test_name = '... and an "is a" triple of each suggested parent';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->load_by_phr($wrd->phrase(), $msg);
+        $t->assert($test_name, $trp_lst->count(), count($parents));
+
+        $this->cleanup_hamburg($t, $new_parents);
+    }
+
+    /**
+     * @param string $name the name of a suggested parent e.g. "city"
+     * @param test_cleanup $t the test environment
+     * @return bool true if the pod has a word or a triple with this name
+     */
+    private function is_phrase_name(string $name, test_cleanup $t): bool
+    {
+        $msg = new user_message($t->usr1);
+        $wrd = new word($t->usr1);
+        $trp = new triple($t->usr1);
+        return ($wrd->load_by_name($name, $msg) > 0 or $trp->load_by_name($name, $msg) > 0);
+    }
+
+    /**
+     * remove Hamburg with its triples and references and the parent words that the workflow has added,
+     * also the leftovers of an earlier run of the workflow
+     *
+     * @param test_cleanup $t the test environment
+     * @param array $new_parents the names of the parent words that the workflow has added
+     * @return void
+     */
+    private function cleanup_hamburg(test_cleanup $t, array $new_parents = []): void
+    {
+        $msg = new user_message($t->usr1);
+        // loaded by the system user, so that a triple excluded by a test user is found too
+        $wrd = new word($t->usr_system);
+        if ($wrd->load_by_name(word_names::HAMBURG, $msg) > 0) {
+            $trp_lst = new triple_list($t->usr_system);
+            $trp_lst->load_by_phr($wrd->phrase(), $msg);
+            // the change log of a test row is removed before the row (see docs/llm/testing.md)
+            foreach ($trp_lst->lst() as $trp) {
+                // a parent word of a test user is a leftover of an earlier run e.g. "big city", because
+                // the parent words of the base data are owned by the system user
+                $to_name = $trp->to_name() ?? '';
+                if ($this->is_test_user_word($to_name, $t)) {
+                    $new_parents[] = $to_name;
+                }
+                $t->cleanup_change_log($trp, [$trp->name()]);
+                // by the owner, because e.g. a triple of usr2 is only excluded by the delete of usr1,
+                // which keeps Hamburg and the parent words in use (see word::used_by_data)
+                $t->del_by_owner($trp, $msg);
+            }
+            $t->cleanup_leftover_refs($wrd->phrase(), $msg);
+        }
+        $t->cleanup_change_log($wrd, [word_names::HAMBURG]);
+        $t->write_named_cleanup($wrd, word_names::HAMBURG);
+        $new_parents = array_unique($new_parents);
+        $t->cleanup_change_log($wrd, $new_parents);
+        foreach ($new_parents as $parent) {
+            $t->write_named_cleanup(new word($t->usr1), $parent);
+        }
+        $t->assert_msg($this->ts . 'cleanup of ' . word_names::HAMBURG, $msg);
+    }
+
+    /**
+     * @param string $name the name of a parent word of Hamburg e.g. "big city"
+     * @param test_cleanup $t the test environment
+     * @return bool true if the pod has a word with this name that a test user owns
+     */
+    private function is_test_user_word(string $name, test_cleanup $t): bool
+    {
+        $msg = new user_message($t->usr_system);
+        $wrd = new word($t->usr_system);
+        $found = ($name != '' and $wrd->load_by_name($name, $msg) > 0);
+        return ($found and in_array($wrd->owner_id(), [$t->usr1->id(), $t->usr2->id()]));
+    }
+
     private function cleanup_test_words(test_cleanup $t): void
     {
         $wrd = new word($t->usr1);

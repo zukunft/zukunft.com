@@ -1165,6 +1165,67 @@ class phrase extends combine_named
     }
 
     /**
+     * add the triples that the user has confirmed together with this new word (see url_var::TRIPLE_ROW)
+     * e.g. "Hamburg" "is a" "city"; a to phrase that the pod does not have yet is added as a new word
+     *
+     * @param array $url_array the confirmed url with the '5'-prefixed triple rows
+     * @param user_message $msg with the requesting user to report the result of each triple add
+     * @return array the url with only the rows that could not be written, so that the confirm page can show them again
+     */
+    function save_triple_rows(array $url_array, user_message $msg): array
+    {
+        $result = $url_array;
+        foreach (url_var::triple_rows($url_array) as $row => $fields) {
+            $row_msg = new user_message($msg->usr); // the result of this row only, merged into $msg right away
+            $this->add_triple_of_row($fields, $row_msg);
+            $msg->merge($row_msg);
+            if ($row_msg->is_ok()) {
+                $result = url_var::without_ref_row($result, $row, url_var::TRIPLE_ROW);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $fields the url vars of a triple row e.g. ['a' => 'a', 'b' => 2, 'pt' => 'city']
+     * @param user_message $msg with the requesting user to report the result of the add
+     * @return void
+     */
+    private function add_triple_of_row(array $fields, user_message $msg): void
+    {
+        $to = $this->phrase_of_row((string)$fields[url_var::PHRASE_TO], $msg);
+        if ($to != null) {
+            $trp = new triple();
+            $trp->set_from($this);
+            $trp->set_verb_by_id((int)($fields[url_var::VERB] ?? 0));
+            $trp->set_to($to);
+            $msg->merge($trp->add_via_api($msg));
+        }
+    }
+
+    /**
+     * @param string $name the name of the to phrase of a triple row e.g. "city"
+     * @param user_message $msg with the requesting user to report a failed add of the new word
+     * @return phrase|null the phrase with this name, added as a new word if the pod has none, null if the add failed
+     */
+    private function phrase_of_row(string $name, user_message $msg): ?phrase
+    {
+        $result = new phrase();
+        $find_msg = new user_message($msg->usr); // an unknown name is no error here, because the word is added then
+        if (!$result->load_by_name($name, $find_msg)) {
+            $wrd = new word();
+            $wrd->set_name($name);
+            $add_msg = $wrd->add_via_api($msg);
+            $msg->merge($add_msg);
+            $result = null;
+            if ($add_msg->is_ok()) {
+                $result = $wrd->phrase();
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param array $fields the url vars of one reference row e.g. ['a' => 'u', 'l' => 279, 'ek' => 'Q71']
      * @param user_message $msg with the requesting user to report the result of the write
      * @return void

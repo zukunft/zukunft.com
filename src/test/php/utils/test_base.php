@@ -5333,21 +5333,34 @@ class test_base
             $sbx_sys->set_user($this->usr_system);
             $sbx_sys->load_by_name($name, $msg);
             if ($sbx_sys->id() != 0) {
-                // remove the overlay rows of all test users and of the system user, so that the delete below is not
-                // diverted to yet another exclusion overlay by the used by someone else check
-                $owner = $sbx_sys->owner($msg);
-                if ($owner == null) {
-                    $owner = $this->usr_system;
-                }
-                foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
-                    $sbx_sys->set_user($usr);
-                    $sbx_sys->del_usr_cfg($msg);
-                }
-                // deleted by the owner, because the delete of any other user is only an exclusion for this user
-                $sbx_sys->set_user($owner);
-                $sbx_sys->del(new user_message($owner));
+                $this->del_by_owner($sbx_sys, $msg);
             }
         }
+    }
+
+    /**
+     * delete a loaded test row of a user sandbox object independent of the user who owns it, e.g. a
+     * triple that a workflow has written for another test user than the user of the cleanup
+     *
+     * @param sandbox $sbx the loaded user sandbox object e.g. a triple
+     * @param user_message $msg to report an overlay row that cannot be removed
+     * @return void
+     */
+    function del_by_owner(sandbox $sbx, user_message $msg): void
+    {
+        // remove the overlay rows of all test users and of the system user, so that the delete below is not
+        // diverted to yet another exclusion overlay by the used by someone else check
+        $owner = $sbx->owner($msg);
+        if ($owner == null) {
+            $owner = $this->usr_system;
+        }
+        foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
+            $sbx->set_user($usr);
+            $sbx->del_usr_cfg($msg);
+        }
+        // deleted by the owner, because the delete of any other user is only an exclusion for this user
+        $sbx->set_user($owner);
+        $sbx->del(new user_message($owner));
     }
 
     /**

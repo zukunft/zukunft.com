@@ -41,12 +41,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
 include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_link_conceptnet.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -55,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -116,6 +119,142 @@ class ref_link_wikipedia
                 }
             }
         }
+    }
+
+    /**
+     * fill a word that does not exist yet with the suggestions of one source for its add view if the url
+     * asks for it (one of url_var::REFRESH_SUGGEST_SOURCES, see web/word/word::suggestion_url): the
+     * description, the wikipedia and the wikidata reference of the wikipedia page with the name of the word,
+     * the 'is a' concepts and the reference of conceptnet, or the groups of a wikidata item ("instance of");
+     * one source per request, so that the frontend shows each step while the user waits; the change is only
+     * in memory, so that the user can adjust and confirm it, and a source that cannot be read leaves its
+     * suggestions out, because the word can be added without them, and names the reason as a step
+     *
+     * @param word $wrd the word as loaded by its name, which gets the suggestions only if it does not exist
+     * @param string $name the name of the new word e.g. "Hamburg"
+     * @param array $url_array the api request parameters with the source and for wikidata the item e.g. "Q1055"
+     * @param user_message $msg with the requesting user, unchanged, because a missing suggestion is no error
+     * @return void
+     */
+    function suggest_from_url(word $wrd, string $name, array $url_array, user_message $msg): void
+    {
+        $source = $url_array[url_var::REFRESH] ?? '';
+        if (in_array($source, url_var::REFRESH_SUGGEST_SOURCES) and $wrd->id() == 0) {
+            $wrd->set_name($name);
+            $wrd->references_related = new ref_list($wrd->get_user());
+            if ($source == url_var::REFRESH_SUGGEST_WIKIPEDIA) {
+                $this->suggest_from_wikipedia($wrd, $name, $msg);
+            } elseif ($source == url_var::REFRESH_SUGGEST_CONCEPTNET) {
+                $this->suggest_from_conceptnet($wrd, $name, $msg);
+            } else {
+                $this->suggest_from_wikidata($wrd, (string)($url_array[url_var::EXTERNAL_KEY] ?? ''), $msg);
+            }
+        }
+    }
+
+    /**
+     * @param word $wrd the new word that gets the description, the wikipedia and the wikidata reference
+     * @param string $name the name of the new word, which is also the name of the wikipedia page
+     * @param user_message $msg with the requesting user
+     * @return void
+     */
+    private function suggest_from_wikipedia(word $wrd, string $name, user_message $msg): void
+    {
+        $wiki_msg = new user_message($msg->usr); // why the page cannot be used, a step and no error of the api answer
+        $summary = $this->summary($name, $wiki_msg);
+        $wiki_ref = $this->new_ref($wrd, ref_types::WIKIPEDIA, $name);
+        if ($summary != []) {
+            $this->take_over($wrd, $wiki_ref, $summary, $name, $wiki_msg);
+        }
+        if ($summary != [] and $wiki_msg->is_ok()) {
+            $wrd->references_related->add_direct($wiki_ref);
+            $this->add_step($wrd, msg_id::SUGGEST_FOUND_DESCRIPTION, $wrd->get_description() ?? '');
+            $wd_id = $this->wikidata_id($summary);
+            if ($wd_id != '') {
+                $this->add_step($wrd, msg_id::SUGGEST_FOUND_WIKIDATA, ref_types::WIKIDATA_ITEM_URL . $wd_id);
+            }
+        } else {
+            $wrd->suggest_steps[] = $wiki_msg->all_message_text();
+        }
+    }
+
+    /**
+     * @param word $wrd the new word that gets the 'is a' concepts and the conceptnet reference
+     * @param string $name the name of the new word e.g. "Hamburg"
+     * @param user_message $msg with the requesting user
+     * @return void
+     */
+    private function suggest_from_conceptnet(word $wrd, string $name, user_message $msg): void
+    {
+        $cpn = new ref_link_conceptnet();
+        $cpn_msg = new user_message($msg->usr); // why conceptnet cannot be read, a step and no error of the api answer
+        $wrd->suggested_parents = $cpn->is_a_names($name, $cpn_msg);
+        $this->add_parents_step($wrd, $wrd->suggested_parents, $cpn_msg, ref_types::CONCEPTNET);
+        if ($wrd->suggested_parents != []) {
+            $cpn_ref = $this->new_ref($wrd, ref_types::CONCEPTNET, $cpn->concept_key($name));
+            $wrd->references_related->add_direct($cpn_ref);
+        }
+    }
+
+    /**
+     * the groups of the wikidata item that the wikipedia page names e.g. "city-state" for Hamburg, which the
+     * frontend asks for if conceptnet knows no group
+     *
+     * @param word $wrd the new word that gets the names of the "instance of" items of the wikidata item
+     * @param string $wd_id the wikidata id of the item e.g. "Q1055"
+     * @param user_message $msg with the requesting user
+     * @return void
+     */
+    private function suggest_from_wikidata(word $wrd, string $wd_id, user_message $msg): void
+    {
+        // a failed live request is logged for the developer (see import_wikidata::request_json) and adds no message
+        $wrd->suggested_parents = new import_wikidata()->instance_of_names($wd_id, $msg);
+        $this->add_parents_step($wrd, $wrd->suggested_parents, $msg, ref_types::WIKIDATA_NAME);
+    }
+
+    /**
+     * @param word $wrd the new word that gets the step
+     * @param array $names the groups that the source has suggested e.g. ["city-state", "port city"]
+     * @param user_message $src_msg why the source cannot be read, ok if it has answered
+     * @param string $source the name of the source for the step without groups e.g. "conceptnet"
+     * @return void
+     */
+    private function add_parents_step(word $wrd, array $names, user_message $src_msg, string $source): void
+    {
+        if ($names != []) {
+            $this->add_step($wrd, msg_id::SUGGEST_FOUND_PARENTS, implode(', ', $names));
+        } elseif (!$src_msg->is_ok()) {
+            $wrd->suggest_steps[] = $src_msg->all_message_text();
+        } else {
+            $this->add_step($wrd, msg_id::SUGGEST_NO_PARENTS, $source);
+        }
+    }
+
+    /**
+     * @param word $wrd the new word that gets the step of its suggestions, which the loading text shows in this order
+     * @param msg_id $msg_id the text of the step e.g. msg_id::SUGGEST_FOUND_WIKIDATA
+     * @param string $name the url or the result of the step e.g. "https://www.wikidata.org/wiki/Q1055"
+     * @return void
+     */
+    private function add_step(word $wrd, msg_id $msg_id, string $name): void
+    {
+        global $mtr;
+        $lib = new library();
+        $wrd->suggest_steps[] = $lib->msg_var_text([[$msg_id, [msg_id::VAR_NAME => $name]]], $mtr);
+    }
+
+    /**
+     * @param word $wrd the new word of the reference
+     * @param string $type_code_id the code id of the reference type e.g. ref_types::WIKIPEDIA
+     * @param string $key the external key e.g. the name of the wikipedia page
+     * @return ref the reference that is written only after the user has confirmed it
+     */
+    private function new_ref(word $wrd, string $type_code_id, string $key): ref
+    {
+        global $sys;
+        $ref = new ref($wrd->get_user());
+        $ref->set(0, $wrd->phrase(), $sys->typ_lst->ref_typ->id($type_code_id), $key);
+        return $ref;
     }
 
     /**

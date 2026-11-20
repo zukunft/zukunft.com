@@ -4,8 +4,8 @@
             "pageid": 200,
             "ns": 0,
             "title": "Q72",
-            "lastrevid": 2571932441,
-            "modified": "2026-11-19T08:55:44Z",
+            "lastrevid": 2572518385,
+            "modified": "2026-11-20T08:42:22Z",
             "type": "item",
             "id": "Q72",
             "labels": {
@@ -2379,7 +2379,33 @@
                         },
                         "type": "statement",
                         "id": "q72$191B3924-0ECE-40E5-9904-E055696DB7EF",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2709,7 +2735,33 @@
                         },
                         "type": "statement",
                         "id": "q72$2284997e-4863-6651-4b97-32dc838b61b9",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2742,23 +2794,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2779,23 +2835,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2816,23 +2876,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2853,23 +2917,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2890,23 +2958,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2927,23 +2999,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2964,23 +3040,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3001,23 +3081,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3038,23 +3122,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3075,23 +3163,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3112,23 +3204,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3223,23 +3319,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3260,23 +3360,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3297,23 +3401,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3334,23 +3442,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3371,23 +3483,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3408,23 +3524,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3445,23 +3565,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3482,23 +3606,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "d2fed1e79e0951283a30abf54387dd90e23ef282",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "596481bf97cbbf1def16f5af398e4b040f5f1d83",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/en/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]

@@ -572,7 +572,10 @@ class system_form extends component
         // object type of a confirm view
         $link_url = html_base::prefixed_url_array(html_base::link_vars($url_array), url_var::LINK);
         // and the '6'-prefixed reference rows that the confirm writes with the phrase (see url_var::REF_ROW)
+        // and the '5'-prefixed triple rows that it adds with a new word (see url_var::TRIPLE_ROW)
         $row_url = url_var::ref_row_url_array(url_var::ref_rows($url_array));
+        $triple_rows = url_var::triple_rows($url_array);
+        $row_url += url_var::ref_row_url_array($triple_rows, [], url_var::TRIPLE_ROW);
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::BACK)
                 or array_key_exists($key, $link_url)

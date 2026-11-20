@@ -142,6 +142,8 @@ class import_wikidata
     // the wikidata property id of the "determination method" qualifier, which says how the number has been found
     // e.g. by a census, but not what it means, so a value with it is imported like one without it
     const string WD_DETERMINATION_METHOD = 'P459';
+    // the wikidata property id of "instance of", which names the groups of an item e.g. "city-state" for Hamburg
+    const string WD_INSTANCE_OF = 'P31';
     // the qualifiers that never change what the number of a claim means; any other e.g. P518 "applies to
     // part" does, so the claim is not imported
     const array WD_KNOWN_QUALIFIERS = [
@@ -555,6 +557,46 @@ class import_wikidata
             $result = array_keys($this->first_entity($entity)[self::WD_CLAIMS] ?? []);
         }
         return $result;
+    }
+
+    /**
+     * the english names of the groups of an item, which the add word button of a search suggests as 'is a'
+     * triples if conceptnet knows none (see ref_link_wikipedia::suggest_from_url)
+     *
+     * @param string $wikidata_id the wikidata id of the item e.g. "Q1055" for Hamburg
+     * @param user_message $msg to report a missing answer file of an offline test
+     * @return array the labels of the "instance of" items each once e.g. ["city-state", "port city"], empty if none can be read
+     */
+    function instance_of_names(string $wikidata_id, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->instance_of_ids($this->read_json($wikidata_id, $msg)) as $item_id) {
+            $label = $this->item_label($item_id, $msg);
+            if ($label != '' and !in_array($label, $result)) {
+                $result[] = $label;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $entity_json the wikidata json of the entity e.g. the content of Q1055.json
+     * @return array the wikidata ids of the "instance of" items e.g. ["Q133442", "Q2264924"], without the deprecated claims
+     */
+    function instance_of_ids(string $entity_json): array
+    {
+        $entity = json_decode($entity_json, true);
+        $result = [];
+        if (is_array($entity)) {
+            foreach ($this->first_entity($entity)[self::WD_CLAIMS][self::WD_INSTANCE_OF] ?? [] as $claim) {
+                // a claim that wikidata marks as wrong or outdated names no group of the item
+                if (($claim[self::WD_RANK] ?? '') != self::WD_RANK_DEPRECATED) {
+                    $result[] = $claim[self::WD_MAINSNAK][self::WD_DATAVALUE][self::WD_VALUE][self::WD_ID] ?? '';
+                }
+            }
+        }
+        // a claim of an unknown or no value has no id
+        return array_values(array_filter($result, fn($id) => $id != ''));
     }
 
     /**

@@ -812,9 +812,11 @@ class system_page extends component
     }
 
     /**
-     * the button of a search without a result that opens the confirm page of the add word
-     * workflow with the search pattern as the suggested name, so that the user can add the
-     * word they have looked for without typing the name again
+     * the button of a search without a result that opens the add word workflow with the search
+     * pattern as the suggested name, so that the user can add the word they have looked for without
+     * typing the name again; the button asks for the suggestions of wikipedia and conceptnet, which
+     * fill the add view (see frontend::url_with_word_suggestions), and without them e.g. in a test
+     * render it opens the confirm page of the word with only the name
      *
      * the confirm step only shows the pending word and writes nothing, so the link needs no
      * session token, and it sets the back target itself (see frontend::url_to_action)
@@ -829,7 +831,8 @@ class system_page extends component
 
         $html = new html_base();
         $par = url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM
-            . url_var::ADD . url_var::NAME . url_var::EQ . urlencode($pattern);
+            . url_var::ADD . url_var::NAME . url_var::EQ . urlencode($pattern)
+            . url_var::ADD . url_var::REFRESH . url_var::EQ . url_var::REFRESH_SUGGEST;
         $url = $html->url_back(views::WORD_ADD_DETAIL_ID, 0, [], $par);
         // ref escapes the pattern, which is user input reflected from the url
         $btn_text = $lib->msg_var_replace(
