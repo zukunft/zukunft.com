@@ -437,6 +437,30 @@ class sandbox extends db_object
         return $vars;
     }
 
+    /**
+     * @param array $vars the json message array of the object to send to the backend
+     * @return array the json message array without the fields that are not set
+     */
+    protected function api_array_set(array $vars): array
+    {
+        return array_filter($vars, fn($val, $key) => $this->api_value_set($val, $key), ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * @param mixed $val the value of a field of the json message array
+     * @param int|string $key the json field name
+     * @return bool true if the field is sent to the backend: an empty description too, because it
+     *              clears the description of the user, but never an unknown description
+     */
+    private function api_value_set(mixed $val, int|string $key): bool
+    {
+        $result = (!is_null($val) and $val !== '');
+        if ($key === json_fields::DESCRIPTION) {
+            $result = !is_null($val);
+        }
+        return $result;
+    }
+
 
     /*
      * set and get

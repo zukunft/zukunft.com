@@ -176,7 +176,9 @@ class sandbox_named extends sandbox
         $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->get_description();
+        // the raw description, not get_description(), which shows null as an empty string:
+        // an empty description clears the description of the user, null means not known
+        $vars[json_fields::DESCRIPTION] = $this->description;
         // the usage is not included here because it should always be updated in the backend
         return $vars;
     }

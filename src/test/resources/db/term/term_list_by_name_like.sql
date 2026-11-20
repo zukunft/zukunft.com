@@ -4,7 +4,7 @@ PREPARE term_list_by_name_like (bigint, text) AS
                s.user_id,
                s.term_type_id,
                CASE WHEN (u.term_name     <> ''  IS NOT TRUE) THEN s.term_name     ELSE u.term_name     END AS term_name,
-               CASE WHEN (u.description   <> ''  IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
+               CASE WHEN (u.description          IS     NULL) THEN s.description   ELSE u.description   END AS description,
                CASE WHEN (u.formula_text  <> ''  IS NOT TRUE) THEN s.formula_text  ELSE u.formula_text  END AS formula_text,
                CASE WHEN (u.resolved_text <> ''  IS NOT TRUE) THEN s.resolved_text ELSE u.resolved_text END AS resolved_text,
                CASE WHEN (u.latex         <> ''  IS NOT TRUE) THEN s.latex         ELSE u.latex         END AS latex,

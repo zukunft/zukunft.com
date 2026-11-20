@@ -498,7 +498,7 @@ class component extends sandbox_code_id
         if ($this->component_link_type_id != 0) {
             $vars[json_fields::COMPONENT_LINK_TYPE] = $this->component_link_type_id;
         }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
     /**

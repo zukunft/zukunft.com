@@ -414,13 +414,17 @@ class sql_par_field_list
      * @param sandbox|sandbox_named|sandbox_link_named $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
      * @param bool $do_log true if the field for logging the change should be included
      * @param int $table_id the id of the table for logging
+     * @param bool $usr_update true for the update of the row of a user, which is compared with the user row as it
+     *                         is in the database: in this row an empty description is the overwrite that clears the
+     *                         standard description, whereas null shows the standard description
      * @return void
      */
     function add_name_and_description(
         sandbox|sandbox_named|sandbox_link_named $sbx_upd,
         sandbox|sandbox_named|sandbox_link_named $sbx_db,
         bool                                     $do_log,
-        int                                      $table_id
+        int                                      $table_id,
+        bool                                     $usr_update = false
     ): void
     {
         global $sys;
@@ -441,7 +445,7 @@ class sql_par_field_list
                 $sbx_db->name_or_null()
             );
         }
-        if ($sbx_db->description <> $sbx_upd->description) {
+        if ($this->description_changed($sbx_upd->description, $sbx_db->description, $usr_update)) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
@@ -456,6 +460,29 @@ class sql_par_field_list
                 $sbx_db->description
             );
         }
+    }
+
+    /**
+     * public only so that the unit tests can check it (see sandbox_tests)
+     *
+     * @param string|null $upd the description that should be saved, '' to clear it
+     * @param string|null $db the description to compare with: of the user row for the update of a user row,
+     *                        else of the standard row e.g. for the insert of a user row or the check if one is needed
+     * @param bool $usr_update true for the update of a user row, in which '' clears and null shows the standard
+     * @return bool true if the description field must be written
+     */
+    function description_changed(?string $upd, ?string $db, bool $usr_update = false): bool
+    {
+        if ($usr_update) {
+            // the update gets only the fields that differ from the standard row (sandbox_named::delta),
+            // so a '' clears a standard description and a null shows it again
+            $result = $db !== $upd;
+        } else {
+            // compared with the standard row null and '' both mean no description, so a form with an empty
+            // field never writes a change of an object without description, but '' clears a description
+            $result = ($db ?? '') !== ($upd ?? '');
+        }
+        return $result;
     }
 
     function del(string $fld_name): void

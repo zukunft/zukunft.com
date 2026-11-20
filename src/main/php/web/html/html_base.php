@@ -210,6 +210,7 @@ class html_base
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
+    const string READONLY = 'readonly'; // a field that the user sees but cannot change
     const string ARIA_LABEL = 'aria-label'; // the accessible name of a control that shows only an icon
     const string PLACEHOLDER = 'placeholder';
     const string BR = 'br';

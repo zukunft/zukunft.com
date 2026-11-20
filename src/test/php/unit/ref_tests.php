@@ -33,12 +33,17 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_USER . 'user_message.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -52,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -59,8 +65,11 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -483,6 +492,31 @@ class ref_tests
         $test_name = 'the ref edit form title of a phrase without name has no phrase link';
         $ttl_plain_html = $form->form_tile(views::REF_EDIT, msg_id::FORM_TITLE_REF_EDIT, $ref_plain);
         $t->assert_text_not_contains($test_name, $ttl_plain_html, '<a ');
+        // the add ref view of a word page gets the word by the url (ref_list::add_link), so its phrase
+        // field shows the word; a test render reads no phrase, so the word is taken from the given list
+        $msg_ui = new user_message_ui();
+        $phr_lst_ui = new phrase_list_ui();
+        $phr_lst_ui->add($ref_ui->phrase(), $msg_ui);
+        // only the input before the datalist, because the options of the datalist name the suggested phrases too
+        $test_name = 'the add ref view shows the word of the reference in the phrase field';
+        $phr_html = $form->form_phrase($ref_ui, views::REF_ADD, $msg_ui, components::FORM_PHRASE_REF_CODE_ID,
+            $phr_lst_ui, true);
+        $t->assert_text_contains($test_name, (string)strstr($phr_html, '<datalist', true), 'value="' . word_names::PI . '"');
+        // negative: a new reference without a phrase shows an empty phrase field, but still the suggestions
+        $test_name = 'the add ref view of a new reference shows an empty phrase field';
+        $phr_html = $form->form_phrase($ref_empty, views::REF_ADD, $msg_ui, components::FORM_PHRASE_REF_CODE_ID,
+            $phr_lst_ui, true);
+        $t->assert_text_not_contains($test_name, (string)strstr($phr_html, '<datalist', true), 'value=');
+        // the suggested phrases of the add ref view are sorted by name like the other phrase fields,
+        // so "CHF" is shown before "Pi" although the list has it after "Pi"
+        $test_name = 'the add ref view sorts the suggested phrases by name';
+        $phr_sort_lst = clone $phr_lst_ui;
+        $phr_sort_lst->add($t_wrd->chf_ui()->phrase(), $msg_ui);
+        $phr_html = $form->form_phrase($ref_ui, views::REF_ADD, $msg_ui, components::FORM_PHRASE_REF_CODE_ID,
+            $phr_sort_lst, true);
+        $pos_chf = strpos($phr_html, 'value="' . words::CHF . '"');
+        $pos_pi = strpos($phr_html, 'value="' . word_names::PI . '"', strpos($phr_html, '<datalist'));
+        $t->assert_true($test_name, $pos_chf !== false and $pos_pi !== false and $pos_chf < $pos_pi);
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);

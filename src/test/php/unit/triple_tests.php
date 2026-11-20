@@ -7,6 +7,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_CONST . 'components.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -27,7 +30,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
@@ -534,6 +540,42 @@ class triple_tests
         $t->assert_text_contains($test_name, $form->form_field_weight($t_trp->triple_impact_ui()), 'value="0.5"');
         $test_name = 'the edit form of a triple without a weight starts with an empty weight field';
         $t->assert_false($test_name, str_contains($form->form_field_weight($t_trp->swiss_franc_ui()), 'value='));
+
+        // the edit form shows the from phrase, the verb and the to phrase of the triple read only,
+        // because a changed link would be another triple, and posts their ids unchanged
+        $trp_named = test_triples::triple_add(
+            test_words::word_add()->phrase(), test_verbs::verb_part(), test_words::word_add_to()->phrase());
+        $trp_named_ui = new triple_ui($trp_named->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+        $no_suggestions = new phrase_list_ui();
+        $test_name = 'the triple edit form shows the from phrase read only';
+        $from_html = $form->form_phrase($trp_named_ui, views::TRIPLE_EDIT, $msg_ui,
+            components::FORM_PHRASE_FROM_CODE_ID, $no_suggestions, true);
+        $t->assert_text_contains($test_name, $from_html, 'value="' . word_names::TEST_ADD . '" readonly');
+        $test_name = '... and posts the id of the from phrase unchanged';
+        $t->assert_text_contains($test_name, $from_html,
+            'name="' . url_var::PHRASE_FROM . '" value="' . word_names::TEST_ADD_ID . '"');
+        $test_name = '... and the to phrase';
+        $to_html = $form->form_phrase($trp_named_ui, views::TRIPLE_EDIT, $msg_ui,
+            components::FORM_PHRASE_TO_CODE_ID, $no_suggestions, true);
+        $t->assert_text_contains($test_name, $to_html, 'value="' . word_names::TEST_ADD_TO . '" readonly');
+        $test_name = '... and the verb';
+        $vrb_html = $form->form_verb($trp_named_ui, views::TRIPLE_EDIT, $msg_ui, null);
+        $t->assert_text_contains($test_name, $vrb_html, 'value="' . verbs::PART_NAME . '" readonly');
+        $test_name = '... and posts the id of the verb unchanged';
+        $t->assert_text_contains($test_name, $vrb_html, 'name="' . url_var::VERB . '" value="' . verbs::PART_ID . '"');
+        // negative: a triple without its verb, e.g. a test render of a triple known only by its id,
+        // offers the verb selection like the from and to phrase, so it never posts the verb 0
+        global $ui_sys;
+        $test_name = 'the triple edit form of a triple without verb offers the verb selection';
+        $no_vrb_html = $form->form_verb(new triple_ui(), views::TRIPLE_EDIT, $msg_ui, $ui_sys->typ_lst_cache);
+        $t->assert_text_not_contains($test_name, $no_vrb_html, html_base::READONLY);
+        // negative: the add form of a new triple has no from phrase to preselect and offers the selection
+        $test_name = 'the triple add form starts with an empty from phrase';
+        $add_html = $form->form_phrase(new triple_ui(), views::TRIPLE_ADD, $msg_ui,
+            components::FORM_PHRASE_FROM_CODE_ID, $no_suggestions, true);
+        $t->assert_text_not_contains($test_name, (string)strstr($add_html, '<datalist', true), 'value=');
+        $test_name = '... which the user can change';
+        $t->assert_text_not_contains($test_name, $add_html, html_base::READONLY);
 
         // the url array is the inverse of url_mapper, so it carries the linked phrases, the verb and
         // the triple fields that the edit form posts; a field that is not set is left out, so that a

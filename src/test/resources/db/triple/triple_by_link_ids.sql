@@ -1,28 +1,27 @@
 PREPARE triple_by_link_ids (bigint, bigint, bigint, bigint) AS
-    SELECT
-                s.triple_id,
-                u.triple_id AS user_triple_id,
-                s.user_id,
-                s.from_phrase_id,
-                s.verb_id,
-                s.to_phrase_id,
-                s.code_id,
-                s.usage,
-                s.triple_condition_id,
-                CASE WHEN (u.triple_name    <> '' IS NOT TRUE) THEN s.triple_name    ELSE u.triple_name    END AS triple_name,
-                CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN s.name_given     ELSE u.name_given     END AS name_given,
-                CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated ELSE u.name_generated END AS name_generated,
-                CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-                CASE WHEN (u.weight               IS     NULL) THEN s.weight         ELSE u.weight         END AS weight,
-                CASE WHEN (u.phrase_type_id       IS     NULL) THEN s.phrase_type_id ELSE u.phrase_type_id END AS phrase_type_id,
-                CASE WHEN (u.view_id              IS     NULL) THEN s.view_id        ELSE u.view_id        END AS view_id,
-                CASE WHEN (u.impact               IS     NULL) THEN s.impact         ELSE u.impact         END AS impact,
-                CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded,
-                CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id  ELSE u.share_type_id  END AS share_type_id,
-                CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id
-           FROM triples s
-      LEFT JOIN user_triples u ON s.triple_id = u.triple_id
-            AND u.user_id = $1
-          WHERE s.from_phrase_id = $2
-            AND s.to_phrase_id = $3
-            AND s.verb_id = $4;
+    SELECT     s.triple_id,
+               u.triple_id AS user_triple_id,
+               s.user_id,
+               s.from_phrase_id,
+               s.verb_id,
+               s.to_phrase_id,
+               s.code_id,
+               s.usage,
+               s.triple_condition_id,
+               CASE WHEN (u.triple_name    <> ''  IS NOT TRUE) THEN s.triple_name    ELSE u.triple_name    END AS triple_name,
+               CASE WHEN (u.name_given     <> ''  IS NOT TRUE) THEN s.name_given     ELSE u.name_given     END AS name_given,
+               CASE WHEN (u.name_generated <> ''  IS NOT TRUE) THEN s.name_generated ELSE u.name_generated END AS name_generated,
+               CASE WHEN (u.description           IS     NULL) THEN s.description    ELSE u.description    END AS description,
+               CASE WHEN (u.weight                IS     NULL) THEN s.weight         ELSE u.weight         END AS weight,
+               CASE WHEN (u.phrase_type_id        IS     NULL) THEN s.phrase_type_id ELSE u.phrase_type_id END AS phrase_type_id,
+               CASE WHEN (u.view_id               IS     NULL) THEN s.view_id        ELSE u.view_id        END AS view_id,
+               CASE WHEN (u.impact                IS     NULL) THEN s.impact         ELSE u.impact         END AS impact,
+               CASE WHEN (u.excluded              IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded,
+               CASE WHEN (u.share_type_id         IS     NULL) THEN s.share_type_id  ELSE u.share_type_id  END AS share_type_id,
+               CASE WHEN (u.protect_id            IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id
+          FROM triples s
+     LEFT JOIN user_triples u ON s.triple_id = u.triple_id
+                             AND u.user_id = $1
+         WHERE s.from_phrase_id = $2
+           AND s.to_phrase_id = $3
+           AND s.verb_id = $4;

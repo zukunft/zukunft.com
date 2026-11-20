@@ -1719,6 +1719,7 @@
     \-- add_id_link_and_user - section for function add_id_link_and_user missing in /db/sql_par_field_list.php
     \-- add_user - section for function add_user missing in /db/sql_par_field_list.php
     \-- add_name_and_description - section for function add_name_and_description missing in /db/sql_par_field_list.php
+    \-- description_changed - section for function description_changed missing in /db/sql_par_field_list.php
     \-- del - section for function del is expected to be del in /db/sql_par_field_list.php
     \-- fill_from_arrays - section for function fill_from_arrays missing in /db/sql_par_field_list.php
     \-- is_empty - section for function is_empty is expected to be info in /db/sql_par_field_list.php
@@ -9861,11 +9862,11 @@
     \-- view_id
         \-- sandbox - @return string the name of the user who owns the object or an empty string if not known
     \-- share_id
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- protection_id
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- is_excluded
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
         \-- system_time_list - set the request times based on the api json array

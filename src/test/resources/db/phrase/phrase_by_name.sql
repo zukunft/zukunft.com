@@ -4,7 +4,7 @@ PREPARE phrase_by_name (bigint, text) AS
                s.user_id,
                s.phrase_type_id,
                CASE WHEN (u.phrase_name <> ''  IS NOT TRUE) THEN s.phrase_name   ELSE u.phrase_name   END AS phrase_name,
-               CASE WHEN (u.description <> ''  IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
+               CASE WHEN (u.description        IS     NULL) THEN s.description   ELSE u.description   END AS description,
                CASE WHEN (u.usage              IS     NULL) THEN s.usage         ELSE u.usage         END AS usage,
                CASE WHEN (u.impact             IS     NULL) THEN s.impact        ELSE u.impact        END AS impact,
                CASE WHEN (u.excluded           IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,

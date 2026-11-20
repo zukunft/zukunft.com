@@ -472,7 +472,7 @@ class formula extends sandbox_code_id
         // usage and impact are included here because to allow
         // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
 

@@ -3332,3 +3332,31 @@ investments`, `USD`, `2013` (464000000), and the later fact overwrites the total
 moves the problem into a fact conflict (`report_fact_conflict` marks the convert message as not ok). A complete
 solution names the member differently from the concept, e.g. with the axis of the member, so that both facts keep
 their own phrase group.
+
+## write test of a cleared description per object type
+
+Since 2026-11-19 a user can clear the description of a word, source, formula, component, view, triple and ref. Only
+the word has a write test (the last round of the workflow `change_word_all_sandbox_fields`); the other types have unit
+tests of their frontend `api_array` and, for the triple and the ref, of their own backend mapper and delta
+(`sandbox_tests`). Add a write test per type that a description cleared by a second user stays empty for that user and
+the owner keeps the description, and negative: a save with an unchanged empty field creates no user row.
+
+## change the from, verb or to of a triple
+
+The edit view of an existing triple shows the from phrase, the verb and the to phrase read only (since 2026-11-19,
+`system_form::form_link_read_only`), because the backend refuses a changed link on purpose
+(`sandbox::refuse_link_change`, `LINK_CHANGE_REFUSED`): the link is what the triple is. The user should be able to
+change them, but the change is then no update of the triple: the previous triple is deleted or excluded with its change
+log, and a new triple with the new link is created.
+
+### suggested code changes
+
+- the edit view offers the from, verb and to selection again and the confirm view tells the user that the change
+  replaces the triple by a new one
+- decide what happens with the values, formulas and refs that use the previous triple: keep them on the excluded
+  triple or move them to the new one; a delete is only possible if nothing uses the triple (`docs/llm/delete.md`)
+- the replace as one step for the user, so that a failed add of the new triple does not leave the previous one
+  excluded
+- test: a changed from of an existing triple creates the new triple and excludes the previous one, and negative: an
+  unchanged link updates the triple without a new one; a write test that a changed `pf` without the replace still
+  gives `LINK_CHANGE_REFUSED`

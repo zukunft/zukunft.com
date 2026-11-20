@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            System Test Word - Word (default) - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li class="menu-header">
+                                    alternative views
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=3&amp;id=999" title="this view has been used to show &#039;System Test Word&#039;" class="grey">
+                                        Word (default)
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=23&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (detail)&#039; view">
+                                        Word (detail)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=23" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (detail)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=31&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (range)&#039; view">
+                                        Word (range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=31" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=39&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (detail with range)&#039; view">
+                                        Word (detail with range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=39" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (detail with range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more" title="show more views e.g. Start view, Table, Triple (default)">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=3&amp;9m=3&amp;9id=999" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84&amp;9m=3&amp;9id=999" title="create a new named view editor for this System Test Word">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=it" title="Italian">
+                                        Italiano
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=3&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test partner">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test partner
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=12&amp;9m=3&amp;9id=999&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9m=3&amp;9id=999">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                <div class="row col-md-12">
+                    <div class="heading-line">
+                        <h4 class="heading-inline">
+                            System Test Word
+                        </h4>
+                        <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;9m=3&amp;9id=999" title="rename word" class="heading-icon-inline">
+                            <i class="fas fa-edit">
+                            </i>
+                        </a>
+                    </div>
+                    <div class="subtitle">
+                        (
+                        <a href="http://localhost/http/view.php?m=74&amp;id=6" title="a scaling word such as millions, one, ...">
+                            scaling
+                        </a>
+                        )
+                    </div>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col" style="min-width: 700px">
+                    <div class="text-left">
+                        <h5>
+                            Description
+                        </h5>
+                        <div>
+                            Plural: System Test Words
+                        </div>
+                        <div>
+                            <div>
+                                <a href="#define-phrase" title="define as a category" class="heading-icon-inline">
+                                    <i class="far fa-square-plus">
+                                    </i>
+                                </a>
+                            </div>
+                            <div class="css-toggle-pane" id="define-phrase">
+                                <form action="http://localhost/http/view.php" id="triple_add">
+                                    <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                    <input type="hidden" name="m" value="50">
+                                    <input type="hidden" name="pf" value="999">
+                                    <input type="hidden" name="b" value="2">
+                                    <input type="hidden" name="9m" value="3">
+                                    <input type="hidden" name="9id" value="999">
+                                    define System Test Word as
+                                    <div class="form-group col-md-4">
+                                        <label for="pt_form_select_phrase_to">
+                                            To word or triple
+                                        </label>
+                                        <select class="form-control" name="pt" form="triple_add" id="pt_form_select_phrase_to" >
+                                            <option value="0" selected>
+                                                please select ...
+                                            </option>
+                                            <option value="-3408"  >
+                                                CBAM good
+                                            </option>
+                                            <option value="-3432"  >
+                                                CN code
+                                            </option>
+                                            <option value="637"  >
+                                                Cooperative
+                                            </option>
+                                            <option value="2043"  >
+                                                EAN
+                                            </option>
+                                            <option value="2439"  >
+                                                EPR
+                                            </option>
+                                            <option value="-2417"  >
+                                                GDP mismeasurement reason
+                                            </option>
+                                            <option value="-2443"  >
+                                                GDP mismeasurement solution
+                                            </option>
+                                            <option value="2041"  >
+                                                ISBN
+                                            </option>
+                                            <option value="2042"  >
+                                                ISIN
+                                            </option>
+                                            <option value="-441"  >
+                                                ISO 4217 code
+                                            </option>
+                                            <option value="-7"  >
+                                                Physical constant
+                                            </option>
+                                            <option value="-82"  >
+                                                SI base unit
+                                            </option>
+                                            <option value="-442"  >
+                                                Symbol or abbreviation
+                                            </option>
+                                            <option value="988"  >
+                                                agglomeration
+                                            </option>
+                                            <option value="-1862"  >
+                                                biased information reason
+                                            </option>
+                                            <option value="-1885"  >
+                                                biased information solution
+                                            </option>
+                                            <option value="-1982"  >
+                                                black-box AI reason
+                                            </option>
+                                            <option value="-2003"  >
+                                                black-box AI solution
+                                            </option>
+                                            <option value="-4408"  >
+                                                bond (finance)
+                                            </option>
+                                            <option value="201"  >
+                                                canton
+                                            </option>
+                                            <option value="628"  >
+                                                cash
+                                            </option>
+                                            <option value="-4494"  >
+                                                child portfolio
+                                            </option>
+                                            <option value="-2105"  >
+                                                citizen participation reason
+                                            </option>
+                                            <option value="-2129"  >
+                                                citizen participation solution
+                                            </option>
+                                            <option value="203"  >
+                                                city
+                                            </option>
+                                            <option value="-1174"  >
+                                                climate solution
+                                            </option>
+                                            <option value="204"  >
+                                                company
+                                            </option>
+                                            <option value="348"  >
+                                                conjecture
+                                            </option>
+                                            <option value="378"  >
+                                                convention
+                                            </option>
+                                            <option value="401"  >
+                                                country
+                                            </option>
+                                            <option value="-3019"  >
+                                                country code
+                                            </option>
+                                            <option value="421"  >
+                                                currency
+                                            </option>
+                                            <option value="-2205"  >
+                                                disinformation reason
+                                            </option>
+                                            <option value="-2225"  >
+                                                disinformation solution
+                                            </option>
+                                            <option value="-2302"  >
+                                                education reason
+                                            </option>
+                                            <option value="-2324"  >
+                                                education solution
+                                            </option>
+                                            <option value="710"  >
+                                                entity
+                                            </option>
+                                            <option value="-3958"  >
+                                                existing NPP
+                                            </option>
+                                            <option value="-139"  >
+                                                global problem
+                                            </option>
+                                            <option value="-3366"  >
+                                                global problem reason
+                                            </option>
+                                            <option value="-3367"  >
+                                                global problem solution
+                                            </option>
+                                            <option value="-1342"  >
+                                                global warming reason
+                                            </option>
+                                            <option value="-1347"  >
+                                                global warming solution
+                                            </option>
+                                            <option value="-1072"  >
+                                                greenhouse gas
+                                            </option>
+                                            <option value="-2538"  >
+                                                health reason
+                                            </option>
+                                            <option value="-2559"  >
+                                                health solution
+                                            </option>
+                                            <option value="2523"  >
+                                                holding
+                                            </option>
+                                            <option value="-2656"  >
+                                                market power reason
+                                            </option>
+                                            <option value="-2678"  >
+                                                market power solution
+                                            </option>
+                                            <option value="-1"  >
+                                                mathematical constant
+                                            </option>
+                                            <option value="-85"  >
+                                                mechanics SI derived unit
+                                            </option>
+                                            <option value="104"  >
+                                                month
+                                            </option>
+                                            <option value="-374"  >
+                                                most relevant
+                                            </option>
+                                            <option value="-6"  >
+                                                natural science
+                                            </option>
+                                            <option value="-3957"  >
+                                                new NPP
+                                            </option>
+                                            <option value="-1591"  >
+                                                populism reason
+                                            </option>
+                                            <option value="-1616"  >
+                                                populism solution
+                                            </option>
+                                            <option value="-3018"  >
+                                                postal code
+                                            </option>
+                                            <option value="-1741"  >
+                                                poverty reason
+                                            </option>
+                                            <option value="-1761"  >
+                                                poverty solution
+                                            </option>
+                                            <option value="437"  >
+                                                price
+                                            </option>
+                                            <option value="-2769"  >
+                                                proprietary software reason
+                                            </option>
+                                            <option value="-2786"  >
+                                                proprietary software solution
+                                            </option>
+                                            <option value="396"  >
+                                                reason
+                                            </option>
+                                            <option value="1006"  >
+                                                region
+                                            </option>
+                                            <option value="-3746"  >
+                                                replacement mix
+                                            </option>
+                                            <option value="356"  >
+                                                report
+                                            </option>
+                                            <option value="639"  >
+                                                scaling
+                                            </option>
+                                            <option value="8"  >
+                                                science
+                                            </option>
+                                            <option value="644"  >
+                                                sector
+                                            </option>
+                                            <option value="-5638"  >
+                                                sector of revenue
+                                            </option>
+                                            <option value="241"  >
+                                                solution
+                                            </option>
+                                            <option value="1736"  >
+                                                stock
+                                            </option>
+                                            <option value="20"  >
+                                                system
+                                            </option>
+                                            <option value="254"  >
+                                                warm
+                                            </option>
+                                            <option value="-2878"  >
+                                                wealth concentration reason
+                                            </option>
+                                            <option value="-2904"  >
+                                                wealth concentration solution
+                                            </option>
+                                            <option value="105"  >
+                                                year
+                                            </option>
+                                            <option value="-55"  >
+                                                year of definition
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <input type="submit" name="submit" value="add" class="submit-input">
+                                </form>
+                            </div>
+                        </div>
+                        <div>
+                            <h5>
+                                References
+                            </h5>
+                        </div>
+                        <div>
+                            <div class="col-md-12">
+                                <a href="http://localhost/http/view.php?m=67&amp;p=999" title="add new reference" class="heading-icon-inline">
+                                    <i class="far fa-square-plus">
+                                    </i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="min-width: 700px">
+                    <div class="heading-line">
+                        <h5>
+                            Values
+                        </h5>
+                        <a href="http://localhost/http/view.php?m=19&amp;pl=999&amp;9m=3&amp;9id=999" title="add new value" class="heading-icon-inline">
+                            <i class="far fa-square-plus">
+                            </i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col" style="min-width: 700px">
+                    <div class="heading-line">
+                        <h5>
+                            Formulas
+                        </h5>
+                        <a href="http://localhost/http/view.php?m=56&amp;7p=999&amp;9m=3&amp;9id=999" title="add new formula" class="heading-icon-inline">
+                            <i class="far fa-square-plus">
+                            </i>
+                        </a>
+                    </div>
+                    <div>
+                        <div>
+                            <a href="#formula-link" title="assign a formula" class="heading-icon-inline">
+                                <i class="fas fa-link">
+                                </i>
+                            </a>
+                        </div>
+                        <div class="css-toggle-pane" id="formula-link">
+                            <form action="http://localhost/http/view.php" id="formula_link_add">
+                                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                <input type="hidden" name="m" value="76">
+                                <input type="hidden" name="z" value="1">
+                                <input type="hidden" name="p" value="999">
+                                <input type="hidden" name="9m" value="3">
+                                <input type="hidden" name="9id" value="999">
+                                <div class="form-group col-md-12">
+                                    <label for="f_form_select_formula">
+                                        formula
+                                    </label>
+                                    <select class="form-control" name="f" form="formula_link_add" id="f_form_select_formula" >
+                                        <option value="0" selected>
+                                            please select ...
+                                        </option>
+                                        <option value="109"  >
+                                            annual damage in money
+                                        </option>
+                                        <option value="123"  >
+                                            annual damage share from the reasons
+                                        </option>
+                                        <option value="114"  >
+                                            avoided loss in trillion EUR
+                                        </option>
+                                        <option value="25"  >
+                                            avoided potential loss
+                                        </option>
+                                        <option value="113"  >
+                                            avoided welfare loss
+                                        </option>
+                                        <option value="125"  >
+                                            avoided welfare loss with a gain factor
+                                        </option>
+                                        <option value="24"  >
+                                            global happy time points
+                                        </option>
+                                        <option value="112"  >
+                                            initial effort of a solution
+                                        </option>
+                                        <option value="110"  >
+                                            long run damage share of the GDP
+                                        </option>
+                                        <option value="129"  >
+                                            loss reduction by a basic income
+                                        </option>
+                                        <option value="131"  >
+                                            loss reduction by a market share tax
+                                        </option>
+                                        <option value="128"  >
+                                            loss reduction by education spending
+                                        </option>
+                                        <option value="134"  >
+                                            loss reduction by fluid democracy
+                                        </option>
+                                        <option value="136"  >
+                                            loss reduction by free software
+                                        </option>
+                                        <option value="135"  >
+                                            loss reduction by gross domestic usage
+                                        </option>
+                                        <option value="127"  >
+                                            loss reduction by health taxes
+                                        </option>
+                                        <option value="124"  >
+                                            loss reduction by one-click hide
+                                        </option>
+                                        <option value="130"  >
+                                            loss reduction by platform regulation
+                                        </option>
+                                        <option value="126"  >
+                                            loss reduction by poverty research
+                                        </option>
+                                        <option value="133"  >
+                                            loss reduction by public AI
+                                        </option>
+                                        <option value="132"  >
+                                            loss reduction by the Delphi method
+                                        </option>
+                                        <option value="108"  >
+                                            probability range high
+                                        </option>
+                                        <option value="107"  >
+                                            probability range low
+                                        </option>
+                                        <option value="26"  >
+                                            reward ratio (formula)
+                                        </option>
+                                        <option value="111"  >
+                                            welfare damage share
+                                        </option>
+                                    </select>
+                                </div>
+                                <input type="submit" name="submit" value="link" class="submit-input">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="min-width: 700px">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                when
+                                            </th>
+                                            <th>
+                                                who
+                                            </th>
+                                            <th>
+                                                what
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                deleted user description "a second confirm change test description"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                changed user description to "a second confirm change test description" from "a confirm change test description"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added user plural "System Test Words"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                remove user overwrite for view
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added user phrase type "scaling"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=4">
+                                                    zukunft.com system test partner
+                                                </a>
+                                            </td>
+                                            <td>
+                                                changed user description to "a confirm change test description" from "test description added to the word via import"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=6">
+                                                    zukunft.com system test no admin
+                                                </a>
+                                            </td>
+                                            <td>
+                                                changed user description to "a description overwrite of another user" from "test description added to the word via import"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added description "test description added to the word via import"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                set owner to zukunft.com system test
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=123&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added "System Test Word"
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-tab" id="my">
+                            <a href="#my" class="css-tab-label">
+                                My
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                Field
+                                            </th>
+                                            <th>
+                                                your
+                                            </th>
+                                            <th>
+                                                instead
+                                            </th>
+                                            <th>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Description
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                test description added to the word via import
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;z=1&amp;o=test+description+added+to+the+word+via+import&amp;8o=" title="undo your overwrite">
+                                                    <i class="fas fa-rotate-left">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Phrase type
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                not set
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;z=1&amp;py=&amp;8py=scaling" title="undo your overwrite">
+                                                    <i class="fas fa-rotate-left">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Plural
+                                            </td>
+                                            <td>
+                                                System Test Words
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;z=1&amp;lp=&amp;8lp=System+Test+Words" title="undo your overwrite">
+                                                    <i class="fas fa-rotate-left">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-tab" id="others">
+                            <a href="#others" class="css-tab-label">
+                                Others
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                Field
+                                            </th>
+                                            <th>
+                                                user
+                                            </th>
+                                            <th>
+                                                value
+                                            </th>
+                                            <th>
+                                                instead
+                                            </th>
+                                            <th>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Description
+                                            </td>
+                                            <td>
+                                                zukunft.com system test no admin
+                                            </td>
+                                            <td>
+                                                a description overwrite of another user
+                                            </td>
+                                            <td>
+                                                test description added to the word via import
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;z=1&amp;o=a+description+overwrite+of+another+user&amp;8o=" title="apply this overwrite to your values">
+                                                    <i class="fas fa-rotate-right">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

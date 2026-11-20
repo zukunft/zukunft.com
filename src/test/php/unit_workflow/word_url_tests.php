@@ -536,7 +536,8 @@ class word_url_tests extends url_test_base
      * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
      * write test ($do_it true): the changing user usr2 does not own the base word (usr1 does), fills
      * almost all sandbox fields in one edit round via the filled test word factory and confirms, then
-     * changes the description twice in two more edit rounds, so the confirmed changes land in a usr2
+     * changes the description twice in two more edit rounds and clears it in a last one (an empty
+     * description of the user must never show the description of the owner), so the confirmed changes land in a usr2
      * user sandbox overlay while the owner keeps the unchanged base word; each snapshot shows the
      * page that results from the step's action, so each confirm step snapshot is the word page with
      * the change log grown by the confirmed change. snapshots go into
@@ -629,8 +630,22 @@ class word_url_tests extends url_test_base
         // page now shows both description changes on top of the filled fields
         $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
 
+        // edit: re-open the edit view to clear the description
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
+
+        // user 2 removes the description; an empty field must clear the description for this user
+        // and never bring back the description of the owner
+        $url_arr[url_var::DESCRIPTION] = '';
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_TWO_COM;
+
+        // save: press save which shows the confirm change view with the cleared description
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
+
+        // confirm: confirm the cleared description (written with $do_it true)
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
         // a write run must persist the changes as a per-user overlay: the changing user sees the
-        // filled fields and the latest description, the owner keeps the unchanged base word
+        // filled fields and the cleared description, the owner keeps the unchanged base word
         // without an overlay of their own
         if ($do_it) {
             $test_name = 'change_word_all_sandbox_fields has created the user overlay';
@@ -639,8 +654,9 @@ class word_url_tests extends url_test_base
             $this->t->assert_true($test_name, $wrd_changer->has_usr_cfg());
             $test_name = '... and the changing user sees the filled plural';
             $this->t->assert($test_name, $wrd_changer->plural ?? '', $fill[url_var::PLURAL]);
-            $test_name = '... and the changing user sees the second changed description';
-            $this->t->assert($test_name, $wrd_changer->get_description() ?? '', word_names::TEST_CHANGE_TWO_COM);
+            // an empty string and not null, because null would show the description of the owner
+            $test_name = '... and the changing user sees the cleared description';
+            $this->t->assert($test_name, $wrd_changer->get_description() ?? 'null', '');
             $test_name = '... while the owner still sees the unfilled word';
             $wrd_owner = new word($this->t->usr1);
             $wrd_owner->load_by_name(word_names::TEST_ADD, $msg);

@@ -2196,8 +2196,11 @@ class sandbox extends db_object_seq_id_user
             $val = $db_row[$field_name] ?? '';
             // an empty or zero value is never a user overwrite: the merged load falls back to
             // the standard value for null and '', a type id is never zero and a zero of a system
-            // calculated field (e.g. the impact) is just the technical default of the row insert
-            if ($val != '' and $val != 0) {
+            // calculated field (e.g. the impact) is just the technical default of the row insert;
+            // except an empty description, which clears the standard description for this user
+            // (see sql_creator::sql_usr_field)
+            $cleared = ($field_name == fields::FLD_DESCRIPTION and ($db_row[$field_name] ?? null) === '');
+            if (($val != '' and $val != 0) or $cleared) {
                 // name the blocking field, so an unexpectedly kept user row can be explained
                 log_debug('user overwrite ' . $field_name . '=' . $val
                     . ' keeps the user row of ' . $this->dsp_id());

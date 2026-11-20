@@ -176,8 +176,9 @@ class sandbox_link_named extends sandbox_link
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
         }
+        // also an empty description, which a user sends to clear the description, like sandbox_named::api_mapper
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
-            if ($api_json[json_fields::DESCRIPTION] <> '') {
+            if ($api_json[json_fields::DESCRIPTION] !== null) {
                 $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
@@ -533,7 +534,9 @@ class sandbox_link_named extends sandbox_link
         if ($std_obj->name !== $this->name) {
             $result->name = $this->name;
         }
-        if ($std_obj->description !== $this->description) {
+        // null and '' both mean no description, like sandbox_named::delta, so an empty description clears
+        // only a standard description for the user
+        if (($std_obj->description ?? '') !== ($this->description ?? '')) {
             $result->description = $this->description;
         }
         if ($std_obj->type_id !== $this->type_id) {
@@ -680,7 +683,8 @@ class sandbox_link_named extends sandbox_link
         if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($this->description === null and $obj->description != '') {
+        // also an empty description, because it can be the overwrite of a user that clears the standard description
+        if ($this->description === null and $obj->description !== null) {
             $this->description = $obj->description;
         }
 
@@ -926,7 +930,8 @@ class sandbox_link_named extends sandbox_link
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
-        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id,
+            $sc_par_lst->is_usr_tbl() and $sc_par_lst->is_update());
         return $lst;
     }
 

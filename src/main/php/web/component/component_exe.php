@@ -244,7 +244,7 @@ class component_exe extends component
             component_types::FORM_FIELD_UI_MSG => $form->form_field_ui_msg($dbo),
 
             // select object fields
-            component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $msg, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $msg, $cfg->typ_lst_cache),
             component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $msg, $cfg->typ_lst_cache),

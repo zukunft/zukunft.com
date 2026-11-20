@@ -1,0 +1,25 @@
+GET
+http://localhost/http/view.php?k=System+Test+Word&o=&uu=3&y=6&lp=System+Test+Words&d=3&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=3&9id=999&8o=a+second+confirm+change+test+description&m=101&z=2&submit=
+/http/view.php?k=System+Test+Word&o=&uu=3&y=6&lp=System+Test+Words&d=3&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=3&9id=999&8o=a+second+confirm+change+test+description&m=101&z=2&submit=
+/http/view.php?name=System+Test+Word&usage=3&type=6&plural=System+Test+Words&view_id=3&impact=3.4&id=999&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&8description=a+second+confirm+change+test+description&mask_id=confirm_update&step=confirmed&
+{
+    "name": "System Test Word",
+    "description": "",
+    "usage": "3",
+    "type": "6",
+    "plural": "System Test Words",
+    "view_id": "3",
+    "impact": "3.4",
+    "id": "999",
+    "mask_id": "confirm_update",
+    "step": "confirmed",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word",
+        "description": "a second confirm change test description"
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
+}

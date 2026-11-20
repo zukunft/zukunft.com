@@ -328,8 +328,9 @@ class ref extends sandbox_link
                 $this->set_url($api_json[json_fields::URL]);
             }
         }
+        // also an empty description, which a user sends to clear the description, like sandbox_named::api_mapper
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
-            if ($api_json[json_fields::DESCRIPTION] != '') {
+            if ($api_json[json_fields::DESCRIPTION] !== null) {
                 $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
@@ -1343,7 +1344,8 @@ class ref extends sandbox_link
         if ($std_obj->predicate_id() !== $this->predicate_id()) {
             $result->set_predicate_id($this->predicate_id());
         }
-        if ($std_obj->description !== $this->description) {
+        // null and '' both mean no description, like sandbox_named::delta
+        if (($std_obj->description ?? '') !== ($this->description ?? '')) {
             $result->description = $this->description;
         }
         return $result;
@@ -1381,7 +1383,8 @@ class ref extends sandbox_link
         if ($this->predicate_id() === null and $obj->predicate_id() != 0) {
             $this->set_predicate_id($obj->predicate_id());
         }
-        if ($this->description === null and $obj->description != null) {
+        // also an empty description, because it can be the overwrite of a user that clears the standard description
+        if ($this->description === null and $obj->description !== null) {
             $this->description = $obj->description;
         }
         return $msg;
@@ -1613,7 +1616,7 @@ class ref extends sandbox_link
                 $obj->get_source()
             );
         }
-        if ($obj->description !== $this->description) {
+        if ($lst->description_changed($this->description, $obj->description, $usr_tbl and $sc_par_lst->is_update())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,

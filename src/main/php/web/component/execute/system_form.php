@@ -53,6 +53,7 @@ include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
@@ -102,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
@@ -2114,11 +2116,13 @@ class system_form extends component
      *
      * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg to report a problem of the load of the preselected phrase
      * @return string the html code to request the description from the user
      */
     function form_phrase(
         db_object|triple $dbo,
         string           $form_name,
+        user_message     $msg,
         string           $code_id = '',
         ?phrase_list     $phr_lst = null,
         bool             $test_mode = false
@@ -2131,20 +2135,26 @@ class system_form extends component
             $pattern = words::MATH;
         }
 
-        // get the selected phrase id
+        // get the selected phrase id and, for a linked phrase, the phrase itself to show it preselected
         $id = $dbo->id();
+        $selected = null;
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            $selected = $dbo->get_from();
+            $id = $selected?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
-            $id = $dbo->get_to()?->id();
+            $selected = $dbo->get_to();
+            $id = $selected?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            // the phrase of the reference e.g. the word whose page has opened the add ref view
+            $selected = $dbo->phrase();
+            $id = $selected->id();
+            $label_id = msg_id::FORM_SELECT_PHRASE_REF;
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -2169,9 +2179,57 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
+        // the from and to phrase of an existing triple cannot be changed
+        if ($form_name == views::TRIPLE_EDIT and $selected != null) {
+            $shown = $selected->obj()?->name() ?? '';
+            return $this->form_link_read_only($name, $form_name, $id, $shown, $label_id, view_styles::COL_SM_4);
+        }
+
         // use an empty list if none is provided so the selector renders without crashing
         $phr_lst ??= new phrase_list();
+        if ($selected != null) {
+            $phr_lst = $this->with_selected_phrase($phr_lst, $selected, $msg, $test_mode);
+        }
         return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
+    }
+
+    /**
+     * the suggested phrases with the preselected phrase, because the selector shows a preselected
+     * phrase only if it is part of the list, e.g. the from phrase of a triple or the word of a new
+     * reference, which are mostly no often used phrases of the fallback list; a copy, so that the
+     * list of the view stays unchanged
+     *
+     * @param phrase_list $phr_lst the suggested phrases e.g. the often used phrases of the fallback list
+     * @param phrase $phr the preselected phrase, with its name e.g. the from phrase of a loaded triple
+     *                    or with only its id e.g. the word of the add ref url
+     * @param user_message $msg to report a problem of the phrase load
+     * @param bool $test_mode true for a test render, which reads no phrase from the backend, so a
+     *                        phrase with only its id is then only preselected if the list contains it
+     * @return phrase_list the suggested phrases including the preselected phrase if its name is known
+     */
+    private function with_selected_phrase(
+        phrase_list  $phr_lst,
+        phrase       $phr,
+        user_message $msg,
+        bool         $test_mode
+    ): phrase_list
+    {
+        $result = $phr_lst;
+        $id = $phr->id();
+        if ($id != 0 and !in_array($id, $phr_lst->id_lst())) {
+            $found = new phrase_list();
+            // via obj, because a phrase known only by its id e.g. from the url may have no object name
+            if (($phr->obj()?->name() ?? '') != '') {
+                $found->add($phr, $msg);
+            } elseif (!$test_mode) {
+                $found->load_by_ids([$id], $msg);
+            }
+            if (!$found->is_empty()) {
+                $result = clone $phr_lst;
+                $result->merge($found, $msg);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2210,7 +2268,9 @@ class system_form extends component
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            // the phrase of the reference like in form_phrase, because a reference has no from phrase
+            $id = $dbo->phrase()->id();
+            $label_id = msg_id::FORM_SELECT_PHRASE_REF;
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -2338,15 +2398,59 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the phrase type
-     * @param db_object $dbo the frontend phrase object with the type used until now
+     * @param db_object|triple $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb
+     * @return string the html code to select the verb or, for an existing triple, to show it read only
      */
-    function form_verb(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
+    function form_verb(db_object|triple $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
+        // the verb of an existing triple cannot be changed; a triple without its verb, e.g. a test render of
+        // a triple known only by its id, shows the selector like the from and to phrase (see form_phrase)
+        if ($form_name == views::TRIPLE_EDIT) {
+            $vrb = $dbo->verb;
+            if ($vrb?->id() > 0) {
+                return $this->form_link_read_only(url_var::VERB, $form_name, $vrb->id(), $vrb->name() ?? '',
+                    msg_id::FORM_SELECT_VERB, view_styles::COL_SM_3);
+            }
+        }
         return $dbo->verb_selector($form_name, $msg, $typ_lst);
+    }
+
+    /**
+     * the from phrase, the verb or the to phrase of an existing triple shown read only, because a
+     * changed link would be another triple (see docs/llm/pending_prio_2.md "change the from, verb or
+     * to of a triple"); the id is posted unchanged in a hidden field, so the confirm finds no change
+     *
+     * @param string $name the url var of the field e.g. url_var::PHRASE_FROM
+     * @param string $form_name the name of the html form
+     * @param int $id the id of the linked phrase or verb that is posted unchanged
+     * @param string $shown the name of the linked phrase or verb that the user sees
+     * @param msg_id $label_id the label of the field, the same as of the selector
+     * @param string $style the bootstrap column of the field, the same as of the selector
+     * @return string the html code of the read only field with the hidden id
+     */
+    private function form_link_read_only(
+        string $name,
+        string $form_name,
+        int    $id,
+        string $shown,
+        msg_id $label_id,
+        string $style
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        // the dom id of the selector, so that the label is linked to the field in the same way
+        $dom_id = $name . '_' . strtolower($label_id->name);
+        $field = '<' . html_base::INPUT . ' ' . html_base::TYPE . '="' . html_base::INPUT_TEXT . '"'
+            . ' ' . html_base::CLASS_HTML . '="form-control" ' . html_base::ID . '="' . $dom_id . '"'
+            . ' ' . html_base::VALUE . '="' . htmlspecialchars($shown, ENT_QUOTES) . '" ' . html_base::READONLY . '>';
+        $text = $html->label($mtr->txt($label_id), $dom_id);
+        $text .= $field;
+        $text .= $html->form_hidden($name, (string)$id, $form_name);
+        return $html->div_form($text, $style);
     }
 
     /**

@@ -3895,6 +3895,7 @@ enum messages: string
         self::FORM_SELECT_PHRASE,
         self::FORM_SELECT_PHRASE_FROM,
         self::FORM_SELECT_PHRASE_TO,
+        self::FORM_SELECT_PHRASE_REF,
         self::FORM_SELECT_PHRASE_ROW,
         self::FORM_SELECT_PHRASE_COL,
         self::FORM_SELECT_PHRASE_COL_SUB,

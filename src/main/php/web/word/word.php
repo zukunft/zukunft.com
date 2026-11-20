@@ -453,7 +453,7 @@ class word extends sandbox_code_id
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
 
