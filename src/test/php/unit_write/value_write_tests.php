@@ -366,23 +366,38 @@ class value_write_tests
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // negative: the database has no foreign key on the phrases of a value, so a phrase id that
-        // names no word or triple is refused by the save, because each page would else show the
+        // the database has no foreign key on the phrases of a value, so the phrase ids of a new value are
+        // checked before its save (see db_object::add_via_api), because each page would else show the
         // number with a phrase without name
-        $test_name = 'a value with a phrase that is not in the database is not saved';
+        $test_name = 'the phrases of a new value are found in the database';
+        $val_good = new value($t->usr1);
+        $val_good->set_grp($phr_grp2->phrase_list()->get_grp_id());
+        $good_msg = new user_message($t->usr1);
+        $t->assert_true($test_name, $val_good->phrases_in_db($good_msg));
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $good_msg);
+        // negative: a phrase id that names no word or triple
+        $test_name = 'a value with a phrase that is not in the database is refused';
         $add_lst = clone $phr_grp2->phrase_list();
         $add_lst->add_id(triple_names::MISSING_PHRASE_ID);
         $val_bad = new value($t->usr1);
         $val_bad->set_grp($add_lst->get_grp_id());
         $val_bad->set_number(values::SAMPLE_BIGGER);
         $chk_msg = new user_message($t->usr1);
-        $t->assert_false($test_name, $val_bad->save($chk_msg));
+        $t->assert_false($test_name, $val_bad->phrases_in_db($chk_msg));
         $test_name = '... and the user is told that a phrase of the number is not in the database';
         $not_found_txt = explode(msg_id::VAR_END, $mtr->txt(msg_id::VALUE_PHRASE_NOT_FOUND))[1];
         $t->assert_msg_false($test_name, $chk_msg, $not_found_txt);
-        $test_name = '... and no value is added for the phrases';
-        $chk_val = new value($t->usr1);
-        $t->assert_false($test_name, $chk_val->load_by_grp($val_bad->grp(), $msg));
+        // negative: no phrase is found, so the message names the value by its number
+        $test_name = 'a value without any phrase of the database is named by its number';
+        $none_lst = new phrase_list($t->usr1);
+        $none_lst->add_id(triple_names::MISSING_PHRASE_ID);
+        $val_none = new value($t->usr1);
+        $val_none->set_grp($none_lst->get_grp_id());
+        $val_none->set_number(values::SAMPLE_BIGGER);
+        $none_msg = new user_message($t->usr1);
+        $val_none->phrases_in_db($none_msg);
+        $t->assert_msg_false($test_name, $none_msg, (string)values::SAMPLE_BIGGER);
 
         // test if a value with time stamp can be saved
         /*

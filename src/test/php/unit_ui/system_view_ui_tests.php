@@ -682,16 +682,6 @@ class system_view_ui_tests
         $test_name = 'logout action returns logout view url';
         $t->assert($test_name, $logout_result_url[url_var::MASK] ?? 0, views::LOGOUT_ID);
 
-        // TODO Prio 2 check why this is switched off
-        /*
-        $test_name = 'logout action resets backend user to anonymous';
-        $t->assert($test_name, $logout_backend->has_db_id(), false);
-
-        $test_name = '... but the logged in user keeps the database id';
-        $logged_in = $t->usr1->has_db_id();
-        $t->assert_true($test_name, $logged_in);
-        */
-
         $test_name = 'logout action resets the message user to ip-only';
         $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
 

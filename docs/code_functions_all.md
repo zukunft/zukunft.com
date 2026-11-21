@@ -4201,6 +4201,8 @@
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
     \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_base.php
+    \-- phrases_in_db - section for function phrases_in_db not yet defined that it should be @param user_message $msg to
+             enrich with problems and suggested solutions in /value/value_base.php
     \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
             hp
     \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
@@ -7517,6 +7519,7 @@
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
+    \-- save_logoff - section for function save_logoff is expected to be save in /frontend.php
     \-- calculator_saved_text - section for function calculator_saved_text not yet defined that it should be execute in 
             /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
@@ -8000,6 +8003,8 @@
             _base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- fieldset_disabled - section for function fieldset_disabled not yet defined that it should be internal in /html/h
+            tml_base.php
     \-- div_at - section for function div_at not yet defined that it should be internal in /html/html_base.php
     \-- block - section for function block not yet defined that it should be internal in /html/html_base.php
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
@@ -10629,6 +10634,9 @@
         \-- html_base - wrap the main tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
+    \-- fieldset_disabled
+        \-- html_base - wrap a disabled fieldset around html code within a form,
+                 so that its fields are shown but neither
     \-- div_at
         \-- html_base - @param string $style the html class name of an absolute positioned block e.g. a needle
     \-- block
@@ -11178,6 +11186,9 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- save_logoff
+        \-- frontend - write the logoff time of the requesting user to the account; separated from action_logout,
+                 which also
     \-- calculator_saved_text
         \-- frontend - the confirmation of one saved number as html,
                  because the new number links to the default view of the value

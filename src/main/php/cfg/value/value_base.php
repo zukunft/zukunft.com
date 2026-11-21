@@ -2273,11 +2273,13 @@ class value_base extends sandbox_value
      * database has no foreign key on the phrases of a value; e.g. a url with the fixed snapshot id
      * of a test word would else add a number that each later page shows with a phrase without name
      * a phrase is reloaded even if it has a name, because a form sends the name next to the id
+     * called where a new value is added from the phrase ids of the url (db_object::add_via_api) and
+     * not by save, because loading and saving are separated
      *
      * @param user_message $msg to report the phrase that is not in the database
      * @return bool true if all phrases of the value can be loaded from the database
      */
-    private function phrases_in_db(user_message $msg): bool
+    function phrases_in_db(user_message $msg): bool
     {
         $ids = $this->ids();
         $db_phr_lst = new phrase_list($this->get_user());
@@ -2294,7 +2296,16 @@ class value_base extends sandbox_value
         }
         if ($missing) {
             // the ids are never shown to the user, so the message names the phrases that are found
-            $msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => implode(', ', $names)]);
+            $val_name = implode(', ', $names);
+            // and if no phrase is found the name that the user has given to the value or its number
+            if ($val_name == '') {
+                $val_name = $this->grp()->name_given();
+            }
+            $val = $this->get_value();
+            if ($val_name == '' and is_scalar($val)) {
+                $val_name = (string)$val;
+            }
+            $msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => $val_name]);
         }
         return !$missing;
     }
@@ -2340,8 +2351,6 @@ class value_base extends sandbox_value
         $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        // an update keeps the phrases of the stored value, so only an add checks them
-        $phr_in_db = true;
 
         // check if a new value is supposed to be added or updated
         // TODO Prio 2 combine this db call with the add or update to one SQL sequence with one commit at the end
@@ -2364,10 +2373,8 @@ class value_base extends sandbox_value
                 // make sure that only an admin user sets the admin protection also on a new value
                 $this->check_protection_change(null, $msg);
                 log_debug('add ' . $this->dsp_id());
-                $phr_in_db = $this->phrases_in_db($msg);
-                if ($phr_in_db) {
-                    $this->add($msg);
-                }
+                // the phrases of a new value from ids are checked before the save (see phrases_in_db)
+                $this->add($msg);
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value
@@ -2422,8 +2429,7 @@ class value_base extends sandbox_value
                 $this->grp()->save($msg);
             }
 
-            // a phrase that is not in the database is a user input problem that the message explains
-            if (!$msg->is_ok() and $phr_in_db) {
+            if (!$msg->is_ok()) {
                 log_err_msg($msg->text(), $msg);
             }
         }

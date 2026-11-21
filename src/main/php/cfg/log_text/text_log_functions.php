@@ -865,10 +865,13 @@ function log_msg(string  $msg_text,
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
                 // the user is told what went wrong and that the admin is informed, but never the sys_log id
-                // (docs/llm/frontend.md); escaped, because the text can contain request derived values (xss)
+                // (docs/llm/frontend.md); escaped once where it is shown, because the text can contain request
+                // derived values (xss)
                 if (log_in_api_answer()) {
-                    // the echo would stand in front of the json, so the api answer sends the text (controller::with_internal_errors)
-                    $result = htmlspecialchars($msg_text, ENT_QUOTES);
+                    // the echo would stand in front of the json, so the api answer sends the text (controller::with_internal_errors);
+                    // unescaped, because json is no html and the frontend escapes it when it shows it (html_base::dsp_notification),
+                    // so that e.g. a quoted name is shown with quotes and not with &quot;
+                    $result = $msg_text;
                 } else {
                     echo_timestamped(critical_error_html($msg_text));
                     if ($sys_log->id > 0) {

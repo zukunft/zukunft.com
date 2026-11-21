@@ -1750,6 +1750,17 @@ class base_ui_tests
         $t->assert($test_name, count($msg_ui->get_all_var_messages()), count($links));
         $test_name = '... as an error';
         $t->assert_false($test_name, $msg_ui->is_ok());
+        // the backend sends the text of an internal error unescaped (log_msg), because the frontend escapes it
+        // once when it shows it, so that a quoted name is shown with its quotes
+        $quoted_err = 'the word "' . word_names::ZH . '" cannot be saved';
+        $quoted_msg = new user_message_ui();
+        rest_call::without_internal_errors(controller::json_with_internal_errors($api_json, [$quoted_err]), $quoted_msg);
+        $quoted_html = new frontend()->user_msg_html($quoted_msg);
+        $test_name = 'the quoted name of an internal error is shown with quotes';
+        $t->assert_text_contains($test_name, $quoted_html, htmlspecialchars($quoted_err));
+        // negative: a text that has been escaped before would show &quot; instead of the quotes
+        $test_name = '... because it is escaped only once';
+        $t->assert_text_not_contains($test_name, $quoted_html, htmlspecialchars(htmlspecialchars('"')));
         // a list, an error message and an empty answer come back exactly, because the answer is sent as a string
         $err_list = controller::json_with_internal_errors('[]', $links);
         $test_name = 'a json list with internal errors comes back as it is';

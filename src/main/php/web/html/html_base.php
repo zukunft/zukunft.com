@@ -211,6 +211,9 @@ class html_base
     const string VALUE = 'value';
     const string ID = 'id';
     const string READONLY = 'readonly'; // a field that the user sees but cannot change
+    // a group of fields that the browser shows greyed out and never posts e.g. the component preview
+    const string FIELDSET = 'fieldset';
+    const string DISABLED = 'disabled';
     const string ARIA_LABEL = 'aria-label'; // the accessible name of a control that shows only an icon
     const string PLACEHOLDER = 'placeholder';
     const string BR = 'br';
@@ -3814,6 +3817,19 @@ class html_base
     function div(string $txt, string $style = '', string $id = ''): string
     {
         return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * wrap a disabled fieldset around html code within a form, so that its fields are shown but neither
+     * changed nor posted e.g. the fields of the component preview, which would otherwise overwrite the
+     * fields of the same name of the edit form, because the last posted value of a var wins
+     *
+     * @param string $txt the html code with the fields
+     * @return string the html code with the fields that the form does not post
+     */
+    function fieldset_disabled(string $txt): string
+    {
+        return '<' . self::FIELDSET . ' ' . self::DISABLED . '>' . $txt . '</' . self::FIELDSET . '>';
     }
 
     /**

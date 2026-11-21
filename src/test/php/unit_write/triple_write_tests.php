@@ -68,6 +68,8 @@ class triple_write_tests
     const float USED_TRIPLE_NUMBER = 3.5;
     // the description that the second user gives the triple of the delete by the owner test
     const string OWNER_CHANGE_COM = 'the description of the second user';
+    // a user id that a test database never gives, because it is the largest 32 bit id
+    const int UNKNOWN_USER_ID = 2147483647;
 
     function run(test_cleanup $t): void
     {
@@ -445,6 +447,14 @@ class triple_write_tests
         $trp_owned->set_owner($t->usr1->id, $usr2_msg);
         $trp_std->load_standard($trp->id(), $chk_msg);
         $t->assert($test_name, $trp_std->owner_id(), $t->usr1->id);
+        // negative: a refused owner change leaves the owner of the standard row and of the object unchanged
+        $test_name = 'the owner change to a user who does not exist is refused';
+        $t->assert_false($test_name, $trp_owned->set_owner(self::UNKNOWN_USER_ID, $usr2_msg));
+        $test_name = '... and the standard row keeps its owner';
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr1->id);
+        $test_name = '... and the object continues as its owner';
+        $t->assert($test_name, [$trp_owned->owner_id(), $trp_owned->get_user()->id()], [$t->usr1->id, $t->usr1->id]);
         $test_name = 'the owner removes a triple that another user has changed';
         $trp->del($msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);

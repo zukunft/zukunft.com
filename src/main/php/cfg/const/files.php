@@ -347,7 +347,9 @@ class files
         self::CURRENCIES,
         self::COMPANY,
         self::COMPANIES,
-        // last, because it only links phrases and views of the files above, so no id shifts
+        // after the files that add its words, triples and components, because it adds none of them but only links
+        // e.g. "mathematical constant" of units to its view and "problem size" of base_views to its row
+        // "potential loss" of solution_prio, so it shifts no id of the files below
         self::ASSIGNED_VIEWS_FILE,
         self::ZURICH_HTP_IMPACT_FILE,
     ];

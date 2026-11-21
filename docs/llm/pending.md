@@ -1,37 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## to review
-
-the findings of the review of the uncommitted changes of #247; each line is one prompt:
-
-fix before the commit:
-- the preview of the component edit view is outside the edit form: `system_views.json` places "system form preview
-  change component" before "system form end" and `system_page::preview` (`web/component/execute/system_page.php:574`)
-  renders the entries of the component, so a previewed form component posts a second `n` / `8n` with the values of the
-  sample phrase and the save takes them instead of the typed name; render the preview after the form end or without
-  its input fields, with a test that the save of the edited component keeps the typed name
-- `sandbox::set_owner` (`cfg/sandbox/sandbox.php:1660`) uses the result of `update_standard_fields()` and sets the new
-  owner in memory only if the update has been written, with a negative test for a refused owner update
-- an error text is escaped exactly once: `text_log_functions.php:866` sends the api answer text unescaped, because the
-  frontend escapes it in `html_base::dsp_notification` (`html_base.php:931`); with a test that a quoted name of an
-  error is shown with quotes; the developer confirms that the api answer may carry the internal error text
-- the check that each phrase of a new value is in the database moves from the save path (`value_base::phrases_in_db`
-  called by `save_for_user`, against "loading and saving are separated" of `coding.md`) to the place where the group of
-  the value is built from the url or api ids; the message names the value also if no phrase is found
-- the resources created with the database that misses the component type row 59 are created again after
-  `/test/reset_db.php`: `api/type_lists/type_lists.json`, `api/ui_config/ui_config.json`, the type ids of
-  `unit/component/list.csv` and the `web/html` snapshots
-
-clean up:
-- `cfg/const/files.php:345`: the comment of `ASSIGNED_VIEWS_FILE` names the words and triples it adds and the id shift
-- `cfg/sandbox/sandbox.php:4568`: `and` instead of `&&`
-- the wrong password workflow test (`unit_write_workflow/word_write_url_tests.php:607`) removes its failed login
-  sys_log row, so the test user never reaches the login fail limit of the admin dashboard
-- `unit_ui/system_view_ui_tests.php:685-693`: the commented out logout block with `$logout_backend` is deleted, and the
-  saving of `last_logoff` by `frontend::action_logout` gets a positive and a negative write test; an anonymous logout
-  without a user id starts no user query
-- `INTERNAL_WARNING` (`messages.php:539` and `de.yaml`) is worded like `INTERNAL` without the link promise
-
 ## fix Prio 0
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved

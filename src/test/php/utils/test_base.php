@@ -119,7 +119,10 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -168,6 +171,7 @@ use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use DOMDocument;
+use DOMElement;
 use Exception;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -193,8 +197,11 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_list.php';
@@ -1062,7 +1069,8 @@ class test_base
 
     /**
      * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
-     * if it is checked and a selector with its selected entry; a later field with the same name wins
+     * if it is checked and a selector with its selected entry, but no disabled field and no field of a disabled
+     * fieldset; a later field with the same name wins
      * e.g. to check the reference and triple rows of an edit or add form (see reference_ui_tests and word_ui_tests)
      *
      * @param string $html the html code of the form fields
@@ -1079,16 +1087,32 @@ class test_base
         $result = [];
         foreach ($dom->getElementsByTagName('input') as $input) {
             $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
-            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))) {
+            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))
+                and !$this->is_disabled_field($input)) {
                 $result[$input->getAttribute('name')] = $input->getAttribute('value');
             }
         }
         foreach ($dom->getElementsByTagName('select') as $select) {
             foreach ($select->getElementsByTagName('option') as $option) {
-                if ($option->hasAttribute('selected')) {
+                if ($option->hasAttribute('selected') and !$this->is_disabled_field($select)) {
                     $result[$select->getAttribute('name')] = $option->getAttribute('value');
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param DOMElement $field an input or select of the form
+     * @return bool true if the browser does not post the field, because it or a fieldset around it is disabled
+     */
+    private function is_disabled_field(DOMElement $field): bool
+    {
+        $result = $field->hasAttribute(html_base::DISABLED);
+        $parent = $field->parentNode;
+        while (!$result and $parent instanceof DOMElement) {
+            $result = ($parent->tagName == html_base::FIELDSET and $parent->hasAttribute(html_base::DISABLED));
+            $parent = $parent->parentNode;
         }
         return $result;
     }
@@ -4839,6 +4863,48 @@ class test_base
         $sql = sql::DELETE . ' ' . $tbl
             . ' ' . sql::WHERE . ' ' . change::FLD_OLD_VALUE . ' ' . sql::LIKE . ' ' . $sc->par_name(1)
             . ' ' . sql::OR . ' ' . change::FLD_NEW_VALUE . ' ' . sql::LIKE . ' ' . $sc->par_name(2);
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * remove the failed login entries of the system log that a login test with a wrong password has written for
+     * the typed name (see user::login), so that the admin dashboard never lists a test user as the target of a
+     * brute force attack, because the failed logins of a name sum up over all test runs
+     *
+     * @param string $usr_name the name that the test has typed e.g. users::SYSTEM_TEST_NAME
+     * @return void
+     */
+    function cleanup_login_fail_log(string $usr_name): void
+    {
+        global $db_con;
+        $msg = new user_message($this->usr_system); // not reported: a cleanup of the test, like cleanup_change_log_deleted
+        $qp = $this->login_fail_log_del_qp($db_con->sql_creator(), $usr_name);
+        $db_con->delete($qp, 'cleanup failed login log of ' . $usr_name, $msg);
+    }
+
+    /**
+     * build the sql statement to delete the failed login entries of the system log for a typed name
+     * public only so that the sql creation can be checked by a unit test (see sys_log_tests)
+     *
+     * @param sql_creator $sc the sql creator with the target db type set
+     * @param string $usr_name the name that the failed login has typed, which the entry has as its description
+     * @return sql_par the delete statement, its name and the parameter list
+     */
+    function login_fail_log_del_qp(sql_creator $sc, string $usr_name): sql_par
+    {
+        $lib = new library();
+        $sc->set_class(sys_log::class);
+        $tbl = $sc->name_sql_esc($sc->get_table());
+        $qp = new sql_par(sys_log::class, new sql_type_list([sql_type::DELETE]));
+        $qp->name = $lib->class_to_name(sys_log::class) . '_del_login_fails';
+        // register both parameters via add_where so the prepared statement declares their types
+        $sc->add_where(sys_log_db::FLD_TEXT, sys_log_functions::LOGIN_FAILED_TEXT, sql_par_type::TEXT);
+        $sc->add_where(sys_log_db::FLD_DESCRIPTION, $usr_name, sql_par_type::TEXT);
+        $sql = sql::DELETE . ' ' . $tbl
+            . ' ' . sql::WHERE . ' ' . sys_log_db::FLD_TEXT . ' = ' . $sc->par_name(1)
+            . ' ' . sql::AND . ' ' . sys_log_db::FLD_DESCRIPTION . ' = ' . $sc->par_name(2);
         $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
         $qp->par = $sc->get_par();
         return $qp;

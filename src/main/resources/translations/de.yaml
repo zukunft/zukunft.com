@@ -1703,7 +1703,7 @@ messages:
   "formula is \"z$VarObjFormula$z\" instead of \"z$VarFormulaCheck$z\" for z$VarClassName$z \"z$VarSandboxName$z\"": "Die Formel ist \"z$VarObjFormula$z\" statt \"z$VarFormulaCheck$z\" für z$VarClassName$z \"z$VarSandboxName$z\""
   "code_id is \"z$VarObjName$z\" instead of \"z$VarObjNameCheck$z\" for z$VarClassName$z \"z$VarSandboxName$z\"": "Die Code-ID ist \"z$VarObjName$z\" statt \"z$VarObjNameCheck$z\" für z$VarClassName$z \"z$VarSandboxName$z\""
   "an internal system error has occurred and the admin has been informed: z$VarLogLink$z": "Ein interner Systemfehler ist aufgetreten und der Admin wurde informiert: z$VarLogLink$z"
-  "a system warning has been logged that you can track with this link: z$VarLogLink$z": "Eine Systemwarnung wurde protokolliert, die du mit diesem Link verfolgen kannst: z$VarLogLink$z"
+  "a system warning has occurred and the admin has been informed: z$VarLogLink$z": "Eine Systemwarnung ist aufgetreten und der Admin wurde informiert: z$VarLogLink$z"
   "The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program.": "Das Backend von zukunft.com ist älter als die verwendete Datenbank. Das kann die Datenbank beschädigen. Bitte aktualisiere das Backend-Programm."
   "unexpected formula id z$VarObjFormula$z in database for z$VarClassName$z \"z$VarSandboxName$z\"": "Unerwartete Formel-ID z$VarObjFormula$z in der Datenbank für z$VarClassName$z \"z$VarSandboxName$z\""
   "trim \"z$VarObjName$z\"": "Leerzeichen entfernen bei \"z$VarObjName$z\""

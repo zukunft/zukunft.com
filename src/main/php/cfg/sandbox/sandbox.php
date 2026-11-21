@@ -1657,9 +1657,17 @@ class sandbox extends db_object_seq_id_user
                 $std->set_user($old_owner);
                 $std_owned = clone $std;
                 $std_owned->set_user($new_owner);
-                $std_owned->update_standard_fields($db_con, $std, $msg);
-                $this->set_owner_id($new_owner_id);
-                $this->set_user($new_owner);
+                // the verdict of the update only, like sandbox_multi::set_owner, because a message that the
+                // caller has collected before must not turn a written owner change into a failure
+                $upd_msg = new user_message($msg->usr);
+                $result = $std_owned->update_standard_fields($db_con, $std, $upd_msg);
+                $msg->merge($upd_msg);
+                // the object continues as the new owner only if the standard row has it, so that e.g. del
+                // never removes the user row of a user who is no owner
+                if ($result) {
+                    $this->set_owner_id($new_owner_id);
+                    $this->set_user($new_owner);
+                }
             } else {
                 $result = false;
             }
@@ -4568,7 +4576,7 @@ class sandbox extends db_object_seq_id_user
         // if no field has changed, no database update is needed
         // and an update statement without any fields to set would be invalid;
         // the user id counts as internal, except if it is the new owner of the standard row
-        $is_new_owner = ($owner_change && $fvt_lst->has_name(user_db::FLD_ID));
+        $is_new_owner = ($owner_change and $fvt_lst->has_name(user_db::FLD_ID));
         if ($fvt_lst->is_empty_except_internal_fields() and !$is_new_owner) {
             return null;
         }

@@ -88,6 +88,7 @@ include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_TYPES . 'component_types.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -130,6 +131,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -571,8 +573,16 @@ class system_page extends component
         } else {
             $result = $html->form_hidden(url_var::SAMPLE_PHRASE, (string)$phr_id);
             $result .= $this->title_for_phrase($ui_msg_code_id, $phr);
-            $result .= $dbo->dsp_entries(
-                $phr, $msg, $form_name, $msk_id, $cfg, $dbo->style_id, '', $test_mode, $url_arr);
+            // a system form component e.g. the name field shows a database object, so it gets the word or
+            // triple of the sample phrase, and any other component the phrase itself
+            $pre_obj = $phr;
+            if (in_array($dbo->type_code_id($cfg?->typ_lst_cache, $msg), component_types::SYSTEM_TYPES)) {
+                $pre_obj = $phr->obj() ?? $phr;
+            }
+            // the preview is within the edit form, so a previewed form component e.g. the name field would post
+            // the name of the sample phrase after the typed name and the save would take it
+            $result .= $html->fieldset_disabled($dbo->dsp_entries(
+                $pre_obj, $msg, $form_name, $msk_id, $cfg, $dbo->style_id, '', $test_mode, $url_arr));
         }
         return $result;
     }

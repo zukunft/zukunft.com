@@ -2612,17 +2612,7 @@ class frontend
     ): array
     {
         if ($do_it) {
-            // the account is loaded by the id of the requesting user like in action_login_activate
-            $usr = new user_backend();
-            $logoff_msg = new backend_user_message($usr); // the user saves its own logoff time, merged into $msg_ui below
-            $usr->load_by_id($usr_ui->id(), $logoff_msg);
-            if ($usr->has_db_id()) {
-                $usr->last_logoff = new DateTime();
-                $usr->save($logoff_msg);
-            }
-            $msg_logoff_ui = new user_message_ui();
-            $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
-            $msg_ui->merge($msg_logoff_ui);
+            $this->save_logoff($usr_ui, $msg_ui);
             if (isset($_SESSION)) {
                 $_SESSION = [];
                 session_destroy();
@@ -2638,6 +2628,34 @@ class frontend
             }
         }
         return $url;
+    }
+
+    /**
+     * write the logoff time of the requesting user to the account; separated from action_logout, which also
+     * destroys the session, so that a test can check the write
+     *
+     * @param user_ui $usr_ui the requesting user whose account gets the last_logoff
+     * @param user_message_ui $msg_ui collects the errors of saving the logoff time
+     * @return bool true if the logoff time has been written, false e.g. for an anonymous user, who has no account
+     */
+    function save_logoff(user_ui $usr_ui, user_message_ui $msg_ui): bool
+    {
+        $result = false;
+        // an anonymous user has no account, so the logout of a visitor starts no query
+        if ($usr_ui->id() > 0) {
+            // the account is loaded by the id of the requesting user like in action_login_activate
+            $usr = new user_backend();
+            $logoff_msg = new backend_user_message($usr); // the user saves its own logoff time, merged into $msg_ui below
+            $usr->load_by_id($usr_ui->id(), $logoff_msg);
+            if ($usr->has_db_id()) {
+                $usr->last_logoff = new DateTime();
+                $result = $usr->save($logoff_msg);
+            }
+            $msg_logoff_ui = new user_message_ui();
+            $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
+            $msg_ui->merge($msg_logoff_ui);
+        }
+        return $result;
     }
 
     /**

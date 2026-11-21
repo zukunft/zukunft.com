@@ -69,6 +69,7 @@ class paths
     const string MODEL_SANDBOX = self::MODEL . 'sandbox' . DIRECTORY_SEPARATOR;
     const string MODEL_SYSTEM = self::MODEL . 'system' . DIRECTORY_SEPARATOR;
     const string MODEL_USER = self::MODEL . 'user' . DIRECTORY_SEPARATOR;
+    const string MODEL_VALUE = self::MODEL . 'value' . DIRECTORY_SEPARATOR;
     const string MODEL_VERB = self::MODEL . 'verb' . DIRECTORY_SEPARATOR;
     const string MODEL_VIEW = self::MODEL . 'view' . DIRECTORY_SEPARATOR;
     const string MODEL_WORD = self::MODEL . 'word' . DIRECTORY_SEPARATOR;

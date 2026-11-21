@@ -48,6 +48,8 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
@@ -213,6 +215,20 @@ class sys_log_tests
         $log_db = $t_sys->sys_log_filled();
         $log = $t_sys->sys_log_closed();
         $t->assert_sql_update($sc, $log, $log_db, [sql_type::LOG]);
+
+        // the test cleanup removes the failed logins of a test user by the typed name (see test_base::cleanup_login_fail_log)
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $t->login_fail_log_del_qp($sc, users::SYSTEM_TEST_NAME);
+        $test_name = 'delete the failed logins of a typed name (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE sys_log_del_login_fails (text, text) AS DELETE FROM sys_log WHERE sys_log_text = $1 AND sys_log_description = $2;');
+        $test_name = '... only of the failed logins and only of the typed name';
+        $t->assert($test_name, implode(',', $qp->par), sys_log_functions::LOGIN_FAILED_TEXT . ',' . users::SYSTEM_TEST_NAME);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $t->login_fail_log_del_qp($sc, users::SYSTEM_TEST_NAME);
+        $test_name = 'delete the failed logins of a typed name (mysql)';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE sys_log_del_login_fails FROM 'DELETE FROM sys_log WHERE sys_log_text = ? AND sys_log_description = ?';");
 
 
         $t->subheader($ts . 'api');

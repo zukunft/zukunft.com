@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use DateTime;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -635,6 +636,8 @@ class word_write_url_tests extends word_url_tests
         $test_name = '... and the next requests have no session user';
         $session_usr_id = $_SESSION[url_var::SESSION_USER_ID] ?? 0;
         $t->assert($test_name, $session_usr_id, 0);
+        // the refused login has written a failed login to the system log, which would sum up over the test runs
+        $t->cleanup_login_fail_log(users::SYSTEM_TEST_NAME);
 
         // the 'normal page' the flow starts from: the default word view of the math word
         $page_url = [
@@ -655,6 +658,24 @@ class word_write_url_tests extends word_url_tests
         $t->assert_text_contains($test_name, $html_logged,
             api::LOGOUT_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID,
             $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // the logout writes the logoff time of the account (see frontend::action_logout), which is checked
+        // without the session destroy that the streamed test run cannot do (see logout());
+        // a minute before, because the database keeps the time without the microseconds
+        $logoff_start = new DateTime('-1 minute');
+        $logoff_msg = new user_message_ui();
+        $test_name = 'the logout writes the logoff time of the user';
+        $t->assert_true($test_name, $this->ui->save_logoff($msg1->usr, $logoff_msg));
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $logoff_msg);
+        $test_name = '... to the account in the database';
+        $t->assert_true($test_name, $this->db_user($msg1->usr)->last_logoff >= $logoff_start);
+        // negative: a visitor without login has no account, so the logout writes nothing
+        $anon_msg = new user_message_ui();
+        $test_name = 'the logout of a visitor without login writes no logoff time';
+        $t->assert_false($test_name, $this->ui->save_logoff(new user_ui(), $anon_msg));
+        $test_name = '... and gives no message';
+        $t->assert_msg($test_name, $anon_msg);
 
         // the logout action forwards the back target to the logout page url; routing only,
         // because a real session destroy is not possible in the streamed test run (see logout())

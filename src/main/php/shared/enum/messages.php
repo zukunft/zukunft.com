@@ -554,7 +554,8 @@ enum messages: string
     // the var is the text of the error without the sys_log id (log_msg)
     case INTERNAL = 'an internal system error has occurred and the admin has been informed: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
-    case INTERNAL_WARNING = 'a system warning has been logged that you can track with this link: '
+    // like INTERNAL without a link, because the var is what log_msg returns for a warning, which is empty (log_warning_msg)
+    case INTERNAL_WARNING = 'a system warning has occurred and the admin has been informed: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
     // the line below a critical error that the log writer shows (log_msg)
     case INTERNAL_ADMIN_INFORMED = 'internal_admin_informed';
