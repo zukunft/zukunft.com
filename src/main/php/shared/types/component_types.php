@@ -125,6 +125,9 @@ class component_types
     // the references of a phrase as '6'-prefixed rows of its edit form (see url_var::REF_ROW)
     const string FORM_REF_ROWS = "system_form_ref_rows";
     const int FORM_REF_ROWS_ID = 295;
+    // the triples of a new word as '5'-prefixed rows of its add form (see url_var::TRIPLE_ROW)
+    const string FORM_TRIPLE_ROWS = "system_form_triple_rows";
+    const int FORM_TRIPLE_ROWS_ID = 298;
     const string FORM_FIELD_VALUE = "system_form_field_value";
     const int FORM_FIELD_VALUE_ID = 133;
     const string FORM_SELECT_VALUE = "form_select_value";
@@ -886,6 +889,7 @@ class component_types
         self::FORM_SELECT_REF,
         self::FORM_SELECT_REFS,
         self::FORM_REF_ROWS,
+        self::FORM_TRIPLE_ROWS,
         self::FORM_SELECT_FORMULA,
         self::FORM_SELECT_FORMULAS,
         self::FORM_SELECT_TERM,
@@ -1130,6 +1134,7 @@ class component_types
         [self::FORM_SELECT_REF, self::FORM_SELECT_REF_ID],
         [self::FORM_SELECT_REFS, self::FORM_SELECT_REFS_ID],
         [self::FORM_REF_ROWS, self::FORM_REF_ROWS_ID],
+        [self::FORM_TRIPLE_ROWS, self::FORM_TRIPLE_ROWS_ID],
         [self::FORM_SELECT_FORMULA, self::FORM_SELECT_FORMULA_ID],
         [self::FORM_SELECT_FORMULAS, self::FORM_SELECT_FORMULAS_ID],
         [self::FORM_SELECT_TERM, self::FORM_SELECT_TERM_ID],

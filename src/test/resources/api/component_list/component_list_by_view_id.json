@@ -78,6 +78,22 @@
         "ui_msg_code_id": "form_select_protection"
     },
     {
+        "id": 403,
+        "name": "system form ref rows",
+        "description": "the references of the phrase as rows of the edit form, which the confirm of the phrase change writes too",
+        "type_id": 295,
+        "code_id": "form_ref_rows",
+        "ui_msg_code_id": "form_ref_rows"
+    },
+    {
+        "id": 406,
+        "name": "system form triple rows",
+        "description": "the triples of a new word as rows of its add form, which the confirm of the word adds too",
+        "type_id": 298,
+        "code_id": "form_triple_rows",
+        "ui_msg_code_id": "form_triple_rows"
+    },
+    {
         "id": 156,
         "name": "system formatter row right",
         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",

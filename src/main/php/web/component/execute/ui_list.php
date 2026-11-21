@@ -1290,6 +1290,9 @@ class ui_list extends ui_base
         // related values and formulas); otherwise fall back to the page reference cache
         if ($dbo->ref_lst != null) {
             $ref_lst = $dbo->ref_lst;
+        } elseif ($dbo->id() == 0) {
+            // a new phrase e.g. of the add word view has no stored references yet
+            $ref_lst = new ref_list();
         } else {
             $ref_lst = $dto->ref_list_cloned()->get_by_phrase($dbo->phrase(), $msg);
         }

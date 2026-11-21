@@ -60,7 +60,6 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 use DateTimeZone;
-use DOMDocument;
 
 class reference_ui_tests
 {
@@ -501,7 +500,7 @@ class reference_ui_tests
         $msg->reset();
 
         $test_name = 'the form rows posted without a change are no reference change';
-        $posted = $this->posted_vars($rows_html);
+        $posted = $t->posted_vars($rows_html);
         $t->assert($test_name, url_var::ref_rows($posted), []);
         $test_name = 'one changed key, one checked delete box and one filled add row are three reference changes';
         $changed = $posted;
@@ -509,38 +508,6 @@ class reference_ui_tests
         $changed[url_var::REF_ROW . url_var::ACTION . 2] = url_var::CRUD_DELETE;
         $changed[url_var::REF_ROW . url_var::EXTERNAL_KEY . $add_row] = refs::MATH_KEY;
         $t->assert($test_name, array_keys(url_var::ref_rows($changed)), [1, 2, $add_row]);
-    }
-
-    /**
-     * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
-     * if it is checked and a selector with its selected entry; a later field with the same name wins
-     *
-     * @param string $html the html code of the form fields
-     * @return array the posted url vars e.g. ['6a1' => 'u', '6ek1' => 'Q395']
-     */
-    private function posted_vars(string $html): array
-    {
-        $dom = new DOMDocument();
-        // the html5 tags are unknown to libxml, which reports them but reads the fields anyway
-        $use_errors = libxml_use_internal_errors(true);
-        $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
-        libxml_clear_errors();
-        libxml_use_internal_errors($use_errors);
-        $result = [];
-        foreach ($dom->getElementsByTagName('input') as $input) {
-            $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
-            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))) {
-                $result[$input->getAttribute('name')] = $input->getAttribute('value');
-            }
-        }
-        foreach ($dom->getElementsByTagName('select') as $select) {
-            foreach ($select->getElementsByTagName('option') as $option) {
-                if ($option->hasAttribute('selected')) {
-                    $result[$select->getAttribute('name')] = $option->getAttribute('value');
-                }
-            }
-        }
-        return $result;
     }
 
 }

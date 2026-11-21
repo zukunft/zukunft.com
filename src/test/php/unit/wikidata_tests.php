@@ -266,6 +266,20 @@ class wikidata_tests
         $test_name = '... but the live answer';
         $t->assert($test_name, $pod_imp->live_or_saved_json(self::ZURICH_KEY, '{"entities":{}}'), '{"entities":{}}');
 
+        $t->subheader($ts . 'page request');
+        // an import waits long and repeats a failed request, because no user waits for it
+        $test_name = 'an import waits for wikidata as long as an import';
+        $t->assert($test_name, $pod_imp->timeout(), import_wikidata::IMPORT_TIMEOUT);
+        $test_name = '... and repeats a failed request';
+        $t->assert_true($test_name, $pod_imp->is_retried());
+        // negative: a page e.g. the groups of the add word suggestions must not block the user for minutes
+        $page_imp = new import_wikidata();
+        $page_imp->for_page();
+        $test_name = 'a page waits for wikidata only as long as for wikipedia';
+        $t->assert($test_name, $page_imp->timeout(), import_wikidata::READ_TIMEOUT);
+        $test_name = '... and never repeats a failed request';
+        $t->assert_false($test_name, $page_imp->is_retried());
+
         $t->subheader($ts . 'convert');
         // reads the units and criteria only from the hand made answers, so the test never sends a live request
         $imp = new import_wikidata(test_paths::IMPORT_WIKIDATA_UNIT);

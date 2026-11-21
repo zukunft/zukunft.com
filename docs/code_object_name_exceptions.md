@@ -59,7 +59,7 @@ view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_calc, $msk_cols, $msk_db, $msk_empty
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_map, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $found_none, $from, $inh, $max_wrd, $measure_word, $name_wrd, $new, $new_word, $no_desc, $obj, $old, $par_wrd, $result, $row_wrd, $sug_wrd, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_clr_ui, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_frm, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_ok, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_views, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $add_wrd, $country, $dbo, $dbo_ui, $found_none, $from, $inh, $ip_wrd, $max_wrd, $measure_word, $name_wrd, $new, $new_word, $new_wrd, $no_desc, $obj, $old, $par_wrd, $result, $row_wrd, $sug_wrd, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_clr_ui, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_frm, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_ok, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_views, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -156,7 +156,7 @@ headless_browser: $brw
 html_base: $head_html, $html, $html_base
 html_page_diff: $hpd
 import_file: $imf, $import
-import_wikidata: $fix_imp, $imp, $imp_no_file, $pod_imp, $saved_imp
+import_wikidata: $fix_imp, $imp, $imp_no_file, $page_imp, $pod_imp, $saved_imp, $wd_imp
 import_wikidata_preview: $preview
 ip_range: $ip, $ip_range
 ip_range_list: $db_lst, $ip_lst, $ip_range_lst
@@ -218,7 +218,7 @@ sys_log_level: $log_typ
 sys_log_list: $answer_lst, $err_lst, $err_lst_ui, $errors, $log_lst, $log_lst_ui, $lst, $lst_ui, $refused_lst, $slg_lst, $sys_lst
 sys_log_status: $log_sta
 sys_log_status_list: $lst, $sys_log_status, $typ_lst
-system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
+system_form: $form, $overwrite_form, $row_form, $sfm, $simple_form, $value_form
 system_page: $page, $pre_page, $sbx_page, $sys_page
 system_time_type: $sys_exe_typ, $sys_script
 table_chart: $chart

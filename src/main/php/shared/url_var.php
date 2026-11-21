@@ -189,6 +189,8 @@ class url_var
         self::REFRESH_SUGGEST_CONCEPTNET,
         self::REFRESH_SUGGEST_WIKIDATA,
     ];
+    // the add button of the reference or triple rows shows the form again with the filled rows and a new empty row
+    const string REFRESH_ROWS = 'frr';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -724,6 +726,7 @@ class url_var
     const string REFRESH_SUGGEST_WIKIPEDIA_HUMAN = 'suggestions_from_wikipedia';
     const string REFRESH_SUGGEST_CONCEPTNET_HUMAN = 'suggestions_from_conceptnet';
     const string REFRESH_SUGGEST_WIKIDATA_HUMAN = 'suggestions_from_wikidata';
+    const string REFRESH_ROWS_HUMAN = 'rows_with_empty_row';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -1110,6 +1113,7 @@ class url_var
         self::REFRESH_SUGGEST_WIKIPEDIA => self::REFRESH_SUGGEST_WIKIPEDIA_HUMAN,
         self::REFRESH_SUGGEST_CONCEPTNET => self::REFRESH_SUGGEST_CONCEPTNET_HUMAN,
         self::REFRESH_SUGGEST_WIKIDATA => self::REFRESH_SUGGEST_WIKIDATA_HUMAN,
+        self::REFRESH_ROWS => self::REFRESH_ROWS_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1247,6 +1251,9 @@ class url_var
         if ($action == self::CRUD_CREATE) {
             // a reference cannot exist without external key, so an add row without one is the untouched add row
             $result = (($fields[self::EXTERNAL_KEY] ?? '') != '');
+        } elseif ($action == self::CRUD_DELETE) {
+            // only a stored reference can be deleted, so a delete without id is a removed add row e.g. a suggestion
+            $result = (($fields[self::REF] ?? '') != '');
         } elseif ($action == self::CRUD_UPDATE and $pre_fields != []) {
             // the action and the id of the reference have no stored value
             $row_values = array_diff_key($fields, [self::ACTION => '', self::REF => '']);

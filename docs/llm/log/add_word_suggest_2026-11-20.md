@@ -53,6 +53,87 @@ defines the group or parent of the new word.
    city" for Hamburg (Q1055); not the categories of the wikipedia page, because they are plural sets with qualifiers
    e.g. "Port cities and towns in Germany", which no text rule turns into a correct singular for every category.
 
+### Follow-up request of 2026-11-21: the references and triples on the add word view
+
+Formerly the separate log `add_view_rows_2026-11-21.md`, merged into this one to keep the number of log files low;
+it was started after the first test run of this log, so its planned changes are the last rows of "Unexpected
+changes" below.
+
+From the developer on 2026-11-21: if after pressing the add word button of a search e.g. the page
+`http://localhost/http/view.php?m=47&z=1&k=Aarau&fr=frs&u=11` is shown and save is pressed, the collected triples e.g.
+"Aarau is a municipality of Switzerland" and the references e.g. "wikidata added: External key Q14274" are shown on
+the confirm page. Show the related triples and references also on the add word view and on the confirm page.
+
+What existed already:
+
+- The add word view (`word_add`, `views::WORD_ADD_DETAIL_ID` 47, `messages/system_views.json`) carried the suggested
+  reference rows (`url_var::REF_ROW`) and triple rows (`url_var::TRIPLE_ROW`) only as hidden fields of
+  `system_form::form_back`, so the user did not see them before the save.
+- The confirm page lists both read only (`ui_preview::ref_rows_section` and `triple_rows_section`).
+- The word edit view has the component "system form ref rows" (`component_types::FORM_REF_ROWS`,
+  `system_form::form_ref_rows`), which shows the stored references as editable rows and one empty add row; a posted
+  add row was shown again only at the row number after the stored references.
+
+Decision of the developer (2026-11-21): the add word view shows the suggestions as **editable rows**, so that the user
+can change or remove a suggestion before the save: the references with the existing component "system form ref rows",
+the triples with a new component "system form triple rows"; the confirm page keeps its read only lists.
+
+### Follow-up request of 2026-11-21: remove and add of the rows
+
+Formerly the separate log `row_buttons_2026-11-21.md`, merged into this one to keep the number of log files low; its
+planned changes are rows of "Unexpected changes" below.
+
+From the developer on 2026-11-21: on the view `http://localhost/http/view.php?m=47&z=1&k=Hamburg&fr=frs&u=11`
+remove the description of the references and the source and instead increase the width of the reference url field.
+Allow to remove or add a reference. And allow to remove or add triples in the list below.
+
+What existed already:
+
+- The add word view showed the suggested references with `system_form::form_ref_rows` as add rows with type, external
+  key, url, description and source (each `col-md-2`) and one empty add row; the triples with
+  `system_form::form_triple_rows` as rows with verb and to phrase and one empty add row.
+- A suggestion was removed only by clearing its external key or its to phrase; a second own reference or triple
+  needed a save, because there was only one empty row.
+- The form is a get form; a submit without `url_var::POST_SUBMIT` only shows the view again with the posted values
+  (e.g. `html_base::button_refresh_text` with `url_var::REFRESH_PHRASES` of the value add view).
+
+Decisions of the LLM:
+
+- The layout change is only for a new phrase (the add view, phrase id 0); the edit views keep their rows, because
+  there the description and the source of a stored reference can be changed.
+- The description and the source of a suggested reference stay as hidden fields of `form_back`, so the suggested
+  values are still written with the reference, only no longer shown.
+- Remove is a checkbox like the delete box of a stored reference and not a submit button, because the first submit
+  of a form gets the enter key and the enter key in the name field must not remove the first reference; an add row
+  with the delete action is no change, so the removed row is neither shown again nor confirmed.
+- Add is a refresh submit (`url_var::REFRESH_ROWS`), which shows the view again with the filled rows and a new empty
+  row; as the first submit of the add view it gets the enter key, which then shows the view again instead of the save.
+
+### Follow-up request of 2026-11-21: include flag and section titles
+
+Formerly the separate log `row_include_2026-11-21.md`, merged into this one to keep the number of log files low; it
+came before the first test run of the remove and add above, so the remove box was never tested.
+
+From the developer on 2026-11-21: in `http://localhost/http/view.php?m=47&z=1&k=Hamburg&fr=frs&u=11` increase the
+line space before 'References' and make the 'References' a header, so bigger and bold. Same for 'Triples'. For the
+references rows reverse 'remove' to 'include' and switch all flags by default on. The flag should be in the row of
+the input fields and the 'include' should be a label above similar to 'External key'. Similar for the triples flag.
+
+What existed already:
+
+- `system_form::form_ref_rows` and `form_triple_rows` started with `label_no_for` of "References" and "Triples".
+- Each posted add row of a new word ended with `system_form::add_row_end`: a "remove" checkbox that posted the delete
+  action and overwrote the hidden add action at the start of the row; the empty row ended with the add button.
+- `html_base::text_h3` ignores its style with bootstrap, so a heading with a top margin needs its own helper.
+
+Decisions of the LLM:
+
+- An unchecked checkbox posts nothing, so the include box posts the add action and is preceded by a hidden delete
+  action of the same row: checked, the later add action wins; unchecked, the delete stays and the row is dropped
+  (`url_var::ref_rows`, `url_var::triple_rows`). The hidden add action at the start of a posted row moves into the
+  last column, so that each row posts its action only once.
+- An excluded row is not shown again after the add button, because the url keeps only the rows to add.
+
 ## Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -86,11 +167,26 @@ defines the group or parent of the new word.
 | `test/php/unit_write_workflow/word_write_url_tests.php`, `test/php/utils/test_base.php` | `add_word_with_suggestions` with `$this->usr` and `$this->msg`; `cleanup_hamburg` loads Hamburg and its triples as usr1 and deletes each triple as usr1; the owner delete inside `write_named_cleanup_force` | a usr1 `user_ui` for the suggestion message and the confirm request; `$t->cleanup_last_used()` in the cleanup of the word workflow; `cleanup_hamburg` loads as the system user and deletes each triple with the new public `test_base::del_by_owner`, which `write_named_cleanup_force` uses too; `is_test_user_word` adds a parent word of a test user to the removed parent words | found by two errors of the runs of 2026-11-20: "... but not of another user" of the triple workflow (actual 2 = `verbs::IS_ID`) and "the write tests have not left the words as they were" (Hamburg, "federated state of Germany", "big city" and "Hanseatic city" owned by user 4, the test partner); `word_login_workflow` starts with `wf_start` for usr2, which sets `$this->usr` and `$this->msg->usr` for all following tests, so the Hamburg add has written the word and its "is a" triples for usr2 and with that set "is a" as the last used verb of usr2; the delete of a usr2 triple by usr1 only writes an exclusion for usr1 (the `added "1"` log rows), so the triples kept Hamburg and its parent words in use and every delete of the words was refused; a parent word owned by a test user is a leftover of an earlier run, because the parent words of the base data are owned by the system user, so the cleanup at the start of the next run removes the four words left now |
 | — (no file changed) | — | — | found by "the write tests have not left the triples as they were" of the same run of 2026-11-20: the six "is a" triples from Hamburg to its parent words e.g. "Hamburg (big city)", owned by user 4, the test partner, and deleted by the system user, which has only written an exclusion (`added "1"`); the same cause as the row above, so the triples are removed by the owner delete of `cleanup_hamburg` (`test_base::del_by_owner`) at the start of the next run, before the words that they keep in use |
 | `test/php/unit_read/phrase_list_read_tests.php` | `uses_test_word` skips the triples of `word_names::TEST_WORDS` | also the triples from or to `word_names::HAMBURG` | found by "... and are the saved fixed list" (`list_is_a.csv`) of the run of 2026-11-20: a Hamburg triple of an earlier write run, "Hamburg (urban …" with the id 8647, was read as seed data, because Hamburg is written only by the add word workflow and is no test word; Hamburg is not added to `TEST_WORDS`, because these are also the reserved test names, which would block the add of Hamburg by a real user; the id 8647 is newer than the six left triples 8638 to 8643, so if the run that wrote it has already used the owner delete of `cleanup_hamburg`, another leak is still open |
+| `web/frontend.php`, `cfg/ref/ref_link_wikipedia.php`, `test/php/unit/wikipedia_tests.php` | `action_crud`: the retry of the open rows of any new object goes to `views::WORD_EDIT_ID`; `suggest_from_wikidata` sends the wikidata id of the url unchecked | the retry of a new triple goes to `views::TRIPLE_EDIT_ID`, and only a phrase gets an edit view; the id is sent only if it matches `WIKIDATA_ID_PATTERN`, otherwise the step "found no group in wikidata"; the negative unit test with the id `../Q72` | found by the review of the uncommitted changes on 2026-11-20 (points 1 and 2): since the reference rows are also written for the create of a triple, an open row would have shown the new triple id in the word edit view, and a typed reference row of e.g. a new formula would have done the same; the `ek` of the url went to the wikidata request without a check, which has no file risk, because the default `import_wikidata` has no cache folder, but a typed id should never reach wikidata; the unit test also passes without the check, because the request would only fail, but with the check it sends no request, so it stays offline |
+| `cfg/ref/ref_link_wikipedia.php`, `cfg/import/import_wikidata.php`, `test/php/unit/wikipedia_tests.php`, `test/php/unit/wikidata_tests.php` | `suggest_from_url` asks the sources for any requesting user; the wikidata step reads with `IMPORT_TIMEOUT` (60 seconds) and repeats a failed request after a pause | `suggest_from_url` asks no source for a data user that `user::is_blocked`, only the step `CHANGE_BLOCKED_FOR_IP_USER`; `import_wikidata::for_page`, `timeout`, `is_retried` and `request_json` with the timeout and the retry of the object; `suggest_from_wikidata` reads with `for_page`; the negative unit tests of a user without login and of the page request | found by the review of the uncommitted changes on 2026-11-20 (points 3 and 4): the frontend has blocked the add word button for a user without login, but the backend api answered a direct call `api/word/?k=<name>&fr=frsw` without login too, so anyone could let the pod ask wikipedia, conceptnet and wikidata; the data user of the word is checked, because for a call of the own frontend it is the browsing user (see `user::data_user`); a rate limit is not added, so a pod that allows the changes of an ip user still lets an anonymous call ask the sources; the wikidata step blocked the add view and the php process up to minutes per request with the import timeout and the repeats, now each request waits at most `READ_TIMEOUT` like wikipedia and only once; an import without `for_page` is unchanged; the one request per group remains open in `pending_prio_2.md` ("speed of the wikidata groups") |
+| `messages/system_views.json`, `web/component/execute/system_form.php`, `web/component/execute/ui_list.php` | `word_add` components 1-15; `form_ref_rows` with one add row after the stored references; `refs_of_phrase` reads the page cache for a phrase without references | `word_add` with "system form ref rows" and "system form triple rows" before the button row; `form_ref_rows` shows each posted add row of the url e.g. the suggested wikipedia and wikidata reference as an editable add row and then one empty add row; `refs_of_phrase` returns an empty list for a new phrase | the follow-up request of 2026-11-21 (see "Request"), the references: a suggested reference is changed in its fields or removed by clearing its external key (an add row without external key is no change, see `url_var::ref_rows`); the visible rows come after the hidden rows of `form_back`, so their posted value wins; a new word has no stored references, so the page cache is not asked for the phrase without id |
+| `db_code_links/component_types.csv`, `shared/types/component_types.php`, `web/component/component_exe.php`, `shared/enum/messages.php`, `translations/en.yaml`, `translations/de.yaml`, `messages/system_views.json`, `web/component/execute/system_form.php`, `test/php/create/test_mappers.php` | — | the row `298, 'form triple rows', …, 'system_form_triple_rows'`; `FORM_TRIPLE_ROWS` and `FORM_TRIPLE_ROWS_ID = 298` in the three places; the arm `FORM_TRIPLE_ROWS => $form->form_triple_rows(…)`; the message `FORM_TRIPLE_ROWS` with en and de texts; the component "system form triple rows"; `system_form::form_triple_rows` with the helper `triple_row`; `FORM_TRIPLE_ROWS` with the filled word in the test mapper | the same follow-up request, the triples: each suggested triple row of the url e.g. "is a" "city-state" as an editable row with the hidden add action `5a<n>`, the verb selector `5b<n>` and the to phrase as a text field `5pt<n>`, then one empty add row with the verb "is a", so that the user can also add an own triple; a triple is removed by clearing its to phrase (a triple row without to phrase is no change, see `url_var::triple_rows`); only for a word, because only the add of a word writes the triple rows (`frontend::action_crud`) |
+| `test/php/unit_ui/word_ui_tests.php`, `test/php/utils/test_base.php`, `test/php/unit_ui/reference_ui_tests.php` | section "add word suggestions"; the private `posted_vars` of `reference_ui_tests` | the tests of the rows of the add view, each with its negative; `test_base::posted_vars`, which both tests use | the same follow-up request: the add view shows the suggested reference and triple of the url as editable rows and an empty add row each, the posted form rows of the suggestions are the same rows again, a cleared external key and a cleared to phrase are no change; negative: an object that is no word gets no triple rows; expected at the next run: every add word snapshot (`views_by_id/word/47_*`, `add_word_wf*`) gets the two components, an edit view shown again with a posted add row gets one more empty add row, and the generated component fixtures and `docs/code_*.md` change |
+| `web/component/execute/system_form.php`, `shared/url_var.php` | `form_ref_rows` with type, key, url, description and source in each add row; `is_ref_row_change` keeps a delete row without reference id | for a new phrase `form_ref_rows` shows type, key and the url as `col-md-6` in each posted add row (`ref_row_new`, `ref_row_type`) and the add button in the empty row; `is_ref_row_change` drops a delete without reference id; the refresh value `REFRESH_ROWS` with its human name | the follow-up request "remove and add of the rows" (see "Request"): another reference is added by the button; a delete needs the id of a stored reference, so a delete of an add row is the removed suggestion; the remove box of this request is replaced by the include box of the next follow-up |
+| `web/component/execute/system_form.php`, `shared/enum/messages.php`, `translations/en.yaml`, `translations/de.yaml` | `triple_row` with verb and to phrase | `triple_row` with the add button in the empty row; the private helper `add_row_end` with the remove box or the add button, which both row types use; the message `FORM_FIELD_ROW_REMOVE` "remove" / "entfernen" | the same follow-up request for the triples; `url_var::triple_rows` already drops a row that is no add; `add_row_end` and `FORM_FIELD_ROW_REMOVE` are replaced by the next follow-up |
+| `test/php/unit_ui/word_ui_tests.php` | section "add word suggestions" | the tests of the remove and add of both row types, each with its negative | the same follow-up request: a removed reference and triple are neither shown again nor in the url of the confirm; the add refresh keeps the filled rows and adds an empty row; negative: a delete of a stored reference is still kept; expected at the next run: the add word snapshots show the wider url and the add button |
+| `web/html/html_base.php`, `web/html/styles.php`, `web/component/execute/system_form.php` | `label_no_for` of the row titles | `html_base::form_section_title`, an `h5` with the style `styles::FORM_SECTION_TITLE` (`mt-4 fw-bold`) | the follow-up request "include flag and section titles": "References" and "Triples" are bigger and bold with more space before them; `form_ref_rows` is the same component on the word and triple edit views, so their "References" becomes a heading too and their snapshots are expected to change |
+| `web/component/execute/system_form.php`, `shared/enum/messages.php`, `translations/en.yaml`, `translations/de.yaml` | `add_row_end` with the unchecked "remove" box beside its label and the hidden add action at the start of `triple_row` and `ref_row_new`; `FORM_FIELD_ROW_REMOVE` "remove" / "entfernen" | `add_row_action` with the hidden delete action and the "include" box, checked by default and below its label like a field, in the last column of the row, or the hidden add action and the add button for the empty row; `FORM_FIELD_ROW_INCLUDE` "include" / "übernehmen" | the same follow-up request: each suggested reference and triple is included by default and excluded by clearing its box; the add word snapshots are expected to show the include box |
+| `test/php/unit_ui/word_ui_tests.php` | the remove box tests of section "add word suggestions" | the include box tests: checked by default, a cleared box excludes the reference or triple, also from the view shown again | the same follow-up request: the tests clear the first box in the html and read the posted vars, as the browser posts them |
+| `messages/system_views.json`, `shared/const/components.php` | the component "system form triple rows" after "system form ref rows" in the middle of the `components` block; `SOLUTION_PRIO_TITLE_ID = 430` | the component at the end of the `components` block, after "system form wikidata id"; `SOLUTION_PRIO_TITLE_ID = 431` | found by "the linked component of a component is shown with its label and a link" and "a component of the request cache is found by its id" of the run of 2026-11-21 (actual "related phrases", expected "Title solution priority"): the id of a seed component is its import position, so the inserted component (id 404 in the regenerated `unit/component/list.csv`) moved every later component by one; it is appended now, as `docs/llm/json_views.md` asks ("append, never insert"), so that "system body import preview" and "system form wikidata id" of the earlier commits keep their ids 404 and 405; the components of the later seed files e.g. `solution_prio.json` move by one anyway, because a view of `system_views.json` can use only a component that is imported before it, so the pinned id is re-baselined from the regenerated `list.csv`; no other pinned component id is above 403 |
 
 ## Lessons learned by llm
 
 - A frontend change that reads new backend data via `rest_call` needs the updated served copy (`/var/www/html`,
   `docs/deployment.md`) before the test run, unlike a backend change that a test calls in the same process; name this
   in the final report of such a change, so that an answer without the new data is not taken for a code error.
+- A new seed component is appended at the end of the `components` block (`docs/llm/json_views.md`) and never placed
+  next to a similar one; a component of `system_views.json` still moves the components of the later seed files, so
+  the pinned component ids (`test_pinned_ids::COMPONENTS`) are named in the final report as expected to change.
 
 ## Lessons learned by human

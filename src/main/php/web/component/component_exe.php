@@ -253,6 +253,7 @@ class component_exe extends component
             component_types::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $msg, $cfg->ref_list(), $pattern),
             component_types::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $msg, $cfg->ref_list()),
             component_types::FORM_REF_ROWS => $form->form_ref_rows($dbo, $form_name, $msg, $cfg, $url_arr, $test_mode),
+            component_types::FORM_TRIPLE_ROWS => $form->form_triple_rows($dbo, $form_name, $cfg, $url_arr),
             component_types::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->value_list()),
             component_types::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->value_list()),
             component_types::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),

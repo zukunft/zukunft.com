@@ -8335,6 +8335,9 @@
                         <option value="147"  >
                             form select verb
                         </option>
+                        <option value="298"  >
+                            form triple rows
+                        </option>
                         <option value="291"  >
                             formula editor
                         </option>
@@ -11101,11 +11104,10 @@
             <br>
             <form action="/http/view.php" id="component_type_test_222">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
-                <label>
+                <h5 class="mt-4 fw-bold">
                     References
-                </label>
+                </h5>
                 <div class="row ">
-                    <input type="hidden" name="6a1_222" value="a">
                     <div class="form-group col-md-2">
                         <label for="6lt1_form_select_ref_type_222">
                             Reference type
@@ -11131,27 +11133,17 @@
                         </label>
                         <input class="form-control" type="text" name="6ek1_222" id="external_key_1_222">
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-6">
                         <label for="url_1_222">
                             URL
                         </label>
                         <input class="form-control" type="text" name="6ur1_222" id="url_1_222">
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="description_1_222">
-                            Description
-                        </label>
-                        <input class="form-control" type="text" name="6o1_222" id="description_1_222">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="6so1_form_select_source_222">
-                            source
-                        </label>
-                        <select class="form-control" name="6so1_222" form="component_type_test_222" id="6so1_form_select_source_222" >
-                            <option value="0" selected>
-                                please select ...
-                            </option>
-                        </select>
+                    <input type="hidden" name="6a1_222" value="a">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr_222" value="frr">
+                            add
+                        </button>
                     </div>
                 </div>
             </form>
@@ -11184,6 +11176,224 @@
                 <button class="btn btn-space col-1 btn-outline-success" type="submit">
                     Show what would be imported
                 </button>
+            </form>
+            <br>
+            <br>
+            <h4>
+                form triple rows (system_form_triple_rows)
+            </h4>
+            <br>
+            <br>
+            <br>
+            <form action="/http/view.php" id="component_type_test_225">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <h5 class="mt-4 fw-bold">
+                    Triples
+                </h5>
+                <div class="row ">
+                    <div class="form-group col-md-3">
+                        <label for="5b1_form_select_verb_225">
+                            Verb
+                        </label>
+                        <select class="form-control" name="5b1_225" form="component_type_test_225" id="5b1_form_select_verb_225" >
+                            <option value="44"  >
+                                adds to
+                            </option>
+                            <option value="46"  >
+                                aims to trigger
+                            </option>
+                            <option value="12"  >
+                                and
+                            </option>
+                            <option value="16"  >
+                                between
+                            </option>
+                            <option value="17"  >
+                                by parts
+                            </option>
+                            <option value="24"  >
+                                can
+                            </option>
+                            <option value="22"  >
+                                can be
+                            </option>
+                            <option value="53"  >
+                                can be made of
+                            </option>
+                            <option value="54"  >
+                                can be packed in
+                            </option>
+                            <option value="7"  >
+                                can be part of
+                            </option>
+                            <option value="21"  >
+                                can be symbol for
+                            </option>
+                            <option value="8"  >
+                                can be used as a differentiator for
+                            </option>
+                            <option value="39"  >
+                                can cause
+                            </option>
+                            <option value="26"  >
+                                can get
+                            </option>
+                            <option value="25"  >
+                                can have
+                            </option>
+                            <option value="48"  >
+                                can use
+                            </option>
+                            <option value="45"  >
+                                competes with
+                            </option>
+                            <option value="43"  >
+                                enables
+                            </option>
+                            <option value="32"  >
+                                expected from
+                            </option>
+                            <option value="56"  >
+                                explains
+                            </option>
+                            <option value="23"  >
+                                has a
+                            </option>
+                            <option value="11"  >
+                                in
+                            </option>
+                            <option value="40"  >
+                                influences
+                            </option>
+                            <option value="2"  selected >
+                                is a
+                            </option>
+                            <option value="19"  >
+                                is alias of
+                            </option>
+                            <option value="20"  >
+                                is an acronym for
+                            </option>
+                            <option value="59"  >
+                                is analogous to
+                            </option>
+                            <option value="58"  >
+                                is evidence for
+                            </option>
+                            <option value="34"  >
+                                is explaining column for
+                            </option>
+                            <option value="33"  >
+                                is follower of
+                            </option>
+                            <option value="29"  >
+                                is measure type for
+                            </option>
+                            <option value="35"  >
+                                is next main column after
+                            </option>
+                            <option value="3"  >
+                                is part of
+                            </option>
+                            <option value="36"  >
+                                is ranked by
+                            </option>
+                            <option value="9"  >
+                                is selector for
+                            </option>
+                            <option value="60"  >
+                                is single attempt in
+                            </option>
+                            <option value="52"  >
+                                issue
+                            </option>
+                            <option value="18"  >
+                                is symbol for
+                            </option>
+                            <option value="38"  >
+                                is term jump for
+                            </option>
+                            <option value="37"  >
+                                is time jump for
+                            </option>
+                            <option value="50"  >
+                                is used by
+                            </option>
+                            <option value="4"  >
+                                kind of
+                            </option>
+                            <option value="42"  >
+                                limits
+                            </option>
+                            <option value="47"  >
+                                lowers barrier for
+                            </option>
+                            <option value="6"  >
+                                must be one of
+                            </option>
+                            <option value="5"  >
+                                name of
+                            </option>
+                            <option value="1"  >
+                                not set
+                            </option>
+                            <option value="10"  >
+                                of
+                            </option>
+                            <option value="14"  >
+                                on
+                            </option>
+                            <option value="27"  >
+                                per
+                            </option>
+                            <option value="41"  >
+                                reduces
+                            </option>
+                            <option value="57"  >
+                                refines
+                            </option>
+                            <option value="30"  >
+                                scaled by
+                            </option>
+                            <option value="55"  >
+                                supports
+                            </option>
+                            <option value="61"  >
+                                term type needed
+                            </option>
+                            <option value="28"  >
+                                times
+                            </option>
+                            <option value="13"  >
+                                to
+                            </option>
+                            <option value="51"  >
+                                used for
+                            </option>
+                            <option value="49"  >
+                                uses
+                            </option>
+                            <option value="31"  >
+                                weighted by
+                            </option>
+                            <option value="15"  >
+                                with
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="to_word_or_triple_1_225">
+                            To word or triple
+                        </label>
+                        <input class="form-control" type="text" name="5pt1_225" id="to_word_or_triple_1_225">
+                    </div>
+                    <input type="hidden" name="5a1_225" value="a">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr_225" value="frr">
+                            add
+                        </button>
+                    </div>
+                </div>
             </form>
         </main>
         <!--usr_msg-->

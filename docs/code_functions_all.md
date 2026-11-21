@@ -2593,6 +2593,9 @@
 \-- import_wikidata
     \-- __construct - section for function __construct is expected to be construct and map in /import/import_wikidata.ph
             p
+    \-- for_page - section for function for_page missing in /import/import_wikidata.php
+    \-- timeout - section for function timeout missing in /import/import_wikidata.php
+    \-- is_retried - section for function is_retried is expected to be info in /import/import_wikidata.php
     \-- get_entity_json - section for function get_entity_json is expected to be set and get in /import/import_wikidata.
             php
     \-- get_property_json - section for function get_property_json is expected to be set and get in /import/import_wikid
@@ -4619,6 +4622,13 @@
         \-- import_convert_xbrl - convert XBRL facts into the zukunft.com import JSON
     \-- convert_facts_to_file
         \-- import_convert_xbrl - convert an XBRL facts file into an import JSON file saved in the same folder
+    \-- for_page
+        \-- import_wikidata - read wikidata for a page that the user waits for e.g. the groups of the add word suggestio
+                ns: each
+    \-- timeout
+        \-- import_wikidata - @return int the seconds that each request waits for the answer of wikidata
+    \-- is_retried
+        \-- import_wikidata - @return bool true if a failed request is repeated after a pause (see retry_pause)
     \-- get_entity_json
         \-- import_wikidata - retrieve the entity data json from wikidata for the given wikidata id e.g. "Q167" for Pi
     \-- get_property_json
@@ -6999,6 +7009,8 @@
             hout auto fill in /component/execute/system_form.php
     \-- form_ref_rows - section for function form_ref_rows not yet defined that it should be optional with show password
              but without auto fill in /component/execute/system_form.php
+    \-- form_triple_rows - section for function form_triple_rows not yet defined that it should be optional with show pa
+            ssword but without auto fill in /component/execute/system_form.php
     \-- form_value - section for function form_value not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- form_values - section for function form_values not yet defined that it should be optional with show password but
@@ -7807,6 +7819,8 @@
     \-- text_h2 - section for function text_h2 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h4 - section for function text_h4 not yet defined that it should be text formatting in /html/html_base.php
+    \-- form_section_title - section for function form_section_title not yet defined that it should be text formatting i
+            n /html/html_base.php
     \-- logo - section for function logo not yet defined that it should be images in /html/html_base.php
     \-- logo_big - section for function logo_big not yet defined that it should be images in /html/html_base.php
     \-- logo_flex - section for function logo_flex not yet defined that it should be images in /html/html_base.php
@@ -10831,6 +10845,9 @@
     \-- form_ref_rows
         \-- system_form - the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW),
                  so that the
+    \-- form_triple_rows
+        \-- system_form - the triples of a new word as '5'-prefixed rows of its add form (see url_var::TRIPLE_ROW),
+                 so that the
     \-- form_value
         \-- system_form - create the html code for the form element to select a value
     \-- form_values
@@ -11391,6 +11408,9 @@
         \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h4
         \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
+    \-- form_section_title
+        \-- html_base - the title of a group of rows within a form e.g. "References" of the add word view,
+                 bigger than a field
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page

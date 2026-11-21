@@ -167,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use DOMDocument;
 use Exception;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -1057,6 +1058,39 @@ class test_base
         } else {
             return $this->assert_dsp($msg . ' ' . $err_message, false, $target_str, $result_str, $err_message);
         }
+    }
+
+    /**
+     * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
+     * if it is checked and a selector with its selected entry; a later field with the same name wins
+     * e.g. to check the reference and triple rows of an edit or add form (see reference_ui_tests and word_ui_tests)
+     *
+     * @param string $html the html code of the form fields
+     * @return array the posted url vars e.g. ['6a1' => 'u', '6ek1' => 'Q395']
+     */
+    function posted_vars(string $html): array
+    {
+        $dom = new DOMDocument();
+        // the html5 tags are unknown to libxml, which reports them but reads the fields anyway
+        $use_errors = libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+        $result = [];
+        foreach ($dom->getElementsByTagName('input') as $input) {
+            $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
+            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))) {
+                $result[$input->getAttribute('name')] = $input->getAttribute('value');
+            }
+        }
+        foreach ($dom->getElementsByTagName('select') as $select) {
+            foreach ($select->getElementsByTagName('option') as $option) {
+                if ($option->hasAttribute('selected')) {
+                    $result[$select->getAttribute('name')] = $option->getAttribute('value');
+                }
+            }
+        }
+        return $result;
     }
 
     /**

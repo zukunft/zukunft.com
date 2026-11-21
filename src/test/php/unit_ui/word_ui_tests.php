@@ -1012,6 +1012,80 @@ class word_ui_tests
         $test_name = '... but the add of the word is still possible';
         $t->assert_true($test_name, $none_msg->is_ok());
 
+        // the add view shows the suggestions as editable rows, so that the user can change or remove them
+        $row_form = new system_form();
+        $add_wrd = new word();
+        $test_name = 'the add view shows the suggested triple as an editable row';
+        $trp_html = $row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $sug_url);
+        $trp_posted = $t->posted_vars($trp_html);
+        $t->assert($test_name, array_column(url_var::triple_rows($trp_posted), url_var::PHRASE_TO), [word_names::CITY]);
+        $test_name = '... with the suggested verb';
+        $t->assert($test_name, (int)(url_var::triple_rows($trp_posted)[1][url_var::VERB] ?? 0), $is_a_id);
+        $test_name = '... where every html id of the rows is unique, because each field is shown in each row';
+        preg_match_all('/ id="([^"]+)"/', $trp_html, $id_matches);
+        $t->assert($test_name, count(array_unique($id_matches[1])), count($id_matches[1]));
+        $test_name = '... and a cleared to phrase removes the suggested triple';
+        $trp_cleared = $trp_posted;
+        $trp_cleared[url_var::TRIPLE_ROW . url_var::PHRASE_TO . 1] = '';
+        $t->assert($test_name, url_var::triple_rows($trp_cleared), []);
+        $test_name = '... and the filled empty row adds an own triple';
+        $trp_own = $trp_posted;
+        $trp_own[url_var::TRIPLE_ROW . url_var::PHRASE_TO . 2] = word_names::TEST_ADD;
+        $own_to = array_column(url_var::triple_rows($trp_own), url_var::PHRASE_TO);
+        $t->assert($test_name, $own_to, [word_names::CITY, word_names::TEST_ADD]);
+        $test_name = '... and the add button shows the filled empty row again with a new empty row';
+        $trp_more = $t->posted_vars($row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $trp_own));
+        $more_to = array_column(url_var::triple_rows($trp_more), url_var::PHRASE_TO);
+        $new_to_var = url_var::TRIPLE_ROW . url_var::PHRASE_TO . 3;
+        $t->assert($test_name, [$more_to, $trp_more[$new_to_var] ?? null], [[word_names::CITY, word_names::TEST_ADD], '']);
+        $test_name = '... where only the empty row has the add button';
+        $add_btn = html_base::VALUE . '="' . url_var::REFRESH_ROWS . '"';
+        $t->assert($test_name, substr_count($trp_html, $add_btn), 1);
+        $test_name = '... and only the suggested triple has an include box, which is checked by default';
+        $box_attr = html_base::TYPE . '="' . html_base::INPUT_CHECKBOX . '"';
+        $box_checked = ' checked';
+        $t->assert($test_name, [substr_count($trp_html, $box_attr), substr_count($trp_html, $box_checked)], [1, 1]);
+        // the browser posts no value for a cleared box, so the hidden delete action before it stays
+        $test_name = '... and its cleared include box excludes the suggested triple';
+        $trp_removed = $t->posted_vars(preg_replace('/' . $box_checked . '/', '', $trp_html, 1));
+        $t->assert($test_name, url_var::triple_rows($trp_removed), []);
+        $test_name = '... also from the add view that is shown again';
+        $trp_again = $t->posted_vars($row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $trp_removed));
+        $t->assert($test_name, url_var::triple_rows($trp_again), []);
+        // negative: only the add of a word writes the triple rows (see frontend::action_crud)
+        $test_name = 'an object that is not a word gets no triple rows';
+        $sug_ref = $sug_wrd->ref_lst->lst()[0];
+        $t->assert($test_name, $row_form->form_triple_rows($sug_ref, views::WORD_ADD_DETAIL, null, $sug_url), '');
+        $test_name = 'the add view shows each suggested reference as an editable row';
+        $ref_html = $row_form->form_ref_rows($add_wrd, views::WORD_ADD_DETAIL, $msg, null, $sug_url, true);
+        $ref_posted = $t->posted_vars($ref_html);
+        $sug_keys = array_column(url_var::ref_rows($sug_url), url_var::EXTERNAL_KEY);
+        $t->assert($test_name, array_column(url_var::ref_rows($ref_posted), url_var::EXTERNAL_KEY), $sug_keys);
+        $test_name = '... and a cleared external key removes the suggested reference';
+        $ref_cleared = $ref_posted;
+        $ref_cleared[url_var::REF_ROW . url_var::EXTERNAL_KEY . 1] = '';
+        $t->assert($test_name, count(url_var::ref_rows($ref_cleared)), count($sug_keys) - 1);
+        $test_name = '... without the description and the source, which only the hidden rows of the suggestion post';
+        $first_fields = [url_var::REF_ROW . url_var::DESCRIPTION . 1, url_var::REF_ROW . url_var::SOURCE . 1];
+        $t->assert($test_name, array_intersect_key($ref_posted, array_flip($first_fields)), []);
+        $test_name = '... where only the empty row has the add button';
+        $t->assert($test_name, substr_count($ref_html, $add_btn), 1);
+        $test_name = '... and each suggested reference a checked include box';
+        $ref_boxes = [substr_count($ref_html, $box_attr), substr_count($ref_html, $box_checked)];
+        $t->assert($test_name, $ref_boxes, [count($sug_keys), count($sug_keys)]);
+        $test_name = '... whose cleared box excludes the suggested reference with its hidden description';
+        $ref_first_cleared = $t->posted_vars(preg_replace('/' . $box_checked . '/', '', $ref_html, 1));
+        $ref_removed = array_merge($sug_url, $ref_first_cleared);
+        $t->assert($test_name, count(url_var::ref_rows($ref_removed)), count($sug_keys) - 1);
+        $test_name = '... also from the add view that is shown again';
+        $ref_again_html = $row_form->form_ref_rows($add_wrd, views::WORD_ADD_DETAIL, $msg, null, $ref_removed, true);
+        $t->assert($test_name, count(url_var::ref_rows($t->posted_vars($ref_again_html))), count($sug_keys) - 1);
+        // negative: the delete of a stored reference has its id and is still a change of the edit view
+        $test_name = 'the delete of a stored reference is still a reference row';
+        $stored_del = url_var::ref_row_url_array([1 => [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => 1]]);
+        $t->assert($test_name, count(url_var::ref_rows($stored_del)), 1);
+        $msg->reset();
+
         $t->subheader($ts . 'url mapper');
 
         // an id-identified url carries only the changed fields (e.g. the my tab undo link), so

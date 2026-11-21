@@ -98,6 +98,10 @@ class styles
     // centred, so the heading stays prominent while the inline action stays unobtrusive
     const string HEADING_ICON_INLINE = 'heading-icon-inline';
 
+    // bootstrap css classes of the title of a group of rows within a form e.g. the references of the add word
+    // view: bold and with space before it, so that it separates the rows from the fields above
+    const string FORM_SECTION_TITLE = 'mt-4 fw-bold';
+
     // css class for an add or change icon link beside a form field e.g. behind the source selector:
     // the size of the field label, so the icon is easy to hit
     const string FORM_ICON_INLINE = 'form-icon-inline';

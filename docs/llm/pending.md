@@ -1,19 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## bug fixing
-
-### confirm the add word suggestions
-
-The add word button of a search fills the add view with the suggestions of wikipedia and conceptnet since 2026-11-20
-(`docs/llm/log/add_word_suggest_2026-11-20.md`); the next run confirms the new workflow "add word suggestions" of
-`word_write_url_tests` with Hamburg and the unit tests of `word_ui_tests` and `ref_tests`.
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
 ## to review
 
 the findings of the review of the uncommitted changes of #247; each line is one prompt:
@@ -32,7 +18,6 @@ fix before the commit:
 - the check that each phrase of a new value is in the database moves from the save path (`value_base::phrases_in_db`
   called by `save_for_user`, against "loading and saving are separated" of `coding.md`) to the place where the group of
   the value is built from the url or api ids; the message names the value also if no phrase is found
-- `AUTO_UPDATE_TEST_FILES` in `src/test/php/const/files.php` is false
 - the resources created with the database that misses the component type row 59 are created again after
   `/test/reset_db.php`: `api/type_lists/type_lists.json`, `api/ui_config/ui_config.json`, the type ids of
   `unit/component/list.csv` and the `web/html` snapshots

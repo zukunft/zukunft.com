@@ -1950,6 +1950,19 @@ class html_base
         return $this->text_h($title, self::H6, self::H3, $style);
     }
 
+    /**
+     * the title of a group of rows within a form e.g. "References" of the add word view, bigger than a field
+     * label, bold and with space before it; it is no label, because it names no single field
+     *
+     * @param string $title the translated title
+     * @return string the html code of the title
+     */
+    function form_section_title(string $title): string
+    {
+        $class = ' ' . self::CLASS_HTML . '="' . styles::FORM_SECTION_TITLE . '"';
+        return '<' . self::H5 . $class . '>' . $title . '</' . self::H5 . '>';
+    }
+
     private function text_h(string $title, string $bs_tag, string $tag, string $style = ''): string
     {
         if (self::UI_USE_BOOTSTRAP) {

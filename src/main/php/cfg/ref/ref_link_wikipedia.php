@@ -142,7 +142,12 @@ class ref_link_wikipedia
         if (in_array($source, url_var::REFRESH_SUGGEST_SOURCES) and $wrd->id() == 0) {
             $wrd->set_name($name);
             $wrd->references_related = new ref_list($wrd->get_user());
-            if ($source == url_var::REFRESH_SUGGEST_WIKIPEDIA) {
+            // the suggestions are only for a user who can add the word, so that a request without
+            // login never lets the pod ask wikipedia, conceptnet or wikidata (the data user of the
+            // word, which is the browsing user for a call of the own frontend, see user::data_user)
+            if ($wrd->get_user()?->is_blocked() ?? true) {
+                $this->add_step($wrd, msg_id::CHANGE_BLOCKED_FOR_IP_USER, $name);
+            } elseif ($source == url_var::REFRESH_SUGGEST_WIKIPEDIA) {
                 $this->suggest_from_wikipedia($wrd, $name, $msg);
             } elseif ($source == url_var::REFRESH_SUGGEST_CONCEPTNET) {
                 $this->suggest_from_conceptnet($wrd, $name, $msg);
@@ -201,14 +206,21 @@ class ref_link_wikipedia
      * frontend asks for if conceptnet knows no group
      *
      * @param word $wrd the new word that gets the names of the "instance of" items of the wikidata item
-     * @param string $wd_id the wikidata id of the item e.g. "Q1055"
+     * @param string $wd_id the wikidata id of the item from the url e.g. "Q1055"
      * @param user_message $msg with the requesting user
      * @return void
      */
     private function suggest_from_wikidata(word $wrd, string $wd_id, user_message $msg): void
     {
-        // a failed live request is logged for the developer (see import_wikidata::request_json) and adds no message
-        $wrd->suggested_parents = new import_wikidata()->instance_of_names($wd_id, $msg);
+        $wrd->suggested_parents = [];
+        // the id is typed in the url, so only a wikidata item id is sent to wikidata
+        if (preg_match(self::WIKIDATA_ID_PATTERN, $wd_id) === 1) {
+            $wd_imp = new import_wikidata();
+            // the user waits for the add view, so each request of the item and of its groups waits shortly and once
+            $wd_imp->for_page();
+            // a failed live request is logged for the developer (see import_wikidata::request_json) and adds no message
+            $wrd->suggested_parents = $wd_imp->instance_of_names($wd_id, $msg);
+        }
         $this->add_parents_step($wrd, $wrd->suggested_parents, $msg, ref_types::WIKIDATA_NAME);
     }
 

@@ -2965,9 +2965,9 @@ class frontend
             // the api calls of the rows have no common transaction, so the confirm page shows the
             // reference and triple rows again that could not be written, together with the message why
             if (url_var::ref_rows($open_url) != [] or url_var::triple_rows($open_url) != []) {
-                // the new word exists now, so the retry of its open rows changes it instead of adding it again
-                if ($crud == url_var::CRUD_CREATE) {
-                    $open_url[url_var::MASK] = views::WORD_EDIT_ID;
+                // the new phrase exists now, so the retry of its open rows changes it instead of adding it again
+                if ($is_phrase and $crud == url_var::CRUD_CREATE) {
+                    $open_url[url_var::MASK] = $dbo instanceof triple_ui ? views::TRIPLE_EDIT_ID : views::WORD_EDIT_ID;
                     $open_url[url_var::ID] = $dbo->id();
                 }
                 return $open_url;

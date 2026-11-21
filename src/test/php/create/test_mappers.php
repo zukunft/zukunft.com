@@ -935,6 +935,7 @@ class test_mappers
             case component_types::FORM_SELECT_FILE:
             case component_types::FORM_SELECT_FORMAT_EXPORT:
             case component_types::FORM_REF_ROWS:
+            case component_types::FORM_TRIPLE_ROWS:
                 $obj = $t_wrd->word_filled();
                 break;
             case component_types::VERB_NAME:

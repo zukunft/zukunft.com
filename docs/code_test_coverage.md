@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1713 of 6523 public functions have at least 2 unit test calls; the 4599 functions below do not; the 211 functions of the last section are called nowhere
+1718 of 6528 public functions have at least 2 unit test calls; the 4599 functions below do not; the 211 functions of the last section are called nowhere
 
-## 1867 functions of main backend have no test at all
+## 1866 functions of main backend have no test at all
 
 ```
 \-- application
@@ -782,7 +782,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- ref_link_wikidata
     \-- read - 0 unit test calls
 \-- ref_link_wikipedia
-    \-- suggest_from_url - 0 unit test calls
     \-- summary - 0 unit test calls shared by 2 classes
 \-- ref_list
     \-- add_by_name_type_and_key - 0 unit test calls
@@ -2140,7 +2139,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 897 functions of frontend have no test at all
+## 898 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2423,6 +2422,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- form_get - 0 unit test calls
     \-- form_input_password - 0 unit test calls
     \-- form_post - 0 unit test calls
+    \-- form_section_title - 0 unit test calls
     \-- form_simple - 0 unit test calls
     \-- form_text - 0 unit test calls
     \-- fr - 0 unit test calls
@@ -3142,7 +3142,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1175 functions of main backend have incomplete tests
+## 1176 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3495,6 +3495,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- instance_file_name - 1 unit test calls
 \-- import_wikidata
     \-- convert_to_file - 1 unit test calls shared by 2 classes
+    \-- for_page - 1 unit test calls
     \-- get_entity_json - 1 unit test calls
     \-- missing_host - 1 unit test calls
     \-- no_answer - 1 unit test calls
@@ -4539,7 +4540,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 552 functions of frontend have incomplete tests
+## 551 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4949,7 +4950,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_from_json_array - 1 unit test calls shared by 6 classes
 \-- system_form
     \-- form_end - 2 unit test calls shared by 2 classes
-    \-- form_ref_rows - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
 \-- system_page

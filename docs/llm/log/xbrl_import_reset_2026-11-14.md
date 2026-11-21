@@ -231,3 +231,5 @@ each triple that links to it. An error would stop the import.
 14. Before writing an assert, check what the callers need, not what the doc comment says.
 
 ## Lessons learned by human
+
+task was too big

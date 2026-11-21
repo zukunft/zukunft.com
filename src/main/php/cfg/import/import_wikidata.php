@@ -71,6 +71,10 @@ class import_wikidata
     // the folder in which each live answer is saved and from which the saved answer is read if wikidata
     // gives no live data e.g. for the live tests, empty for the pod, which never uses an old answer
     private string $fallback_path;
+    // the seconds to wait for each answer and if a failed request is repeated after a pause: an import waits
+    // long and repeats, because no user waits for it, a page waits shortly and only once (see for_page)
+    private int $timeout = self::IMPORT_TIMEOUT;
+    private bool $retry = true;
 
     /**
      * @param string $fixture_path empty for the pod, which reads wikidata by http, or the folder of the wikidata
@@ -82,6 +86,35 @@ class import_wikidata
     {
         $this->fixture_path = $fixture_path;
         $this->fallback_path = $fallback_path;
+    }
+
+    /**
+     * read wikidata for a page that the user waits for e.g. the groups of the add word suggestions: each
+     * request waits only as long as for wikipedia and is not repeated, because a repeat after a pause would
+     * block the page and the php process for minutes
+     *
+     * @return void
+     */
+    function for_page(): void
+    {
+        $this->timeout = self::READ_TIMEOUT;
+        $this->retry = false;
+    }
+
+    /**
+     * @return int the seconds that each request waits for the answer of wikidata
+     */
+    function timeout(): int
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @return bool true if a failed request is repeated after a pause (see retry_pause)
+     */
+    function is_retried(): bool
+    {
+        return $this->retry;
     }
 
     // the base url of the wikidata entity data json api; the wikidata id and the json extension are added
@@ -330,7 +363,7 @@ class import_wikidata
     {
         $result = '';
         $url = self::ENTITY_DATA_URL . $id . self::JSON_EXTENSION;
-        $context = self::request_context(self::IMPORT_TIMEOUT);
+        $context = self::request_context($this->timeout);
         // the @ suppresses the php warning of a failed http request (e.g. a http 403 or no network)
         // so that the failure is reported as a log warning and the program continues;
         // the last request is cleared before each try, so that the warning below never names an older error
@@ -343,7 +376,8 @@ class import_wikidata
             // the request and the pause are never interrupted by the note timer of a long import
             $json = import::without_note_timer(fn() => @file_get_contents($url, false, $context));
             $pause = null;
-            if ($json === false) {
+            // a page that the user waits for gets no repeat (see for_page)
+            if ($json === false and $this->retry) {
                 $pause = self::retry_pause(http_get_last_response_headers(), error_get_last()['message'] ?? '', $try);
                 if ($pause !== null) {
                     log_info('the wikidata request for ' . $id . ' failed with ' . self::request_failure()
