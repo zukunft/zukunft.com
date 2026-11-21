@@ -1651,8 +1651,7 @@ class sandbox_multi extends db_object_multi_user
         ?data_object $dto = null
     ): bool
     {
-        global $sys;
-
+        // the mapper reads the share and the protection type with key_exists and reports an unknown type
         $this->import_mapper($in_ex_json, $msg);
 
 
@@ -1662,29 +1661,6 @@ class sandbox_multi extends db_object_multi_user
         //    $this->take_ownership();
         //}
 
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $sys->typ_lst->shr_typ->id($value);
-                if ($this->share_id < 0) {
-                    $lib = new library();
-                    $msg->add(msg_id::SHARE_TYPE_NOT_EXPECTED, [
-                        msg_id::VAR_NAME => $value,
-                        msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
-                    ]);
-                }
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $sys->typ_lst->ptc_typ->id($value);
-                if ($this->protection_id < 0) {
-                    $lib = new library();
-                    $msg->add(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
-                        msg_id::VAR_NAME => $value,
-                        msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
-                    ]);
-                }
-            }
-        }
         return $msg->is_ok();
     }
 

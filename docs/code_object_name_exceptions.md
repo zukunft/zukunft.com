@@ -158,7 +158,7 @@ html_page_diff: $hpd
 import_file: $imf, $import
 import_wikidata: $fix_imp, $imp, $imp_no_file, $page_imp, $pod_imp, $saved_imp, $wd_imp
 import_wikidata_preview: $preview
-ip_range: $ip, $ip_range
+ip_range: $ip, $ip_off, $ip_on, $ip_range
 ip_range_list: $db_lst, $ip_lst, $ip_range_lst
 job_list: $empty_lst, $job_lst, $jobs, $no_job_lst, $result
 job_status: $job_sta

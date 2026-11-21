@@ -140,6 +140,12 @@ class coding_rule_tests
         . 'needs a translation with the same headings per level, which src/main/resources/translations/docs.csv names' . "\n\n";
     const string TRANSLATION_FINDINGS_NONE = 'no findings';
 
+    // the number of the Prio 0 TODOs of src/main/php, src/test/php, api and http can only go down
+    // (docs/llm/log/fix_prio0_rest_2026-11-21.md): a commit that solves one lowers the const by one, and a new one
+    // can only be added if another one is solved; the marker is split, so that this file does not count itself
+    const int TODO_PRIO_0_MAX = 73;
+    const string TODO_PRIO_0_MARK = 'TODO Prio' . ' 0';
+
     // the continuation lines of a wrapped md line start with this marker plus the indent of the
     // line that is continued, so that a wrapped line is not read as an own entry of the tree
     const string MD_WRAP_MARKER = '    ';
@@ -367,6 +373,9 @@ class coding_rule_tests
         $this->php_include_tests($t, test_paths::CREATE);
 
         $this->php_cfg_no_web_tests($t);
+
+        $t->subheader($ts . 'Prio 0 TODOs');
+        $this->todo_prio_0_tests($t);
 
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
@@ -1843,6 +1852,52 @@ class coding_rule_tests
         foreach ($files as $file) {
             if (str_ends_with($file, '.php')) {
                 $result[] = $file;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check that the number of the Prio 0 TODOs of the code is not above TODO_PRIO_0_MAX, so that a Prio 0 TODO
+     * is only added if another one is solved (see "## fix Prio 0" of docs/llm/pending.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function todo_prio_0_tests(test_cleanup $t): void
+    {
+        $test_name = 'a line with a Prio 0 TODO is counted';
+        $t->assert($test_name, $this->todo_prio_0_count(['// ' . self::TODO_PRIO_0_MARK . ' fix it', '$a = 1;']), 1);
+        // negative: a TODO of another prio and a line without a TODO are not counted
+        $test_name = '... but not a TODO of another prio';
+        $t->assert($test_name, $this->todo_prio_0_count(['// TODO Prio 1 later', '// TODO Prio 2 maybe', '$a = 1;']), 0);
+
+        $count = 0;
+        $files_checked = 0;
+        foreach ([paths::PHP_LIB, TEST_PHP_PATH, paths::API, html_paths::HTTP] as $root) {
+            foreach ($this->php_file_list($root) as $code_file) {
+                $files_checked++;
+                $count += $this->todo_prio_0_count(file($code_file));
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'Prio 0 TODOs counted in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'the ' . $count . ' Prio 0 TODOs are not more than ' . self::TODO_PRIO_0_MAX
+            . ', so a new one is only added if another one is solved';
+        $t->assert_true($test_name, $count <= self::TODO_PRIO_0_MAX);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return int the number of lines with a Prio 0 TODO, like a search for the marker
+     */
+    private function todo_prio_0_count(array $lines): int
+    {
+        $result = 0;
+        foreach ($lines as $line) {
+            if (str_contains($line, self::TODO_PRIO_0_MARK)) {
+                $result++;
             }
         }
         return $result;

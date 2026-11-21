@@ -1681,45 +1681,40 @@ class result extends sandbox_value
             $do_save = false;
         }
 
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $res) {
-
-            // the phrases of the result
-            if ($key == json_fields::WORDS) {
-                $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $msg)) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
-                    log_debug('got word group ' . $phr_grp->dsp_id());
-                    $this->set_grp($phr_grp);
-                    log_debug('set grp id to ' . $this->grp_id());
-                }
+        // the phrases of the result, with the group saved if the database is open, which the mapper does not
+        if (array_key_exists(json_fields::WORDS, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            if ($phr_lst->import_lst($in_ex_json[json_fields::WORDS], $msg)) {
+                $phr_grp = $phr_lst->get_grp_id($do_save);
+                log_debug('got word group ' . $phr_grp->dsp_id());
+                $this->set_grp($phr_grp);
+                log_debug('set grp id to ' . $this->grp_id());
             }
+        }
 
-            // the phrases used to calculate the result
-            if ($key == json_fields::CONTEXT) {
-                $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $msg)) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
-                    log_debug('got context ' . $phr_grp->dsp_id());
-                    $this->set_src_grp($phr_grp);
-                    log_debug('set grp id to ' . $this->src_grp_id());
-                }
+        // the phrases used to calculate the result
+        if (array_key_exists(json_fields::CONTEXT, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            if ($phr_lst->import_lst($in_ex_json[json_fields::CONTEXT], $msg)) {
+                $phr_grp = $phr_lst->get_grp_id($do_save);
+                log_debug('got context ' . $phr_grp->dsp_id());
+                $this->set_src_grp($phr_grp);
+                log_debug('set grp id to ' . $this->src_grp_id());
             }
+        }
 
-            /*
-            if ($key == exp_obj::FLD_TIMESTAMP) {
-                if (str_to_time($res)) {
-                    $this->time_stamp = get_datetime($res, $this->dsp_id(), 'JSON import');
-                } else {
-                    log_err('Cannot add timestamp ' . $res . ' when importing ' . $this->dsp_id(), 'value->import_obj');
-                }
+        /*
+        if ($key == exp_obj::FLD_TIMESTAMP) {
+            if (str_to_time($res)) {
+                $this->time_stamp = get_datetime($res, $this->dsp_id(), 'JSON import');
+            } else {
+                log_err('Cannot add timestamp ' . $res . ' when importing ' . $this->dsp_id(), 'value->import_obj');
             }
-            */
+        }
+        */
 
-            if ($key == json_fields::NUMBER) {
-                $this->set_number($res);
-            }
-
+        if (array_key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $this->set_number($in_ex_json[json_fields::NUMBER]);
         }
 
         // save the result in the database

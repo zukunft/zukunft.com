@@ -562,20 +562,18 @@ class view extends sandbox_code_id
 
         // TODO Prio 2 add the assigned terms
         // after the view has it's components assign the view to the terms
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::ASSIGNED) {
-                foreach ($value as $trm_name) {
-                    $trm = new term($this->get_user());
-                    $trm->load_by_name($trm_name, $msg);
-                    if ($trm->id() == 0) {
-                        log_warning('word "' . $trm_name .
-                            '" created to link it to view "' . $this->name() .
-                            '" as requested by the import of ');
-                    }
-                    if ($trm->id() != 0) {
-                        $this->add_term_db($trm, $msg);
-                    }
+        // the links to the terms are written here, because the mapper only keeps them in memory for view_list::save
+        if (array_key_exists(json_fields::ASSIGNED, $in_ex_json)) {
+            foreach ($in_ex_json[json_fields::ASSIGNED] as $trm_name) {
+                $trm = new term($this->get_user());
+                $trm->load_by_name($trm_name, $msg);
+                if ($trm->id() == 0) {
+                    log_warning('word "' . $trm_name .
+                        '" created to link it to view "' . $this->name() .
+                        '" as requested by the import of ');
+                }
+                if ($trm->id() != 0) {
+                    $this->add_term_db($trm, $msg);
                 }
             }
         }

@@ -702,36 +702,32 @@ class verb extends type_object
         // reset all parameters of this verb object but keep the user
         $this->reset(true);
 
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
+        // the verb file uses the db field names e.g. "name_reverse", which the mapper does not read
+        if (array_key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->name = $in_ex_json[json_fields::NAME];
+        }
+        if (($in_ex_json[json_fields::CODE_ID] ?? '') != '') {
+            if ($msg->usr === null) {
+                log_err_reported('user not set in user_message', 'import_obj');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
+                $this->code_id = $in_ex_json[json_fields::CODE_ID];
             }
-            if ($key == json_fields::CODE_ID) {
-                if ($value != '') {
-                    if ($msg->usr === null) {
-                        log_err_reported('user not set in user_message', 'import_obj');
-                        $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-                    } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
-                        $this->code_id = $value;
-                    }
-                }
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == verb_db::FLD_REVERSE) {
-                $this->reverse = $value;
-            }
-            if ($key == verb_db::FLD_PLURAL) {
-                $this->plural = $value;
-            }
-            if ($key == verb_db::FLD_PLURAL_REVERSE) {
-                $this->rev_plural = $value;
-            }
-            if ($key == verb_db::FLD_NAME_FORMULA) {
-                $this->frm_name = $value;
-            }
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
+        if (array_key_exists(verb_db::FLD_REVERSE, $in_ex_json)) {
+            $this->reverse = $in_ex_json[verb_db::FLD_REVERSE];
+        }
+        if (array_key_exists(verb_db::FLD_PLURAL, $in_ex_json)) {
+            $this->plural = $in_ex_json[verb_db::FLD_PLURAL];
+        }
+        if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $in_ex_json)) {
+            $this->rev_plural = $in_ex_json[verb_db::FLD_PLURAL_REVERSE];
+        }
+        if (array_key_exists(verb_db::FLD_NAME_FORMULA, $in_ex_json)) {
+            $this->frm_name = $in_ex_json[verb_db::FLD_NAME_FORMULA];
         }
 
         // save the verb in the database

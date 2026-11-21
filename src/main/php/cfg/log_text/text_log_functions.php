@@ -864,8 +864,9 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                // the user is told what went wrong and that the admin is informed, but never the sys_log id
-                // (docs/llm/frontend.md); escaped once where it is shown, because the text can contain request
+                // the user is told what went wrong, also with the sql and the error (docs/llm/structure.md), and
+                // that the admin is informed, but never the sys_log id (docs/llm/pending_prio_2.md "## the sys_log
+                // id shown to the user"); escaped once where it is shown, because the text can contain request
                 // derived values (xss)
                 if (log_in_api_answer()) {
                     // the echo would stand in front of the json, so the api answer sends the text (controller::with_internal_errors);

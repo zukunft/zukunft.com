@@ -339,7 +339,7 @@ class a_selected_test extends all_unit_tests
         //new math_tests()->run($this);
         //new system_tests()->run($this);
         //new config_tests()->run($this);
-        //new ip_range_tests()->run($this);
+        new ip_range_tests()->run($this);
         new coding_rule_tests()->run($this);
         //new change_link_validation_tests()->run($this);
         //new sql_tests()->run($this);
@@ -359,7 +359,7 @@ class a_selected_test extends all_unit_tests
         new system_view_ui_tests()->run($this);
         //new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
         //new word_list_tests()->run($this);
-        //new verb_tests()->run($this);
+        new verb_tests()->run($this);
         //new triple_tests()->run($this);
         //new triple_list_tests()->run($this);
         //new phrase_tests()->run($this);
@@ -385,7 +385,7 @@ class a_selected_test extends all_unit_tests
         //new result_list_tests()->run($this);
         //new figure_tests()->run($this);
         //new figure_list_tests()->run($this);
-        //new view_tests()->run($this);
+        new view_tests()->run($this);
         //new view_list_tests()->run($this);
         //new term_view_tests()->run($this);
         //new component_tests()->run($this);
