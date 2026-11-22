@@ -114,6 +114,8 @@ class phrase_list extends sandbox_list_named
     // the relation levels from "sort order (system)" to the default orders of a table, which
     // are defined like the charts: the tier and the assignment of the order
     const int SORT_LEVELS = 2;
+    // the internal error of a caller that asks for the group of an empty list, followed by the callers
+    const string MSG_EMPTY_GROUP = 'Cannot create phrase group for an empty list called by ';
 
     // the names of the linked phrases by direction and phrase name of a copy for the build of
     // one table (see with_link_index) or null if each request scans the list
@@ -2266,8 +2268,8 @@ class phrase_list extends sandbox_list_named
     {
         $grp = null;
         if ($this->is_empty()) {
-            // TODO Prio 0 switch back to error
-            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+            // an error of the caller, so the text names the callers, which the trace of the log entry does not
+            log_err(self::MSG_EMPTY_GROUP . library::caller_chain(), 'phrase_list->get_grp_id');
         } else {
             $grp = new group();
             /*

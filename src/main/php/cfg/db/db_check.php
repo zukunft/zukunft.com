@@ -128,10 +128,17 @@ class db_check
 
         // check if essential config table exists and if not setup the database
         // because it is assumed that the database structure has not yet been created
-        // TODO Prio 0 in prod and test environment do this only is setup flag is on
         // TODO Prio 2 remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
-        if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
+        $has_main_tbl = $db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name);
+        $setup_allowed = $this->setup_allowed((string)getenv(ENVIRONMENT), (string)getenv(ENV_DB_SETUP));
+        // a guard, because the config and the version of an empty database cannot be read e.g. if the connection to
+        // the prod database points to a wrong database, which must never be filled with a new setup
+        if (!$has_main_tbl and !$setup_allowed) {
+            $msg->add(msg_id::DB_SETUP_OFF, []);
+            return false;
+        }
+        if (!$has_main_tbl) {
             // if tbe database needs to be created it is a system task independent of the calling user
             $sys_msg = new user_message(user::system());
             // because no log yet exists here echo instead of log_echo() is used
@@ -198,6 +205,18 @@ class db_check
 
         return $msg->is_ok();
 
+    }
+
+    /**
+     * public, because it decides if an empty database is filled, so it is unit tested
+     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV), empty if not set
+     * @param string $setup_flag the value of DB_SETUP from the environment file, ENV_DB_SETUP_ON to allow the setup
+     * @return bool true if an empty database may be set up: always in dev, in prod, test and an unknown level only if
+     *              the flag is on, so that e.g. a wrong connection of a prod pod never creates a new database
+     */
+    function setup_allowed(string $env, string $setup_flag): bool
+    {
+        return ($env == ENV_DEV or $setup_flag == ENV_DB_SETUP_ON);
     }
 
     /**

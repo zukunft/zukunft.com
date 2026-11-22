@@ -215,6 +215,10 @@ class library
     const string PHP_TRACE_FILE_END = '.php(';
     // the sys_log function name used if no script name can be taken from the exception trace
     const string FUNCTION_UNKNOWN = 'unknown function';
+    // the number of functions that an internal error names as its callers (see caller_chain)
+    const int CALLER_DEPTH = 10;
+    // between two callers of the caller chain e.g. "word->load@expression.php:1155 < expression->load_word@..."
+    const string CALLER_SEPARATOR = ' < ';
 
     /*
      * internal const
@@ -3069,6 +3073,28 @@ class library
         // a name that does not fit would make the insert of the log entry fail, and a log entry
         // that is not written is an error nobody ever sees
         return mb_substr($fnc, 0, sql_field_type::NAME_MAX_LEN);
+    }
+
+    /**
+     * the functions that have called the current one, for the text of an internal error that the caller has caused,
+     * because the trace of the log entry points only to the log function
+     *
+     * @param string $skip_class the class whose own calls are not named e.g. sql_db for its internal calls, or empty
+     * @return string e.g. "word->load_by_name@expression.php:1155 < ..." with the file and line from which each
+     *                function has been called, so that the caller is found without a debugger
+     */
+    static function caller_chain(string $skip_class = ''): string
+    {
+        $callers = [];
+        foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
+            $cls = $frame['class'] ?? '';
+            $is_skipped = ($cls == self::class or ($skip_class != '' and $cls == $skip_class));
+            if (!$is_skipped and count($callers) < self::CALLER_DEPTH) {
+                $call_place = basename($frame['file'] ?? '') . ':' . ($frame['line'] ?? 0);
+                $callers[] = self::class_to_name($cls) . '->' . $frame['function'] . '@' . $call_place;
+            }
+        }
+        return implode(self::CALLER_SEPARATOR, $callers);
     }
 
     function php_code_use(array $lines): array

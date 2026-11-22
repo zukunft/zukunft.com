@@ -40,6 +40,7 @@ namespace Zukunft\ZukunftCom\main\php\web\types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::HELPER . 'list_size.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -56,6 +57,7 @@ include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\list_size;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -63,7 +65,6 @@ use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -401,25 +402,41 @@ class type_list
 
     /**
      * the names of this list in one line, comma separated, each with its description as tooltip
-     * the short version of a list shows shared_config::LIMIT_SHORT_LIST entries, the more version
-     * shared_config::LIMIT_MORE_LIST and the all version every entry (self::LIMIT_ALL)
-     * @param int $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list
+     * the short and the more version of a list show the number of entries of config.yaml (list_size)
+     * and the all version every entry (self::LIMIT_ALL)
+     * @param int|null $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list or null for
+     *                        the configured short list
      * @return string the html code of the names in one line
      */
-    function name_tip(int $limit = shared_config::LIMIT_SHORT_LIST): string
+    function name_tip(?int $limit = null): string
     {
-        return $this->names_one_line($limit, false);
+        return $this->names_one_line($this->limit_or_short($limit), false);
     }
 
     /**
      * the names of this list in one line, comma separated, each linked to its own page
-     * @param int $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list
+     * @param int|null $limit the maximum number of entries to show, self::LIMIT_ALL for the complete list or null for
+     *                        the configured short list
      * @param string $base_url to set an absolut html path for urls
      * @return string the html code of the linked names in one line
      */
-    function name_link(int $limit = shared_config::LIMIT_SHORT_LIST, string $base_url = ''): string
+    function name_link(?int $limit = null, string $base_url = ''): string
     {
-        return $this->names_one_line($limit, true, $base_url);
+        return $this->names_one_line($this->limit_or_short($limit), true, $base_url);
+    }
+
+    /**
+     * @param int|null $limit the number of entries that the caller has requested or null for the configured short list
+     * @return int the requested number or the number of entries of the short list of config.yaml
+     */
+    private function limit_or_short(?int $limit): int
+    {
+        $result = $limit;
+        if ($limit === null) {
+            $cfg_msg = new user_message(); // not reported: a display without message, which shows the fallback size
+            $result = list_size::short_list($cfg_msg);
+        }
+        return $result;
     }
 
     /**

@@ -79,11 +79,15 @@ class formula_names
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
+    // the *_FROM_DB texts are the user texts that the conversion of the reference text writes, which has no spaces
+    const string DIAMETER_FROM_DB = '="' . word_names::CIRCUMFERENCE . '"/"' . word_names::PI . '"';
     // the min and max function and their argument separator are kept as they are by the conversion
     const string MIN_CIRCUMFERENCE_PI = '= min( "circumference" ; "Pi" * 2 )';
     const string MIN_CIRCUMFERENCE_PI_DB = '=min({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MIN_CIRCUMFERENCE_PI_FROM_DB = '=min("' . word_names::CIRCUMFERENCE . '";"' . word_names::PI . '"*2)';
     const string MAX_CIRCUMFERENCE_PI = '= max( "circumference" ; "Pi" * 2 )';
     const string MAX_CIRCUMFERENCE_PI_DB = '=max({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MAX_CIRCUMFERENCE_PI_FROM_DB = '=max("' . word_names::CIRCUMFERENCE . '";"' . word_names::PI . '"*2)';
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';
@@ -98,6 +102,7 @@ class formula_names
     const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
+    const string INCREASE_FROM_DB = '"' . words::PERCENT . '"=("' . word_names::THIS_NAME . '"-"' . word_names::PRIOR_NAME . '")/"' . word_names::PRIOR_NAME . '"';
     // each term is wrapped in \text{} so the expression_latex_link component can link it; the
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
@@ -144,6 +149,7 @@ class formula_names
     const string PARTS_IN_PERCENT = 'parts in percent';
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO Prio 3 check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
+    const string PARTS_IN_PERCENT_FROM_DB = '"' . words::PERCENT . '"="parts""' . verbs::OF_NAME . '"/"total"';
     // the potential loss of a problem in money from its annual share of the world GDP (problem_*.json)
     const string ANNUAL_DAMAGE = 'annual damage in money';
     const int ANNUAL_DAMAGE_ID = 109;

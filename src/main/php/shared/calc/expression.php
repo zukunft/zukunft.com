@@ -316,9 +316,9 @@ class expression
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        // an expression without result part starts with the "=", so the position 0 is also converted like in get_ref_text
-        $pos = strpos($this->ref_text($msg, $trm_lst), chars::CHAR_CALC);
-        if ($pos !== false) {
+        // an expression without result part starts with the "=", so the "=" is converted at any position
+        $ref_txt = $this->ref_text($msg, $trm_lst);
+        if (str_contains($ref_txt, chars::CHAR_CALC)) {
             $left_part = $this->res_part($msg);
             $right_part = $this->r_part($msg);
             $left_part = $this->get_usr_part($left_part, $trm_lst, $msg);

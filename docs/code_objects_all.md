@@ -431,6 +431,7 @@ the object structure is:
 ├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
 ├── config_treeUi - $cft - the tree of the system configuration in config.yaml
 ├── data_objectUi - frontend cache object
+├── list_sizeUi - the configured number of entries of the short and the more version of a list
 ├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
 ├── number_formatUi - the unit and the decimals that a group of numbers is shown with
 ├── url_mapperUi - create human-readable or pod exchangeable urls

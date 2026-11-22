@@ -656,6 +656,10 @@ class user_tests
         $vars = $usr_arr->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::ACTIVATION_KEY, $vars);
         $t->assert_key_not_exists($test_name . ' and no ip', json_fields::IP_ADDR, $vars);
+        // the hash is searched in every field, also of the nested objects, and with the slashes of the hash unescaped
+        $test_name = '... and no password hash in any field';
+        $api_txt = json_encode($vars, JSON_UNESCAPED_SLASHES);
+        $t->assert_text_not_contains($test_name, $api_txt, users::TEST_USER_PASSWORD_FIX_HASH);
         $msg->reset();
 
         // negative: an empty field is not sent at all

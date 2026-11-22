@@ -1705,6 +1705,7 @@ messages:
   "an internal system error has occurred and the admin has been informed: z$VarLogLink$z": "Ein interner Systemfehler ist aufgetreten und der Admin wurde informiert: z$VarLogLink$z"
   "a system warning has occurred and the admin has been informed: z$VarLogLink$z": "Eine Systemwarnung ist aufgetreten und der Admin wurde informiert: z$VarLogLink$z"
   "The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program.": "Das Backend von zukunft.com ist älter als die verwendete Datenbank. Das kann die Datenbank beschädigen. Bitte aktualisiere das Backend-Programm."
+  "The zukunft.com database is empty, but the setup of the database is switched off. Please check the database connection or set DB_SETUP=true in the .env file to create the database.": "Die Datenbank von zukunft.com ist leer, aber die Einrichtung der Datenbank ist ausgeschaltet. Bitte prüfe die Datenbankverbindung oder setze DB_SETUP=true in der .env-Datei, um die Datenbank zu erstellen."
   "unexpected formula id z$VarObjFormula$z in database for z$VarClassName$z \"z$VarSandboxName$z\"": "Unerwartete Formel-ID z$VarObjFormula$z in der Datenbank für z$VarClassName$z \"z$VarSandboxName$z\""
   "trim \"z$VarObjName$z\"": "Leerzeichen entfernen bei \"z$VarObjName$z\""
   "word \"z$VarObjName$z\" is missing": "Das Wort \"z$VarObjName$z\" fehlt"

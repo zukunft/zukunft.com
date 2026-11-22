@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'db_check.php';
 include_once paths::DB . 'sql_field_list.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_list.php';
@@ -48,6 +49,7 @@ include_once test_paths::CREATE . 'test_sql.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -282,6 +284,21 @@ class sql_tests
         $test_name = '... and the user is told';
         $t->assert_false($test_name, $msg->is_ok());
         $msg->reset();
+
+        // an empty database is filled by db_check only where it is allowed
+        $t->subheader($ts . 'setup of an empty database');
+        $db_chk = new db_check();
+        $test_name = 'an empty database is set up in dev';
+        $t->assert_true($test_name, $db_chk->setup_allowed(ENV_DEV, ''));
+        $test_name = '... and in prod if the setup flag is on';
+        $t->assert_true($test_name, $db_chk->setup_allowed(ENV_PROD, ENV_DB_SETUP_ON));
+        // negative: e.g. a prod pod with a wrong database connection must not create a new database
+        $test_name = '... but not in prod without the setup flag';
+        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_PROD, ''));
+        $test_name = '... nor in test without the setup flag';
+        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_UA, 'false'));
+        $test_name = '... nor if no environment is set';
+        $t->assert_false($test_name, $db_chk->setup_allowed('', ''));
 
         // the lists that collect the parts of a sql statement before it is created
         $t->subheader($ts . 'add');

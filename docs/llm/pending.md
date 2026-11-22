@@ -4,7 +4,7 @@
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
 (the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 47 left (151 on
+3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 42 left (151 on
 2026-11-13); `unit/coding_rule_tests.php` fails if there are more than `coding_rule_tests::TODO_PRIO_0_MAX`, so a new
 one can only be added if another one is solved, and every prompt lowers the const by the number it has solved.
 
@@ -20,18 +20,24 @@ errors` of `config.yaml` (the tests of `phrase::import_mapper` and `term::import
 for `sql_db::setup_db` and the tests of `word_write_tests::run`, `triple_write_tests::create_base_times` and
 `group_write_tests::run` (the developer has decided on 2026-11-22 that the time word is part of a phrase group), and
 by the decisions of the developer the frontend message of `http/about.php`, the check of a stored reference text in
-`formula_map::expression` and the coding rule checks of the error log of a stub and of a class mapper; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
+`formula_map::expression` and the coding rule checks of the error log of a stub and of a class mapper, the
+"switch back to error" of `get_grp_id` in `cfg/` and `web/` with the callers of the error text
+(`library::caller_chain`, decided by the developer on 2026-11-22) and its first caller `sandbox_value::load_by_names`;
+of prompt 6 the security bullet: the setup of an empty database only with `DB_SETUP=true` in prod and test
+(`db_check::setup_allowed`), the test that the api message of a user has no password hash, and the list limits of
+`shared/helper/Config.php` only as the fallback of `config.yaml` (`web/helper/list_size`), all decided by the
+developer on 2026-11-22; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
 `all_unit_read_tests::run_unit_db_tests`. The inventory by file and function, with the plan of each open prompt, is
 `docs/llm/log/fix_prio0_rest_2026-11-21.md`.
 
 **Order:** the fixes of the top rules of `docs/llm/coding.md` (never fail silently, data correctness) first and the
 clean up last; each line is one prompt:
 
-5. **silent failures and the triaged tests** (size M, 2 TODOs):
-   - stop for a run: `/test/test.php` first (decided by the developer on 2026-11-22)
-   - then "switch back to error" of `get_grp_id` in `cfg/` and `web/` as its own step (106 callers, the callers with an
-     empty list first)
-6. **backend correctness** (size L, 24 TODOs): one agent per bullet of the log; a new or changed db field goes into the
+5. **the callers of `get_grp_id` with an empty list** (size S, no TODO): the first run has named only
+   `sandbox_value::load_by_names`, which is fixed; fix each further caller that a run names ("Cannot create phrase
+   group for an empty list called by ...") at its source, with a `msg_id` where the user can act
+6. **backend correctness** (size L, 20 TODOs, the security bullet is done): one bullet per prompt, because
+   `cfg/user/user.php` is part of both open bullets; a new or changed db field goes into the
    setup sql and `db_check::db_upgrade_0_0_4`, never a version raise; stop for a run, with re-pin if the database
    structure changes
 7. **merge, rename and the rest of the clean up** (size L, 21 TODOs): a merge or a rename includes all callers in the

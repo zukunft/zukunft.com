@@ -561,6 +561,9 @@ enum messages: string
     case INTERNAL_ADMIN_INFORMED = 'internal_admin_informed';
     case BACKEND_OLDER_THAN_DB = 'The zukunft.com backend is older than the database used. '
         . 'This may cause damage on the database. Please upgrade the backend program.';
+    // an empty database in the prod or test environment is set up only if the .env allows it (db_check::setup_allowed)
+    case DB_SETUP_OFF = 'The zukunft.com database is empty, but the setup of the database is switched off. '
+        . 'Please check the database connection or set DB_SETUP=true in the .env file to create the database.';
 
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END

@@ -118,6 +118,9 @@ const ENV_SIGNUP_MAIL_HOST = 'SIGNUP_MAIL_HOST'; // the smtp server e.g. smtp.ex
 const ENV_SIGNUP_MAIL_PORT = 'SIGNUP_MAIL_PORT'; // 587 for starttls or 465 for implicit tls
 const ENV_SIGNUP_MAIL_USER = 'SIGNUP_MAIL_USER'; // the login of the account; empty to use the sender address
 const ENV_SIGNUP_MAIL_PW = 'SIGNUP_MAIL_PW'; // the password of the account, which stays in the deployed .env
+// in the prod and test environment an empty database is set up only if this is true (see db_check::setup_allowed)
+const ENV_DB_SETUP = 'DB_SETUP';
+const ENV_DB_SETUP_ON = 'true';
 const SIGNUP_MAIL_PORT_FALLBACK = 587;
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
@@ -184,6 +187,7 @@ const ENV_VARS = [
     ENV_SIGNUP_MAIL_PORT,
     ENV_SIGNUP_MAIL_USER,
     ENV_SIGNUP_MAIL_PW,
+    ENV_DB_SETUP,
 ];
 
 const ENV_SECRETS = [

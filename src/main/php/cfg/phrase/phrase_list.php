@@ -143,6 +143,8 @@ class phrase_list extends sandbox_list_named
     // the maximum number of link levels that load_by_phr_levels follows, because the level is
     // requested by the url and each level multiplies the number of database reads
     const int MAX_LINK_LEVELS = 3;
+    // the internal error of a caller that asks for the group of an empty list, followed by the callers
+    const string MSG_EMPTY_GROUP = 'Cannot create phrase group for an empty list called by ';
 
 
     /*
@@ -2328,8 +2330,8 @@ class phrase_list extends sandbox_list_named
     {
         $grp = null;
         if ($this->is_empty()) {
-            // TODO Prio 0 switch back to error
-            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+            // an error of the caller, so the text names the callers, which the trace of the log entry does not
+            log_err(self::MSG_EMPTY_GROUP . library::caller_chain(), 'phrase_list->get_grp_id');
         } else {
             $grp = new group($this->get_user());
             $grp_id = new group_id();

@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1732 of 6540 public functions have at least 2 unit test calls; the 4598 functions below do not; the 210 functions of the last section are called nowhere
+1735 of 6544 public functions have at least 2 unit test calls; the 4599 functions below do not; the 210 functions of the last section are called nowhere
 
-## 1833 functions of main backend have no test at all
+## 1832 functions of main backend have no test at all
 
 ```
 \-- application
@@ -490,7 +490,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_id_medium - 0 unit test calls
     \-- dsp_id_short - 0 unit test calls shared by 2 classes
     \-- get_by_phrase_list - 0 unit test calls
-    \-- get_ex_time - 0 unit test calls
     \-- get_similar - 0 unit test calls shared by 14 classes
     \-- has_phrase_list - 0 unit test calls
     \-- id_fvt - 0 unit test calls
@@ -4536,7 +4535,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 554 functions of frontend have incomplete tests
+## 556 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4766,6 +4765,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- list_named
     \-- name_link - 15 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
+\-- list_size
+    \-- more_list - 1 unit test calls
+    \-- short_list - 1 unit test calls
 \-- log
     \-- api_array - 21 unit test calls shared by 37 classes
     \-- user_id - 1 unit test calls shared by 2 classes

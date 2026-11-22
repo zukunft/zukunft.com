@@ -336,8 +336,6 @@ class sql_db
     const string MSG_CONNECTION_LOST = 'Database connection lost when reading ';
     // the text before the functions that have called a read without connection e.g. a unit test step that reads
     const string MSG_CALLED_BY = ' called by ';
-    // the number of functions outside of this class that the error of a read without connection names
-    const int CALLER_DEPTH = 10;
 
     const string TBL_USER_PREFIX = 'user_';
 
@@ -3523,15 +3521,7 @@ class sql_db
      */
     private function connection_lost_text(string $sql_name): string
     {
-        $callers = [];
-        foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame) {
-            $cls = $frame['class'] ?? '';
-            if ($cls != self::class and count($callers) < self::CALLER_DEPTH) {
-                $call_place = basename($frame['file'] ?? '') . ':' . ($frame['line'] ?? 0);
-                $callers[] = library::class_to_name($cls) . '->' . $frame['function'] . '@' . $call_place;
-            }
-        }
-        return self::MSG_CONNECTION_LOST . $sql_name . self::MSG_CALLED_BY . implode(' < ', $callers);
+        return self::MSG_CONNECTION_LOST . $sql_name . self::MSG_CALLED_BY . library::caller_chain(self::class);
     }
 
     /**

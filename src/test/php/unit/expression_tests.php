@@ -175,30 +175,35 @@ class expression_tests
             'including a triple',
             formula_names::DIAMETER,
             formula_names::DIAMETER_DB,
+            formula_names::DIAMETER_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including the min function',
             formula_names::MIN_CIRCUMFERENCE_PI,
             formula_names::MIN_CIRCUMFERENCE_PI_DB,
+            formula_names::MIN_CIRCUMFERENCE_PI_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including the max function',
             formula_names::MAX_CIRCUMFERENCE_PI,
             formula_names::MAX_CIRCUMFERENCE_PI_DB,
+            formula_names::MAX_CIRCUMFERENCE_PI_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including fixed formulas',
             formula_names::INCREASE_EXP,
             formula_names::INCREASE_DB,
+            formula_names::INCREASE_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including verbs',
             formula_names::PARTS_IN_PERCENT_EXP,
             formula_names::PARTS_IN_PERCENT_DB,
+            formula_names::PARTS_IN_PERCENT_FROM_DB,
             $trm_lst
         );
 
@@ -237,7 +242,8 @@ class expression_tests
         $exp_keep = new expression($frm);
         $exp_keep->set_user_text(formula_names::SCALE_TO_SEC_EXP, $msg, $t_trm->term_list_time());
         $exp_keep->set_ref_text('', $msg, $t_trm->term_list_time());
-        $t->assert($test_name, $exp_keep->user_text_ui($t_trm->term_list_time()), formula_names::SCALE_TO_SEC_EXP);
+        $result = $exp_keep->user_text_ui($t_trm->term_list_time());
+        $t->assert($test_name, $result, formula_names::SCALE_TO_SEC_EXP);
         $msg->reset();
 
         // test the phrase list of the left side
@@ -450,6 +456,7 @@ class expression_tests
      * @param string $test_name the part that should be tested e.g. with fixed formulas
      * @param string $usr_frm_exp the formula expression in the human-readable format
      * @param string $db_ref_frm_exp the formula expression in the database reference format
+     * @param string $usr_frm_from_db the user text that the conversion of the reference text writes, without spaces
      * @param ?term_list $in_trm_lst the term list cache to be used for the conversion
      * @return void
      */
@@ -459,6 +466,7 @@ class expression_tests
         string       $test_name,
         string       $usr_frm_exp,
         string       $db_ref_frm_exp,
+        string       $usr_frm_from_db,
         ?term_list   $in_trm_lst = null
     ): void
     {
@@ -482,13 +490,15 @@ class expression_tests
 
         // the same from an expression that only gets the reference text, with all its terms preloaded
         // by the list that has created the reference ids, because the test term list numbers its terms from one
-        // the conversion back does not recreate the spaces of the typed text, so the texts are compared without spaces
         $test_name = 'the reference text sets the user text ' . $case_name;
-        $ref_trm_lst = $in_trm_lst ?? $trm_lst;
+        $ref_trm_lst = $trm_lst;
+        if ($in_trm_lst != null) {
+            $ref_trm_lst = $in_trm_lst;
+        }
         $exp_ref = new expression($frm);
         $exp_ref->set_ref_text($db_ref_frm_exp, $msg, $ref_trm_lst);
-        $result = str_replace(' ', '', $exp_ref->user_text_ui($ref_trm_lst) ?? '');
-        $t->assert($test_name, $result, str_replace(' ', '', $usr_frm_exp));
+        $result = $exp_ref->user_text_ui($ref_trm_lst);
+        $t->assert($test_name, $result, $usr_frm_from_db);
     }
 
 }

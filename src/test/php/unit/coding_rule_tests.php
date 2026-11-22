@@ -151,7 +151,7 @@ class coding_rule_tests
     // the number of the Prio 0 TODOs of src/main/php, src/test/php, api and http can only go down
     // (docs/llm/log/fix_prio0_rest_2026-11-21.md): a commit that solves one lowers the const by one, and a new one
     // can only be added if another one is solved; the marker is split, so that this file does not count itself
-    const int TODO_PRIO_0_MAX = 47;
+    const int TODO_PRIO_0_MAX = 42;
     const string TODO_PRIO_0_MARK = 'TODO Prio' . ' 0';
     // the text of a stub that a child class must overwrite e.g. 'name not overwritten by ' . $this::class
     const string STUB_MARK = 'not overwritten by';
@@ -165,6 +165,8 @@ class coding_rule_tests
     const string CSV_COM_SUFFIX = '_COM';
     // the value of an empty field of a code link csv e.g. a missing description
     const string CSV_NULL = 'NULL';
+    // the end of the name column of a code link csv e.g. user_status_name or type_name
+    const string CSV_NAME_COLUMN_SUFFIX = '_name';
 
     // the continuation lines of a wrapped md line start with this marker plus the indent of the
     // line that is continued, so that a wrapped line is not read as an own entry of the tree
@@ -2122,12 +2124,44 @@ class coding_rule_tests
         $csv_lines = ['user_status_id, user_status_name, code_id, description', "2, 'read-only', 'read-only', 'no write'"];
         $consts = ['READ_ONLY' => 'read-only', 'READ_ONLY_ID' => 2, 'READ_ONLY_NAME' => 'read-only', 'READ_ONLY_COM' => 'no write'];
         $test_name = 'the consts that match their csv row are fine';
-        $t->assert($test_name, $this->enum_csv_diffs('user_statuum', $consts, $csv_lines), []);
+        $diffs = $this->enum_csv_differences('user_statuum', $consts, $csv_lines);
+        $t->assert($test_name, $diffs, []);
         // negative: the id of another row is reported with the class, the const and both ids
         $test_name = '... but an id of another row is reported';
-        $consts['READ_ONLY_ID'] = 3;
-        $diffs = $this->enum_csv_diffs('user_statuum', $consts, $csv_lines);
+        $id_consts = array_merge($consts, ['READ_ONLY_ID' => 3]);
+        $diffs = $this->enum_csv_differences('user_statuum', $id_consts, $csv_lines);
         $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_ID is 3, but the csv row of "read-only" has the id 2']);
+        $test_name = '... and another name';
+        $name_consts = array_merge($consts, ['READ_ONLY_NAME' => 'read only']);
+        $diffs = $this->enum_csv_differences('user_statuum', $name_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_NAME is "read only", but the csv has "read-only"']);
+        $test_name = '... and another description';
+        $com_consts = array_merge($consts, ['READ_ONLY_COM' => 'no writing']);
+        $diffs = $this->enum_csv_differences('user_statuum', $com_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_COM is "no writing", but the csv has "no write"']);
+        $test_name = '... and a code id without csv row';
+        $code_consts = array_merge($consts, ['READ_ONLY' => 'read-write']);
+        $diffs = $this->enum_csv_differences('user_statuum', $code_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_ID is set, but the csv has no row with the code id "read-write"']);
+        // a NULL of the csv is an empty description, so only a const with a text differs from it
+        $test_name = 'an empty description const matches a NULL of the csv';
+        $null_lines = [$csv_lines[0], "2, 'read-only', 'read-only', NULL"];
+        $null_consts = array_merge($consts, ['READ_ONLY_COM' => '']);
+        $diffs = $this->enum_csv_differences('user_statuum', $null_consts, $null_lines);
+        $t->assert($test_name, $diffs, []);
+        $test_name = '... but a description const with a text does not';
+        $diffs = $this->enum_csv_differences('user_statuum', $consts, $null_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_COM is "no write", but the csv has ""']);
+        // a X_NAME const with its own X_NAME_ID is the code id of another row e.g. component_types::PHRASE_NAME
+        $test_name = 'a name const with its own id is not compared as the name';
+        $code_name_consts = array_merge($consts, ['READ_ONLY_NAME' => 'read-only-name', 'READ_ONLY_NAME_ID' => 5]);
+        $code_name_lines = array_merge($csv_lines, ["5, 'read-only-name', 'read-only-name', 'no write'"]);
+        $diffs = $this->enum_csv_differences('user_statuum', $code_name_consts, $code_name_lines);
+        $t->assert($test_name, $diffs, []);
+        $test_name = '... but as the code id of its own row';
+        $code_name_consts['READ_ONLY_NAME_ID'] = 6;
+        $diffs = $this->enum_csv_differences('user_statuum', $code_name_consts, $code_name_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_NAME_ID is 6, but the csv row of "read-only-name" has the id 5']);
 
         $diffs = [];
         $files_checked = 0;
@@ -2136,7 +2170,7 @@ class coding_rule_tests
             $consts = $this->enum_consts_by_name($name);
             if ($consts !== null) {
                 $files_checked++;
-                $diffs = array_merge($diffs, $this->enum_csv_diffs($name, $consts, file($csv_file)));
+                $diffs = array_merge($diffs, $this->enum_csv_differences($name, $consts, file($csv_file)));
             }
         }
         // a scanner that reads no file would else pass silently
@@ -2175,7 +2209,7 @@ class coding_rule_tests
      * @param array $csv_lines the lines of the code link csv with the column names as the first line
      * @return array the description of each const that differs from its csv row
      */
-    private function enum_csv_diffs(string $cls_name, array $consts, array $csv_lines): array
+    private function enum_csv_differences(string $cls_name, array $consts, array $csv_lines): array
     {
         $result = [];
         $lib = new library();
@@ -2187,7 +2221,7 @@ class coding_rule_tests
             foreach ($consts as $key => $code) {
                 if ($this->is_csv_code_const($consts, $key)) {
                     $row = $rows[$code] ?? null;
-                    $result = array_merge($result, $this->enum_const_diffs($cls_name, $consts, $key, $row, $cols));
+                    $result = array_merge($result, $this->enum_const_differences($cls_name, $consts, $key, $row, $cols));
                 }
             }
         }
@@ -2232,7 +2266,7 @@ class coding_rule_tests
      * @param array $cols the column names of the csv
      * @return array the description of each const of this code id that differs from the csv row
      */
-    private function enum_const_diffs(string $cls_name, array $consts, string $key, ?array $row, array $cols): array
+    private function enum_const_differences(string $cls_name, array $consts, string $key, ?array $row, array $cols): array
     {
         $result = [];
         $code = $consts[$key];
@@ -2248,11 +2282,11 @@ class coding_rule_tests
             }
             // a const X_NAME with its own X_NAME_ID is the code id of another row and not the name of this one
             if (!array_key_exists($key . self::CSV_NAME_SUFFIX . self::CSV_ID_SUFFIX, $consts)) {
-                $name_col = $this->csv_name_col($cols);
-                $result = array_merge($result, $this->enum_text_diff($cls_name, $consts, $key . self::CSV_NAME_SUFFIX, $row, $name_col));
+                $name_col = $this->csv_name_column($cols);
+                $result = array_merge($result, $this->enum_text_difference($cls_name, $consts, $key . self::CSV_NAME_SUFFIX, $row, $name_col));
             }
             $desc_col = array_search(fields::FLD_DESCRIPTION, $cols);
-            $result = array_merge($result, $this->enum_text_diff($cls_name, $consts, $key . self::CSV_COM_SUFFIX, $row, $desc_col));
+            $result = array_merge($result, $this->enum_text_difference($cls_name, $consts, $key . self::CSV_COM_SUFFIX, $row, $desc_col));
         }
         return $result;
     }
@@ -2261,11 +2295,11 @@ class coding_rule_tests
      * @param array $cols the column names of a code link csv
      * @return int|false the position of the name column e.g. user_status_name or type_name, or false if there is none
      */
-    private function csv_name_col(array $cols): int|false
+    private function csv_name_column(array $cols): int|false
     {
         $result = false;
         foreach ($cols as $pos => $col) {
-            if ($result === false and str_ends_with($col, '_name')) {
+            if ($result === false and str_ends_with($col, self::CSV_NAME_COLUMN_SUFFIX)) {
                 $result = $pos;
             }
         }
@@ -2280,7 +2314,7 @@ class coding_rule_tests
      * @param int|false $col the position of the text column or false if the csv has none
      * @return array the description of the difference or an empty array if the text matches or is not set
      */
-    private function enum_text_diff(string $cls_name, array $consts, string $txt_key, array $row, int|false $col): array
+    private function enum_text_difference(string $cls_name, array $consts, string $txt_key, array $row, int|false $col): array
     {
         $result = [];
         if ($col !== false and array_key_exists($txt_key, $consts)) {

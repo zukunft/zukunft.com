@@ -2224,6 +2224,17 @@ class lib_tests
         $result = $lib->php_code_use_sorted($code_inc);
         $t->assert($test_name, $result, []);
 
+        // the callers of an internal error e.g. of an empty phrase list, without the library itself
+        $test_name = 'caller_chain names the calling test function';
+        $result = library::caller_chain();
+        $t->assert_text_contains($test_name, $result, 'lib_tests->run@');
+        $test_name = '... but not the library';
+        $t->assert_text_not_contains($test_name, $result, 'library->');
+        // negative: the calls of the skipped class are not named e.g. the internal calls of sql_db
+        $test_name = 'caller_chain without the skipped class';
+        $result = library::caller_chain(self::class);
+        $t->assert_text_not_contains($test_name, $result, 'lib_tests->');
+
         // a use line is converted to the matching include line
         $test_name = 'php_code_use_converted';
         $code = ['use Zukunft\ZukunftCom\main\php\shared\library;'];

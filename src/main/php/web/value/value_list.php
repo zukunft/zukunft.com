@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'list_size.php';
 include_once html_paths::HTML . 'button.php';
 // TODO Prio 2 move phr_ids to shared objects
 include_once html_paths::CONST . 'icons.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\helper\list_size;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
@@ -3405,26 +3407,6 @@ class value_list extends ListBase
     }
 
     /**
-     * the configured number of rows shown in a value table
-     * (config.yaml "select > initial > entries", falling back to config::LIMIT_SHORT_LIST if the
-     * config is not loaded), which is the short version of a list; the more and the all version
-     * are not wired yet (see docs/llm/frontend.md "Short, more and all")
-     *
-     * @param user_message $msg to report a problem of reading the config
-     * @return int the maximum number of table rows to show
-     */
-    private function configured_row_limit(user_message $msg): int
-    {
-        global $ui_sys;
-        $result = config::LIMIT_SHORT_LIST;
-        if ($ui_sys?->cfg !== null) {
-            $result = (int)$ui_sys->cfg->get_by(
-                [words::ENTRIES, words::INITIAL, words::SELECT], $msg, config::LIMIT_SHORT_LIST);
-        }
-        return $result;
-    }
-
-    /**
      * the "... and n more" tail of a truncated value list as a link that shows more (see
      * docs/llm/frontend.md: a "more" is always a link that shows more): the same page with
      * the next list size if the page is known, else all values of the page phrase via the
@@ -3466,7 +3448,7 @@ class value_list extends ListBase
      */
     private function row_limit(array $url_array, user_message $msg): int
     {
-        $result = $this->configured_row_limit($msg);
+        $result = list_size::short_list($msg);
         if (array_key_exists(url_var::DISPLAY_LIST_SIZE, $url_array)) {
             $result = (int)$url_array[url_var::DISPLAY_LIST_SIZE];
         }
@@ -3518,28 +3500,9 @@ class value_list extends ListBase
     private function next_row_limit(int $row_limit, user_message $msg): int
     {
         $result = self::LIMIT_ALL;
-        $more_limit = $this->configured_more_limit($msg);
+        $more_limit = list_size::more_list($msg);
         if ($row_limit < $more_limit) {
             $result = $more_limit;
-        }
-        return $result;
-    }
-
-    /**
-     * the configured number of rows of the more version of a list
-     * (config.yaml "select > more > entries", falling back to config::LIMIT_MORE_LIST if the
-     * config is not loaded)
-     *
-     * @param user_message $msg to report a problem of reading the config
-     * @return int the number of rows of the more list
-     */
-    private function configured_more_limit(user_message $msg): int
-    {
-        global $ui_sys;
-        $result = config::LIMIT_MORE_LIST;
-        if ($ui_sys?->cfg !== null) {
-            $result = (int)$ui_sys->cfg->get_by(
-                [words::ENTRIES, words::MORE, words::SELECT], $msg, config::LIMIT_MORE_LIST);
         }
         return $result;
     }

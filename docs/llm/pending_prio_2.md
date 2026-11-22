@@ -3388,3 +3388,11 @@ is not created again, so `result::save` writes the result with the group id of t
 without time takes its group from the changed list, so for such a result the two rows do not fit together. Create the
 group id again from the changed list before the save (e.g. with `phrase_list::get_grp_id`), with a write test of a
 division result whose measure phrase is removed, and negative: a result without a change keeps its group id.
+
+## the group without time changes the group itself
+
+Found on 2026-11-22 with the "switch back to error" of `get_grp_id`: `group::get_ex_time` calls `ex_time` on
+`$this->phrase_list()`, which is the phrase list of the group itself, so the group loses its time phrases but keeps
+its id; its only caller `group::result` does not use the returned group and loads again with `$this`. Remove the time
+phrases from a clone, use the returned group in `group::result` for the load of a result of any time, with a unit test
+that the group keeps its time phrase, and negative: the returned group has none.

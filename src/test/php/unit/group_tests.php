@@ -520,6 +520,20 @@ class group_tests
         $grp->set_saved();
         $t->assert_false($test_name, $grp->needs_similar_check());
 
+        $t->subheader($ts . 'without time');
+        $test_name = 'a group without time phrase keeps its phrases';
+        $grp_pi = $t_grp->group_add($t_wrd->word_pi()->phrase());
+        $grp_ex_time = $grp_pi->get_ex_time($msg);
+        $result = $grp_ex_time?->id();
+        $t->assert($test_name, $result, word_names::PI_ID);
+        // negative: a group of only a time phrase has no group without time, which is no error of the caller
+        $test_name = '... but a group of only the year has none';
+        $grp_year = $t_grp->group_add($t_wrd->word_2020()->phrase());
+        $grp_ex_time = $grp_year->get_ex_time($msg);
+        $result = $grp_ex_time?->id();
+        $t->assert_null($test_name, $result);
+        $msg->reset();
+
         $t->subheader($ts . 'sql statements - setup');
         $grp = new group($t->usr1);
         $t->assert_sql_table_create($grp);

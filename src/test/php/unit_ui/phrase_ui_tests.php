@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\list_size;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -311,15 +312,14 @@ class phrase_ui_tests
         $test_name = '... with the cost of the global warming problem';
         $t->assert_text_contains($test_name, $tbl_html, '31.5');
         // a page must not fill the screen, because the user messages are shown below the view,
-        // so the table shows at most the configured number of rows; the same config key and the
-        // same fallback as value_list::configured_row_limit, because the unit tests use an
-        // empty frontend config, so that here the fallback is the effective limit
-        global $ui_sys;
-        $row_limit = Config::LIMIT_SHORT_LIST;
-        if ($ui_sys?->cfg !== null) {
-            $row_limit = (int)$ui_sys->cfg->get_by(
-                [words::ENTRIES, words::INITIAL, words::SELECT], $msg, Config::LIMIT_SHORT_LIST);
-        }
+        // so the table shows at most the configured number of rows of list_size, which the value list uses too;
+        // the unit tests use an empty frontend config, so that here the fallback is the effective limit
+        $test_name = 'the short list of a unit test has the fallback size';
+        $row_limit = list_size::short_list($msg);
+        $t->assert($test_name, $row_limit, Config::LIMIT_SHORT_LIST);
+        $test_name = '... and the more list too';
+        $more_limit = list_size::more_list($msg);
+        $t->assert($test_name, $more_limit, Config::LIMIT_MORE_LIST);
         // one row per problem plus the header row; only the problems linked to "global problem"
         // are rows of this table, so it stays within the limit and is not cut
         $test_name = 'the table shows at most the configured number of rows';
@@ -347,7 +347,7 @@ class phrase_ui_tests
         // the same page with the size of the next list version instead (docs/llm/frontend.md
         // "Short, more and all"), so the reader stays on the page and sees more rows of it;
         // the more size is the config.yaml value, which the unit test reads from the cache
-        // (see value_list::configured_more_limit), so it is expected to equal the fallback const
+        // (see list_size::more_list), so it is expected to equal the fallback const
         $page_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => $cut_limit];
         $tbl_page = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
             $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),

@@ -1264,6 +1264,8 @@
             _list.php
 \-- component_list
     \-- order error - order of section load sql has difference at load_sql should be before load_sql_by_view_id
+\-- db_check
+    \-- setup_allowed - section for function setup_allowed is expected to be set and get in /db/db_check.php
 \-- sql_creator
     \-- db_type - section for function db_type not yet defined that it should be set and get in /db/sql_creator.php
     \-- par_list - section for function par_list not yet defined that it should be set and get in /db/sql_creator.php
@@ -5247,6 +5249,8 @@
 \-- upgrade
     \-- db_check
         \-- db_check - read the version number from the database and compare it with the backend version
+    \-- setup_allowed
+        \-- db_check - public, because it decides if an empty database is filled, so it is unit tested
     \-- db_upgrade_0_0_3
         \-- db_check - upgrade the database from any version prior of 0.0.3
     \-- db_move_time_phrase_to_group
@@ -5474,8 +5478,8 @@
     \-- drop_config_cache
         \-- import_file - the imported values are part of the cached config of every user, which the database cache
     \-- import_system_data
-        \-- import_file - TODO Prio 2 fill a user_message with the warning and error messages and return true if success
-                ful
+        \-- import_file - TODO Prio 0 add $msg parameter and fill the user_message with the warning and error messages a
+                nd return true if successful
     \-- import_pod_config
         \-- import_file - import the default pod base configuration json files
     \-- import_sample_view_data

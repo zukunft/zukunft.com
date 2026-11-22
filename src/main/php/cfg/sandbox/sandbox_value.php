@@ -1615,13 +1615,12 @@ class sandbox_value extends sandbox_multi
                 $load_lst->add($phr);
             }
         }
-        $grp = $load_lst->get_grp_id();
         // a value without phrases has no group, so the user is told which names are not found
-        if ($grp === null) {
+        if ($load_lst->is_empty()) {
             $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => implode(', ', $names)]);
             $result = 0;
         } else {
-            $result = $this->load_by_grp($grp, $msg);
+            $result = $this->load_by_grp($load_lst->get_grp_id(), $msg);
         }
         return $result;
     }
