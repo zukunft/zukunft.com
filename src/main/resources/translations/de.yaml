@@ -1805,6 +1805,7 @@ messages:
   "the formula expression id z$VarObjName$z is not valid number.": "Die ID z$VarObjName$z im Formelausdruck ist keine gültige Zahl."
   "the formula expression symbol \"z$VarObjName$z\" is not valid. only word, triple, verb and formula are expected.": "Das Symbol \"z$VarObjName$z\" im Formelausdruck ist ungültig. Erwartet werden nur Wort, Tripel, Verb und Formel."
   "the term \"z$VarObjTerm$z\" of formula \"z$VarObjFormula$z\" is missing": "Der Term \"z$VarObjTerm$z\" der Formel \"z$VarObjFormula$z\" fehlt"
+  "the stored reference text \"z$VarValue$z\" of formula \"z$VarFormulaName$z\" does not match its expression \"z$VarObjFormula$z\", so the formula should be saved again": "Der gespeicherte Referenztext \"z$VarValue$z\" der Formel \"z$VarFormulaName$z\" passt nicht zu ihrem Ausdruck \"z$VarObjFormula$z\", daher sollte die Formel erneut gespeichert werden"
   "the database format of the formula expression of \"z$VarObjFormula$z\" is null": "Das Datenbankformat des Formelausdrucks von \"z$VarObjFormula$z\" ist null"
   "the database format of the formula expression of \"z$VarObjFormula$z\" is empty": "Das Datenbankformat des Formelausdrucks von \"z$VarObjFormula$z\" ist leer"
   "the database format of the formula expression \"z$VarObjExpression$z\" of \"z$VarObjFormula$z\" is too short to be a valid expression": "Das Datenbankformat des Formelausdrucks \"z$VarObjExpression$z\" von \"z$VarObjFormula$z\" ist zu kurz für einen gültigen Ausdruck"

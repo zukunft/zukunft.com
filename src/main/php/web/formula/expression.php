@@ -187,7 +187,7 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected function load_word(int $id, backend_user_message|Message $msg): word
+    protected function load_word(int $id, backend_user_message|Message $msg): ?word
     {
         $wrd = new word();
         $wrd->load_by_id($id, $msg);
@@ -197,7 +197,7 @@ class expression extends shared_expression
         return $wrd;
     }
 
-    protected function load_triple(int $id, backend_user_message|Message $msg): triple
+    protected function load_triple(int $id, backend_user_message|Message $msg): ?triple
     {
         $trp = new triple();
         $trp->load_by_id($id, $msg);
@@ -207,7 +207,7 @@ class expression extends shared_expression
         return $trp;
     }
 
-    protected function load_formula(int $id, backend_user_message|Message $msg): formula
+    protected function load_formula(int $id, backend_user_message|Message $msg): ?formula
     {
         $frm = new formula();
         $frm->load_by_id($id, $msg);
@@ -217,7 +217,7 @@ class expression extends shared_expression
         return $frm;
     }
 
-    protected function load_verb(int $id, backend_user_message|Message $msg): verb
+    protected function load_verb(int $id, backend_user_message|Message $msg): ?verb
     {
         $vrb = new verb();
         $vrb->load_by_id($id, $msg);

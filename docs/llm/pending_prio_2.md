@@ -3379,3 +3379,12 @@ log, and a new triple with the new link is created.
 - test: a changed from of an existing triple creates the new triple and excludes the previous one, and negative: an
   unchanged link updates the triple without a new one; a write test that a changed `pf` without the replace still
   gives `LINK_CHANGE_REFUSED`
+
+## the group id of a result after its phrases have changed
+
+Found on 2026-11-22 with the copy of a result without its time phrase: `result::save_if_updated` adds the formula name
+phrase and, for a division, removes the measure phrases in the phrase list of the result group itself, but the group id
+is not created again, so `result::save` writes the result with the group id of the phrases before the change. The copy
+without time takes its group from the changed list, so for such a result the two rows do not fit together. Create the
+group id again from the changed list before the save (e.g. with `phrase_list::get_grp_id`), with a write test of a
+division result whose measure phrase is removed, and negative: a result without a change keeps its group id.

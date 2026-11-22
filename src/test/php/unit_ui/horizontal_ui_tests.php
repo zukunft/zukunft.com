@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED . 'library.php';
@@ -57,6 +58,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -176,6 +178,11 @@ class horizontal_ui_tests
             // TODO Prio 1 remove exception
             if ($filled_obj::class == triple::class) {
                 $refilled_obj->name_given = $filled_obj->name_given;
+            }
+            // the reference text of a formula is converted from the expression by the backend and no form transports
+            // it, so it is backfilled like the impact; only a null is filled so the diff still catches a wrong value
+            if ($filled_obj::class == formula::class and $refilled_obj->ref_text === null) {
+                $refilled_obj->ref_text = $filled_obj->ref_text;
             }
             // TODO Prio 1 remove exception
             if ($filled_obj::class == component::class and $refilled_obj::class == component::class) {

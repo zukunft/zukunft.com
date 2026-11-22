@@ -263,15 +263,7 @@ class phrase_list_tests
         $msg->reset();
 
 
-        $t->subheader($ts . 'FOAF');
-
-        $test_name = 'test the verb "are" by getting the phrases that are a city';
-        $wrd_city = $t_wrd->word_city();
-        $city_lst = $wrd_city->are($msg);
-        $target = $t_phr->phrase_list_cities();
-        // TODO Prio 2 activate
-        //$t->assert_contains($test_name, $city_lst->names(), $target->names());
-
+        // the FOAF test of the verb "are" reads the children from the database, so it is in phrase_list_read_tests
 
         $t->subheader($ts . 'api');
 

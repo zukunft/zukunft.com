@@ -1370,7 +1370,8 @@ class value_base extends sandbox_value
                 $frm = $trm->obj();
                 if ($frm->ref_text != null and $frm->ref_text != '') {
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $msg, $trm_lst);
+                    // only the reference text like in scale_calc, because only the ids of both parts are compared
+                    $exp->set_ref_and_user_text($frm->ref_text, null);
                     $res_ids = $exp->phr_id_lst($exp->res_part($msg));
                     $src_ids = $exp->phr_id_lst($exp->r_part($msg));
                     if (in_array($trg_phr->id(), $res_ids->lst ?? [])
@@ -1461,7 +1462,9 @@ class value_base extends sandbox_value
                     // test if it is a valid scale formula
                     // which means that the result part must contain exactly one word of type scaling
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                    // only the reference text, because the scaling needs the ids and not the user text, whose
+                    // conversion would read a term of the formula that the data object does not contain
+                    $exp->set_ref_and_user_text($frm->ref_text, null);
                     $res_ids = $exp->phr_id_lst($exp->res_part($msg));
                     $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all($msg)->scaling_lst();
                     if (count($res_scale_lst->lst()) != 1) {
@@ -1496,7 +1499,8 @@ class value_base extends sandbox_value
         foreach ($dto->formula_list()->lst() as $frm) {
             if ($frm_found == null and $frm->ref_text != null and $frm->ref_text != '') {
                 $exp = new expression($frm);
-                $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                // only the reference text like in scale_calc, because only the ids of the source part are compared
+                $exp->set_ref_and_user_text($frm->ref_text, null);
                 $r_ids = $exp->phr_id_lst($exp->r_part($msg));
                 if (in_array($scale_wrd->id(), $r_ids->lst ?? [])) {
                     $frm_found = $frm;

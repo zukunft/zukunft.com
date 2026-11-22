@@ -191,7 +191,8 @@ class import_write_tests
 
         // a first import creates the triple with the from/verb/to link and its original name
         $test_name = 'import a triple that a later import renames';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
@@ -201,7 +202,8 @@ class import_write_tests
         // a second import that declares the same link with a different name selects and renames the
         // original triple instead of creating a duplicate link (see triple::get_similar)
         $test_name = 'a second import with the same link but a different name renames the original';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_2 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_2 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED, $msg);
@@ -232,7 +234,8 @@ class import_write_tests
         // a first import creates the triple without a description, like solution_prio.json does it
         // for a triple that a later file describes
         $test_name = 'import a triple without a description';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_1 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_1 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
@@ -244,7 +247,8 @@ class import_write_tests
 
         // the same from/verb/to link gets its id early, but the other fields must still be updated
         $test_name = 'a later import of the same link adds the description';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_2 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_2 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
@@ -254,7 +258,8 @@ class import_write_tests
 
         // the weight forces an update of the triple, which must not remove the description
         $test_name = 'an update due to another field keeps the description';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_3 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_3 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
@@ -278,7 +283,8 @@ class import_write_tests
         $test_name = 'the types cache is filled before the symbol triple import';
         $t->assert_true($test_name, $this->fill_types_cache($msg));
         $test_name = 'import a symbol triple';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TYPES_CACHE_SYMBOL . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TYPES_CACHE_SYMBOL . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = '... removes the types cache';
         $t->assert_false($test_name, $this->types_cached($msg));
@@ -288,7 +294,8 @@ class import_write_tests
         $test_name = 'the types cache is filled before the unit word import';
         $t->assert_true($test_name, $this->fill_types_cache($msg));
         $test_name = 'import a unit word';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TYPES_CACHE_UNIT . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TYPES_CACHE_UNIT . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = '... removes the types cache';
         $t->assert_false($test_name, $this->types_cached($msg));
@@ -298,7 +305,8 @@ class import_write_tests
         $test_name = 'the types cache is filled before the import without symbol or unit';
         $t->assert_true($test_name, $this->fill_types_cache($msg));
         $test_name = 'import plain words and an is a triple';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = '... keeps the types cache';
         $t->assert_true($test_name, $this->types_cached($msg));
@@ -315,15 +323,17 @@ class import_write_tests
 
         // create a word with a description and a word without a description
         $test_name = 'import the words for the no update test';
-        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE . test_files::JSON, $t->usr1, false);
-        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $imp_msg = new user_message($t->usr1);
+        $imported = $imf->json_file(test_files::IMPORT_NO_UPDATE . test_files::JSON, $t->usr1, $imp_msg, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imported);
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
         $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_COM, test_base::TIMEOUT_LIMIT_DB);
 
         // a no update import must keep the existing description and only fill up the empty one
         $test_name = 'the no update import keeps the existing description';
-        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, false, true, true);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, $imp_msg, false, true, true);
         $t->assert_false($test_name . ' ' . $imp_msg->text(), $imp_msg->is_ok());
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
@@ -336,7 +346,8 @@ class import_write_tests
 
         // without the no update flag the same import overwrites the existing description
         $test_name = 'a normal import overwrites the existing description';
-        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
@@ -355,8 +366,9 @@ class import_write_tests
 
         $test_name = 'json_file rejects a file created with a newer program version';
         $imf = new import_file();
-        $imp_msg = $imf->json_file(test_files::IMPORT_VERSION_NEWER_TEST, $t->usr1, true, true);
-        $t->assert_false($test_name, $imp_msg->is_ok());
+        $imp_msg = new user_message($t->usr1);
+        $imported = $imf->json_file(test_files::IMPORT_VERSION_NEWER_TEST, $t->usr1, $imp_msg, true, true);
+        $t->assert_false($test_name, $imported);
         $test_name = 'json_file version-newer message text';
         $target = 'Import file has been created with version "9.9.9"';
         $t->assert_text_contains($test_name, $imp_msg->all_message_text(), $target);
@@ -496,7 +508,8 @@ class import_write_tests
         $t->subheader($ts . $name);
 
         $test_name = 'import the test ' . $name;
-        $imp_msg = $imf->json_file($filename . test_files::JSON, $usr_req, false);
+        $imp_msg = new user_message($usr_req);
+        $imf->json_file($filename . test_files::JSON, $usr_req, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_name($add_name, $msg);
@@ -505,7 +518,8 @@ class import_write_tests
         $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add the description to the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, false);
+        $imp_msg = new user_message($usr_req);
+        $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
         $sbx->load_by_name($add_name, $msg);
@@ -522,7 +536,8 @@ class import_write_tests
             $is_used = !$sbx->never_used();
         }
         $test_name = 'remove the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
+        $imp_msg = new user_message($usr_req);
+        $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, $imp_msg, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $sbx->load_by_name($add_name, $msg);
         if ($sbx::class == verb::class) {
@@ -595,7 +610,8 @@ class import_write_tests
         $t->subheader($ts . $name);
 
         $test_name = 'import the test ' . $name;
-        $imp_msg = $imf->json_file($filename, $t->usr1, false);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file($filename, $t->usr1, $imp_msg, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_names([$add_name], $msg);
@@ -604,14 +620,16 @@ class import_write_tests
         $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add the description to the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT, $msg->usr, false);
+        $imp_msg = new user_message($msg->usr);
+        $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT, $msg->usr, $imp_msg, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
         $sbx->load_by_names([$add_name], $msg);
         $t->assert($test_name, $sbx->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT, $msg->usr, false);
+        $imp_msg = new user_message($msg->usr);
+        $imf->json_file($filename . test_files::IMPORT_UNDO_EXT, $msg->usr, $imp_msg, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
         $sbx->load_by_names([$add_name], $msg);

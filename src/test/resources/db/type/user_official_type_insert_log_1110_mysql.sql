@@ -29,9 +29,9 @@ PREPARE user_official_type_insert_log_1110_call FROM
     'SELECT user_official_type_insert_log_1110 (?,?,?,?,?,?)';
 
 SELECT user_official_type_insert_log_1110
-       ('EU passport',
+       ('passport number',
         3,
         1,
         49,
         50,
-        'passport_eu');
+        'passport_nbr');

@@ -77,6 +77,7 @@ class triples
     const string MAX_CHANGES = 'max changes';
     const string MAX_COLUMNS = 'max columns';
     const string MAX_DELAY = 'max delay';
+    const string MAX_ERRORS = 'max errors';
     const string MAX_LEVELS = 'max levels';
     const string MAX_LIFETIME = 'max lifetime';
     const string MAX_LOGIN = 'max login';

@@ -778,9 +778,15 @@ class db_object extends TextIdObject
 
     function name(): string|null
     {
-        $msg = 'ERROR:  name not overwritten by ' . $this::class;
-        log_warning($msg);
-        return $this->id;
+        $result = '';
+        // a page without an object e.g. the about page uses this base object as placeholder, which has no name,
+        // so only a child class that misses its own name is an error
+        if ($this::class != self::class) {
+            $msg = 'ERROR:  name not overwritten by ' . $this::class;
+            log_err($msg);
+            $result = $this->id;
+        }
+        return $result;
     }
 
     function get_description(): string

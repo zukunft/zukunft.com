@@ -269,10 +269,13 @@ class phrase_list extends sandbox_list_named
             $ids_to_load = $ids;
         }
 
-        // create the sql and load
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_ids($sc, $ids_to_load);
-        $result = $this->load($qp, $msg);
+        // create the sql and load, but only the phrases that are not in the cache
+        $result = false;
+        if ($ids_to_load->count() > 0) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_ids($sc, $ids_to_load);
+            $result = $this->load($qp, $msg);
+        }
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
             if (!$phr_lst_to_add->is_empty()) {

@@ -932,6 +932,13 @@ enum messages: string
         . '" of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing';
+    case EXPRESSION_REF_TEXT_DIFFERS = 'the stored reference text "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" of formula "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" does not match its expression "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '", so the formula should be saved again';
     case EXPRESSION_REF_IS_NULL = 'the database format of the formula expression of "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is null';

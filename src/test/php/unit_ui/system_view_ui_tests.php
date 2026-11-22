@@ -1269,6 +1269,9 @@ class system_view_ui_tests
             $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
             [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
                 $this->view_id_to_url_action(views::TABLE_ID), $page_url, $lib);
+            // named by the page instead of the id of the page triple, because the triple is imported late, so every
+            // new seed phrase before it moves its pinned id and would rename the snapshot at each re-pin
+            $dbo_name = $lib->str_left_of_last($dbo_name, '_') . '_global_warming_' . $page_name;
             $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
             $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
             $t->assert_html_page($test_name, $t->link_to_pod($page_html, THIS_URL), $file_path);

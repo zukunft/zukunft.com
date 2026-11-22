@@ -351,8 +351,8 @@
     \-- update - section for function update not yet defined that it should be display in /result/result.php
     \-- save_if_updated - section for function save_if_updated is expected to be save in /result/result.php
     \-- save - section for function save is expected to be save in /result/result.php
-    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
-             if a value without time is already saved in /result/result.php
+    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be save a copy of th
+            is result as the result without time, which is shown if the user asks e.g. for the in /result/result.php
     \-- del - section for function del is expected to be del in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
@@ -508,6 +508,8 @@
     \-- del_term - section for function del_term is expected to be del in /view/view.php
     \-- delta - section for function delta is expected to be del in /view/view.php
     \-- has_components - section for function has_components not yet defined that it should be info in /view/view.php
+    \-- set_term_links_by_db_name - section for function set_term_links_by_db_name is expected to be set and get in /vie
+            w/view.php
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /view/view.php
     \-- del_links - section for function del_links is expected to be del in /view/view.php
 \-- view_relation
@@ -773,8 +775,8 @@
         \-- formula_map - update the expression by setting the human-readable format and try to update the database refe
                 rence format
     \-- get_usr_text
-        \-- formula_map - update the expression by setting the human-readable format and try to update the database refe
-                rence format
+        \-- formula_map - set the user text and mark the reference text as not yet converted,
+                 so that get_ref_text or the save converts it
     \-- get_ref_text
         \-- formula_map - @param user_message $msg to report an expression that cannot be converted
     \-- set_latex
@@ -1022,8 +1024,12 @@
         \-- view - add or update a view in the database or create a user view
     \-- save_component_links
         \-- view - add or update the component links of this view in the database or create a user view
+    \-- set_term_links_by_db_name
+        \-- view - take the database term of each term that this view is assigned to only by its name e.g. a term of ano
+                ther
     \-- save_term_links
-        \-- view - save the terms that the import assigns to this view e.g. "Pi" to "Mathematical constant",
+        \-- view - take the database term of each term that this view is assigned to only by its name e.g. a term of ano
+                ther
     \-- load_sql_user_changes
         \-- view - create an SQL statement to retrieve the user changes of the current view
 \-- message
@@ -4125,12 +4131,14 @@
             hp
     \-- all_message_text - section for function all_message_text not yet defined that it should be get in /user/user_mes
             sage.php
+    \-- error_text - section for function error_text not yet defined that it should be get in /user/user_message.php
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
+    \-- order error - order of section get has difference at get_message should be before error_text
 \-- user_profile
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /user/user_profile.php
@@ -4332,6 +4340,8 @@
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /view/view_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /view/view_list.php
     \-- add_by_id - section for function add_by_id not yet defined that it should be load in /view/view_list.php
+    \-- set_term_links_by_db_name - section for function set_term_links_by_db_name is expected to be set and get in /vie
+            w/view_list.php
     \-- save - section for function save is expected to be save in /view/view_list.php
     \-- order error - order of section load has difference at load_sql should be before load_sql_names
 \-- view_relation_list
@@ -4567,14 +4577,11 @@
         \-- import_wikidata - @param string $fixture_path empty for the pod, which reads wikidata by http,
                  or the folder of the wikidata
         \-- import_wikidata_preview - @param user $usr the user who sees the preview and who would write the import
-        \-- user_message - assumes that normally everything is fine
         \-- view_sys_list - 
     \-- reset
         \-- sql_message - clear the accumulated messages so the object can be reused for the next change request
-        \-- user_message - clear the accumulated messages so the object can be reused for the next change request
     \-- clone_reset
         \-- sql_message - create user message list without errors but with the original user
-        \-- user_message - create user message list without errors but with the original user
     \-- has_par
         \-- sql_par - @return bool true if the query has at least one parameter set
     \-- merge
@@ -5348,28 +5355,20 @@
         \-- sql_creator - get the preloaded table id for change log entries
     \-- set_ok
         \-- sql_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
-        \-- user_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
     \-- set_db_row_id
         \-- sql_message - set the main database row to which this user message is related
-        \-- user_message - set the main database row to which this user message is related
     \-- set_url
         \-- sql_message - @param string $url the url used to trace to progress
-        \-- user_message - @param string $url the url used to trace to progress
     \-- url
         \-- sql_message - @param string $url the url used to trace to progress
-        \-- user_message - @param string $url the url used to trace to progress
     \-- set_checksum
         \-- sql_message - set a simple checksum e.g. for a fast import validation
-        \-- user_message - set a simple checksum e.g. for a fast import validation
     \-- checksum
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- db_row_id_lst
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- added_depending
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- 3
         \-- combine_named - @param string $name the name of the word, triple, formula or verb
     \-- name
@@ -5742,7 +5741,6 @@
 \-- api
     \-- api_array
         \-- sql_message - create a json array to send the messages to the frontend
-        \-- user_message - create a json array to send the messages to the frontend
     \-- api_json
         \-- sql_message - @return string the json message to the backend as a string
         \-- combine_object - create the api json message string of this combine object for the frontend
@@ -5752,11 +5750,9 @@
         \-- type_list - create the api json message string for this list
         \-- type_lists - create the api message based on the loaded types
         \-- list_db_read - create the api json message string for this list
-        \-- user_message - @return string the json message to the backend as a string
     \-- api_mapper
         \-- sql_message - fill the vars with this database message object based on the given api json array
         \-- ref_type - function to import the core reference type values from a json string
-        \-- user_message - fill the vars with this database message object based on the given api json array
     \-- api_json_array
         \-- element - create an array for the api json creation
         \-- combine_object - create an array for the api json message
@@ -5820,34 +5816,24 @@
 \-- add
     \-- add_info_with_vars
         \-- sql_message - add an info message id and a list of related variables
-        \-- user_message - add an info message id and a list of related variables
     \-- add_warning_with_vars
         \-- sql_message - add a warning message with variables
-        \-- user_message - add a warning message with variables
     \-- add_type_message
         \-- sql_message - to offer the user to see more details without a retry,
-        \-- user_message - to offer the user to see more details without a retry,
     \-- add_message_text
         \-- sql_message - to offer the user to see more details without a retry
-        \-- user_message - to offer the user to see more details without a retry
     \-- add_warning_text
         \-- sql_message - show the warning message to the user without interrupting the process
-        \-- user_message - show the warning message to the user without interrupting the process
     \-- add_info_text
         \-- sql_message - show the info message to the user without interrupting the process
-        \-- user_message - show the info message to the user without interrupting the process
     \-- merge
         \-- sql_message - combine the given message with this message
-        \-- user_message - combine the given message with this message
     \-- add_list_name_id
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- set_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- unset_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each
@@ -5868,30 +5854,21 @@
 \-- get
     \-- is_ok
         \-- sql_message - @return bool true if user does not need to be informed
-        \-- user_message - @return bool true if user does not need to be informed
     \-- all_info_text
         \-- sql_message - return the info only message text with all messages
-        \-- user_message - return the info only message text with all messages
     \-- all_message_text
         \-- sql_message - return the translated message text with all messages
-        \-- user_message - return the translated message text with all messages
     \-- get_message
         \-- sql_message - simple return the message text
-        \-- user_message - simple return the message text
     \-- get_last_message
         \-- sql_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
-        \-- user_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
     \-- get_row_id
         \-- sql_message - @return int|string the main database row to which this user message is related
-        \-- user_message - @return int|string the main database row to which this user message is related
     \-- has_msg
         \-- sql_message - @return bool true if any message has been added to this user message
-        \-- user_message - @return bool true if any message has been added to this user message
     \-- has_row
         \-- sql_message - @return bool true if the message is linked to a valid database row of just a database row has 
                 been created
-        \-- user_message - @return bool true if the message is linked to a valid database row of just a database row has
-                 been created
 \-- debug
     \-- dsp_id
         \-- sql_par - combine two sql and the related parameters to one sql statement
@@ -6139,8 +6116,6 @@
         \-- expression - @return array of the term names used in the expression based on the user text
     \-- db_id
         \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
-    \-- get_all_messages
-        \-- user_message - @return array with all the text messages
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
@@ -7488,6 +7463,8 @@
     \-- start - section for function start not yet defined that it should be session in /frontend.php
     \-- start_ui - section for function start_ui not yet defined that it should be session in /frontend.php
     \-- end - section for function end not yet defined that it should be session in /frontend.php
+    \-- slow_request_log_level - section for function slow_request_log_level not yet defined that it should be session i
+            n /frontend.php
     \-- load_cache - section for function load_cache is expected to be load in /frontend.php
     \-- set_cache - section for function set_cache is expected to be set and get in /frontend.php
     \-- load_dummy_cache_from_test_resources - section for function load_dummy_cache_from_test_resources is expected to 
@@ -8698,6 +8675,7 @@
     \-- status - section for function status not yet defined that it should be set and get in /system/job.php
     \-- priority - section for function priority not yet defined that it should be set and get in /system/job.php
     \-- user_name - section for function user_name not yet defined that it should be set and get in /system/job.php
+    \-- name - section for function name is expected to be debug in /system/job.php
     \-- is_open - section for function is_open is expected to be info in /system/job.php
     \-- is_delayed - section for function is_delayed is expected to be info in /system/job.php
     \-- change - section for function change not yet defined that it should be modify in /system/job.php
@@ -8750,7 +8728,8 @@
     \-- owner - section for function owner not yet defined that it should be display in /system/sys_log.php
     \-- owner_name - section for function owner_name not yet defined that it should be display in /system/sys_log.php
     \-- status_name - section for function status_name not yet defined that it should be display in /system/sys_log.php
-    \-- order error - order of section display has difference at header should be before page_view
+    \-- name - section for function name is expected to be debug in /system/sys_log.php
+    \-- order error - order of section display has difference at name should be before header
 \-- sys_log_list
     \-- api_load - section for function api_load not yet defined that it should be load in /system/sys_log_list.php
     \-- api_json - section for function api_json not yet defined that it should be api in /system/sys_log_list.php
@@ -10915,7 +10894,7 @@
     \-- form_protection_type
         \-- system_form - create the html code for the form element to select the protection type
     \-- form_table_linked_view
-        \-- system_form - TODO Prio 0 review
+        \-- system_form - TODO Prio 1 review
     \-- form_formula_expression
         \-- system_form - create the html code for the form element to enter the formula expression
     \-- form_formula_latex
@@ -11170,6 +11149,9 @@
         \-- frontend - start a frontend session via api
     \-- end
         \-- frontend - write the execution time if it took too long
+    \-- slow_request_log_level
+        \-- frontend - the log level of a page of the given duration,
+                 based on the response time limits of the frontend behaviour
     \-- load_cache
         \-- frontend - load the frontend cache once upfront via api
     \-- set_cache

@@ -126,7 +126,10 @@ if ($start_usr->id() > 0) {
             // fixtures hold the seed rows only (see test_full_load.php)
             $t->header('Load the full initial setup data');
             $result = $t->import_base_data($t->usr1);
-            $result .= $t->import_test_data($t->usr1);
+            $imp_msg = $msg->clone_reset(); // a buffer, because $msg holds the reports of the steps before
+            if (!$t->import_test_data($t->usr1, $imp_msg)) {
+                $result .= $imp_msg->all_message_text();
+            }
             if ($result != '') {
                 echo $result . "\n";
             }

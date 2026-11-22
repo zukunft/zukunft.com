@@ -272,7 +272,7 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 1 add $msg parameter and fill the user_message with the warning and error messages and return true if successful
      * import all zukunft.com data via json files for the unit and db read testing
      * @param user $usr the user who should be owner of the data
      * @return string any error or warning message during import
@@ -292,12 +292,18 @@ class all_unit_write_tests extends all_unit_read_tests
         // import initial data used for the main demo pages e.g. the start page
         // the bare file names need the message path prepended (as in import_system_data)
         foreach (files::BASE_DATA_FILES as $filename) {
-            $result .= $imf->json_file(files::MESSAGE_PATH . $filename, $usr, false)->get_last_message();
+            $imp_msg = new user_message($usr); // a buffer per file, because only its last message is returned
+            $imf->json_file(files::MESSAGE_PATH . $filename, $usr, $imp_msg, false);
+            // TODO Prio 1 merge to the $msg parameter
+            $result .= $imp_msg->get_last_message();
         }
 
         // import initial data used for the main demo pages e.g. the start page
         foreach (files::BASE_DATA_PATH_FILES as $filename) {
-            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
+            $imp_msg = new user_message($usr); // a buffer per file, because only its last message is returned
+            $imf->json_file($filename, $usr, $imp_msg, false);
+            // TODO Prio 1 merge to the $msg parameter
+            $result .= $imp_msg->get_last_message();
         }
 
         log_debug('import test data ... done');
@@ -306,15 +312,14 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * import all zukunft.com initial setup data vie json files
      * should not include data used for system testing to prevent volatile test data
      * @param user $usr the user who should be owner of the data
-     * @return string any error or warning message during import
+     * @param user_message $msg to collect the warning and error messages of all files
+     * @return bool true if all files have been imported without error
      */
-    function import_test_data(user $usr): string
+    function import_test_data(user $usr, user_message $msg): bool
     {
-        $result = '';
         log_info('test import',
             sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the some test json files',
@@ -326,26 +331,32 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // import json files to test the import and fill the database with initial data
         foreach (test_files::TEST_DATA_FILES as $filename) {
-            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            $imf->json_file($filename, $usr, $imp_msg, false);
+            $msg->merge($imp_msg);
         }
 
         // TODO Prio 2 complete data object base import and move these file to TEST_IMPORT_FILES
         // import JSON files that cannot jet be fully imported via data object
         foreach (test_files::TEST_DATA_FILES_DIRECT as $filename) {
             // TODO Prio 1 fix error reports
-            $result .= $imf->json_file($filename, $usr, true, true)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            $imf->json_file($filename, $usr, $imp_msg, true, true);
+            $msg->merge($imp_msg);
         }
 
         // TODO Prio 3 test the import and if fine move these file to TEST_IMPORT_FILES
         // import JSON files that are not jet reviewed
         foreach (test_files::TEST_DATA_FILES_NOT_REVIEWED as $filename) {
-            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            $imf->json_file($filename, $usr, $imp_msg, false);
+            $msg->merge($imp_msg);
         }
 
 
         log_debug('import test ... done');
 
-        return $result;
+        return $msg->is_ok();
     }
 
     /**

@@ -157,6 +157,20 @@ class base_object_tests
         $test_name = 'an ok message is no error';
         $t->assert_false($test_name, $msg_ok->is_error());
 
+        // both backend messages send the status of the shared Message class, so the frontend reads one status
+        $test_name = 'the api message of an error sends the error status';
+        $err_json = $msg_err->api_array($msg_ok);
+        $status = $err_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::ERROR);
+        $test_name = '... and of an sql message the same status';
+        $sql_json = $msg_sql->api_array([], $msg_ok);
+        $status = $sql_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::ERROR);
+        $test_name = 'the api message of an ok message sends the ok status';
+        $ok_json = $msg_ok->api_array($msg_ok);
+        $status = $ok_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::OK);
+
         $t->subheader($ts . 'message add');
 
         // a message id with its vars is added to the message
@@ -173,6 +187,77 @@ class base_object_tests
         $cnt = count($msg->msg_var_lst);
         $t->assert($test_name, $cnt, 1);
         $msg->reset();
+
+        // each entry has its severity, so that e.g. the errors of a failed import can be told apart from its infos
+        // a backend message, because the info and warning adders and assert_log_err need it
+        $usr_msg = new user_message();
+        $test_name = 'an info keeps the message ok';
+        $usr_msg->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $test_name = '... and is kept as an info';
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::INFO);
+        $usr_msg->reset();
+        $test_name = 'a warning with vars is kept as a warning';
+        $usr_msg->add_warning_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::WARNING);
+        $usr_msg->reset();
+        $test_name = 'a repeated text keeps the worse severity';
+        $usr_msg->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $usr_msg->add(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::NOK);
+        $usr_msg->reset();
+        $test_name = 'an added error is logged';
+        $err_call = fn() => $usr_msg->add_err(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH]);
+        $t->assert_log_err($test_name, $err_call, word_names::MATH, $usr_msg);
+        $test_name = '... and sets the error status';
+        $t->assert_true($test_name, $usr_msg->is_error());
+        $test_name = '... and is kept as an error';
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::ERROR);
+        $usr_msg->reset();
+        $test_name = 'a merged info of a failed message stays an info';
+        $msg_buf = new user_message();
+        $msg_buf->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $msg_buf->add(msg_id::RESET_MAIL_SENT, [word_names::ZH]);
+        $usr_msg->merge($msg_buf);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::INFO);
+        $test_name = '... and the not ok entry stays not ok';
+        $severity = $usr_msg->msg_var_lst[1][2];
+        $t->assert($test_name, $severity, msg_id::NOK);
+        $test_name = '... and the message is not ok';
+        $t->assert_false($test_name, $usr_msg->is_ok());
+        $usr_msg->reset();
+        $test_name = 'an entry added with its severity keeps it';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::WARNING);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::WARNING);
+        // negative: a warning does not lower the status
+        $test_name = '... and a warning keeps the message ok';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $usr_msg->reset();
+        $test_name = 'the error text with a limit of one names the first error';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::ERROR);
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::ZH], msg_id::ERROR);
+        $usr_msg->add_info_with_vars(msg_id::PHRASE_CREATED, [msg_id::VAR_PHRASE_NAME => word_names::PI]);
+        $err_txt = $usr_msg->var_error_text(1);
+        $t->assert_text_contains($test_name, $err_txt, word_names::MATH);
+        $test_name = '... and counts the second';
+        $t->assert_text_contains($test_name, $err_txt, '1 ' . msg_id::MORE->text());
+        // negative: an info is no error, so it is neither named nor counted
+        $test_name = '... but not the info';
+        $t->assert_text_not_contains($test_name, $err_txt, word_names::PI);
+        $usr_msg->reset();
+
+        // negative: with a limit above the number of errors every error is named and nothing is counted
+        $test_name = 'the error text with a limit above the error count counts nothing';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::ERROR);
+        $err_txt = $usr_msg->var_error_text(2);
+        $t->assert_text_not_contains($test_name, $err_txt, msg_id::MORE->text());
+        $usr_msg->reset();
 
         $t->subheader($ts . 'list');
         $test_name = 'count';

@@ -407,6 +407,14 @@ class sys_log extends log
         return '"' . $this->status . '"';
     }
 
+    /**
+     * @return string empty, because a log entry has no name, so e.g. the page title shows only the view name
+     */
+    function name(): string
+    {
+        return '';
+    }
+
 
     /*
      * internal helper

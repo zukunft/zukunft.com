@@ -41,6 +41,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CREATE . 'test_links.php';
 include_once test_paths::CREATE . 'test_terms.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
@@ -80,6 +82,29 @@ class term_view_tests
         // start the test section (ts)
         $ts = 'unit view term link ';
         $t->header($ts);
+
+        $t->subheader($ts . 'setup link');
+
+        // the database setup links the word mathematics to the start view with the shared consts only
+        $test_name = 'the setup link names the word mathematics';
+        $math_lnk = new term_view($t->usr1);
+        $math_lnk->set_math_start();
+        $trm_name = $math_lnk->term()->name();
+        $t->assert($test_name, $trm_name, words::MATH);
+        $test_name = '... and the start view';
+        $msk_id = $math_lnk->get_view()->id();
+        $t->assert($test_name, $msk_id, views::START_ID);
+        $test_name = '... with the default link type';
+        $t->assert($test_name, $math_lnk->get_predicate_code_id(), view_link_types::DEFAULT);
+        // negative: the link is new, so that the save of the setup inserts it
+        $test_name = '... and without a database id';
+        $t->assert($test_name, $math_lnk->id(), 0);
+
+        // the term of the link is created for the user of the link and not e.g. for the system user
+        $test_name = 'the setup link of another user names the term for that user';
+        $usr2_lnk = new term_view($t->usr2);
+        $usr2_lnk->set_math_start();
+        $t->assert($test_name, $usr2_lnk->term()->get_user()->id(), $t->usr2->id());
 
         $t->subheader($ts . 'term_view sql setup');
         $trm_lnk_ui = new term_view($t->usr1);

@@ -228,6 +228,14 @@ class job extends db_object
     }
 
     /**
+     * @return string empty, because a job has no name, so e.g. the page title shows only the view name
+     */
+    function name(): string
+    {
+        return '';
+    }
+
+    /**
      * @return bool true if the job is not yet completed, so its priority can be changed and it can be cancelled;
      *              a completed, failed or cancelled job always has an end time (see job_runner::run_job)
      */

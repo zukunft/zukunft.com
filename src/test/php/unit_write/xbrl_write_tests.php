@@ -129,7 +129,8 @@ class xbrl_write_tests
         // without a new reset; nothing is added, so nothing needs to be removed after the test
         $test_name = 'the XBRL fileset json is imported again without changes';
         $imf = new import_file();
-        $imp_msg = $imf->json_file($json_path, user::system(), false, false, true);
+        $imp_msg = new user_message(user::system());
+        $imf->json_file($json_path, user::system(), $imp_msg, false, false, true);
         $t->assert_msg($test_name, $imp_msg, $t::TIMEOUT_LIMIT_IMPORT);
 
         // check that the imported values can be loaded from the database

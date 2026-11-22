@@ -423,15 +423,15 @@ class test_types
     }
 
     /**
-     * @return user_official_type "EU passport" as the main external user trust level
+     * @return user_official_type "passport number" as the main external user trust level
      */
     function user_official_type(): user_official_type
     {
         return new user_official_type(
-            user_official_types::PASSPORT_EU,
-            user_official_types::PASSPORT_EU_NAME,
-            user_official_types::PASSPORT_EU_COM,
-            user_official_types::PASSPORT_EU_ID);
+            user_official_types::PASSPORT_NBR,
+            user_official_types::PASSPORT_NBR_NAME,
+            user_official_types::PASSPORT_NBR_COM,
+            user_official_types::PASSPORT_NBR_ID);
     }
 
     /**
@@ -440,7 +440,7 @@ class test_types
     function user_status(): user_status
     {
         return new user_status(
-            user_statuum::READ_ONLY_ID,
+            user_statuum::READ_ONLY,
             user_statuum::READ_ONLY_NAME,
             user_statuum::READ_ONLY_COM,
             user_statuum::READ_ONLY_ID);
@@ -694,7 +694,7 @@ class test_types
     function language_form(): language_form
     {
         return new language_form(
-            language_forms::DEFAULT,
+            language_forms::PLURAL,
             language_forms::PLURAL_NAME,
             language_forms::PLURAL_COM,
             language_forms::PLURAL_ID);

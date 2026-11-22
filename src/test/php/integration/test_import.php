@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_import_test($file_list, test_cleanup $t): void
@@ -48,10 +49,11 @@ function run_import_test($file_list, test_cleanup $t): void
 
     foreach ($file_list as $json_test_filename) {
         $imf = new import_file();
-        $result = $imf->json_file($import_path . $json_test_filename, $t->usr1);
+        $imp_msg = new user_message($t->usr1);
+        $imf->json_file($import_path . $json_test_filename, $t->usr1, $imp_msg);
         $target = 'done';
         $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target,
-            $result->get_last_message(), $t::TIMEOUT_LIMIT_IMPORT);
+            $imp_msg->get_last_message(), $t::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

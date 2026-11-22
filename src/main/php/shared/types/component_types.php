@@ -52,12 +52,12 @@ class component_types
     // the components used for the default start page
     const string PHRASE_NAME = "phrase_name";
     const int PHRASE_NAME_ID = 32;
-    const string PHRASE_NAME_COM = "show the name of a phrase fixed when designing the view";
+    const string PHRASE_NAME_COM = "show the word name and give the user the possibility to change the word name";
 
     const string CALC_SHEET = "calc_sheet";
     const string CALC_SHEET_NAME = "spreadsheet";
     const int CALC_SHEET_ID = 68;
-    const string CALC_SHEET_COM = "changeable spreadsheet with words, number and formulas that allow changes";
+    const string CALC_SHEET_COM = "spreadsheet that allows calculations by adding formulas to cells";
 
 
     /*
@@ -76,22 +76,22 @@ class component_types
     const int TITLE_NAMED_EDIT_ID = 6;
     const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
     const int TITLE_TRIPLE_EDIT_ID = 8;
-    const string TITLE_TRIPLE_EDIT_COM = "show the triple name as the page title and the from, verb and to with links in the subtitle, plus the edit link";
+    const string TITLE_TRIPLE_EDIT_COM = "show the from, verb and to of a triple with links as the page title plus the edit link and subtitle";
     const string TITLE_FORMULA_EDIT = "title_of_formula_with_edit_link";
     const int TITLE_FORMULA_EDIT_ID = 9;
-    const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle, plus the edit link";
+    const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle plus the edit link";
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
     const int TITLE_VALUE_EDIT_ID = 10;
-    const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
+    const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself plus the edit link and the share and protection subtitle";
     const string TITLE_LINK_EDIT = "title_of_link_with_edit_link";
     const int TITLE_LINK_EDIT_ID = 11;
-    const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle, plus the edit link";
+    const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle";
     // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
     // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
     // can be used for a word and for a triple without a title component per phrase type
     const string PHRASE_TITLE = "phrase_title";
     const int PHRASE_TITLE_ID = 7;
-    const string PHRASE_TITLE_COM = "show the phrase name as the page title with the subheader of a word or of a triple, plus the edit link";
+    const string PHRASE_TITLE_COM = "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links), plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 121;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -480,22 +480,22 @@ class component_types
     const int LIST_CHILD_TRIPLES_ID = 294;
     const string PHRASE_ALIASES = "phrase_aliases";
     const int PHRASE_ALIASES_ID = 42;
-    const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
+    const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. has aliases: $ and U.S. dollar for US dollar";
     const string PHRASE_SYMBOLS = "phrase_symbols";
     const int PHRASE_SYMBOLS_ID = 43;
-    const string PHRASE_SYMBOLS_COM = "show the symbols of the given phrase e.g. 'has symbol: USD' for 'US dollar'";
+    const string PHRASE_SYMBOLS_COM = "show the symbols of the given phrase e.g. has symbol: USD for US dollar";
     const string LIST_PHRASES_RELATED_EX_SYMBOLS = "list_phrases_related_ex_symbols";
     const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 48;
     const string LIST_PHRASES_RELATED_EX_SYMBOLS_COM = "list of phrases related to the given phrase excluding the alias and symbol entries";
     const string LIST_PHRASES_RELATED_EX_SUBTITLE = "list_phrases_related_ex_subtitle";
     const int LIST_PHRASES_RELATED_EX_SUBTITLE_ID = 49;
-    const string LIST_PHRASES_RELATED_EX_SUBTITLE_COM = "list of phrases related to the given phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components";
+    const string LIST_PHRASES_RELATED_EX_SUBTITLE_COM = "list of phrases related to the given phrase excluding the alias, symbol and is a entries that are already shown by the alias, symbol and subtitle components";
     const string VALUE_CHART = "value_chart";
     const int VALUE_CHART_ID = 58;
     const string VALUE_CHART_COM = "show a chart of the most relevant values by impact on top of the value list";
     const string VIEW_TAB_BOX = "view_tab_box";
     const int VIEW_TAB_BOX_ID = 25;
-    const string VIEW_TAB_BOX_COM = "a tab box with the related views (preview plus open and switch buttons) and the change log of the word";
+    const string VIEW_TAB_BOX_COM = "a tab box with the related views (preview plus open and switch buttons) and the change log of the shown object";
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 52;
     const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
@@ -576,13 +576,13 @@ class component_types
     // each column headed by one of the phrases used most often within these values
     const string VALUES_IN_COLUMNS = "values_in_columns";
     const int VALUES_IN_COLUMNS_ID = 56;
-    const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns headed by the phrases used most often within the values";
+    const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values";
     // the values related to a phrase as a table: one column per phrase used most often within the
     // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
     // (e.g. per year), so that the values of one row can be compared column by column
     const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
     const int TABLE_WITH_RELATED_COLUMNS_ID = 55;
-    const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
+    const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination";
     // the triples that point to the column phrase of the component and that are related to the
     // phrase of the page, e.g. the columns of the table editor (see ui_list::triples_of_types)
     const string TRIPLE_LIST = "triple_list";
@@ -809,7 +809,7 @@ class component_types
     // a borderless change log table with the three columns when, who and what
     const string CHANGE_LOG_TABLE_PURE = "invisible_change_log_table";
     const int CHANGE_LOG_TABLE_PURE_ID = 27;
-    const string CHANGE_LOG_TABLE_PURE_COM = "a change log table without borders with the three columns when, who and what limited to a config char count";
+    const string CHANGE_LOG_TABLE_PURE_COM = "a borderless change log table with the three columns when, who and what limited to a config char count";
 
     const string USER_SYSTEM_ERRORS = "user_system_errors";
     const int USER_SYSTEM_ERRORS_ID = 254;

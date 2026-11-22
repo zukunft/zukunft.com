@@ -1458,7 +1458,6 @@ class term extends combine_named
                 $frm->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($frm);
             } else {
-                // TODO Prio 0 review
                 $msg->add_err(msg_id::IMPORT_FAILED, [
                     msg_id::VAR_SUMMARY => 'the class "' . $class . '" of a term is neither a word, a verb, a triple nor a formula'
                 ]);

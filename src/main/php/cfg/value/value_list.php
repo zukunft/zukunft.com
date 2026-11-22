@@ -1317,7 +1317,12 @@ class value_list extends sandbox_value_list
                 $val->source = $src;
             }
 
-            if ($key == json_fields::VALUES) {
+            // the values depend on the context, the time and the source of the list, so an error there stops them
+            if ($key == json_fields::VALUES and !$msg->is_ok()) {
+                $msg->add(msg_id::IMPORT_STEP_SKIPPED, [
+                    msg_id::VAR_NAME => $lib->class_to_word(value::class)
+                ], true);
+            } elseif ($key == json_fields::VALUES) {
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
@@ -1358,28 +1363,34 @@ class value_list extends sandbox_value_list
         $val_to_add = clone $val;
         $phr_lst_to_add = clone $phr_lst;
         $val_phr = new phrase($this->get_user());
+        // a message per value, because the values of a list are independent, like in save
+        $val_msg = $msg->clone_reset();
+        $val_phr_found = true;
         if ($db_con->is_open()) {
-            $val_phr->load_by_name($val_key, $msg);
-            $phr_lst_to_add->add($val_phr);
+            // a name that is not in the database would else save the number without this phrase
+            $val_phr_found = ($val_phr->load_by_name($val_key, $val_msg) != 0);
+            if ($val_phr_found) {
+                $phr_lst_to_add->add($val_phr);
+            }
         } else {
             $val_phr->set_name($val_key, word::class);
             $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
         $grp = $phr_lst_to_add->get_grp_id($do_save);
-        if ($grp != null) {
+        if ($val_phr_found and $grp != null) {
             $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
             if ($db_con->is_open()) {
-                $val_to_add->save($msg);
+                $val_to_add->save($val_msg);
                 $this->add_obj($val_to_add);
             } else {
                 // TODO Prio 2 maybe use add_by_phr_names
                 $this->add_direct($val_to_add);
             }
         } else {
-            // TODO Prio 0 review error
-            log_warning('');
+            $val_msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => $val_key]);
         }
+        $msg->merge($val_msg);
         return $msg;
     }
 
@@ -1911,7 +1922,10 @@ class value_list extends sandbox_value_list
                             msg_id::VAR_NAME_LIST => $this->undefined_phrase_names($val)
                         ]);
                     } else {
-                        $val->save($msg);
+                        // a message per value, so that an issue of one value does not prevent the next one from being saved
+                        $val_usr_msg = $msg->clone_reset();
+                        $val->save($val_usr_msg);
+                        $msg->merge($val_usr_msg);
                     }
                 }
                 $i++;

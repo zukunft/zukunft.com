@@ -37,7 +37,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -75,7 +79,11 @@ include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as files_cfg;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
@@ -143,8 +151,20 @@ class coding_rule_tests
     // the number of the Prio 0 TODOs of src/main/php, src/test/php, api and http can only go down
     // (docs/llm/log/fix_prio0_rest_2026-11-21.md): a commit that solves one lowers the const by one, and a new one
     // can only be added if another one is solved; the marker is split, so that this file does not count itself
-    const int TODO_PRIO_0_MAX = 73;
+    const int TODO_PRIO_0_MAX = 47;
     const string TODO_PRIO_0_MARK = 'TODO Prio' . ' 0';
+    // the text of a stub that a child class must overwrite e.g. 'name not overwritten by ' . $this::class
+    const string STUB_MARK = 'not overwritten by';
+    // the creation of the bare shared message, which an http entry point replaces by the message of its layer
+    const string BARE_MESSAGE_MARK = 'new Message(';
+    // the file extension of a php class file e.g. of an enum class that is named like its code link csv
+    const string PHP_EXT = '.php';
+    // the suffixes of the consts that repeat the id, the name and the description of a code link csv row
+    const string CSV_ID_SUFFIX = '_ID';
+    const string CSV_NAME_SUFFIX = '_NAME';
+    const string CSV_COM_SUFFIX = '_COM';
+    // the value of an empty field of a code link csv e.g. a missing description
+    const string CSV_NULL = 'NULL';
 
     // the continuation lines of a wrapped md line start with this marker plus the indent of the
     // line that is continued, so that a wrapped line is not read as an own entry of the tree
@@ -376,6 +396,16 @@ class coding_rule_tests
 
         $t->subheader($ts . 'Prio 0 TODOs');
         $this->todo_prio_0_tests($t);
+
+        $t->subheader($ts . 'error log of a missing overwrite or mapping');
+        $this->stub_error_log_tests($t);
+        $this->class_mapper_error_log_tests($t);
+
+        $t->subheader($ts . 'message of the http entry points');
+        $this->http_no_bare_message_tests($t);
+
+        $t->subheader($ts . 'enum consts of the code link csv');
+        $this->enum_csv_tests($t);
 
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
@@ -1886,6 +1916,383 @@ class coding_rule_tests
         $test_name = 'the ' . $count . ' Prio 0 TODOs are not more than ' . self::TODO_PRIO_0_MAX
             . ', so a new one is only added if another one is solved';
         $t->assert_true($test_name, $count <= self::TODO_PRIO_0_MAX);
+    }
+
+    /**
+     * check that every stub of a function that a child class must overwrite logs an error and not only a warning,
+     * because a missing overwrite is a program error that the admin has to see
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function stub_error_log_tests(test_cleanup $t): void
+    {
+        $stub_txt = "        \$msg = 'name " . self::STUB_MARK . " ' . \$this::class;";
+        $test_name = 'a stub that logs an error is fine';
+        $err_stub = ['    function name(): string', '    {', $stub_txt, '        log_err($msg);', '        return $msg;', '    }'];
+        $t->assert($test_name, $this->stubs_without_error_log($err_stub), []);
+        // negative: a stub that only logs a warning is reported with its line
+        $test_name = '... but not a stub that only logs a warning';
+        $wrn_stub = ['    function name(): string', '    {', $stub_txt, '        log_warning($msg);', '        return $msg;', '    }'];
+        $t->assert($test_name, $this->stubs_without_error_log($wrn_stub), [3]);
+
+        $missing = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(paths::PHP_LIB) as $code_file) {
+            $files_checked++;
+            foreach ($this->stubs_without_error_log(file($code_file)) as $line_nbr) {
+                $missing[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'stubs checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every stub of a function that a child class must overwrite logs an error';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers of the stub texts whose function does not log an error
+     */
+    private function stubs_without_error_log(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if ($this->is_stub_text($line) and !$this->logs_error_until_function_end($lines, $pos)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $line one line of a code file
+     * @return bool true if the line builds the text of a stub, but not a comment or a message enum case
+     */
+    private function is_stub_text(string $line): bool
+    {
+        $code = ltrim($line);
+        $is_code = (!str_starts_with($code, '*') and !str_starts_with($code, '//') and !str_starts_with($code, '.'));
+        return ($is_code and str_contains($code, self::STUB_MARK));
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @param int $pos the index of the line from which the function is read until its end
+     * @return bool true if the function logs an error from the given line until its end
+     */
+    private function logs_error_until_function_end(array $lines, int $pos): bool
+    {
+        $result = false;
+        $is_end = false;
+        for ($i = $pos; $i < count($lines) and !$is_end; $i++) {
+            if (str_contains($lines[$i], 'log_err') or str_contains($lines[$i], 'add_err')) {
+                $result = true;
+            }
+            $is_end = (rtrim($lines[$i]) == '    }');
+        }
+        return $result;
+    }
+
+    /**
+     * check that every mapper that creates an object by the class of another object e.g. the frontend object of a
+     * backend object logs an error for a class that it does not know, and does not only return false
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function class_mapper_error_log_tests(test_cleanup $t): void
+    {
+        $head = '        $result = match ($dbo::class) {';
+        $arm = '            word::class => new word_ui(),';
+        $test_name = 'a class mapper that logs an unknown class is fine';
+        $log_mapper = [$head, $arm, '            default => false,', '        };', '        if (!$result) {', "            log_err('ui object missing');", '        }', '    }'];
+        $t->assert($test_name, $this->class_mappers_without_error_log($log_mapper), []);
+        // negative: a class mapper that only returns false for an unknown class is reported with its line
+        $test_name = '... but not a class mapper that only returns false';
+        $mute_mapper = [$head, $arm, '            default => false,', '        };', '        return $result;', '    }'];
+        $t->assert($test_name, $this->class_mappers_without_error_log($mute_mapper), [1]);
+
+        $missing = [];
+        $files_checked = 0;
+        foreach ([paths::PHP_LIB, TEST_PHP_PATH] as $root) {
+            foreach ($this->php_file_list($root) as $code_file) {
+                $files_checked++;
+                foreach ($this->class_mappers_without_error_log(file($code_file)) as $line_nbr) {
+                    $missing[] = $code_file . ':' . $line_nbr;
+                }
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'class mappers checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every mapper that creates an object by a class logs an unknown class';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * a match by a class whose arms return a default value e.g. a default view id is no mapper and is not reported
+     * @param array $lines the lines of a code file
+     * @return array the line numbers of the class matches that create objects, but do not log an unknown class
+     */
+    private function class_mappers_without_error_log(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if ($this->is_class_mapper($lines, $pos) and !$this->logs_error_until_function_end($lines, $pos)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @param int $pos the index of the line that may start a match by a class
+     * @return bool true if the line starts a match by a class whose next line creates an object,
+     *              but not a text with such a match e.g. the test lines of class_mapper_error_log_tests
+     */
+    private function is_class_mapper(array $lines, int $pos): bool
+    {
+        $code = ltrim($lines[$pos]);
+        $is_class_match = (str_contains($code, 'match (') and str_contains($code, '::class)'));
+        $is_class_match = ($is_class_match and !str_contains($code, "'"));
+        $next_line = $lines[$pos + 1] ?? '';
+        return ($is_class_match and str_contains($next_line, '=> new '));
+    }
+
+    /**
+     * check that no http entry point creates the bare shared message, because the frontend shows only the messages
+     * of its own message class and the backend entry points use the backend message
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function http_no_bare_message_tests(test_cleanup $t): void
+    {
+        $test_name = 'an entry point with the frontend message is fine';
+        $ui_lines = ['$msg_ui = new user_message_ui(); // frontend entry point'];
+        $t->assert($test_name, $this->bare_message_lines($ui_lines), []);
+        // negative: the bare shared message is reported with its line
+        $test_name = '... but not an entry point with the bare shared message';
+        $bare_lines = ['$app = new frontend();', '$msg = ' . self::BARE_MESSAGE_MARK . ');'];
+        $t->assert($test_name, $this->bare_message_lines($bare_lines), [2]);
+
+        $found = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(html_paths::HTTP) as $code_file) {
+            $files_checked++;
+            foreach ($this->bare_message_lines(file($code_file)) as $line_nbr) {
+                $found[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'http entry points checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'no http entry point creates the bare shared message';
+        $t->assert($test_name, $found, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers that create the bare shared message
+     */
+    private function bare_message_lines(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if (str_contains($line, self::BARE_MESSAGE_MARK)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check that the id, the name and the description consts of an enum or type class match the row of the code link
+     * csv with the same name, from which the database and the type lists take them, because the consts are written
+     * by hand e.g. user_statuum::READ_ONLY_ID was 3 for the row 2 of "read-only"
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function enum_csv_tests(test_cleanup $t): void
+    {
+        $csv_lines = ['user_status_id, user_status_name, code_id, description', "2, 'read-only', 'read-only', 'no write'"];
+        $consts = ['READ_ONLY' => 'read-only', 'READ_ONLY_ID' => 2, 'READ_ONLY_NAME' => 'read-only', 'READ_ONLY_COM' => 'no write'];
+        $test_name = 'the consts that match their csv row are fine';
+        $t->assert($test_name, $this->enum_csv_diffs('user_statuum', $consts, $csv_lines), []);
+        // negative: the id of another row is reported with the class, the const and both ids
+        $test_name = '... but an id of another row is reported';
+        $consts['READ_ONLY_ID'] = 3;
+        $diffs = $this->enum_csv_diffs('user_statuum', $consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_ID is 3, but the csv row of "read-only" has the id 2']);
+
+        $diffs = [];
+        $files_checked = 0;
+        foreach (glob(files_cfg::CODE_LINK_PATH . '*' . files_cfg::CSV) as $csv_file) {
+            $name = basename($csv_file, files_cfg::CSV);
+            $consts = $this->enum_consts_by_name($name);
+            if ($consts !== null) {
+                $files_checked++;
+                $diffs = array_merge($diffs, $this->enum_csv_diffs($name, $consts, file($csv_file)));
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'enum consts checked against ' . $files_checked . ' code link csv files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'the id, name and description consts of an enum match the row of its code link csv';
+        $t->assert($test_name, $diffs, []);
+    }
+
+    /**
+     * @param string $name the name of the code link csv e.g. user_statuum
+     * @return array|null the consts of the enum or type class with the same name or null if there is no such class
+     */
+    private function enum_consts_by_name(string $name): ?array
+    {
+        $result = null;
+        $lib = new library();
+        $folders = [
+            paths::SHARED_ENUM => $lib->str_left_of_last(user_statuum::class, '\\'),
+            paths::SHARED_TYPES => $lib->str_left_of_last(component_types::class, '\\'),
+        ];
+        foreach ($folders as $path => $name_space) {
+            $class_file = $path . $name . self::PHP_EXT;
+            if ($result === null and file_exists($class_file)) {
+                // the class is found only by the name of the csv, so it cannot be included upfront
+                include_once $class_file;
+                $result = new ReflectionClass($name_space . '\\' . $name)->getConstants();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cls_name the name of the class of the consts for the report e.g. user_statuum
+     * @param array $consts the consts of the class with the name as key
+     * @param array $csv_lines the lines of the code link csv with the column names as the first line
+     * @return array the description of each const that differs from its csv row
+     */
+    private function enum_csv_diffs(string $cls_name, array $consts, array $csv_lines): array
+    {
+        $result = [];
+        $lib = new library();
+        $cols = $lib->array_trim($lib->csv_line_to_array($csv_lines[0]));
+        $code_col = array_search(json_fields::CODE_ID, $cols);
+        // e.g. the change fields have no code id, so no const can name one of their rows
+        if ($code_col !== false) {
+            $rows = $this->csv_rows_by_code(array_slice($csv_lines, 1), $code_col);
+            foreach ($consts as $key => $code) {
+                if ($this->is_csv_code_const($consts, $key)) {
+                    $row = $rows[$code] ?? null;
+                    $result = array_merge($result, $this->enum_const_diffs($cls_name, $consts, $key, $row, $cols));
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lines the data lines of a code link csv
+     * @param int $code_col the position of the code id column
+     * @return array the trimmed fields of each row with the code id as key
+     */
+    private function csv_rows_by_code(array $lines, int $code_col): array
+    {
+        $result = [];
+        $lib = new library();
+        foreach ($lines as $line) {
+            if (trim($line) != '') {
+                // trimmed per field and not with array_trim, which drops an empty field and would move the columns
+                $fields = array_map('trim', $lib->csv_line_to_array($line));
+                $result[$fields[$code_col] ?? ''] = $fields;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $consts the consts of the class with the name as key
+     * @param string $key the name of a const
+     * @return bool true if the const is a code id that has an id const e.g. READ_ONLY with READ_ONLY_ID
+     */
+    private function is_csv_code_const(array $consts, string $key): bool
+    {
+        $has_id = is_int($consts[$key . self::CSV_ID_SUFFIX] ?? null);
+        return ($has_id and is_string($consts[$key]));
+    }
+
+    /**
+     * @param string $cls_name the name of the class for the report
+     * @param array $consts the consts of the class with the name as key
+     * @param string $key the name of the code id const e.g. READ_ONLY
+     * @param array|null $row the csv row with the code id of the const or null if the csv has none
+     * @param array $cols the column names of the csv
+     * @return array the description of each const of this code id that differs from the csv row
+     */
+    private function enum_const_diffs(string $cls_name, array $consts, string $key, ?array $row, array $cols): array
+    {
+        $result = [];
+        $code = $consts[$key];
+        $id_key = $key . self::CSV_ID_SUFFIX;
+        if ($row === null) {
+            $result[] = $cls_name . '::' . $id_key . ' is set, but the csv has no row with the code id "' . $code . '"';
+        } else {
+            // the first column of each code link csv is the row id
+            $id = (int)$row[0];
+            if ($consts[$id_key] != $id) {
+                $result[] = $cls_name . '::' . $id_key . ' is ' . $consts[$id_key]
+                    . ', but the csv row of "' . $code . '" has the id ' . $id;
+            }
+            // a const X_NAME with its own X_NAME_ID is the code id of another row and not the name of this one
+            if (!array_key_exists($key . self::CSV_NAME_SUFFIX . self::CSV_ID_SUFFIX, $consts)) {
+                $name_col = $this->csv_name_col($cols);
+                $result = array_merge($result, $this->enum_text_diff($cls_name, $consts, $key . self::CSV_NAME_SUFFIX, $row, $name_col));
+            }
+            $desc_col = array_search(fields::FLD_DESCRIPTION, $cols);
+            $result = array_merge($result, $this->enum_text_diff($cls_name, $consts, $key . self::CSV_COM_SUFFIX, $row, $desc_col));
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $cols the column names of a code link csv
+     * @return int|false the position of the name column e.g. user_status_name or type_name, or false if there is none
+     */
+    private function csv_name_col(array $cols): int|false
+    {
+        $result = false;
+        foreach ($cols as $pos => $col) {
+            if ($result === false and str_ends_with($col, '_name')) {
+                $result = $pos;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cls_name the name of the class for the report
+     * @param array $consts the consts of the class with the name as key
+     * @param string $txt_key the name of the text const e.g. READ_ONLY_NAME
+     * @param array $row the csv row of the code id
+     * @param int|false $col the position of the text column or false if the csv has none
+     * @return array the description of the difference or an empty array if the text matches or is not set
+     */
+    private function enum_text_diff(string $cls_name, array $consts, string $txt_key, array $row, int|false $col): array
+    {
+        $result = [];
+        if ($col !== false and array_key_exists($txt_key, $consts)) {
+            $csv_txt = $row[$col] ?? '';
+            if ($csv_txt == self::CSV_NULL) {
+                $csv_txt = '';
+            }
+            if ($consts[$txt_key] != $csv_txt) {
+                $result[] = $cls_name . '::' . $txt_key . ' is "' . $consts[$txt_key] . '", but the csv has "' . $csv_txt . '"';
+            }
+        }
+        return $result;
     }
 
     /**

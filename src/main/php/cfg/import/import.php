@@ -1634,6 +1634,7 @@ class import
     ): void
     {
         global $mtr;
+        global $cfg;
 
         $end_time = microtime(true);
         // no step runs anymore, so the note timer has nothing to show or to repeat
@@ -1642,7 +1643,8 @@ class import
         if ($msg->is_ok()) {
             $step = $mtr->txt(msg_id::DONE);
         } else {
-            $step = $msg->all_message_text();
+            $max_errors = $cfg->get_by([triples::MAX_ERRORS, words::IMPORT], def::FALLBACK_IMPORT_MAX_ERRORS);
+            $step = $msg->error_text($max_errors);
         }
 
         if ($nbr > 0) {

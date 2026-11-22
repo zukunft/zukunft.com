@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -377,6 +378,42 @@ class view_tests
         $is_ok = $msg->is_ok();
         $t->assert_true($test_name, $is_ok);
         $msg->reset();
+
+        // the import mapper takes an assigned term only from the import and never reads the database, because e.g.
+        // a term of another file gets its database id before the save (view_list::set_term_links_by_db_name)
+        $test_name = 'an assigned term of the import is taken from the import';
+        $msk = new view($t->usr1);
+        $msk_json = [json_fields::NAME => views::TEST_ADD_NAME, json_fields::ASSIGNED => [word_names::MINUTE]];
+        $msk->import_mapper($msk_json, $msg, $t_trm->dto_minute_and_second());
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->id_obj(), word_names::MINUTE_ID);
+        // negative: a term that the import does not know keeps only its name until the save
+        $test_name = '... but a term of another file keeps only its name';
+        $msk_json = [json_fields::NAME => views::TEST_ADD_NAME, json_fields::ASSIGNED => [word_names::PI]];
+        $msk->import_mapper($msk_json, $msg, $t_trm->dto_minute_and_second());
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->name(), word_names::PI);
+        $test_name = '... and no database id';
+        $t->assert($test_name, $lnk->term()->id(), 0);
+        $msg->reset();
+
+        // before the save the terms of the term links get their database id by name, but a term with an id is kept
+        $test_name = 'a term link with a database id keeps its term';
+        $read_msg = new user_message($t->usr1);
+        $read_msg->log_test_only = true;
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->term(), $read_msg);
+        $msk->set_term_links_by_db_name($read_msg);
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->id(), $t_trm->term()->id());
+        // negative: no database read for a term that is complete already
+        $test_name = '... without a database read';
+        $t->assert($test_name, $read_msg->log_test_txt, '');
+        $test_name = '... also as a view of a list';
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->add($msk);
+        $msk_lst->set_term_links_by_db_name($read_msg);
+        $t->assert($test_name, $read_msg->log_test_txt, '');
 
 
         $t->subheader($ts . 'im- and export');

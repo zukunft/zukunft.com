@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -71,6 +72,13 @@ class sql_db_read_tests
 
         $test_name = 'csv check for the change log ';
         $this->assert_table_field_preload($test_name, $t, $db_con, $msg);
+
+        // the positive case of the unit test "read without connection": with a connection the count is read
+        $t->subheader($ts . 'read');
+        $test_name = 'a count with database connection has a number';
+        // a failed count is null, so it shows as 0 in the failed test instead of a type error
+        $cnt = $db_con->count(formula::class, $msg) ?? 0;
+        $t->assert_greater($test_name, 0, $cnt);
 
     }
 

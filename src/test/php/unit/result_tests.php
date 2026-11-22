@@ -489,8 +489,9 @@ class result_tests
         $res = $t_res->result();
         $grp = $t_grp->group_16();
         $phr_id_flds = $res->id_fields_main(1, result_id::MAIN_PHRASES_ALL);
+        // without the phrase names, because they are read from the database and only the group id is checked
         $t->assert_true($test_name, $res->set_grp_by_row(
-            [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds));
+            [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds, false));
         $t->assert($test_name . ' id', $res->grp()->id(), $grp->id());
         // negative: a range that ends before it starts names no id column
         $test_name = 'an empty range of phrase positions has no id field';

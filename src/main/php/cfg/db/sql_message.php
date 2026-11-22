@@ -229,7 +229,7 @@ class sql_message extends Message
 
     /**
      * create a json array to send the messages to the frontend
-     * TODO Prio 0 move the message status to a shared const object
+     * with the status of the shared Message class, whose values are the consts of the shared enum messages
      * TODO Prio 1 move the text messages to id message and include it in the json
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
@@ -310,7 +310,7 @@ class sql_message extends Message
      */
     function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::INFO);
     }
 
     /**
@@ -323,7 +323,7 @@ class sql_message extends Message
      */
     function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::WARNING);
         $msg = $this->get_last_message_translated();
         log_warning($msg);
     }

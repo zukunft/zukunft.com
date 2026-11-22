@@ -517,14 +517,32 @@ class triple_write_tests
 
     function create_base_times(test_cleanup|a_selected_test $t): void
     {
+        global $sys;
+
         // start the test section (ts)
         $ts = 'db create test words ';
         $t->header($ts);
 
+        // the years around the current year are created as words and each year follows the year before
+        $test_name = 'the time setup creates the word of the current year';
         $this->create_time_setup($t);
+        $t_db = new test_db_load($t);
+        $msg = new user_message($t->usr1);
+        $this_year = date('Y');
+        $prev_year = strval(intval($this_year) - 1);
+        $year_phr = $t_db->load_phrase($this_year, $msg);
+        $t->assert_greater_zero($test_name, $year_phr->id());
+        $test_name = '... which follows the year before';
+        $follow_trp = $t_db->test_triple($msg, $prev_year, verbs::FOLLOW, $this_year, '', '', false);
+        $t->assert_greater_zero($test_name, $follow_trp->id());
+        // negative: only the is and the follow links are created, so e.g. the year before does not contain the year
+        $test_name = '... but is not linked by another verb to the year before';
+        $prev_phr = $t_db->load_phrase($prev_year, $msg);
+        $part_trp = new triple($t->usr1);
+        $part_trp->load_by_link_id($prev_phr->id(), $msg, $sys->verb(verbs::PART)->id(), $year_phr->id());
+        $t->assert($test_name, $part_trp->id(), 0);
     }
 
-    // TODO Prio 0 review
     /**
      * testing functions to create the main time value
      * @param test_cleanup $t

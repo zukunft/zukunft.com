@@ -2035,6 +2035,8 @@ class data_object
      */
     private function save_views(user_message $msg, import $imp): void
     {
+        // after the words and triples have been saved, because a view may be assigned to a term of another file
+        $this->view_list()->set_term_links_by_db_name($msg);
         $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class, $msg);
     }
 

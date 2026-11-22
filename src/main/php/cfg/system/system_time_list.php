@@ -39,12 +39,14 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -341,7 +343,7 @@ class system_time_list
     {
         global $cfg;
         $names = [triples::RESPONSE_TIME, words::LOG, words::FRONTEND, words::BEHAVIOUR];
-        return $cfg?->get_by($names, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG;
+        return $cfg?->get_by($names, def_shared::FALLBACK_RESPONSE_TIME_LOG) ?? def_shared::FALLBACK_RESPONSE_TIME_LOG;
     }
 
     /**

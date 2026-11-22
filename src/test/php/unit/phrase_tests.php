@@ -40,6 +40,7 @@ include_once paths::DB . 'sql.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_triples.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -153,6 +155,47 @@ class phrase_tests
         $phr = $t_phr->phrase();
         $exp = $phr->export_json($msg, [], false);
         $t->assert_key_not_exists($test_name, json_fields::EX_VERB, $exp);
+        $msg->reset();
+
+        $t->subheader($ts . 'import mapper');
+
+        // a phrase is a word or a triple, so the import of another class is refused and not silently mapped
+        $test_name = 'the import of a phrase of another class is logged with the class';
+        $phr = new phrase($t->usr1);
+        $imp_json = [json_fields::OBJECT_CLASS => json_fields::CLASS_VERB];
+        $map_call = fn() => $phr->import_mapper($imp_json, $msg);
+        $t->assert_log_err($test_name, $map_call, json_fields::CLASS_VERB, $msg);
+        $test_name = '... and is an error';
+        $t->assert_true($test_name, $msg->is_error());
+        $msg->reset();
+
+        // positive: the class of a word is mapped
+        $test_name = 'the import of a phrase of the word class is mapped';
+        $imp_json = [json_fields::OBJECT_CLASS => json_fields::CLASS_WORD, json_fields::NAME => word_names::MATH];
+        $t->assert_true($test_name, $phr->import_mapper($imp_json, $msg));
+        $msg->reset();
+
+        // the error text of a failed import names more than one error, but only up to the max errors of config.yaml
+        $test_name = 'the import errors of three phrases are logged';
+        $map_calls = fn() => [
+            $phr->import_mapper([json_fields::OBJECT_CLASS => json_fields::CLASS_VERB], $msg),
+            $phr->import_mapper([json_fields::OBJECT_CLASS => json_fields::CLASS_FORMULA], $msg),
+            $phr->import_mapper([json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE], $msg)
+        ];
+        $t->assert_log_err($test_name, $map_calls, json_fields::CLASS_VALUE, $msg);
+        $test_name = '... and the error text with a limit of two names the first two';
+        $err_txt = $msg->error_text(2);
+        $t->assert_text_contains($test_name, $err_txt, '"' . json_fields::CLASS_FORMULA . '"');
+        $test_name = '... but not the third';
+        $t->assert_text_not_contains($test_name, $err_txt, '"' . json_fields::CLASS_VALUE . '"');
+        $test_name = '... which it counts instead';
+        $t->assert_text_contains($test_name, $err_txt, '1 ' . msg_id::MORE->text());
+        // negative: below the limit every error is named and nothing is counted
+        $test_name = 'the error text with a limit of three names the third';
+        $err_txt = $msg->error_text(3);
+        $t->assert_text_contains($test_name, $err_txt, '"' . json_fields::CLASS_VALUE . '"');
+        $test_name = '... and counts none';
+        $t->assert_text_not_contains($test_name, $err_txt, msg_id::MORE->text());
         $msg->reset();
 
         $t->subheader($ts . 'debug id');

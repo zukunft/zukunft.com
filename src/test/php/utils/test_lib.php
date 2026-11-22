@@ -308,7 +308,7 @@ class test_lib
 
     /**
      * TODO Prio 2 add missing frontend objects like
-     * TODO Prio 0 easy add missing mapping error log message to all other object mapper
+     * an unknown class is logged as an error, as coding_rule_tests::class_mapper_error_log_tests checks for all mappers
      * get the *empty* frontend object related to the given backend object:
      * only the class is selected, no vars are filled, so the caller must follow up with
      * set_from_json($dbo->api_json(...)) - or use a filling helper like ui_value(),

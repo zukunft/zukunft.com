@@ -76,6 +76,11 @@ class def
     // fallback for the seconds after which a page that is not yet complete shows that the data is being collected;
     // overridden by config.yaml entry user.default.frontend.behaviour.response time.target
     const float FALLBACK_RESPONSE_TIME_TARGET = 1.0;
+    // fallbacks for the seconds above which a request is written to the system times resp. also each of its steps
+    // and above which a slow page is logged as debug resp. warning by the frontend;
+    // overridden by config.yaml entry user.default.frontend.behaviour.response time.log resp. .detail
+    const float FALLBACK_RESPONSE_TIME_LOG = 1.2;
+    const float FALLBACK_RESPONSE_TIME_DETAIL = 2.0;
     // fallback for the number of failed logins of the same name from which they are critical on the admin dashboard;
     // overridden by config.yaml entry pod.limits.max login.per day.by ip-address
     const int FALLBACK_MAX_LOGIN = 5;

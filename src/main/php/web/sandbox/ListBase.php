@@ -122,8 +122,8 @@ class ListBase extends ListOfIdObjects
     }
 
     /**
-     * TODO Prio 0 check that all missing overwrites are creating an error log message
      * set the vars of this figure list based on the given json
+     * a stub that logs an error, as coding_rule_tests::stub_error_log_tests checks for all stubs
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */

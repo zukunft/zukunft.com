@@ -215,6 +215,7 @@ class words
     // the frontend shows this word for the phrase type math const and offers it as the test mode
     // pattern of a phrase selector, so the name is here and not only in the test const
     const string MATH = 'mathematics';
+    const string MATH_COM = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const int MATH_ID = 1;
     const string MAX = 'max';
     // the same description as in companies.json, because the import of this file with the system user
@@ -330,7 +331,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 835;
+    const int VERBS_ID = 836;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';
@@ -510,6 +511,7 @@ class words
         word_names::TEST_ADD,
         word_names::TEST_NO_UPD,
         word_names::TEST_FILL_UP,
+        word_names::TEST_NOT_IN_DB,
         word_names::TEST_ADD_VIA_FUNC,
         word_names::TEST_ADD_GROUP_MOST_FUNC,
         word_names::TEST_ADD_GROUP_MOST_SQL,
@@ -584,6 +586,7 @@ class words
         word_names::TEST_ADD,
         word_names::TEST_NO_UPD,
         word_names::TEST_FILL_UP,
+        word_names::TEST_NOT_IN_DB,
         word_names::TEST_ADD_VIA_FUNC,
         word_names::TEST_ADD_GROUP_PRIME,
         word_names::TEST_ADD_GROUP_PRIME_FUNC,

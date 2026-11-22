@@ -211,7 +211,7 @@ class expression
         term_list|term_list_ui|null $trm_lst = null
     ): ?string
     {
-        // TODO Prio 0 use the ref text check functions that includes the user message
+        // the conversion reports its problems on $msg; formula_map::expression checks a stored pair of both texts
         if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
             // a local message, because the is_ok() gate must judge only this conversion: with a
             // shared message an error that the caller collected earlier would keep the converted
@@ -271,6 +271,11 @@ class expression
         user_message                $msg
     ): string
     {
+        // an expression without user text has nothing to convert, which e.g. the empty check of symbol_list reports
+        if ($this->usr_text == null or $this->usr_text == '') {
+            return '';
+        }
+
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
@@ -311,8 +316,9 @@ class expression
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
+        // an expression without result part starts with the "=", so the position 0 is also converted like in get_ref_text
         $pos = strpos($this->ref_text($msg, $trm_lst), chars::CHAR_CALC);
-        if ($pos > 0) {
+        if ($pos !== false) {
             $left_part = $this->res_part($msg);
             $right_part = $this->r_part($msg);
             $left_part = $this->get_usr_part($left_part, $trm_lst, $msg);
@@ -401,6 +407,7 @@ class expression
                 log_debug('name "' . $name . '" (' . $end . ') left "' . $left . '" (' . $pos . ') right "' . $right . '"');
 
                 $db_sym = '';
+                $missing_in_lst = false;
 
                 // check if the preloaded terms can be used for the conversion
                 if ($trm_lst != null) {
@@ -423,11 +430,16 @@ class expression
                             msg_id::VAR_FORMULA => $this->frm_name,
                             msg_id::VAR_EXPRESSION => $frm_part_text
                         ]);
+                        $this->ref_text_dirty = true;
+                        $missing_in_lst = true;
                     }
 
                 }
 
-                if ($db_sym == '') {
+                // a term that the preloaded terms do not know is reported above, which fails the conversion,
+                // so a database read could not change the result and would e.g. read in a unit test without database;
+                // a known term without id yet e.g. of an import is still read, because the database may know it
+                if ($db_sym == '' and !$missing_in_lst) {
                     $db_sym = $this->get_term_symbol($name, $msg);
                 }
 
@@ -562,8 +574,11 @@ class expression
         if ($id == "") {
             $id = $lib->str_between($frm_part_ref_text, chars::VERB_START, chars::VERB_END);
             if ($id > 0) {
+                // like the other terms, a verb of the preloaded list is used and only a missing verb is read
                 $vrb = $trm_lst?->verb_by_id($id);
-                $vrb?->load_by_id($id, $msg);
+                if ($vrb == null) {
+                    $vrb = $this->load_verb($id, $msg);
+                }
                 if ($vrb == null) {
                     $this->usr_text_dirty = true;
                     log_warning('Verb with id ' . $id . ' not found');

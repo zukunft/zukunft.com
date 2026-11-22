@@ -207,9 +207,10 @@ class user_message extends Message
      */
     function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
-        $msg = $this->get_last_message_translated();
-        log_err($msg);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::ERROR);
+        $msg_txt = $this->get_last_message_translated();
+        // on the message, so that a test that expects the error keeps it instead of counting it (test_base::assert_log_err)
+        log_err_on_msg($msg_txt, $this);
     }
 
     /**
@@ -222,7 +223,7 @@ class user_message extends Message
      */
     function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::WARNING);
         $msg = $this->get_last_message_translated();
         log_warning($msg);
     }
@@ -353,7 +354,7 @@ class user_message extends Message
             $this->add_message_text($msg_text);
         }
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
-            $this->add($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
+            $this->add_with_severity($msg_var[0], $msg_var[1], $this->severity($msg_var));
         }
         // e.g. the refused save of a setting of the pod, which the backend reports without vars;
         // only appended, because combine_status below keeps the status and an info id is no error

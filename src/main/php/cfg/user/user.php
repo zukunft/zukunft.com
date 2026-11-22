@@ -609,11 +609,7 @@ class user extends db_id_object_non_sandbox
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            // only system and admin users are allowed to change the code id
-            if ($msg->usr === null) {
-                log_err_reported('user not set in user_message', 'import_mapper');
-                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            if ($this->critical_import_permitted(fields::FLD_CODE_ID, $msg)) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
             }
         }
@@ -629,8 +625,11 @@ class user extends db_id_object_non_sandbox
         } else {
             $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
         }
+        // the status too, because it can e.g. activate a user that an admin has set to read only
         if (key_exists(json_fields::STATUS, $in_ex_json)) {
-            $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
+            if ($this->critical_import_permitted(user_db::FLD_STATUS, $msg)) {
+                $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
+            }
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         }
@@ -649,6 +648,32 @@ class user extends db_id_object_non_sandbox
         // TODO Prio 2 create the view if the json is an array with more information than just the view name
 
         return $msg->is_ok();
+    }
+
+    /**
+     * only a system or an admin user may import a critical field of a user e.g. the code id or the status
+     * @param string $fld_name the db field name of the critical field, which the refusal names
+     * @param user_message $msg with the requesting user and to report why the field is refused
+     * @return bool true if the requesting user may import the critical field
+     */
+    private function critical_import_permitted(string $fld_name, user_message $msg): bool
+    {
+        $result = false;
+        if ($msg->usr === null) {
+            log_err_reported('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            $result = true;
+        } else {
+            $lib = new library();
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
+                msg_id::VAR_NAME => $fld_name,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $result;
     }
 
     /**
@@ -2239,6 +2264,8 @@ class user extends db_id_object_non_sandbox
         ?user        $usr_req = null
     ): bool
     {
+        global $db_con;
+
         if ($usr_req == null) {
             $usr_req = $msg->usr;
         }
@@ -2247,44 +2274,27 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        // map the non critical fields
+        // map the fields, of which the mapper refuses the critical ones e.g. the profile, the code id and the status
+        // if the requesting user may not set them
         $this->import_mapper($in_ex_json, $msg, $dto);
-
-        // set the critical parameter
-        // TODO Prio 0 review
-        /*
-        if ($usr_req->is_admin() or $usr_req->is_system()) {
-            $trm = new term($this);
-            $trm->import_mapper($in_ex_json[json_fields::TERM], $msg, $dto);
-            $this->trm = $trm;
-            $msk = new view($this);
-            $msk->import_mapper($in_ex_json[json_fields::VIEW], $msg, $dto);
-            $this->msk = $msk;
-            $src = new source($this);
-            $src->import_mapper($in_ex_json[json_fields::SOURCE], $msg, $dto);
-            $this->src = $src;
-        } else {
-            // or remove the setting if the requesting user has no permission
-            $this->profile_id = user_profiles::NORMAL_ID;
-            $this->code_id = null;
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
-            $this->trm = null;
-            $this->msk = null;
-            $this->src = null;
-        }
-        */
 
 
         // the last used objects are not included in the im- and export because this is mot like not needed
 
-        // save the user in the database
-        if (!$test_obj) {
+        // save the user in the database, like db_object_seq_id::import_obj only with a database connection,
+        // so that e.g. the im- and export unit test on the dummy connection only maps the user
+        if (!$test_obj and $db_con->is_open()) {
             if ($msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO Prio 1 use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     $this->save_user($msg, $usr_req);
+                } else {
+                    $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                    ]);
                 }
             } else {
                 $lib = new library();
@@ -2341,16 +2351,17 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::LAST_NAME] = $this->last_name;
 
         // the last objects used by the user to improve guessing of the next user actions
+        // with the load flag of the caller, because e.g. a test without database exports without loading
         if ($this->trm != null) {
-            $vars[json_fields::TERM] = $this->trm->export_json($msg, $exp_typ);
+            $vars[json_fields::TERM] = $this->trm->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::TERM] = $this->trm->name();
         }
         if ($this->msk != null) {
-            $vars[json_fields::VIEW] = $this->msk->export_json($msg, $exp_typ);
+            $vars[json_fields::VIEW] = $this->msk->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::VIEW] = $this->msk->name();
         }
         if ($this->src != null) {
-            $vars[json_fields::SOURCE] = $this->src->export_json($msg, $exp_typ);
+            $vars[json_fields::SOURCE] = $this->src->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::SOURCE] = $this->src->name();
         }
 

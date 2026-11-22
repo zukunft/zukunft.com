@@ -243,6 +243,9 @@ zukunft.com:
                 elements:
                   sys-conf-value: 800
                   tooltip-comment: "the estimated number of elements that can be removed from the database per second using the list of predefined SQL statements"
+          max errors:
+            sys-conf-value: 10
+            tooltip-comment: "the number of errors that the message of a failed import names; the other errors are counted as '... and n more'"
         value table:
           table name:
             max phrase: 3

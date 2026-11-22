@@ -324,20 +324,18 @@ class view extends sandbox_code_id
         }
 
         // after the view has it's components assign the view to the terms, which view_list::save
-        // writes after the views (see view::save_term_links)
+        // writes after the views (see view::save_term_links); the mapper takes the term only from the
+        // import, because e.g. a term of another file gets its database id in set_term_links_by_db_name
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $value = $in_ex_json[json_fields::ASSIGNED];
             foreach ($value as $trm_name) {
-                $trm = new term($this->get_user());
-                $trm->load_by_name($trm_name, $msg);
-                if ($trm->id() == 0) {
+                $trm = $dto?->get_term_by_name($trm_name, $msg);
+                if ($trm == null) {
                     // keep the name, because it identifies the link until the ids are known
                     // (docs/llm/architecture.md); without it every term that a view assigns
                     // before it exists would look like the same term assigned twice
+                    $trm = new term($this->get_user());
                     $trm->set_name($trm_name);
-                    log_warning('word "' . $trm_name .
-                        '" created to link it to view "' . $this->name() .
-                        '" as requested by the import of ');
                 }
                 $this->add_term($trm, $msg, json_encode($in_ex_json));
             }
@@ -1268,6 +1266,30 @@ class view extends sandbox_code_id
      * @param user_message $msg ok or the warning of an assigned term that is not in the database
      * @return bool true if all assigned terms with a database id have been saved
      */
+    /**
+     * take the database term of each term that this view is assigned to only by its name e.g. a term of another
+     * import file, which the import mapper cannot know, because it maps from the import only
+     * @param user_message $msg with the requesting user to report a load problem
+     * @return void
+     */
+    function set_term_links_by_db_name(user_message $msg): void
+    {
+        foreach ($this->trm_msk_lst?->lst() ?? [] as $lnk) {
+            $trm = $lnk->term();
+            if ($trm != null and $trm->id() == 0) {
+                $db_trm = new term($this->get_user());
+                $db_trm->load_by_name($trm->name(), $msg);
+                if ($db_trm->id() == 0) {
+                    log_warning('word "' . $trm->name() .
+                        '" created to link it to view "' . $this->name() .
+                        '" as requested by the import of ');
+                } else {
+                    $lnk->set_term($db_trm);
+                }
+            }
+        }
+    }
+
     function save_term_links(user_message $msg): bool
     {
         foreach ($this->trm_msk_lst?->lst() ?? [] as $lnk) {

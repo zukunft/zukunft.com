@@ -476,7 +476,6 @@ class component_link_list extends sandbox_link_list
 
     /**
      * simple but slow function to add of update all list items in the database
-     * TODO Prio 0 apply the user_message reset to all lists
      * TODO Prio 2 faster mass db update
      *
      * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
@@ -492,7 +491,8 @@ class component_link_list extends sandbox_link_list
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready($lnk_usr_msg)) {
-                    $cmp->save($msg);
+                    // the message of this link, so that a failed component also stops the save of its link
+                    $cmp->save($lnk_usr_msg);
                 }
             }
             // save the link of the view to the component

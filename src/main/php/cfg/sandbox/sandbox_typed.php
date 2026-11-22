@@ -117,7 +117,7 @@ class sandbox_typed extends sandbox_named
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param string $name_fld the name of the name field as defined in this child class
      * @param string $type_fld the name of the type field as defined in this child class
-     * @return bool true if this object is loaded and valid
+     * @return bool $msg->is_ok(), so that a child mapper continues with if ($result); a missing row or a row without id is reported
      */
     function row_mapper_sandbox(
         ?array       $db_row,
@@ -135,7 +135,6 @@ class sandbox_typed extends sandbox_named
                 $this->type_id = $db_row[$type_fld];
             }
         }
-        // TODO Prio 0 if no row has been mapped and this should prevent a further execution this should be included in the $msg var, so that the return value could always be $msg->is_ok()
         return $msg->is_ok();
     }
 

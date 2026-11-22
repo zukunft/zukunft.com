@@ -46,7 +46,7 @@ class word_names
     // words from import file units.json in order of appearance
     // the frontend needs the name of this word too, so it is defined in the shared const
     const string MATH = shared_words::MATH;
-    const string MATH_COM = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
+    const string MATH_COM = shared_words::MATH_COM;
     const int MATH_ID = shared_words::MATH_ID;
     // the typed start of a phrase name as the phrase select of a form sends it to the phrase list
     // api (see ui_select::phrase_matches): matches exactly the word "mathematics" and the triple
@@ -445,6 +445,8 @@ class word_names
     const string TEST_NO_UPD_CHANGED = 'the changed description that a no update import must ignore';
     const string TEST_FILL_UP = 'System Test Word Fill Up';
     const string TEST_FILL_UP_COM = 'the description added to an empty field by a no update import';
+    // a name that no test adds, e.g. to test that a value of an imported value list with this name is refused
+    const string TEST_NOT_IN_DB = 'System Test Word never added';
     const string TEST_ADD_TO = 'System Test Word To';
     // the fixed snapshot id of the 'System Test Word To' (like TEST_ADD_ID for the 'System Test Word')
     const int TEST_ADD_TO_ID = 997;

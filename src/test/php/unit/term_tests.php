@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
@@ -51,6 +52,7 @@ include_once test_paths::CREATE . 'test_verbs.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -316,6 +318,43 @@ class term_tests
         $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_FORMULA);
         $msg->reset();
 
+
+        $t->subheader($ts . 'import mapper');
+
+        // a term is a word, verb, triple or formula, so the import of another class is refused and not silently mapped
+        $test_name = 'the import of a term of another class is logged with the class';
+        $trm = new term($t->usr1);
+        $imp_json = [json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE];
+        $map_call = fn() => $trm->import_mapper($imp_json, $msg);
+        $t->assert_log_err($test_name, $map_call, json_fields::CLASS_VALUE, $msg);
+        $test_name = '... and is an error';
+        $t->assert_true($test_name, $msg->is_error());
+        $msg->reset();
+
+        // positive: the class of a word is mapped
+        $test_name = 'the import of a term of the word class is mapped';
+        $imp_json = [json_fields::OBJECT_CLASS => json_fields::CLASS_WORD, json_fields::NAME => word_names::MATH];
+        $t->assert_true($test_name, $trm->import_mapper($imp_json, $msg));
+        $msg->reset();
+
+        // the error text of a failed import names its errors, but not its infos
+        $test_name = 'the import errors of two terms are logged';
+        $msg->add_info_with_vars(msg_id::PHRASE_CREATED, [msg_id::VAR_PHRASE_NAME => word_names::MATH]);
+        $map_calls = fn() => [
+            $trm->import_mapper([json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE], $msg),
+            $trm->import_mapper([json_fields::OBJECT_CLASS => json_fields::CLASS_RESULT], $msg)
+        ];
+        $t->assert_log_err($test_name, $map_calls, json_fields::CLASS_RESULT, $msg);
+        $test_name = '... and the error text names both';
+        $err_txt = $msg->error_text(def::FALLBACK_IMPORT_MAX_ERRORS);
+        $t->assert_text_contains($test_name, $err_txt, '"' . json_fields::CLASS_VALUE . '"');
+        $test_name = '... but not the info';
+        $t->assert_text_not_contains($test_name, $err_txt, word_names::MATH);
+        // negative: with a limit of one the second error is only counted
+        $test_name = 'the error text with a limit of one counts the second error';
+        $err_txt = $msg->error_text(1);
+        $t->assert_text_contains($test_name, $err_txt, '1 ' . msg_id::MORE->text());
+        $msg->reset();
 
         $t->subheader($ts . 'sql setup');
         $trm = $t_trm->term();

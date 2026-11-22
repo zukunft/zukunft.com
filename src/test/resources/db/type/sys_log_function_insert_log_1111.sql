@@ -47,4 +47,4 @@ SELECT sys_log_function_insert_log_1111
         17::smallint,
         'import_base_config'::text,
         18::smallint,
-        'import all zukunft.com base configuration json files'::text);
+        'Import the default system and user configuration'::text);

@@ -42,4 +42,4 @@ SELECT sys_log_function_insert_log_1111
         17,
         'import_base_config',
         18,
-        'import all zukunft.com base configuration json files');
+        'Import the default system and user configuration');

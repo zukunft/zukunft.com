@@ -40,6 +40,9 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'controller.php';
@@ -50,6 +53,9 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
@@ -105,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -1156,6 +1163,29 @@ class base_ui_tests
         // negative: a page without the count stays as it is
         $test_name = '... and a loading start without the count stays unchanged';
         $t->assert($test_name, $t->fix_volatile_loading_seconds($at_limit), $at_limit);
+
+        // a slow page is written to the log, so that the developer can improve the really time critical parts
+        $t->subheader($ts . 'slow request');
+        $test_name = 'a page slower than the detail limit is a warning';
+        $sec = def::FALLBACK_RESPONSE_TIME_DETAIL * 2;
+        $t->assert($test_name, $ui->slow_request_log_level($sec, $msg_ui), sys_log_levels::WARNING_ID);
+        $test_name = 'a page between the log and the detail limit is a debug line';
+        $sec = (def::FALLBACK_RESPONSE_TIME_LOG + def::FALLBACK_RESPONSE_TIME_DETAIL) / 2;
+        $t->assert($test_name, $ui->slow_request_log_level($sec, $msg_ui), sys_log_levels::DEBUG_ID);
+        // negative: a page that is fast enough is not logged
+        $test_name = 'a page faster than the log limit is not logged';
+        $sec = def::FALLBACK_RESPONSE_TIME_LOG / 2;
+        $t->assert_null($test_name, $ui->slow_request_log_level($sec, $msg_ui));
+
+        // the page title shows only the view name for an object without name, and no database id
+        $t->subheader($ts . 'page object without name');
+        $test_name = 'a log entry has no name';
+        $t->assert($test_name, new sys_log_ui()->name(), '');
+        $test_name = '... nor a job';
+        $t->assert($test_name, new job_ui()->name(), '');
+        // the placeholder of a page without object e.g. the about page has no name, which is no missing overwrite
+        $test_name = '... nor the placeholder of a page without object';
+        $t->assert($test_name, new db_object_ui()->name(), '');
 
 
         $t->subheader($ts . 'unit html table tests');

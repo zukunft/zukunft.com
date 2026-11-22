@@ -1281,7 +1281,10 @@ class result_list extends sandbox_value_list
                 if ($res->grp()->id() == 0) {
                     $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
                 }
-                $res->save($msg);
+                // a message per result, so that an issue of one result does not prevent the next one from being saved
+                $res_usr_msg = $msg->clone_reset();
+                $res->save($res_usr_msg);
+                $msg->merge($res_usr_msg);
                 $i++;
                 $imp->display_progress($i, $est_per_sec, $res->dsp_id());
             }

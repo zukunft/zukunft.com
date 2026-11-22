@@ -727,11 +727,8 @@ class expression extends shared_expression
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids, $msg);
         } else {
-            $cac_lst = $trm_lst->get_by_ids($phr_ids->trm_ids());
-            $ids_to_load = array_diff($phr_ids->lst, $cac_lst->id_lst());
-            if (count($ids_to_load) > 0) {
-                $phr_lst->load_by_ids($phr_ids, $msg, $trm_lst->phrase_list());
-            }
+            // takes the phrases of the cache and loads only the others
+            $phr_lst->load_by_ids($phr_ids, $msg, $trm_lst->phrase_list());
         }
 
         return $phr_lst;

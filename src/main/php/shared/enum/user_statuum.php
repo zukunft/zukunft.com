@@ -44,8 +44,8 @@ enum user_statuum: string
     // list of the user statuum that have a coded functionality
     const string ACTIVE = "active"; // no restrictions are applied
     const string READ_ONLY = "read-only"; // the write permission is switched off for the user
-    const int READ_ONLY_ID = 3;
-    const string READ_ONLY_NAME = "read only";
+    const int READ_ONLY_ID = 2; // the row id of db_code_links/user_statuum.csv
+    const string READ_ONLY_NAME = "read-only";
     const string READ_ONLY_COM = "the write permission is switched off for the user";
     const string GEO_FENCED = "geo-fenced"; // the user can only be seen and write within a given geo fence
     const string WRITE_GEO = "write-geo"; // the user can only change data within a geo fence

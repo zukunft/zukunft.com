@@ -45,6 +45,7 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_read_tests
@@ -218,6 +220,14 @@ class phrase_list_read_tests
         // TODO Prio 1 ABB is not expected to be related even if it is related via zurich and company
         //      but Switzerland is expected to be related
         //$t->assert_contains($test_name, $phr_lst->names(), array(words::TN_ZH, words::TN_CH));
+
+        // the verb "are" gives the phrases that are a city, which are read from the database
+        $test_name = 'test the verb "are" by getting the phrases that are a city';
+        $wrd_city = $t_db->load_word($msg, word_names::CITY);
+        $city_lst = $wrd_city->are($msg);
+        $target = new test_phrases($t)->phrase_list_cities();
+        // TODO Prio 2 activate
+        //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
         $t->subheader($ts . 'linked sides');

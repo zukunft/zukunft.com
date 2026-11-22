@@ -168,6 +168,16 @@ class formula_tests
         $frm->api_mapper([json_fields::ID => formula_names::SCALE_TO_SEC_ID, json_fields::VIEW => 0], $msg);
         $t->assert($test_name, $frm->get_view_id(), 0);
         $msg->reset();
+        // a mapper reads no database, so it takes the user text and the save converts the reference text later
+        $test_name = 'the api mapper takes the user text of a formula';
+        $api_msg = new user_message($t->usr1);
+        $api_msg->log_test_only = true;
+        $frm = new formula($t->usr1);
+        $frm->api_mapper([json_fields::ID => formula_names::SCALE_TO_SEC_ID, json_fields::USR_TEXT => formula_names::SCALE_TO_SEC_EXP], $api_msg);
+        $t->assert($test_name, $frm->usr_text, formula_names::SCALE_TO_SEC_EXP);
+        // negative: no conversion with the terms of the database, which would keep its internal error on the message
+        $test_name = '... without a database read';
+        $t->assert($test_name, $api_msg->log_test_txt, '');
 
         $t->subheader($ts . 'api json array');
 
@@ -304,6 +314,18 @@ class formula_tests
         $t->assert($test_name, $fld_to_url[formula_fields::FLD_LATEX] ?? '', url_var::LATEX);
         $test_name = 'the system-set last update time has no url var, because no form may post it';
         $t->assert_key_not_exists($test_name, fields::FLD_LAST_UPDATE, $fld_to_url);
+
+        $t->subheader($ts . 'stored expression check');
+        // both texts of a formula are stored, so a reference text that the expression does not give any more is reported
+        $test_name = 'a stored reference text that the expression gives is not reported';
+        $frm_chk = $t_frm->formula();
+        $chk_msg = new user_message($t->usr1);
+        $frm_chk->expression($chk_msg, $t_trm->term_list_time());
+        $t->assert_true($test_name, $chk_msg->is_ok());
+        $test_name = '... but a stored reference text that differs is reported with the formula name';
+        $frm_chk->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
+        $frm_chk->expression($chk_msg, $t_trm->term_list_time());
+        $t->assert_msg_false($test_name, $chk_msg, formula_names::SCALE_TO_SEC);
 
         $t->subheader($ts . 'partial update expression handling');
         // the stored formula as loaded from the database, carrying its expression

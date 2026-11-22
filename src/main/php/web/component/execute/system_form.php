@@ -3239,7 +3239,7 @@ class system_form extends component
     }
 
     /**
-     * TODO Prio 0 review
+     * TODO Prio 1 review
      * create the html code for the form element to select a view to link the object to
      * the view to link is posted as url_var::COMPONENT_LINK and not as url_var::VIEW,
      * because the same form can show the view selector, which would give two fields with one id

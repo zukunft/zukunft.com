@@ -45,6 +45,7 @@ include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
@@ -652,6 +653,53 @@ class value_write_tests
         // must never point to a deleted group row
         $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);
         $db_grp->del($msg);
+
+        // the values of an imported list are independent, so a value that is not saved never stops the next one
+        $t->subheader($ts . 'list save');
+        $msg->reset();
+        $test_name = 'a value without number of a list is not saved and reported';
+        $null_val = new value($t->usr1);
+        $null_val->set_grp($t_db->load_phrase_group([word_names::TEST_ADD, word_names::YEAR_2020]));
+        $lst_val = new value($t->usr1);
+        $lst_val->set_grp($t_db->load_phrase_group([word_names::TEST_ADD, word_names::MIO]));
+        $lst_val->set_number(values::SAMPLE_INT);
+        $val_lst = new value_list($t->usr1);
+        $val_lst->add($null_val);
+        $val_lst->add($lst_val);
+        $val_lst->save($msg, new import());
+        $t->test_val_ids[] = $lst_val->id();
+        $val_ids[] = $lst_val->id();
+        $exp_msg = new user_message();
+        $exp_msg->add(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $null_val->dsp_id()]);
+        $t->assert_msg_false($test_name, $msg, $exp_msg->text());
+        $test_name = '... but the next value of the list is saved';
+        $db_val = new value($t->usr1);
+        $db_val->load_by_id($lst_val->id(), $msg);
+        $t->assert($test_name, $db_val->number(), values::SAMPLE_INT);
+        $msg->reset();
+
+        // a name of an imported value list that is no phrase would else save the number without this phrase
+        $test_name = 'a value of a value list whose name is no phrase is not saved and reported';
+        $lst_json = [
+            json_fields::CONTEXT => [word_names::TEST_ADD],
+            json_fields::VALUES => [
+                [word_names::TEST_NOT_IN_DB => values::SAMPLE_INT],
+                [word_names::YEAR_2019 => values::SAMPLE_INT],
+            ],
+        ];
+        $imp_lst = new value_list($t->usr1);
+        $imp_lst->import_obj($lst_json, $msg);
+        $exp_msg = new user_message();
+        $exp_msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => word_names::TEST_NOT_IN_DB]);
+        $t->assert_msg_false($test_name, $msg, $exp_msg->text());
+        // the values of a list are independent, so the refused name does not stop the next value
+        $test_name = '... but the next value with a known name is saved';
+        $known_val = new value($t->usr1);
+        $known_val->load_by_grp($t_db->load_phrase_group([word_names::TEST_ADD, word_names::YEAR_2019]), $msg);
+        $t->test_val_ids[] = $known_val->id();
+        $val_ids[] = $known_val->id();
+        $t->assert($test_name, $known_val->number(), values::SAMPLE_INT);
+        $msg->reset();
 
         // cleanup - the values of this test first, because a test word that a value uses is only excluded and not
         // deleted by the word cleanup below (see word::used_by_data)

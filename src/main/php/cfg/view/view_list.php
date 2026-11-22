@@ -403,6 +403,19 @@ class view_list extends sandbox_list_named
     }
 
     /**
+     * take the database term of each term that a view of this list is assigned to only by its name,
+     * e.g. after an import, whose mapper takes the terms only from the import
+     * @param user_message $msg with the requesting user to report a load problem
+     * @return void
+     */
+    function set_term_links_by_db_name(user_message $msg): void
+    {
+        foreach ($this->lst() as $msk) {
+            $msk->set_term_links_by_db_name($msg);
+        }
+    }
+
+    /**
      * save all views of this list
      * TODO Prio 2 create one SQL and commit statement for faster execution
      *

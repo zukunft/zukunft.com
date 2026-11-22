@@ -135,6 +135,7 @@ include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
+include_once html_paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::SHARED_HELPER . 'MapObject.php';
@@ -235,6 +236,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
@@ -758,9 +760,14 @@ class frontend
         } else {
             $duration = microtime(true) - $this->start_time;
         }
-        // TODO Prio 0 review
-        if ($duration > 1) {
-            log_debug();
+        // a slow page is logged, so that the developer can start improving the really time critical parts
+        $msg_ui = new user_message_ui(); // not reported: the page has been sent already, so a config problem only means that the fallback limits are used
+        $log_level = $this->slow_request_log_level($duration, $msg_ui);
+        $slow_txt = 'script ' . $sys->script . ' took ' . round($duration, 3) . ' seconds';
+        if ($log_level == sys_log_levels::WARNING_ID) {
+            log_warning($slow_txt, 'frontend->end');
+        } elseif ($log_level == sys_log_levels::DEBUG_ID) {
+            log_debug($slow_txt);
         }
 
         // Free result test
@@ -776,6 +783,30 @@ class frontend
         } else {
             return '';
         }
+    }
+
+    /**
+     * the log level of a page of the given duration, based on the response time limits of the frontend behaviour
+     * (config.yaml user > default > frontend > behaviour > response time > log resp. detail)
+     *
+     * @param float $duration the seconds that the page has taken
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @return int|null the warning id above the detail limit, the debug id above the log limit or null if fast enough
+     */
+    function slow_request_log_level(float $duration, user_message_ui $msg_ui): ?int
+    {
+        global $ui_sys;
+        $log_names = [triples::RESPONSE_TIME, words::LOG, words::FRONTEND, words::BEHAVIOUR];
+        $detail_names = [triples::RESPONSE_TIME, words::DETAIL, words::FRONTEND, words::BEHAVIOUR];
+        $log_limit = (float)($ui_sys?->cfg?->get_by($log_names, $msg_ui, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG);
+        $detail_limit = (float)($ui_sys?->cfg?->get_by($detail_names, $msg_ui, def::FALLBACK_RESPONSE_TIME_DETAIL) ?? def::FALLBACK_RESPONSE_TIME_DETAIL);
+        $result = null;
+        if ($duration > $detail_limit) {
+            $result = sys_log_levels::WARNING_ID;
+        } elseif ($duration > $log_limit) {
+            $result = sys_log_levels::DEBUG_ID;
+        }
+        return $result;
     }
 
     /**

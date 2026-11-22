@@ -90,8 +90,7 @@ class all_unit_read_tests extends all_unit_tests
 
         // do the database unit tests
         $t->subheader($ts . 'general');
-        // TODO Prio 0 use $t instead of $this ?
-        (new system_read_tests)->run($this);
+        (new system_read_tests)->run($t);
         // the view snapshots before the test entries are created, so that the pages show only the seed data
         (new system_views_read_tests)->run($t);
 

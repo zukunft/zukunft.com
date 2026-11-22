@@ -44,10 +44,12 @@ include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST . 'def.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -459,8 +461,8 @@ class sys_log_tests
         $t->subheader($ts . 'system time of a slow request');
         $sys_tim_typ_lst = $t_sys->system_time_types();
         $start = (float)strtotime(self::TV_TIME);
-        $log_limit = def::FALLBACK_RESPONSE_TIME_LOG;
-        $detail_limit = def::FALLBACK_RESPONSE_TIME_DETAIL;
+        $log_limit = def_shared::FALLBACK_RESPONSE_TIME_LOG;
+        $detail_limit = def_shared::FALLBACK_RESPONSE_TIME_DETAIL;
 
         $test_name = 'a request faster than the log limit writes no system time';
         $end = $start + self::TV_FAST_SEC;

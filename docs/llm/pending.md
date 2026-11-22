@@ -4,30 +4,40 @@
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
 (the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-21: 73 left (151 on
+3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 47 left (151 on
 2026-11-13); `unit/coding_rule_tests.php` fails if there are more than `coding_rule_tests::TODO_PRIO_0_MAX`, so a new
 one can only be added if another one is solved, and every prompt lowers the const by the number it has solved.
 
 **Done:** prompts 1 to 3 (the disabled tests, the stubs and the missing tests, deprecate) with the log
-`docs/llm/log/fix_prio0_2026-11-13.md`, prompt 4 (the ratchet and the inventory) and of prompt 5 the five "switch to a
-key_exists" on 2026-11-21. The inventory by file and function, with the plan of each open prompt, is
+`docs/llm/log/fix_prio0_2026-11-13.md`, prompt 4 (the ratchet and the inventory) and of prompt 5 on 2026-11-21 the five
+"switch to a key_exists", `sql_db::fetch`, `sql_db::insert`, `sandbox_typed::row_mapper_sandbox`, the message status of
+both messages, the message per item of the list saves, the `$msg` parameter of `import_file::json_file`, the triage of
+the 12 "review" TODOs by the developer, the unknown value name of `value_list::add_value`, the docblock of
+`result::save_without_time`, the log of a slow page in `frontend::end` and on 2026-11-22 the error status of
+`Message::add_err` with a severity per message entry and the error text of a failed import up to `import > max
+errors` of `config.yaml` (the tests of `phrase::import_mapper` and `term::import_mapper`), the critical fields of
+`user::import_obj`, the copy of a result without its time phrase in `result::save_if_updated`, `term_view::set_math_start`
+for `sql_db::setup_db` and the tests of `word_write_tests::run`, `triple_write_tests::create_base_times` and
+`group_write_tests::run` (the developer has decided on 2026-11-22 that the time word is part of a phrase group), and
+by the decisions of the developer the frontend message of `http/about.php`, the check of a stored reference text in
+`formula_map::expression` and the coding rule checks of the error log of a stub and of a class mapper; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
+`all_unit_read_tests::run_unit_db_tests`. The inventory by file and function, with the plan of each open prompt, is
 `docs/llm/log/fix_prio0_rest_2026-11-21.md`.
 
 **Order:** the fixes of the top rules of `docs/llm/coding.md` (never fail silently, data correctness) first and the
 clean up last; each line is one prompt:
 
-5. **triage and silent failures** (size M, 26 TODOs): the 12 bare "review" TODOs are triaged by the human developer,
-   because only the developer knows what was meant to be reviewed: the log lists them with file and function (the two
-   of `result.php` belong to `save_without_time` and `save_if_updated`), and the developer replaces each by a concrete
-   TODO with a Prio or by a fix; a triaged "review" can move into another prompt. Then the 14 failures that are not
-   reported, from "switch back to error" on, with one agent per group of the log; `sql_db::fetch` also runs on the
-   connection of the unit tests, and `get_grp_id` needs its callers with an empty list first; stop for a run:
-   `/test/test.php`
+5. **silent failures and the triaged tests** (size M, 2 TODOs):
+   - stop for a run: `/test/test.php` first (decided by the developer on 2026-11-22)
+   - then "switch back to error" of `get_grp_id` in `cfg/` and `web/` as its own step (106 callers, the callers with an
+     empty list first)
 6. **backend correctness** (size L, 24 TODOs): one agent per bullet of the log; a new or changed db field goes into the
    setup sql and `db_check::db_upgrade_0_0_4`, never a version raise; stop for a run, with re-pin if the database
    structure changes
-7. **merge, rename and the rest of the clean up** (size L, 23 TODOs): a merge or a rename includes all callers in the
-   same prompt; stop for a run
+7. **merge, rename and the rest of the clean up** (size L, 21 TODOs): a merge or a rename includes all callers in the
+   same prompt; for the developer to decide: `test_views::view_relation_filled` "msk_rel instead of mrl", because
+   `view_relation` declares `$mrl` as its var name, and `expression_write_tests::run` "rename to user_text", because the
+   backend test calls `user_text_ui()` and `user_text($msg)` converts again; stop for a run
 
 **Rules for every prompt** (`docs/llm/coding.md`):
 - the smallest diff that solves the TODO; never tidy up code that the TODO does not name
@@ -40,42 +50,6 @@ clean up last; each line is one prompt:
 - the lead reports per prompt the number of solved and re-prioritised TODOs, the new `TODO_PRIO_0_MAX`, the line
   balance, the tests to run and a short commit message
 
-## create a calculator for the top 5 global problems
-
-### create a 'cost of climate change' calculator
-
-use the estimate that germany has lost around 20 billion in 2026 due to climate warming
-
-use sliders for the time period that should be included, the increase rate per 0.1 grad temperatur increase, the number of death caused by climate warming and put the costs in realtion to the GDP
-
-### link the calculators
-
-if a calculator view for a phrase is defined the calculator should be the default view for the phrase. 
-
-the calculator view should also be linked to the related number e.g. in http://localhost/http/view.php?m=1&dla=table_chart the '4' should link to the calculator instead of http://localhost/http/view.php?m=9&id=0q-22_2e_2i_3G_&9m=1&9dla=table_chart
-
-### reduce the list links
-
-in http://localhost/http/view.php?m=1&dla=table_chart the 'one-click hide, ...' link to http://localhost/http/view.php?m=4&id=1293&u=11 and the ... to 'http://localhost/http/view.php?m=2&id=-1616&9m=1&9dla=table_chart&u=11'. the link of '...' is more relevant, but very small to the user. So if a table entry has a '...' use the link for the '...' for both, the first phrase of the list and the '...'
-
-## user menu
-
-### to add
-
-#### missing parents
-
-add to the user menu in the navbar a 'to add' view that lists the words that have no linked triple and suggest to use wikipedia, wikidata and conceptnet.io to add triples
-
-missing descriptions
-
-### to check
-
-missing sources
-
-### to correct
-
-contradicting values / results
-
 ## improve the new word / triple process
 
 if the user searches for a word that does not jet exist, suggest to add the word (or the triple, if the word contains spaces)
@@ -83,8 +57,6 @@ check, if the word or triples exist in wikipedia, wikidata or conceptnet.io and 
 including the description and an 'is a' triple to define the group / parent of the new word
 
 ## create JavaScript based add, edit and del views
-
-
 
 if done remove this prompt from pending.md
 
@@ -315,6 +287,42 @@ because the ahv vat use case gets new data). One phase, four agents in parallel:
   check script that every `*_sample.html` has a generated page and is part of the compare and the generation build
 - agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
   version of the formula editor
+
+## create a calculator for the top 5 global problems
+
+### create a 'cost of climate change' calculator
+
+use the estimate that Germany has lost around 20 billion in 2026 due to climate warming
+
+use sliders for the time period that should be included, the increase rate per 0.1 grad temperatur increase, the number of death caused by climate warming and put the costs in relation to the GDP
+
+### link the calculators
+
+if a calculator view for a phrase is defined the calculator should be the default view for the phrase.
+
+the calculator view should also be linked to the related number e.g. in http://localhost/http/view.php?m=1&dla=table_chart the '4' should link to the calculator instead of http://localhost/http/view.php?m=9&id=0q-22_2e_2i_3G_&9m=1&9dla=table_chart
+
+### reduce the list links
+
+in http://localhost/http/view.php?m=1&dla=table_chart the 'one-click hide, ...' link to http://localhost/http/view.php?m=4&id=1293&u=11 and the ... to 'http://localhost/http/view.php?m=2&id=-1616&9m=1&9dla=table_chart&u=11'. the link of '...' is more relevant, but very small to the user. So if a table entry has a '...' use the link for the '...' for both, the first phrase of the list and the '...'
+
+## user menu
+
+### to add
+
+#### missing parents
+
+add to the user menu in the navbar a 'to add' view that lists the words that have no linked triple and suggest to use wikipedia, wikidata and conceptnet.io to add triples
+
+missing descriptions
+
+### to check
+
+missing sources
+
+### to correct
+
+contradicting values / results
 
 ## ID check
 

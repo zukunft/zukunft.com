@@ -36,10 +36,12 @@ enum user_official_types: string
 {
 
     // list of official user identification types
+    // the type of row 1 of db_code_links/user_official_types.csv
+    const string PASSPORT_NBR = "passport_nbr";
+    const int PASSPORT_NBR_ID = 1;
+    const string PASSPORT_NBR_NAME = "passport number";
+    const string PASSPORT_NBR_COM = "";
     const string PASSPORT_EU = "passport_eu";
-    const int PASSPORT_EU_ID = 1;
-    const string PASSPORT_EU_NAME = "EU passport";
-    const string PASSPORT_EU_COM = "";
     const string PASSPORT_US = "passport_us";
     const string PASSPORT_US_FAKE = "passport_us_fake"; // if the passport is faked not by an official source
     const string PASSPORT_US_FAKE_BY_STATE = "passport_us_fake_by_state"; // if the passport is faked by an official source

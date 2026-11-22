@@ -33,23 +33,21 @@ $start_time = microtime(true);
 
 include_once 'const.php';
 
-use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-
 include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
-// open database 
+// open database
 $app = new frontend();
-// TODO Prio 0 use message in all frontend calls
-$msg = new Message();
+$msg_ui = new user_message_ui(); // frontend entry point
 global $sys;
-$db_con = $app->start("about", $msg);
+$db_con = $app->start("about", $msg_ui);
 
 // display the view
 $html = new html_base();
-echo $html->about_page($msg);
+echo $html->about_page($msg_ui);
 
 // close the database and measure the script loading time before the frontend has been created
 $app->end($db_con, $start_time);

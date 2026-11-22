@@ -257,6 +257,32 @@ class sql_tests
         $t->assert_null($test_name, $sql_msg->usr?->name());
         $msg->reset();
 
+        // a failed read is false and never an empty array, which would look like a read without rows
+        $t->subheader($ts . 'read without connection');
+        $test_name = 'a count without database connection is reported';
+        $db_lost = new sql_db();
+        $cnt = 0;
+        $count_call = function () use ($db_lost, $msg, &$cnt) {
+            $cnt = $db_lost->count(formula::class, $msg);
+        };
+        $t->assert_log_err($test_name, $count_call, sql_db::MSG_CONNECTION_LOST, $msg);
+        // the error names who has read, because without a connection the read is mostly a code path that should
+        // not read e.g. a mapper in a unit test, and the trace of the log entry points only to the log function
+        $test_name = '... with the test that has read';
+        $lost_txt = $msg->log_test_txt;
+        $t->assert_text_contains($test_name, $lost_txt, sql_db::MSG_CALLED_BY . 'sql_tests->');
+        // the file and line of each call, so that e.g. one of several calls in the same test function is found
+        $test_name = '... and the place from which the test has been called';
+        $t->assert_text_contains($test_name, $lost_txt, '@test_base.php:');
+        // negative: the database layer itself is not named as the caller
+        $test_name = '... but not with the database layer';
+        $t->assert_text_not_contains($test_name, $lost_txt, 'sql_db->');
+        $test_name = '... has no number';
+        $t->assert_null($test_name, $cnt);
+        $test_name = '... and the user is told';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
         // the lists that collect the parts of a sql statement before it is created
         $t->subheader($ts . 'add');
         $t_sql = new test_sql();
