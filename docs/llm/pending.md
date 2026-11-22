@@ -5,8 +5,8 @@
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
 (the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
 3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 42 left (151 on
-2026-11-13); `unit/coding_rule_tests.php` fails if there are more than `coding_rule_tests::TODO_PRIO_0_MAX`, so a new
-one can only be added if another one is solved, and every prompt lowers the const by the number it has solved.
+2026-11-13); the limit test of `unit/coding_rule_tests.php` has been removed by the developer on 2026-11-22, so the
+number is counted with `git grep "TODO Prio 0"` in these folders.
 
 **Done:** prompts 1 to 3 (the disabled tests, the stubs and the missing tests, deprecate) with the log
 `docs/llm/log/fix_prio0_2026-11-13.md`, prompt 4 (the ratchet and the inventory) and of prompt 5 on 2026-11-21 the five
@@ -22,7 +22,8 @@ for `sql_db::setup_db` and the tests of `word_write_tests::run`, `triple_write_t
 by the decisions of the developer the frontend message of `http/about.php`, the check of a stored reference text in
 `formula_map::expression` and the coding rule checks of the error log of a stub and of a class mapper, the
 "switch back to error" of `get_grp_id` in `cfg/` and `web/` with the callers of the error text
-(`library::caller_chain`, decided by the developer on 2026-11-22) and its first caller `sandbox_value::load_by_names`;
+(`library::caller_chain`, decided by the developer on 2026-11-22), its first caller `sandbox_value::load_by_names`
+and the `user_message $msg` parameter of `get_grp_id` with `log_err_msg` for its 28 backend and 86 test callers;
 of prompt 6 the security bullet: the setup of an empty database only with `DB_SETUP=true` in prod and test
 (`db_check::setup_allowed`), the test that the api message of a user has no password hash, and the list limits of
 `shared/helper/Config.php` only as the fallback of `config.yaml` (`web/helper/list_size`), all decided by the
@@ -53,8 +54,8 @@ clean up last; each line is one prompt:
   the tests and reports the result
 - the changes after the first test of a prompt go into "Unexpected changes" of
   `docs/llm/log/fix_prio0_rest_2026-11-21.md`
-- the lead reports per prompt the number of solved and re-prioritised TODOs, the new `TODO_PRIO_0_MAX`, the line
-  balance, the tests to run and a short commit message
+- the lead reports per prompt the number of solved and re-prioritised TODOs, the number left, the line balance, the
+  tests to run and a short commit message
 
 ## improve the new word / triple process
 

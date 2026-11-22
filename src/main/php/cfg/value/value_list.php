@@ -200,16 +200,17 @@ class value_list extends sandbox_value_list
      * so it is only logged and this function reports nothing to the user
      * the given name and the description of the group are kept, because e.g. the import sets
      * them on the group of the value (see value_base::import_mapper) and the save writes them
+     * @param user_message $msg to report a problem of the creation of a group
      * @return void
      */
-    function set_grp_ids(): void
+    function set_grp_ids(user_message $msg): void
     {
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
             if ($phr_lst->is_empty()) {
                 log_err('phrase list is empty for value ' . $val->dsp_id());
             } else {
-                $grp = $phr_lst->get_grp_id(false);
+                $grp = $phr_lst->get_grp_id($msg, false);
                 $this->keep_group_texts($val->grp(), $grp);
                 $val->set_grp($grp);
             }
@@ -1280,7 +1281,7 @@ class value_list extends sandbox_value_list
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->get_user());
                 if ($phr_lst->import_lst($value, $msg)) {
-                    $val->set_grp($phr_lst->get_grp_id($do_save));
+                    $val->set_grp($phr_lst->get_grp_id($msg, $do_save));
                 }
             }
 
@@ -1377,9 +1378,9 @@ class value_list extends sandbox_value_list
             $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
-        $grp = $phr_lst_to_add->get_grp_id($do_save);
+        $grp = $phr_lst_to_add->get_grp_id($msg, $do_save);
         if ($val_phr_found and $grp != null) {
-            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
+            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($msg, $do_save));
             if ($db_con->is_open()) {
                 $val_to_add->save($val_msg);
                 $this->add_obj($val_to_add);
@@ -1899,7 +1900,7 @@ class value_list extends sandbox_value_list
         } else {
             // if the group id is not yet set
             $imp->step_start(msg_id::PREPARE, value::class);
-            $this->set_grp_ids();
+            $this->set_grp_ids($msg);
 
             // load the values already in the database
             $grp_lst = $this->grp_ids();

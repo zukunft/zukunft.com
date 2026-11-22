@@ -296,9 +296,21 @@ class sql_tests
         $test_name = '... but not in prod without the setup flag';
         $t->assert_false($test_name, $db_chk->setup_allowed(ENV_PROD, ''));
         $test_name = '... nor in test without the setup flag';
-        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_UA, 'false'));
+        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_UA, ENV_DB_SETUP_OFF));
         $test_name = '... nor if no environment is set';
         $t->assert_false($test_name, $db_chk->setup_allowed('', ''));
+        // the setup switches the flag off in the environment file, so that the flag allows one setup only
+        $test_name = 'the setup switches the flag of the environment file off';
+        $flag_on = ENV_DB_SETUP . '=' . ENV_DB_SETUP_ON . PHP_EOL;
+        $flag_off = ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF . PHP_EOL;
+        $env_line = ENVIRONMENT . '=' . ENV_PROD . PHP_EOL;
+        $result = $db_chk->env_lines_setup_off([$env_line, $flag_on]);
+        $t->assert($test_name, $result, [$env_line, $flag_off]);
+        // negative: a commented flag is no setting and stays as it is
+        $test_name = '... but keeps a commented flag';
+        $commented = '# ' . $flag_on;
+        $result = $db_chk->env_lines_setup_off([$commented, $env_line]);
+        $t->assert($test_name, $result, [$commented, $env_line]);
 
         // the lists that collect the parts of a sql statement before it is created
         $t->subheader($ts . 'add');

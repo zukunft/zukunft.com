@@ -564,6 +564,9 @@ enum messages: string
     // an empty database in the prod or test environment is set up only if the .env allows it (db_check::setup_allowed)
     case DB_SETUP_OFF = 'The zukunft.com database is empty, but the setup of the database is switched off. '
         . 'Please check the database connection or set DB_SETUP=true in the .env file to create the database.';
+    // the setup switches the flag off again, so that it allows one setup only (db_check::switch_setup_off)
+    case DB_SETUP_NOT_SWITCHED_OFF = 'The zukunft.com database has been set up, but DB_SETUP could not be switched off '
+        . 'in the .env file. Please set DB_SETUP=false by hand, so that an empty database is not set up again.';
 
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END

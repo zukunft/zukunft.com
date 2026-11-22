@@ -395,7 +395,7 @@ class result extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
             if ($msg->is_ok()) {
-                $phr_grp = $phr_lst->get_grp_id(false);
+                $phr_grp = $phr_lst->get_grp_id($msg, false);
                 $this->set_grp($phr_grp);
             }
         }
@@ -404,7 +404,7 @@ class result extends sandbox_value
             $src_phr_lst = new phrase_list($this->get_user());
             $src_phr_lst->import_mapper($in_ex_json[json_fields::CONTEXT], $msg, $dto);
             if ($msg->is_ok()) {
-                $src_grp = $src_phr_lst->get_grp_id(false);
+                $src_grp = $src_phr_lst->get_grp_id($msg, false);
                 $this->set_src_grp($src_grp);
             }
         }
@@ -1240,7 +1240,7 @@ class result extends sandbox_value
 
         if ($phr_lst->is_valid()) {
             $this->reset(true);
-            $grp = $phr_lst->get_grp_id();
+            $grp = $phr_lst->get_grp_id($msg);
             $result = $this->load_by_grp($grp, $msg);
         } else {
             log_err('The result phrase list and the user must be set ' .
@@ -1685,7 +1685,7 @@ class result extends sandbox_value
         if (array_key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->get_user());
             if ($phr_lst->import_lst($in_ex_json[json_fields::WORDS], $msg)) {
-                $phr_grp = $phr_lst->get_grp_id($do_save);
+                $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
                 log_debug('got word group ' . $phr_grp->dsp_id());
                 $this->set_grp($phr_grp);
                 log_debug('set grp id to ' . $this->grp_id());
@@ -1696,7 +1696,7 @@ class result extends sandbox_value
         if (array_key_exists(json_fields::CONTEXT, $in_ex_json)) {
             $phr_lst = new phrase_list($this->get_user());
             if ($phr_lst->import_lst($in_ex_json[json_fields::CONTEXT], $msg)) {
-                $phr_grp = $phr_lst->get_grp_id($do_save);
+                $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
                 log_debug('got context ' . $phr_grp->dsp_id());
                 $this->set_src_grp($phr_grp);
                 log_debug('set grp id to ' . $this->src_grp_id());
@@ -2041,7 +2041,7 @@ class result extends sandbox_value
     private function save_without_time(phrase_list $lst_ex_time, user_message $msg): bool
     {
         $res_no_time = $this->clone_all();
-        $res_no_time->set_grp($lst_ex_time->get_grp_id());
+        $res_no_time->set_grp($lst_ex_time->get_grp_id($msg));
         return $res_no_time->save($msg);
     }
 

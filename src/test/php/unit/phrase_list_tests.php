@@ -162,6 +162,23 @@ class phrase_list_tests
         $target = $this->get_phrase_list_ex_time($t)->dsp_id();
         $t->assert('phrase_list->ex_time names', $result, $target);
 
+        // the group of a phrase list is the base of a value or result, so an empty list is an error of its caller
+        $test_name = 'a phrase list with phrases has a group';
+        $grp_pi = $t_phr->phrase_list_pi()->get_grp_id($msg);
+        $t->assert_true($test_name, $grp_pi->is_id_set());
+        // negative: the error names the caller, because only the caller can know why its list is empty
+        $test_name = '... but the group of an empty list is an internal error';
+        $empty_lst = $t_phr->list_empty();
+        $grp_call = function () use ($empty_lst, $msg) {
+            $empty_lst->get_grp_id($msg);
+        };
+        $t->assert_log_err($test_name, $grp_call, phrase_list::MSG_EMPTY_GROUP, $msg);
+        $test_name = '... which names the caller';
+        $t->assert_text_contains($test_name, $msg->log_test_txt, 'phrase_list->get_grp_id@phrase_list_tests.php:');
+        $test_name = '... and the user is told';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t_phr->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all($msg);

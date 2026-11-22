@@ -661,7 +661,7 @@ class import_wikidata_preview
         }
         if ($all_found and !$phr_lst->is_empty()) {
             $val = new value($this->usr);
-            if ($val->load_by_grp($phr_lst->get_grp_id(), $msg)) {
+            if ($val->load_by_grp($phr_lst->get_grp_id($msg), $msg)) {
                 $result = $val;
             }
         }

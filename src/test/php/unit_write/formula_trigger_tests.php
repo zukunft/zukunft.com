@@ -85,13 +85,13 @@ class formula_trigger_tests
         // so this test only reads them: a delete by the test user would exclude them for all later tests
         // check if the first number is in the database
         $added_val = new value($t->usr1);
-        $added_val->load_by_grp($phr_lst1->get_grp_id(), $msg);
+        $added_val->load_by_grp($phr_lst1->get_grp_id($msg), $msg);
         $result = $added_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($t->usr1);
-        $added_val2->load_by_grp($phr_lst2->get_grp_id(), $msg);
+        $added_val2->load_by_grp($phr_lst2->get_grp_id($msg), $msg);
         $result = $added_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -134,7 +134,7 @@ class formula_trigger_tests
         if ($res != null) {
             $no_time_lst = clone $res->grp()->phrase_list();
             $no_time_lst->ex_time($msg);
-            $added_grp_lst = [$res->grp(), $no_time_lst->get_grp_id()];
+            $added_grp_lst = [$res->grp(), $no_time_lst->get_grp_id($msg)];
             foreach ($added_grp_lst as $added_grp) {
                 $res_added = new result($t->usr1);
                 if ($res_added->load_by_grp($added_grp, $msg)) {
@@ -147,7 +147,7 @@ class formula_trigger_tests
             $test_name = 'the result that the calc of ' . $frm->dsp_id() . ' has added is removed';
             $t->assert_false($test_name, $res_check->load_by_grp($res->grp(), $msg));
             $test_name = '... and also its copy without the year';
-            $t->assert_false($test_name, $res_check->load_by_grp($no_time_lst->get_grp_id(), $msg));
+            $t->assert_false($test_name, $res_check->load_by_grp($no_time_lst->get_grp_id($msg), $msg));
         }
 
         // TODO Prio 1 remove the previous added numbers

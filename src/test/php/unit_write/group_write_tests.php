@@ -128,11 +128,11 @@ class group_write_tests
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_list(), $msg);
         $no_time_lst = $wrd_lst->phrase_list();
         $no_time_lst->ex_time($msg);
-        $no_time_id = (string)$no_time_lst->get_grp_id()->id();
+        $no_time_id = (string)$no_time_lst->get_grp_id($msg)->id();
         $t->assert_not($test_name, (string)$phr_grp->id(), $no_time_id);
         // negative: the same phrases give the same group
         $test_name = '... but the same phrases give the same group';
-        $same_id = (string)$wrd_lst->phrase_list()->get_grp_id()->id();
+        $same_id = (string)$wrd_lst->phrase_list()->get_grp_id($msg)->id();
         $t->assert($test_name, (string)$phr_grp->id(), $same_id);
 
         // load based on id
@@ -151,7 +151,7 @@ class group_write_tests
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(triple_names::CITY_ZH, word_names::INHABITANTS), $msg);
-        $zh_city_grp = $phr_lst->get_grp_id();
+        $zh_city_grp = $phr_lst->get_grp_id($msg);
         $result = $zh_city_grp->get_id($msg);
         if ($result > 0) {
             $target = $result;
@@ -166,7 +166,7 @@ class group_write_tests
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS), $msg);
-        $grp = $phr_lst->get_grp_id();
+        $grp = $phr_lst->get_grp_id($msg);
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
@@ -176,7 +176,7 @@ class group_write_tests
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
-        $grp = $phr_lst->get_grp_id();
+        $grp = $phr_lst->get_grp_id($msg);
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();

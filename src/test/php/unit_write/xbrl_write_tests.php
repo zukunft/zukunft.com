@@ -154,7 +154,7 @@ class xbrl_write_tests
         $phr_lst->load_by_names(array_unique($names), $msg);
         $val = new value($t->usr1);
         // the value keeps the group id also if nothing is found, so only the load result tells
-        if ($val->load_by_grp($phr_lst->get_grp_id(), $msg)) {
+        if ($val->load_by_grp($phr_lst->get_grp_id($msg), $msg)) {
             return $val;
         } else {
             return null;

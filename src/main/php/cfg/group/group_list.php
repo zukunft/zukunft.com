@@ -532,7 +532,7 @@ class group_list extends sandbox_list_named
                     $phr_lst_res_name = $phr_lst_res->dsp_id();
                 }
                 // add the group to the calculation list if the group is not yet in the list
-                $grp_to_add = $used_phr_lst->get_grp_id();
+                $grp_to_add = $used_phr_lst->get_grp_id($msg);
                 if ($grp_to_add->id() <> $val_grp->id()) {
                     log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_res_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;

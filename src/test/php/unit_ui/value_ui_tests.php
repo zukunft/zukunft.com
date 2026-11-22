@@ -1110,9 +1110,9 @@ class value_ui_tests
         $phr_lst_ch->add_name(words::TN_CH);
         $phr_lst_added->add_name(words::TN_RENAMED);
         $val_added = new value($t->usr1);
-        $val_added->load_by_grp($phr_lst_added->get_grp_id());
+        $val_added->load_by_grp($phr_lst_added->get_grp_id($msg));
         $val_ch = new value($t->usr1);
-        $val_ch->load_by_grp($phr_lst_ch->get_grp_id());
+        $val_ch->load_by_grp($phr_lst_ch->get_grp_id($msg));
 
 
         $t->subheader($ts . 'Test the value list class (classes/value_list.php)');

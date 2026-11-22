@@ -121,24 +121,36 @@ class db_check
      */
     function db_check(sql_db $db_con, user_message $msg): bool
     {
+        // the config and the version of an empty database cannot be read, so they are checked only if it has its tables
+        if ($this->setup_if_empty($db_con, $msg)) {
+            $this->check_version($db_con, $msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * set up the database if its essential config table is missing, because then it is assumed that the database
+     * structure has not yet been created, but only where it is allowed (see setup_allowed)
+     * @param sql_db $db_con the database connection object to the database that should be tested
+     * @param user_message $msg to collect the messages of the setup for the user who has requested the check
+     * @return bool false if the database is empty and the setup is switched off, else true also after a failed setup
+     */
+    private function setup_if_empty(sql_db $db_con, user_message $msg): bool
+    {
         global $sys;
-
-        $do_consistency_check = false;
         $lib = new library();
+        $result = true;
 
-        // check if essential config table exists and if not setup the database
-        // because it is assumed that the database structure has not yet been created
         // TODO Prio 2 remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         $has_main_tbl = $db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name);
-        $setup_allowed = $this->setup_allowed((string)getenv(ENVIRONMENT), (string)getenv(ENV_DB_SETUP));
-        // a guard, because the config and the version of an empty database cannot be read e.g. if the connection to
-        // the prod database points to a wrong database, which must never be filled with a new setup
+        $setup_flag = (string)getenv(ENV_DB_SETUP);
+        $setup_allowed = $this->setup_allowed((string)getenv(ENVIRONMENT), $setup_flag);
         if (!$has_main_tbl and !$setup_allowed) {
+            // e.g. if the connection of a prod pod points to a wrong database, which must never be filled with a setup
             $msg->add(msg_id::DB_SETUP_OFF, []);
-            return false;
-        }
-        if (!$has_main_tbl) {
+            $result = false;
+        } elseif (!$has_main_tbl) {
             // if tbe database needs to be created it is a system task independent of the calling user
             $sys_msg = new user_message(user::system());
             // because no log yet exists here echo instead of log_echo() is used
@@ -150,9 +162,26 @@ class db_check
                 $cfg = new config();
                 $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
             }
+            // the flag allows one setup only, so that a later empty database e.g. of a wrong connection is not filled
+            if ($sys_msg->is_ok() and $setup_flag == ENV_DB_SETUP_ON) {
+                $this->switch_setup_off($sys_msg);
+            }
             // report tbe system setup errors to the calling user
             $msg->merge($sys_msg);
         }
+        return $result;
+    }
+
+    /**
+     * check the version of the database, start the upgrade process if needed and the consistency check once a day
+     * @param sql_db $db_con the database connection object to the database with its tables
+     * @param user_message $msg to collect the messages of the upgrade for the user who has requested the check
+     * @return void
+     */
+    private function check_version(sql_db $db_con, user_message $msg): void
+    {
+        $do_consistency_check = false;
+        $lib = new library();
 
         $cfg = new config();
         $cfg->check_cfg(config::SITE_NAME, POD_NAME,
@@ -202,9 +231,47 @@ class db_check
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
             $msg->merge($sys_msg);
         }
+    }
 
-        return $msg->is_ok();
+    /**
+     * switch the setup flag of the environment file off after the setup, so that DB_SETUP=true allows one setup only
+     * @param user_message $msg to tell the admin that the flag has to be switched off by hand if the file is read-only
+     * @return void
+     */
+    private function switch_setup_off(user_message $msg): void
+    {
+        $written = false;
+        if (is_writable(ENV_FILE_PATH)) {
+            $env_lines = file(ENV_FILE_PATH);
+            if ($env_lines !== false) {
+                $new_txt = implode('', $this->env_lines_setup_off($env_lines));
+                $written = (file_put_contents(ENV_FILE_PATH, $new_txt) !== false);
+            }
+        }
+        if ($written) {
+            // also for the rest of this request, which has read the flag before
+            putenv(ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF);
+        } else {
+            $msg->add_warning_with_vars(msg_id::DB_SETUP_NOT_SWITCHED_OFF, []);
+        }
+    }
 
+    /**
+     * public, because it decides which line of the environment file is changed, so it is unit tested
+     * @param array $env_lines the lines of the environment file with their line ends
+     * @return array the same lines, but the line that sets DB_SETUP replaced by DB_SETUP=false
+     */
+    function env_lines_setup_off(array $env_lines): array
+    {
+        $result = [];
+        foreach ($env_lines as $line) {
+            // a commented line e.g. "# DB_SETUP=true" starts with the # and is kept
+            if (str_starts_with(trim($line), ENV_DB_SETUP . '=')) {
+                $line = ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF . PHP_EOL;
+            }
+            $result[] = $line;
+        }
+        return $result;
     }
 
     /**

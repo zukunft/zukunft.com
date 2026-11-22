@@ -1548,7 +1548,7 @@ class group extends sandbox_multi
         }
 
         if ($msg->is_ok()) {
-            $phr_grp = $phr_lst->get_grp_id(false);
+            $phr_grp = $phr_lst->get_grp_id($msg, false);
             $this->set_id($phr_grp->id());
             $this->set_phrase_list($phr_lst);
         }
@@ -1934,7 +1934,7 @@ class group extends sandbox_multi
         $phr_lst->ex_time($msg);
         // e.g. the group of only the year 2020 has no group without time, which is no error of the caller
         if (!$phr_lst->is_empty()) {
-            $grp = $phr_lst->get_grp_id();
+            $grp = $phr_lst->get_grp_id($msg);
         }
         return $grp;
     }

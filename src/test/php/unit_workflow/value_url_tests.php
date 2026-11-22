@@ -329,11 +329,12 @@ class value_url_tests extends url_test_base
      */
     protected function value_id(array $phr_ids): int
     {
+        $msg = new user_message();
         $phr_lst = new phrase_list($this->t->usr1);
         foreach ($phr_ids as $phr_id) {
             $phr_lst->add_id($phr_id);
         }
-        return $phr_lst->get_grp_id(false)->id();
+        return $phr_lst->get_grp_id($msg, false)->id();
     }
 
     /**

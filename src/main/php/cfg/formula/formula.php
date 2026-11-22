@@ -1011,13 +1011,14 @@ class formula extends formula_map
      * create a result object for this formula
      *
      * @param phrase_list $phr_lst list of the phrases that describes the result
+     * @param user_message $msg to report a problem of the creation of the source group
      * @return result with the value from this formula
      */
-    private function create_result(phrase_list $phr_lst): result
+    private function create_result(phrase_list $phr_lst, user_message $msg): result
     {
         $rst = new result($this->get_user());
         $rst->frm = $this;
-        $rst->src_grp = $phr_lst->get_grp_id();
+        $rst->src_grp = $phr_lst->get_grp_id($msg);
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
         $rst->src_grp->set_phrase_list(clone $phr_lst);
@@ -1106,7 +1107,7 @@ class formula extends formula_map
 
         // create the result list and a master result object to fill with the numbers
         $res_lst = new result_list($this->get_user());
-        $res_init = $this->create_result($phr_lst);
+        $res_init = $this->create_result($phr_lst, $msg);
 
         // never a wrong number: a list function that cannot take all values of its operand gives no result
         $list_symbols = $this->list_symbols($res_init->num_text);

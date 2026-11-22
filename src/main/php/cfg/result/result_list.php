@@ -1279,7 +1279,7 @@ class result_list extends sandbox_value_list
             $imp->step_start(msg_id::SAVE, result::class);
             foreach ($this->lst() as $res) {
                 if ($res->grp()->id() == 0) {
-                    $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+                    $res->set_grp($res->grp()->phrase_list()->get_grp_id($msg, false));
                 }
                 // a message per result, so that an issue of one result does not prevent the next one from being saved
                 $res_usr_msg = $msg->clone_reset();

@@ -307,7 +307,7 @@ class group_tests
         $grp = $t_grp->group();
         $t->assert($test_name, $grp->name_given(), groups::TN_READ);
         $test_name = 'a group named only by its phrases reports no given name, but still a name';
-        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
+        $grp = $t_phr->phrase_list_pi()->get_grp_id($msg, false);
         $t->assert($test_name, $grp->name_given(), '');
         $t->assert_true($test_name, $grp->name() != '');
         // the given name is unique, so the e group must not repeat the name of the pi group

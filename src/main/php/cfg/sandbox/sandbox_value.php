@@ -1620,7 +1620,7 @@ class sandbox_value extends sandbox_multi
             $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => implode(', ', $names)]);
             $result = 0;
         } else {
-            $result = $this->load_by_grp($load_lst->get_grp_id(), $msg);
+            $result = $this->load_by_grp($load_lst->get_grp_id($msg), $msg);
         }
         return $result;
     }

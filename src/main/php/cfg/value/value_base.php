@@ -507,7 +507,7 @@ class value_base extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
             if ($msg->is_ok()) {
-                $phr_grp = $phr_lst->get_grp_id(false);
+                $phr_grp = $phr_lst->get_grp_id($msg, false);
                 $this->set_grp($phr_grp);
             }
         }
@@ -762,7 +762,7 @@ class value_base extends sandbox_value
     {
         $phr_lst = new phrase_list($this->get_user());
         $phr_lst->load_names_by_ids((new phr_ids($phr_ids)), $msg);
-        return $this->load_by_grp($phr_lst->get_grp_id(), $msg);
+        return $this->load_by_grp($phr_lst->get_grp_id($msg), $msg);
     }
 
     /**
@@ -796,7 +796,7 @@ class value_base extends sandbox_value
     function load_best(phrase_list $phr_lst, user_message $msg): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
-        $grp = $phr_lst->get_grp_id();
+        $grp = $phr_lst->get_grp_id($msg);
         $this->load_by_grp($grp, $msg);
         // if not found try without scaling
         if (!$this->is_id_set()) {
@@ -807,7 +807,7 @@ class value_base extends sandbox_value
                 $phr_lst_unscaled = clone $phr_lst;
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp_id();
+                $grp_unscale = $phr_lst_unscaled->get_grp_id($msg);
                 $this->load_by_grp($grp_unscale, $msg);
                 // if not found try with converted measure
                 if (!$this->is_id_set()) {
@@ -815,7 +815,7 @@ class value_base extends sandbox_value
                     $phr_lst_converted = clone $phr_lst_unscaled;
                     $phr_lst_converted->ex_measure($msg);
                     log_debug('try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp_id();
+                    $grp_unscale = $phr_lst_converted->get_grp_id($msg);
                     $this->grp()->set_id($grp_unscale->id());
                     $this->load_by_grp($grp_unscale, $msg);
                     // TODO Prio 2
@@ -1581,7 +1581,7 @@ class value_base extends sandbox_value
 
         if ($msg->is_ok()) {
             $phr_lst->add($phr);
-            $phr_grp = $phr_lst->get_grp_id($do_save);
+            $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
             $this->set_grp($phr_grp);
             $this->set_value($value);
 

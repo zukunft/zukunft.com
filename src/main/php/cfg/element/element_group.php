@@ -317,7 +317,7 @@ class element_group extends list_db_write
      */
     private function add_figure(figure_list $fig_lst, phrase_list $val_phr_lst, ?string $val_symbol, user_message $msg): void
     {
-        $val_phr_grp = $val_phr_lst->get_grp_id();
+        $val_phr_grp = $val_phr_lst->get_grp_id($msg);
         // try to get a normal value set by the user directly for the phrase list
         // display the word group value and offer the user to change it
         // e.g. if the user has overwritten a result use the user overwrite

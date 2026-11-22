@@ -939,7 +939,7 @@ class ref_url_tests extends url_test_base
         // without a missing phrase, because the group of the other phrases names another value
         if ($phr_lst->count() == count($names)) {
             $val = new value($this->t->usr1);
-            if ($val->load_by_grp($phr_lst->get_grp_id(), $msg)) {
+            if ($val->load_by_grp($phr_lst->get_grp_id($msg), $msg)) {
                 $result = $val;
             }
         }

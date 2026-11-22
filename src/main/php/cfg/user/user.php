@@ -244,7 +244,8 @@ class user extends db_id_object_non_sandbox
     public ?string $ip_addr = null;        // simply the ip address used if no username is given
     public ?string $email = null;          // the email used for the signup process
 
-    // log in and sighup; the password hash, the activation key and the ip address are never in the api message (user_tests)
+    // log in and sighup; the password hash, the activation key and the ip address
+    // are never in the api message (user_tests)
     // TODO Prio 2 check by a unit test that every other user var has its field in the api message
     private ?string $password = null;      // only used for the login and password change process
     public ?string $activation_key = null; // var used for the registration and logon process

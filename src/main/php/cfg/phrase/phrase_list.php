@@ -2324,14 +2324,16 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to tell the user and the admin that a caller has asked for the group of an empty list
+     * @param bool $do_save not used yet, because the group is only created in memory
      * @return group|null the group with only the id set based to this list or null if no group matches
      */
-    function get_grp_id(bool $do_save = true): ?group
+    function get_grp_id(user_message $msg, bool $do_save = true): ?group
     {
         $grp = null;
         if ($this->is_empty()) {
             // an error of the caller, so the text names the callers, which the trace of the log entry does not
-            log_err(self::MSG_EMPTY_GROUP . library::caller_chain(), 'phrase_list->get_grp_id');
+            log_err_msg(self::MSG_EMPTY_GROUP . library::caller_chain(), $msg);
         } else {
             $grp = new group($this->get_user());
             $grp_id = new group_id();
@@ -2427,7 +2429,7 @@ class phrase_list extends sandbox_list_named
     function value(user_message $msg): value
     {
         $val = new value($this->get_user());
-        $val->load_by_grp($this->get_grp_id(), $msg);
+        $val->load_by_grp($this->get_grp_id($msg), $msg);
 
         return $val;
     }

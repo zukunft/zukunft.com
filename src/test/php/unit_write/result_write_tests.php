@@ -91,13 +91,13 @@ class result_write_tests
         $year_lst->add_name(word_names::YEAR_2020, $msg);
         $res_year = new result($t->usr1);
         $res_year->set_formula($frm);
-        $res_year->set_grp($year_lst->get_grp_id());
-        $res_year->set_src_grp($year_lst->get_grp_id());
+        $res_year->set_grp($year_lst->get_grp_id($msg));
+        $res_year->set_src_grp($year_lst->get_grp_id($msg));
         $res_year->set_number(results::TV_PCT);
         $res_year->last_val_update = new DateTime();
         $res_year->save_if_updated($msg, true);
         $res_no_time = new result($t->usr1);
-        $res_no_time->load_by_grp($no_time_lst->get_grp_id(), $msg);
+        $res_no_time->load_by_grp($no_time_lst->get_grp_id($msg), $msg);
         $t->assert($test_name, $res_no_time->number(), results::TV_PCT);
 
         // negative: the result of another year, which is not the newest one, does not overwrite the result without year
@@ -106,12 +106,12 @@ class result_write_tests
         $old_lst->add_name(word_names::YEAR_2019, $msg);
         $res_old = new result($t->usr1);
         $res_old->set_formula($frm);
-        $res_old->set_grp($old_lst->get_grp_id());
-        $res_old->set_src_grp($old_lst->get_grp_id());
+        $res_old->set_grp($old_lst->get_grp_id($msg));
+        $res_old->set_src_grp($old_lst->get_grp_id($msg));
         $res_old->set_number(results::TV_FLOAT);
         $res_old->last_val_update = new DateTime();
         $res_old->save_if_updated($msg, true);
-        $res_no_time->load_by_grp($no_time_lst->get_grp_id(), $msg);
+        $res_no_time->load_by_grp($no_time_lst->get_grp_id($msg), $msg);
         $t->assert($test_name, $res_no_time->number(), results::TV_PCT);
 
 
@@ -122,7 +122,7 @@ class result_write_tests
         $phr_lst->add_name(formula_names::SYSTEM_TEST_RENAMED, $msg);
         $phr_lst->add_name(words::PCT, $msg);
         $phr_lst->add_name(word_names::INHABITANTS, $msg);
-        $ch_up_grp = $phr_lst->get_grp_id();
+        $ch_up_grp = $phr_lst->get_grp_id($msg);
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($t->usr1);
             $ch_increase->load_by_grp($ch_up_grp, $msg);
@@ -142,7 +142,7 @@ class result_write_tests
         $phr_lst->add_name(word_names::YEAR_2020, $msg);
         $time_phr = $phr_lst->time_useful($msg);
         $phr_lst->ex_time($msg);
-        $ch_up_grp = $phr_lst->get_grp_id();
+        $ch_up_grp = $phr_lst->get_grp_id($msg);
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($t->usr1);
             $ch_increase->load_by_grp( $ch_up_grp, $msg, true );
@@ -166,7 +166,7 @@ class result_write_tests
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::TEST_IN_K), $msg);
         $phr_lst->ex_time($msg);
-        $ch_k_grp = $phr_lst->get_grp_id();
+        $ch_k_grp = $phr_lst->get_grp_id($msg);
         /*
         $dest_wrd_lst = new word_list($t->usr1);
         $dest_wrd_lst->add_name(words::TN_INHABITANTS);
@@ -196,7 +196,7 @@ class result_write_tests
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020), $msg);
         $phr_lst->ex_time($msg);
         $val_best_guess = new value($t->usr1);
-        $val_best_guess->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $val_best_guess->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $result = $val_best_guess->number();
         // TODO Prio 1 check why this value sometimes switch
         /*

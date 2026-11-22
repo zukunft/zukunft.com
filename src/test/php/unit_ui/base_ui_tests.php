@@ -1696,7 +1696,8 @@ class base_ui_tests
 
         // a value or result url names the group by its short form: without the zero chars and the
         // empty slots of the database key and with "_" for the "+" of a word (see group_id_url)
-        $grp_key = $t_phr->phrase_list()->get_grp_id(false)->id();
+        $grp_msg = new user_message(); // the backend message of the group, because $msg is the frontend message here
+        $grp_key = $t_phr->phrase_list()->get_grp_id($grp_msg, false)->id();
         $url_key = group_id_url::to_url($grp_key);
         $test_name = 'a value url names the group in its short form';
         $t->assert_text_contains($test_name, html_base::url(views::VALUE_DEFAULT_ID, $grp_key),

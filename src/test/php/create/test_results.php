@@ -340,12 +340,13 @@ class test_results
      */
     function result_for_phrases(array $phrases, float $number): result
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $lst = new phrase_list($this->env->usr1);
         foreach ($phrases as $phr) {
             $lst->add($phr);
         }
         $res = new result($this->env->usr1);
-        $res->set_grp($lst->get_grp_id(false));
+        $res->set_grp($lst->get_grp_id($msg, false));
         $res->set_number($number);
         return $res;
     }
@@ -360,6 +361,7 @@ class test_results
      */
     function result_zh_sum_ui(float $number): result_ui
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $zh = $t_wrd->word_zh()->phrase();
@@ -371,7 +373,7 @@ class test_results
         $ctx_lst->add($zh);
         $ctx_lst->add($t_trp->zh_city_low_impact()->phrase());
         $ctx_lst->add($t_trp->company_zurich_high_impact()->phrase());
-        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        $res->set_src_grp($ctx_lst->get_grp_id($msg, false));
         return new result_ui($res->api_json([api_types::INCL_PHRASES]));
     }
 
@@ -421,6 +423,7 @@ class test_results
      */
     function result_zh_scaled_ui(float $number): result_ui
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $zh = $t_wrd->word_zh()->phrase();
@@ -433,7 +436,7 @@ class test_results
         $ctx_lst->add($t_trp->zh_city_low_impact()->phrase());
         $ctx_lst->add($t_wrd->word_inhabitant()->phrase());
         $ctx_lst->add($t_wrd->word_bern()->phrase());
-        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        $res->set_src_grp($ctx_lst->get_grp_id($msg, false));
         return new result_ui($res->api_json([api_types::INCL_PHRASES]));
     }
 
@@ -447,6 +450,7 @@ class test_results
      */
     function result_zh_city_bern_inhabitants_ui(float $number): result_ui
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $inhab = $t_wrd->word_inhabitant()->phrase();
@@ -457,7 +461,7 @@ class test_results
         $ctx_lst = new phrase_list($this->env->usr1);
         $ctx_lst->add($inhab);
         $ctx_lst->add($t_wrd->word_bern()->phrase());
-        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        $res->set_src_grp($ctx_lst->get_grp_id($msg, false));
         return new result_ui($res->api_json([api_types::INCL_PHRASES]));
     }
 
@@ -536,6 +540,7 @@ class test_results
      */
     function result_list_solution_prio_first_row_calc_ui(): result_list_ui
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_val = new test_values($this->env);
         $t_wrd = new test_words($this->env);
         [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed] = $t_val->solution_prio_rows()[0];
@@ -549,7 +554,7 @@ class test_results
                      $t_wrd->word_percent()->phrase(), $t_wrd->word_annual()->phrase()] as $phr) {
             $ctx_lst->add($phr);
         }
-        $loss->set_src_grp($ctx_lst->get_grp_id(false));
+        $loss->set_src_grp($ctx_lst->get_grp_id($msg, false));
         $lst = new result_list($this->env->usr1);
         $lst->add($loss);
         $lst->add($this->result_for_phrases(

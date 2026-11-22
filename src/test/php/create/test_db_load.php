@@ -846,12 +846,13 @@ class test_db_load
      */
     function load_phrase_group(array $array_of_phrase_str): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $result = new group($this->env->usr1);
         $phr_lst = $this->load_phrase_list($array_of_phrase_str);
         $missing = array_diff($array_of_phrase_str, $phr_lst->names());
         $test_name = 'the phrases "' . implode('","', $array_of_phrase_str) . '" of the group exist';
         if ($this->env->assert($test_name, implode(',', $missing), '')) {
-            $result = $phr_lst->get_grp_id() ?? $result;
+            $result = $phr_lst->get_grp_id($msg) ?? $result;
         }
         return $result;
     }
@@ -916,7 +917,7 @@ class test_db_load
 
         // the time separation is done here until there is a phrase series value table that can be used also to time phrases
         $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $phr_grp = $phr_lst->get_grp_id();
+        $phr_grp = $phr_lst->get_grp_id($msg);
 
         $val = new value($this->env->usr1);
         if ($phr_grp == null) {
@@ -947,7 +948,7 @@ class test_db_load
         if (!$val->is_saved()) {
             $msg = new user_message($this->env->usr1);
             $phr_lst = $this->load_phrase_list($array_of_word_str);
-            $phr_grp = $phr_lst->get_grp_id();
+            $phr_grp = $phr_lst->get_grp_id($msg);
 
             // add missing words
             if (count($array_of_word_str) > $phr_lst->count()) {
@@ -956,7 +957,7 @@ class test_db_load
                 }
                 // retry
                 $phr_lst = $this->load_phrase_list($array_of_word_str);
-                $phr_grp = $phr_lst->get_grp_id();
+                $phr_grp = $phr_lst->get_grp_id($msg);
             }
 
             // getting the latest value if selected without time phrase should be done when reading the value

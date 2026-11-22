@@ -2075,12 +2075,12 @@ class data_object
         $phr_lst = $this->phrase_list();
         foreach ($this->result_list()->lst() as $res) {
             $this->resolve_phrase_list_ids($res->grp()->phrase_list(), $phr_lst, $msg);
-            $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+            $res->set_grp($res->grp()->phrase_list()->get_grp_id($msg, false));
             if ($res->src_grp !== null) {
                 $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $msg);
                 // an unresolved source phrase list yields no group; skip it with a
                 // warning instead of passing null to the non-nullable set_src_grp
-                $src_grp = $res->src_grp->phrase_list()->get_grp_id(false);
+                $src_grp = $res->src_grp->phrase_list()->get_grp_id($msg, false);
                 if ($src_grp !== null) {
                     $res->set_src_grp($src_grp);
                 } else {

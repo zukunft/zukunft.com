@@ -162,7 +162,7 @@ class value_write_tests
                 // the group of create_test_values is based on a phrase list and not on a word list
                 $phr_lst_create = $t_db->load_phrase_list([word_names::CANTON, word_names::ZH,
                     word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020]);
-                $load_info .= ', group of create_test_values: ' . $phr_lst_create->get_grp_id(false)?->id();
+                $load_info .= ', group of create_test_values: ' . $phr_lst_create->get_grp_id($msg, false)?->id();
                 // the values that really exist for the canton Zurich
                 $info_msg = new user_message($t->usr1);
                 $zh_val_lst = new value_list($t->usr1);
@@ -251,7 +251,7 @@ class value_write_tests
         $dest_phr_lst = new phrase_list($t->usr1);
         $dest_phr_lst->load_by_names(array(word_names::INHABITANTS, word_names::ONE), $msg);
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $mio_val->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $result = $mio_val->scale($dest_phr_lst, $msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
@@ -260,7 +260,7 @@ class value_write_tests
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(word_names::CANTON, word_names::ZH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $mio_val->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $mio_val_ui = new value_ui();
         $mio_val_ui->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $msg_ui);
         $fig = $mio_val->figure();
@@ -372,7 +372,7 @@ class value_write_tests
         // number with a phrase without name
         $test_name = 'the phrases of a new value are found in the database';
         $val_good = new value($t->usr1);
-        $val_good->set_grp($phr_grp2->phrase_list()->get_grp_id());
+        $val_good->set_grp($phr_grp2->phrase_list()->get_grp_id($msg));
         $good_msg = new user_message($t->usr1);
         $t->assert_true($test_name, $val_good->phrases_in_db($good_msg));
         $test_name = '... without a message';
@@ -382,7 +382,7 @@ class value_write_tests
         $add_lst = clone $phr_grp2->phrase_list();
         $add_lst->add_id(triple_names::MISSING_PHRASE_ID);
         $val_bad = new value($t->usr1);
-        $val_bad->set_grp($add_lst->get_grp_id());
+        $val_bad->set_grp($add_lst->get_grp_id($msg));
         $val_bad->set_number(values::SAMPLE_BIGGER);
         $chk_msg = new user_message($t->usr1);
         $t->assert_false($test_name, $val_bad->phrases_in_db($chk_msg));
@@ -394,7 +394,7 @@ class value_write_tests
         $none_lst = new phrase_list($t->usr1);
         $none_lst->add_id(triple_names::MISSING_PHRASE_ID);
         $val_none = new value($t->usr1);
-        $val_none->set_grp($none_lst->get_grp_id());
+        $val_none->set_grp($none_lst->get_grp_id($msg));
         $val_none->set_number(values::SAMPLE_BIGGER);
         $none_msg = new user_message($t->usr1);
         $val_none->phrases_in_db($none_msg);

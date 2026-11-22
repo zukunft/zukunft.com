@@ -1265,6 +1265,8 @@
 \-- component_list
     \-- order error - order of section load sql has difference at load_sql should be before load_sql_by_view_id
 \-- db_check
+    \-- env_lines_setup_off - section for function env_lines_setup_off not yet defined that it should be upgrade in /db/
+            db_check.php
     \-- setup_allowed - section for function setup_allowed is expected to be set and get in /db/db_check.php
 \-- sql_creator
     \-- db_type - section for function db_type not yet defined that it should be set and get in /db/sql_creator.php
@@ -5249,6 +5251,8 @@
 \-- upgrade
     \-- db_check
         \-- db_check - read the version number from the database and compare it with the backend version
+    \-- env_lines_setup_off
+        \-- db_check - public, because it decides which line of the environment file is changed, so it is unit tested
     \-- setup_allowed
         \-- db_check - public, because it decides if an empty database is filled, so it is unit tested
     \-- db_upgrade_0_0_3

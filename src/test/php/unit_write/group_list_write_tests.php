@@ -57,17 +57,17 @@ class group_list_write_tests
         // Switzerland inhabitants
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO), $msg);
-        $country_grp = $phr_lst->get_grp_id();
+        $country_grp = $phr_lst->get_grp_id($msg);
 
         // canton of Zurich inhabitants
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO), $msg);
-        $canton_grp = $phr_lst->get_grp_id();
+        $canton_grp = $phr_lst->get_grp_id($msg);
 
         // city of Zurich inhabitants
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CITY, word_names::INHABITANTS, word_names::MIO), $msg);
-        $city_grp = $phr_lst->get_grp_id();
+        $city_grp = $phr_lst->get_grp_id($msg);
 
         // test add a phrase group to a phrase group list
         $grp_lst = new group_list($t->usr1);
