@@ -125,7 +125,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
-use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -2140,15 +2139,8 @@ class result extends sandbox_value
                     }
                 }
 
-                // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
-                // simplified version, that needs to be review to handle more complex formulas
-                if (str_contains($this->frm->ref_text_r, chars::DIV)) {
-                    log_debug('check measure ' . $this->grp()->phrase_list()->dsp_id());
-                    if ($this->grp()->phrase_list()->has_measure($msg)) {
-                        $this->grp()->phrase_list()->ex_measure($msg);
-                        log_debug('measure removed from words ' . $this->grp()->phrase_list()->dsp_id());
-                    }
-                }
+                // the measure words of a division are removed by formula::apply_result_phrases before the result
+                // phrases are added, so that a unit that the formula names stays the unit of the result
 
                 // build the formula result object
                 //$this->frm_id = $this->frm->id();

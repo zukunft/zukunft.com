@@ -1738,6 +1738,282 @@
     },
     {
       "name": "133"
+    },
+    {
+      "name": "watt hour",
+      "description": "A watt hour is a unit of energy equal to the energy of one watt of power for one hour, which is 3600 joules.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Wh",
+      "description": "Is a symbol for watt hour",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilowatt hour",
+      "description": "A kilowatt hour is a unit of energy equal to 1000 watt hours or 3.6 megajoules, the unit of most electricity bills.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "megawatt hour",
+      "description": "A megawatt hour is a unit of energy equal to 1000 kilowatt hours, e.g. used for the price of electricity on the wholesale market.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "MWh",
+      "description": "Is a symbol for megawatt hour",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gigawatt hour",
+      "description": "A gigawatt hour is a unit of energy equal to 1000 megawatt hours, e.g. used for the annual production of a power plant.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GWh",
+      "description": "Is a symbol for gigawatt hour",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "terawatt hour",
+      "description": "A terawatt hour is a unit of energy equal to 1000 gigawatt hours, e.g. used for the annual electricity consumption of a country.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TWh",
+      "description": "Is a symbol for terawatt hour",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "petawatt hour",
+      "description": "A petawatt hour is a unit of energy equal to 1000 terawatt hours, e.g. used for the annual energy consumption of the world.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "PWh",
+      "description": "Is a symbol for petawatt hour",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilojoule",
+      "description": "A kilojoule is a unit of energy equal to 1000 joules, e.g. used for the energy content of food.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kJ",
+      "description": "Is a symbol for kilojoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "megajoule",
+      "description": "A megajoule is a unit of energy equal to 1000 kilojoules; 3.6 megajoules are one kilowatt hour.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "MJ",
+      "description": "Is a symbol for megajoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gigajoule",
+      "description": "A gigajoule is a unit of energy equal to 1000 megajoules, e.g. used for the price of natural gas.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GJ",
+      "description": "Is a symbol for gigajoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "terajoule",
+      "description": "A terajoule is a unit of energy equal to 1000 gigajoules.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TJ",
+      "description": "Is a symbol for terajoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "petajoule",
+      "description": "A petajoule is a unit of energy equal to 1000 terajoules, e.g. used for the energy statistics of a country.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "PJ",
+      "description": "Is a symbol for petajoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "exajoule",
+      "description": "An exajoule is a unit of energy equal to 1000 petajoules, e.g. used for the primary energy supply of the world.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "EJ",
+      "description": "Is a symbol for exajoule",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilowatt",
+      "description": "A kilowatt is a unit of power equal to 1000 watts, e.g. used for the power of a car engine or a heat pump.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kW",
+      "description": "Is a symbol for kilowatt",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "megawatt",
+      "description": "A megawatt is a unit of power equal to 1000 kilowatts, e.g. used for the power of a wind turbine.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "MW",
+      "description": "Is a symbol for megawatt",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gigawatt",
+      "description": "A gigawatt is a unit of power equal to 1000 megawatts, e.g. used for the capacity of a large power plant.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GW",
+      "description": "Is a symbol for gigawatt",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "terawatt",
+      "description": "A terawatt is a unit of power equal to 1000 gigawatts, e.g. used for the installed power of the world.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TW",
+      "description": "Is a symbol for terawatt",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "milligram",
+      "description": "A milligram is a unit of mass equal to one thousandth of a gram, e.g. used for the dose of a drug.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mg",
+      "description": "Is a symbol for milligram",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilotonne",
+      "description": "A kilotonne is a unit of mass equal to 1000 metric tonnes.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kt",
+      "description": "Is a symbol for kilotonne",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "megatonne",
+      "description": "A megatonne is a unit of mass equal to 1000 kilotonnes or one million metric tonnes, e.g. used for the CO2 emissions of a country.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Mt",
+      "description": "Is a symbol for megatonne",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gigatonne",
+      "description": "A gigatonne is a unit of mass equal to 1000 megatonnes or one billion metric tonnes, e.g. used for the CO2 emissions of the world.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Gt",
+      "description": "Is a symbol for gigatonne",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "millimetre",
+      "description": "A millimetre is a unit of length equal to one thousandth of a metre.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mm",
+      "description": "Is a symbol for millimetre",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "centimetre",
+      "description": "A centimetre is a unit of length equal to one hundredth of a metre.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "cm",
+      "description": "Is a symbol for centimetre",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "millilitre",
+      "description": "A millilitre is a unit of volume equal to one thousandth of a litre or one cubic centimetre.",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ml",
+      "description": "Is a symbol for millilitre",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "km2",
+      "description": "Is a symbol for square kilometre",
+      "type": "measure_unit",
+      "protection": "admin_protection"
     }
   ],
   "triples": [
@@ -2744,7 +3020,46 @@
       "to": "100 km",
       "type": "measure_divisor",
       "protection": "admin_protection"
-    }
+    },
+    {"name": "Wh (unit symbol)", "from": "Wh", "verb": "is symbol for", "to": "watt hour"},
+    {"name": "kWh (unit symbol)", "from": "kWh", "verb": "is symbol for", "to": "kilowatt hour"},
+    {"name": "MWh (unit symbol)", "from": "MWh", "verb": "is symbol for", "to": "megawatt hour"},
+    {"name": "GWh (unit symbol)", "from": "GWh", "verb": "is symbol for", "to": "gigawatt hour"},
+    {"name": "TWh (unit symbol)", "from": "TWh", "verb": "is symbol for", "to": "terawatt hour"},
+    {"name": "PWh (unit symbol)", "from": "PWh", "verb": "is symbol for", "to": "petawatt hour"},
+    {"name": "J (unit symbol)", "from": "J", "verb": "is symbol for", "to": "joule"},
+    {"name": "kJ (unit symbol)", "from": "kJ", "verb": "is symbol for", "to": "kilojoule"},
+    {"name": "MJ (unit symbol)", "from": "MJ", "verb": "is symbol for", "to": "megajoule"},
+    {"name": "GJ (unit symbol)", "from": "GJ", "verb": "is symbol for", "to": "gigajoule"},
+    {"name": "TJ (unit symbol)", "from": "TJ", "verb": "is symbol for", "to": "terajoule"},
+    {"name": "PJ (unit symbol)", "from": "PJ", "verb": "is symbol for", "to": "petajoule"},
+    {"name": "EJ (unit symbol)", "from": "EJ", "verb": "is symbol for", "to": "exajoule"},
+    {"name": "W (unit symbol)", "from": "W", "verb": "is symbol for", "to": "watt"},
+    {"name": "kW (unit symbol)", "from": "kW", "verb": "is symbol for", "to": "kilowatt"},
+    {"name": "MW (unit symbol)", "from": "MW", "verb": "is symbol for", "to": "megawatt"},
+    {"name": "GW (unit symbol)", "from": "GW", "verb": "is symbol for", "to": "gigawatt"},
+    {"name": "TW (unit symbol)", "from": "TW", "verb": "is symbol for", "to": "terawatt"},
+    {"name": "g (unit symbol)", "from": "g", "verb": "is symbol for", "to": "gram"},
+    {"name": "mg (unit symbol)", "from": "mg", "verb": "is symbol for", "to": "milligram"},
+    {"name": "kt (unit symbol)", "from": "kt", "verb": "is symbol for", "to": "kilotonne"},
+    {"name": "Mt (unit symbol)", "from": "Mt", "verb": "is symbol for", "to": "megatonne"},
+    {"name": "Gt (unit symbol)", "from": "Gt", "verb": "is symbol for", "to": "gigatonne"},
+    {"name": "km (unit symbol)", "from": "km", "verb": "is symbol for", "to": "kilometre"},
+    {"name": "mm (unit symbol)", "from": "mm", "verb": "is symbol for", "to": "millimetre"},
+    {"name": "cm (unit symbol)", "from": "cm", "verb": "is symbol for", "to": "centimetre"},
+    {"name": "ml (unit symbol)", "from": "ml", "verb": "is symbol for", "to": "millilitre"},
+    {"name": "ha (unit symbol)", "from": "ha", "verb": "is symbol for", "to": "hectare"},
+    {
+      "name": "square kilometre",
+      "description": "A square kilometre is a unit of area equal to the area of a square with sides of one kilometre, which is 100 hectares.",
+      "from": "kilometre",
+      "verb": "can be",
+      "to": "square",
+      "type": "measure_unit",
+      "protection": "admin_protection"
+    },
+    {"name": "km2 (unit symbol)", "from": "km2", "verb": "is symbol for", "to": "square kilometre"},
+    {"from": "gram", "verb": "per", "to": "kWh", "type": "measure_unit", "description": "the unit of the emission intensity of electricity"}
   ],
   "formulas": [
     {
@@ -2844,7 +3159,32 @@
       "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}",
       "description": "the SI definition of the unit joule",
       "assigned_word": "joule"
-    }
+    },
+    {"name": "scale Wh to kWh", "description": "to convert energies in watt hours to kilowatt hours and the other way round", "expression": "\"kilowatt hour\" = \"watt hour\" / 1000", "latex": "\\text{kWh} = \\text{Wh} / 1000", "assigned_word": "watt hour"},
+    {"name": "scale MWh to kWh", "description": "to convert energies in megawatt hours to kilowatt hours and the other way round", "expression": "\"kilowatt hour\" = \"megawatt hour\" * 1000", "latex": "\\text{kWh} = 1000 \\cdot \\text{MWh}", "assigned_word": "megawatt hour"},
+    {"name": "scale GWh to MWh", "description": "to convert energies in gigawatt hours to megawatt hours and the other way round", "expression": "\"megawatt hour\" = \"gigawatt hour\" * 1000", "latex": "\\text{MWh} = 1000 \\cdot \\text{GWh}", "assigned_word": "gigawatt hour"},
+    {"name": "scale TWh to GWh", "description": "to convert energies in terawatt hours to gigawatt hours and the other way round", "expression": "\"gigawatt hour\" = \"terawatt hour\" * 1000", "latex": "\\text{GWh} = 1000 \\cdot \\text{TWh}", "assigned_word": "terawatt hour"},
+    {"name": "scale PWh to TWh", "description": "to convert energies in petawatt hours to terawatt hours and the other way round", "expression": "\"terawatt hour\" = \"petawatt hour\" * 1000", "latex": "\\text{TWh} = 1000 \\cdot \\text{PWh}", "assigned_word": "petawatt hour"},
+    {"name": "scale kJ to joule", "description": "to convert energies in kilojoules to joules and the other way round", "expression": "\"joule\" = \"kilojoule\" * 1000", "latex": "\\text{J} = 1000 \\cdot \\text{kJ}", "assigned_word": "kilojoule"},
+    {"name": "scale MJ to kJ", "description": "to convert energies in megajoules to kilojoules and the other way round", "expression": "\"kilojoule\" = \"megajoule\" * 1000", "latex": "\\text{kJ} = 1000 \\cdot \\text{MJ}", "assigned_word": "megajoule"},
+    {"name": "scale GJ to MJ", "description": "to convert energies in gigajoules to megajoules and the other way round", "expression": "\"megajoule\" = \"gigajoule\" * 1000", "latex": "\\text{MJ} = 1000 \\cdot \\text{GJ}", "assigned_word": "gigajoule"},
+    {"name": "scale TJ to GJ", "description": "to convert energies in terajoules to gigajoules and the other way round", "expression": "\"gigajoule\" = \"terajoule\" * 1000", "latex": "\\text{GJ} = 1000 \\cdot \\text{TJ}", "assigned_word": "terajoule"},
+    {"name": "scale PJ to TJ", "description": "to convert energies in petajoules to terajoules and the other way round", "expression": "\"terajoule\" = \"petajoule\" * 1000", "latex": "\\text{TJ} = 1000 \\cdot \\text{PJ}", "assigned_word": "petajoule"},
+    {"name": "scale EJ to PJ", "description": "to convert energies in exajoules to petajoules and the other way round", "expression": "\"petajoule\" = \"exajoule\" * 1000", "latex": "\\text{PJ} = 1000 \\cdot \\text{EJ}", "assigned_word": "exajoule"},
+    {"name": "scale kW to watt", "description": "to convert powers in kilowatts to watts and the other way round", "expression": "\"watt\" = \"kilowatt\" * 1000", "latex": "\\text{W} = 1000 \\cdot \\text{kW}", "assigned_word": "kilowatt"},
+    {"name": "scale MW to kW", "description": "to convert powers in megawatts to kilowatts and the other way round", "expression": "\"kilowatt\" = \"megawatt\" * 1000", "latex": "\\text{kW} = 1000 \\cdot \\text{MW}", "assigned_word": "megawatt"},
+    {"name": "scale GW to MW", "description": "to convert powers in gigawatts to megawatts and the other way round", "expression": "\"megawatt\" = \"gigawatt\" * 1000", "latex": "\\text{MW} = 1000 \\cdot \\text{GW}", "assigned_word": "gigawatt"},
+    {"name": "scale TW to GW", "description": "to convert powers in terawatts to gigawatts and the other way round", "expression": "\"gigawatt\" = \"terawatt\" * 1000", "latex": "\\text{GW} = 1000 \\cdot \\text{TW}", "assigned_word": "terawatt"},
+    {"name": "scale mg to gram", "description": "to convert masses in milligrams to grams and the other way round", "expression": "\"gram\" = \"milligram\" / 1000", "latex": "\\text{g} = \\text{mg} / 1000", "assigned_word": "milligram"},
+    {"name": "scale kt to tonne", "description": "to convert masses in kilotonnes to metric tonnes and the other way round", "expression": "\"tonne\" = \"kilotonne\" * 1000", "latex": "\\text{t} = 1000 \\cdot \\text{kt}", "assigned_word": "kilotonne"},
+    {"name": "scale Mt to kt", "description": "to convert masses in megatonnes to kilotonnes and the other way round", "expression": "\"kilotonne\" = \"megatonne\" * 1000", "latex": "\\text{kt} = 1000 \\cdot \\text{Mt}", "assigned_word": "megatonne"},
+    {"name": "scale Gt to Mt", "description": "to convert masses in gigatonnes to megatonnes and the other way round", "expression": "\"megatonne\" = \"gigatonne\" * 1000", "latex": "\\text{Mt} = 1000 \\cdot \\text{Gt}", "assigned_word": "gigatonne"},
+    {"name": "scale mm to cm", "description": "to convert lengths in millimetres to centimetres and the other way round", "expression": "\"centimetre\" = \"millimetre\" / 10", "latex": "\\text{cm} = \\text{mm} / 10", "assigned_word": "millimetre"},
+    {"name": "scale cm to metre", "description": "to convert lengths in centimetres to metres and the other way round", "expression": "\"metre\" = \"centimetre\" / 100", "latex": "\\text{m} = \\text{cm} / 100", "assigned_word": "centimetre"},
+    {"name": "scale ml to litre", "description": "to convert volumes in millilitres to litres and the other way round", "expression": "\"litre\" = \"millilitre\" / 1000", "latex": "\\text{L} = \\text{mL} / 1000", "assigned_word": "millilitre"},
+    {"name": "scale are to m2", "description": "to convert areas in ares to square metres and the other way round; an are is 100 square metres", "expression": "\"m2\" = \"are\" * 100", "latex": "\\text{m}^2 = 100 \\cdot \\text{a}", "assigned_word": "are"},
+    {"name": "scale hectare to are", "description": "to convert areas in hectares to ares and the other way round; a hectare is 100 ares", "expression": "\"are\" = \"hectare\" * 100", "latex": "\\text{a} = 100 \\cdot \\text{ha}", "assigned_word": "hectare"},
+    {"name": "scale km2 to hectare", "description": "to convert areas in square kilometres to hectares and the other way round; a square kilometre is 100 hectares", "expression": "\"hectare\" = \"square kilometre\" * 100", "latex": "\\text{ha} = 100 \\cdot \\text{km}^2", "assigned": ["square kilometre"]}
   ],
   "sources": [
     {

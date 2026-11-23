@@ -19,7 +19,7 @@
                 "to": "new NPP sensitivity cell levelised cost"
             },
             {
-                "id": 4131,
+                "id": 4160,
                 "name": "new NPP sensitivity hint",
                 "description": "each cell: the levelised cost and the change of the household bill",
                 "from": "new NPP sensitivity",
@@ -32,11 +32,11 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 4379
+                "id": 4408
             },
             {
                 "class": "triple",
-                "id": 4298
+                "id": 4327
             }
         ]
     }

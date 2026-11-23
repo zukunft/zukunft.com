@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1752 of 6547 public functions have at least 2 unit test calls; the 4585 functions below do not; the 210 functions of the last section are called nowhere
+1753 of 6547 public functions have at least 2 unit test calls; the 4584 functions below do not; the 210 functions of the last section are called nowhere
 
-## 1828 functions of main backend have no test at all
+## 1827 functions of main backend have no test at all
 
 ```
 \-- application
@@ -370,7 +370,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- formula
     \-- add_formula_name_phrase - 0 unit test calls
     \-- api_latex_terms_array - 0 unit test calls
-    \-- apply_result_phrases - 0 unit test calls
     \-- assign_phr_glst - 0 unit test calls
     \-- assign_phr_glst_direct - 0 unit test calls
     \-- assign_phr_lst - 0 unit test calls

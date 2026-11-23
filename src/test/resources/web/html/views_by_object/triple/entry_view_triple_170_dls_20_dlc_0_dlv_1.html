@@ -1,0 +1,3199 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            global problem - Start view - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root {
+                --font-page: sans-serif;
+            }
+            :root {
+                --page-grey: #9ea09e;
+                --page-link: #385eb7;
+                --page-deep: #274b8f;
+                --page-border: #b9c6d6;
+                --page-white: #ffffff;
+                --page-rule: #dee2e6;
+                --page-panel: #f9fafb;
+                --page-input: #ccc;
+                --page-changed: #6b86c2;
+                --page-tab: #f8f9fa;
+                --page-highlight: #dbe4f5;
+                --page-shadow: rgba(0, 0, 0, 0.1);
+                --page-menu: #f0f0f0;
+                --page-faint: #aaa;
+                --page-label: #777;
+                --page-file: #6e706e;
+                --page-negative: #dc3545;
+                --page-success: #198754;
+                --page-warning: #ffc107;
+                --page-hover: #7a9fbf;
+                --page-black: black;
+                --bg: #eef2f8;
+                --surface: #ffffff;
+                --surface-2: #f6f8fc;
+                --ink: #1b2f5c;
+                --ink-2: #4b5d83;
+                --muted: #7b88a3;
+                --line: #d2dbe9;
+                --accent: #385eb7;
+                --accent-deep: #274b8f;
+                --accent-soft: #dbe4f5;
+                --shared: #8a5a07;
+                --shared-soft: #fbf0db;
+                --danger: #c23b30;
+                --danger-soft: #fbe4e1;
+                --ok: #2f7d55;
+                --ok-soft: #dff1e7;
+                --pv-text: #274b8f;
+                --pv-label: #385eb7;
+                --pv-muted: #9ea09e;
+                --pv-panel: #f9fafb;
+                --pv-border: #b9c6d6;
+                --pv-field: #ffffff;
+                --pv-rule: #dee2e6;
+                --pv-sec: #dbe4f5;
+                --pv-assumed: #6b86c2;
+                --pv-neg: #dc3545;
+                color-scheme: light;
+            }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=it" title="Italian">
+                                        Italiano
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                global problem
+            </div>
+            <div class="container text-center">
+                <h4>
+                    <a href="http://localhost/http/view.php?m=4&amp;id=170" title="here more a personal issue (wikipedia does not really match)">
+                        global problems
+                    </a>
+                </h4>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=291" title="A problem is if someone is getting unhappy. This can be measured with &quot;happy time points&quot;.">
+                            problem
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=291.alpha_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=291.alpha_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=213" title="the loss that a problem can cause if it is not solved">
+                            potential loss
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=369" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=373" title="ISO 4217 alphabetic code for the euro.">
+                            EUR
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-213.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon sort-active">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=213" title="the loss that a problem can cause if it is not solved">
+                            potential loss
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=375" title="a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.">
+                            GDP
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=231" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
+                            percent
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=213" title="the loss that a problem can cause if it is not solved">
+                            potential loss
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1250" title="a share of the happy time points of the world, one number type, so that a loss is shown in percent htp">
+                            percent htp
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=213" title="the loss that a problem can cause if it is not solved">
+                            potential loss
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=368" title="the symbol used in formulas for happy time points">
+                            htp
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=3&amp;id=467" title="the cause of a problem, e.g. the climate gas emissions of global warming, linked with &#039;&lt;reason&gt; is a reason&#039;; the loss that a reason causes carries the problem, the word reason and the reason">
+                            reason
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=467.alpha_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=467.alpha_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=310" title="the part of the potential loss of a problem that one reason causes; a value of it carries the problem, the word reason, the reason and the potential loss, so the table shows it in this column and not in the potential loss column of the problem">
+                            potential loss of reason
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=369" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=373" title="ISO 4217 alphabetic code for the euro.">
+                            EUR
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-310.numeric_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-310.numeric_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=312" title="a homogeneous mixture of a solute dissolved in a solvent">
+                            solution
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=312.alpha_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=312.alpha_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=214" title="the gain that a solution can reach if it is implemented">
+                            potential gain
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=369" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=373" title="ISO 4217 alphabetic code for the euro.">
+                            EUR
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-214.numeric_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-214.numeric_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=214" title="the gain that a solution can reach if it is implemented">
+                            potential gain
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=230" title="to specify numbers in billions - 10⁹">
+                            billion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=368" title="the symbol used in formulas for happy time points">
+                            htp
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=237" title="the work needed to implement a solution the first time, without the recurring operation">
+                            initial effort
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=4&amp;id=239" title="the work of one person during one year, the unit of the initial effort">
+                            person year
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-237.numeric_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-237.numeric_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=236" title="the share of the potential loss of a problem that a solution can avoid">
+                            loss reduction
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=231" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
+                            percent
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-236.numeric_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-236.numeric_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=238" title="the avoided potential loss per unit of initial effort, used to sort the solutions by efficiency instead of by problem size">
+                            reward ratio
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=369" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=283" title="the unit of the reward ratio">
+                            EUR per person year
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-238.numeric_asc&amp;dlo2=-213.numeric_desc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="http://localhost/http/view.php?dls=20&amp;dlc=0&amp;dlv=1&amp;dlo=-238.numeric_desc&amp;dlo2=-213.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=347" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+                            health
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-3P_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5.5&quot; = 110.05 * 5 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-3P_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.2&quot; = 5.5 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-3P_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;13.75&quot; = 5.5 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            13.75
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-1b_3P_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-31 %&quot; = 0 - 5 % * 620.25 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -31 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-1b_3P_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-77.5 %&quot; = -31 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -77.5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-1b_3P_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-12.4 %&quot; = -31 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -12.4 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-3P_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-24&quot; = -31 % * 0.77
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -24
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0o-3P_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-60&quot; = -24 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -60
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0n-3P_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-9.6&quot; = -24 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -9.6
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1356" title="the gross domestic product that is lost compared to a world without the cause e.g. without global warming; stored as a positive number">
+                            GDP loss
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2569&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=JA-1J-3P_3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=350" title="A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.">
+                            taxes
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2590&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-3P_3S_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.55&quot; = 5.5 * 10 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-1a_3P_3S_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;8.8&quot; = 0 - -24 * 1&#039;189 * 10 % * 0.31
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            8.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0o-1a_3P_3S_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5.87&quot; = 8.8 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            5.87
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0n-1a_3P_3S_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;13.2&quot; = 8.8 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            13.2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6&quot; = 5.5 * 1.09
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0o-3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.4&quot; = 6 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0n-3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;15&quot; = 6 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b_3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10 %&quot; = 10 %
+&quot;loss reduction&quot;,&quot;percent&quot; = &quot;health taxes&quot;,&quot;economic capacity&quot;
+click for more details">
+                            10 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0o-1b_3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4 %&quot; = 10 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0n-1b_3P_3S_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;25 %&quot; = 10 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            25 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-3P_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.09
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0o-3P_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.01
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0n-3P_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            1.43
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=331" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                            populism
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 30 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-39_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 110.05 * 3.63 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-39_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2&quot; = 4 * 0.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-39_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;8&quot; = 4 * 2
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            8
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-1b_39_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-31 %&quot; = 0 - 3.63 % * 852.86 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -31 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-1b_39_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-62 %&quot; = -31 % * 2
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -62 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-1b_39_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-15.5 %&quot; = -31 % * 0.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -15.5 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-28&quot; = -31 % * 0.9
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -28
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0o-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-56&quot; = -28 * 200
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -56
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0n-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-14&quot; = -28 * 50
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -14
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1357" title="the change of the GDP per person compared to a world without the cause e.g. without global warming; a loss is negative">
+                            GDP per capita change
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1622&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=JB-1J-39_3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1324" title="a button that lets a reader hide a post or an account with one click, so that emotional content spreads less far (see fermi_internet_pro_contra.json)">
+                            one-click hide
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1647&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1K-39_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 4 * 100 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1K-1a_39_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;34.1&quot; = 0 - -28 * 1&#039;189 * 100 % * 0.1
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1K-0o-1a_39_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;22.73&quot; = 34.1 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            22.73
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1K-0n-1a_39_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;51.15&quot; = 34.1 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            51.15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1j-1h-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;8&quot; = 4 * 2
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1j-1h-0o-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;3.2&quot; = 8 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            3.2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1j-1h-0n-39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;20&quot; = 8 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            20
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1g-1b_39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 0 - 1.04 % / -1.04 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;one-click hide&quot;,&quot;GDP&quot;,&quot;annual&quot; / &quot;decline&quot;,&quot;15-year&quot;
+click for more details">
+                            100 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1g-0o-1b_39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;40 %&quot; = 100 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            40 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Ig-1g-0n-1b_39_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 100 % * 100 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-39_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.5
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0o-39_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.04
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0n-39_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            2.5
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=198" title="the long-term rise in Earth&#039;s average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.">
+                            global warming
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.2&quot; = 110.05 * 2 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            2.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.88&quot; = 2.2 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.88
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5.5&quot; = 2.2 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            5.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-32 %&quot; = 0 - 2 % * 1600 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -32 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-80 %&quot; = -32 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -80 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-14-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-12.8 %&quot; = -32 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -12.8 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-14-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-37&quot; = -32 % * 1.16
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -37
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-14-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-92.5&quot; = -37 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -92.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-14-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-14.8&quot; = -37 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -14.8
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1582708457685&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            31.5
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=278" title="Greenhouse gas emissions are the release of gases into the atmosphere that trap heat and thereby warm the climate.">
+                            climate gas emissions
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1373&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=2K-1J-14-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            2.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1253" title="the calculation of the carbon border tariff by a public, source-verifiable tool, so that every importer and exporter can check the price of the embedded emissions; the leading measure of the solution reduce climate gas emissions and the part of the carbon border tariff that removes its main obstacle, the complexity of the calculation (concept paper section 3)">
+                            public CBAM calculation
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1378&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1K-14-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.6&quot; = 2.2 * 72.73 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            1.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1K-14-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;320.01&quot; = 0 - -37 * 1&#039;189 * 72.73 %
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            320.01
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1K-14-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;213.35&quot; = 320.01 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            213.35
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1K-14-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;480.02&quot; = 320.01 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            480.02
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1j-1h-14-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;3&quot; = 2.2 * 1.36
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1j-1h-14-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.2&quot; = 3 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1j-1h-14-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;7.5&quot; = 3 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            7.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=HZ-1g-14-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            72.73 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1g-14-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;29.09 %&quot; = 72.73 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            29.09 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-1g-14-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 72.73 % * 137.5 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HZ-2P-1i-14-3l_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.53&quot; = 2.2 * 72.73 % / 3
+&quot;reward ratio&quot;,&quot;trillion&quot;,&quot;EUR per person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot; / &quot;initial effort&quot;,&quot;person year&quot;
+click for more details">
+                            0.53
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=349" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
+                            poverty
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 25 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-3R_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2&quot; = 110.05 * 1.82 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-3R_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1&quot; = 2 * 0.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-3R_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 2 * 2
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-1b_3R_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-8 %&quot; = 0 - 1.82 % * 440.19 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-1b_3R_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-16 %&quot; = -8 % * 2
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -16 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-1b_3R_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4 %&quot; = -8 % * 0.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -4 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-16&quot; = -8 % * 2
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -16
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0o-3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-32&quot; = -16 * 200
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -32
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0n-3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-8&quot; = -16 * 50
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -8
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=3&amp;id=1569" title="the chronic undernourishment: a habitual food intake that is too low to provide the dietary energy for a normal, active and healthy life">
+                            hunger
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1772&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=1J-3R_3l_3p_4N_5H_MV_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=348" title="systematic investigation to discover new knowledge">
+                            research
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1792&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-3Q_3R_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.02&quot; = 2 * 1 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.02
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-1a_3Q_3R_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;34.1&quot; = 0 - -16 * 1&#039;189 * 1 % * 17.92
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0o-1a_3Q_3R_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;22.73&quot; = 34.1 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            22.73
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0n-1a_3Q_3R_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;51.15&quot; = 34.1 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            51.15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10&quot; = 2 * 5
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            10
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0o-3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 10 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0n-3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;25&quot; = 10 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            25
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b_3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1 %&quot; = 0 - -1 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;poverty research&quot;,&quot;extreme poverty&quot;
+click for more details">
+                            1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0o-1b_3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.4 %&quot; = 1 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.4 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0n-1b_3Q_3R_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.5 %&quot; = 1 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.5 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-3R_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0o-3R_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0n-3R_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.03
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=219" title="the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)">
+                            market power
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 15 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.6&quot; = 110.05 * 1.45 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            1.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.64&quot; = 1.6 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.64
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 1.6 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-8 %&quot; = 0 - 1.45 % * 550.25 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-20 %&quot; = -8 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -20 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1P-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-3.2 %&quot; = -8 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -3.2 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1P-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5&quot; = -8 % * 0.63
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1P-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-12.5&quot; = -5 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -12.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1P-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2&quot; = -5 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2671">
+                            deadweight loss
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2687&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=dj-1P-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            1.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=281" title="supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)">
+                            market share tax
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2709&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1P-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.48&quot; = 1.6 * 30 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.48
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1P-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6&quot; = 0 - -5 * 1&#039;189 * 30 % * 0.34
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1P-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.4&quot; = 6 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1P-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;15&quot; = 6 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1j-1h-1P-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2&quot; = 1.6 * 1.25
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1j-1h-1P-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.8&quot; = 2 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.8
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1j-1h-1P-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5&quot; = 2 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1g-1P-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;30 %&quot; = 30 %
+&quot;loss reduction&quot;,&quot;percent&quot; = &quot;market share tax&quot;,&quot;markup&quot;,&quot;percent&quot;
+click for more details">
+                            30 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1g-1P-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12 %&quot; = 30 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            12 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2N-1g-1P-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;75 %&quot; = 30 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            75 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1P-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.24
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1P-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.02
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1P-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            3.75
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=218" title="concentration of money and power that destroys democratic participation (concept paper section 5)">
+                            wealth concentration
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 10 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.4&quot; = 110.05 * 1.27 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            1.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.47&quot; = 1.4 * 0.33
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.47
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4.2&quot; = 1.4 * 3
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4.2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-10 %&quot; = 0 - 1.27 % * 786.04 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -10 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-25 %&quot; = -10 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -25 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1O-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4 %&quot; = -10 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -4 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1O-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-15&quot; = -10 % * 1.5
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -15
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1O-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-37.5&quot; = -15 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -37.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1O-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-6&quot; = -15 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -6
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2894" title="the growth of the GDP per capita that is lost compared to a counterfactual without the cause">
+                            growth loss
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2909&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=hC-1O-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            1.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=231" title="a proto unconditional basic income implemented as a negative income tax, started so low that almost nobody feels an effect and raised as long as the net effect stays positive (concept paper section 5)">
+                            basic income
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2935&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1b-1O-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.42&quot; = 1.4 * 30 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.42
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1b-1O-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;16&quot; = 0 - -15 * 1&#039;189 * 30 % * 0.3
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            16
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1b-1O-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6.4&quot; = 16 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            6.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1b-1O-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;40&quot; = 16 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            40
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1b-1O-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5&quot; = 1.4 * 3.57
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1b-1O-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2&quot; = 5 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1b-1O-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12.5&quot; = 5 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            12.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b-1O-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;30 %&quot; = 30 %
+&quot;loss reduction&quot;,&quot;percent&quot; = &quot;basic income&quot;,&quot;demand&quot;,&quot;percent&quot;
+click for more details">
+                            30 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b-1O-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12 %&quot; = 30 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            12 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b-1O-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;75 %&quot; = 30 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            75 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1O-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.08
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1O-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1O-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            1.58
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=351" title="process of teaching and learning">
+                            education
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-3T_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.55&quot; = 110.05 * 0.5 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-3T_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.22&quot; = 0.55 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.22
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-3T_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.38&quot; = 0.55 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.38
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-1b_3T_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-13 %&quot; = 0 - 0.5 % * 2601.04 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -13 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-1b_3T_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-32.5 %&quot; = -13 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -32.5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-1b_3T_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5.2 %&quot; = -13 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -5.2 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-3T_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-11&quot; = -13 % * 0.85
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -11
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0o-3T_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-27.5&quot; = -11 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -27.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0n-3T_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4.4&quot; = -11 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -4.4
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1247">
+                            income loss
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2333&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=HT-1J-3T_3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=352" title="an outlay of money for goods or services">
+                            spending
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2355&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-3T_3U_3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.03&quot; = 0.55 * 5 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.03
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-1a_3T_3U_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;14.3&quot; = 0 - -11 * 1&#039;189 * 5 % * 2.19
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            14.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0o-1a_3T_3U_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;9.53&quot; = 14.3 * 0.67
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            9.53
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1K-0n-1a_3T_3U_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;21.45&quot; = 14.3 * 1.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            21.45
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6&quot; = 0.55 * 10.91
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0o-3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.4&quot; = 6 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-0n-3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;15&quot; = 6 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1b_3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5 %&quot; = 0 - -5 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;education spending&quot;,&quot;learning poverty&quot;
+click for more details">
+                            5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0o-1b_3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2 %&quot; = 5 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-0n-1b_3T_3U_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12.5 %&quot; = 5 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            12.5 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-3T_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.01
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0o-3T_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0n-3T_3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.07
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=220" title="incomplete or one sided information used as the basis for political and social decisions (concept paper section 4)">
+                            biased information
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 10 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.45&quot; = 110.05 * 0.41 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.45
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.15&quot; = 0.45 * 0.33
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.15
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.35&quot; = 0.45 * 3
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.35
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4 %&quot; = 0 - 0.41 % * 978.23 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-10 %&quot; = -4 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -10 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Q-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.6 %&quot; = -4 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.6 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1Q-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5&quot; = -4 % * 1.25
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1Q-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-12.5&quot; = -5 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -12.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1Q-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2&quot; = -5 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1877" title="the actual cost above the estimated cost as share of the estimated cost">
+                            cost overrun
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1893&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=RJ-1Q-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.45
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=230" title="structured, iterative and anonymised consultation of experts, in a real time variant used to let transparent consensus building set the direction instead of the emotional impulse (concept paper section 4)">
+                            Delphi method
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1916&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1a-1Q-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.07&quot; = 0.45 * 15 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.07
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1a-1Q-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;9&quot; = 0 - -5 * 1&#039;189 * 15 % * 1.01
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            9
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1a-1Q-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;3.6&quot; = 9 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            3.6
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1a-1Q-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;22.5&quot; = 9 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            22.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1a-1Q-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 0.45 * 8.89
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1a-1Q-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.6&quot; = 4 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.6
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1a-1Q-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10&quot; = 4 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            10
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1a-1Q-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;15 %&quot; = 0 - -15 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;Delphi method&quot;,&quot;biased information&quot;
+click for more details">
+                            15 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1a-1Q-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6 %&quot; = 15 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            6 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1a-1Q-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;37.5 %&quot; = 15 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            37.5 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1Q-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.02
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1Q-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1Q-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.32
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=378" title="false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.">
+                            disinformation
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 10 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-3l_3p_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.35&quot; = 110.05 * 0.32 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.35
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-3l_3p_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.12&quot; = 0.35 * 0.33
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.12
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-3l_3p_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.05&quot; = 0.35 * 3
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.05
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-1b_3r_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5 %&quot; = 0 - 0.32 % * 1572.33 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0o-1b_3r_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-12.5 %&quot; = -5 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -12.5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1J-0n-1b_3r_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2 %&quot; = -5 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -2 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-8&quot; = -5 % * 1.6
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0o-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-20&quot; = -8 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -20
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1J-0n-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-3.2&quot; = -8 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -3.2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2228" title="the attempt of a foreign or domestic actor to influence the voters of an election with false or misleading content">
+                            election interference
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2236&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=Wo-1J-3l_3p_3u_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.35
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=229" title="democratically legitimised, transparent and justiciable rules against disinformation on internet platforms (concept paper section 2)">
+                            platform regulation
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2256&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Z-1K-3l_3p_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.04&quot; = 0.35 * 10 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.04
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Z-1K-1a_3k_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12&quot; = 0 - -8 * 1&#039;189 * 10 % * 1.26
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            12
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Z-1K-0o-1a_3k_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4.8&quot; = 12 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4.8
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1Z-1K-0n-1a_3k_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;30&quot; = 12 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            30
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1Z-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;12&quot; = 0.35 * 34.29
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            12
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1Z-0o-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4.8&quot; = 12 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4.8
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1Z-0n-3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;30&quot; = 12 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            30
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1Z-1b_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10 %&quot; = 0 - -10 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;platform regulation&quot;,&quot;disinformation&quot;
+click for more details">
+                            10 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1Z-0o-1b_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4 %&quot; = 10 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            4 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1Z-0n-1b_3u_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;25 %&quot; = 10 % * 250 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            25 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-3l_3u_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0o-3l_3u_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-0n-3l_3u_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.05
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=223" title="gross domestic product measures the market production and not the benefit, so free goods count as zero and unrepaired damage does not reduce it (concept paper section 11)">
+                            GDP mismeasurement
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 15 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.25&quot; = 110.05 * 0.23 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.25
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.1&quot; = 0.25 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.1
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.63&quot; = 0.25 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.63
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-3 %&quot; = 0 - 0.23 % * 1320.54 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-7.5 %&quot; = -3 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -7.5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1T-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.2 %&quot; = -3 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.2 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1T-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-3&quot; = -3 % * 1
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1T-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-7.5&quot; = -3 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -7.5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1T-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.2&quot; = -3 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.2
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2436" title="the change of the measured GDP level when the statistical office rebases the national accounts; an increase is positive">
+                            GDP revision
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2448&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=a2-1T-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.25
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=282" title="a measure of the actual usage instead of the market turnover, so that free goods and avoided damage are part of the result (concept paper section 11)">
+                            gross domestic usage
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2474&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1T-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.25&quot; = 0.25 * 100 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.25
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1T-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 0 - -3 * 1&#039;189 * 100 % * 0.11
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1T-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.6&quot; = 4 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.6
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1T-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10&quot; = 4 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            10
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1j-1h-1T-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;4&quot; = 0.25 * 16
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1j-1h-1T-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.6&quot; = 4 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.6
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1j-1h-1T-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;10&quot; = 4 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            10
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1g-1T-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 0.11 % / 0.11 %
+&quot;loss reduction&quot;,&quot;percent&quot; = &quot;gross domestic usage&quot;,&quot;GDP mismeasurement&quot; / &quot;GDP growth&quot;,&quot;free good&quot;,&quot;variance high (system)&quot;
+click for more details">
+                            100 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1g-1T-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;40 %&quot; = 100 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            40 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2O-1g-1T-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 100 % * 100 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1T-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.06
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1T-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1T-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.39
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=277" title="proprietary AI systems without disclosed training data, open source code or accountability chain, which reproduce a text in its intended reading instead of exposing its weaknesses (concept paper section 6)">
+                            black-box AI
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 10 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.22&quot; = 110.05 * 0.2 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.22
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.07&quot; = 0.22 * 0.33
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.07
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.66&quot; = 0.22 * 3
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.66
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-3 %&quot; = 0 - 0.2 % * 1500.75 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-7.5 %&quot; = -3 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -7.5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2J-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.2 %&quot; = -3 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.2 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-2J-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4&quot; = -3 % * 1.33
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-2J-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-10&quot; = -4 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -10
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-2J-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.6&quot; = -4 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.6
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=3&amp;id=1693">
+                            mistake
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2013&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=2J-1J-3l_3p_4N_5H_OR_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.22
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=280" title="AI systems with societal decision relevance organised as a public good with disclosed training data, open source availability and clear liability rules (concept paper section 6)">
+                            public AI
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2034&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.11&quot; = 0.22 * 50 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.11
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;7&quot; = 0 - -4 * 1&#039;189 * 50 % * 0.29
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            7
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.8&quot; = 7 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.8
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;17.5&quot; = 7 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            17.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1j-1h-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;20&quot; = 0.22 * 90.91
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            20
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1j-1h-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;8&quot; = 20 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            8
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1j-1h-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;50&quot; = 20 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            50
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1g-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;50 %&quot; = 0 - -50 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;public AI&quot;,&quot;black-box AI&quot;
+click for more details">
+                            50 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1g-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;20 %&quot; = 50 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            20 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2M-2J-1g-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 50 % * 200 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-2J-1i-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.01
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-2J-1i-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-2J-1i-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.08
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=222" title="the missing overview of the solidarity effects of an initiative, which reduces a multifaceted issue to a binary yes or no decision (concept paper section 10)">
+                            citizen participation
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 10 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.18&quot; = 110.05 * 0.16 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.18
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.06&quot; = 0.18 * 0.33
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.06
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.54&quot; = 0.18 * 3
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.54
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2 %&quot; = 0 - 0.16 % * 1222.72 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5 %&quot; = -2 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1S-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-0.8 %&quot; = -2 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -0.8 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1S-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-4&quot; = -2 % * 2
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1S-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-10&quot; = -4 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -10
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1S-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-1.6&quot; = -4 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -1.6
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2128" title="a public budget that is spent on other purposes than the citizens would choose, e.g. less on health and sanitation">
+                            budget misallocation
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2136&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=VE-1S-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.18
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=234" title="a structured, argument based and iterative process in which every citizen can propose, debate and decide binding rules (concept paper section 10)">
+                            fluid democracy
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2160&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1e-1S-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.09&quot; = 0.18 * 50 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.09
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1e-1S-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;5.5&quot; = 0 - -4 * 1&#039;189 * 50 % * 0.23
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1e-1S-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.2&quot; = 5.5 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1e-1S-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;13.75&quot; = 5.5 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            13.75
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1e-1S-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;6&quot; = 0.18 * 33.33
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1e-1S-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.4&quot; = 6 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1e-1S-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;15&quot; = 6 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            15
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1e-1S-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;50 %&quot; = 50 %
+&quot;loss reduction&quot;,&quot;percent&quot; = &quot;fluid democracy&quot;,&quot;position&quot;,&quot;percent&quot;
+click for more details">
+                            50 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1e-1S-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;20 %&quot; = 50 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            20 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1e-1S-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 50 % * 200 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1S-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.02
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1S-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1S-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.23
+                        </a>
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=224" title="closed source software in the public sector that causes opacity, missing verifiability, vendor dependency and risks to national security (concept paper section 9)">
+                            proprietary software
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.1&quot; = 110.05 * 0.09 %
+&quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;world&quot;,&quot;GDP&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot;
+click for more details">
+                            0.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-0o-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.04&quot; = 0.1 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.04
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-0n-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.25&quot; = 0.1 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.25
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2 %&quot; = 0 - 0.09 % * 2200.95 %
+&quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; = 0 - &quot;percent&quot;,&quot;GDP&quot;,&quot;annual&quot; * &quot;loss&quot;,&quot;long run growth&quot;,&quot;percent&quot;
+click for more details">
+                            -2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-0o-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5 %&quot; = -2 % * 2.5
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -5 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1U-1J-0n-1b_3r_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-0.8 %&quot; = -2 % * 0.4
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -0.8 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1U-1J-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-2&quot; = -2 % * 1
+&quot;potential loss&quot;,&quot;percent htp&quot; = &quot;potential loss&quot;,&quot;percent&quot;,&quot;GDP&quot; * &quot;welfare weight&quot;,&quot;factor&quot;
+click for more details">
+                            -2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1U-1J-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-5&quot; = -2 * 250
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -5
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=HW-1U-1J-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;-0.8&quot; = -2 * 40
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            -0.8
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="http://localhost/http/view.php?m=4&amp;id=2790">
+                            licence cost
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2800&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=5&amp;id=fa-1U-1J-3l_3p_4N_5H_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=233" title="free, secure and transparent software in the public sector following the principle public money, public code (concept paper section 9)">
+                            free software
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-2817&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1d-1U-1K-3l_3p_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.05&quot; = 0.1 * 50 %
+&quot;potential gain&quot;,&quot;trillion&quot;,&quot;EUR&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;loss reduction&quot;,&quot;percent&quot;
+click for more details">
+                            0.05
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1d-1U-1K-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;3&quot; = 0 - -2 * 1&#039;189 * 50 % * 0.25
+&quot;potential gain&quot;,&quot;billion&quot;,&quot;htp&quot; = 0 - &quot;potential loss&quot;,&quot;percent htp&quot; * &quot;world&quot;,&quot;htp&quot;,&quot;billion&quot; * &quot;loss reduction&quot;,&quot;percent&quot; * &quot;gain share&quot;,&quot;factor&quot;
+click for more details">
+                            3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1d-1U-1K-0o-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1.2&quot; = 3 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            1.2
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1d-1U-1K-0n-1a_3k_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;7.5&quot; = 3 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            7.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1d-1U-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;1&quot; = 0.1 * 10
+&quot;initial effort&quot;,&quot;person year&quot; = &quot;potential loss&quot;,&quot;trillion&quot;,&quot;EUR&quot; * &quot;person year per trillion EUR&quot;,&quot;factor&quot;
+click for more details">
+                            1
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1d-1U-0o-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;0.4&quot; = 1 * 0.4
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            0.4
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1j-1h-1d-1U-0n-4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;2.5&quot; = 1 * 2.5
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            2.5
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1d-1U-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;50 %&quot; = 0 - -50 %
+&quot;loss reduction&quot;,&quot;percent&quot; = 0 - &quot;free software&quot;,&quot;licence spending&quot;
+click for more details">
+                            50 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1d-1U-0o-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;20 %&quot; = 50 % * 40 %
+&quot;variance low (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            20 %
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1g-1d-1U-0n-1b_4N_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1" title="&quot;100 %&quot; = 50 % * 200 %
+&quot;variance high (system)&quot; = &quot;assumed&quot; * &quot;probability range factor&quot;
+click for more details">
+                            100 %
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1U-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.05
+                        </a>
+                        (
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1U-0o-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0
+                        </a>
+                        –
+                        <a href="http://localhost/http/view.php?m=9&amp;id=2P-1i-1U-0n-3l_&amp;9dls=20&amp;9dlc=0&amp;9dlv=1">
+                            0.63
+                        </a>
+                        )
+                    </td>
+                </tr>
+            </table>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

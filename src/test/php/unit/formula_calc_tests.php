@@ -208,7 +208,8 @@ class formula_calc_tests
             . $frm_prior->id()
             . '">'
             . word_names::PRIOR_NAME
-            . '</a> ) / <a href="' . $frm_edit_url . '20">'
+            . '</a> ) / <a href="' . $frm_edit_url
+            . $frm_prior->id() . '">'
             . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 

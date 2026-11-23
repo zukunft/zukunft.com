@@ -3412,3 +3412,12 @@ an api message with only the id from the request cache, but no frontend caller u
 cases are solved object by object (`sandbox_link::named_from_cache`, `phrase_list::cached_phrase`). Use it where a run
 reports an empty link (`coding_rule_tests::html_no_empty_link_tests`) or an id-only api message, and then check
 whether the object helpers can call it instead; with a unit test per caller.
+
+## the result of a row phrase with a named unit
+
+Added on 2026-11-23 with the unit that a formula names on the left side (`"annual production" "TWh" = ...`, see
+`formula::apply_result_phrases`): `web/formula/formula_calc::calculates_phrase` and `phraseResult` of
+`calculator_json.js` take a result as the number of a row phrase of a detail table only if its formula has the phrase
+alone left of the `=`, so a formula that also names its unit is never taken for a row phrase. Let both take the first
+term of the left side as the phrase if the other terms are units, with a unit test of `calculates_phrase` for a left
+side with a unit, and negative: a left side with two phrases that are no units is still not the result of one phrase.

@@ -1,0 +1,47 @@
+# energy units (2026-11-23)
+
+Part of #247. Written after the edits instead of before the first edit as `docs/llm/coding.md` asks, which the LLM
+missed; the tables state the change as it is.
+
+## Request
+
+Add scaling formulas from 'Wh' (watt hour) to 'kWh', 'MWh', 'GWh' and 'TWh' and add the units and similar useful units
+and scalings that might be missing; better more than less, to reduce the number of re-pins.
+
+Decisions of the developer of 2026-11-23:
+- add the power units too and fix the test data `wind_investment.json`, whose triples "kW", "MW" (Watt scaled by Kilo /
+  Mega), "Gigawatt" and "kilowatt hour" (kilowatt per hour) collide with them in the shared phrase namespace
+- declare each new unit like tonne and t: a long name word, a symbol word and an "is symbol for" triple
+- add the groups energy Wh..PWh, energy kJ..EJ, mass kt, Mt, Gt and length, area and volume
+
+The frontend converts a number step by step to the nearest unit that a scaling formula links (`number_format::next_unit`
+repeats the step), so each formula links a unit to its next neighbour. A formula names the long units on both sides,
+because `number_format::is_unit` matches the unit of a value by its name or by the phrase it is a symbol for.
+
+## Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/messages/units.json` | 142 words, 99 triples, 14 formulas | 188 words, 130 triples, 39 formulas: appended at the end of each list, so that no existing unit moves | the long name and symbol words of Wh, kWh (long name only), MWh, GWh, TWh, PWh, kJ, MJ, GJ, TJ, PJ, EJ, kW, MW, GW, TW, mg, kt, Mt, Gt, mm, cm, ml and km2; their "is symbol for" triples and those of J, W, g, km and ha, which were missing; the triple "square kilometre" (kilometre can be square, as in `zh_city.json`) and the unit "gram per kWh" (as in the use cases); 25 scaling formulas Wh-kWh-MWh-GWh-TWh-PWh, J-kJ-MJ-GJ-TJ-PJ-EJ, W-kW-MW-GW-TW, mg-g, t-kt-Mt-Gt, mm-cm-m, ml-l and m2-are-ha-km2 |
+| `src/main/resources/messages/system_unit_test_data/wind_investment.json` | the triples "kW", "MW", "Gigawatt" and "kilowatt hour"; a value with "gram" and "kilowatt hour" | the four triples removed, "kW" and "MW" as name-only words, the unit triple "gram per kWh" repeated verbatim and used by the value | no word and triple with the same name, and the value has one unit as `docs/llm/json_values.md` asks |
+
+## Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `test/php/create/test_pinned_ids.php`, `unit/*/list.csv` | — | — | `units.json` is a system data file, so every object of a later file gets a new id: re-pin |
+| html snapshots and api fixtures with a unit of the new groups | — | — | e.g. a number in kWh, TWh, MW or km2 is now shown in the nearest unit of a scaling formula, and a symbol links to its long name with the description as tooltip; written by the run |
+| `base_data/zh_canton.json`, `zurich.json`, `zh_city.json`, `start_page/problem_global_warming_solutions.json`, the use cases | — | — | GWh, km2, square kilometre, millimetre, megatonne, gigatonne and gram per kWh have their home in `units.json` now; the later files declare them name-only or verbatim, so they are not changed |
+
+## Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/php/shared/calc/expression.php` | `user_text`, `ref_text` and `user_text_ui` create the local conversion message as the backend `user_message`; `get_ref_text`, `get_usr_text`, `res_part`, `get_usr_part` and `get_next_term_from_ref` accept only the backend `user_message` | the local message comes from the new `conversion_msg()`, which a frontend or backend class overrides; the internal functions accept `user_message\|user_message_ui` | a fatal of the test run of 2026-11-23 in `formula_write_tests` (`formula->dsp_text`): `web\sandbox\db_object::load_by_id(): Argument #2 ($msg) must be of type web\user\user_message, cfg\user\user_message given`; the frontend expression got the backend message of the shared conversion and handed it to the frontend `word::load_by_id`. The bug was latent: the test passes a preloaded term list, so no term was loaded so far; the new units shift the id of "percent" (`scaling.json` is imported after `units.json`), so until the re-pin the pinned id is not in the list and the expression loads the word |
+| `src/test/php/unit_ui/system_view_ui_tests.php` | `view_id_to_file_info` adds the object id to every snapshot name, e.g. `result/9_result_06_0S_0U_10_12_1I_1R_`, `group/73_group_add_910542012557` and `phrase/2_phrase_table_167` | the classes of `SNAPSHOT_WITHOUT_ID_CLASSES` (result, group) and the views of `SNAPSHOT_WITHOUT_ID_VIEWS` (table) are named without the object id e.g. `result/9_result`; the global warming table pages add their page name to that name instead of replacing the id | 13 internal errors of the test run of 2026-11-23 "file .../views_by_id/result/9_result_06_1Z_1b_27_29_2P_2Y_.html does not exist": the group id of a result and a group sample is made of pinned phrase ids, and the table view shows a pinned phrase, so the new seed words of `units.json` have renamed 13 snapshots; the git history shows the same renames at earlier re-pins (2026-06-10, 2026-10-04, 2026-11-03). The view id at the start keeps each name unique, as for the global warming pages, which were already named by the page for the same reason. The next run reports the 13 files once more under their new names and writes them; the run removes the id-named files. Confirmed by the following run of 2026-11-23: it reported the 13 new names as "does not exist" with "Target is not expected to be empty", wrote them and deleted the 13 id-named files; the new files differ from the committed ones only by the group and phrase ids in the links, which is the re-pin itself. The message is not suppressed, because a missing snapshot must be reported (`docs/llm/coding.md`: never remove an error message) |
+| `src/test/php/unit/group_tests.php` | the expected 512 bit text key of the result id starts with the hard-coded formula part `J=` (formula id 21) | the formula part is built with `int2alpha_num(formula_names::INCREASE_ID, false, false, true)`, like the 64 and 128 bit keys above it are built from the pinned ids | the test run of 2026-11-23 "text key result_id: actual i=8jId-..., expected J=8jId-...": the 25 scaling formulas of `units.json` are imported before the formula "increase", so its pinned id moved from 21 to 46 (`i=`); the phrase part has fixed test ids and is unchanged |
+| `src/test/php/unit/formula_calc_tests.php` | the expected display text of the formula "increase" links the second "prior" with the hard-coded id 20 | `$frm_prior->id()`, as the first "prior" link | the test run of 2026-11-23 "formula increase; test the display name ...: actual ...id=45">prior</a>, expected ...id=20">prior</a>": the 25 scaling formulas of `units.json` moved the pinned id of the formula "prior" from 20 to 45 |
+| `src/test/php/unit/expression_tests.php` | the expected element ids `21/18,21/20,21/20` and term ids `36,40,319` of the formula "increase" hard-coded | the element ids built from `formula_names::INCREASE_ID`, `THIS_ID` and `PRIOR_ID` like the element test above it, the term ids with `library::term_id` from these ids and `words::PCT_ID`, sorted as `dsp_id` lists them | the test run of 2026-11-23 "test the formula element list: actual 46/43,46/45,46/45" and "test the formula term list: actual (86,90,461)": the 25 scaling formulas and the 46 words of `units.json` moved the pinned ids of "increase" (21 to 46), "this" (18 to 43), "prior" (20 to 45) and "percent" (160 to 231) |
+| `src/test/php/unit_write/formula_write_tests.php`, `src/test/php/unit_write/element_group_write_tests.php` | the expected reference texts `{w160}=1-({f18}/{f20})` and `{f18}` hard-coded | built from `words::PCT_ID`, `formula_names::THIS_ID` and `PRIOR_ID` | found by a read-only scan for the old ids after the fix of `expression_tests.php` above; the db write tests run after the unit tests, so they would have failed in the same way on the next run |
+| `src/test/php/const/formula_names.php` | `SCALE_MIO_TO_ONE_ID = 16` and `SCALE_MIO_ID = 16` | `SCALE_MIO_TO_ONE_ID = 41` re-pinned by hand; `SCALE_MIO_ID = self::SCALE_MIO_TO_ONE_ID` | the test run of 2026-11-23 "the pinned formula ids match ... list.csv: scale million to one is 41 not 16": the 25 scaling formulas of `units.json` moved the id by 25 like the other formulas, but the auto re-pin skipped it, because two consts had the value 16 (`docs/pinned_id_findings.md`: "re-pin by hand, because of no single const with the pinned id"); both got 16 in afe42e692 ("re-baseline the test ids"), so the test formula "scale millions to one" is meant to have the seed id of "scale million to one"; with the reference the next re-pin finds a single const. The test formula changes its id to 41 with it, so a snapshot or fixture with its term id changes in the run |
+| `src/main/php/web/formula/expression.php` | the term loads and symbols typed `backend_user_message\|Message` | `conversion_msg()` returns the frontend `user_message`; the loads and symbols typed `user_message\|Message` with the frontend class, the backend alias removed | the frontend loads accept only the frontend message; the `\|Message` stays, because a child must accept the `Message` of the shared parent |

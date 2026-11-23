@@ -178,6 +178,11 @@ class system_view_ui_tests
     // and the cleanup of the snapshots below keeps it
     const string START_PAGE_DETAILS_FILE = test_paths::VIEWS_BY_ID . self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR
         . views::START_ID . '_' . self::START_PAGE_FILE_NAME . self::DETAILS_LIST_FILE_POSTFIX;
+    // the classes and the views whose sample object has an id that follows the pinned seed ids, e.g. the group id
+    // of a result is made of its phrase ids, so their snapshot is named without the object id, because every new
+    // seed phrase would rename the snapshot at each re-pin; the view id at the start keeps the name unique
+    const array SNAPSHOT_WITHOUT_ID_CLASSES = [result::class, group::class];
+    const array SNAPSHOT_WITHOUT_ID_VIEWS = [views::TABLE_ID];
 
     function run(test_cleanup $t): void
     {
@@ -1269,9 +1274,9 @@ class system_view_ui_tests
             $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
             [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
                 $this->view_id_to_url_action(views::TABLE_ID), $page_url, $lib);
-            // named by the page instead of the id of the page triple, because the triple is imported late, so every
-            // new seed phrase before it moves its pinned id and would rename the snapshot at each re-pin
-            $dbo_name = $lib->str_left_of_last($dbo_name, '_') . '_global_warming_' . $page_name;
+            // named by the page, because the table view is named without the id of its phrase
+            // (see SNAPSHOT_WITHOUT_ID_VIEWS), which would rename the snapshot at each re-pin
+            $dbo_name .= '_global_warming_' . $page_name;
             $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
             $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
             $t->assert_html_page($test_name, $t->link_to_pod($page_html, THIS_URL), $file_path);
@@ -1338,7 +1343,10 @@ class system_view_ui_tests
                 if ($class == phrase::class or $class == term::class) {
                     $dbo_name .= '_' . views::TEST_VIEW_IDS[$id] ?? 'not_found';
                 }
-                $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                if (!in_array($class, self::SNAPSHOT_WITHOUT_ID_CLASSES)
+                    and !in_array($id, self::SNAPSHOT_WITHOUT_ID_VIEWS)) {
+                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                }
             }
             $result = [$domain_class . DIRECTORY_SEPARATOR, $dbo_name, $action . ' ' . $domain_class . ' view'];
         }

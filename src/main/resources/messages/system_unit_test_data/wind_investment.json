@@ -108,6 +108,12 @@
       "name": "kilowatt"
     },
     {
+      "name": "kW"
+    },
+    {
+      "name": "MW"
+    },
+    {
       "name": "kWh"
     },
     {
@@ -301,24 +307,6 @@
       "to": "Power Plant"
     },
     {
-      "name": "kW",
-      "from": "Watt",
-      "verb": "scaled by",
-      "to": "Kilo"
-    },
-    {
-      "name": "kilowatt hour",
-      "from": "kilowatt",
-      "verb": "per",
-      "to": "hour"
-    },
-    {
-      "name": "MW",
-      "from": "Watt",
-      "verb": "scaled by",
-      "to": "Mega"
-    },
-    {
       "name": "German North Sea Coast",
       "from": "Germany",
       "verb": "has a",
@@ -346,6 +334,7 @@
       "verb": "per",
       "to": "kWh"
     },
+    {"from": "gram", "verb": "per", "to": "kWh", "type": "measure_unit", "description": "the unit of the emission intensity of electricity"},
     {
       "name": "Power per Wind Turbine",
       "from": "Power",
@@ -363,12 +352,6 @@
       "from": "hour",
       "verb": "with",
       "to": "full load"
-    },
-    {
-      "name": "Gigawatt",
-      "from": "Watt",
-      "verb": "scaled by",
-      "to": "Giga"
     },
     {
       "name": "GWh/a",
@@ -735,8 +718,7 @@
         "replacement mix",
         "North Germany",
         "CO2-eq",
-        "gram",
-        "kilowatt hour",
+        "gram per kWh",
         "assumed"
       ],
       "number": "600"

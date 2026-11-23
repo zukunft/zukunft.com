@@ -30,7 +30,8 @@
       "name": "GWh"
     },
     {
-      "name": "TWh"
+      "name": "TWh",
+      "type": "measure_unit"
     },
     {
       "name": "GW"
@@ -1439,134 +1440,6 @@
       "to": "new NPP input WACC"
     },
     {
-      "name": "new NPP input capacity",
-      "from": "new NPP inputs",
-      "verb": "has a",
-      "to": "capacity"
-    },
-    {
-      "name": "new NPP input capacity label",
-      "description": "New nuclear capacity",
-      "from": "new NPP input capacity",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
-      "name": "new NPP input capacity hint",
-      "description": "One EPR 1.63 GW, one AP1000 1.157 GW, two AP1000 2.314 GW {source:BAK economiesuisse study 2026}",
-      "from": "new NPP input capacity",
-      "verb": "has a",
-      "to": "calculator hint"
-    },
-    {
-      "name": "new NPP input capacity slider",
-      "from": "new NPP input capacity",
-      "verb": "has a",
-      "to": "calculator slider"
-    },
-    {
-      "name": "new NPP input capacity order",
-      "from": "new NPP input capacity",
-      "verb": "is follower of",
-      "to": "new NPP input construction time"
-    },
-    {
-      "name": "new NPP input alternative cost",
-      "from": "new NPP inputs",
-      "verb": "has a",
-      "to": "renewable levelised cost"
-    },
-    {
-      "name": "new NPP input alternative cost label",
-      "description": "Cost of the renewable alternative",
-      "from": "new NPP input alternative cost",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
-      "name": "new NPP input alternative cost hint",
-      "description": "Levelised cost 2050 of the PV and wind that would replace the nuclear kilowatt-hours: rooftop PV 50-130, wind 60-100 CHF/MWh {source:BAK economiesuisse study 2026}; Fraunhofer: PV 41-50, wind 43-92 EUR/MWh in Germany {source:Fraunhofer ISE LCOE 2024 via Faktenfackel}",
-      "from": "new NPP input alternative cost",
-      "verb": "has a",
-      "to": "calculator hint"
-    },
-    {
-      "name": "new NPP input alternative cost slider",
-      "from": "new NPP input alternative cost",
-      "verb": "has a",
-      "to": "calculator slider"
-    },
-    {
-      "name": "new NPP input alternative cost order",
-      "from": "new NPP input alternative cost",
-      "verb": "is follower of",
-      "to": "new NPP input capacity"
-    },
-    {
-      "name": "new NPP input system cost",
-      "from": "new NPP inputs",
-      "verb": "has a",
-      "to": "system cost"
-    },
-    {
-      "name": "new NPP input system cost label",
-      "description": "System cost of intermittent supply",
-      "from": "new NPP input system cost",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
-      "name": "new NPP input system cost hint",
-      "description": "Storage, backup and grid cost per renewable MWh beyond the plant itself; no Swiss figure exists {source:BAK economiesuisse study 2026}",
-      "from": "new NPP input system cost",
-      "verb": "has a",
-      "to": "calculator hint"
-    },
-    {
-      "name": "new NPP input system cost slider",
-      "from": "new NPP input system cost",
-      "verb": "has a",
-      "to": "calculator slider"
-    },
-    {
-      "name": "new NPP input system cost order",
-      "from": "new NPP input system cost",
-      "verb": "is follower of",
-      "to": "new NPP input alternative cost"
-    },
-    {
-      "name": "new NPP input security value",
-      "from": "new NPP inputs",
-      "verb": "has a",
-      "to": "security value"
-    },
-    {
-      "name": "new NPP input security value label",
-      "description": "Value of secured winter supply",
-      "from": "new NPP input security value",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
-      "name": "new NPP input security value hint",
-      "description": "Per MWh of avoided winter import: 0 counts only the cost; BAK's 520 million CHF per year for 4.3 TWh is about 120 CHF/MWh {source:BAK economiesuisse study 2026}",
-      "from": "new NPP input security value",
-      "verb": "has a",
-      "to": "calculator hint"
-    },
-    {
-      "name": "new NPP input security value slider",
-      "from": "new NPP input security value",
-      "verb": "has a",
-      "to": "calculator slider"
-    },
-    {
-      "name": "new NPP input security value order",
-      "from": "new NPP input security value",
-      "verb": "is follower of",
-      "to": "new NPP input system cost"
-    },
-    {
       "name": "new NPP assumptions",
       "from": "new NPP",
       "verb": "has a",
@@ -1713,6 +1586,134 @@
       "from": "new NPP assumption threshold",
       "verb": "is follower of",
       "to": "new NPP assumption energy tariff"
+    },
+    {
+      "name": "new NPP input capacity",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "capacity"
+    },
+    {
+      "name": "new NPP input capacity label",
+      "description": "New nuclear capacity",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input capacity hint",
+      "description": "One EPR 1.63 GW, one AP1000 1.157 GW, two AP1000 2.314 GW {source:BAK economiesuisse study 2026}",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input capacity slider",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input capacity order",
+      "from": "new NPP input capacity",
+      "verb": "is follower of",
+      "to": "new NPP assumption threshold"
+    },
+    {
+      "name": "new NPP input alternative cost",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "renewable levelised cost"
+    },
+    {
+      "name": "new NPP input alternative cost label",
+      "description": "Cost of the renewable alternative",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input alternative cost hint",
+      "description": "Levelised cost 2050 of the PV and wind that would replace the nuclear kilowatt-hours: rooftop PV 50-130, wind 60-100 CHF/MWh {source:BAK economiesuisse study 2026}; Fraunhofer: PV 41-50, wind 43-92 EUR/MWh in Germany {source:Fraunhofer ISE LCOE 2024 via Faktenfackel}",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input alternative cost slider",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input alternative cost order",
+      "from": "new NPP input alternative cost",
+      "verb": "is follower of",
+      "to": "new NPP input capacity"
+    },
+    {
+      "name": "new NPP input system cost",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "system cost"
+    },
+    {
+      "name": "new NPP input system cost label",
+      "description": "System cost of intermittent supply",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input system cost hint",
+      "description": "Storage, backup and grid cost per renewable MWh beyond the plant itself; no Swiss figure exists {source:BAK economiesuisse study 2026}",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input system cost slider",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input system cost order",
+      "from": "new NPP input system cost",
+      "verb": "is follower of",
+      "to": "new NPP input alternative cost"
+    },
+    {
+      "name": "new NPP input security value",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "security value"
+    },
+    {
+      "name": "new NPP input security value label",
+      "description": "Value of secured winter supply",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input security value hint",
+      "description": "Per MWh of avoided winter import: 0 counts only the cost; BAK's 520 million CHF per year for 4.3 TWh is about 120 CHF/MWh {source:BAK economiesuisse study 2026}",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input security value slider",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input security value order",
+      "from": "new NPP input security value",
+      "verb": "is follower of",
+      "to": "new NPP input system cost"
     },
     {
       "name": "new NPP scenario columns",
@@ -2082,7 +2083,7 @@
   "formulas": [
     {
       "name": "annual production formula",
-      "expression": "\"annual production\" = \"capacity\" * \"capacity factor\" * 8760 / 1000",
+      "expression": "\"annual production\" \"TWh\" = \"capacity\" * \"capacity factor\" * 8760 / 1000",
       "latex": "E = P \\cdot CF \\cdot 8760 / 1000",
       "assigned": [
         "capacity",

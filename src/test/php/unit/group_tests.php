@@ -490,9 +490,12 @@ class group_tests
         $result = $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg);
         $t->assert($test_name, $result, $target);
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
+        // the key starts with the pinned formula id like the int keys above, so that a new seed formula
+        // does not break the test; the phrases of the lists have fixed test ids
         $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),
-            'J=8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+1FajJ2(4LYK3)1FajJ2)',
+            $res_id->int2alpha_num(formula_names::INCREASE_ID, false, false, true)
+            . '8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+1FajJ2(4LYK3)1FajJ2)',
             $t::TIMEOUT_LIMIT_PAGE);
         $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase(), $msg),

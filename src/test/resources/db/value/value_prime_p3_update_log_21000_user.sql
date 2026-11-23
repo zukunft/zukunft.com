@@ -40,9 +40,9 @@ SELECT value_prime_p3_update_log_21000_user
         295::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
-        979266437255::bigint,
-        228::smallint,
-        212::smallint,
+        1284213768327::bigint,
+        299::smallint,
+        283::smallint,
         135::smallint,
         0::smallint,
         3::bigint);

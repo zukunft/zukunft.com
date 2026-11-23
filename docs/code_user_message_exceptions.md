@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-256 creations below the entry points: 231 explained, 22 parameter defaults and 3 still unexplained
+255 creations below the entry points: 228 explained, 22 parameter defaults and 5 still unexplained
 and 0 nullable message parameters and 8 messages that never reach the caller
 
 ## parameter defaults
@@ -62,6 +62,8 @@ the remaining rule breaks: explain the exception with a comment or thread the $m
 
 ```
 frontend: /component/execute/system_form.php:1054 - $msg = new user_message();
+frontend: /formula/expression.php:77 - return new user_message();
 main backend: /helper/data_object.php:1133 - $msg = new user_message();
 main backend: /rdf/qlever.php:58 - return new user_message();
+shared: /calc/expression.php:126 - return new user_message();
 ```

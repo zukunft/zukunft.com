@@ -22,4 +22,4 @@ SELECT value_text_delete_log
         3,
         350,
         'zukunft.com',
-        '0A-1O+1S+1X+');
+        '0f-2V+2Z+2e+');

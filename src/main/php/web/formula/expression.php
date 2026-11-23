@@ -59,7 +59,6 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
@@ -67,6 +66,16 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 
 class expression extends shared_expression
 {
+
+    /**
+     * the frontend message for a conversion, because the frontend loads of the terms
+     * e.g. word::load_by_id accept only the frontend user_message
+     * @return user_message an empty message to collect the problems of one conversion
+     */
+    protected function conversion_msg(): user_message
+    {
+        return new user_message();
+    }
 
     /**
      * get a list of all formula elements
@@ -161,7 +170,7 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected function get_triple_symbol(string $name, backend_user_message|Message $msg): string
+    protected function get_triple_symbol(string $name, user_message|Message $msg): string
     {
         $trp = new triple();
         $trp->load_by_name($name, $msg);
@@ -174,7 +183,7 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected function get_verb_symbol(string $name, backend_user_message|Message $msg): string
+    protected function get_verb_symbol(string $name, user_message|Message $msg): string
     {
         $vrb = new verb;
         $vrb->load_by_name($name, $msg);
@@ -187,7 +196,7 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected function load_word(int $id, backend_user_message|Message $msg): ?word
+    protected function load_word(int $id, user_message|Message $msg): ?word
     {
         $wrd = new word();
         $wrd->load_by_id($id, $msg);
@@ -197,7 +206,7 @@ class expression extends shared_expression
         return $wrd;
     }
 
-    protected function load_triple(int $id, backend_user_message|Message $msg): ?triple
+    protected function load_triple(int $id, user_message|Message $msg): ?triple
     {
         $trp = new triple();
         $trp->load_by_id($id, $msg);
@@ -207,7 +216,7 @@ class expression extends shared_expression
         return $trp;
     }
 
-    protected function load_formula(int $id, backend_user_message|Message $msg): ?formula
+    protected function load_formula(int $id, user_message|Message $msg): ?formula
     {
         $frm = new formula();
         $frm->load_by_id($id, $msg);
@@ -217,7 +226,7 @@ class expression extends shared_expression
         return $frm;
     }
 
-    protected function load_verb(int $id, backend_user_message|Message $msg): ?verb
+    protected function load_verb(int $id, user_message|Message $msg): ?verb
     {
         $vrb = new verb();
         $vrb->load_by_id($id, $msg);

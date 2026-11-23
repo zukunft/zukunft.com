@@ -1712,8 +1712,12 @@ class formula extends formula_map
         log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
         $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all($msg);
 
-        // a percent result is relative, so remove any measure word from the result words
-        if ($res_add_wrd_lst->has_percent()) {
+        // the measure words of the operands are removed before the result phrases are added, so that a unit that the
+        // formula names on the left side e.g. "annual production" "TWh" stays the unit of the result: a division of
+        // values with a measure word like metre or CHF gives a ratio (a simplification of the unit algebra), a
+        // percent result is relative and a result phrase with a unit replaces the units of the operands
+        $divides = str_contains($this->ref_text_r, chars::DIV);
+        if ($divides or $res_add_wrd_lst->has_percent() or $res_add_phr_lst->has_measure($msg)) {
             $res->grp()->phrase_list()->ex_measure($msg);
             log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
         }

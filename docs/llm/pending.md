@@ -1,68 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## improve the new word / triple process
-
-if the user searches for a word that does not jet exist, suggest to add the word (or the triple, if the word contains spaces)
-check, if the word or triples exist in wikipedia, wikidata or conceptnet.io and if yes, suggest to include the references
-including the description and an 'is a' triple to define the group / parent of the new word
-
-## create JavaScript based add, edit and del views
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-## language
-
-### import sample
-
-make here a plan how to add other languages. this should include
-
-allow in import json files to import a translation for where a name is used a translation section like this 
-
-`"words": [
-    {
-        "name": "problem",
-        "translations": [
-            "de": {
-                  {
-                    "name": "Problem",
-                    "description": "Ein Problem ist ..."
-                  }
-             }
-        ]
-    },
-`
-
-where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
-
-add the translations to src/main/resources/messages/solution_prio.json
-
-add how translations can be imported to json_structure.md
-
-import the translation and save it to user_words. define how the standard translation should be saved. 
-If possible without a user or a default user or the owner of the related object.
-
-add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions. 
-So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
-
-apply the translation to all objects that have language specific fields
-
-add the translations to the export and check where changes due to translations might be useful 
-e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes  
-
-and finally show the translated page if the url has something link =de
-
 ## Calculator editor
 
 ### Swiss NPP
-
-add costs of CO2-eq reduction to the npp
-
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
@@ -223,6 +163,12 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
 5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
+### add costs of CO2-eq reduction to the npp
+
+### add to the calculator a 'Share assumptions and vote' button
+
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
 if done remove this prompt from pending.md
 
 **next prompt**
@@ -256,6 +202,47 @@ the calculator view should also be linked to the related number e.g. in http://l
 
 in http://localhost/http/view.php?m=1&dla=table_chart the 'one-click hide, ...' link to http://localhost/http/view.php?m=4&id=1293&u=11 and the ... to 'http://localhost/http/view.php?m=2&id=-1616&9m=1&9dla=table_chart&u=11'. the link of '...' is more relevant, but very small to the user. So if a table entry has a '...' use the link for the '...' for both, the first phrase of the list and the '...'
 
+## language
+
+### import sample
+
+make here a plan how to add other languages. this should include
+
+allow in import json files to import a translation for where a name is used a translation section like this
+
+`"words": [
+    {
+        "name": "problem",
+        "translations": [
+            "de": {
+                  {
+                    "name": "Problem",
+                    "description": "Ein Problem ist ..."
+                  }
+             }
+        ]
+    },
+`
+
+where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
+
+add the translations to src/main/resources/messages/solution_prio.json
+
+add how translations can be imported to json_structure.md
+
+import the translation and save it to user_words. define how the standard translation should be saved.
+If possible without a user or a default user or the owner of the related object.
+
+add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions.
+So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
+
+apply the translation to all objects that have language specific fields
+
+add the translations to the export and check where changes due to translations might be useful
+e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes
+
+and finally show the translated page if the url has something link =de
+
 ## user menu
 
 ### to add
@@ -273,6 +260,14 @@ missing sources
 ### to correct
 
 contradicting values / results
+
+## create JavaScript based add, edit and del views
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 ## ID check
 
@@ -760,9 +755,9 @@ if done remove this prompt from pending.md
 
 **full test run: /test/test.php**
 
-**Prompt:** no `TODO Prio 1` left and the test clean up (size L). The order of the prompts and their rules are in
-"## fix Prio 0" at the top of this file; this block keeps the file list of each step. The rules of "TODO" stay; a file
-that two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
+**Prompt:** no `TODO Prio 1` left and the test clean up (size L). This block keeps the order, the rules and the file
+list of each step. The rules of "TODO" stay; a file that two steps name belongs to the agent of the lower step, which
+takes the TODO of the other step as well.
 
 ### TODO
 
@@ -783,6 +778,11 @@ rules for every step:
 - an activated test that fails is not switched off again: the cause is fixed, or the test gets
   a `TODO Prio 1` with the reported diff
 - the LLM never runs the tests; the developer runs them and reports the result
+- Edit/Write only, never a shell edit; the LLM and its agents never commit
+- each step gets the log file that `docs/llm/coding.md` asks for, and every change after the first test of the step
+  goes into its "Unexpected changes"
+- the report of each prompt names the number of solved and re-prioritised TODOs, the number left (counted with
+  `git grep "TODO Prio 1"`), the line balance, the tests to run and a short commit message
 
 1. triage the bare "review" TODOs, because they do not say what is wrong; this step is done by the human developer,
    not by an agent: read the code, then replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a

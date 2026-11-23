@@ -76,21 +76,21 @@ class word_names
 
     // words from import file scaling.json in order of appearance
     const string MIO = 'million';
-    const int MIO_ID = 158;
+    const int MIO_ID = 229;
     const string MIO_COM = '10⁶';
     // "mio" is the symbol word of "million" and has its own database row
     const string MIO_SHORT = 'mio';
-    const int MIO_SHORT_ID = 299;
+    const int MIO_SHORT_ID = 370;
     const string MIO_SHORT_COM = 'the symbol used in formulas for million';
     const string BILLION = 'billion';
-    const int BILLION_ID = 159;
+    const int BILLION_ID = 230;
     // TODO Prio 2 maybe select the symbols by the triple
     // "x" is the symbol word of "factor" and has its own database row (see scaling.json)
     const string FACTOR_SYMBOL = 'x';
-    const int FACTOR_SYMBOL_ID = 164;
+    const int FACTOR_SYMBOL_ID = 235;
     // "%" is the symbol word of "percent" and has its own database row (see scaling.json)
     const string PERCENT_SYMBOL = '%';
-    const int PERCENT_SYMBOL_ID = 165;
+    const int PERCENT_SYMBOL_ID = 236;
 
     // words from import file time_definition.json in order of appearance
     const string THIS_NAME = 'this'; // the test name for the predefined word 'this'
@@ -98,74 +98,74 @@ class word_names
 
     // words from import file base_phrases.json used for the offline phrase selection
     const string FACT = 'fact';
-    const int FACT_ID = 206;
+    const int FACT_ID = 277;
     const string GOVERNMENT = 'government';
-    const int GOVERNMENT_ID = 208;
+    const int GOVERNMENT_ID = 279;
     const string GROUP = 'group';
-    const int GROUP_ID = 210;
+    const int GROUP_ID = 281;
     const string HAND = 'hand';
-    const int HAND_ID = 211;
+    const int HAND_ID = 282;
     const string LIFE = 'life';
     const int LIFE_ID = 12;
     const string MAN = 'man';
-    const int MAN_ID = 214;
+    const int MAN_ID = 285;
     const string PART = 'part';
-    const int PART_ID = 215;
+    const int PART_ID = 286;
     const string PERSON = 'person';
-    const int PERSON_ID = 216;
+    const int PERSON_ID = 287;
     const string PLACE = 'place';
-    const int PLACE_ID = 217;
+    const int PLACE_ID = 288;
     const string WAY = 'way';
-    const int WAY_ID = 223;
+    const int WAY_ID = 294;
     const string WOMAN = 'woman';
-    const int WOMAN_ID = 224;
+    const int WOMAN_ID = 295;
     const string WORK = 'work';
-    const int WORK_ID = 225;
+    const int WORK_ID = 296;
     const string WORLD = 'world';
-    const int WORLD_ID = 226;
+    const int WORLD_ID = 297;
 
     // words from import file solution_prio.json used for the start page in order of appearance
     const string PROBLEM = 'problem';
-    const int PROBLEM_ID = 220;
+    const int PROBLEM_ID = 291;
     const string GLOBAL = 'global';
-    const int GLOBAL_ID = 209;
+    const int GLOBAL_ID = 280;
     // the phrases of the "global happy time points" formula of solution_prio.json
     const string HUMAN = 'human';
     const int HUMAN_ID = 14;
     const string POPULATION = 'population';
-    const int POPULATION_ID = 296;
+    const int POPULATION_ID = 367;
     const string POTENTIAL = 'potential';
-    const int POTENTIAL_ID = 249;
+    const int POTENTIAL_ID = 320;
     const string SOLUTION = 'solution';
-    const int SOLUTION_ID = 241;
+    const int SOLUTION_ID = 312;
     const string LOSS = 'loss';
-    const int LOSS_ID = 252;
+    const int LOSS_ID = 323;
     const string GAIN = 'gain';
-    const int GAIN_ID = 250;
+    const int GAIN_ID = 321;
     const string CLIMATE = 'climate';
-    const int CLIMATE_ID = 253;
+    const int CLIMATE_ID = 324;
     const string WARMER = 'warmer';
-    const int WARMER_ID = 256;
+    const int WARMER_ID = 327;
     // the two measure words of the unit triple "gram per kWh" (see triple_names::GRAM_PER_KWH)
     const string GRAM = 'gram';
     const int GRAM_ID = 123;
     const string KWH = 'kWh';
     const int KWH_ID = 122;
     const string POPULISM = 'populism';
-    const int POPULISM_ID = 260;
+    const int POPULISM_ID = 331;
     const string POPULISM_COM = 'a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.';
     const string HEALTH = 'health';
-    const int HEALTH_ID = 276;
+    const int HEALTH_ID = 347;
     const string HEALTH_COM = 'a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.';
     const string POVERTY = 'poverty';
-    const int POVERTY_ID = 278;
+    const int POVERTY_ID = 349;
     const string POVERTY_COM = 'the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.';
     const string EDUCATION = 'education';
-    const int EDUCATION_ID = 280;
+    const int EDUCATION_ID = 351;
     const string EDUCATION_COM = 'process of teaching and learning';
     // the qualifier of a value that is estimated instead of taken from a source
     const string ASSUMED = 'assumed';
-    const int ASSUMED_ID = 338;
+    const int ASSUMED_ID = 409;
     // the unit of the PV capacity of pv_lifetime_balance.json, a phrase of the value that a calculator editor scenario changes
     const string KWP = 'kWp';
     // the status of a value that has been withdrawn, whatever its quality was
@@ -176,74 +176,74 @@ class word_names
     const string ISIN_MERCEDES = 'DE0007100000';
     // the words of the variance bound triples e.g. "variance low (system)"
     const string LOW = 'low';
-    const int LOW_ID = 236;
+    const int LOW_ID = 307;
     const string HIGH = 'high';
-    const int HIGH_ID = 237;
+    const int HIGH_ID = 308;
     // the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
-    const int CONFIDENCE_ID = 341;
+    const int CONFIDENCE_ID = 412;
     // the problems and solutions of solution_prio.json that are a word, not a triple
     // with the description of the import, which the start page shows as the tooltip
     const string DISINFORMATION = 'disinformation';
-    const int DISINFORMATION_ID = 307;
+    const int DISINFORMATION_ID = 378;
     const string DISINFORMATION_COM = 'false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.';
     const string RESEARCH = 'research';
-    const int RESEARCH_ID = 277;
+    const int RESEARCH_ID = 348;
     const string RESEARCH_COM = 'systematic investigation to discover new knowledge';
     const string TAXES = 'taxes';
-    const int TAXES_ID = 279;
+    const int TAXES_ID = 350;
     const string TAXES_COM = 'A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.';
     const string SPENDING = 'spending';
-    const int SPENDING_ID = 281;
+    const int SPENDING_ID = 352;
     const string SPENDING_COM = 'an outlay of money for goods or services';
     const string HTP = 'htp';
-    const int HTP_ID = 297;
+    const int HTP_ID = 368;
     const string TRILLION = 'trillion';
-    const int TRILLION_ID = 298;
+    const int TRILLION_ID = 369;
     const string USD = 'USD';
-    const int USD_ID = 470;
+    const int USD_ID = 541;
     // the chart types of solution_prio.json and the tiers they are assigned to (see triples::SYSTEM_CHART_TYPE)
     const string DEFAULT = 'default';
-    const int DEFAULT_ID = 229;
+    const int DEFAULT_ID = 300;
     const string MAYOR = 'mayor';
-    const int MAYOR_ID = 285;
+    const int MAYOR_ID = 356;
     const string MINOR = 'minor';
-    const int MINOR_ID = 287;
+    const int MINOR_ID = 358;
     const string ALTERNATIVE = 'alternative';
-    const int ALTERNATIVE_ID = 388;
+    const int ALTERNATIVE_ID = 459;
     // the reason column of the start page ranking (see triple_names::COLUMN_REASON)
     const string REASON = 'reason';
-    const int REASON_ID = 396;
+    const int REASON_ID = 467;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 627;
+    const int SALES_ID = 698;
     const string CASH = 'cash';
-    const int CASH_ID = 628;
+    const int CASH_ID = 699;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 629;
+    const int STATEMENT_ID = 700;
     const string PARTS = 'parts';
-    const int PARTS_ID = 631;
+    const int PARTS_ID = 702;
     const string INCOME = 'income';
-    const int INCOME_ID = 328;
+    const int INCOME_ID = 399;
     const string TAX = 'tax';
-    const int TAX_ID = 331;
+    const int TAX_ID = 402;
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
     const string CANTON = 'canton';
-    const int CANTON_ID = 201;
+    const int CANTON_ID = 272;
     const string CITY = 'city';
-    const int CITY_ID = 203;
+    const int CITY_ID = 274;
     // a city that the pod does not have, which the add word suggestions workflow adds and removes again
     const string HAMBURG = 'Hamburg';
     const string ZH = 'Zurich';
-    const int ZH_ID = 228;
+    const int ZH_ID = 299;
     const string BE = 'Bern';
-    const int BE_ID = 200;
+    const int BE_ID = 271;
     const string GE = 'Geneva';
-    const int GE_ID = 207;
-    const int INHABITANT_ID = 212;
+    const int GE_ID = 278;
+    const int INHABITANT_ID = 283;
     // the id of the word expected in the check table test without a database, so it follows no seed row
     const int EXPECTED_TEST_ID = 9901;
     // TODO Prio 2 add test to search for words in all language forms e.g. plural
@@ -253,28 +253,28 @@ class word_names
     const string ORIGINAL = 'original';
     // the word of solution_prio.json whose values of populism have a variance range
     const string FIFTEEN_YEAR = '15-year';
-    const int FIFTEEN_YEAR_ID = 270;
+    const int FIFTEEN_YEAR_ID = 341;
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 403;
+    const int YEAR_2013_ID = 474;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 404;
+    const int YEAR_2014_ID = 475;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 405;
+    const int YEAR_2015_ID = 476;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 406;
+    const int YEAR_2016_ID = 477;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 407;
+    const int YEAR_2017_ID = 478;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 408;
+    const int YEAR_2018_ID = 479;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
-    const int COMPANY_ID = 204;
+    const int COMPANY_ID = 275;
     const string ABB = 'ABB';
-    const int ABB_ID = 625;
+    const int ABB_ID = 696;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 626;
+    const int VESTAS_ID = 697;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -291,7 +291,7 @@ class word_names
     const string PROFIT = 'profit';
     const string GROSS = 'gross';
     const string COST = 'cost';
-    const int COST_ID = 339;
+    const int COST_ID = 410;
     const string REVENUE = 'revenue';
     // the parts of the concepts that the base setup defines as a triple, so that the XBRL import
     // re-declares the triple instead of joining the two tokens with "and" (import_convert_xbrl::CONCEPT_TRIPLES)
@@ -335,25 +335,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 693;
+    const int YEAR_2021_ID = 764;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 468;
+    const int YEAR_2022_ID = 539;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 692;
+    const int YEAR_2023_ID = 763;
     const string YEAR_2024 = '2024';
-    const int YEAR_2024_ID = 306;
+    const int YEAR_2024_ID = 377;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 691;
+    const int YEAR_2025_ID = 762;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 690;
+    const int YEAR_2026_ID = 761;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 689;
+    const int YEAR_2027_ID = 760;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 688;
+    const int YEAR_2028_ID = 759;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 687;
+    const int YEAR_2029_ID = 758;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 686;
+    const int YEAR_2030_ID = 757;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -392,29 +392,29 @@ class word_names
     const int YEAR_1983_ID = 134;
     const string YEAR_1967 = '1967';
     const int YEAR_1967_ID = 132;
-    const int THIS_ID = 194;
-    const int PRIOR_ID = 196;
+    const int THIS_ID = 265;
+    const int PRIOR_ID = 267;
     const string EUR = 'EUR';
-    const int EUR_ID = 302;
+    const int EUR_ID = 373;
     // what is measured, typed "measure non unit", so that it heads no row of a value table
     const string GDP = 'GDP';
-    const int GDP_ID = 304;
+    const int GDP_ID = 375;
     // the time span of a share of the GDP e.g. the annual loss that a problem causes
     const string ANNUAL = 'annual';
-    const int ANNUAL_ID = 303;
+    const int ANNUAL_ID = 374;
     const string EURO = 'Euro';
-    const int EURO_ID = 458;
+    const int EURO_ID = 529;
     const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 472;
+    const int DOLLAR_ID = 543;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 474;
+    const int EURO_SIGN_ID = 545;
     // the words of the share unit of use_cases/pv_lifetime_balance.json
     const string SHARE = 'share';
-    const int SHARE_ID = 330;
+    const int SHARE_ID = 401;
     const string RATIO = 'ratio';
-    const int RATIO_ID = 344;
-    const int CURRENCY_ID = 421;
+    const int RATIO_ID = 415;
+    const int CURRENCY_ID = 492;
     const string US = 'US';
 
 

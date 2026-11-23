@@ -38,6 +38,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::SHARED_CONST . 'chars.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -46,7 +49,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -64,6 +70,7 @@ use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_tests
@@ -79,6 +86,7 @@ class formula_tests
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
         $t_phr = new test_phrases($t);
+        $t_wrd = new test_words($t);
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
@@ -314,6 +322,32 @@ class formula_tests
         $t->assert($test_name, $fld_to_url[formula_fields::FLD_LATEX] ?? '', url_var::LATEX);
         $test_name = 'the system-set last update time has no url var, because no form may post it';
         $t->assert_key_not_exists($test_name, fields::FLD_LAST_UPDATE, $fld_to_url);
+
+        // a unit that the formula names on the left side e.g. "annual production" "TWh" is the unit of its result
+        $t->subheader($ts . 'result phrases');
+        $test_name = 'the unit that a formula names stays the unit of its result after a division';
+        $frm_div = $t_frm->formula();
+        $frm_div->ref_text_r = chars::CHAR_CALC . '{w' . word_names::GRAM_ID . '}' . chars::DIV . '{w' . word_names::KWH_ID . '}';
+        $res_unit = new result($t->usr1);
+        $src_lst = new phrase_list($t->usr1);
+        $src_lst->add($t_wrd->word_gram()->phrase());
+        $res_unit->grp()->set_phrase_list($src_lst);
+        $unit_lst = new phrase_list($t->usr1);
+        $unit_lst->add($t_wrd->word_kwh()->phrase());
+        $frm_div->apply_result_phrases($res_unit, $unit_lst, $msg);
+        $res_names = $res_unit->grp()->phrase_list()->names();
+        $t->assert_contains($test_name, $res_names, [word_names::KWH]);
+        $test_name = '... and replaces the unit of the operands';
+        $t->assert_contains_not($test_name, $res_names, [word_names::GRAM]);
+        $msg->reset();
+        // negative: a division without a named unit removes the unit of the operands and adds none
+        $test_name = 'a division without a named unit gives a result without unit';
+        $res_ratio = new result($t->usr1);
+        $res_ratio->grp()->set_phrase_list(clone $src_lst);
+        $frm_div->apply_result_phrases($res_ratio, new phrase_list($t->usr1), $msg);
+        $ratio_names = $res_ratio->grp()->phrase_list()->names();
+        $t->assert_contains_not($test_name, $ratio_names, [word_names::GRAM]);
+        $msg->reset();
 
         $t->subheader($ts . 'stored expression check');
         // both texts of a formula are stored, so a reference text that the expression does not give any more is reported

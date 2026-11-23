@@ -41,8 +41,10 @@ include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -322,17 +324,30 @@ class expression_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($msg, $trm_lst);
         $result = $elm_lst->dsp_id();
+        // the ids are built from the pinned ids like above, so that a new seed formula or word does not break the test
+        $frm_id = formula_names::INCREASE_ID . '/';
         $target = '"' . formula_names::THIS_NAME . '","'
             . formula_names::PRIOR . '","'
-            . formula_names::PRIOR . '" (element_id 21/18,21/20,21/20) for user 3 (zukunft.com system test)';
+            . formula_names::PRIOR . '" (element_id '
+            . $frm_id . formula_names::THIS_ID . ','
+            . $frm_id . formula_names::PRIOR_ID . ','
+            . $frm_id . formula_names::PRIOR_ID
+            . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
         $trm_lst = $exp->terms($msg, $trm_lst);
         $result = $trm_lst->dsp_id();
+        // the names and the term ids are each listed in their sort order
+        $trm_ids = [
+            $lib->term_id(formula_names::THIS_ID, formula::class),
+            $lib->term_id(formula_names::PRIOR_ID, formula::class),
+            $lib->term_id(words::PCT_ID, word::class)
+        ];
+        sort($trm_ids);
         $target = '"' . words::PERCENT . '","'
             . formula_names::PRIOR . '","'
-            . formula_names::THIS_NAME . '" (36,40,319)';
+            . formula_names::THIS_NAME . '" (' . implode(',', $trm_ids) . ')';
         $t->assert($test_name, $result, $target);
 
         // element_special_following

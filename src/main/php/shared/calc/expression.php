@@ -116,6 +116,16 @@ class expression
         $this->frm_name = '';
     }
 
+    /**
+     * the local message of a conversion, of the class that the term loads of this side expect,
+     * because a frontend load e.g. web word::load_by_id accepts only the frontend user_message
+     * @return user_message|user_message_ui an empty message to collect the problems of one conversion
+     */
+    protected function conversion_msg(): user_message|user_message_ui
+    {
+        return new user_message();
+    }
+
 
     /*
      * set and get
@@ -188,7 +198,7 @@ class expression
     {
         if ($this->usr_text_dirty) {
             // a local message like in ref_text, so that the conversion judges only itself
-            $conv_msg = new user_message();
+            $conv_msg = $this->conversion_msg();
             $this->usr_text = $this->get_usr_text($trm_lst, $conv_msg);
             $msg->merge($conv_msg);
         }
@@ -216,7 +226,7 @@ class expression
             // a local message, because the is_ok() gate must judge only this conversion: with a
             // shared message an error that the caller collected earlier would keep the converted
             // text from being stored; most callers use this as a getter and pass no message
-            $conv_msg = new user_message();
+            $conv_msg = $this->conversion_msg();
             $new_ref_txt = $this->get_ref_text($trm_lst, $conv_msg);
             if ($conv_msg->is_ok()) {
                 $this->ref_text = $new_ref_txt;
@@ -250,7 +260,7 @@ class expression
      */
     function user_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
     {
-        $dsp_msg = new user_message(); // not reported: a display-only read, see ref_text_ui
+        $dsp_msg = $this->conversion_msg(); // not reported: a display-only read, see ref_text_ui
         return $this->user_text($dsp_msg, $trm_lst);
     }
 
@@ -267,8 +277,8 @@ class expression
      * @return string the expression in the formula reference format
      */
     protected function get_ref_text(
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): string
     {
         // an expression without user text has nothing to convert, which e.g. the empty check of symbol_list reports
@@ -308,8 +318,8 @@ class expression
      * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
     protected function get_usr_text(
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): string
     {
         log_debug($this->ref_text_ui($msg));
@@ -342,7 +352,7 @@ class expression
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    function res_part(user_message $msg): string
+    function res_part(user_message|user_message_ui $msg): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->ref_text_ui($msg), chars::CHAR_CALC);
@@ -474,7 +484,7 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format
      */
-    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null, user_message $msg): string
+    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null, user_message|user_message_ui $msg): string
     {
         $result = $frm_part_text;
 
@@ -502,9 +512,9 @@ class expression
      * @return term|term_ui|null
      */
     private function get_next_term_from_ref(
-        string                      $frm_part_ref_text,
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        string                       $frm_part_ref_text,
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): term|term_ui|null
     {
         $trm = null;

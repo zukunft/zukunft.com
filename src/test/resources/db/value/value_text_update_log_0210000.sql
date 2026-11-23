@@ -30,4 +30,4 @@ SELECT value_text_update_log_0210000
         350::smallint,
         'old db text sample value'::text,
         'zukunft.com'::text,
-        '0A-1O+1S+1X+'::text);
+        '0f-2V+2Z+2e+'::text);

@@ -193,7 +193,7 @@ class element_group_write_tests
             // which is the compact key of the phrase ids (docs/llm/group_id.md) and so follows the ids of the database
             $fig_phr_lst = $t_db->load_phrase_list([words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020]);
             $fig_id = $fig_phr_lst->get_grp_id($msg, false)->id();
-            $target = ' 8.6703 {f18}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (' . $fig_id . ')';
+            $target = ' 8.6703 {f' . formula_names::THIS_ID . '}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_ui = new figure_list($fig_lst->api_json());

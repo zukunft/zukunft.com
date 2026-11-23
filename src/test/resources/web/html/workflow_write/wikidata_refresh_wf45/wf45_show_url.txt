@@ -1,9 +1,9 @@
 GET
-http://localhost/http/view.php?id=276&m=3&z=0
-/http/view.php?id=276&m=3&z=0
-/http/view.php?id=276&mask_id=word_default&step=no&
+http://localhost/http/view.php?id=347&m=3&z=0
+/http/view.php?id=347&m=3&z=0
+/http/view.php?id=347&mask_id=word_default&step=no&
 {
-    "id": "276",
+    "id": "347",
     "mask_id": "word_default",
     "step": "no"
 }
