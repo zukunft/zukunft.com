@@ -35,7 +35,7 @@ PREPARE element_type_insert_log_1111_call FROM
     'SELECT element_type_insert_log_1111 (?,?,?,?,?,?,?,?)';
 
 SELECT element_type_insert_log_1111
-       ('Word selector',
+       ('word',
         3,
         1,
         593,

@@ -135,6 +135,7 @@ include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
+include_once html_paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::SHARED_HELPER . 'MapObject.php';
@@ -235,6 +236,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
@@ -758,9 +760,14 @@ class frontend
         } else {
             $duration = microtime(true) - $this->start_time;
         }
-        // TODO Prio 0 review
-        if ($duration > 1) {
-            log_debug();
+        // a slow page is logged, so that the developer can start improving the really time critical parts
+        $msg_ui = new user_message_ui(); // not reported: the page has been sent already, so a config problem only means that the fallback limits are used
+        $log_level = $this->slow_request_log_level($duration, $msg_ui);
+        $slow_txt = 'script ' . $sys->script . ' took ' . round($duration, 3) . ' seconds';
+        if ($log_level == sys_log_levels::WARNING_ID) {
+            log_warning($slow_txt, 'frontend->end');
+        } elseif ($log_level == sys_log_levels::DEBUG_ID) {
+            log_debug($slow_txt);
         }
 
         // Free result test
@@ -776,6 +783,30 @@ class frontend
         } else {
             return '';
         }
+    }
+
+    /**
+     * the log level of a page of the given duration, based on the response time limits of the frontend behaviour
+     * (config.yaml user > default > frontend > behaviour > response time > log resp. detail)
+     *
+     * @param float $duration the seconds that the page has taken
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @return int|null the warning id above the detail limit, the debug id above the log limit or null if fast enough
+     */
+    function slow_request_log_level(float $duration, user_message_ui $msg_ui): ?int
+    {
+        global $ui_sys;
+        $log_names = [triples::RESPONSE_TIME, words::LOG, words::FRONTEND, words::BEHAVIOUR];
+        $detail_names = [triples::RESPONSE_TIME, words::DETAIL, words::FRONTEND, words::BEHAVIOUR];
+        $log_limit = (float)($ui_sys?->cfg?->get_by($log_names, $msg_ui, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG);
+        $detail_limit = (float)($ui_sys?->cfg?->get_by($detail_names, $msg_ui, def::FALLBACK_RESPONSE_TIME_DETAIL) ?? def::FALLBACK_RESPONSE_TIME_DETAIL);
+        $result = null;
+        if ($duration > $detail_limit) {
+            $result = sys_log_levels::WARNING_ID;
+        } elseif ($duration > $log_limit) {
+            $result = sys_log_levels::DEBUG_ID;
+        }
+        return $result;
     }
 
     /**
@@ -896,10 +927,8 @@ class frontend
     /**
      * execute the user request e.g. a database update and create the url for the next page
      * the execution should be done via api
-     * TODO Prio 0 deprecate $usr_backend and find another way to switch the user after login or signup
      *
      * @param array $url_array the parsed url as an array
-     * @param user_backend $usr_backend the backend user object updated in-place on successful login
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
@@ -909,7 +938,6 @@ class frontend
      */
     function url_to_action(
         array           $url_array,
-        user_backend    &$usr_backend,
         user_message_ui $msg_ui,
         data_object     $dto = new data_object(),
         bool            $do_it = true,
@@ -993,10 +1021,10 @@ class frontend
         }
 
         match (true) {
-            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg_ui, $do_it, $url_array),
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg_ui, $usr_ui, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_ui, $msg_ui, $do_it, $url_array),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg_ui, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg_ui, $do_it),
             // a button of the job lists changes the priority of a job or cancels it without a confirm view
@@ -1179,6 +1207,8 @@ class frontend
         $url_array = $this->url_with_wikipedia_refresh($url_array, $msg_ui, $test_mode);
         // the refresh icon of a wikidata reference leads to the preview of the values that wikidata would add
         $url_array = $this->url_with_wikidata_refresh($url_array, $msg_ui, $test_mode);
+        // the add word button of a search leads to the add view filled with the suggestions
+        $url_array = $this->url_with_word_suggestions($url_array, $msg_ui, $test_mode);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -2224,7 +2254,7 @@ class frontend
      * This is the two step dispatch of http/view.php wrapped in one call for the workflow tests.
      *
      * @param array $url_arr the parsed url of the user action e.g. the submitted edit form
-     * @param user_request $req the bundled request context (users, message, cache and the do_it flag)
+     * @param user_request $req the bundled request context (message with the requesting user, cache and the do_it flag)
      * @return string the html code of the next page shown to the user
      */
     function execute_and_next(
@@ -2238,7 +2268,7 @@ class frontend
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
+        $next_url = $this->url_to_action($url_arr, $req->msg, $req->dto, $req->do_it);
         $sys->times->switch();
         // url_to_html counts the rendering and the api wait itself
         return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
@@ -2255,7 +2285,6 @@ class frontend
      *
      * @param array $url_array the normalised URL params including username and password
      * @param user_message_ui $msg_ui collects errors if login fails
-     * @param user_backend $usr_backend updated in-place with the logged-in user on success
      * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the session
      * @return array URL array pointing to the back page (or the start view if no back target) on success, or the original login URL (minus credentials) on failure
@@ -2263,7 +2292,6 @@ class frontend
     private function action_login(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2280,7 +2308,6 @@ class frontend
             $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
             if ($logged_in) {
                 $this->start_user_session($db_usr->id(), $db_usr->name());
-                $usr_backend = $db_usr;
                 $usr_ui->set_from_json($db_usr->api_json([], $login_msg), $msg_ui);
             } else {
                 $msg_login_ui = new user_message_ui();
@@ -2291,7 +2318,7 @@ class frontend
 
         if ($logged_in) {
             // reject at once if a user whitelist is active and this user is not on it
-            server_guard::enforce_user((string)$usr_backend->id(), $usr_name);
+            server_guard::enforce_user((string)$usr_ui->id(), $usr_name);
             // without a back target show the start view after the login, not the login view again
             $back_array = html_base::url_par_from_back_part($url_array);
             $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
@@ -2310,7 +2337,6 @@ class frontend
      *
      * @param array $url_array the normalised URL params including username, email, and passwords
      * @param user_message_ui $msg_ui collects validation errors or save failures
-     * @param user_backend $usr_backend updated in-place with the new user on success
      * @param user_ui $usr_ui updated in-place from the new user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the signup page (minus passwords) on failure
@@ -2318,7 +2344,6 @@ class frontend
     private function action_signup(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2389,7 +2414,6 @@ class frontend
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
                         $this->start_user_session($usr_id, $usr_name);
-                        $usr_backend = $usr_by_name;
                         $usr_ui->set_from_json($usr_by_name->api_json([], $signup_msg), $msg_ui);
                         $signed_up = true;
                         $this->send_signup_mail($usr_by_name, $key, $msg_ui);
@@ -2504,7 +2528,6 @@ class frontend
      * validate the activation key, confirm the email, set the new password if given and auto-login the user
      * @param array $url_array the normalised URL params; expects id, key and optionally the two password fields
      * @param user_message_ui $msg_ui collects validation and save errors shown to the user
-     * @param user_backend $usr_backend updated in-place with the activated user on success
      * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the activate page (minus passwords) on failure
@@ -2512,7 +2535,6 @@ class frontend
     private function action_login_activate(
         array           $url_array,
         user_message_ui $msg_ui,
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         bool            $do_it
     ): array
@@ -2570,7 +2592,6 @@ class frontend
                                 $this->start_user_session($usr_id, $usr_by_id->name());
                                 // reject at once if a user whitelist is active and this user is not on it
                                 server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
-                                $usr_backend = $usr_by_id;
                                 $usr_ui->set_from_json($usr_by_id->api_json([], $activate_msg), $msg_ui);
                                 $activated = true;
                             } else {
@@ -2607,16 +2628,14 @@ class frontend
     }
 
     /**
-     * record the logoff time, clear the session and reset both user objects to anonymous IP-only state
-     * mirrors the login process: on login the users are set to the DB user; on logout they are reset to empty
-     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is saved and object is reset
-     * @param user_ui $usr_ui the frontend user object; reset to an empty (IP-only) object after logout
+     * record the logoff time, clear the session and reset the requesting user to the anonymous IP-only state
+     * mirrors the login process: on login the user is set to the DB user; on logout it is reset to empty
+     * @param user_ui $usr_ui the requesting user whose account gets the last_logoff; reset to an empty (IP-only) object after logout
      * @param user_message_ui $msg_ui collects errors from saving the logoff time
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the logout confirmation view
      */
     private function action_logout(
-        user_backend    &$usr_backend,
         user_ui         &$usr_ui,
         user_message_ui $msg_ui,
         bool            $do_it,
@@ -2624,20 +2643,12 @@ class frontend
     ): array
     {
         if ($do_it) {
-            if ($usr_backend->has_db_id()) {
-                $logoff_msg = new backend_user_message($usr_backend);
-                $usr_backend->last_logoff = new DateTime();
-                $usr_backend->save($logoff_msg);
-                $msg_logoff_ui = new user_message_ui();
-                $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
-                $msg_ui->merge($msg_logoff_ui);
-            }
+            $this->save_logoff($usr_ui, $msg_ui);
             if (isset($_SESSION)) {
                 $_SESSION = [];
                 session_destroy();
             }
         }
-        $usr_backend = new user_backend();
         $usr_ui = new user_ui();
         // keep the '9'-prefixed back target of the logout request in the logout page url, so the
         // logout page (and a login from there) can send the user back to the original page
@@ -2648,6 +2659,34 @@ class frontend
             }
         }
         return $url;
+    }
+
+    /**
+     * write the logoff time of the requesting user to the account; separated from action_logout, which also
+     * destroys the session, so that a test can check the write
+     *
+     * @param user_ui $usr_ui the requesting user whose account gets the last_logoff
+     * @param user_message_ui $msg_ui collects the errors of saving the logoff time
+     * @return bool true if the logoff time has been written, false e.g. for an anonymous user, who has no account
+     */
+    function save_logoff(user_ui $usr_ui, user_message_ui $msg_ui): bool
+    {
+        $result = false;
+        // an anonymous user has no account, so the logout of a visitor starts no query
+        if ($usr_ui->id() > 0) {
+            // the account is loaded by the id of the requesting user like in action_login_activate
+            $usr = new user_backend();
+            $logoff_msg = new backend_user_message($usr); // the user saves its own logoff time, merged into $msg_ui below
+            $usr->load_by_id($usr_ui->id(), $logoff_msg);
+            if ($usr->has_db_id()) {
+                $usr->last_logoff = new DateTime();
+                $result = $usr->save($logoff_msg);
+            }
+            $msg_logoff_ui = new user_message_ui();
+            $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
+            $msg_ui->merge($msg_logoff_ui);
+        }
+        return $result;
     }
 
     /**
@@ -2882,7 +2921,8 @@ class frontend
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
                 and !str_starts_with($key, url_var::BACK)
                 and !str_starts_with($key, url_var::LINK)
-                and !str_starts_with($key, url_var::REF_ROW)) {
+                and !str_starts_with($key, url_var::REF_ROW)
+                and !str_starts_with($key, url_var::TRIPLE_ROW)) {
                 $result[$key] = $val;
             }
         }
@@ -2950,10 +2990,17 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
-            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW)
+            // the references that the confirm page has shown with the phrase change (see url_var::REF_ROW),
+            // and for a new word also the suggested references and 'is a' triples (see url_var::TRIPLE_ROW),
+            // which are written after the word, because they need its id; a retry of the open rows of a
+            // new word is an update (see below)
             $open_url = $url_array;
-            if ($crud == url_var::CRUD_UPDATE and ($dbo instanceof word_ui or $dbo instanceof triple_ui)) {
+            $is_phrase = ($dbo instanceof word_ui or $dbo instanceof triple_ui);
+            if ($is_phrase and in_array($crud, [url_var::CRUD_CREATE, url_var::CRUD_UPDATE])) {
                 $open_url = $dbo->phrase()->save_ref_rows($url_array, $msg_ui);
+                if ($dbo instanceof word_ui) {
+                    $open_url = $dbo->phrase()->save_triple_rows($open_url, $msg_ui);
+                }
             }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
@@ -2965,8 +3012,13 @@ class frontend
                 $msg_ui->add_info($this->setting_saved_text($url_array));
             }
             // the api calls of the rows have no common transaction, so the confirm page shows the
-            // reference rows again that could not be written, together with the message why
-            if (url_var::ref_rows($open_url) != []) {
+            // reference and triple rows again that could not be written, together with the message why
+            if (url_var::ref_rows($open_url) != [] or url_var::triple_rows($open_url) != []) {
+                // the new phrase exists now, so the retry of its open rows changes it instead of adding it again
+                if ($is_phrase and $crud == url_var::CRUD_CREATE) {
+                    $open_url[url_var::MASK] = $dbo instanceof triple_ui ? views::TRIPLE_EDIT_ID : views::WORD_EDIT_ID;
+                    $open_url[url_var::ID] = $dbo->id();
+                }
                 return $open_url;
             }
         }
@@ -3449,6 +3501,30 @@ class frontend
                 $result = $dbo->phrase()->wikipedia_confirm_url($url_array, $msg_ui);
             } else {
                 log_err_msg_ui('the wikipedia refresh of view ' . $view . ' that shows no phrase is ignored', $msg_ui);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the add view of a new word filled with the description, the references and the 'is a' triples that
+     * wikipedia and conceptnet suggest, because the add word button of a search writes nothing before the
+     * user has adjusted and confirmed them (see word::suggestion_url)
+     *
+     * @param array $url_array the parsed url in the standard format
+     * @param user_message_ui $msg_ui with the requesting user and to tell which suggestion is missing
+     * @param bool $test_mode true to render without a backend call, so the add view gets only the name
+     * @return array the url of the filled add view, unchanged if no suggestions are requested
+     */
+    function url_with_word_suggestions(array $url_array, user_message_ui $msg_ui, bool $test_mode): array
+    {
+        $result = $url_array;
+        if (($url_array[url_var::REFRESH] ?? '') == url_var::REFRESH_SUGGEST) {
+            unset($result[url_var::REFRESH]);
+            if (html_base::change_blocked()) {
+                $msg_ui->add_id(msg_id::CHANGE_LOGIN_REQUIRED);
+            } elseif (!$test_mode) {
+                $result = new word_ui()->suggestion_url($result, $msg_ui);
             }
         }
         return $result;

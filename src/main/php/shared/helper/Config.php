@@ -74,11 +74,11 @@ class Config
     const int LIMIT_SEARCH_LIST = 40;
 
     // number of entries shown in the short version of a list (config.yaml select: initial: entries)
-    // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
+    // only the fallback if the config is not loaded, because the frontend reads the value via web/helper/list_size
     const int LIMIT_SHORT_LIST = 5;
 
     // number of entries shown in the more version of a list (config.yaml select: more: entries)
-    // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
+    // only the fallback if the config is not loaded, because the frontend reads the value via web/helper/list_size
     const int LIMIT_MORE_LIST = 20;
 
     // number of columns of a table including the row name column (config.yaml select: columns: entries)

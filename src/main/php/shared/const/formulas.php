@@ -46,7 +46,7 @@ class formulas
     // has no code_id, so the seed id is the only handle (see web\formula\formula_list::default_id)
     const int NOT_SET_ID = 0;
     const string INCREASE = 'increase';
-    const int INCREASE_ID = 21;
+    const int INCREASE_ID = 46;
 
     // formula names that are reserved either
     // for creating the test formulas, that are removed after the test

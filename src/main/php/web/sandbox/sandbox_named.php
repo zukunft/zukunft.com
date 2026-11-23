@@ -141,7 +141,8 @@ class sandbox_named extends sandbox
     function api_mapper(array $json_array, user_message $msg): bool
     {
         parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::NAME, $json_array)) {
+        // a name sent as null is as missing as a name that is not sent
+        if (($json_array[json_fields::NAME] ?? null) !== null) {
             $this->set_name($json_array[json_fields::NAME]);
         } else {
             $this->set_name('');
@@ -175,7 +176,9 @@ class sandbox_named extends sandbox
         $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->get_description();
+        // the raw description, not get_description(), which shows null as an empty string:
+        // an empty description clears the description of the user, null means not known
+        $vars[json_fields::DESCRIPTION] = $this->description;
         // the usage is not included here because it should always be updated in the backend
         return $vars;
     }

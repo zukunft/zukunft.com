@@ -293,6 +293,7 @@ class ui_preview extends ui_base
             if (!in_array($key, $skip)
                 and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::REF_ROW)
+                and !str_starts_with($key, url_var::TRIPLE_ROW)
                 and !str_starts_with($key, url_var::BACK)) {
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
@@ -357,6 +358,10 @@ class ui_preview extends ui_base
         if ($dbo instanceof word or $dbo instanceof triple) {
             $result .= $this->ref_rows_section($url_array, $msg, $test_mode);
         }
+        // the triples that the confirm of a new word adds too
+        if ($dbo instanceof word) {
+            $result .= $this->triple_rows_section($url_array);
+        }
         return $result;
     }
 
@@ -385,6 +390,31 @@ class ui_preview extends ui_base
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO));
             $tbl = $html->tbl($html->thead($html->tr($head_row)) . $rows);
             $result = $html->div($title . $tbl, styles::CHANGE_PREVIEW);
+        }
+        return $result;
+    }
+
+    /**
+     * the list of the triples that the same confirm button adds with the new word (see url_var::TRIPLE_ROW)
+     *
+     * @param array $url_array the pending change url with the name of the word and the '5'-prefixed rows
+     * @return string the html code of the added triples e.g. "Hamburg is a city", empty if the confirm adds none
+     */
+    private function triple_rows_section(array $url_array): string
+    {
+        global $mtr, $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $name = (string)($url_array[url_var::NAME] ?? '');
+        $rows = '';
+        foreach (url_var::triple_rows($url_array) as $fields) {
+            $verb_name = $ui_sys->typ_lst_cache->vrb->name((int)($fields[url_var::VERB] ?? 0));
+            $triple_txt = $name . ' ' . $verb_name . ' ' . $fields[url_var::PHRASE_TO];
+            $rows .= $html->tr($html->td($html->esc($triple_txt)));
+        }
+        if ($rows != '') {
+            $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_TRIPLES));
+            $result = $html->div($title . $html->tbl($rows), styles::CHANGE_PREVIEW);
         }
         return $result;
     }
@@ -497,6 +527,7 @@ class ui_preview extends ui_base
             if (!in_array($key, $skip)
                 and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::REF_ROW)
+                and !str_starts_with($key, url_var::TRIPLE_ROW)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)
                 and (string)$val != (string)($url_array[url_var::PRE . $key] ?? '')) {
@@ -894,8 +925,9 @@ class ui_preview extends ui_base
         global $mtr;
         $html = new html_base();
         $result = '';
-        // a confirm that changes only references is a change too
-        $has_change = ($this->changed_fields($url_array) != [] or url_var::ref_rows($url_array) != []);
+        // a confirm that changes only references or adds only triples is a change too
+        $has_rows = (url_var::ref_rows($url_array) != [] or url_var::triple_rows($url_array) != []);
+        $has_change = ($this->changed_fields($url_array) != [] or $has_rows);
         if ($has_change) {
             $update_url = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
             $line = $mtr->txt(msg_id::POPUP_IMPACT)

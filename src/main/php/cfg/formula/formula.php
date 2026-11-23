@@ -575,14 +575,14 @@ class formula extends formula_map
         $val = null;
 
         if ($this->type_id > 0) {
-            log_debug("type (" . $this->type_cl . ")");
-            if ($this->type_cl == formula_type::THIS) {
+            log_debug("type (" . $this->type_code_id() . ")");
+            if ($this->type_code_id() == formula_type::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("this (" . $time_phr->name() . ")");
                 $val = $val_phr_lst->value_scaled($msg);
             }
-            if ($this->type_cl == formula_type::NEXT) {
+            if ($this->type_code_id() == formula_type::NEXT) {
                 $val_phr_lst = clone $phr_lst;
                 $next_wrd = $time_phr->next($msg);
                 if ($next_wrd->id() > 0) {
@@ -591,7 +591,7 @@ class formula extends formula_map
                     $val = $val_phr_lst->value_scaled($msg);
                 }
             }
-            if ($this->type_cl == formula_type::PREV) {
+            if ($this->type_code_id() == formula_type::PREV) {
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior($msg);
                 if ($prior_wrd->id() > 0) {
@@ -613,22 +613,22 @@ class formula extends formula_map
      */
     function special_time_phr(phrase $time_phr, user_message $msg): phrase
     {
-        log_debug($this->type_cl . ' for ' . $time_phr->dsp_id());
+        log_debug($this->type_code_id() . ' for ' . $time_phr->dsp_id());
         $result = $time_phr;
 
         if ($this->type_id > 0) {
             if ($time_phr->id() <= 0) {
                 log_err('No time defined for ' . $time_phr->dsp_id() . '.', 'formula->special_time_phr');
             } else {
-                if ($this->type_cl == formula_type::THIS) {
+                if ($this->type_code_id() == formula_type::THIS) {
                     $result = $time_phr;
                 }
-                if ($this->type_cl == formula_type::NEXT) {
+                if ($this->type_code_id() == formula_type::NEXT) {
                     $this_wrd = $time_phr->main_word($msg);
                     $next_wrd = $this_wrd->next($msg);
                     $result = $next_wrd->phrase();
                 }
-                if ($this->type_cl == formula_type::PREV) {
+                if ($this->type_code_id() == formula_type::PREV) {
                     $this_wrd = $time_phr->main_word($msg);
                     $prior_wrd = $this_wrd->prior($msg);
                     $result = $prior_wrd->phrase();
@@ -1011,16 +1011,21 @@ class formula extends formula_map
      * create a result object for this formula
      *
      * @param phrase_list $phr_lst list of the phrases that describes the result
+     * @param user_message $msg to report a problem of the creation of the source group
      * @return result with the value from this formula
      */
-    private function create_result(phrase_list $phr_lst): result
+    private function create_result(phrase_list $phr_lst, user_message $msg): result
     {
         $rst = new result($this->get_user());
         $rst->frm = $this;
-        $rst->src_grp = $phr_lst->get_grp_id();
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
-        $rst->src_grp->set_phrase_list(clone $phr_lst);
+        // an empty list has no group, which get_grp_id reports, so the result keeps its empty source group
+        $src_grp = $phr_lst->get_grp_id($msg);
+        if ($src_grp != null) {
+            $rst->src_grp = $src_grp;
+            $rst->src_grp->set_phrase_list(clone $phr_lst);
+        }
         $rst->grp()->set_phrase_list(clone $phr_lst);
         if ($rst->last_val_update < $this->last_update) {
             $rst->last_val_update = $this->last_update;
@@ -1106,7 +1111,7 @@ class formula extends formula_map
 
         // create the result list and a master result object to fill with the numbers
         $res_lst = new result_list($this->get_user());
-        $res_init = $this->create_result($phr_lst);
+        $res_init = $this->create_result($phr_lst, $msg);
 
         // never a wrong number: a list function that cannot take all values of its operand gives no result
         $list_symbols = $this->list_symbols($res_init->num_text);
@@ -1707,8 +1712,12 @@ class formula extends formula_map
         log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
         $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all($msg);
 
-        // a percent result is relative, so remove any measure word from the result words
-        if ($res_add_wrd_lst->has_percent()) {
+        // the measure words of the operands are removed before the result phrases are added, so that a unit that the
+        // formula names on the left side e.g. "annual production" "TWh" stays the unit of the result: a division of
+        // values with a measure word like metre or CHF gives a ratio (a simplification of the unit algebra), a
+        // percent result is relative and a result phrase with a unit replaces the units of the operands
+        $divides = str_contains($this->ref_text_r, chars::DIV);
+        if ($divides or $res_add_wrd_lst->has_percent() or $res_add_phr_lst->has_measure($msg)) {
             $res->grp()->phrase_list()->ex_measure($msg);
             log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
         }

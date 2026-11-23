@@ -39,10 +39,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -58,11 +61,14 @@ include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -399,6 +405,32 @@ class word_write_tests
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
         $msg->reset();
 
+        // before the protection tests, because the admin protection would also protect the owner of the standard row
+        $t->subheader($ts . 'owner');
+        $test_name = 'the owner of "' . word_names::TEST_ADD . '" is loaded';
+        $wrd_own = $t_db->load_word($msg, word_names::TEST_ADD);
+        $own_before = $wrd_own->owner_id();
+        $own_loaded = $wrd_own->load_owner($msg);
+        $t->assert_true($test_name, $own_loaded);
+        $msg->reset();
+        $test_name = '... and a word without owner takes the ownership for its user';
+        $wrd_own = $t_db->load_word($msg, word_names::TEST_ADD);
+        $wrd_own->set_owner_id(null);
+        $wrd_own->load_owner($msg);
+        $own_id = $wrd_own->owner_id();
+        $t->assert($test_name, $own_id, $t->usr1->id());
+        $msg->reset();
+        // the owner of the standard row is set back, if a previous run has left it to another user
+        if ($own_before != null and $own_before != $t->usr1->id()) {
+            $wrd_own->set_owner($own_before, $msg);
+        }
+        // negative: a word that is not in the database has no owner
+        $test_name = '... but a word without id loads no owner';
+        $wrd_no_id = new word($t->usr1);
+        $own_loaded = $wrd_no_id->load_owner($msg);
+        $t->assert_false($test_name, $own_loaded);
+        $msg->reset();
+
         $t->subheader($ts . 'protection');
         $test_name = 'the owner can raise the protection of "' . word_names::TEST_ADD . '" to admin';
         $wrd_prt = $t_db->load_word($msg, word_names::TEST_ADD);
@@ -432,43 +464,34 @@ class word_write_tests
         $test_name = '... and the denied reduction is reported to the user';
         $t->assert_text_contains($test_name, $msg->all_message_text(), word_names::TEST_ADD);
 
-        // check that the word name cannot be used for a verb, triple or formula any more
-        // TODO Prio 0 review
-        /*
+        // the word name cannot be used for a verb, triple or formula any more; the message depends on the class,
+        // so each save is checked to be refused with the word name, and a wrongly saved object is removed again
+        // before the assert, so that it does not stay in the database
+        $test_name = 'a verb cannot have the name of a word';
+        $clash_msg = new user_message($t->usr1);
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(word_names::TEST_ADD);
-        $usr_msg = new user_message($t->usr1);
-        $vrb->save($usr_msg);
-        $result = $usr_msg->text();
-        $target = 'A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
-        $t->assert('verb cannot have an already used word name', $result, $target);
-
-        // ... triple
-        $t_trp = new test_triples($t);
-        $trp = $t_trp->triple();
-        $trp->id = 0;
+        $vrb->save($clash_msg);
+        $this->del_if_saved($vrb, $t);
+        $t->assert_msg_false($test_name, $clash_msg, word_names::TEST_ADD);
+        // the triple links the test word to a seed word, so that no seed triple is renamed
+        $test_name = '... nor a triple';
+        $trp = new triple($t->usr1);
+        $trp->set_from($t_db->load_word($clash_msg, word_names::TEST_ADD)->phrase());
+        $trp->set_verb($sys->verb(verbs::IS));
+        $trp->set_to($t_db->load_word($clash_msg, words::MATH)->phrase());
         $trp->set_name(word_names::TEST_ADD);
-        $usr_msg = new user_message($t->usr1);
-        $trp->save($usr_msg);
-        $result = $usr_msg->text();
-        $target = 'A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
-        $t->assert('triple cannot by renamed to an already used word name', $result, $target);
-
-        // ... or formula any more
-        $t_frm = new test_formulas($t);
-        $frm = $t_frm->formula();
-        $frm->id = 0;
+        $trp->save($clash_msg);
+        $this->del_if_saved($trp, $t);
+        $t->assert_msg_false($test_name, $clash_msg, word_names::TEST_ADD);
+        $test_name = '... nor a formula';
+        $frm = new formula($t->usr1);
         $frm->set_name(word_names::TEST_ADD);
-        $usr_msg = new user_message($t->usr1);
-        $frm->save($usr_msg);
-        $result = $usr_msg->text();
-        $target = 'A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
-        $t->assert('formula cannot by renamed to an already used word name', $result, $target);
-        */
+        $frm->usr_text = formula_names::INCREASE_EXP;
+        $frm->save($clash_msg);
+        $this->del_if_saved($frm, $t);
+        $t->assert_msg_false($test_name, $clash_msg, word_names::TEST_ADD);
 
 
         $t->subheader($ts . 'user log');
@@ -865,6 +888,18 @@ class word_write_tests
                 $t_db->test_triple($msg, $word_name, verbs::FOLLOW, $prev_word_name);
             }
             $prev_word_name = $word_name;
+        }
+    }
+
+    /**
+     * remove an object that a test expects to be refused, so that a wrongly saved row does not stay in the database
+     * @param verb|triple|formula $obj the object whose save is expected to be refused
+     * @param test_cleanup $t the test environment with the test user
+     */
+    private function del_if_saved(verb|triple|formula $obj, test_cleanup $t): void
+    {
+        if ($obj->id() > 0) {
+            $obj->del(new user_message($t->usr1)); // not reported: the assert of the refused save reports the wrongly saved object
         }
     }
 

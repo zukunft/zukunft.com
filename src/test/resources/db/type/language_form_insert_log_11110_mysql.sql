@@ -40,6 +40,6 @@ SELECT language_form_insert_log_11110
         1,
         93,
         94,
-        'standard',
+        'plural',
         95,
         'The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one');

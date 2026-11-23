@@ -125,7 +125,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
-use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -395,7 +394,7 @@ class result extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
             if ($msg->is_ok()) {
-                $phr_grp = $phr_lst->get_grp_id(false);
+                $phr_grp = $phr_lst->get_grp_id($msg, false);
                 $this->set_grp($phr_grp);
             }
         }
@@ -404,8 +403,11 @@ class result extends sandbox_value
             $src_phr_lst = new phrase_list($this->get_user());
             $src_phr_lst->import_mapper($in_ex_json[json_fields::CONTEXT], $msg, $dto);
             if ($msg->is_ok()) {
-                $src_grp = $src_phr_lst->get_grp_id(false);
-                $this->set_src_grp($src_grp);
+                $src_grp = $src_phr_lst->get_grp_id($msg, false);
+                // an empty context has no group, which get_grp_id reports
+                if ($src_grp != null) {
+                    $this->set_src_grp($src_grp);
+                }
             }
         }
 
@@ -1240,7 +1242,7 @@ class result extends sandbox_value
 
         if ($phr_lst->is_valid()) {
             $this->reset(true);
-            $grp = $phr_lst->get_grp_id();
+            $grp = $phr_lst->get_grp_id($msg);
             $result = $this->load_by_grp($grp, $msg);
         } else {
             log_err('The result phrase list and the user must be set ' .
@@ -1681,45 +1683,46 @@ class result extends sandbox_value
             $do_save = false;
         }
 
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $res) {
-
-            // the phrases of the result
-            if ($key == json_fields::WORDS) {
-                $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $msg)) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
+        // the phrases of the result, with the group saved if the database is open, which the mapper does not
+        if (array_key_exists(json_fields::WORDS, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            if ($phr_lst->import_lst($in_ex_json[json_fields::WORDS], $msg)) {
+                $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
+                // an empty list has no group, which get_grp_id reports
+                if ($phr_grp != null) {
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
                     log_debug('set grp id to ' . $this->grp_id());
                 }
             }
+        }
 
-            // the phrases used to calculate the result
-            if ($key == json_fields::CONTEXT) {
-                $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $msg)) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
+        // the phrases used to calculate the result
+        if (array_key_exists(json_fields::CONTEXT, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            if ($phr_lst->import_lst($in_ex_json[json_fields::CONTEXT], $msg)) {
+                $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
+                // an empty context has no group, which get_grp_id reports
+                if ($phr_grp != null) {
                     log_debug('got context ' . $phr_grp->dsp_id());
                     $this->set_src_grp($phr_grp);
                     log_debug('set grp id to ' . $this->src_grp_id());
                 }
             }
+        }
 
-            /*
-            if ($key == exp_obj::FLD_TIMESTAMP) {
-                if (str_to_time($res)) {
-                    $this->time_stamp = get_datetime($res, $this->dsp_id(), 'JSON import');
-                } else {
-                    log_err('Cannot add timestamp ' . $res . ' when importing ' . $this->dsp_id(), 'value->import_obj');
-                }
+        /*
+        if ($key == exp_obj::FLD_TIMESTAMP) {
+            if (str_to_time($res)) {
+                $this->time_stamp = get_datetime($res, $this->dsp_id(), 'JSON import');
+            } else {
+                log_err('Cannot add timestamp ' . $res . ' when importing ' . $this->dsp_id(), 'value->import_obj');
             }
-            */
+        }
+        */
 
-            if ($key == json_fields::NUMBER) {
-                $this->set_number($res);
-            }
-
+        if (array_key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $this->set_number($in_ex_json[json_fields::NUMBER]);
         }
 
         // save the result in the database
@@ -2035,35 +2038,49 @@ class result extends sandbox_value
         }
     }
 
-    // TODO Prio 0 review
-    private function save_without_time(): string
+    /**
+     * save a copy of this result as the result without time, which is shown if the user asks e.g. for the
+     * inhabitants of a city without a year; called by save_if_updated if the time of this result is the
+     * default time or if no result without time is saved yet for its phrase group
+     * @param phrase_list $lst_ex_time the phrases of this result without the time phrases
+     * @param user_message $msg to collect the problems of the save
+     * @return bool true if the result without time has been saved
+     */
+    private function save_without_time(phrase_list $lst_ex_time, user_message $msg): bool
     {
-        $msg = new user_message(); // a local buffer only to build the returned message text
         $res_no_time = $this->clone_all();
-        // $res_no_time->time_phr = null;
-        $res_no_time->save($msg);
-        return $msg->get_last_message();
+        $res_no_time->set_grp($lst_ex_time->get_grp_id($msg));
+        return $res_no_time->save($msg);
     }
 
+    /**
+     * @param phrase_list $lst_ex_time the phrases of this result without the time phrases
+     * @return bool true if this result has a time phrase and at least one other phrase, so that it can be saved without time
+     */
+    private function can_be_saved_without_time(phrase_list $lst_ex_time): bool
+    {
+        $has_time = ($lst_ex_time->count() < $this->grp()->phrase_list()->count());
+        return ($has_time and !$lst_ex_time->is_empty());
+    }
 
     /**
-     * @return bool true if a value without time is already saved
+     * @param phrase_list $lst_ex_time the phrases of this result without the time phrases
+     * @param user_message $msg to collect the problems of the load
+     * @return bool true if no result without time is saved yet
      *
      * e.g. if the user asks for the inhabitants of the city of zurich and does not specify the time
      *      the guess is that the user wants the latest reported number
-     *      so this function will return false if the latest reported number is not yet saved in the database
+     *      so this function will return true if the latest reported number is not yet saved in the database
      */
     // TODO Prio 2 add check
-    private function has_no_time_value(user_message $msg): bool
+    private function has_no_time_value(phrase_list $lst_ex_time, user_message $msg): bool
     {
-        $res_check = $this->clone_all();
-        $phr_lst_ex_time = $res_check->grp()->phrase_list();
-        $phr_lst_ex_time->ex_time($msg);
-        return !$res_check->load_by_phr_lst($phr_lst_ex_time, $msg);
+        $res_check = new result($this->get_user());
+        return !$res_check->load_by_phr_lst($lst_ex_time, $msg);
     }
 
     // check if a single formula result needs to be saved to the database
-    // TODO Prio 0 review
+    // TODO Prio 1 add a job trigger to update the depending results
     function save_if_updated(user_message $msg, bool $has_result_phrases = false): bool
     {
         global $debug;
@@ -2104,10 +2121,10 @@ class result extends sandbox_value
                     }
                 }
                 // check the formula result consistency
-                if (!$this->grp()->phrase_list()->is_empty()) {
+                if ($this->grp()->phrase_list()->is_empty()) {
                     log_warning('The result phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
-                if (!$this->src_grp->phrase_list()->is_empty()) {
+                if ($this->src_grp->phrase_list()->is_empty()) {
                     log_warning('The source phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
 
@@ -2122,15 +2139,8 @@ class result extends sandbox_value
                     }
                 }
 
-                // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
-                // simplified version, that needs to be review to handle more complex formulas
-                if (str_contains($this->frm->ref_text_r, chars::DIV)) {
-                    log_debug('check measure ' . $this->grp()->phrase_list()->dsp_id());
-                    if ($this->grp()->phrase_list()->has_measure($msg)) {
-                        $this->grp()->phrase_list()->ex_measure($msg);
-                        log_debug('measure removed from words ' . $this->grp()->phrase_list()->dsp_id());
-                    }
-                }
+                // the measure words of a division are removed by formula::apply_result_phrases before the result
+                // phrases are added, so that a unit that the formula names stays the unit of the result
 
                 // build the formula result object
                 //$this->frm_id = $this->frm->id();
@@ -2138,7 +2148,8 @@ class result extends sandbox_value
                 log_debug('save "' . $this->number() . '" for ' . $this->grp()->phrase_list()->dsp_id());
 
                 // get the default time for the phrases e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
-                $lst_ex_time = $this->grp()->phrase_list();
+                // a copy, because ex_time removes the time phrases from the list itself
+                $lst_ex_time = clone $this->grp()->phrase_list();
                 $lst_ex_time->ex_time($msg);
                 $res_default_time = $lst_ex_time->assume_time($msg); // must be the same function called used in 2num
                 if (isset($res_default_time)) {
@@ -2150,23 +2161,18 @@ class result extends sandbox_value
                 if ($this->number() == null) {
                     log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->get_user()->id . '.', "result->save_if_updated");
                 } else {
-                    // save the default value if the result time is the "newest"
-                    if (isset($res_default_time)) {
-                        log_debug('check if result time ' . $this->grp()->time($msg)->dsp_id() . ' is the default time ' . $res_default_time->dsp_id());
-                        if ($this->grp()->time($msg)->id() == $res_default_time->id()) {
-                            // if there is not yet a general value for all user, save it now
-                            $result .= $this->save_without_time();
+                    // save the result
+                    $result = $this->save($msg);
+                    $res_id = $this->id();
+
+                    // and a copy without time e.g. the inhabitants of a city without the year, but only if the time
+                    // of this result is the "newest" or if no result without time is saved yet for the phrase group
+                    if ($result and $this->can_be_saved_without_time($lst_ex_time)) {
+                        $is_newest = ($res_default_time != null and $this->grp()->time($msg)->id() == $res_default_time->id());
+                        if ($is_newest or $this->has_no_time_value($lst_ex_time, $msg)) {
+                            $result = $this->save_without_time($lst_ex_time, $msg);
                         }
                     }
-
-                    // save the value without time if no value without time is yet saved for the phrase group
-                    if ($this->has_no_time_value($msg)) {
-                        $result .= $this->save_without_time();
-                    }
-
-                    // save the result
-                    $this->save($msg);
-                    $res_id = $this->id();
 
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->number() . ' saved for ' . $this->grp()->phrase_list()->name_linked();

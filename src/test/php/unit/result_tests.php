@@ -177,7 +177,6 @@ class result_tests
         $t->assert_sql_insert($sc, $res_big);
         $res = $t_res->result_incomplete();
         $t->assert_sql_insert_fail($sc, $res);
-        // TODO Prio 0 activate db write
         // TODO Prio 2 add tests for text, time and geo values
         $res = $t_res->result();
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
@@ -186,7 +185,6 @@ class result_tests
         $db_res_filled = $res_filled->cloned(results::TV_FLOAT);
         $db_res = $res->cloned(results::TV_FLOAT);
         $db_res_big = $res_big->cloned(results::TV_FLOAT);
-        // TODO Prio 0 activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
@@ -215,7 +213,6 @@ class result_tests
         $t->assert_sql_save_fields($sc, $res_prime_max, $db_res_prime_max);
         $t->assert_sql_save_fields($sc, $res_main, $db_res_main);
         $t->assert_sql_save_fields($sc, $res_big, $db_res_big);
-        // TODO Prio 0 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
         // is covered already by the horizontal tests
@@ -492,8 +489,9 @@ class result_tests
         $res = $t_res->result();
         $grp = $t_grp->group_16();
         $phr_id_flds = $res->id_fields_main(1, result_id::MAIN_PHRASES_ALL);
+        // without the phrase names, because they are read from the database and only the group id is checked
         $t->assert_true($test_name, $res->set_grp_by_row(
-            [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds));
+            [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds, false));
         $t->assert($test_name . ' id', $res->grp()->id(), $grp->id());
         // negative: a range that ends before it starts names no id column
         $test_name = 'an empty range of phrase positions has no id field';

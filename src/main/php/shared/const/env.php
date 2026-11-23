@@ -118,6 +118,12 @@ const ENV_SIGNUP_MAIL_HOST = 'SIGNUP_MAIL_HOST'; // the smtp server e.g. smtp.ex
 const ENV_SIGNUP_MAIL_PORT = 'SIGNUP_MAIL_PORT'; // 587 for starttls or 465 for implicit tls
 const ENV_SIGNUP_MAIL_USER = 'SIGNUP_MAIL_USER'; // the login of the account; empty to use the sender address
 const ENV_SIGNUP_MAIL_PW = 'SIGNUP_MAIL_PW'; // the password of the account, which stays in the deployed .env
+// in the prod and test environment an empty database is set up only if this is true (see db_check::setup_allowed);
+// the setup switches it off in the file again, so that it allows one setup only
+const ENV_DB_SETUP = 'DB_SETUP';
+const ENV_DB_SETUP_ON = 'true';
+const ENV_DB_SETUP_OFF = 'false';
+const ENV_DB_SETUP_VALUES = [ENV_DB_SETUP_ON, ENV_DB_SETUP_OFF];
 const SIGNUP_MAIL_PORT_FALLBACK = 587;
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
@@ -184,6 +190,7 @@ const ENV_VARS = [
     ENV_SIGNUP_MAIL_PORT,
     ENV_SIGNUP_MAIL_USER,
     ENV_SIGNUP_MAIL_PW,
+    ENV_DB_SETUP,
 ];
 
 const ENV_SECRETS = [
@@ -251,6 +258,8 @@ $env_path = ROOT_PATH . '..' . DIRECTORY_SEPARATOR . ENV_FILE;
 if (!file_exists($env_path)) {
     $env_path = ROOT_PATH . ENV_FILE;
 }
+// the file that has been read, so that e.g. the database setup can switch its flag off again
+define('ENV_FILE_PATH', $env_path);
 $env = file($env_path);
 foreach ($env as $line) {
     if (!str_starts_with($line, '#') and trim($line) != '') {
@@ -288,6 +297,12 @@ foreach ($env as $line) {
                 if ($key == ENV_CACHE) {
                     if (!in_array($var, ENV_CACHE_TYPES)) {
                         log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_CACHE_TYPES) . ' allowed)');
+                    }
+                }
+                // e.g. "TRUE" would else silently keep the setup switched off
+                if ($key == ENV_DB_SETUP) {
+                    if (!in_array($var, ENV_DB_SETUP_VALUES)) {
+                        log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_DB_SETUP_VALUES) . ' allowed)');
                     }
                 }
                 if ($line != '') {

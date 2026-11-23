@@ -6,8 +6,8 @@
     ---------------------------
 
     combines the recurring parameters of frontend::url_to_action and
-    frontend::url_user_reaction (the backend user, the message buffer with the
-    requesting frontend user, the frontend cache and the do_it flag) into one
+    frontend::url_user_reaction (the message buffer with the requesting
+    frontend user, the frontend cache and the do_it flag) into one
     object so the call stays short
     var name: $req
 
@@ -44,7 +44,6 @@ include_once html_paths::MODEL_USER . 'user.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class user_request
@@ -54,8 +53,6 @@ class user_request
      *  object vars
      */
 
-    // the backend user, updated in place e.g. on login
-    public user_backend $usr_backend;
     // the message buffer enriched with potential errors; carries the requesting
     // frontend user as $usr_msg->usr (docs/llm/state-and-messages.md)
     public user_message $msg;
@@ -72,21 +69,18 @@ class user_request
      */
 
     /**
-     * @param user_backend $usr_backend the backend user, updated in place e.g. on login
      * @param user_message $msg the message buffer enriched with potential errors; must carry the requesting frontend user as $msg->usr
      * @param data_object $dto the frontend cache used to reduce the backend loading
      * @param bool $do_it false to skip the database execution e.g. for unit testing
      * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      */
     function __construct(
-        user_backend $usr_backend,
         user_message $msg,
         data_object  $dto = new data_object(),
         bool         $do_it = true,
         bool         $test_mode = false
     )
     {
-        $this->usr_backend = $usr_backend;
         $this->msg = $msg;
         $this->dto = $dto;
         $this->do_it = $do_it;

@@ -1548,7 +1548,7 @@ class group extends sandbox_multi
         }
 
         if ($msg->is_ok()) {
-            $phr_grp = $phr_lst->get_grp_id(false);
+            $phr_grp = $phr_lst->get_grp_id($msg, false);
             $this->set_id($phr_grp->id());
             $this->set_phrase_list($phr_lst);
         }
@@ -1923,11 +1923,20 @@ class group extends sandbox_multi
     }
 
 
-    function get_ex_time(user_message $msg): group
+    /**
+     * @param user_message $msg to collect the problems of the selection of the time phrases
+     * @return group|null the group of the phrases without the time phrases or null if the group has only time phrases
+     */
+    function get_ex_time(user_message $msg): ?group
     {
+        $grp = null;
         $phr_lst = $this->phrase_list();
         $phr_lst->ex_time($msg);
-        return $phr_lst->get_grp_id();
+        // e.g. the group of only the year 2020 has no group without time, which is no error of the caller
+        if (!$phr_lst->is_empty()) {
+            $grp = $phr_lst->get_grp_id($msg);
+        }
+        return $grp;
     }
 
     /*

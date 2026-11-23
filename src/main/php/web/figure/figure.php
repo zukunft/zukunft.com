@@ -228,10 +228,12 @@ class figure extends combine_named
     {
         // TODO Prio 3 check if $result .= $this->obj->display_linked($url_arr) can be used
         $html = new html_base();
+        // a result opens the result edit view and a value the value edit view, like the overwrite
+        // form of system_form::form_value_overwrite_fields
         if ($this->is_result()) {
-            $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), $url_arr);
-        } else {
             $url = $html->url_back(views::RESULT_EDIT_ID, $this->obj_id(), $url_arr);
+        } else {
+            $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), $url_arr);
         }
         return $html->ref($url, $this->val_formatted($msg));
     }

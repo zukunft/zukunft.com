@@ -42,7 +42,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -110,6 +112,46 @@ class verb_write_tests
         $result = $t->log_last_by_user();
         $target = $log_time . ' ' . users::SYSTEM_TEST_NAME . ' deleted "' . verbs::TEST_ADD_NAME . '"';
         $t->assert($test_name, $result, $target);
+
+        // the mapping does not write to the database, so import_obj saves the new verb before the triple
+        $t->subheader($ts . 'import of a triple with a new verb');
+        $test_name = 'a triple import without to phrase fails';
+        $trp = new triple($t->usr1);
+        $imp_ok = $trp->import_obj([
+            json_fields::EX_FROM => word_names::MATH,
+            json_fields::EX_VERB => verbs::TEST_ADD_NAME,
+            json_fields::EX_TO => ''
+        ], $msg);
+        $t->assert_false($test_name, $imp_ok);
+        $msg->reset();
+        // negative: the verb of a failed import is not saved
+        $test_name = '... and does not save its new verb';
+        $vrb = new verb;
+        $vrb_id = $vrb->load_by_name(verbs::TEST_ADD_NAME, $msg);
+        $t->assert($test_name, $vrb_id, 0);
+        $msg->reset();
+        $test_name = 'the import of a triple with a new verb saves the verb';
+        $trp = new triple($t->usr1);
+        $trp->import_obj([
+            json_fields::EX_FROM => word_names::MATH,
+            json_fields::EX_VERB => verbs::TEST_ADD_NAME,
+            json_fields::EX_TO => word_names::PI
+        ], $msg);
+        $vrb = new verb;
+        $vrb_id = $vrb->load_by_name(verbs::TEST_ADD_NAME, $msg);
+        $t->assert_greater_zero($test_name, $vrb_id);
+        $test_name = '... and the triple uses the saved verb';
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert($test_name, $trp_vrb_id, $vrb_id);
+        $test_name = '... and shows its name';
+        $trp_vrb_name = $trp->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        // the triple first, because a used verb is not deleted
+        $test_name = '... and the verb can be deleted after the triple';
+        $trp->del($msg);
+        $vrb->set_user($t->usr1);
+        $t->assert_true($test_name, $vrb->del($msg));
+        $msg->reset();
 
         // TODO Prio 2 add more tests e.g. that a verb name cannot be used for a word any more
 

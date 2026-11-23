@@ -242,8 +242,10 @@ class sandbox_named extends sandbox
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
         }
+        // also an empty description, which a user sends to clear the description; a missing key or null means
+        // "not changed" (see sandbox_named::delta for when '' counts as a change)
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
-            if ($api_json[json_fields::DESCRIPTION] <> '') {
+            if ($api_json[json_fields::DESCRIPTION] !== null) {
                 $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
@@ -501,7 +503,9 @@ class sandbox_named extends sandbox
         if ($std_obj->name() !== $this->name()) {
             $result->set_name($this->name());
         }
-        if ($std_obj->get_description() !== $this->get_description()) {
+        // null and '' both mean no description, so an empty field never differs from a standard without
+        // description, but an empty description differs from a standard description and clears it for the user
+        if (($std_obj->get_description() ?? '') !== ($this->get_description() ?? '')) {
             $result->set_description($this->get_description());
         }
         if ($std_obj->get_usage() != $this->get_usage()) {
@@ -530,7 +534,8 @@ class sandbox_named extends sandbox
         if ($this->name_or_null() === null and $obj->name_or_null() != null) {
             $this->set_name($obj->name());
         }
-        if ($this->get_description() === null and $obj->get_description() != null) {
+        // also an empty description, because it can be the overwrite of a user that clears the standard description
+        if ($this->get_description() === null and $obj->get_description() !== null) {
             $this->set_description($obj->get_description());
         }
         if ($this->get_usage() === null and $obj->get_usage() != null) {
@@ -1447,7 +1452,7 @@ class sandbox_named extends sandbox
         } else {
             $lst->add_user($this, $obj, $do_log, $table_id);
         }
-        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id, $usr_tbl and $sc_par_lst->is_update());
         if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(

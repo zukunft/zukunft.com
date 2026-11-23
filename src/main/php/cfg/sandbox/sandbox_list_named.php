@@ -54,7 +54,6 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_REF . 'source_list.php';
-include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -93,7 +92,6 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
@@ -185,13 +183,28 @@ class sandbox_list_named extends sandbox_list
         $result = array();
         if ($this->is_name_list_dirty()) {
             foreach ($this->lst() as $key => $obj) {
-                $result[$obj->name()] = $key;
+                foreach ($this->name_index_keys($obj) as $name) {
+                    $result[$name] = $key;
+                }
             }
             $this->set_name_pos_list($result);
         } else {
             $result = $this->name_pos_lst;
         }
         return $result;
+    }
+
+    /**
+     * the names by which an entry is found in the name hash table, used by the rebuild of the
+     * table and by the add of one entry, so that both give the same table
+     * overwritten e.g. by the phrase list, which finds a word also by its plural
+     *
+     * @param object $obj an entry of this list e.g. a word
+     * @return array the names of the entry e.g. ["Zurich"]
+     */
+    protected function name_index_keys(object $obj): array
+    {
+        return [$obj->name()];
     }
 
     /**
@@ -514,14 +527,15 @@ class sandbox_list_named extends sandbox_list
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $to_add->name();
             if ($name != '') {
-                if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                // a hash lookup, and add_direct updates the hashes, so that the next add does not
+                // rebuild them from all names (see add_by_name_direct)
+                if (!isset($this->name_pos_lst()[$name]) or $allow_duplicates) {
                     // add only objects that have all mandatory values, judged by a local message,
                     // because can_be_ready returns the state of the given message, so a shared
                     // message with an earlier error would block an object that is fine
                     $rdy_msg = new user_message(); // the verdict of this object, merged on rejection
                     if ($to_add->can_be_ready($rdy_msg)) {
                         $this->add_direct($to_add);
-                        $this->set_hash_dirty();
                         $added = true;
                     } else {
                         $msg->merge($rdy_msg);
@@ -543,8 +557,10 @@ class sandbox_list_named extends sandbox_list
      * without checking if the object is db ready.
      * used e.g. for the triple import to update triple fields
      * without repeating the links in the import json message
+     * a repeated name of an object without id is skipped without a message, because e.g. the import
+     * adds the same from or to triple once for each triple that links to it (see triples_to_add_to_db)
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
-     * @param user_message $msg to report which entry is double
+     * @param user_message $msg to report e.g. a repeated object with an id or an object of another user
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
@@ -559,9 +575,11 @@ class sandbox_list_named extends sandbox_list
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $obj_to_add->name(true);
             if ($name != '') {
-                if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                // a hash lookup, and add_direct updates the hashes, so that the next add does not
+                // rebuild them from all names, which made e.g. the triple selection of a large import
+                // quadratic; the hash of all names, because its key is the name incl. the excluded
+                if (!isset($this->name_pos_lst_all()[$name]) or $allow_duplicates) {
                     $this->add_direct($obj_to_add);
-                    $this->set_hash_dirty();
                     $added = true;
                 } else {
                     $added = parent::add_obj($obj_to_add, $allow_duplicates, $msg);
@@ -580,14 +598,18 @@ class sandbox_list_named extends sandbox_list
      */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|sandbox_named|triple|phrase|term|null $obj_to_add): void
     {
+        parent::add_direct($obj_to_add);
+        // the key of the appended entry and not the count, which is lower after an unset left a gap
+        $pos = array_key_last($this->lst());
         if (!$this->is_name_list_dirty()) {
-            $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
+            foreach ($this->name_index_keys($obj_to_add) as $name) {
+                $this->name_pos_lst[$name] = $pos;
+            }
         }
         if (!$this->is_all_name_list_dirty()) {
             // TODO Prio 2 add handling of excluded named objects
-            $this->name_pos_lst_all[$obj_to_add->name(true)] = count($this->lst());
+            $this->name_pos_lst_all[$obj_to_add->name(true)] = $pos;
         }
-        parent::add_direct($obj_to_add);
     }
 
     /**
@@ -1204,8 +1226,8 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
-     * create any missing sql functions and queries to exclude or delete the objects of the list
-     * TODO Prio 2 create blocks of delete function calls
+     * delete or exclude the objects of the list that the import marks as excluded, each via its
+     * del() and so by the rules of docs/llm/delete.md
      *
      * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the objects that are already in the db
      * @param user_message $msg enriched with the reason why the action has failed
@@ -1222,10 +1244,6 @@ class sandbox_list_named extends sandbox_list
         float                                                            $del_per_sec = 0.1
     ): bool
     {
-        global $db_con;
-
-        // prepare
-        $sc = $db_con->sql_creator();
         if ($msg->usr == null) {
             log_err('message  user missing');
         }
@@ -1236,39 +1254,19 @@ class sandbox_list_named extends sandbox_list
         $imp->step_end($db_lst->count());
 
         if (!$del_lst->is_empty()) {
-
-            // get the sql call to add the missing objects
-            $del_calls = $del_lst->sql_delete($sc, $db_lst, $msg);
-            $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
-
-            // get the functions that are already in the database
-            $db_func_lst = $this->db_functions($msg, $imp, $class);
-            if ($db_func_lst !== null) {
-
-                // get the sql functions that have not yet been created
-                $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
-
-                // get the first object that have requested the missing function
-                $func_create_obj = clone $del_lst;
-                $func_create_obj_names = $func_to_create->object_names();
-                $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
-
-                // create the missing sql functions and add the first missing object
-                $func_to_create = $func_create_obj->sql_delete($sc, $db_lst, $msg);
-                $func_to_create->exe_delete($msg, $class);
-                $imp->step_end($func_to_create->count());
-
-                // delete upfront depending database entries like the formula elements
-                $this->delete_depending($msg);
-
-                // add the remaining missing words, triples or ...
-                $step_time = $db_lst->count() / $del_per_sec;
-                $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
-                $del_calls = $del_lst->sql_delete_call_with_par($sc, $msg, $db_lst);
-                $del_calls->exe_delete($msg, $class);
-
-                $imp->step_end($db_lst->count(), $del_per_sec);
+            // each object via its del(), which is the single entry point of every delete
+            // (docs/llm/delete.md): it deletes the object with its depending rows if nobody else
+            // uses it and else only excludes it for the requesting user; a direct sql delete would
+            // skip these checks and e.g. fail on the user row that the update above has written
+            $step_time = $del_lst->count() / $del_per_sec;
+            $imp->step_start(msg_id::DEL, $class, $del_lst->count(), $step_time);
+            foreach ($del_lst->lst() as $sbx) {
+                $db_sbx = $db_lst->get_by_name($sbx->name(true), $msg, true);
+                if ($db_sbx != null) {
+                    $db_sbx->del($msg);
+                }
             }
+            $imp->step_end($del_lst->count(), $del_per_sec);
         }
 
         return $msg->is_ok();
@@ -1364,41 +1362,6 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
-     * get a list of all sql functions that are needed to delete all objects of this list to the database
-     * @return sql_par_list with the sql function names
-     */
-    function sql_delete(sql_creator $sc, sandbox_list_named $db_lst, user_message $msg): sql_par_list
-    {
-        $sql_list = new sql_par_list();
-        foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name(), $msg);
-            // another validation check as a second line of defence
-            if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                // check always user sandbox and normal name, because reading from the database for check would take longer
-                $sc_par_lst = new sql_type_list();
-                $sc_par_lst->add(sql_type::LOG);
-                // a per item buffer, because one object that cannot be written must not stop the list
-                $msg_del = new user_message();
-                $qp = $sbx->sql_delete($sc, $msg_del, $sc_par_lst);
-                if ($msg_del->is_ok()) {
-                    $qp->obj_name = $sbx->name();
-                    $sql_list->add_by_name($qp);
-                } else {
-                    log_err('sql delete of ' . $sbx->dsp_id() . ' skipped because ' . $msg_del->all_message_text());
-                }
-                $msg->merge($msg_del);
-            }
-        }
-        return $sql_list;
-    }
-
-    // TODO Prio 3 use the given $usr_msg instead of $usr_msg->add() to increase speed
-    protected function delete_depending(user_message $msg): void
-    {
-        $msg->add_info_text('no depending defined for ' . $this::class);
-    }
-
-    /**
      * get a list of all sql function names that are needed to update all loader of this list to the database
      * @param sql_creator $sc
      * @param sandbox_list_named $db_lst
@@ -1422,8 +1385,12 @@ class sandbox_list_named extends sandbox_list
                 // do not overwrite db values not set by the import
                 $sbx->fill($db_row, $usr_req);
 
-                if (!$sbx->db_ready($msg)) {
-                    log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
+                // a per item buffer like for the update below, because the check returns the state of
+                // the message, so one object that is not ready would block all later objects of the list
+                $rdy_msg = new user_message();
+                if (!$sbx->db_ready($rdy_msg)) {
+                    log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par because '
+                        . $rdy_msg->all_message_text());
                 } else {
                     if (!$sbx->needs_db_update($db_row, $msg)) {
                         log_info($sbx->dsp_id() . ' has no database relevant difference so db update is skipped');
@@ -1431,50 +1398,16 @@ class sandbox_list_named extends sandbox_list
                         // check always user sandbox and normal name, because reading from database for check would take longer
                         $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                         $sc_par_lst->add(sql_type::LOG);
-                        // a per item buffer, because one failing object must not stop the list;
-                        // it is merged into the request message below
+                        // a per item buffer, because one failing object must not stop the list
                         $upd_usr_msg = new user_message();
                         $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
                         if (!$upd_usr_msg->is_ok()) {
-                            $msg->merge($upd_usr_msg);
-                            log_err('Internal import error: ' . $msg->all_message_text());
+                            log_err('Internal import error: ' . $upd_usr_msg->all_message_text());
                         } elseif ($qp != null) {
                             $qp->obj_name = $sbx->name();
                             $sql_list->add($qp);
                         }
                     }
-                }
-            }
-        }
-        return $sql_list;
-    }
-
-    /**
-     * get a list of all sql function names that are needed to delete all loaded of this list to the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
-     * @param sandbox_list_named|list_db_write|null $db_lst the list of delete statements that are already in the database
-     * @return sql_par_list with the sql function names
-     */
-    function sql_delete_call_with_par(
-        sql_creator                           $sc,
-        user_message                          $msg,
-        sandbox_list_named|list_db_write|null $db_lst = null
-    ): sql_par_list
-    {
-        $sql_list = new sql_par_list();
-        foreach ($this->lst() as $sbx) {
-            if ($db_lst != null) {
-                $db_row = $db_lst->get_by_name($sbx->name(true), $msg);
-                // another validation check as a second line of defence
-                if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    // check always user sandbox and normal name, because reading from database for check would take longer
-                    $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-                    $sc_par_lst->add(sql_type::LOG);
-                    $qp = $sbx->sql_delete($sc, $msg, $sc_par_lst);
-                    $qp->obj_name = $sbx->name(true);
-                    $sql_list->add($qp);
                 }
             }
         }
@@ -1506,20 +1439,19 @@ class sandbox_list_named extends sandbox_list
      */
     function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
-        if ($limit == null and !$this->is_name_list_dirty()) {
-            $result = array_keys($this->name_pos_lst);
-        } else {
-            $result = [];
-            $pos = 0;
-            foreach ($this->lst() as $sbx_obj) {
-                if ($pos <= $limit or $limit == null) {
-                    $name = $sbx_obj->name($ignore_excluded);
-                    // do not add excluded names
-                    if ($name != null and $name != '') {
-                        $result[] = $sbx_obj->name($ignore_excluded);
-                    }
-                    $pos++;
+        // always from the objects and never from the keys of the name hash, because the hash is keyed
+        // by the name without the excluded objects, so it ignores $ignore_excluded e.g. for the import
+        // of an excluded triple, and the hash of a phrase list also has the plural forms as keys
+        $result = [];
+        $pos = 0;
+        foreach ($this->lst() as $sbx_obj) {
+            if ($pos <= $limit or $limit == null) {
+                $name = $sbx_obj->name($ignore_excluded);
+                // do not add excluded names
+                if ($name != null and $name != '') {
+                    $result[] = $sbx_obj->name($ignore_excluded);
                 }
+                $pos++;
             }
         }
         return $result;

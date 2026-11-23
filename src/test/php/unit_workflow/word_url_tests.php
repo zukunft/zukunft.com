@@ -236,8 +236,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = word_names::MATH_ID;
-        $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $msg, $ui->dto, false, true);
+        $req = new user_request($msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_to_action returns the confirm change view
         $url_arr[url_var::ACTION] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -253,7 +252,7 @@ class word_url_tests extends url_test_base
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
-        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $msg, $ui->dto, false);
+        $confirm_url = $ui->url_to_action($url_arr, $msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
     }
 
@@ -537,7 +536,8 @@ class word_url_tests extends url_test_base
      * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
      * write test ($do_it true): the changing user usr2 does not own the base word (usr1 does), fills
      * almost all sandbox fields in one edit round via the filled test word factory and confirms, then
-     * changes the description twice in two more edit rounds, so the confirmed changes land in a usr2
+     * changes the description twice in two more edit rounds and clears it in a last one (an empty
+     * description of the user must never show the description of the owner), so the confirmed changes land in a usr2
      * user sandbox overlay while the owner keeps the unchanged base word; each snapshot shows the
      * page that results from the step's action, so each confirm step snapshot is the word page with
      * the change log grown by the confirmed change. snapshots go into
@@ -630,8 +630,22 @@ class word_url_tests extends url_test_base
         // page now shows both description changes on top of the filled fields
         $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
 
+        // edit: re-open the edit view to clear the description
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
+
+        // user 2 removes the description; an empty field must clear the description for this user
+        // and never bring back the description of the owner
+        $url_arr[url_var::DESCRIPTION] = '';
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_TWO_COM;
+
+        // save: press save which shows the confirm change view with the cleared description
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
+
+        // confirm: confirm the cleared description (written with $do_it true)
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
         // a write run must persist the changes as a per-user overlay: the changing user sees the
-        // filled fields and the latest description, the owner keeps the unchanged base word
+        // filled fields and the cleared description, the owner keeps the unchanged base word
         // without an overlay of their own
         if ($do_it) {
             $test_name = 'change_word_all_sandbox_fields has created the user overlay';
@@ -640,8 +654,9 @@ class word_url_tests extends url_test_base
             $this->t->assert_true($test_name, $wrd_changer->has_usr_cfg());
             $test_name = '... and the changing user sees the filled plural';
             $this->t->assert($test_name, $wrd_changer->plural ?? '', $fill[url_var::PLURAL]);
-            $test_name = '... and the changing user sees the second changed description';
-            $this->t->assert($test_name, $wrd_changer->get_description() ?? '', word_names::TEST_CHANGE_TWO_COM);
+            // an empty string and not null, because null would show the description of the owner
+            $test_name = '... and the changing user sees the cleared description';
+            $this->t->assert($test_name, $wrd_changer->get_description() ?? 'null', '');
             $test_name = '... while the owner still sees the unfilled word';
             $wrd_owner = new word($this->t->usr1);
             $wrd_owner->load_by_name(word_names::TEST_ADD, $msg);
@@ -753,9 +768,12 @@ class word_url_tests extends url_test_base
             // (a zero id url would be rejected by url_to_html with 'id of word is empty')
             $this->wf_id = word_names::TEST_ADD_ID;
         }
-        // the api json does not yet carry the usage, and the test word is not really linked, so force
-        // the usage that blocks the deletion (the frontend check reads the usage posted with the url)
-        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        // the unit workflow renders from the url without a backend call, and the test word is not linked to
+        // anything in a read-only run, so force the usage that blocks the deletion (the frontend check reads
+        // the usage posted with the url)
+        // TODO Prio 2 remove the forced usage once the test word is linked e.g. by a test value and the backend
+        //      fills the usage on load (word::api_json_array with incl_related calls update_usage)
+        //      or a batch maintains the usage of the words like verb_list::calc_usage
         $usage = $wrd->usage ?? 0;
         if ($usage == 0) {
             $usage = 1;
@@ -866,6 +884,7 @@ class word_url_tests extends url_test_base
         // word is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_word_removed('del_word workflow has removed the word');
+            $this->cleanup_change_log_of_removed($wrd);
         }
     }
 

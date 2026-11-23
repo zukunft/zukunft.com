@@ -35,8 +35,10 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -378,6 +380,42 @@ class view_tests
         $t->assert_true($test_name, $is_ok);
         $msg->reset();
 
+        // the import mapper takes an assigned term only from the import and never reads the database, because e.g.
+        // a term of another file gets its database id before the save (view_list::set_term_links_by_db_name)
+        $test_name = 'an assigned term of the import is taken from the import';
+        $msk = new view($t->usr1);
+        $msk_json = [json_fields::NAME => views::TEST_ADD_NAME, json_fields::ASSIGNED => [word_names::MINUTE]];
+        $msk->import_mapper($msk_json, $msg, $t_trm->dto_minute_and_second());
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->id_obj(), word_names::MINUTE_ID);
+        // negative: a term that the import does not know keeps only its name until the save
+        $test_name = '... but a term of another file keeps only its name';
+        $msk_json = [json_fields::NAME => views::TEST_ADD_NAME, json_fields::ASSIGNED => [word_names::PI]];
+        $msk->import_mapper($msk_json, $msg, $t_trm->dto_minute_and_second());
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->name(), word_names::PI);
+        $test_name = '... and no database id';
+        $t->assert($test_name, $lnk->term()->id(), 0);
+        $msg->reset();
+
+        // before the save the terms of the term links get their database id by name, but a term with an id is kept
+        $test_name = 'a term link with a database id keeps its term';
+        $read_msg = new user_message($t->usr1);
+        $read_msg->log_test_only = true;
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->term(), $read_msg);
+        $msk->set_term_links_by_db_name($read_msg);
+        $lnk = $msk->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->id(), $t_trm->term()->id());
+        // negative: no database read for a term that is complete already
+        $test_name = '... without a database read';
+        $t->assert($test_name, $read_msg->log_test_txt, '');
+        $test_name = '... also as a view of a list';
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->add($msk);
+        $msk_lst->set_term_links_by_db_name($read_msg);
+        $t->assert($test_name, $read_msg->log_test_txt, '');
+
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_msk->view(), $t->usr_system);
@@ -527,21 +565,28 @@ class view_tests
 
         $t->subheader($ts . 'export');
 
-        // without the database load the parent and the child view are exported as objects
+        // if requested the parent and the child view are exported as objects
         $test_name = 'export parent';
         $mrl = $t_msk->view_relation();
-        $exp = $mrl->export_json($msg, [], false);
+        $exp = $mrl->export_json($msg, [export_type::INCL_LINKED], false);
         $parent = $exp[json_fields::PARENT];
         $t->assert($test_name, $parent[json_fields::NAME], views::WORD_EDIT);
         $test_name = 'export child';
         $child = $exp[json_fields::CHILD];
         $t->assert($test_name, $child[json_fields::NAME], views::WORD_LOG);
         $msg->reset();
+        // negative: without the request, also without the database load, only their names are exported
+        $test_name = '... but only the name of the parent if the objects are not requested';
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PARENT], views::WORD_EDIT);
+        $test_name = '... and of the child';
+        $t->assert($test_name, $exp[json_fields::CHILD], views::WORD_LOG);
+        $msg->reset();
 
         // negative: a view relation without a child view exports no child view
         $test_name = 'export no child';
         $mrl = $t_msk->view_relation_incomplete();
-        $exp = $mrl->export_json($msg, [], false);
+        $exp = $mrl->export_json($msg, [export_type::INCL_LINKED], false);
         $t->assert_null($test_name, $exp[json_fields::CHILD]);
         $msg->reset();
 

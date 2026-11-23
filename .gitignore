@@ -23,5 +23,6 @@
 /.mcp.json
 /cache/cfg_1.json
 /cache/cfg_2.json
+/cache/cfg_3.json
 # the api answers written next to the expected files if files::WRITE_API_ACTUAL_FILES is on
 /src/test/resources/api/**/*_actual.json

@@ -26,5 +26,5 @@ SELECT value_text_insert_log_11000_user
         1::smallint,
         359::smallint,
         'zukunft.com'::text,
-        '0A-1O+1S+1X+'::text,
+        '0f-2V+2Z+2e+'::text,
         null::bigint);

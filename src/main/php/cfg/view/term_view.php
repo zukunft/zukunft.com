@@ -67,9 +67,13 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -98,9 +102,13 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -127,6 +135,9 @@ class term_view extends sandbox_link
     // of the join, so both must match the join order of term_view_list::load_sql_by_ids
     const string FLD_VIEW_NAME_JOINED = view_fields::FLD_NAME . '1';
     const string FLD_TERM_NAME_JOINED = term::FLD_NAME . '2';
+
+    // the description of the link of the word mathematics to the start view that the database setup adds
+    const string MATH_START_COM = 'add usage and log of a word';
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
@@ -500,6 +511,27 @@ class term_view extends sandbox_link
     }
 
     /**
+     * set this new link to the link of the word mathematics to the start view, which the database setup adds,
+     * with the shared consts only, because the setup is production code that must not use the test folder
+     * @return void
+     */
+    function set_math_start(): void
+    {
+        $usr = $this->get_user();
+        $wrd = new word($usr);
+        $wrd->set(words::MATH_ID, words::MATH);
+        $wrd->description = words::MATH_COM;
+        $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // not reported: only for the permission check
+        $msk = new view($usr);
+        $msk->set(views::START_ID, views::START_NAME);
+        $msk->description = views::START_COM;
+        $this->set_term($wrd->term());
+        $this->set_predicate(view_link_types::DEFAULT);
+        $this->set_view($msk);
+        $this->description = self::MATH_START_COM;
+    }
+
+    /**
      * interface function to set the view always to the from object
      * @param view $msk the view that should be linked
      * @return void
@@ -560,7 +592,8 @@ class term_view extends sandbox_link
         if ($typ != null) {
             return $typ->get_code_id();
         } else {
-            // TODO Prio 0 use msg_id
+            // TODO Prio 2 use a translatable msg_id with log_err_msg, which needs the user_message parameter
+            //      in every get_predicate_code_id (see docs/llm/pending_prio_2.md "the verb name of a triple")
             $msg = 'term view link type with id ' . $id . ' is missing';
             log_err($msg);
             return $msg;

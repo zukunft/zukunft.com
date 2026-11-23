@@ -240,6 +240,9 @@ enum messages: string
     case WIKIPEDIA_REFRESH = 'wikipedia_refresh';
     case WIKIPEDIA_REF_MISSING = 'wikipedia_ref_missing';
     case WIKIPEDIA_READ_FAILED = 'wikipedia_read_failed';
+    // a request to an external server e.g. wikipedia or wikidata without any answer, e.g. because the
+    // pod has no internet connection or no dns server, instead of the read failed message of the page
+    case CONNECTION_MISSING = 'connection_missing';
     case WIKIPEDIA_NO_DESCRIPTION = 'wikipedia_no_description';
     case WIKIPEDIA_NO_WIKIDATA = 'wikipedia_no_wikidata';
     // the info that a refresh has found nothing to update, with and without the time of the wikipedia page
@@ -254,6 +257,19 @@ enum messages: string
     case WIKIDATA_IMPORTED = 'wikidata_imported';
     case WIKIDATA_NAME_USED = 'wikidata_name_used';
     case WIKIDATA_ID_FIELD = 'wikidata_id_field';
+    // the suggestions of the add word button of a search (see ref_link_wikipedia::suggest_from_url)
+    case CONCEPTNET_READ_FAILED = 'conceptnet_read_failed';
+    case SUGGEST_WIKIPEDIA_MISSING = 'suggest_wikipedia_missing';
+    case SUGGEST_PARENTS_MISSING = 'suggest_parents_missing';
+    // the steps of the suggestions that the add view shows to the user
+    case SUGGEST_READ_WIKIPEDIA = 'suggest_read_wikipedia';
+    case SUGGEST_READ_CONCEPTNET = 'suggest_read_conceptnet';
+    case SUGGEST_READ_WIKIDATA = 'suggest_read_wikidata';
+    case SUGGEST_FOUND_DESCRIPTION = 'suggest_found_description';
+    case SUGGEST_FOUND_WIKIDATA = 'suggest_found_wikidata';
+    case SUGGEST_FOUND_PARENTS = 'suggest_found_parents';
+    case SUGGEST_NO_PARENTS = 'suggest_no_parents';
+    case SUGGEST_NO_ANSWER = 'suggest_no_answer';
     case IMPORT_PREVIEW_WORDS_NEW = 'import_preview_words_new';
     case IMPORT_PREVIEW_TRIPLES_NEW = 'import_preview_triples_new';
     case IMPORT_PREVIEW_VALUES_NEW = 'import_preview_values_new';
@@ -280,6 +296,8 @@ enum messages: string
     case INFO_CONFIRM_REFS = 'info_confirm_refs';
     case REF_ROW_OF_OTHER_PHRASE = 'ref_row_of_other_phrase';
     case REF_ROW_TYPE_USED = 'ref_row_type_used';
+    // the triple rows that the confirm of a new word adds too (see url_var::TRIPLE_ROW)
+    case INFO_CONFIRM_TRIPLES = 'info_confirm_triples';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
     case READ = 'read';
@@ -533,12 +551,22 @@ enum messages: string
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
 
-    case INTERNAL = 'an internal system error has occurred that you can track with this link: '
+    // the var is the text of the error without the sys_log id (log_msg)
+    case INTERNAL = 'an internal system error has occurred and the admin has been informed: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
-    case INTERNAL_WARNING = 'a system warning has been logged that you can track with this link: '
+    // like INTERNAL without a link, because the var is what log_msg returns for a warning, which is empty (log_warning_msg)
+    case INTERNAL_WARNING = 'a system warning has occurred and the admin has been informed: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    // the line below a critical error that the log writer shows (log_msg)
+    case INTERNAL_ADMIN_INFORMED = 'internal_admin_informed';
     case BACKEND_OLDER_THAN_DB = 'The zukunft.com backend is older than the database used. '
         . 'This may cause damage on the database. Please upgrade the backend program.';
+    // an empty database in the prod or test environment is set up only if the .env allows it (db_check::setup_allowed)
+    case DB_SETUP_OFF = 'The zukunft.com database is empty, but the setup of the database is switched off. '
+        . 'Please check the database connection or set DB_SETUP=true in the .env file to create the database.';
+    // the setup switches the flag off again, so that it allows one setup only (db_check::switch_setup_off)
+    case DB_SETUP_NOT_SWITCHED_OFF = 'The zukunft.com database has been set up, but DB_SETUP could not be switched off '
+        . 'in the .env file. Please set DB_SETUP=false by hand, so that an empty database is not set up again.';
 
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
@@ -910,6 +938,13 @@ enum messages: string
         . '" of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing';
+    case EXPRESSION_REF_TEXT_DIFFERS = 'the stored reference text "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" of formula "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" does not match its expression "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '", so the formula should be saved again';
     case EXPRESSION_REF_IS_NULL = 'the database format of the formula expression of "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is null';
@@ -3003,6 +3038,8 @@ enum messages: string
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
     // an empty text has nothing to store and its api message would have no text, so e.g. the config could not be read
     case VALUE_TEXT_EMPTY = 'value_text_empty';
+    // the database has no foreign key on the phrases of a value, so a phrase id that names no word or triple is refused before the insert
+    case VALUE_PHRASE_NOT_FOUND = 'value_phrase_not_found';
     // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
     case CONFIG_FONT_INVALID = 'config_font_invalid';
     // the font selection of the settings page and its entries (see web/helper/config_tree::FONT_OPTIONS)
@@ -3094,6 +3131,8 @@ enum messages: string
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
     case SOLUTION_PRIO_RANKING_TABLE = 'solution_prio_ranking_table';
+    // the ranking view, which lists the related phrases of a phrase with the highest impact first
+    case RANKING_BY_IMPACT = 'ranking_by_impact';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';
@@ -3154,6 +3193,8 @@ enum messages: string
 
     // value and result fields
     case FORM_FIELD_VALUE = 'form_field_value';
+    // the label of the user who owns the object e.g. on the value detail page
+    case FORM_FIELD_OWNER = 'form_field_owner';
     case FORM_FIELD_GROUP = 'form_field_group';
     // the label of the field for the name or the first chars of a word or triple of a new value
     case FORM_FIELD_PHRASE_PATTERN = 'form_field_phrase_pattern';
@@ -3168,6 +3209,7 @@ enum messages: string
     case FORM_FIELD_DOI = 'form_field_doi';
     case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
     case FORM_FIELD_REF_DELETE = 'form_field_ref_delete';
+    case FORM_FIELD_ROW_INCLUDE = 'form_field_row_include';
 
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
@@ -3225,6 +3267,7 @@ enum messages: string
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
     case FORM_REF_ROWS = 'form_ref_rows';
+    case FORM_TRIPLE_ROWS = 'form_triple_rows';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
 
     // value and result select fields
@@ -3298,6 +3341,9 @@ enum messages: string
 
     // TODO Prio 2 review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
+    // the hints of the component preview without a sample phrase (system_page::preview)
+    case COMPONENT_PREVIEW_NO_SAMPLE = 'component_preview_no_sample';
+    case COMPONENT_PREVIEW_SAMPLE_NOT_FOUND = 'component_preview_sample_not_found';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
@@ -3880,6 +3926,7 @@ enum messages: string
         self::FORM_SELECT_PHRASE,
         self::FORM_SELECT_PHRASE_FROM,
         self::FORM_SELECT_PHRASE_TO,
+        self::FORM_SELECT_PHRASE_REF,
         self::FORM_SELECT_PHRASE_ROW,
         self::FORM_SELECT_PHRASE_COL,
         self::FORM_SELECT_PHRASE_COL_SUB,

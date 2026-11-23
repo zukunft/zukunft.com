@@ -238,7 +238,7 @@ if ($db_con->is_open()) {
             $is_action = ($is_post_action or $is_get_action) && $app->session_token_valid;
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
-                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
+                    $url_array = $ui->url_to_action($url_array, $msg_ui, $ui->dto, true, $upload, $is_uploaded);
                     // a page text collected so far or an already sent header would be lost by a redirect
                     if ($web_txt == '' and !headers_sent()) {
                         $redirect_url = frontend::redirect_url($url_array, $msg_ui);

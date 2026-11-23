@@ -296,3 +296,4 @@ component_type_id, type_name, description, code_id
 295, 'form reference rows', 'the references of a phrase as rows of its edit form, which the confirm of the phrase change writes too', 'system_form_ref_rows'
 296, 'system body import preview', 'the new words, triples and values, the values in line and the conflicts that an import e.g. from wikidata would add, with the confirm that writes them', 'system_body_import_preview'
 297, 'system form wikidata id', 'the wikidata id of the entity whose values the admin imports, which opens the import preview', 'system_form_wikidata_id'
+298, 'form triple rows', 'the triples of a new word as rows of its add form, which the confirm of the word adds too', 'system_form_triple_rows'

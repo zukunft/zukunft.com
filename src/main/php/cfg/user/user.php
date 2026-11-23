@@ -244,8 +244,9 @@ class user extends db_id_object_non_sandbox
     public ?string $ip_addr = null;        // simply the ip address used if no username is given
     public ?string $email = null;          // the email used for the signup process
 
-    // log in and sighup
-    // TODO Prio 0 check that all user vars are save and are included in the api message
+    // log in and sighup; the password hash, the activation key and the ip address
+    // are never in the api message (user_tests)
+    // TODO Prio 2 check by a unit test that every other user var has its field in the api message
     private ?string $password = null;      // only used for the login and password change process
     public ?string $activation_key = null; // var used for the registration and logon process
     public ?DateTime $activation_timeout = null;
@@ -609,11 +610,7 @@ class user extends db_id_object_non_sandbox
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            // only system and admin users are allowed to change the code id
-            if ($msg->usr === null) {
-                log_err_reported('user not set in user_message', 'import_mapper');
-                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            if ($this->critical_import_permitted(fields::FLD_CODE_ID, $msg)) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
             }
         }
@@ -629,8 +626,11 @@ class user extends db_id_object_non_sandbox
         } else {
             $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
         }
+        // the status too, because it can e.g. activate a user that an admin has set to read only
         if (key_exists(json_fields::STATUS, $in_ex_json)) {
-            $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
+            if ($this->critical_import_permitted(user_db::FLD_STATUS, $msg)) {
+                $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
+            }
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         }
@@ -645,10 +645,37 @@ class user extends db_id_object_non_sandbox
         $this->msk = $map->get_view($in_ex_json, $msg, $dto);
         $this->src = $map->get_source($in_ex_json, $msg, $dto);
 
-        // TODO Prio 0 create and use an object mapper library (one for backend and one for the fromtend)
+        // TODO Prio 2 create and use an object mapper library (one for backend and one for the frontend),
+        //      which maps the view, source and other references of every import_mapper by one function
         // TODO Prio 2 create the view if the json is an array with more information than just the view name
 
         return $msg->is_ok();
+    }
+
+    /**
+     * only a system or an admin user may import a critical field of a user e.g. the code id or the status
+     * @param string $fld_name the db field name of the critical field, which the refusal names
+     * @param user_message $msg with the requesting user and to report why the field is refused
+     * @return bool true if the requesting user may import the critical field
+     */
+    private function critical_import_permitted(string $fld_name, user_message $msg): bool
+    {
+        $result = false;
+        if ($msg->usr === null) {
+            log_err_reported('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            $result = true;
+        } else {
+            $lib = new library();
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
+                msg_id::VAR_NAME => $fld_name,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $result;
     }
 
     /**
@@ -750,7 +777,7 @@ class user extends db_id_object_non_sandbox
         // the user himself, so the remaining email is only shown to them
         $vars[json_fields::EMAIL] = $this->email;
 
-        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        // the dates with the time zone and null if not set, like every json date (coding_rule_tests::json_date_format_tests)
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
         $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);
@@ -1611,10 +1638,10 @@ class user extends db_id_object_non_sandbox
             $this->id = 0; // switch off the permission
             // record the block reason also on the request message, because most api
             // endpoints only forward $msg to the user and would otherwise drop the
-            // reason returned as text (add_message_text does not repeat the same text,
+            // reason returned as text; merged, so that also the status and the message ids are kept
+            // (merge adds the texts with add_message_text, which does not repeat the same text,
             // so endpoints that additionally add the returned text do not duplicate it)
-            // TODO Prio 0 use merge?
-            $msg->add_message_text($test_result->all_message_text());
+            $msg->merge($test_result);
             log_info('ip_check rejects due to ' . $test_result->text());
         }
         return $test_result->all_message_text();
@@ -2239,6 +2266,8 @@ class user extends db_id_object_non_sandbox
         ?user        $usr_req = null
     ): bool
     {
+        global $db_con;
+
         if ($usr_req == null) {
             $usr_req = $msg->usr;
         }
@@ -2247,44 +2276,27 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        // map the non critical fields
+        // map the fields, of which the mapper refuses the critical ones e.g. the profile, the code id and the status
+        // if the requesting user may not set them
         $this->import_mapper($in_ex_json, $msg, $dto);
-
-        // set the critical parameter
-        // TODO Prio 0 review
-        /*
-        if ($usr_req->is_admin() or $usr_req->is_system()) {
-            $trm = new term($this);
-            $trm->import_mapper($in_ex_json[json_fields::TERM], $msg, $dto);
-            $this->trm = $trm;
-            $msk = new view($this);
-            $msk->import_mapper($in_ex_json[json_fields::VIEW], $msg, $dto);
-            $this->msk = $msk;
-            $src = new source($this);
-            $src->import_mapper($in_ex_json[json_fields::SOURCE], $msg, $dto);
-            $this->src = $src;
-        } else {
-            // or remove the setting if the requesting user has no permission
-            $this->profile_id = user_profiles::NORMAL_ID;
-            $this->code_id = null;
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
-            $this->trm = null;
-            $this->msk = null;
-            $this->src = null;
-        }
-        */
 
 
         // the last used objects are not included in the im- and export because this is mot like not needed
 
-        // save the user in the database
-        if (!$test_obj) {
+        // save the user in the database, like db_object_seq_id::import_obj only with a database connection,
+        // so that e.g. the im- and export unit test on the dummy connection only maps the user
+        if (!$test_obj and $db_con->is_open()) {
             if ($msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO Prio 1 use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     $this->save_user($msg, $usr_req);
+                } else {
+                    $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                    ]);
                 }
             } else {
                 $lib = new library();
@@ -2318,7 +2330,7 @@ class user extends db_id_object_non_sandbox
         // the activation key is intentionally not exported: it is the account activation secret,
         // so leaking it in an export or backup file would enable an account takeover; the key stays
         // backend only (like in api_json_array), a re-imported account simply re-requests activation
-        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        // the dates with the time zone and null if not set, like every json date (coding_rule_tests::json_date_format_tests)
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
         $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);
@@ -2341,16 +2353,17 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::LAST_NAME] = $this->last_name;
 
         // the last objects used by the user to improve guessing of the next user actions
+        // with the load flag of the caller, because e.g. a test without database exports without loading
         if ($this->trm != null) {
-            $vars[json_fields::TERM] = $this->trm->export_json($msg, $exp_typ);
+            $vars[json_fields::TERM] = $this->trm->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::TERM] = $this->trm->name();
         }
         if ($this->msk != null) {
-            $vars[json_fields::VIEW] = $this->msk->export_json($msg, $exp_typ);
+            $vars[json_fields::VIEW] = $this->msk->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::VIEW] = $this->msk->name();
         }
         if ($this->src != null) {
-            $vars[json_fields::SOURCE] = $this->src->export_json($msg, $exp_typ);
+            $vars[json_fields::SOURCE] = $this->src->export_json($msg, $exp_typ, $do_load);
             //$vars[json_fields::SOURCE] = $this->src->name();
         }
 

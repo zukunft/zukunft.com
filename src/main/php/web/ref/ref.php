@@ -519,8 +519,9 @@ class ref extends sandbox
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
-        $vars[json_fields::DESCRIPTION] = $this->get_description();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        // the stored description, because get_description() shows null as an empty description
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        return $this->api_array_set($vars);
     }
 
 

@@ -102,6 +102,21 @@ class sandbox_code_id extends sandbox_typed
         return $msg->is_ok();
     }
 
+    /**
+     * @param user_message $msg with the requesting user, because a code id is only shown to an admin or a developer
+     * @return array parent url array extended with the code id, if this object has one and the user may see it
+     */
+    function to_url_array(user_message $msg): array
+    {
+        $url_array = parent::to_url_array($msg);
+        // a link url is part of the page, so the code id follows the same gate as its form field
+        $can_see = ($msg->usr ?? null)?->can_see_code_id() ?? false;
+        if ($this->code_id != null and $can_see) {
+            $url_array[url_var::CODE_ID] = $this->code_id;
+        }
+        return $url_array;
+    }
+
 
     /**
      * besides the base checks the phrase type may only be changed by a user that is allowed to set

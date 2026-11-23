@@ -99,7 +99,7 @@
    "id": 105,
    "protection": "admin_protection",
    "name": "year",
-   "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
+   "description": "A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.",
    "type_code_id": "time",
    "type": "time"
   },

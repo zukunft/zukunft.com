@@ -157,6 +157,20 @@ class base_object_tests
         $test_name = 'an ok message is no error';
         $t->assert_false($test_name, $msg_ok->is_error());
 
+        // both backend messages send the status of the shared Message class, so the frontend reads one status
+        $test_name = 'the api message of an error sends the error status';
+        $err_json = $msg_err->api_array($msg_ok);
+        $status = $err_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::ERROR);
+        $test_name = '... and of an sql message the same status';
+        $sql_json = $msg_sql->api_array([], $msg_ok);
+        $status = $sql_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::ERROR);
+        $test_name = 'the api message of an ok message sends the ok status';
+        $ok_json = $msg_ok->api_array($msg_ok);
+        $status = $ok_json[json_fields::USER_MESSAGES_STATUS];
+        $t->assert($test_name, $status, msg_id::OK);
+
         $t->subheader($ts . 'message add');
 
         // a message id with its vars is added to the message
@@ -173,6 +187,77 @@ class base_object_tests
         $cnt = count($msg->msg_var_lst);
         $t->assert($test_name, $cnt, 1);
         $msg->reset();
+
+        // each entry has its severity, so that e.g. the errors of a failed import can be told apart from its infos
+        // a backend message, because the info and warning adders and assert_log_err need it
+        $usr_msg = new user_message();
+        $test_name = 'an info keeps the message ok';
+        $usr_msg->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $test_name = '... and is kept as an info';
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::INFO);
+        $usr_msg->reset();
+        $test_name = 'a warning with vars is kept as a warning';
+        $usr_msg->add_warning_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::WARNING);
+        $usr_msg->reset();
+        $test_name = 'a repeated text keeps the worse severity';
+        $usr_msg->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $usr_msg->add(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::NOK);
+        $usr_msg->reset();
+        $test_name = 'an added error is logged';
+        $err_call = fn() => $usr_msg->add_err(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH]);
+        $t->assert_log_err($test_name, $err_call, word_names::MATH, $usr_msg);
+        $test_name = '... and sets the error status';
+        $t->assert_true($test_name, $usr_msg->is_error());
+        $test_name = '... and is kept as an error';
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::ERROR);
+        $usr_msg->reset();
+        $test_name = 'a merged info of a failed message stays an info';
+        $msg_buf = new user_message();
+        $msg_buf->add_info_with_vars(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $msg_buf->add(msg_id::RESET_MAIL_SENT, [word_names::ZH]);
+        $usr_msg->merge($msg_buf);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::INFO);
+        $test_name = '... and the not ok entry stays not ok';
+        $severity = $usr_msg->msg_var_lst[1][2];
+        $t->assert($test_name, $severity, msg_id::NOK);
+        $test_name = '... and the message is not ok';
+        $t->assert_false($test_name, $usr_msg->is_ok());
+        $usr_msg->reset();
+        $test_name = 'an entry added with its severity keeps it';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::WARNING);
+        $severity = $usr_msg->msg_var_lst[0][2];
+        $t->assert($test_name, $severity, msg_id::WARNING);
+        // negative: a warning does not lower the status
+        $test_name = '... and a warning keeps the message ok';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $usr_msg->reset();
+        $test_name = 'the error text with a limit of one names the first error';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::ERROR);
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::ZH], msg_id::ERROR);
+        $usr_msg->add_info_with_vars(msg_id::PHRASE_CREATED, [msg_id::VAR_PHRASE_NAME => word_names::PI]);
+        $err_txt = $usr_msg->var_error_text(1);
+        $t->assert_text_contains($test_name, $err_txt, word_names::MATH);
+        $test_name = '... and counts the second';
+        $t->assert_text_contains($test_name, $err_txt, '1 ' . msg_id::MORE->text());
+        // negative: an info is no error, so it is neither named nor counted
+        $test_name = '... but not the info';
+        $t->assert_text_not_contains($test_name, $err_txt, word_names::PI);
+        $usr_msg->reset();
+
+        // negative: with a limit above the number of errors every error is named and nothing is counted
+        $test_name = 'the error text with a limit above the error count counts nothing';
+        $usr_msg->add_with_severity(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => word_names::MATH], msg_id::ERROR);
+        $err_txt = $usr_msg->var_error_text(2);
+        $t->assert_text_not_contains($test_name, $err_txt, msg_id::MORE->text());
+        $usr_msg->reset();
 
         $t->subheader($ts . 'list');
         $test_name = 'count';
@@ -301,6 +386,10 @@ class base_object_tests
         $del_lst = new ListOfIdNamedObjects([$wrd2_no_id]);
         $lst = $lst->diff_by_name($del_lst);
         $t->assert($test_name, $lst->names(), [word_names::MATH]);
+        $test_name = 'diff with other names keeps all';
+        $other_lst = new ListOfIdNamedObjects([$t_wrd->word_2020()]);
+        $diff_lst = $lst->diff_by_name($other_lst);
+        $t->assert($test_name, $diff_lst->names(), [word_names::MATH]);
         $test_name = 'unset by name can empty the list';
         $lst->unset_by_name(word_names::MATH);
         $t->assert_true($test_name, $lst->is_empty());
@@ -343,6 +432,28 @@ class base_object_tests
         $test_name = 'id_by_code_id returns zero if the code id is missing';
         $missing_id = $lst->id_by_code_id(phrase_types::CALC);
         $t->assert($test_name, $missing_id, 0);
+
+        // an object added after an unset gets the key after the gap and not the count of the list,
+        // else its id, name and code id would point to another object or to no object
+        $test_name = 'an object added after an unset is found by its id';
+        $gap_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_time()]);
+        $gap_lst->unset_by_id(phrase_types::MEASURE_ID);
+        // the lookups rebuild the name and code id hashes, so that the add below has to extend them
+        $gap_lst->has_name(phrase_types::NORMAL_NAME);
+        $gap_lst->has_code_id(phrase_types::NORMAL);
+        $gap_lst->add_obj($t_typ->phrase_type_scaling());
+        $gap_id = $gap_lst->get(phrase_types::SCALING_ID)?->id();
+        $t->assert($test_name, $gap_id, phrase_types::SCALING_ID);
+        $test_name = '... and by its name';
+        $gap_name_id = $gap_lst->get_by_name(phrase_types::SCALING_NAME)?->id();
+        $t->assert($test_name, $gap_name_id, phrase_types::SCALING_ID);
+        $test_name = '... and by its code id';
+        $gap_code_id = $gap_lst->get_by_code_id(phrase_types::SCALING)?->id();
+        $t->assert($test_name, $gap_code_id, phrase_types::SCALING_ID);
+        // negative: the object behind the gap is still found by its own id and not replaced by the added one
+        $test_name = '... and the object behind the gap keeps its id';
+        $gap_time_id = $gap_lst->get(phrase_types::TIME_ID)?->id();
+        $t->assert($test_name, $gap_time_id, phrase_types::TIME_ID);
 
         $test_name = 'id_by_code_id returns zero if name is missing';
         $t->assert($test_name, $lst->id_by_name(phrase_types::CALC), 0);
@@ -387,6 +498,24 @@ class base_object_tests
         $test_name = 'unset by name can empty the list';
         $lst->unset_by_name(phrase_types::NORMAL_NAME);
         $t->assert_true($test_name, $lst->is_empty());
+        $test_name = 'diff by code id removes the types with the same code id';
+        $lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_time()]);
+        $del_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type_measure()]);
+        $diff_lst = $lst->diff_by_code_id($del_lst);
+        $t->assert($test_name, $diff_lst->code_ids(), [phrase_types::NORMAL, phrase_types::TIME]);
+        $test_name = 'diff by code id with other code ids keeps all';
+        $other_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type_scaling()]);
+        $diff_lst = $lst->diff_by_code_id($other_lst);
+        $t->assert($test_name, $diff_lst->code_ids(), [phrase_types::NORMAL, phrase_types::MEASURE, phrase_types::TIME]);
+        $test_name = 'unset by code id removes all types with the code id';
+        $lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_measure()]);
+        $lst->unset_by_code_id(phrase_types::MEASURE);
+        $t->assert($test_name, $lst->code_ids(), [phrase_types::NORMAL]);
+        $test_name = 'unset by a missing code id does not change the list';
+        $unset = $lst->unset_by_code_id(phrase_types::CALC);
+        $t->assert_false($test_name, $unset);
+        $test_name = '... and keeps the type';
+        $t->assert($test_name, $lst->code_ids(), [phrase_types::NORMAL]);
 
         // the id base classes are only reached through a concrete child, so each block maps
         // the api json of a test object and checks the id that the base class maps
@@ -513,6 +642,15 @@ class base_object_tests
         $cnt = count($exp_typ_lst->lst);
         $t->assert($test_name, $cnt, 1);
 
+        // the linked objects are exported as objects only if requested, e.g. the views of a view relation
+        $test_name = 'export type list with the linked objects requests them';
+        $exp_typ_lst = new export_type_list([export_type::INCL_LINKED]);
+        $t->assert_true($test_name, $exp_typ_lst->incl_linked());
+        // negative: another export type does not request the linked objects
+        $test_name = '... but not a list without it';
+        $exp_typ_lst = new export_type_list([export_type::IGNORE_FROM]);
+        $t->assert_false($test_name, $exp_typ_lst->incl_linked());
+
         // an api type is added to the api type list
         $test_name = 'api type list adds a type';
         $api_typ_lst = new api_type_list();
@@ -577,7 +715,21 @@ class base_object_tests
         $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
 
-        // TODO Prio 0 add add and unset tests
+        // the add of an object without id, which only a child list can do; the base list function is not
+        // called, because it reports the missing overwrite as a program error to the system log (log_err)
+        $t->subheader($ts . 'add by key');
+        $msg->reset();
+        $test_name = 'a word without id is added by its name';
+        $wrd_lst = $t_wrd->word_list();
+        $wrd_no_id = $t_wrd->word_2020();
+        $wrd_no_id->id = 0;
+        $added = $wrd_lst->add_by_key($wrd_no_id, false, $msg);
+        $t->assert_true($test_name, $added);
+        $test_name = 'a word without id and without name is not added';
+        $wrd_no_key = $wrd_no_id->clone_reset(true);
+        $added = $wrd_lst->add_by_key($wrd_no_key, false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
 
         // TODO Prio 2 add tests fpr CombineObject, Config, IdObject, ListOfIdObjects, MapObjects, TextIdObjects, Translator and Workflow
 

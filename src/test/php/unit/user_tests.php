@@ -48,10 +48,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -329,6 +331,17 @@ class user_tests
         $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file, $t->usr_admin);
 
+        // without a database connection the import only maps the user, like the import of the other objects
+        $test_name = 'the import of a user without database maps the user';
+        $imp_usr = new user();
+        $imp_msg = new user_message($t->usr_admin);
+        $imp_msg->log_test_only = true;
+        $imp_usr->import_obj([json_fields::NAME => users::SYSTEM_TEST_NORMAL_NAME], $imp_msg);
+        $t->assert($test_name, $imp_usr->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        // negative: no save is tried, so no internal error of a read without connection is kept on the message
+        $test_name = '... without a database read';
+        $t->assert($test_name, $imp_msg->log_test_txt, '');
+
         // the activation key is the account activation secret, so it must never be serialized:
         // a user with the key set keeps it on the backend object but neither the export json nor
         // the api json may contain it, otherwise an export, backup or api read leaks a working key
@@ -336,7 +349,8 @@ class user_tests
         $test_name = 'the activation key stays available on the backend object';
         $t->assert_true($test_name, $usr_key->activation_key == users::TEST_USER_ACTIVATION_KEY);
         $test_name = 'the export json does not leak the activation key';
-        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json($msg)));
+        // without loading the linked objects e.g. the components of the last view, because a unit test has no database
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json($msg, [], false)));
         $test_name = 'the api json does not leak the activation key';
         $usr_key_api = json_decode($usr_key->api_json(), true);
         $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key_api));
@@ -642,6 +656,10 @@ class user_tests
         $vars = $usr_arr->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::ACTIVATION_KEY, $vars);
         $t->assert_key_not_exists($test_name . ' and no ip', json_fields::IP_ADDR, $vars);
+        // the hash is searched in every field, also of the nested objects, and with the slashes of the hash unescaped
+        $test_name = '... and no password hash in any field';
+        $api_txt = json_encode($vars, JSON_UNESCAPED_SLASHES);
+        $t->assert_text_not_contains($test_name, $api_txt, users::TEST_USER_PASSWORD_FIX_HASH);
         $msg->reset();
 
         // negative: an empty field is not sent at all
@@ -805,10 +823,10 @@ class user_tests
         $usr->import_mapper([], $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
         $test_name = 'the sandbox usage flag is part of the export json';
-        $t->assert_true($test_name, $t_usr->sandbox_user()->export_json($msg)[json_fields::USES_SANDBOX] ?? false);
+        $t->assert_true($test_name, $t_usr->sandbox_user()->export_json($msg, [], false)[json_fields::USES_SANDBOX] ?? false);
         $test_name = 'the default false is not exported';
         $t->assert_false(
-            $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json($msg)));
+            $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json($msg, [], false)));
 
 
         $t->subheader($ts . 'code id privilege');
@@ -825,6 +843,32 @@ class user_tests
         $t->assert_false($test_name, $t->usr_normal->is_system_test());
         $test_name = 'a normal user cannot set the code id of an object';
         $t->assert_false($test_name, $t->usr_normal->can_set_code_id());
+
+
+        $t->subheader($ts . 'critical import fields');
+
+        // only an admin or a system user may import the status or the code id of a user,
+        // because e.g. the status could activate a user that an admin has set to read only
+        $test_name = 'an admin imports the status of a user';
+        $usr = new user();
+        $msg = new user_message($t->usr_admin);
+        $sta_json = [json_fields::NAME => users::SYSTEM_TEST_NORMAL_NAME, json_fields::STATUS => user_statuum::READ_ONLY];
+        $usr->import_mapper($sta_json, $msg);
+        $t->assert($test_name, $usr->status_id, user_statuum::READ_ONLY_ID);
+        $msg->reset();
+        $test_name = 'a normal user cannot import the status of a user';
+        $msg->usr = $t->usr_normal;
+        $usr->import_mapper($sta_json, $msg);
+        $t->assert_msg_false($test_name, $msg, user_db::FLD_STATUS);
+        $test_name = 'a normal user cannot import the code id of a user';
+        $cod_json = [json_fields::NAME => users::SYSTEM_TEST_NORMAL_NAME, json_fields::CODE_ID => users::SYSTEM_TEST_NORMAL_CODE_ID];
+        $usr->import_mapper($cod_json, $msg);
+        $t->assert_msg_false($test_name, $msg, fields::FLD_CODE_ID);
+        $test_name = 'a system test user imports the code id of a user';
+        $msg->usr = $t_usr->user_sys_test();
+        $usr->import_mapper($cod_json, $msg);
+        $t->assert($test_name, $usr->code_id, users::SYSTEM_TEST_NORMAL_CODE_ID);
+        $msg->reset();
 
 
         $t->subheader($ts . 'activation key at rest');

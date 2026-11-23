@@ -116,6 +116,16 @@ class expression
         $this->frm_name = '';
     }
 
+    /**
+     * the local message of a conversion, of the class that the term loads of this side expect,
+     * because a frontend load e.g. web word::load_by_id accepts only the frontend user_message
+     * @return user_message|user_message_ui an empty message to collect the problems of one conversion
+     */
+    protected function conversion_msg(): user_message|user_message_ui
+    {
+        return new user_message();
+    }
+
 
     /*
      * set and get
@@ -188,7 +198,7 @@ class expression
     {
         if ($this->usr_text_dirty) {
             // a local message like in ref_text, so that the conversion judges only itself
-            $conv_msg = new user_message();
+            $conv_msg = $this->conversion_msg();
             $this->usr_text = $this->get_usr_text($trm_lst, $conv_msg);
             $msg->merge($conv_msg);
         }
@@ -211,12 +221,12 @@ class expression
         term_list|term_list_ui|null $trm_lst = null
     ): ?string
     {
-        // TODO Prio 0 use the ref text check functions that includes the user message
+        // the conversion reports its problems on $msg; formula_map::expression checks a stored pair of both texts
         if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
             // a local message, because the is_ok() gate must judge only this conversion: with a
             // shared message an error that the caller collected earlier would keep the converted
             // text from being stored; most callers use this as a getter and pass no message
-            $conv_msg = new user_message();
+            $conv_msg = $this->conversion_msg();
             $new_ref_txt = $this->get_ref_text($trm_lst, $conv_msg);
             if ($conv_msg->is_ok()) {
                 $this->ref_text = $new_ref_txt;
@@ -250,7 +260,7 @@ class expression
      */
     function user_text_ui(term_list|term_list_ui|null $trm_lst = null): ?string
     {
-        $dsp_msg = new user_message(); // not reported: a display-only read, see ref_text_ui
+        $dsp_msg = $this->conversion_msg(); // not reported: a display-only read, see ref_text_ui
         return $this->user_text($dsp_msg, $trm_lst);
     }
 
@@ -267,10 +277,15 @@ class expression
      * @return string the expression in the formula reference format
      */
     protected function get_ref_text(
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): string
     {
+        // an expression without user text has nothing to convert, which e.g. the empty check of symbol_list reports
+        if ($this->usr_text == null or $this->usr_text == '') {
+            return '';
+        }
+
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
@@ -303,16 +318,17 @@ class expression
      * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
     protected function get_usr_text(
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): string
     {
         log_debug($this->ref_text_ui($msg));
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->ref_text($msg, $trm_lst), chars::CHAR_CALC);
-        if ($pos > 0) {
+        // an expression without result part starts with the "=", so the "=" is converted at any position
+        $ref_txt = $this->ref_text($msg, $trm_lst);
+        if (str_contains($ref_txt, chars::CHAR_CALC)) {
             $left_part = $this->res_part($msg);
             $right_part = $this->r_part($msg);
             $left_part = $this->get_usr_part($left_part, $trm_lst, $msg);
@@ -336,7 +352,7 @@ class expression
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    function res_part(user_message $msg): string
+    function res_part(user_message|user_message_ui $msg): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->ref_text_ui($msg), chars::CHAR_CALC);
@@ -401,6 +417,7 @@ class expression
                 log_debug('name "' . $name . '" (' . $end . ') left "' . $left . '" (' . $pos . ') right "' . $right . '"');
 
                 $db_sym = '';
+                $missing_in_lst = false;
 
                 // check if the preloaded terms can be used for the conversion
                 if ($trm_lst != null) {
@@ -423,11 +440,16 @@ class expression
                             msg_id::VAR_FORMULA => $this->frm_name,
                             msg_id::VAR_EXPRESSION => $frm_part_text
                         ]);
+                        $this->ref_text_dirty = true;
+                        $missing_in_lst = true;
                     }
 
                 }
 
-                if ($db_sym == '') {
+                // a term that the preloaded terms do not know is reported above, which fails the conversion,
+                // so a database read could not change the result and would e.g. read in a unit test without database;
+                // a known term without id yet e.g. of an import is still read, because the database may know it
+                if ($db_sym == '' and !$missing_in_lst) {
                     $db_sym = $this->get_term_symbol($name, $msg);
                 }
 
@@ -462,7 +484,7 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format
      */
-    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null, user_message $msg): string
+    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null, user_message|user_message_ui $msg): string
     {
         $result = $frm_part_text;
 
@@ -490,9 +512,9 @@ class expression
      * @return term|term_ui|null
      */
     private function get_next_term_from_ref(
-        string                      $frm_part_ref_text,
-        term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        string                       $frm_part_ref_text,
+        term_list|term_list_ui|null  $trm_lst,
+        user_message|user_message_ui $msg
     ): term|term_ui|null
     {
         $trm = null;
@@ -562,8 +584,11 @@ class expression
         if ($id == "") {
             $id = $lib->str_between($frm_part_ref_text, chars::VERB_START, chars::VERB_END);
             if ($id > 0) {
+                // like the other terms, a verb of the preloaded list is used and only a missing verb is read
                 $vrb = $trm_lst?->verb_by_id($id);
-                $vrb?->load_by_id($id, $msg);
+                if ($vrb == null) {
+                    $vrb = $this->load_verb($id, $msg);
+                }
                 if ($vrb == null) {
                     $this->usr_text_dirty = true;
                     log_warning('Verb with id ' . $id . ' not found');

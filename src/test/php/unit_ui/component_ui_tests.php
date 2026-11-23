@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component;
@@ -50,8 +51,10 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -514,6 +517,72 @@ class component_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+
+        $t->subheader($ts . 'preview');
+
+        // the component edit view shows the edited component for the sample phrase of the url, so that the
+        // user sees the change on a real phrase before the save; the test mode takes the phrase from the cache
+        $pre_page = new system_page();
+        $pre_dto = new data_object();
+        $pre_dto->online = false;
+        $pre_dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $pre_dto->phr_lst = $ui_sys->phr_lst;
+        // the url of the edit form also posts the id, the name and the type, which the url mapper else resets
+        $cmp_pre = new component_exe($t_cmp->component()->api_json());
+        $cmp_pre->url_mapper([
+            url_var::ID => components::WORD_ID,
+            url_var::NAME => components::WORD_NAME,
+            url_var::COMPONENT_TYPE => component_types::PHRASE_NAME_ID,
+            url_var::SAMPLE_PHRASE => (string)word_names::CANTON_ID
+        ], $msg);
+        $pre_html = $pre_page->preview($cmp_pre, $msg, msg_id::FORM_FIELD_PREVIEW_CHANGE_COMPONENTS,
+            views::COMPONENT_EDIT, views::COMPONENT_EDIT_ID, $pre_dto, true, []);
+        $test_name = 'the preview shows the edited component for the sample phrase';
+        $t->assert_text_contains($test_name, $pre_html, word_names::CANTON);
+        $test_name = '... and posts the sample phrase again with the form';
+        $t->assert_text_contains($test_name, $pre_html,
+            $html->form_hidden(url_var::SAMPLE_PHRASE, (string)word_names::CANTON_ID));
+        $msg->reset();
+
+        // the preview is within the edit form, so a previewed form component must not post its fields
+        // e.g. the name field with the name of the sample phrase after the typed name of the component
+        $cmp_form = new component_exe($t_cmp->component_rename()->api_json());
+        $cmp_form->url_mapper([
+            url_var::ID => components::FORM_NAME_ID,
+            url_var::NAME => components::FORM_NAME_NAME,
+            url_var::COMPONENT_TYPE => component_types::FORM_FIELD_NAME_ID,
+            url_var::SAMPLE_PHRASE => (string)word_names::CANTON_ID
+        ], $msg);
+        $form_pre_html = $pre_page->preview($cmp_form, $msg, msg_id::FORM_FIELD_PREVIEW_CHANGE_COMPONENTS,
+            views::COMPONENT_EDIT, views::COMPONENT_EDIT_ID, $pre_dto, true, []);
+        // the title names the sample phrase too, so the field is checked by its value
+        $test_name = 'the preview of a form component shows its field for the sample phrase';
+        $t->assert_text_contains($test_name, $form_pre_html, html_base::VALUE . '="' . word_names::CANTON . '"');
+        $test_name = '... but posts only the sample phrase';
+        $t->assert($test_name, array_keys($t->posted_vars($form_pre_html)), [url_var::SAMPLE_PHRASE]);
+        $test_name = '... so the save of the edited component keeps the typed name';
+        $edit_html = new system_form()->form_name($cmp_form, '') . $form_pre_html;
+        $t->assert($test_name, $t->posted_vars($edit_html)[url_var::NAME] ?? '', components::FORM_NAME_NAME);
+        $msg->reset();
+
+        // negative: without a sample phrase the preview says so instead of showing the component
+        $test_name = 'a component edit view without a sample phrase shows the hint';
+        $cmp_no_pre = new component_exe($t_cmp->component()->api_json());
+        $t->assert($test_name, $pre_page->preview($cmp_no_pre, $msg, msg_id::FORM_FIELD_PREVIEW_CHANGE_COMPONENTS,
+            views::COMPONENT_EDIT, views::COMPONENT_EDIT_ID, $pre_dto, true, []),
+            $html->p($mtr->txt(msg_id::COMPONENT_PREVIEW_NO_SAMPLE)));
+        $msg->reset();
+
+        // negative: a sample phrase that is not found gives its own hint
+        $test_name = 'a sample phrase that is not found shows the not found hint';
+        $pre_dto_empty = new data_object();
+        $pre_dto_empty->online = false;
+        $pre_dto_empty->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $t->assert($test_name, $pre_page->preview($cmp_pre, $msg, msg_id::FORM_FIELD_PREVIEW_CHANGE_COMPONENTS,
+            views::COMPONENT_EDIT, views::COMPONENT_EDIT_ID, $pre_dto_empty, true, []),
+            $html->p($mtr->txt(msg_id::COMPONENT_PREVIEW_SAMPLE_NOT_FOUND)));
+        $msg->reset();
     }
 
 }

@@ -49,9 +49,10 @@ class Message
     // in the language of the user frontend
     // to explain the result of a process
     public array $msg_id_lst;
-    // array of an array of a message id
-    // and a list of vars that should be added at the translated messages text
+    // array of an array of a message id,
+    // a list of vars that should be added at the translated messages text
     // at the predefined and language specific place
+    // and the severity of the entry e.g. msg_id::ERROR or msg_id::INFO
     public array $msg_var_lst;
     // true only in a test that expects an internal error (test_base::assert_log_err): log_err_msg keeps the text
     // of the error here and neither writes nor counts it, because it is the expected result and no error of the run
@@ -143,13 +144,25 @@ class Message
      */
     function add(?msg_id $msg_id, array $var_lst, bool $ok = false): void
     {
+        $severity = msg_id::NOK;
+        if ($ok) {
+            $severity = msg_id::INFO;
+        }
+        $this->add_with_severity($msg_id, $var_lst, $severity);
+    }
+
+    /**
+     * add a message id with its vars and its severity
+     * and lower the status of this message for a not ok or an error entry, but never for a warning or an info
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @param array $var_lst the vars that should be added to the message text
+     * @param int $severity the status const of the entry e.g. msg_id::ERROR, msg_id::NOK, msg_id::WARNING or msg_id::INFO
+     * @return void is never expected to fail
+     */
+    function add_with_severity(?msg_id $msg_id, array $var_lst, int $severity): void
+    {
         if ($msg_id != null) {
-            $key_lst = [];
-            foreach ($this->msg_var_lst as $msg_row) {
-
-                $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
-            }
-
             // check the var list
             foreach ($var_lst as $var) {
                 if (is_array($var)) {
@@ -157,13 +170,19 @@ class Message
                 }
             }
 
-            // do not repeat the same text more than once
-            if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
-                $key_lst)) {
-                $this->msg_var_lst[] = [$msg_id, $var_lst];
+            // do not repeat the same text more than once, but keep the worse severity of a repeated text
+            $key = $msg_id->name . ':' . implode(",", $var_lst);
+            $pos = $this->var_message_pos($key);
+            if ($pos === null) {
+                $this->msg_var_lst[] = [$msg_id, $var_lst, $severity];
+            } else {
+                $this->msg_var_lst[$pos][2] = min($this->severity($this->msg_var_lst[$pos]), $severity);
             }
-            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
-            if ($this->is_ok() and !$ok) {
+
+            // a lower status is worse, so set_error and set_not_ok keep an already worse status
+            if ($severity <= msg_id::ERROR) {
+                $this->set_error();
+            } elseif ($severity == msg_id::NOK) {
                 $this->set_not_ok();
             }
         }
@@ -194,18 +213,20 @@ class Message
     }
 
     /**
-     * add a error message with variables
+     * add a error message with variables, set the error status
      * and add the translated message to the log so that the admin can also see it
      * TODO Prio 3 check if the causing user is added to the log
      *
      * @param msg_id|null $msg_id the message text to add
+     * @param array $var_lst the vars that should be added to the message text
      * @return void is never expected to fail
      */
     function add_err(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
-        $msg = $this->get_last_message_translated();
-        log_err($msg);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::ERROR);
+        $msg_txt = $this->get_last_message_translated();
+        // on the message, so that a test that expects the error keeps it instead of counting it (test_base::assert_log_err)
+        log_err_on_msg($msg_txt, $this);
     }
 
     /**
@@ -251,8 +272,10 @@ class Message
     function merge(Message $msg_to_add): void
     {
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
-            $this->add($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
+            $this->add_with_severity($msg_var[0], $msg_var[1], $this->severity($msg_var));
         }
+        // the status too, because e.g. a set_error without an entry is not ok
+        $this->combine_status($msg_to_add);
         // the expected internal error of a test that a buffer has kept
         if ($msg_to_add->log_test_txt != '') {
             $this->log_test_txt = $msg_to_add->log_test_txt;
@@ -312,6 +335,34 @@ class Message
     protected function get_all_var_messages(): array
     {
         return $this->msg_var_lst;
+    }
+
+    /**
+     * @param array $msg_var an entry of msg_var_lst
+     * @return int the severity of the entry; an entry without severity e.g. of an api message of an older pod is not ok
+     */
+    protected function severity(array $msg_var): int
+    {
+        $result = msg_id::NOK;
+        if (array_key_exists(2, $msg_var)) {
+            $result = $msg_var[2];
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $key the message id name and the vars of a message as created by add_with_severity
+     * @return int|null the position of the entry with the same text in msg_var_lst or null if the text is new
+     */
+    private function var_message_pos(string $key): ?int
+    {
+        $result = null;
+        foreach ($this->msg_var_lst as $pos => $msg_row) {
+            if ($result === null and $msg_row[0]->name . ':' . implode(",", $msg_row[1]) == $key) {
+                $result = $pos;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -377,6 +428,63 @@ class Message
         global $mtr;
         $lib = new library();
         return $lib->msg_var_text($this->msg_var_lst, $mtr);
+    }
+
+    /**
+     * the errors with vars e.g. of a failed import without its infos and warnings, limited to keep the text readable
+     * @param int $limit the number of errors that are named e.g. the max errors of the import in config.yaml
+     * @return string the translated text of the first errors and the number of the errors that are not named
+     */
+    function var_error_text(int $limit): string
+    {
+        global $mtr;
+        $lib = new library();
+        $err_lst = $this->var_error_list();
+        $result = $lib->msg_var_text(array_slice($err_lst, 0, $limit), $mtr);
+        $more = count($err_lst) - $limit;
+        if ($more > 0) {
+            $result .= ' ' . $this->more_text($more);
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the entries of msg_var_lst that are not ok or an error, but no warning and no info
+     */
+    private function var_error_list(): array
+    {
+        $result = [];
+        foreach ($this->msg_var_lst as $msg_var) {
+            if ($this->severity($msg_var) < msg_id::WARNING) {
+                $result[] = $msg_var;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $more the number of errors that are not named
+     * @return string e.g. "... and 3 more" in the language of the user
+     */
+    private function more_text(int $more): string
+    {
+        $dots = $this->translated(msg_id::THREE_POINTS);
+        $and = $this->translated(msg_id::AND_MORE_BEFORE);
+        return $dots . ' ' . $and . ' ' . $more . ' ' . $this->translated(msg_id::MORE);
+    }
+
+    /**
+     * @param msg_id $msg_id a message without vars
+     * @return string the text in the language of the user or the english text e.g. without a translator in a setup script
+     */
+    private function translated(msg_id $msg_id): string
+    {
+        global $mtr;
+        $result = $msg_id->value;
+        if ($mtr != null) {
+            $result = $mtr->txt($msg_id);
+        }
+        return $result;
     }
 
 }

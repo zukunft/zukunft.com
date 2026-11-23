@@ -186,7 +186,10 @@ class figure_tests
         $fig = $t_fig->figure_value($msg);
         $dsp = $tl->ui_obj($fig, new figure_ui());
         $html_link = $dsp->display_linked($msg_ui);
-        $t->assert_text_contains('figure html link', $html_link, url_var::MASK . '=' . views::RESULT_EDIT_ID);
+        $t->assert_text_contains('the figure of a value links to the value edit view', $html_link, url_var::MASK . '=' . views::VALUE_EDIT_ID);
+        // negative: a result figure opens the result edit view and not the value edit view
+        $res_link = $tl->ui_obj($t_fig->figure_result(), new figure_ui())->display_linked($msg_ui);
+        $t->assert_text_contains('... and the figure of a result to the result edit view', $res_link, url_var::MASK . '=' . views::RESULT_EDIT_ID);
 
     }
 

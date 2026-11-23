@@ -93,7 +93,9 @@ class wikidata_write_tests
         $ts = 'wikidata import ';
         $t->header($ts);
 
-        $imp = new import_wikidata();
+        // without live data from wikidata the answers saved in the cache folder by the last run are used,
+        // so that a slow or refusing wikidata does not fail the tests of the converter
+        $imp = new import_wikidata('', test_paths::IMPORT_WIKIDATA_CACHE);
 
         // positive: retrieve the wikidata json for two example entities and store them as test fixtures
         $this->assert_capture($t, $imp, refs::PI_KEY);
@@ -111,8 +113,8 @@ class wikidata_write_tests
         $this->assert_convert_population($t, $imp);
 
         // the values that the refresh of a wikidata reference offers, converted with the phrases of the pod
-        $this->assert_refresh_convert($t, self::ZH_KEY, wikidata_tests::ZURICH_CITY, test_files::IMPORT_WIKIDATA_REFRESH_Q72);
-        $this->assert_refresh_convert($t, self::USD_KEY, wikidata_tests::USD_NAME, test_files::IMPORT_WIKIDATA_REFRESH_Q4917);
+        $this->assert_refresh_convert($t, $imp, self::ZH_KEY, wikidata_tests::ZURICH_CITY, test_files::IMPORT_WIKIDATA_REFRESH_Q72);
+        $this->assert_refresh_convert($t, $imp, self::USD_KEY, wikidata_tests::USD_NAME, test_files::IMPORT_WIKIDATA_REFRESH_Q4917);
 
         // negative: an unknown wikidata id returns a failure message and stores nothing
         $test_name = 'store of an unknown wikidata id (' . refs::CHANGE_NEW_KEY . ') fails';
@@ -158,17 +160,25 @@ class wikidata_write_tests
      * reported as such and not only as a failed assert of the wikidata_import workflow (ref_write_url_tests)
      *
      * @param test_cleanup $t the test environment with the assert functions
+     * @param import_wikidata $imp the importer with the cache folder as fallback, so that without live data the
+     *                             names of the units and criteria come from the saved answers and no value is skipped
      * @param string $wikidata_id the wikidata id of the captured entity e.g. "Q72"
      * @param string $name the name of the phrase of the pod with this wikidata reference e.g. "Zurich (city)"
      * @param string $file the import json of the last run e.g. test_files::IMPORT_WIKIDATA_REFRESH_Q72
      * @return void
      */
-    private function assert_refresh_convert(test_cleanup $t, string $wikidata_id, string $name, string $file): void
+    private function assert_refresh_convert(
+        test_cleanup    $t,
+        import_wikidata $imp,
+        string          $wikidata_id,
+        string          $name,
+        string          $file
+    ): void
     {
         $msg = new user_message($t->usr1);
         $claim_msg = new user_message($t->usr1); // not reported, because the live claims may be reported for another reason e.g. the qualifier P31
         $entity_json = file_get_contents(test_paths::IMPORT_WIKIDATA_CACHE . $wikidata_id . import_wikidata::JSON_EXTENSION);
-        $preview = new import_wikidata_preview($t->usr1);
+        $preview = new import_wikidata_preview($t->usr1, $imp);
         $import = $preview->import_of_entity($entity_json, $name, $msg, $claim_msg);
         $json = json_encode($import, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $test_name = 'the live wikidata entity ' . $wikidata_id . ' gives the import json of the last run with the phrases of the pod';

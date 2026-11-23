@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_REF . 'source.php';
@@ -61,11 +62,13 @@ use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
@@ -77,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
@@ -106,6 +110,7 @@ use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -253,15 +258,68 @@ class sandbox_tests
         $t->assert_null($test_name, $wrd_map->share_id());
         $msg->reset();
 
-        // backend sandbox_named: the name is mapped, but an empty description is not taken
+        // backend sandbox_named: the name is mapped, and an empty description is taken, because a user
+        // sends it to clear the description; a json without description means "not changed"
         $test_name = 'the named part of the mapper sets the name';
         $wrd_map->api_mapper($wrd_json, $msg);
         $t->assert($test_name, $wrd_map->name(), word_names::MATH);
         $msg->reset();
-        $test_name = '... but not an empty description';
+        $test_name = '... and an empty description, which clears the description';
         $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::DESCRIPTION => ''], $msg);
+        $t->assert($test_name, $wrd_map->get_description() ?? 'null', '');
+        $msg->reset();
+        // negative: without the description field the description is not set
+        $test_name = '... but a json without description sets no description';
+        $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg);
         $t->assert_null($test_name, $wrd_map->get_description());
         $msg->reset();
+        // the frontend word sends the empty description of a cleared form field, but no unknown description
+        $test_name = 'the frontend word sends an empty description to clear it';
+        $wrd_clr_ui = new word_ui();
+        $wrd_clr_ui->set_description('');
+        $t->assert($test_name, $wrd_clr_ui->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? 'missing', '');
+        $test_name = '... but no description if it is not known';
+        $wrd_clr_ui->set_description(null);
+        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $wrd_clr_ui->api_array([], $msg_ui)));
+        // the same for the other objects whose edit view has a description field; the triple with a verb,
+        // because the api array of a triple without verb reports a data error
+        $t_map = new test_mappers($t);
+        $dsc_lst = [
+            $t_map->class_to_ui_object(source::class),
+            $t_map->class_to_ui_object(formula::class),
+            $t_map->class_to_ui_object(component::class),
+            $t_map->class_to_ui_object(view::class),
+            $t_map->class_to_ui_object(ref::class),
+            test_triples::triple_add_ui(),
+        ];
+        foreach ($dsc_lst as $dsc_ui) {
+            $test_name = 'the frontend ' . $lib->class_to_name($dsc_ui::class) . ' sends an empty description to clear it';
+            $dsc_ui->description = '';
+            $t->assert($test_name, $dsc_ui->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? 'null', '');
+            // negative: an unknown description is never sent as an empty one, so it never clears the description
+            $test_name = '... but no unknown description';
+            $dsc_ui->description = null;
+            $t->assert_null($test_name, $dsc_ui->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? null);
+        }
+        // the triple (see the sandbox_link_named mapper below) and the ref have an own backend mapper and
+        // delta, which treat the description like the word
+        $test_name = 'the ref mapper takes an empty description, which clears the description';
+        $ref_map = new ref($t->usr1);
+        $ref_map->api_mapper([json_fields::ID => refs::PI_ID, json_fields::DESCRIPTION => ''], $msg);
+        $t->assert($test_name, $ref_map->get_description() ?? 'null', '');
+        $msg->reset();
+        foreach ([new triple($t->usr1), new ref($t->usr1)] as $dsc_std) {
+            $class_name = $lib->class_to_name($dsc_std::class);
+            $dsc_usr = clone $dsc_std;
+            $dsc_usr->set_description('');
+            // negative: an empty form field is no user change of an object without description
+            $test_name = 'an empty description is no user change of a ' . $class_name . ' without description';
+            $t->assert_null($test_name, $dsc_usr->delta($dsc_std, $dsc_usr->clone_reset(true))->get_description());
+            $test_name = '... but clears the standard description of a ' . $class_name . ' for the user';
+            $dsc_std->set_description(word_names::TEST_ADD_COM);
+            $dsc_chg = $dsc_usr->delta($dsc_std, $dsc_usr->clone_reset(true));
+            $t->assert($test_name, $dsc_chg->get_description() ?? 'null', '');
+        }
 
         // backend sandbox_typed: the type is mapped and a json without type leaves it empty
         $test_name = 'the typed part of the mapper sets the type';
@@ -294,16 +352,23 @@ class sandbox_tests
         $t->assert_null($test_name, $lnk_new->predicate_id());
         $msg->reset();
 
-        // backend sandbox_link_named: the name of the link is mapped, but an empty description is not taken
+        // backend sandbox_link_named: the name of the link is mapped, and an empty description is taken like
+        // for a word, because a user sends it to clear the description
         $test_name = 'the named link part of the mapper sets the name';
         $trp = $t_trp->triple();
         $trp_map = new triple($t->usr1);
         $trp_map->api_mapper($trp->api_json_array([], $msg), $msg);
         $t->assert($test_name, $trp_map->name(), triple_names::MATH_CONST);
         $msg->reset();
-        $test_name = '... but not an empty description of the link';
+        $test_name = '... and an empty description of the link, which clears the description';
         $trp_map->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID, json_fields::DESCRIPTION => ''], $msg);
-        $t->assert_null($test_name, $trp_map->get_description());
+        $t->assert($test_name, $trp_map->get_description() ?? 'null', '');
+        $msg->reset();
+        // negative: without the description field the description of the link is not set
+        $test_name = '... but a json without description sets no description of the link';
+        $trp_none = new triple($t->usr1);
+        $trp_none->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], $msg);
+        $t->assert_null($test_name, $trp_none->get_description());
         $msg->reset();
 
         // backend sandbox_multi: the share type of a value is mapped and a leftover is reset
@@ -982,6 +1047,21 @@ class sandbox_tests
         // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 
         $t->subheader($ts . 'sql base functions');
+
+        // an empty description of a user clears the standard description, but a form with an empty field
+        // never writes a description change of an object without description (pending.md "word")
+        $fld_lst = new sql_par_field_list();
+        $test_name = 'a cleared description is written compared with the standard description';
+        $t->assert_true($test_name, $fld_lst->description_changed('', word_names::TEST_ADD_COM));
+        $test_name = '... and into a user row that shows the standard description';
+        $t->assert_true($test_name, $fld_lst->description_changed('', null, true));
+        $test_name = '... and null brings the standard description back for the user';
+        $t->assert_true($test_name, $fld_lst->description_changed(null, '', true));
+        // negative: compared with the standard row an empty field is no change of no description
+        $test_name = 'an empty field is no change of an object without description';
+        $t->assert_false($test_name, $fld_lst->description_changed('', null));
+        $test_name = '... and an unchanged empty description of a user row is not written again';
+        $t->assert_false($test_name, $fld_lst->description_changed('', '', true));
 
         // test sf (Sql Formatting) function
         $db_con = new sql_db();
@@ -1918,6 +1998,25 @@ class sandbox_tests
         $sc->db_type = sql_db::MYSQL;
         $qp = $wrd->load_sql_changer($sc);
         $t->assert_qp($qp, $sc->db_type);
+
+        // the owner is the user of the standard row, so a change of the owner is a change of the user
+        $test_name = 'the standard row of a word with another owner is updated';
+        $wrd = $t_wrd->word();
+        $wrd_owned = clone $wrd;
+        $wrd_owned->set_user($t->usr2);
+        foreach ([sql_db::POSTGRES, sql_db::MYSQL] as $db_type) {
+            $sc->reset($db_type);
+            $qp = $wrd_owned->sql_update_standard($sc, $wrd, $msg);
+            if ($t->assert_true($test_name, $qp != null)) {
+                $t->assert_qp($qp, $sc->db_type);
+            }
+        }
+        $msg->reset();
+        $test_name = 'the standard row of an unchanged word is not updated';
+        $qp = $wrd->sql_update_standard($sc, clone $wrd, $msg);
+        $qp_sql = $qp?->sql;
+        $t->assert_null($test_name, $qp_sql);
+        $msg->reset();
     }
 
     /**

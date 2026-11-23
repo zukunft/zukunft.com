@@ -53,6 +53,7 @@ include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
@@ -71,6 +72,7 @@ include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::TYPES . 'verbs.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
@@ -102,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
@@ -117,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result;
@@ -570,7 +574,10 @@ class system_form extends component
         // object type of a confirm view
         $link_url = html_base::prefixed_url_array(html_base::link_vars($url_array), url_var::LINK);
         // and the '6'-prefixed reference rows that the confirm writes with the phrase (see url_var::REF_ROW)
+        // and the '5'-prefixed triple rows that it adds with a new word (see url_var::TRIPLE_ROW)
         $row_url = url_var::ref_row_url_array(url_var::ref_rows($url_array));
+        $triple_rows = url_var::triple_rows($url_array);
+        $row_url += url_var::ref_row_url_array($triple_rows, [], url_var::TRIPLE_ROW);
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::BACK)
                 or array_key_exists($key, $link_url)
@@ -666,7 +673,7 @@ class system_form extends component
         return $html->input(
             url_var::LANGUAGE_SYMBOL,
             msg_id::FORM_FIELD_LANGUAGE_SYMBOL,
-            'symbol field missing',
+            $dbo->wiki_code,
             html_base::INPUT_TEXT);
     }
 
@@ -675,8 +682,7 @@ class system_form extends component
      */
     function show_language_symbol(language|db_object $dbo): string
     {
-        // TODO Prio 0 add system to web language
-        return $this->esc($dbo->name);
+        return $this->esc($dbo->wiki_code);
     }
 
 
@@ -815,7 +821,7 @@ class system_form extends component
      * @param msg_id $ui_msg_code_id the message id of the field label
      * @return string the html behind its label
      */
-    private function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
+    function label_with_html(string $html_code, msg_id $ui_msg_code_id): string
     {
         global $mtr;
 
@@ -2115,11 +2121,13 @@ class system_form extends component
      *
      * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg to report a problem of the load of the preselected phrase
      * @return string the html code to request the description from the user
      */
     function form_phrase(
         db_object|triple $dbo,
         string           $form_name,
+        user_message     $msg,
         string           $code_id = '',
         ?phrase_list     $phr_lst = null,
         bool             $test_mode = false
@@ -2132,20 +2140,26 @@ class system_form extends component
             $pattern = words::MATH;
         }
 
-        // get the selected phrase id
+        // get the selected phrase id and, for a linked phrase, the phrase itself to show it preselected
         $id = $dbo->id();
+        $selected = null;
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            $selected = $dbo->get_from();
+            $id = $selected?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
-            $id = $dbo->get_to()?->id();
+            $selected = $dbo->get_to();
+            $id = $selected?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            // the phrase of the reference e.g. the word whose page has opened the add ref view
+            $selected = $dbo->phrase();
+            $id = $selected->id();
+            $label_id = msg_id::FORM_SELECT_PHRASE_REF;
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -2170,9 +2184,57 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
+        // the from and to phrase of an existing triple cannot be changed
+        if ($form_name == views::TRIPLE_EDIT and $selected != null) {
+            $shown = $selected->obj()?->name() ?? '';
+            return $this->form_link_read_only($name, $form_name, $id, $shown, $label_id, view_styles::COL_SM_4);
+        }
+
         // use an empty list if none is provided so the selector renders without crashing
         $phr_lst ??= new phrase_list();
+        if ($selected != null) {
+            $phr_lst = $this->with_selected_phrase($phr_lst, $selected, $msg, $test_mode);
+        }
         return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
+    }
+
+    /**
+     * the suggested phrases with the preselected phrase, because the selector shows a preselected
+     * phrase only if it is part of the list, e.g. the from phrase of a triple or the word of a new
+     * reference, which are mostly no often used phrases of the fallback list; a copy, so that the
+     * list of the view stays unchanged
+     *
+     * @param phrase_list $phr_lst the suggested phrases e.g. the often used phrases of the fallback list
+     * @param phrase $phr the preselected phrase, with its name e.g. the from phrase of a loaded triple
+     *                    or with only its id e.g. the word of the add ref url
+     * @param user_message $msg to report a problem of the phrase load
+     * @param bool $test_mode true for a test render, which reads no phrase from the backend, so a
+     *                        phrase with only its id is then only preselected if the list contains it
+     * @return phrase_list the suggested phrases including the preselected phrase if its name is known
+     */
+    private function with_selected_phrase(
+        phrase_list  $phr_lst,
+        phrase       $phr,
+        user_message $msg,
+        bool         $test_mode
+    ): phrase_list
+    {
+        $result = $phr_lst;
+        $id = $phr->id();
+        if ($id != 0 and !in_array($id, $phr_lst->id_lst())) {
+            $found = new phrase_list();
+            // via obj, because a phrase known only by its id e.g. from the url may have no object name
+            if (($phr->obj()?->name() ?? '') != '') {
+                $found->add($phr, $msg);
+            } elseif (!$test_mode) {
+                $found->load_by_ids([$id], $msg);
+            }
+            if (!$found->is_empty()) {
+                $result = clone $phr_lst;
+                $result->merge($found, $msg);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2211,7 +2273,9 @@ class system_form extends component
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->get_from()?->id();
+            // the phrase of the reference like in form_phrase, because a reference has no from phrase
+            $id = $dbo->phrase()->id();
+            $label_id = msg_id::FORM_SELECT_PHRASE_REF;
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -2339,15 +2403,59 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the phrase type
-     * @param db_object $dbo the frontend phrase object with the type used until now
+     * @param db_object|triple $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param user_message $msg with the requesting user whose last used verb a new triple preselects
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb
+     * @return string the html code to select the verb or, for an existing triple, to show it read only
      */
-    function form_verb(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
+    function form_verb(db_object|triple $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
+        // the verb of an existing triple cannot be changed; a triple without its verb, e.g. a test render of
+        // a triple known only by its id, shows the selector like the from and to phrase (see form_phrase)
+        if ($form_name == views::TRIPLE_EDIT) {
+            $vrb = $dbo->verb;
+            if ($vrb?->id() > 0) {
+                return $this->form_link_read_only(url_var::VERB, $form_name, $vrb->id(), $vrb->name() ?? '',
+                    msg_id::FORM_SELECT_VERB, view_styles::COL_SM_3);
+            }
+        }
         return $dbo->verb_selector($form_name, $msg, $typ_lst);
+    }
+
+    /**
+     * the from phrase, the verb or the to phrase of an existing triple shown read only, because a
+     * changed link would be another triple (see docs/llm/pending_prio_2.md "change the from, verb or
+     * to of a triple"); the id is posted unchanged in a hidden field, so the confirm finds no change
+     *
+     * @param string $name the url var of the field e.g. url_var::PHRASE_FROM
+     * @param string $form_name the name of the html form
+     * @param int $id the id of the linked phrase or verb that is posted unchanged
+     * @param string $shown the name of the linked phrase or verb that the user sees
+     * @param msg_id $label_id the label of the field, the same as of the selector
+     * @param string $style the bootstrap column of the field, the same as of the selector
+     * @return string the html code of the read only field with the hidden id
+     */
+    private function form_link_read_only(
+        string $name,
+        string $form_name,
+        int    $id,
+        string $shown,
+        msg_id $label_id,
+        string $style
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        // the dom id of the selector, so that the label is linked to the field in the same way
+        $dom_id = $name . '_' . strtolower($label_id->name);
+        $field = '<' . html_base::INPUT . ' ' . html_base::TYPE . '="' . html_base::INPUT_TEXT . '"'
+            . ' ' . html_base::CLASS_HTML . '="form-control" ' . html_base::ID . '="' . $dom_id . '"'
+            . ' ' . html_base::VALUE . '="' . htmlspecialchars($shown, ENT_QUOTES) . '" ' . html_base::READONLY . '>';
+        $text = $html->label($mtr->txt($label_id), $dom_id);
+        $text .= $field;
+        $text .= $html->form_hidden($name, (string)$id, $form_name);
+        return $html->div_form($text, $style);
     }
 
     /**
@@ -2430,7 +2538,8 @@ class system_form extends component
     /**
      * the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW), so that the
      * confirm of the phrase change also adds, changes or deletes them: one row per reference and one add row;
-     * the confirm keeps only the rows that the user has changed (url_var::ref_rows)
+     * the confirm keeps only the rows that the user has changed (url_var::ref_rows); a new phrase e.g. of the add
+     * word view has only add rows, each with the include box, and the add button in the empty row (ref_row_new)
      *
      * @param db_object $dbo the frontend word or triple of the edit view
      * @param string $form_name the name of the view which is also used for the html form name
@@ -2464,8 +2573,128 @@ class system_form extends component
                 $rows .= $this->ref_row_change($ref, $row, $form_name, $src_lst, $url_arr);
                 $row++;
             }
-            $rows .= $this->ref_row_add($row, $form_name, $dto, $src_lst, $url_arr);
-            $result = $html->label_no_for($mtr->txt(msg_id::FORM_REF_ROWS)) . $rows;
+            // a new phrase e.g. of the add word view shows only the type, the key and a wide url of its add rows
+            // and lets the user remove a suggested reference or add another one
+            $is_new = ($dbo->id() == 0);
+            // the posted add rows e.g. the suggested references of a new word, so that the user can change them
+            foreach ($this->posted_ref_add_rows($url_arr, $row) as $add_row) {
+                if ($is_new) {
+                    $rows .= $this->ref_row_new($add_row, $form_name, $dto, $url_arr, false);
+                } else {
+                    $rows .= $this->ref_row_add($add_row, $form_name, $dto, $src_lst, $url_arr);
+                }
+                $row = $add_row + 1;
+            }
+            if ($is_new) {
+                $rows .= $this->ref_row_new($row, $form_name, $dto, $url_arr, true);
+            } else {
+                $rows .= $this->ref_row_add($row, $form_name, $dto, $src_lst, $url_arr);
+            }
+            $result = $html->form_section_title($mtr->txt(msg_id::FORM_REF_ROWS)) . $rows;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_arr the url of the form e.g. the add word view with the suggested references
+     * @param int $first_row the number of the first row after the stored references
+     * @return array the numbers of the posted add rows from this row on in their order e.g. [1, 2]
+     */
+    private function posted_ref_add_rows(array $url_arr, int $first_row): array
+    {
+        $result = [];
+        foreach (url_var::ref_rows($url_arr) as $row => $fields) {
+            if ($row >= $first_row and ($fields[url_var::ACTION] ?? '') == url_var::CRUD_CREATE) {
+                $result[] = $row;
+            }
+        }
+        sort($result);
+        return $result;
+    }
+
+    /**
+     * the triples of a new word as '5'-prefixed rows of its add form (see url_var::TRIPLE_ROW), so that the
+     * confirm of the word adds them too: one row per posted triple row e.g. the suggested "is a" "city-state"
+     * and one empty add row; a triple is excluded by clearing its include box or its to phrase, because the confirm
+     * keeps only the add rows with a to phrase (url_var::triple_rows), and the add button of the empty row shows the
+     * form again with one more empty row
+     *
+     * @param db_object $dbo the frontend word of the add view
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param data_object|null $dto the request cache with the verbs
+     * @param array $url_arr the url of the add view with the triple rows e.g. of the suggestions of a new word
+     * @return string the html code of the triple rows, '' for an object that is not a word
+     */
+    function form_triple_rows(db_object $dbo, string $form_name, ?data_object $dto, array $url_arr = []): string
+    {
+        global $mtr, $ui_sys;
+        $result = '';
+        if ($dbo instanceof word) {
+            $html = new html_base();
+            $vrb_lst = ($dto?->typ_lst_cache ?? $ui_sys->typ_lst_cache)->vrb;
+            $rows = '';
+            $row = 1;
+            foreach (url_var::triple_rows($url_arr) as $posted_row => $fields) {
+                $rows .= $this->triple_row($posted_row, $form_name, $vrb_lst, $fields, false);
+                $row = max($row, $posted_row + 1);
+            }
+            // the empty row to add an own triple, with the default verb "is a" like the suggestions
+            $empty_fields = [url_var::VERB => $vrb_lst->default_id()];
+            $rows .= $this->triple_row($row, $form_name, $vrb_lst, $empty_fields, true);
+            $result = $html->form_section_title($mtr->txt(msg_id::FORM_TRIPLE_ROWS)) . $rows;
+        }
+        return $result;
+    }
+
+    /**
+     * one row of the add form that adds a triple from the new word: the verb selector, the name of the to phrase,
+     * which the confirm adds as a new word if the pod has none, and the action of the row (add_row_action)
+     *
+     * @param int $row the number of the row within the form, starting with 1
+     * @param string $form_name the name of the html form
+     * @param verbs $vrb_lst the verbs that can be selected
+     * @param array $fields the posted fields of the row e.g. ['b' => 2, 'pt' => 'city-state'], only the verb for the empty row
+     * @param bool $is_empty true for the empty row that ends the rows and gets the add button
+     * @return string the html code of the row
+     */
+    private function triple_row(int $row, string $form_name, verbs $vrb_lst, array $fields, bool $is_empty): string
+    {
+        $html = new html_base();
+        $vrb_id = (int)($fields[url_var::VERB] ?? 0);
+        $cols = $vrb_lst->selector($form_name, $vrb_id, url_var::TRIPLE_ROW . url_var::VERB . $row, view_styles::COL_SM_3);
+        $to_name = (string)($fields[url_var::PHRASE_TO] ?? '');
+        $cols .= $html->form_field(url_var::TRIPLE_ROW . url_var::PHRASE_TO . $row, msg_id::FORM_SELECT_PHRASE_TO,
+            $to_name, html_base::INPUT_TEXT, '', view_styles::COL_SM_4, '', '_' . $row);
+        $cols .= $this->add_row_action(url_var::TRIPLE_ROW . url_var::ACTION . $row, $form_name, $is_empty);
+        return $html->div_row($cols);
+    }
+
+    /**
+     * the action of an add row of a new object as its last column: for a filled row e.g. a suggested reference or
+     * triple of the add word view the include box below its label like a field, checked by default; for the empty
+     * row the add action and the add button; the include box is a checkbox and no submit, because the enter key
+     * triggers the first submit of a form and must never exclude a row
+     *
+     * @param string $act_var the url var of the action of the row e.g. '5a2'
+     * @param string $form_name the name of the html form
+     * @param bool $is_empty true for the empty row that ends the rows
+     * @return string the html code of the action and of the include box or of the add button
+     */
+    private function add_row_action(string $act_var, string $form_name, bool $is_empty): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if ($is_empty) {
+            $result = $html->form_hidden($act_var, url_var::CRUD_CREATE);
+            // only shows the form again, so that the filled empty row is kept and a new empty row follows
+            $result .= $html->button_refresh_text($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), url_var::REFRESH_ROWS);
+        } else {
+            // an unchecked box posts nothing, so the delete action before it stays and the row is excluded;
+            // the checked box posts the add action after it, which wins, because the last posted value of a var wins
+            $result = $html->form_hidden($act_var, url_var::CRUD_DELETE);
+            $label = $html->label($mtr->txt(msg_id::FORM_FIELD_ROW_INCLUDE), $act_var);
+            $box = $html->div($html->input_checkbox($act_var, true, $form_name, url_var::CRUD_CREATE));
+            $result .= $html->div_form($label . $box, view_styles::COL_SM_2);
         }
         return $result;
     }
@@ -2520,21 +2749,61 @@ class system_form extends component
      */
     private function ref_row_add(int $row, string $form_name, ?data_object $dto, source_list $src_lst, array $url_arr): string
     {
-        global $ui_sys;
         $html = new html_base();
         $act_var = url_var::REF_ROW . url_var::ACTION . $row;
         // a posted row is only taken if it is the add row
         $row_url = (($url_arr[$act_var] ?? '') == url_var::CRUD_CREATE) ? $url_arr : [];
         $cols = $html->form_hidden($act_var, url_var::CRUD_CREATE);
-        $ref_typ_lst = ($dto?->typ_lst_cache ?? $ui_sys->typ_lst_cache)->ref_typ;
-        $typ_var = url_var::REF_ROW . url_var::REF_TYPE . $row;
-        $typ_id = (int)($row_url[$typ_var] ?? $ref_typ_lst->default_id());
-        $cols .= $ref_typ_lst->selector($form_name, $typ_id, $typ_var, view_styles::COL_SM_2);
+        $cols .= $this->ref_row_type($row, $form_name, $dto, $row_url);
         $cols .= $this->ref_row_field(url_var::EXTERNAL_KEY, $row, msg_id::FORM_FIELD_EXTERNAL_KEY, '', $row_url, false);
         $cols .= $this->ref_row_field(url_var::URL, $row, msg_id::FORM_FIELD_URL, '', $row_url, false);
         $cols .= $this->ref_row_field(url_var::DESCRIPTION, $row, msg_id::FORM_FIELD_DESCRIPTION, '', $row_url, false);
         $cols .= $this->ref_row_source($row, $form_name, $src_lst, '0', $row_url, false);
         return $html->div_row($cols);
+    }
+
+    /**
+     * one add row of the references of a new phrase e.g. a suggested reference of the add word view: the type
+     * selector, the external key, the url in a wide field and the action of the row (add_row_action) with the
+     * include box of a posted row or the add button of the empty row; the description and the source are not shown, so a
+     * suggested description or source is only posted with the hidden row of form_back
+     *
+     * @param int $row the number of the row within the form, starting with 1
+     * @param string $form_name the name of the html form
+     * @param data_object|null $dto the request cache with the reference types
+     * @param array $url_arr the url of the add view with the posted add rows e.g. of the suggestions of a new word
+     * @param bool $is_empty true for the empty row that ends the rows and gets the add button
+     * @return string the html code of the row
+     */
+    private function ref_row_new(int $row, string $form_name, ?data_object $dto, array $url_arr, bool $is_empty): string
+    {
+        $html = new html_base();
+        $act_var = url_var::REF_ROW . url_var::ACTION . $row;
+        // a posted row is only taken if it is an add row, not e.g. an excluded one with the same number
+        $row_url = (($url_arr[$act_var] ?? '') == url_var::CRUD_CREATE) ? $url_arr : [];
+        $cols = $this->ref_row_type($row, $form_name, $dto, $row_url);
+        $cols .= $this->ref_row_field(url_var::EXTERNAL_KEY, $row, msg_id::FORM_FIELD_EXTERNAL_KEY, '', $row_url, false);
+        $cols .= $this->ref_row_field(url_var::URL, $row, msg_id::FORM_FIELD_URL, '', $row_url, false, view_styles::COL_SM_6);
+        $cols .= $this->add_row_action($act_var, $form_name, $is_empty);
+        return $html->div_row($cols);
+    }
+
+    /**
+     * the type selector of an add row of the references, because the type of a stored reference cannot be changed
+     *
+     * @param int $row the number of the row within the form
+     * @param string $form_name the name of the html form
+     * @param data_object|null $dto the request cache with the reference types
+     * @param array $row_url the posted url of this row, empty if the row has not been posted
+     * @return string the html code of the selector with the posted or the default type
+     */
+    private function ref_row_type(int $row, string $form_name, ?data_object $dto, array $row_url): string
+    {
+        global $ui_sys;
+        $ref_typ_lst = ($dto?->typ_lst_cache ?? $ui_sys->typ_lst_cache)->ref_typ;
+        $typ_var = url_var::REF_ROW . url_var::REF_TYPE . $row;
+        $typ_id = (int)($row_url[$typ_var] ?? $ref_typ_lst->default_id());
+        return $ref_typ_lst->selector($form_name, $typ_id, $typ_var, view_styles::COL_SM_2);
     }
 
     /**
@@ -2546,14 +2815,23 @@ class system_form extends component
      * @param string|null $stored the stored value of the field, '' for the add row
      * @param array $row_url the posted url of this row, empty if the row has not been posted
      * @param bool $with_pre true to add the stored value as the '86' value, false for the add row
+     * @param string $style the width of the field e.g. view_styles::COL_SM_6 for the url of the add row of a new phrase
      * @return string the html code of the field
      */
-    private function ref_row_field(string $var, int $row, msg_id $label, ?string $stored, array $row_url, bool $with_pre): string
+    private function ref_row_field(
+        string  $var,
+        int     $row,
+        msg_id  $label,
+        ?string $stored,
+        array   $row_url,
+        bool    $with_pre,
+        string  $style = view_styles::COL_SM_2
+    ): string
     {
         $html = new html_base();
         $name = url_var::REF_ROW . $var . $row;
         $value = $row_url[$name] ?? $stored ?? '';
-        $result = $html->form_field($name, $label, $value, html_base::INPUT_TEXT, '', view_styles::COL_SM_2, '', '_' . $row);
+        $result = $html->form_field($name, $label, $value, html_base::INPUT_TEXT, '', $style, '', '_' . $row);
         if ($with_pre) {
             // on a re-render keep the stored value of the edit form start, not the posted change
             $result .= $html->form_hidden(url_var::PRE . $name, $row_url[url_var::PRE . $name] ?? $stored ?? '');
@@ -2961,7 +3239,7 @@ class system_form extends component
     }
 
     /**
-     * TODO Prio 0 review
+     * TODO Prio 1 review
      * create the html code for the form element to select a view to link the object to
      * the view to link is posted as url_var::COMPONENT_LINK and not as url_var::VIEW,
      * because the same form can show the view selector, which would give two fields with one id
@@ -3152,13 +3430,21 @@ class system_form extends component
     }
 
     /**
-     * TODO Prio 0 wire up the request action
-     * @return string the html code for a button that requests a new e.g. type item
+     * TODO Prio 2 let a user who is no admin request a new language that an admin confirms
+     * @param user_message $msg with the requesting user, because only an admin can add a language
+     * @return string the html code of the link to the language add view for an admin, else an empty string
      */
-    function button_request(): string
+    function button_request(user_message $msg): string
     {
-        $html = new html_base();
-        return $html->button_bs('Request');
+        global $mtr;
+        $result = '';
+        $usr = $msg->usr;
+        if ($usr != null and $usr->is_admin()) {
+            $html = new html_base();
+            $url = html_base::url(views::LANGUAGE_ADD_ID);
+            $result = $html->ref($url, $mtr->txt(msg_id::BUTTON_ADD_LANGUAGES), '', html_base::BS_BTN);
+        }
+        return $result;
     }
 
     /**

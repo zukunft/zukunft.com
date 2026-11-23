@@ -296,7 +296,7 @@ class source extends sandbox_code_id
         $vars[json_fields::URL] = $this->url;
         $vars[json_fields::DOI] = $this->doi;
         $vars[json_fields::VIEW] = $this->view_id;
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
 

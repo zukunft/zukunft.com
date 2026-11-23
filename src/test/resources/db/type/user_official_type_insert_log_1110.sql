@@ -34,9 +34,9 @@ SELECT user_official_type_insert_log_1110
         ($1,$2,$3,$4,$5,$6);
 
 SELECT user_official_type_insert_log_1110
-       ('EU passport'::text,
+       ('passport number'::text,
         3::bigint,
         1::smallint,
         49::smallint,
         50::smallint,
-        'passport_eu'::text);
+        'passport_nbr'::text);

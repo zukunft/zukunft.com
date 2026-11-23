@@ -36,15 +36,21 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
 include_once paths::MODEL_REF . 'ref_link_wikipedia.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_link_wikipedia;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -65,6 +71,8 @@ class wikipedia_tests
     const string WITHOUT_IPA = 'Zürich is a city.';
     const string WITH_BRACKET = 'Zürich is a city (the largest of Switzerland).';
     const string NO_WIKIDATA_ID = 'Zurich';
+    // a wikidata id typed in the url of the add word suggestions that would leave the path of the item
+    const string PATH_WIKIDATA_ID = '../Q72';
     // the lead paragraph of test_files::IMPORT_WIKIPEDIA_SUMMARY_GENEVA, which the summary api sends already
     // without the pronunciation of the page
     const string GENEVA_DESCRIPTION = 'Geneva is the second-most populous city in Switzerland and the most populous in French-speaking Romandy. Situated in the southwest of the country, where the Rhône leaves Lake Geneva, it is the capital of the Republic and Canton of Geneva. Geneva is a global city, an international financial centre, and a worldwide centre for diplomacy, which has led to it being called the "Peace Capital".';
@@ -222,6 +230,35 @@ class wikipedia_tests
         $description = $wrd->get_description();
         $t->assert($test_name, $description, word_names::MATH_COM);
 
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // negative: the wikidata id of the add word suggestions comes from the url, so an id that is no
+        // wikidata item id is never sent to wikidata, which also keeps this unit test offline
+        $test_name = 'a wikidata id of the url that is no item id suggests no group';
+        $new_wrd = new word($t->usr1);
+        $wd_url = [
+            url_var::REFRESH => url_var::REFRESH_SUGGEST_WIKIDATA,
+            url_var::EXTERNAL_KEY => self::PATH_WIKIDATA_ID,
+        ];
+        $wik->suggest_from_url($new_wrd, word_names::HAMBURG, $wd_url, $msg);
+        $t->assert($test_name, $new_wrd->suggested_parents, []);
+        $test_name = '... and tells the user that wikidata has named no group';
+        $t->assert_text_contains($test_name, implode(' ', $new_wrd->suggest_steps), ref_types::WIKIDATA_NAME);
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // negative: a user without login cannot add the word, so the pod asks no source for it, which
+        // also keeps this unit test offline (a new user object is an ip user, see user_tests)
+        $test_name = 'a user without login gets no suggestion of wikipedia';
+        $ip_wrd = new word(new user());
+        $wiki_url = [url_var::REFRESH => url_var::REFRESH_SUGGEST_WIKIPEDIA];
+        $wik->suggest_from_url($ip_wrd, word_names::HAMBURG, $wiki_url, $msg);
+        $t->assert_true($test_name, $ip_wrd->references_related->is_empty());
+        $test_name = '... and only the step that a login is needed';
+        $t->assert($test_name, count($ip_wrd->suggest_steps), 1);
         $test_name = '... without a message';
         $t->assert_msg($test_name, $msg);
         $msg->reset();

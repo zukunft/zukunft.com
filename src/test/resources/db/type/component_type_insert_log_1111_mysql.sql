@@ -42,4 +42,4 @@ SELECT component_type_insert_log_1111
         778,
         'calc_sheet',
         779,
-        'changeable spreadsheet with words, number and formulas that allow changes');
+        'spreadsheet that allows calculations by adding formulas to cells');

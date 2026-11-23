@@ -111,7 +111,7 @@ class value_read_tests
             array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020)
         , $msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $val->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $t->assert($ts . $test_name, $val->number(), values::CH_INHABITANTS_2020_IN_MIO);
 
         // the default confidence of a value quality is a value, so that a user can overwrite it
@@ -119,7 +119,7 @@ class value_read_tests
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ASSUMED, word_names::CONFIDENCE, words::PCT), $msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $val->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $t->assert($ts . $test_name, $val->number(), values::ASSUMED_CONFIDENCE);
 
         $test_name = 'value without time returns the latest value';
@@ -186,7 +186,7 @@ class value_read_tests
             // test load by phrase list first to get the value id
             $phr_lst = $t_db->load_phrase_list(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
             $val_by_phr_lst = new value($t->usr1);
-            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id(), $msg);
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id($msg), $msg);
             $result = $val_by_phr_lst->number();
             $target = values::CH_INHABITANTS_2019_IN_MIO;
             $t->assert(', value->load for another word list ' . $phr_lst->dsp_name(), $result, $target);
@@ -194,7 +194,7 @@ class value_read_tests
             // test load by phrase list first to get the value id
             $phr_lst = $t_db->load_phrase_list(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
             $val_by_phr_lst = new value($t->usr1);
-            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id(), $msg);
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id($msg), $msg);
             $result = $val_by_phr_lst->number();
             $target = values::CH_INHABITANTS_2020_IN_MIO;
             $t->assert(', value->load for another word list ' . $phr_lst->dsp_name(), $result, $target);

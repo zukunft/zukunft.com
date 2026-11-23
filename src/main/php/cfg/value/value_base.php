@@ -507,7 +507,7 @@ class value_base extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
             if ($msg->is_ok()) {
-                $phr_grp = $phr_lst->get_grp_id(false);
+                $phr_grp = $phr_lst->get_grp_id($msg, false);
                 $this->set_grp($phr_grp);
             }
         }
@@ -762,7 +762,7 @@ class value_base extends sandbox_value
     {
         $phr_lst = new phrase_list($this->get_user());
         $phr_lst->load_names_by_ids((new phr_ids($phr_ids)), $msg);
-        return $this->load_by_grp($phr_lst->get_grp_id(), $msg);
+        return $this->load_by_grp($phr_lst->get_grp_id($msg), $msg);
     }
 
     /**
@@ -785,45 +785,27 @@ class value_base extends sandbox_value
     }
 
     /**
-     * get the best matching value
+     * get the best matching value, which is for now only the value of the group of the phrases
+     * planned (see the TODO below):
      * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","sales","2014" the value for "ABB","sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "sales" are in ,"million","CHF"
      *
      * @param phrase_list $phr_lst with the phrases used for the selection
+     * @param user_message $msg to report a selection without phrases
      */
     function load_best(phrase_list $phr_lst, user_message $msg): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
-        $grp = $phr_lst->get_grp_id();
-        $this->load_by_grp($grp, $msg);
-        // if not found try without scaling
-        if (!$this->is_id_set()) {
-            if (!$phr_lst->is_empty()) {
-                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
-            } else {
-                // try to get a value with another scaling
-                $phr_lst_unscaled = clone $phr_lst;
-                $phr_lst_unscaled->ex_scaling();
-                log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp_id();
-                $this->load_by_grp($grp_unscale, $msg);
-                // if not found try with converted measure
-                if (!$this->is_id_set()) {
-                    // try to get a value with another measure
-                    $phr_lst_converted = clone $phr_lst_unscaled;
-                    $phr_lst_converted->ex_measure($msg);
-                    log_debug('try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp_id();
-                    $this->grp()->set_id($grp_unscale->id());
-                    $this->load_by_grp($grp_unscale, $msg);
-                    // TODO Prio 2
-                    // check if there are any matching values at all
-                    // if yes, get the most often used phrase
-                    // repeat adding a phrase utils a number is found
-                }
-            }
+        // an empty list has no group, which get_grp_id reports, and a list that has no value is a normal outcome
+        // TODO Prio 2 if no value is found try the list without scaling and then with a converted measure,
+        //      but only with the number converted to the requested scaling and measure, so never a wrong number;
+        //      then check if there are any matching values at all, take the most often used phrase
+        //      and repeat adding a phrase until a number is found
+        $grp = $phr_lst->get_grp_id($msg);
+        if ($grp != null) {
+            $this->load_by_grp($grp, $msg);
         }
         log_debug('got ' . $this->get_value() . ' for ' . $this->dsp_id());
     }
@@ -1370,7 +1352,8 @@ class value_base extends sandbox_value
                 $frm = $trm->obj();
                 if ($frm->ref_text != null and $frm->ref_text != '') {
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $msg, $trm_lst);
+                    // only the reference text like in scale_calc, because only the ids of both parts are compared
+                    $exp->set_ref_and_user_text($frm->ref_text, null);
                     $res_ids = $exp->phr_id_lst($exp->res_part($msg));
                     $src_ids = $exp->phr_id_lst($exp->r_part($msg));
                     if (in_array($trg_phr->id(), $res_ids->lst ?? [])
@@ -1461,7 +1444,9 @@ class value_base extends sandbox_value
                     // test if it is a valid scale formula
                     // which means that the result part must contain exactly one word of type scaling
                     $exp = new expression($frm);
-                    $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                    // only the reference text, because the scaling needs the ids and not the user text, whose
+                    // conversion would read a term of the formula that the data object does not contain
+                    $exp->set_ref_and_user_text($frm->ref_text, null);
                     $res_ids = $exp->phr_id_lst($exp->res_part($msg));
                     $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all($msg)->scaling_lst();
                     if (count($res_scale_lst->lst()) != 1) {
@@ -1496,7 +1481,8 @@ class value_base extends sandbox_value
         foreach ($dto->formula_list()->lst() as $frm) {
             if ($frm_found == null and $frm->ref_text != null and $frm->ref_text != '') {
                 $exp = new expression($frm);
-                $exp->set_ref_text($frm->ref_text, $msg, $dto->term_list());
+                // only the reference text like in scale_calc, because only the ids of the source part are compared
+                $exp->set_ref_and_user_text($frm->ref_text, null);
                 $r_ids = $exp->phr_id_lst($exp->r_part($msg));
                 if (in_array($scale_wrd->id(), $r_ids->lst ?? [])) {
                     $frm_found = $frm;
@@ -1577,7 +1563,7 @@ class value_base extends sandbox_value
 
         if ($msg->is_ok()) {
             $phr_lst->add($phr);
-            $phr_grp = $phr_lst->get_grp_id($do_save);
+            $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
             $this->set_grp($phr_grp);
             $this->set_value($value);
 
@@ -2091,7 +2077,7 @@ class value_base extends sandbox_value
     $log->new_to    = $wrd_id;
     $log->row_id    = $this->id();
     $log->link_text = 'word';
-    $log->add_link_ref();
+    $log->add($msg);
 
     return $log;
     }
@@ -2106,7 +2092,7 @@ class value_base extends sandbox_value
     $log->old_to    = $wrd_id;
     $log->row_id    = $this->id();
     $log->link_text = 'word';
-    $log->add_link_ref();
+    $log->add($msg);
 
     return $log;
     }
@@ -2269,6 +2255,48 @@ class value_base extends sandbox_value
     }
 
     /**
+     * check that each phrase of a new value is a word or triple of the database, because the
+     * database has no foreign key on the phrases of a value; e.g. a url with the fixed snapshot id
+     * of a test word would else add a number that each later page shows with a phrase without name
+     * a phrase is reloaded even if it has a name, because a form sends the name next to the id
+     * called where a new value is added from the phrase ids of the url (db_object::add_via_api) and
+     * not by save, because loading and saving are separated
+     *
+     * @param user_message $msg to report the phrase that is not in the database
+     * @return bool true if all phrases of the value can be loaded from the database
+     */
+    function phrases_in_db(user_message $msg): bool
+    {
+        $ids = $this->ids();
+        $db_phr_lst = new phrase_list($this->get_user());
+        $db_phr_lst->load_names_by_ids(new phr_ids($ids), $msg);
+        $missing = false;
+        $names = [];
+        foreach ($ids as $id) {
+            $phr = $db_phr_lst->get($id);
+            if ($phr == null or $phr->name() == '') {
+                $missing = true;
+            } else {
+                $names[] = $phr->name();
+            }
+        }
+        if ($missing) {
+            // the ids are never shown to the user, so the message names the phrases that are found
+            $val_name = implode(', ', $names);
+            // and if no phrase is found the name that the user has given to the value or its number
+            if ($val_name == '') {
+                $val_name = $this->grp()->name_given();
+            }
+            $val = $this->get_value();
+            if ($val_name == '' and is_scalar($val)) {
+                $val_name = (string)$val;
+            }
+            $msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => $val_name]);
+        }
+        return !$missing;
+    }
+
+    /**
      * a setting of the pod below "system configuration > system" in config.yaml can only be changed by an
      * admin or the system user e.g. when importing config.yaml; the settings below "user" and "select"
      * can be changed by each logged-in user as the own overwrite
@@ -2331,6 +2359,7 @@ class value_base extends sandbox_value
                 // make sure that only an admin user sets the admin protection also on a new value
                 $this->check_protection_change(null, $msg);
                 log_debug('add ' . $this->dsp_id());
+                // the phrases of a new value from ids are checked before the save (see phrases_in_db)
                 $this->add($msg);
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());

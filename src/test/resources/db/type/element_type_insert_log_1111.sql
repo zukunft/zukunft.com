@@ -40,7 +40,7 @@ SELECT element_type_insert_log_1111
         ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT element_type_insert_log_1111
-       ('Word selector'::text,
+       ('word'::text,
         3::bigint,
         1::smallint,
         593::smallint,

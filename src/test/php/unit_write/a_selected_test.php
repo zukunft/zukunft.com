@@ -88,6 +88,7 @@ include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'job_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
+include_once test_paths::UNIT_UI . 'component_ui_tests.php';
 include_once test_paths::UNIT_UI . 'wikidata_import_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
@@ -114,6 +115,7 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\unit\base_object_tests;
 use Zukunft\ZukunftCom\test\php\unit\change_log_tests;
 use Zukunft\ZukunftCom\test\php\unit\coding_rule_tests;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
@@ -131,6 +133,7 @@ use Zukunft\ZukunftCom\test\php\unit\formula_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_tests;
 use Zukunft\ZukunftCom\test\php\unit\import_tests;
+use Zukunft\ZukunftCom\test\php\unit\ip_range_tests;
 use Zukunft\ZukunftCom\test\php\unit\job_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_tests;
@@ -139,6 +142,7 @@ use Zukunft\ZukunftCom\test\php\unit\result_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\result_tests;
 use Zukunft\ZukunftCom\test\php\unit\source_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\source_tests;
+use Zukunft\ZukunftCom\test\php\unit\sql_tests;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\unit\term_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\term_tests;
@@ -168,6 +172,7 @@ use Zukunft\ZukunftCom\test\php\unit_read\formula_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\formula_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\group_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\job_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\sql_db_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\language_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\phrase_data_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\phrase_list_read_tests;
@@ -194,6 +199,7 @@ use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\change_log_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\job_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\reference_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\component_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\wikidata_import_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\result_ui_tests;
@@ -337,55 +343,55 @@ class a_selected_test extends all_unit_tests
         //new math_tests()->run($this);
         //new system_tests()->run($this);
         //new config_tests()->run($this);
-        //new ip_range_tests()->run($this);
+        new ip_range_tests()->run($this);
         new coding_rule_tests()->run($this);
         //new change_link_validation_tests()->run($this);
-        //new sql_tests()->run($this);
-        //new sys_log_tests()->run($this);
+        new sql_tests()->run($this);
+        new sys_log_tests()->run($this);
         //new change_log_tests()->run($this);
         //new job_tests()->run($this);
         //new pod_tests()->run($this);
         new user_tests()->run($this);
         //new user_list_tests()->run($this);
-        //new base_object_tests()->run($this);
+        new base_object_tests()->run($this);
         new sandbox_tests()->run($this);
         //new language_tests()->run($this);
         //new type_tests()->run($this);
         //new db_cache_tests()->run($this);
-        //new horizontal_tests()->run($this);
+        new horizontal_tests()->run($this);
         //new permission_tests()->run($this);
         new system_view_ui_tests()->run($this);
         //new word_tests()->run($this, $ui_unit->dto->typ_lst_cache);
         //new word_list_tests()->run($this);
-        //new verb_tests()->run($this);
+        new verb_tests()->run($this);
         //new triple_tests()->run($this);
         //new triple_list_tests()->run($this);
-        //new phrase_tests()->run($this);
+        new phrase_tests()->run($this);
         //new phrase_list_tests()->run($this);
         new group_tests()->run($this);
         //new group_list_tests()->run($this);
-        //new term_tests()->run($this);
+        new term_tests()->run($this);
         //new term_list_tests()->run($this);
-        //new source_tests()->run($this);
+        new source_tests()->run($this);
         //new source_list_tests()->run($this);
         new ref_tests()->run($this);
         new wikipedia_tests()->run($this);
         new value_tests()->run($this);
         //new value_list_tests()->run($this);
-        //new formula_tests()->run($this);
-        //new formula_calc_tests()->run($this);
+        new formula_tests()->run($this);
+        new formula_calc_tests()->run($this);
         //new formula_list_tests()->run($this);
         //new formula_link_tests()->run($this);
         //new element_tests()->run($this);
         //new element_list_tests()->run($this);
-        //new expression_tests()->run($this);
+        new expression_tests()->run($this);
         new result_tests()->run($this);
         //new result_list_tests()->run($this);
         //new figure_tests()->run($this);
         //new figure_list_tests()->run($this);
-        //new view_tests()->run($this);
+        new view_tests()->run($this);
         //new view_list_tests()->run($this);
-        //new term_view_tests()->run($this);
+        new term_view_tests()->run($this);
         //new component_tests()->run($this);
         //new component_list_tests()->run($this);
         //new component_link_tests()->run($this);
@@ -394,7 +400,7 @@ class a_selected_test extends all_unit_tests
         new wikidata_tests()->run($this);
         new db_setup_tests()->run($this);
         new api_tests()->run_openapi_test($this);
-        //new base_ui_tests()->run($this);
+        new base_ui_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -495,23 +501,27 @@ class a_selected_test extends all_unit_tests
             //$cfg->load_cfg($sys_msg, null, $usr);
             foreach (self::SELECTED_SYSTEM_IMPORT_FILES as $import_file) {
                 $test_name = 'the selected system file ' . basename($import_file) . ' is imported again';
-                $imp_msg = $imf->json_file($import_file, user::system(), false);
+                $imp_msg = new user_message_cfg(user::system());
+                $imf->json_file($import_file, user::system(), $imp_msg, false);
                 $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
             foreach (self::SELECTED_SYSTEM_DATA_FILES as $import_file) {
                 $test_name = 'the selected system data file ' . basename($import_file) . ' is imported again';
-                $imp_msg = $imf->json_file(cfg_files::MESSAGE_PATH . $import_file, user::system(), false, false, true);
+                $imp_msg = new user_message_cfg(user::system());
+                $imf->json_file(cfg_files::MESSAGE_PATH . $import_file, user::system(), $imp_msg, false, false, true);
                 $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
                 $test_name = 'the selected file ' . basename($import_file) . ' is imported again';
-                $imp_msg = $imf->json_file($import_file, $usr, false);
+                $imp_msg = new user_message_cfg($usr);
+                $imf->json_file($import_file, $usr, $imp_msg, false);
                 $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
             if (self::SELECTED_START_PAGE_IMPORT) {
                 foreach ($this->start_page_import_files() as $import_file) {
                     $test_name = 'the start page file ' . basename($import_file) . ' is imported again';
-                    $imp_msg = $imf->json_file($import_file, user::system(), false);
+                    $imp_msg = new user_message_cfg(user::system());
+                    $imf->json_file($import_file, user::system(), $imp_msg, false);
                     $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
                 }
             }
@@ -595,7 +605,7 @@ class a_selected_test extends all_unit_tests
             //$t_db->create_test_db_entries($this);
             //$t_db->create_unit_test_db_entries($this);
             // the db read tests in the order of all_unit_read_tests::run_unit_db_tests
-            //new sql_db_read_tests()->run($this);
+            new sql_db_read_tests()->run($this);
             //new user_read_tests()->run($this);
             //new protection_read_tests()->run($this);
             //new share_read_tests()->run($this);
@@ -619,7 +629,7 @@ class a_selected_test extends all_unit_tests
             //new expression_read_tests()->run($this);
             //new element_list_read_tests()->run($this);
             //new result_list_read_tests()->run($this);
-            //new view_read_tests()->run($this);
+            new view_read_tests()->run($this);
             //new view_list_read_tests()->run($this);
             //new component_read_tests()->run($this);
             //new component_list_read_tests()->run($this);
@@ -649,7 +659,7 @@ class a_selected_test extends all_unit_tests
             // the html ui tests in the order of all_ui_tests::run
             //new base_ui_tests()->run($this);
             //new user_ui_tests()->run($this);
-            //new horizontal_ui_tests()->run($this, $ui);
+            new horizontal_ui_tests()->run($this, $ui);
             //new word_ui_tests()->run($this, $ui->dto->typ_lst_cache);
             //new word_list_ui_tests()->run($this);
             new verb_ui_tests()->run($this);
@@ -677,7 +687,7 @@ class a_selected_test extends all_unit_tests
             //new term_list_ui_tests()->run($this);
             //new view_ui_tests()->run($this, $ui);
             //new view_list_ui_tests()->run($this);
-            //new component_ui_tests()->run($this);
+            new component_ui_tests()->run($this);
             //new component_list_ui_tests()->run($this);
             //new process_catch_ui_tests()->run($this);
             //new use_case_ui_tests()->run($this);
@@ -711,7 +721,7 @@ class a_selected_test extends all_unit_tests
             //new signup_url_tests()->run($this);
             //new login_url_tests()->run($this);
             new verb_url_tests()->run($this);
-            //new word_write_url_tests()->run($this);
+            new word_write_url_tests()->run($this);
             new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
             new source_write_url_tests()->run($this);
@@ -741,7 +751,7 @@ class a_selected_test extends all_unit_tests
             $t_db->create_test_db_entries($this);
             //new word_write_tests()->run($this);
             //new triple_write_tests()->run($this);
-            //new value_write_tests()->run($this);
+            new value_write_tests()->run($this);
             //new formula_write_tests()->run($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
@@ -764,13 +774,14 @@ class a_selected_test extends all_unit_tests
             //new horizontal_write_tests()->run($this);
             //$t_db->create_test_db_entries($this);
 
-            //new word_write_tests()->run($this);
+            new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             new verb_write_tests()->run($this);
             //new triple_write_tests()->run($this);
+            new triple_write_tests()->run_del_owner_change($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
-            //new group_write_tests()->run($this);
+            new group_write_tests()->run($this);
             //new group_list_write_tests()->run($t);
             //new graph_tests()->run($t);
             //new term_write_tests()->run($t);
@@ -790,7 +801,7 @@ class a_selected_test extends all_unit_tests
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);
             //new formula_trigger_tests()->run($this);
-            //new result_write_tests()->run($this);
+            new result_write_tests()->run($this);
             //new result_write_tests()->run_list($this);
             //new job_write_tests()->run($this);
             //new job_write_tests()->run_list($this);
@@ -802,7 +813,7 @@ class a_selected_test extends all_unit_tests
 
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
-            //new import_write_tests()->run($this);
+            new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             new wikidata_write_tests()->run($this);
             //new update_put_write_tests()->run($this);

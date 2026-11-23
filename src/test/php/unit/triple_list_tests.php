@@ -135,6 +135,41 @@ class triple_list_tests
         $msg->reset();
 
 
+        $t->subheader($ts . 'add by name');
+
+        // the import selects the triples without id by their name (see triples_to_add_to_db)
+        $test_name = 'triples without id are added by their name';
+        $trp_lst = $t_trp->list_empty();
+        $trp_lst->add_by_name_direct($t_trp->triple_name_only(), $msg);
+        $trp_lst->add_by_name_direct($t_trp->triple_filled_add_name(), $msg);
+        $t->assert($test_name, $trp_lst->names(true), [triple_names::MATH_CONST, triple_names::SYSTEM_TEST_ADD]);
+        $t->assert_msg($test_name, $msg);
+
+        // negative: the name hash is updated by the add, so a second triple with the same name is found without a rebuild
+        $test_name = '... but a second triple with the same name is not added';
+        $added = $trp_lst->add_by_name_direct($t_trp->triple_name_only(), $msg);
+        $t->assert($test_name, $added, false);
+        $t->assert($test_name, $trp_lst->count(), 2);
+        // a triple without id is skipped silently, because the import adds the same from or to triple
+        // once for each triple that links to it (see triples_to_add_to_db), so a repeat is no error
+        $test_name = '... and the repeat is no error';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // the import loads an excluded triple by its name to delete it (see save_with_cache),
+        // so the names incl. the excluded come from the triples and not from the name hash of the add
+        $test_name = 'the names incl. the excluded contain a triple that the import excludes';
+        $trp_lst = $t_trp->list_empty();
+        $trp_exc = $t_trp->triple_name_only();
+        $trp_exc->exclude();
+        $trp_lst->add_by_name_direct($trp_exc, $msg);
+        $t->assert($test_name, $trp_lst->names(true), [triple_names::MATH_CONST]);
+        // negative: the names without the excluded do not show it
+        $test_name = '... but the names without the excluded do not';
+        $t->assert($test_name, $trp_lst->names(), []);
+        $msg->reset();
+
+
         $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t_trp->triple_list_short();

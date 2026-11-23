@@ -259,6 +259,17 @@ class test_sources extends test_objects
         return $tl->list_to_ui($this->source_list());
     }
 
+    /**
+     * @return source_list_ui with only the source BFS (sources::BFS_ID) e.g. as the request cache of a
+     *         test render, which names a source id without a backend call
+     */
+    function source_bfs_list_ui(): source_list_ui
+    {
+        $lst = new source_list($this->env->usr1);
+        $lst->add($this->source());
+        return new test_lib()->list_to_ui($lst);
+    }
+
 
     /*
      * url

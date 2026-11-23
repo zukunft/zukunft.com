@@ -321,6 +321,7 @@ class source_url_tests extends url_test_base
         // the source is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_source_removed('del_source workflow has removed the source');
+            $this->cleanup_change_log_of_removed($src);
         }
     }
 

@@ -221,8 +221,6 @@ class formula_map extends sandbox_code_id
     private ?formula_link_list $lnk_lst = null;
     // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
-    // TODO Prio 0 deprecate
-    public ?string $type_cl = '';       // the code id of the formula type
     public ?phrase $name_phr = null;    // the triple object for the formula name:
     //                                     because values can only be assigned to phrases, also for the formula name a triple must exist
     public bool $needs_res_upd = false; // true if the formula results needs to be updated
@@ -265,7 +263,6 @@ class formula_map extends sandbox_code_id
 
         $this->lnk_lst = null;
         $this->phr_lst = null;
-        $this->type_cl = '';
         $this->name_phr = null;
 
         $this->needs_res_upd = false;
@@ -293,7 +290,6 @@ class formula_map extends sandbox_code_id
         string       $name_fld = formula_fields::FLD_NAME,
         string       $type_fld = formula_fields::FLD_TYPE): bool
     {
-        global $sys;
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
@@ -321,9 +317,6 @@ class formula_map extends sandbox_code_id
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
 
-            if ($this->type_id > 0) {
-                $this->type_cl = $sys->typ_lst->frm_typ->code_id($this->type_id);
-            }
             /*
             if ($this->id() > 0) {
                 // TODO Prio 2 check the exclusion handling
@@ -357,10 +350,9 @@ class formula_map extends sandbox_code_id
 
         if (array_key_exists(json_fields::USR_TEXT, $api_json)) {
             if ($api_json[json_fields::USR_TEXT] <> '') {
-                // a local message, because api_mapper returns $msg->is_ok() and the terms of the
-                // expression are resolved with a term list that this mapper does not have
-                $exp_msg = new user_message(); // not reported, see above
-                $this->set_user_text($api_json[json_fields::USR_TEXT], $exp_msg);
+                // only the user text, because a mapper reads no database (docs/llm/coding.md): the reference
+                // text is converted from it with the terms of the database later e.g. by the save
+                $this->set_user_text_unconverted($api_json[json_fields::USR_TEXT]);
             }
         }
 
@@ -587,10 +579,20 @@ class formula_map extends sandbox_code_id
         ?term_list   $trm_lst = null
     ): bool
     {
+        $this->set_user_text_unconverted($usr_txt);
+        return $this->generate_ref_text($trm_lst, $msg);
+    }
+
+    /**
+     * set the user text and mark the reference text as not yet converted, so that get_ref_text or the save converts it
+     * @param string $usr_txt the formula expression in the human-readable format
+     * @return void
+     */
+    private function set_user_text_unconverted(string $usr_txt): void
+    {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
         $this->ref_text_dirty = true;
-        return $this->generate_ref_text($trm_lst, $msg);
     }
 
     function get_usr_text(?term_list $trm_lst = null): string
@@ -695,14 +697,42 @@ class formula_map extends sandbox_code_id
     function expression(user_message $msg, ?term_list $trm_lst = null): expression
     {
         $exp = new expression($this);
-        // TODO Prio 0 use the ref text check function that includes the user message
         if ($this->ref_text != '' and $this->usr_text != '') {
             $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
+            // only with preloaded terms, because else the check would read each term from the database for every use
+            if ($trm_lst != null) {
+                $this->check_ref_text($msg, $trm_lst);
+            }
         } else {
             $exp->set_ref_text($this->ref_text, $msg, $trm_lst);
             $exp->set_user_text($this->usr_text, $msg, $trm_lst);
         }
         return $exp;
+    }
+
+    /**
+     * report if the stored reference text differs from the one that the expression of the user gives now,
+     * because both are stored and e.g. a manual database change or a renamed term can let them differ
+     * @param user_message $msg to report the difference
+     * @param term_list $trm_lst the preloaded terms that are used for the conversion
+     * @return bool true if both texts match or if the expression cannot be converted now
+     */
+    private function check_ref_text(user_message $msg, term_list $trm_lst): bool
+    {
+        $result = true;
+        $chk_msg = $msg->clone_reset(); // a buffer, because a failed conversion e.g. of a term not in the list is no difference of the texts
+        $chk_exp = new expression($this);
+        $chk_exp->set_user_text($this->usr_text, $chk_msg, $trm_lst);
+        $chk_ref = $chk_exp->ref_text($chk_msg, $trm_lst);
+        if ($chk_msg->is_ok() and $chk_ref != $this->ref_text) {
+            $msg->add(msg_id::EXPRESSION_REF_TEXT_DIFFERS, [
+                msg_id::VAR_VALUE => $this->ref_text,
+                msg_id::VAR_FORMULA_NAME => $this->name(),
+                msg_id::VAR_FORMULA => $this->usr_text
+            ]);
+            $result = false;
+        }
+        return $result;
     }
 
 
@@ -1109,10 +1139,9 @@ class formula_map extends sandbox_code_id
     function diff_msg(formula|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
         $msg = parent::diff_msg($obj, $ex_def);
-        // a local message, because the diff reports the differences between the two objects and a
-        // term that cannot be resolved without a term list is not one of them
-        $txt_msg = new user_message(); // not reported, see above
-        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text($txt_msg), $obj->get_ref_text($txt_msg));
+        // the stored reference texts, because the diff compares the two objects as they are and a conversion of a
+        // not yet converted user text would read the terms from the database e.g. in a unit test
+        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->ref_text, $obj->ref_text);
         $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_USER_TEXT, $this->get_usr_text(), $obj->get_usr_text());
         $this->diff_field_msg($msg, formula_fields::FLD_LATEX, $this->latex, $obj->latex);
         $this->diff_field_msg($msg, formula_fields::FLD_ALL_NEEDED, $this->need_all_val, $obj->need_all_val);

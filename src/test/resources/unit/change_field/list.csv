@@ -907,3 +907,4 @@ change_field_id,table_id,change_field_name,code_id,description
 906,124,last_update,,
 907,32,group_msg_code_id,,
 908,32,wikipedia,,
+909,26,scaling_factor,,

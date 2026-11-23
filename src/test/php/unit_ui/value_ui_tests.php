@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_select;
@@ -81,8 +82,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -454,6 +457,10 @@ class value_ui_tests
         $t->subheader($ts . 'confirm change preview');
         $preview = new ui_preview();
         $val_chg = $t_val->value_form_ui($msg);
+        // a test render names a source only from the request cache (see ui_preview::source_name_by_id),
+        // so the source of the test is set here and not taken from what a previous test has left
+        $src_lst_keep = $ui_sys->source_list();
+        $ui_sys->set_source_list(new test_sources($t)->source_bfs_list_ui());
         $chg_url = [
             url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT,
             url_var::PRE . url_var::NUMERIC_VALUE => (string)$val_chg->number(),
@@ -474,6 +481,7 @@ class value_ui_tests
         $test_name = 'the confirm page posts the old value again, so that after a failed write it still lists only the changes';
         $pre_source = $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::BFS_ID);
         $t->assert_text_contains($test_name, $chg_html, $pre_source);
+        $ui_sys->set_source_list($src_lst_keep);
 
         // the overwrite form writes the changed number of the value without the confirm view
         $t->subheader($ts . 'value overwrite');
@@ -838,7 +846,7 @@ class value_ui_tests
 
         // a value is never listed among its own similar values (see value_list::remove)
         $test_name = 'pi is not listed among its own similar values';
-        $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
+        $t->assert_text_not_contains($test_name, $sim_html, word_names::PI_SYMBOL);
 
         // the results column lists the results that use the value like a value list, each with
         // its phrase and its formatted number
@@ -896,6 +904,48 @@ class value_ui_tests
         $t->assert($test_name,
             $lst_ui->results_by_value($tl->ui_value($t_val->value_pi()), $msg_ui, $dto_res),
             $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS));
+
+
+        $t->subheader($ts . 'value detail');
+
+        // the value detail page shows the fields of the value, the formulas whose results use it, the change
+        // history and the numbers of the other users; the test mode takes the formulas from the cache
+        $t_frm = new test_formulas($t);
+        $page = new system_page();
+        $dto_frm = new data_object();
+        $dto_frm->frm_lst = $t_frm->formula_list_ui();
+        $val_frm = $t_val->value_page_formula_ui($msg);
+        $dtl_html = $page->value_details($val_frm, $msg_ui, $dto_frm, true, []);
+        $test_name = 'the value detail page names the formula whose result uses the value';
+        $t->assert_text_contains($test_name, $dtl_html, formula_names::SCALE_TO_SEC);
+        $test_name = '... and shows the number of the value with its label';
+        $t->assert_text_contains($test_name, $dtl_html, $mtr->txt(msg_id::FORM_FIELD_VALUE));
+        $test_name = '... and the phrases of the value';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SELECT_MULTI_PHRASES), word_names::PI_SYMBOL);
+        $test_name = '... and the share and the protection, also if they are the default';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SELECT_SHARE_TYPE), $mtr->txt(msg_id::FORM_SELECT_PROTECTION_TYPE));
+        $test_name = '... and the owner';
+        $t->assert_text_contains($test_name, $dtl_html, $mtr->txt(msg_id::FORM_FIELD_OWNER));
+        $test_name = '... and the change history and the values of the other users';
+        $t->assert_text_order($test_name, $dtl_html,
+            $mtr->txt(msg_id::FORM_SUB_TITLE_LOG), $mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS));
+        $msg_ui->reset();
+
+        // negative: a value whose results have no formula is not used for formulas
+        $test_name = 'a value without a formula result says that it is not used for formulas';
+        $t->assert_text_contains($test_name,
+            $page->value_details($val_rel, $msg_ui, $dto_frm, true, []),
+            $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS));
+        $msg_ui->reset();
+
+        // negative: an object that is no value shows no details and reports why
+        $test_name = 'the value detail page of a word reports that it is no value';
+        $wrd_no_val = $t_wrd->zh_ui();
+        $call = fn() => $page->value_details($wrd_no_val, $msg_ui, $dto_frm, true, []);
+        $t->assert_log_err($test_name, $call, system_page::VALUE_DETAILS_NO_VALUE, $msg_ui);
+        $msg_ui->reset();
 
 
         $t->subheader($ts . 'view tab box');
@@ -1060,9 +1110,9 @@ class value_ui_tests
         $phr_lst_ch->add_name(words::TN_CH);
         $phr_lst_added->add_name(words::TN_RENAMED);
         $val_added = new value($t->usr1);
-        $val_added->load_by_grp($phr_lst_added->get_grp_id());
+        $val_added->load_by_grp($phr_lst_added->get_grp_id($msg));
         $val_ch = new value($t->usr1);
-        $val_ch->load_by_grp($phr_lst_ch->get_grp_id());
+        $val_ch->load_by_grp($phr_lst_ch->get_grp_id($msg));
 
 
         $t->subheader($ts . 'Test the value list class (classes/value_list.php)');

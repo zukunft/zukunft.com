@@ -47,4 +47,4 @@ SELECT component_type_insert_log_1111
         778::smallint,
         'calc_sheet'::text,
         779::smallint,
-        'changeable spreadsheet with words, number and formulas that allow changes'::text);
+        'spreadsheet that allows calculations by adding formulas to cells'::text);

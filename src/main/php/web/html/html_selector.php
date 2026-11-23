@@ -116,7 +116,8 @@ class html_selector
     }
 
     /**
-     * TODO Prio 0 easy use html function and html names
+     * TODO Prio 2 build the select, datalist and form group tags with html_base functions and html_names
+     *      instead of the raw tags below (rule "Any paired tag" of docs/llm/coding.md)
      * @returns string the HTML code that starts a selector field
      */
     private function start_selector(): string

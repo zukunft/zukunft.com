@@ -98,44 +98,41 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * @returns array with all unique names of this list with the keys within this list
+     * a term is found by the name of its object, a word also by its plural, a triple also by its
+     * generated name and a verb also by its other forms; used by the rebuild and the add of the
+     * name hash table
+     *
+     * @param object $obj a term of this list
+     * @return array the names of the term e.g. ["is a", "are"]
      */
-    function name_pos_lst(): array
+    protected function name_index_keys(object $obj): array
     {
-        $result = array();
-        if ($this->is_name_list_dirty()) {
-            foreach ($this->lst() as $key => $trm) {
-                $obj = $trm->obj();
-                $result[$obj->name()] = $key;
-                // TODO Prio 2 add the language forms of words and triples
-                if ($obj::class == word::class) {
-                    if ($obj->plural != '') {
-                        $result[$obj->plural] = $key;
-                    }
-                }
-                if ($obj::class == triple::class) {
-                    if ($obj->name_generated() != '') {
-                        $result[$obj->name_generated()] = $key;
-                    }
-                }
-                if ($obj::class == verb::class) {
-                    if ($obj->plural != '') {
-                        $result[$obj->plural] = $key;
-                    }
-                    if ($obj->reverse != '') {
-                        $result[$obj->reverse] = $key;
-                    }
-                    if ($obj->rev_plural != '') {
-                        $result[$obj->rev_plural] = $key;
-                    }
-                    if ($obj->frm_name != '') {
-                        $result[$obj->frm_name] = $key;
-                    }
-                }
-            }
-            $this->set_name_pos_list($result);
+        $trm_obj = $obj->obj();
+        if ($trm_obj == null) {
+            // e.g. a term that is only named yet
+            $names = [$obj->name()];
         } else {
-            $result = parent::name_pos_lst();
+            $names = [$trm_obj->name()];
+            // TODO Prio 2 add the language forms of words and triples
+            if ($trm_obj::class == word::class) {
+                $names[] = $trm_obj->plural;
+            }
+            if ($trm_obj::class == triple::class) {
+                $names[] = $trm_obj->name_generated();
+            }
+            if ($trm_obj::class == verb::class) {
+                $names[] = $trm_obj->plural;
+                $names[] = $trm_obj->reverse;
+                $names[] = $trm_obj->rev_plural;
+                $names[] = $trm_obj->frm_name;
+            }
+        }
+        // the first name is the key even if empty like in the parent, the other forms only if set
+        $result = [$names[0]];
+        foreach (array_slice($names, 1) as $name) {
+            if ($name != '') {
+                $result[] = $name;
+            }
         }
         return $result;
     }

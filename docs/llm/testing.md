@@ -147,6 +147,10 @@ its own flow does not explain, a delete earlier in the same run has failed.
   the delete ran, so the row stayed and only an exclusion was written.
 - `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
   `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+- An expected html page is committed only from a run that started on a recreated database
+  (`test.php`, or `reset_db.php` before `test_part.php`), because `test_part.php` alone keeps the
+  rows of a stopped run, and a page written while they are in the database shows them, e.g.
+  Zurich "... and 149 more" or the inhabitants page with Switzerland.
 
 ## An LLM never runs the `/test/*` scripts — the developer does
 
@@ -863,6 +867,29 @@ Never add the description of Geneva (city) or the wikidata reference of health t
 file (e.g. `system_unit_test_data/country.json`, `base_phrases.json`, `base_data/health.json`,
 `solution_prio.json`), not even when a review or an import fills the descriptions and the
 wikidata ids of all other phrases: without the gap the workflow has nothing to take over.
+
+The gap must also be back after every test run, so that the data set is the same for the
+next run: the workflow confirms the description of Geneva (city) and the description and the
+wikidata reference of health as usr1, and `ref_url_tests::cleanup_wikipedia_refresh` and
+`cleanup_wikidata_refresh` remove these user overlays, the added reference row and their
+change log again. `ref_write_url_tests` calls each cleanup before its workflow (for the
+leftovers of an interrupted run) and after it. A new step that writes on these two phrases
+needs the same undo in these cleanups, never a change of the seed rows.
+
+Both workflows and `ref_url_tests::wikipedia_page_tests` read the live wikipedia page, so
+they need the network. Each run that reaches wikipedia writes the summary of the page to
+`test_files::IMPORT_WIKIPEDIA_LIVE_*` (`import/wikipedia/cache/live_<page>.json`); if the live
+read fails, e.g. with "getaddrinfo for en.wikipedia.org failed: Temporary failure in name
+resolution" when the machine has lost its network or dns server, the page test compares this
+copy instead and names the reason (via `import_wikidata::request_failure`) in a step line.
+The refresh workflows are then skipped with one step line, because their backend reads the live
+page too and every step would fail as a follow-up; their cleanups still run. The same way the
+`wikidata_import` workflow (`workflows::WF_WIKIDATA_IMPORT`) is skipped with a step line that names
+the reason if `ref_url_tests::wikidata_import_live` cannot read the live wikidata item Q72. Without a copy, e.g.
+before the first run with network, the failed read is an error that names the reason. An
+unreadable page never updates the expected import json of the last run
+(`test_files::IMPORT_WIKIPEDIA_REFRESH_*`). The hand made `summary_Geneva.json` and
+`summary_Zurich.json` of the unit tests are no such copy and are never written by a run.
 
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 

@@ -79,17 +79,21 @@ class formula_names
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
+    // the *_FROM_DB texts are the user texts that the conversion of the reference text writes, which has no spaces
+    const string DIAMETER_FROM_DB = '="' . word_names::CIRCUMFERENCE . '"/"' . word_names::PI . '"';
     // the min and max function and their argument separator are kept as they are by the conversion
     const string MIN_CIRCUMFERENCE_PI = '= min( "circumference" ; "Pi" * 2 )';
     const string MIN_CIRCUMFERENCE_PI_DB = '=min({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MIN_CIRCUMFERENCE_PI_FROM_DB = '=min("' . word_names::CIRCUMFERENCE . '";"' . word_names::PI . '"*2)';
     const string MAX_CIRCUMFERENCE_PI = '= max( "circumference" ; "Pi" * 2 )';
     const string MAX_CIRCUMFERENCE_PI_DB = '=max({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MAX_CIRCUMFERENCE_PI_FROM_DB = '=max("' . word_names::CIRCUMFERENCE . '";"' . word_names::PI . '"*2)';
     const string THIS_NAME = 'this';
-    const int THIS_ID = 18;
+    const int THIS_ID = 43;
     const string THIS_EXP = '="Now"';
     const string THIS_COM = 'hardcoded formula to select now, today, this year, ...';
     const string PRIOR = 'prior';
-    const int PRIOR_ID = 20;
+    const int PRIOR_ID = 45;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
     const string PERCENT = 'percent';
     const string INCREASE = shared_formulas::INCREASE;
@@ -98,6 +102,7 @@ class formula_names
     const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
+    const string INCREASE_FROM_DB = '"' . words::PERCENT . '"=("' . word_names::THIS_NAME . '"-"' . word_names::PRIOR_NAME . '")/"' . word_names::PRIOR_NAME . '"';
     // each term is wrapped in \text{} so the expression_latex_link component can link it; the
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
@@ -116,16 +121,16 @@ class formula_names
     // the formulas of solution_prio.json: the three scaling formulas that convert a number of
     // the start page table to one and the sum that turns a percent loss into happy time points
     const string SCALE_MIO_TO_ONE = 'scale million to one';
-    const int SCALE_MIO_TO_ONE_ID = 16;
+    const int SCALE_MIO_TO_ONE_ID = 41;
     const string SCALE_MIO_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::MIO . '" * 1000000';
     const string SCALE_BIL_TO_ONE = 'scale billion to one';
-    const int SCALE_BIL_TO_ONE_ID = 17;
+    const int SCALE_BIL_TO_ONE_ID = 42;
     const string SCALE_BIL_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::BILLION . '" * 1000000000';
     const string SCALE_TRILLION_TO_ONE = 'scale trillion to one';
-    const int SCALE_TRILLION_TO_ONE_ID = 23;
+    const int SCALE_TRILLION_TO_ONE_ID = 48;
     const string SCALE_TRILLION_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::TRILLION . '" * 1000000000000';
     const string GLOBAL_HTP = 'global happy time points';
-    const int GLOBAL_HTP_ID = 24;
+    const int GLOBAL_HTP_ID = 49;
     const string GLOBAL_HTP_EXP = '"' . word_names::HTP . '" = "' . word_names::HTP . '","' . words::PERCENT
         . '" * "' . word_names::GLOBAL . '","' . word_names::HUMAN . '","' . word_names::POPULATION . '"';
     const string JOULE_DEF = 'definition of joule';
@@ -138,20 +143,23 @@ class formula_names
     const string LITRE_TO_M3 = 'scale litre to m3';
     const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
-    const int SCALE_MIO_ID = 16;
+    // the test formula has the seed id of "scale million to one", whose expression it repeats; a reference instead of
+    // the number, because the re-pin rewrites a pinned id only if a single const has it (docs/pinned_id_findings.md)
+    const int SCALE_MIO_ID = self::SCALE_MIO_TO_ONE_ID;
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const string SCALE_MIO_DB = '{w' . word_names::ONE_ID . '} = {w' . word_names::MIO_ID . '} * 1000000';
     const string PARTS_IN_PERCENT = 'parts in percent';
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO Prio 3 check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
+    const string PARTS_IN_PERCENT_FROM_DB = '"' . words::PERCENT . '"="parts""' . verbs::OF_NAME . '"/"total"';
     // the potential loss of a problem in money from its annual share of the world GDP (problem_*.json)
     const string ANNUAL_DAMAGE = 'annual damage in money';
-    const int ANNUAL_DAMAGE_ID = 107;
+    const int ANNUAL_DAMAGE_ID = 134;
     const string ANNUAL_DAMAGE_EXP = '"' . triple_names::POTENTIAL_LOSS . '","' . word_names::TRILLION . '","' . word_names::EUR . '"'
         . ' = "' . word_names::WORLD . '","' . word_names::GDP . '","' . word_names::TRILLION . '","' . word_names::EUR . '"'
         . ' * "' . words::PCT . '","' . word_names::GDP . '","' . word_names::ANNUAL . '"';
     const string CITY_POPULATION = 'city population';
-    const int CITY_POPULATION_ID = 27;
+    const int CITY_POPULATION_ID = 52;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests

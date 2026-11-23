@@ -536,6 +536,16 @@ every internal error that no message has reported is sent with the answer
 (`controller::with_internal_errors`), and the frontend shows a generic internal
 notice with the log link for it.
 
+The text of such an error may reach the user, also with the sql statement and the
+error of the database or of php (e.g. `sql_db` adds both to the text), and that is
+decided by the developer (2026-11-21): the code is open source, so a security issue
+that the text would show is visible in the code anyway, and hiding the text would
+only make the error harder to report. What still never reaches the user is the
+sys_log id (`docs/llm/pending_prio_2.md` "## the sys_log id shown to the user") and anything that is not code, e.g. a password,
+a session token or the data of another user. The backend sends the text unescaped,
+because json is no html, and the frontend escapes it once when it shows it
+(`html_base::dsp_notification`).
+
 | has `$msg` | adds its own text for this error to `$msg` right after the call | use | who tells the user |
 |---|---|---|---|
 | false | false | `log_err($txt)` | nobody yet — in an api request the answer sends the generic notice |

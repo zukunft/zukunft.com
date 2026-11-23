@@ -8,7 +8,7 @@ PREPARE ref_by_id (bigint, bigint) AS
                s.last_update,
                CASE WHEN (u.external_key <> ''  IS NOT TRUE) THEN s.external_key  ELSE u.external_key  END AS external_key,
                CASE WHEN (u.url          <> ''  IS NOT TRUE) THEN s.url           ELSE u.url           END AS url,
-               CASE WHEN (u.description  <> ''  IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
+               CASE WHEN (u.description         IS     NULL) THEN s.description   ELSE u.description   END AS description,
                CASE WHEN (u.source_id           IS     NULL) THEN s.source_id     ELSE u.source_id     END AS source_id,
                CASE WHEN (u.excluded            IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
                CASE WHEN (u.share_type_id       IS     NULL) THEN s.share_type_id ELSE u.share_type_id END AS share_type_id,

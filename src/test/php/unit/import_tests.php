@@ -1260,6 +1260,59 @@ class import_tests
         $t->assert_true($test_name,
             abs($imp_cnt->est_time_save(json_fields::LIST_VERBS, def::FALLBACK_IMPORT_PER_SEC) - 1) < 0.0001);
 
+        $t->subheader($ts . 'step note');
+
+        // the note names the step that starts, so that a hang of a long import shows the step;
+        // the throttle is fixed by the time of the last line: zero is long ago, so a note is due
+        $note_step = 'rename the link conflicts of';
+        $imp = new import('xbrl_fileset.json');
+        $imp->est_time_total = import::LONG_IMPORT_SEC + 1;
+        $imp->last_display_time = 0;
+        $test_name = 'the start of a step of a long import is noted';
+        $note = $this->step_note_text($imp, $note_step, triple::class, 8000);
+        $t->assert_text_contains($test_name, $note, 'xbrl_fileset.json start ' . $note_step . ' 8000 triples');
+        $test_name = '... which restarts the throttle like a progress line';
+        $t->assert_true($test_name, $imp->last_display_time > 0);
+        // negative: within the response time after the last line the note is skipped; the last line
+        // is set in the future, so that the check never depends on the configured response time
+        $test_name = 'a note within the response time after the last line is skipped by the throttle';
+        $imp->last_display_time = microtime(true) + 3600;
+        $note = $this->step_note_text($imp, $note_step, triple::class, 8000);
+        $t->assert($test_name, $note, '');
+        // the note timer shows the skipped note if the step is still running, so that a hang shows its step;
+        // called directly, because the test never waits for the timer
+        $test_name = '... but kept and shown with its running time by the note timer';
+        $note = $this->pending_note_text($imp);
+        $t->assert_text_contains($test_name, $note, 'xbrl_fileset.json start ' . $note_step . ' 8000 triples (running since ');
+        // negative: a shown note is not shown again by a second timer call
+        $test_name = '... and shown only once';
+        $t->assert($test_name, $this->pending_note_text($imp), '');
+        // negative: a short import e.g. a small file of the setup writes no note at all
+        $test_name = 'the start of a step of a short import is not noted';
+        $imp = new import('words.json');
+        $imp->last_display_time = 0;
+        $note = $this->step_note_text($imp, $note_step, triple::class, 8000);
+        $t->assert($test_name, $note, '');
+
+        // the alarm of the note timer is held back during a blocking call e.g. a wikidata request,
+        // because the signal would break the wait for the answer or end the pause before a retry
+        $test_name = 'a call without the note timer gives the result of the call';
+        $t->assert($test_name, import::without_note_timer(fn() => 'answer'), 'answer');
+        if (function_exists('pcntl_sigprocmask')) {
+            $test_name = '... and holds back the alarm of the timer during the call';
+            $blocked = import::without_note_timer(fn() => $this->blocked_signals());
+            $t->assert_true($test_name, in_array(SIGALRM, $blocked));
+            $test_name = '... also after a nested call';
+            $blocked = import::without_note_timer(function () {
+                import::without_note_timer(fn() => null);
+                return $this->blocked_signals();
+            });
+            $t->assert_true($test_name, in_array(SIGALRM, $blocked));
+            // negative: after the call the alarm reaches the note timer again
+            $test_name = '... but not after the call';
+            $t->assert_false($test_name, in_array(SIGALRM, $this->blocked_signals()));
+        }
+
 
         $t->subheader($ts . 'merge two import json');
 
@@ -1438,6 +1491,44 @@ class import_tests
         $grp_id = $upd->db_id(self::TV_GROUP_ID_KEY);
         $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID_KEY);
 
+    }
+
+    /**
+     * @param import $imp the import whose step note is written
+     * @param string $step the step that starts e.g. 'rename the link conflicts of'
+     * @param string $class the class of the objects of the step e.g. triple::class
+     * @param float $total the number of objects of the step
+     * @return string the line that import::step_note writes to the log, empty if none is written
+     */
+    private function step_note_text(import $imp, string $step, string $class, float $total): string
+    {
+        ob_start();
+        $imp->step_note($step, $class, $total);
+        return (string)ob_get_clean();
+    }
+
+    /**
+     * @param import $imp the import with a step note that the throttle may have skipped
+     * @return string the line that the note timer writes to the log, empty if no note is pending
+     */
+    private function pending_note_text(import $imp): string
+    {
+        ob_start();
+        $imp->show_pending_note();
+        return (string)ob_get_clean();
+    }
+
+    /**
+     * @return array the signals that are blocked at the moment e.g. [SIGALRM] during import::without_note_timer
+     */
+    private function blocked_signals(): array
+    {
+        $blocked = [];
+        // a block of the alarm gives the mask before it, which is set again at once, because a block of
+        // no signal to only read the mask is refused (ValueError since php 8.4)
+        pcntl_sigprocmask(SIG_BLOCK, [SIGALRM], $blocked);
+        pcntl_sigprocmask(SIG_SETMASK, $blocked);
+        return $blocked;
     }
 
 }

@@ -140,7 +140,6 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
-     * TODO Prio 0 move the $db_row != null to the calling function
      * set the user based on the id from the database row array
      * to be extended by the child functions
      *

@@ -305,7 +305,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Exception;
 use mysqli;
@@ -333,6 +332,10 @@ class sql_db
     // default settings for sql
     const int ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
     const int ROW_MAX = 2000; // the max number of rows per query to avoid long response times
+    // the start of the internal error text if a read has no database connection, followed by the name of the query
+    const string MSG_CONNECTION_LOST = 'Database connection lost when reading ';
+    // the text before the functions that have called a read without connection e.g. a unit test step that reads
+    const string MSG_CALLED_BY = ' called by ';
 
     const string TBL_USER_PREFIX = 'user_';
 
@@ -580,6 +583,7 @@ class sql_db
         element::class,
         component_link::class,
         term_view::class,
+        view_relation::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
@@ -1257,18 +1261,21 @@ class sql_db
 
             $import = new import_file();
             $this->import_verbs($usr, $sys_msg);
-            $import->import_system_data($usr);
+            $import->import_system_data($usr, $sys_msg);
             $this->create_internal_words($usr, $sys_msg);
             $import->import_config_yaml($usr, $sys_msg);
             // load the view unit-test sample data once the system config it references is in place
-            $import->import_sample_view_data($usr);
-            $import->import_pod_config($usr);
+            $import->import_sample_view_data($usr, $sys_msg);
+            $import->import_pod_config($usr, $sys_msg);
             // the use cases come last, because they build on the phrases of the start page
-            $import->import_use_case_data($usr);
+            $import->import_use_case_data($usr, $sys_msg);
             // followed only by the system data added after the test ids have been pinned
-            $import->import_system_data_appended($usr);
+            $import->import_system_data_appended($usr, $sys_msg);
             // and the use cases that build on the appended system data e.g. the calculator keywords
-            $import->import_use_case_data($usr, false, files::USE_CASE_FILES_APPENDED);
+            $import->import_use_case_data($usr, $sys_msg, false, files::USE_CASE_FILES_APPENDED);
+            // the XBRL fileset of a company as the last import, because it adds about 700 words and
+            // 2900 triples, which would shift every later id
+            $import->import_xbrl_data($usr, $sys_msg);
             // a types api call during the imports may have cached the system phrases without the
             // symbol triples imported after it e.g. "g/kWh is symbol for gram per kWh"
             new db_cache(user::system())->del_types($sys_msg);
@@ -1280,20 +1287,8 @@ class sql_db
 
             $msg->merge($sys_msg);
 
-            // TODO Prio 0 review
             $msk_lnk = new term_view($usr);
-            $wrd = new word($usr);
-            $wrd->set(word_names::MATH_ID, word_names::MATH);
-            $wrd->description = word_names::MATH_COM;
-            $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr)); // not reported: only for the permission check
-            $msk = new view($usr);
-            $msk->set(views::START_ID, views::START_NAME);
-            $msk->description = views::START_COM;
-            $msk_lnk->set_term($wrd->term());
-            $msk_lnk->set_predicate(view_link_types::DEFAULT);
-            $msk_lnk->set_view($msk);
-            $msk_lnk->description = 'add usage and log of a word';
-            $msk_lnk->id = 0;
+            $msk_lnk->set_math_start();
             $msk_lnk->save($msg);
 
             // remove the test dataset for a clean database
@@ -1501,9 +1496,19 @@ class sql_db
         // (an id lookup on an empty list returns -1 which the database rejects)
         $sys->typ_lst->load_log_if_empty($this, $msg);
 
+        // the change log code links first and without log like in db_log_code_links,
+        // because e.g. a new change field would need a change table of the change fields for its own log
+        foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $msg);
+        }
+        // reloaded, because the logged code links below need e.g. the id of a change field that has just been added
+        $sys->typ_lst->load_log($this, $msg);
+
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
+            if (!in_array($csv_file_name, def::LOG_CODE_LINK_FILES)) {
+                $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
+            }
         }
 
         // the cached types api message is the state before the csv load
@@ -3408,18 +3413,6 @@ class sql_db
     }
 
     /**
-     * fetch the first value from an SQL database (either Postgres or MySQL at the moment)
-     * TODO Prio 0 return false in case of an error
-     *
-     * @param string $sql the sql statement that should be executed
-     * @param user_message $msg to enrich with the messages that should be shown to the user
-     * @param string $sql_name the unique name of the sql statement
-     * @param array $sql_array the values that should be used for executing the precompiled SQL statement
-     * @param bool $fetch_all if true, all database rows are returned at once
-     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
-     * @return array|false with one or all database records or false if something went wrong
-     */
-    /**
      * postgres returns a char(112) group id padded with spaces, but the compact group id has no
      * fixed length (see docs/llm/group_id.md), so the padding is removed; a key never contains a
      * space and mysql already removes the trailing spaces of a char field
@@ -3441,6 +3434,17 @@ class sql_db
         return $sql_row;
     }
 
+    /**
+     * fetch the first value from an SQL database (either Postgres or MySQL at the moment)
+     *
+     * @param string $sql the sql statement that should be executed
+     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
+     * @param string $sql_name the unique name of the sql statement
+     * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param bool $fetch_all if true, all database rows are returned at once
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
+     * @return array|false with one or all database records or false if the read has failed e.g. because the connection is lost
+     */
     private function fetch(
         string       $sql,
         user_message $usr_msg,
@@ -3459,7 +3463,9 @@ class sql_db
             // the read is traced by exe at url_var::DEBUG_LEVEL_DB_READ (from '&debug=7' upward)
             if ($this->db_type == sql_db::POSTGRES) {
                 if ($this->postgres_link == null) {
-                    log_warning('Database connection lost', 'sql_db->fetch');
+                    // false and not an empty array, because no row would look like a read without a result
+                    log_err_msg($this->connection_lost_text($sql_name), $usr_msg);
+                    $result = false;
                     // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
@@ -3486,7 +3492,8 @@ class sql_db
                 }
             } elseif ($this->db_type == sql_db::MYSQL) {
                 if ($this->mysql == null) {
-                    log_warning('Database connection lost', 'sql_db->fetch');
+                    log_err_msg($this->connection_lost_text($sql_name), $usr_msg);
+                    $result = false;
                     // TODO Prio 2 try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
@@ -3506,12 +3513,25 @@ class sql_db
                     }
                 }
             } else {
-                log_err('Unknown database type "' . $this->db_type . '"', 'sql_db->fetch');
+                log_err_msg('Unknown database type "' . $this->db_type . '" when reading ' . $sql_name, $usr_msg);
+                $result = false;
             }
         }
         $sys->times->switch();
 
         return $result;
+    }
+
+    /**
+     * the error text of a read without connection with the functions that have called the read, because without a
+     * connection the read is mostly a code path that should not read e.g. a mapper in a unit test on the dummy connection
+     * @param string $sql_name the unique name of the sql statement e.g. word_by_name
+     * @return string e.g. "... word_by_name called by word->load_by_name@expression.php:1155 < ..." with the file and
+     *                line from which each function has been called, so that the reader is found without a debugger
+     */
+    private function connection_lost_text(string $sql_name): string
+    {
+        return self::MSG_CONNECTION_LOST . $sql_name . self::MSG_CALLED_BY . library::caller_chain(self::class);
     }
 
     /**
@@ -3593,13 +3613,13 @@ class sql_db
      * @param string $sql the sql statement to get the db row
      * @param user_message $msg to enrich the message object with the messages that should be shown to the user
      * @param string $debug_txt the text that should be shown in the debug message
-     * @return array|null the database row or null
+     * @return array|false|null the database row, false if the read has failed or null if the result is empty
      */
     function get1_internal(
         string       $sql,
         user_message $msg,
         string       $debug_txt = ''
-    ): ?array
+    ): array|false|null
     {
         $this->debug_msg($sql, 'get1');
 
@@ -3654,7 +3674,8 @@ class sql_db
     {
         $result = null;
         $db_array = $this->get1($qp, $msg);
-        if (count($db_array) > 0) {
+        // a failed read (false) is already reported on $msg and no row (null) has no number
+        if (is_array($db_array) and count($db_array) > 0) {
             $result = $db_array[0];
         }
         return $result;
@@ -4739,7 +4760,6 @@ class sql_db
     */
 
     /**
-     * TODO Prio 0 add user_message parameter
      * execute an insert sql statement
      * and return a message to the user if something has gone wrong
      * and a suggested solution to fix the issue
@@ -5939,9 +5959,11 @@ class sql_db
 
                 // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();
-                $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
-                if (str_starts_with($import_result->get_last_message(), ' done ')) {
-                    $result = true;
+                // a buffer, so that only this import decides the result, and its problems reach the user
+                $imp_msg = $msg->clone_reset();
+                $result = $imf->json_file(files::SYSTEM_USERS, $usr, $imp_msg);
+                if (!$result) {
+                    $msg->merge($imp_msg);
                 }
             }
         }
@@ -6014,9 +6036,11 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(files::VERBS, $usr);
-            if (str_starts_with($import_result->get_last_message(), ' done ')) {
-                $result = true;
+            // a buffer, so that only this import decides the result, and its problems reach the user
+            $imp_msg = $msg->clone_reset();
+            $result = $imf->json_file(files::VERBS, $usr, $imp_msg);
+            if (!$result) {
+                $msg->merge($imp_msg);
             }
         }
 
@@ -6112,9 +6136,11 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(files_shared::SYSTEM_VIEWS, $usr);
-            if (str_starts_with($import_result->get_last_message(), ' done ')) {
-                $result = true;
+            // a buffer, so that only this import decides the result, and its problems reach the user
+            $imp_msg = $msg->clone_reset();
+            $result = $imf->json_file(files_shared::SYSTEM_VIEWS, $usr, $imp_msg);
+            if (!$result) {
+                $msg->merge($imp_msg);
             }
         }
 

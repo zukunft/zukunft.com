@@ -689,6 +689,12 @@ class value_tests
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
         $test_name = '... and the scaling reports no problem';
         $t->assert_true($test_name, $msg->is_ok());
+        // negative: the scaling uses only the preloaded data object, so a database read would keep its error here
+        $test_name = '... and reads nothing from the database';
+        $read_msg = new user_message();
+        $read_msg->log_test_only = true;
+        $val->scale_calc($t_trm->dto_scale_mio(), $read_msg);
+        $t->assert($test_name, $read_msg->log_test_txt, '');
 
         $test_name = 'if "one" of the formula result is not a scaling word report the problem';
         $msg = new user_message();
@@ -794,7 +800,6 @@ class value_tests
         $t->assert_sql_changing_users_by_ids($sc, $val_3);
         $t->assert_sql_changing_users_by_ids($sc, $val_17);
 
-        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
         $val = $t_val->value($msg);
         $db_val = $val->cloned(values::SAMPLE_FLOAT);

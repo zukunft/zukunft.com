@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'db_check.php';
 include_once paths::DB . 'sql_field_list.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_list.php';
@@ -48,11 +49,13 @@ include_once test_paths::CREATE . 'test_sql.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -257,6 +260,59 @@ class sql_tests
         $t->assert_null($test_name, $sql_msg->usr?->name());
         $msg->reset();
 
+        // a failed read is false and never an empty array, which would look like a read without rows
+        $t->subheader($ts . 'read without connection');
+        $test_name = 'a count without database connection is reported';
+        $db_lost = new sql_db();
+        $cnt = 0;
+        $count_call = function () use ($db_lost, $msg, &$cnt) {
+            $cnt = $db_lost->count(formula::class, $msg);
+        };
+        $t->assert_log_err($test_name, $count_call, sql_db::MSG_CONNECTION_LOST, $msg);
+        // the error names who has read, because without a connection the read is mostly a code path that should
+        // not read e.g. a mapper in a unit test, and the trace of the log entry points only to the log function
+        $test_name = '... with the test that has read';
+        $lost_txt = $msg->log_test_txt;
+        $t->assert_text_contains($test_name, $lost_txt, sql_db::MSG_CALLED_BY . 'sql_tests->');
+        // the file and line of each call, so that e.g. one of several calls in the same test function is found
+        $test_name = '... and the place from which the test has been called';
+        $t->assert_text_contains($test_name, $lost_txt, '@test_base.php:');
+        // negative: the database layer itself is not named as the caller
+        $test_name = '... but not with the database layer';
+        $t->assert_text_not_contains($test_name, $lost_txt, 'sql_db->');
+        $test_name = '... has no number';
+        $t->assert_null($test_name, $cnt);
+        $test_name = '... and the user is told';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
+        // an empty database is filled by db_check only where it is allowed
+        $t->subheader($ts . 'setup of an empty database');
+        $db_chk = new db_check();
+        $test_name = 'an empty database is set up in dev';
+        $t->assert_true($test_name, $db_chk->setup_allowed(ENV_DEV, ''));
+        $test_name = '... and in prod if the setup flag is on';
+        $t->assert_true($test_name, $db_chk->setup_allowed(ENV_PROD, ENV_DB_SETUP_ON));
+        // negative: e.g. a prod pod with a wrong database connection must not create a new database
+        $test_name = '... but not in prod without the setup flag';
+        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_PROD, ''));
+        $test_name = '... nor in test without the setup flag';
+        $t->assert_false($test_name, $db_chk->setup_allowed(ENV_UA, ENV_DB_SETUP_OFF));
+        $test_name = '... nor if no environment is set';
+        $t->assert_false($test_name, $db_chk->setup_allowed('', ''));
+        // the setup switches the flag off in the environment file, so that the flag allows one setup only
+        $test_name = 'the setup switches the flag of the environment file off';
+        $flag_on = ENV_DB_SETUP . '=' . ENV_DB_SETUP_ON . PHP_EOL;
+        $flag_off = ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF . PHP_EOL;
+        $env_line = ENVIRONMENT . '=' . ENV_PROD . PHP_EOL;
+        $result = $db_chk->env_lines_setup_off([$env_line, $flag_on]);
+        $t->assert($test_name, $result, [$env_line, $flag_off]);
+        // negative: a commented flag is no setting and stays as it is
+        $test_name = '... but keeps a commented flag';
+        $commented = '# ' . $flag_on;
+        $result = $db_chk->env_lines_setup_off([$commented, $env_line]);
+        $t->assert($test_name, $result, [$commented, $env_line]);
+
         // the lists that collect the parts of a sql statement before it is created
         $t->subheader($ts . 'add');
         $t_sql = new test_sql();
@@ -309,6 +365,23 @@ class sql_tests
         $whr_lst->add($t_sql->where());
         $added = $whr_lst->lst[0];
         $t->assert($test_name, $added->fld, word_fields::FLD_NAME);
+
+        // the branches of a union reuse the placeholders e.g. $1 and $2 of postgres
+        $t->subheader($ts . 'merge of a union');
+        $test_name = 'a unique merge keeps one parameter per placeholder, also if two have the same value';
+        $qp_branch = new sql_par(phrase::class);
+        // e.g. the phrase id and the user id are both 1
+        $qp_branch->par = [1, 1];
+        $qp_union = new sql_par(phrase::class);
+        $qp_union->merge($qp_branch, true);
+        $qp_union->merge(clone $qp_branch, true);
+        $t->assert($test_name, $qp_union->par, [1, 1]);
+        // negative: without unique, e.g. for mysql, each branch adds its parameters
+        $test_name = '... but a merge without unique adds the parameters of each branch';
+        $qp_all = new sql_par(phrase::class);
+        $qp_all->merge($qp_branch);
+        $qp_all->merge(clone $qp_branch);
+        $t->assert($test_name, $qp_all->par, [1, 1, 1, 1]);
 
         $t->subheader($ts . 'debug id');
 

@@ -96,6 +96,19 @@ class triple_url_tests extends url_test_base
     }
 
     /**
+     * a triple is named as a phrase by its negative id e.g. the hidden field pf=-8645 of the add
+     * phrase form or the add reference link p=-8645, so the negative id is normalized like the id
+     * of the triple, else the snapshot changes with every run that has not reset the database
+     *
+     * @param int $id the current db id of the workflow triple (0 if not known)
+     * @return array the real phrase id => the fixed phrase id e.g. -8645 => -998
+     */
+    protected function phrase_norm_ids(int $id): array
+    {
+        return [-$id => -$this->wf_fixed_id, -$this->wf_id => -$this->wf_fixed_id];
+    }
+
+    /**
      * set the additional snapshot id normalization for the from and to test words of the test triple,
      * so a write run snapshot shows the fixed test ids instead of the dynamically assigned word ids
      * (in a read-only run the words are not in the db and the urls already carry the fixed ids)
@@ -490,8 +503,11 @@ class triple_url_tests extends url_test_base
 
         // initial url with the in-use triple; the url carries the current db ids of the triple and of its
         // from and to words (the snapshot files normalize the ids back to the fixed test ids); the usage
-        // is forced so the frontend check reads the triple as still in use and blocks the deletion
-        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        // is forced so the frontend check reads the triple as still in use and blocks the deletion, because
+        // the unit workflow renders from the url without a backend call and the test triple is not linked
+        // TODO Prio 2 remove the forced usage once the test triple is linked e.g. by a test value and the backend
+        //      fills the usage on load (a triple::update_usage like word::update_usage)
+        //      or a batch maintains the usage of the triples like verb_list::calc_usage
         $t_trp = new test_triples($this->t);
         $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
@@ -594,6 +610,7 @@ class triple_url_tests extends url_test_base
         // triple is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
             $this->assert_triple_removed('del_triple workflow has removed the triple');
+            $this->cleanup_change_log_of_removed($trp);
         }
     }
 

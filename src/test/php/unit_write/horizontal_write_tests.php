@@ -111,13 +111,13 @@ class horizontal_write_tests
                 $check_obj = $obj->clone_reset(true);
                 $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' by name and check differences';
                 $check_obj->reset(true);
                 $check_obj->load_by_name($obj->name(), $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
             }
         }
 
@@ -144,7 +144,7 @@ class horizontal_write_tests
                 $check_obj = $obj->clone_reset(true);
                 $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
-                $t->assert_true($test_name, $diff->is_ok());
+                $t->assert_msg($test_name, $diff);
 
                 $msg_upd = $msg->clone_reset();
                 if (in_array($obj::class, def::ONLY_ADMIN_CAN_RENAME_CLASSES)) {
@@ -194,10 +194,14 @@ class horizontal_write_tests
                     $msg->usr = $t->usr1;
                 }
 
-                // TODO Prio 2 delete changes caused by the test before deleting the test row
-
                 $test_name = 'delete ' . $lib->class_to_name($class) . ' via SQL function';
                 $t->assert_delete($test_name, $obj, $msg, $sc_par_lst);
+                $t->cleanup_change_log_of_deleted([$obj]);
+                // the counterpart of the add to the verb cache above, because a later test e.g. the
+                // update put of a triple with the test verb expects it to be unknown
+                if ($obj::class == verb::class) {
+                    $sys->typ_lst->vrb->unset_by_id($ids[$class]);
+                }
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' and check that it has been remove';
                 $t->assert_false($test_name, $obj->load_by_id($ids[$class], $msg));
@@ -207,6 +211,7 @@ class horizontal_write_tests
                     $wrd2 = $t_wrd->word_add_via_api();
                     $wrd2->load_by_name($wrd2->name(), $msg);
                     $wrd2->del($msg);
+                    $t->cleanup_change_log_of_deleted([$wrd2]);
                 }
             }
 

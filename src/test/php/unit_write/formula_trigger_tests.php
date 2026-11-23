@@ -85,13 +85,13 @@ class formula_trigger_tests
         // so this test only reads them: a delete by the test user would exclude them for all later tests
         // check if the first number is in the database
         $added_val = new value($t->usr1);
-        $added_val->load_by_grp($phr_lst1->get_grp_id(), $msg);
+        $added_val->load_by_grp($phr_lst1->get_grp_id($msg), $msg);
         $result = $added_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($t->usr1);
-        $added_val2->load_by_grp($phr_lst2->get_grp_id(), $msg);
+        $added_val2->load_by_grp($phr_lst2->get_grp_id($msg), $msg);
         $result = $added_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -111,8 +111,7 @@ class formula_trigger_tests
 
         // calculate the increase and check the result
         // the calc saves the result of the seed formula, which is no seed row, so the test removes it again
-        $res_before = new result($t->usr1);
-        $res_existed = $res_before->load_by_grp($phr_lst2->get_grp_id(), $msg);
+        $res = null;
         $res_lst = $frm->calc($phr_lst2, $msg);
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
@@ -125,26 +124,30 @@ class formula_trigger_tests
         } else {
             $result = '';
         }
-        // TODO Prio 2 check why the data in PROD is strange
-        if ($result == values::SALES_INCREASE_2017_FORM) {
-            $target = values::SALES_INCREASE_2017_FORM;
-        } else {
-            $target = '0.75' . result_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
-        }
-        // TODO Prio 0 activate
-        //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+        $target = '0.75' . result_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
+        $t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
         // a result is derived data without change log, so it is removed like formula::delete_results does
         // and not by result::del, which deletes only values (see sandbox_multi::del_exe)
-        if (!$res_existed) {
-            $res_added = new result($t->usr1);
-            if ($res_added->load_by_grp($phr_lst2->get_grp_id(), $msg)) {
-                $res_del_lst = new result_list($t->usr1);
-                $res_del_lst->add($res_added);
-                $res_del_lst->db_delete_no_log($msg, new import(), result::class);
+        // the result is selected by its own group e.g. with "percent" instead of the scaling word of the source group,
+        // because load_by_grp selects by the result group and not by the source phrases of the calc
+        // result::save_if_updated also saves a copy without the year, which is removed the same way
+        if ($res != null) {
+            $no_time_lst = clone $res->grp()->phrase_list();
+            $no_time_lst->ex_time($msg);
+            $added_grp_lst = [$res->grp(), $no_time_lst->get_grp_id($msg)];
+            foreach ($added_grp_lst as $added_grp) {
+                $res_added = new result($t->usr1);
+                if ($res_added->load_by_grp($added_grp, $msg)) {
+                    $res_del_lst = new result_list($t->usr1);
+                    $res_del_lst->add($res_added);
+                    $res_del_lst->db_delete_no_log($msg, new import(), result::class);
+                }
             }
             $res_check = new result($t->usr1);
             $test_name = 'the result that the calc of ' . $frm->dsp_id() . ' has added is removed';
-            $t->assert_false($test_name, $res_check->load_by_grp($phr_lst2->get_grp_id(), $msg));
+            $t->assert_false($test_name, $res_check->load_by_grp($res->grp(), $msg));
+            $test_name = '... and also its copy without the year';
+            $t->assert_false($test_name, $res_check->load_by_grp($no_time_lst->get_grp_id($msg), $msg));
         }
 
         // TODO Prio 1 remove the previous added numbers

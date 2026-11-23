@@ -106,6 +106,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 class db_check
 {
 
+    // the start of the name of the new environment file before it replaces the old one (see switch_setup_off)
+    const string ENV_TMP_PREFIX = '.env_setup_';
+
     /*
      * upgrade
      */
@@ -121,83 +124,41 @@ class db_check
      */
     function db_check(sql_db $db_con, user_message $msg): bool
     {
-        global $sys;
-
-        $do_consistency_check = false;
-        $lib = new library();
-
-        // check if essential config table exists and if not setup the database
-        // because it is assumed that the database structure has not yet been created
-        // TODO Prio 0 in prod and test environment do this only is setup flag is on
-        // TODO Prio 2 remove rewrite before moved to PROD
-        $main_tbl_name = $lib->class_to_name(config::class);
-        if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
-            // if tbe database needs to be created it is a system task independent of the calling user
-            $sys_msg = new user_message(user::system());
-            // because no log yet exists here echo instead of log_echo() is used
-            $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
-            $db_con->setup_db($sys_msg);
-            if ($sys_msg->is_ok()) {
-                $db_con->db_fill_code_links($sys_msg);
-                $db_con->db_check_missing_owner($sys_msg);
-                $cfg = new config();
-                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
-            }
-            // report tbe system setup errors to the calling user
-            $msg->merge($sys_msg);
+        // the config and the version of an empty database cannot be read, so they are checked only if it has its tables
+        if ($this->setup_if_empty($db_con, $msg)) {
+            $this->check_version($db_con, $msg);
         }
-
-        $cfg = new config();
-        $cfg->check_cfg(config::SITE_NAME, POD_NAME,
-            $db_con, $msg, '', 'check pod name in config');
-
-        // get the db version and start the upgrade process if needed
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
-        if ($db_version == '') {
-            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con, $msg);
-        } elseif ($db_version != def::PRG_VERSION) {
-            $do_consistency_check = true;
-            if ($lib->prg_version_is_newer($db_version)) {
-                // tell the admin to upgrade (and log it) without aborting the startup check
-                $msg->add_warning_with_vars(msg_id::BACKEND_OLDER_THAN_DB, []);
-            } else {
-                $diff_txt = match ($db_version) {
-                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con, $msg),
-                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con, $msg),
-                };
-                $msg->add_message_text($diff_txt);
-            }
-        } else {
-            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg, 'get last consistency check');
-            // run a database consistency check once every 24h if the database is the least busy
-            $last_check = strtotime($last_consistency_check);
-            $check_limit = strtotime("now -1 day");
-            if ($last_check < $check_limit) {
-                // TODO Prio 2 open a simple db connection just to write the log entry
-                /*
-                log_info('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
-                    . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit)
-                    . ' so start the database consistency check');
-                */
-                $do_consistency_check = true;
-            } else {
-                log_debug('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
-                    . ' which is less than one day ago at ' . date('Y-m-d H:i:s', $check_limit));
-            }
-        }
-
-        // run a database consistency check now and remember the time
-        if ($do_consistency_check) {
-            // if tbe database needs to be check it is a system task independent of the calling user
-            $sys_msg = new user_message(user::system());
-            $db_con->db_fill_code_links($sys_msg);
-            $db_con->db_check_missing_owner($sys_msg);
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
-            $msg->merge($sys_msg);
-        }
-
         return $msg->is_ok();
+    }
 
+    /**
+     * public, because it decides which line of the environment file is changed, so it is unit tested
+     * @param array $env_lines the lines of the environment file with their line ends
+     * @return array the same lines, but the line that sets DB_SETUP replaced by DB_SETUP=false
+     */
+    function env_lines_setup_off(array $env_lines): array
+    {
+        $result = [];
+        foreach ($env_lines as $line) {
+            // a commented line e.g. "# DB_SETUP=true" starts with the # and is kept
+            if (str_starts_with(trim($line), ENV_DB_SETUP . '=')) {
+                $line = ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF . PHP_EOL;
+            }
+            $result[] = $line;
+        }
+        return $result;
+    }
+
+    /**
+     * public, because it decides if an empty database is filled, so it is unit tested
+     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV), empty if not set
+     * @param string $setup_flag the value of DB_SETUP from the environment file, ENV_DB_SETUP_ON to allow the setup
+     * @return bool true if an empty database may be set up: always in dev, in prod, test and an unknown level only if
+     *              the flag is on, so that e.g. a wrong connection of a prod pod never creates a new database
+     */
+    function setup_allowed(string $env, string $setup_flag): bool
+    {
+        return ($env == ENV_DEV or $setup_flag == ENV_DB_SETUP_ON);
     }
 
     /**
@@ -542,6 +503,150 @@ class db_check
         }
 
         return $result;
+    }
+
+    /**
+     * set up the database if its essential config table is missing, because then it is assumed that the database
+     * structure has not yet been created, but only where it is allowed (see setup_allowed)
+     * @param sql_db $db_con the database connection object to the database that should be tested
+     * @param user_message $msg to collect the messages of the setup for the user who has requested the check
+     * @return bool false if the database is empty and the setup is switched off, else true also after a failed setup
+     */
+    private function setup_if_empty(sql_db $db_con, user_message $msg): bool
+    {
+        global $sys;
+        $lib = new library();
+        $result = true;
+
+        // TODO Prio 2 remove rewrite before moved to PROD
+        $main_tbl_name = $lib->class_to_name(config::class);
+        $has_main_tbl = $db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name);
+        $setup_flag = (string)getenv(ENV_DB_SETUP);
+        $setup_allowed = $this->setup_allowed((string)getenv(ENVIRONMENT), $setup_flag);
+        if (!$has_main_tbl and !$setup_allowed) {
+            // e.g. if the connection of a prod pod points to a wrong database, which must never be filled with a setup
+            $msg->add(msg_id::DB_SETUP_OFF, []);
+            $result = false;
+        } elseif (!$has_main_tbl) {
+            // if tbe database needs to be created it is a system task independent of the calling user
+            $sys_msg = new user_message(user::system());
+            // because no log yet exists here echo instead of log_echo() is used
+            $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
+            $db_con->setup_db($sys_msg);
+            if ($sys_msg->is_ok()) {
+                $db_con->db_fill_code_links($sys_msg);
+                $db_con->db_check_missing_owner($sys_msg);
+                $cfg = new config();
+                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
+            }
+            // the flag allows one setup only, so that a later empty database e.g. of a wrong connection is not filled
+            if ($sys_msg->is_ok() and $setup_flag == ENV_DB_SETUP_ON) {
+                $this->switch_setup_off($sys_msg);
+            }
+            // report tbe system setup errors to the calling user
+            $msg->merge($sys_msg);
+        }
+        return $result;
+    }
+
+    /**
+     * check the version of the database, start the upgrade process if needed and the consistency check once a day
+     * @param sql_db $db_con the database connection object to the database with its tables
+     * @param user_message $msg to collect the messages of the upgrade for the user who has requested the check
+     * @return void
+     */
+    private function check_version(sql_db $db_con, user_message $msg): void
+    {
+        $do_consistency_check = false;
+        $lib = new library();
+
+        $cfg = new config();
+        $cfg->check_cfg(config::SITE_NAME, POD_NAME,
+            $db_con, $msg, '', 'check pod name in config');
+
+        // get the db version and start the upgrade process if needed
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
+        if ($db_version == '') {
+            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con, $msg);
+        } elseif ($db_version != def::PRG_VERSION) {
+            $do_consistency_check = true;
+            if ($lib->prg_version_is_newer($db_version)) {
+                // tell the admin to upgrade (and log it) without aborting the startup check
+                $msg->add_warning_with_vars(msg_id::BACKEND_OLDER_THAN_DB, []);
+            } else {
+                $diff_txt = match ($db_version) {
+                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con, $msg),
+                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con, $msg),
+                };
+                $msg->add_message_text($diff_txt);
+            }
+        } else {
+            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg, 'get last consistency check');
+            // run a database consistency check once every 24h if the database is the least busy
+            $last_check = strtotime($last_consistency_check);
+            $check_limit = strtotime("now -1 day");
+            if ($last_check < $check_limit) {
+                // TODO Prio 2 open a simple db connection just to write the log entry
+                /*
+                log_info('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
+                    . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit)
+                    . ' so start the database consistency check');
+                */
+                $do_consistency_check = true;
+            } else {
+                log_debug('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
+                    . ' which is less than one day ago at ' . date('Y-m-d H:i:s', $check_limit));
+            }
+        }
+
+        // run a database consistency check now and remember the time
+        if ($do_consistency_check) {
+            // if tbe database needs to be check it is a system task independent of the calling user
+            $sys_msg = new user_message(user::system());
+            $db_con->db_fill_code_links($sys_msg);
+            $db_con->db_check_missing_owner($sys_msg);
+            // only a complete check is remembered, so that a failed one is repeated at the next start
+            // instead of leaving e.g. the missing phrase types of a failed code link fill for a day
+            if ($sys_msg->is_ok()) {
+                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
+            }
+            $msg->merge($sys_msg);
+        }
+    }
+
+    /**
+     * switch the setup flag of the environment file off after the setup, so that DB_SETUP=true allows one setup only
+     * the new file is written next to the old one and then renamed, so that a failed write never leaves a half-written
+     * environment file without e.g. the database password, and a parallel request reads either the old or the new file
+     * @param user_message $msg to tell the admin that the flag has to be switched off by hand
+     *                          if the web server user cannot write the folder of the environment file
+     * @return void
+     */
+    private function switch_setup_off(user_message $msg): void
+    {
+        $written = false;
+        $env_dir = dirname(ENV_FILE_PATH);
+        if (is_writable($env_dir)) {
+            $env_lines = file(ENV_FILE_PATH);
+            $env_perms = fileperms(ENV_FILE_PATH);
+            $tmp_path = tempnam($env_dir, self::ENV_TMP_PREFIX);
+            if ($env_lines !== false and $env_perms !== false and $tmp_path !== false) {
+                $new_txt = implode('', $this->env_lines_setup_off($env_lines));
+                // tempnam creates a file that only the web server user can read, so it gets the rights of the old file
+                if (file_put_contents($tmp_path, $new_txt) !== false and chmod($tmp_path, $env_perms & 0777)) {
+                    $written = rename($tmp_path, ENV_FILE_PATH);
+                }
+            }
+            if ($tmp_path !== false and !$written and file_exists($tmp_path)) {
+                unlink($tmp_path);
+            }
+        }
+        if ($written) {
+            // also for the rest of this request, which has read the flag before
+            putenv(ENV_DB_SETUP . '=' . ENV_DB_SETUP_OFF);
+        } else {
+            $msg->add_warning_with_vars(msg_id::DB_SETUP_NOT_SWITCHED_OFF, []);
+        }
     }
 
 }

@@ -210,6 +210,10 @@ class html_base
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
+    const string READONLY = 'readonly'; // a field that the user sees but cannot change
+    // a group of fields that the browser shows greyed out and never posts e.g. the component preview
+    const string FIELDSET = 'fieldset';
+    const string DISABLED = 'disabled';
     const string ARIA_LABEL = 'aria-label'; // the accessible name of a control that shows only an icon
     const string PLACEHOLDER = 'placeholder';
     const string BR = 'br';
@@ -1949,6 +1953,19 @@ class html_base
         return $this->text_h($title, self::H6, self::H3, $style);
     }
 
+    /**
+     * the title of a group of rows within a form e.g. "References" of the add word view, bigger than a field
+     * label, bold and with space before it; it is no label, because it names no single field
+     *
+     * @param string $title the translated title
+     * @return string the html code of the title
+     */
+    function form_section_title(string $title): string
+    {
+        $class = ' ' . self::CLASS_HTML . '="' . styles::FORM_SECTION_TITLE . '"';
+        return '<' . self::H5 . $class . '>' . $title . '</' . self::H5 . '>';
+    }
+
     private function text_h(string $title, string $bs_tag, string $tag, string $style = ''): string
     {
         if (self::UI_USE_BOOTSTRAP) {
@@ -2399,7 +2416,8 @@ class html_base
 
     /**
      * a plain input field of the simple html forms e.g. the login, with its label linked to the field
-     * TODO Prio 0 use this function for all html input fields
+     * TODO Prio 2 use this function for all html input fields, which are the 22 raw input tags of
+     *      html_base, html_selector, system_form and ui_list, each with its html snapshot test
      * @param string $type the input type e.g. self::INPUT_TEXT
      * @param string $name the submitted field name, which is the url var e.g. url_var::USERNAME
      * @param string $value the pre-filled value e.g. the username after a failed signup
@@ -3011,37 +3029,6 @@ class html_base
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $field .
             '" ' . self::VALUE . '="' . $id . '">';
-    }
-
-    // TODO Prio 0 easy deprecate and use
-// add the text field to a form
-    function dsp_form_text($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
-        } else {
-            $result .= '' . $field .
-                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
-                '" ' . self::NAME . '="' . $field .
-                '" ' . self::VALUE . '="' . $txt_value . '">';
-        }
-        return $result;
-    }
-
-// add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
-        } else {
-            $result .= '' . $field .
-                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
-                '" ' . self::NAME . '="' . $field .
-                '" ' . self::CLASS_HTML . '="resizedTextbox" ' . self::VALUE . '="' . $txt_value . '">';
-        }
-        return $result;
     }
 
     /**
@@ -3831,6 +3818,19 @@ class html_base
     function div(string $txt, string $style = '', string $id = ''): string
     {
         return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * wrap a disabled fieldset around html code within a form, so that its fields are shown but neither
+     * changed nor posted e.g. the fields of the component preview, which would otherwise overwrite the
+     * fields of the same name of the edit form, because the last posted value of a var wins
+     *
+     * @param string $txt the html code with the fields
+     * @return string the html code with the fields that the form does not post
+     */
+    function fieldset_disabled(string $txt): string
+    {
+        return '<' . self::FIELDSET . ' ' . self::DISABLED . '>' . $txt . '</' . self::FIELDSET . '>';
     }
 
     /**

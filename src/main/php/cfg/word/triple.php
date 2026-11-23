@@ -287,6 +287,9 @@ class triple extends sandbox_link_named
         }
     }
     private ?array $ref_lst = [];
+    // a verb that the import has created and that is not yet saved
+    // kept here, because the triple itself has only the verb id (see fill_new_verb)
+    private ?verb $new_vrb = null;
 
     // values where this triple is used; populated lazily by load_values_related() and only
     // emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the default
@@ -346,6 +349,7 @@ class triple extends sandbox_link_named
 
         $this->view = null;
         $this->ref_lst = [];
+        $this->new_vrb = null;
 
         $this->create_objects();
     }
@@ -383,7 +387,7 @@ class triple extends sandbox_link_named
         string       $type_fld = phrase::FLD_TYPE
     ): bool
     {
-        // TODO Prio 0 add to coding.md that explicit is better than implicit: use this case as a sample. If a function returns a bool that indicates the status if the process should be continued, use id. Do not use any other values like the database id that are not explicit designed for the case e.g. because this would not work if a database table does not have an id but has only a timestamp
+        // the mapping continues by the result of the parent and not by the id (rule "Explicit is better than implicit")
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(triple_fields::FLD_FROM, $db_row)) {
@@ -579,18 +583,28 @@ class triple extends sandbox_link_named
         if (key_exists(json_fields::EX_VERB, $in_ex_json)) {
             $name = $in_ex_json[json_fields::EX_VERB];
             $vrb = $sys->typ_lst->vrb->get_by_name($name);
+            $this->new_vrb = null;
             if ($vrb == null) {
                 if ($name <> '') {
-                    $vrb = new verb();
-                    $vrb->set_name($name);
-                    // TODO Prio 0 move saving from the mapper to the import_obj to avoid db interaction during the mapping
-                    if ($db_con->is_open()) {
-                        $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
-                        $vrb->set_user($this->get_user());
-                        // TODO Prio 2 remove this exception
-                        $vrb->save($msg);
+                    // the mapping does not write to the database, so the new verb is saved by import_obj
+                    // or with the verbs of the data object before the triples (see data_object::save)
+                    // TODO Prio 2 remove this exception that an import of a triple can create a verb
+                    // another triple of the same import may have created the verb already,
+                    // so both triples get the same verb object that the data object saves once
+                    $new_vrb = $dto?->verb_list()->get_by_name($name);
+                    if ($new_vrb == null) {
+                        $new_vrb = new verb();
+                        $new_vrb->set_name($name);
+                        $new_vrb->set_user($this->get_user());
+                        // an info, because a not ok message would stop the import before the verb is saved
+                        if ($db_con->is_open()) {
+                            $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name], true);
+                        }
+                        $dto?->add_verb($new_vrb, $msg);
                     }
-                    $dto?->add_verb($vrb, $msg);
+                    // the verb id is set by fill_new_verb after the verb is saved
+                    $this->new_vrb = $new_vrb;
+                    $vrb = null;
                 } else {
                     $vrb = $sys->verb(verbs::NOT_SET);
                     $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
@@ -603,7 +617,8 @@ class triple extends sandbox_link_named
                     }
                 }
             }
-            if ($vrb->check($msg, $this->dsp_id())) {
+            // a new verb is not yet in the verb list, so the check would report it as missing
+            if ($vrb != null and $vrb->check($msg, $this->dsp_id())) {
                 $this->set_verb($vrb);
             }
         }
@@ -653,7 +668,9 @@ class triple extends sandbox_link_named
         }
 
         // finally generate the name if needed
-        if ($this->name() == null and $this->name_given() == null) {
+        // incl. the excluded, because the name of a triple that the import excludes names the triple
+        // to delete (docs/llm/delete.md), and without the from and to the generated name is empty
+        if ($this->name(true) == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
         }
@@ -1115,6 +1132,11 @@ class triple extends sandbox_link_named
 
         // save the triple in the database
         if ($db_con->is_open()) {
+            // a new verb that the mapper has created is saved first, because the triple needs its id
+            if ($msg->is_ok() and $this->new_vrb != null and $this->new_vrb->id() == 0) {
+                $this->new_vrb->save($msg);
+            }
+            $this->fill_new_verb();
             if ($msg->is_ok()) {
                 $this->save($msg);
             } else {
@@ -1282,6 +1304,25 @@ class triple extends sandbox_link_named
         $this->set_predicate_id($id);
     }
 
+    /**
+     * set the verb id of a verb that the import has created, once the verb is saved
+     * and add the saved verb to the verb cache so that get_verb and get_verb_name find it
+     * e.g. the verb "System Test Verb" of an imported triple after data_object::save_verbs
+     *
+     * @return void
+     */
+    function fill_new_verb(): void
+    {
+        global $sys;
+        if ($this->new_vrb != null and $this->new_vrb->id() > 0) {
+            if ($sys->typ_lst->vrb->get($this->new_vrb->id()) == null) {
+                $sys->add_verb($this->new_vrb);
+            }
+            $this->set_verb_id($this->new_vrb->id());
+            $this->new_vrb = null;
+        }
+    }
+
     function get_verb(): verb|null
     {
         global $sys;
@@ -1328,7 +1369,8 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } else {
-            return '';
+            // the name of a verb that the import has created and that is not yet saved
+            return $this->new_vrb?->name() ?? '';
         }
     }
 
@@ -1941,25 +1983,13 @@ class triple extends sandbox_link_named
             $trp = $obj->obj();
         }
         if ($trp != null) {
-            // fill to link objects
-            if ($this->from_empty()) {
-                if (!$trp->from_empty()) {
-                    $this->set_from($trp->get_from());
-                }
-            } else {
-                $this->get_from()->fill($trp->get_from(), $usr_req);
-            }
+            // the from and to phrases are already filled by sandbox_link::fill of the parent; a second
+            // fill here would fill each nested triple twice per level, so that the fill of a triple whose
+            // from is a triple of a triple ... takes 4^depth fills e.g. minutes for the XBRL import
             if ($this->verb_empty()) {
                 if (!$trp->verb_empty()) {
                     $this->set_verb($trp->get_verb());
                 }
-            }
-            if ($this->to_empty()) {
-                if (!$trp->to_empty()) {
-                    $this->set_to($trp->get_to());
-                }
-            } else {
-                $this->get_to()->fill($trp->get_to(), $usr_req);
             }
 
             // fill the names, but not the given name of the database if another name is requested,
@@ -2283,7 +2313,6 @@ class triple extends sandbox_link_named
 
     /**
      * load the object parameters for all users by the standard formula link from the database
-     * TODO Prio 0 add unit test
      *
      * @param int $from_id the id of the from link object
      * @param int $to_id the id of the to link object
@@ -2304,7 +2333,6 @@ class triple extends sandbox_link_named
 
     /**
      * load the object parameters for all users by the standard formula link from the database
-     * TODO Prio 0 add unit test
      *
      * @param int $from_id the id of the from link object
      * @param int $typ_id the id of the verb object

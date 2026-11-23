@@ -4,8 +4,8 @@
             "pageid": 200,
             "ns": 0,
             "title": "Q72",
-            "lastrevid": 2561618009,
-            "modified": "2026-10-28T07:44:25Z",
+            "lastrevid": 2573561757,
+            "modified": "2026-11-22T07:34:45Z",
             "type": "item",
             "id": "Q72",
             "labels": {
@@ -812,6 +812,10 @@
                 "gv": {
                     "language": "gv",
                     "value": "Zürich"
+                },
+                "to": {
+                    "language": "to",
+                    "value": "Sūliki"
                 }
             },
             "descriptions": {
@@ -2379,7 +2383,33 @@
                         },
                         "type": "statement",
                         "id": "q72$191B3924-0ECE-40E5-9904-E055696DB7EF",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2394,7 +2424,33 @@
                         },
                         "type": "statement",
                         "id": "q72$a11229f6-4f09-96fb-9144-1659a15647b3",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2409,7 +2465,33 @@
                         },
                         "type": "statement",
                         "id": "q72$8bc103c8-4207-389e-007f-b0c0e86acc9c",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2424,7 +2506,33 @@
                         },
                         "type": "statement",
                         "id": "q72$b3e61e8c-4e84-3d3b-1505-28aba421eaf8",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2439,7 +2547,33 @@
                         },
                         "type": "statement",
                         "id": "q72$9ad502ba-4f2a-e84d-5475-1d4e279c9c9c",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2454,7 +2588,33 @@
                         },
                         "type": "statement",
                         "id": "q72$b973d55d-42fd-3335-907b-5d2940f40a12",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2469,7 +2629,33 @@
                         },
                         "type": "statement",
                         "id": "q72$740780db-4439-7b02-15ec-44250d32295c",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2484,7 +2670,33 @@
                         },
                         "type": "statement",
                         "id": "q72$e3dbd9b0-4d26-7575-1832-2026f9e2d66f",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2499,7 +2711,33 @@
                         },
                         "type": "statement",
                         "id": "q72$93b7a416-49ab-a22b-1613-211281283a5b",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2514,7 +2752,33 @@
                         },
                         "type": "statement",
                         "id": "q72$8c2f9fad-4871-ad0d-34c4-99506d7e962f",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2529,7 +2793,33 @@
                         },
                         "type": "statement",
                         "id": "q72$4cc1fe09-426c-76e0-ce56-93b4b1f4c68b",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2544,7 +2834,33 @@
                         },
                         "type": "statement",
                         "id": "q72$8ecce942-438f-b91d-b075-03e4241214e9",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2559,7 +2875,33 @@
                         },
                         "type": "statement",
                         "id": "q72$ef5aff6d-4385-79ed-c879-162da4412b9b",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2574,7 +2916,33 @@
                         },
                         "type": "statement",
                         "id": "q72$dcb7e80f-413d-c560-39cf-63d081d84178",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2589,7 +2957,33 @@
                         },
                         "type": "statement",
                         "id": "q72$64ea6883-4813-60db-1bb1-10c427a9d245",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2604,7 +2998,33 @@
                         },
                         "type": "statement",
                         "id": "q72$c1f29c51-496b-6db2-5b37-17e35e3678c6",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2619,7 +3039,33 @@
                         },
                         "type": "statement",
                         "id": "q72$c0e5367d-4990-2ffc-7ebc-4a96b06cbf94",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2634,7 +3080,33 @@
                         },
                         "type": "statement",
                         "id": "q72$60d9f0c8-42a2-6e9c-478e-c8f1bff8fd93",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2649,7 +3121,33 @@
                         },
                         "type": "statement",
                         "id": "q72$46a68de7-4468-2175-6eff-f73d962f9330",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2664,7 +3162,33 @@
                         },
                         "type": "statement",
                         "id": "q72$e27c13a7-4bcd-62df-fbc2-36023e891d41",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2679,7 +3203,33 @@
                         },
                         "type": "statement",
                         "id": "q72$64492212-40e5-d945-ec9e-e17937b272a8",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2694,7 +3244,33 @@
                         },
                         "type": "statement",
                         "id": "q72$dbf98c79-4e41-0dfc-3573-5d7a882d819d",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2709,7 +3285,33 @@
                         },
                         "type": "statement",
                         "id": "q72$2284997e-4863-6651-4b97-32dc838b61b9",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2724,7 +3326,33 @@
                         },
                         "type": "statement",
                         "id": "q72$68d58f0b-4022-b3c1-be83-83458d3a2fa9",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
                     },
                     {
                         "mainsnak": {
@@ -2742,23 +3370,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2779,23 +3411,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2816,23 +3452,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2853,23 +3493,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2890,23 +3534,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2927,23 +3575,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -2964,23 +3616,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3001,23 +3657,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3038,23 +3698,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3075,23 +3739,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3112,23 +3780,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3149,23 +3821,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3186,23 +3862,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "a3dee475074a0cf85aeeae76f318dfff8443df5b",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "8976dcddce8a35353cffe56ada319d68848b5a22",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 2032118,
+                                                    "id": "Q2032118"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3223,23 +3903,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3260,23 +3944,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3297,23 +3985,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3334,23 +4026,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3371,23 +4067,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3408,23 +4108,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3445,23 +4149,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "c4c8d64fb556f756b6e9a2f3cc8288f2a60f790f",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "395e89b72fbe28d0015293202424d42a7910325b",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/de/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -3482,23 +4190,27 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "d2fed1e79e0951283a30abf54387dd90e23ef282",
+                                "hash": "b5e2abda6f8c2a53a8241e18e8dd0007c4292adb",
                                 "snaks": {
-                                    "P854": [
+                                    "P248": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P854",
-                                            "hash": "596481bf97cbbf1def16f5af398e4b040f5f1d83",
+                                            "property": "P248",
+                                            "hash": "3a3bfcddf874fabf26bb7d6b691a8b9e9e260cd1",
                                             "datavalue": {
-                                                "value": "https://www.post.ch/en/pages/plz-suche",
-                                                "type": "string"
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 142214348,
+                                                    "id": "Q142214348"
+                                                },
+                                                "type": "wikibase-entityid"
                                             },
-                                            "datatype": "url"
+                                            "datatype": "wikibase-item"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
-                                    "P854"
+                                    "P248"
                                 ]
                             }
                         ]
@@ -43252,6 +43964,86 @@
                             "P9675"
                         ],
                         "id": "Q72$88BB4038-BA62-411B-BEC7-97BCFB847F77",
+                        "rank": "normal"
+                    }
+                ],
+                "P7704": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P7704",
+                            "hash": "380b2b66675326d692ec3bff5aceb85f0084810e",
+                            "datavalue": {
+                                "value": "place/base/216115",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q72$09384FEC-E6FF-4170-A5AB-25E75826BDA9",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "ae4855f9b921641cac67c34d3ac40273be06f5c2",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "9ccf205ab8b85e52a3cff50f50db5efa9284a467",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 234110,
+                                                    "id": "Q234110"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ],
+                                    "P813": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P813",
+                                            "hash": "55e1f210cd3306353863fb311c966d271fb32615",
+                                            "datavalue": {
+                                                "value": {
+                                                    "time": "+2026-11-16T00:00:00Z",
+                                                    "timezone": 0,
+                                                    "before": 0,
+                                                    "after": 0,
+                                                    "precision": 11,
+                                                    "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                                },
+                                                "type": "time"
+                                            },
+                                            "datatype": "time"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248",
+                                    "P813"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P15033": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P15033",
+                            "hash": "ccf0b5cbbffcef0260ae4b4871dd1f0d6d1a557c",
+                            "datavalue": {
+                                "value": "j2x_lgx_12b",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q72$C44FC9DB-A9E7-4733-80E9-3179D312FFE3",
                         "rank": "normal"
                     }
                 ]

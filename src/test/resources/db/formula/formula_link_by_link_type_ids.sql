@@ -4,7 +4,7 @@ PREPARE formula_link_by_link_type_ids (bigint, bigint, bigint, bigint) AS
                s.user_id,
                s.formula_id,
                s.phrase_id,
-               CASE WHEN (u.description   <> ''  IS NOT TRUE) THEN s.description          ELSE u.description          END AS description,
+               CASE WHEN (u.description          IS     NULL) THEN s.description          ELSE u.description          END AS description,
                CASE WHEN (u.formula_link_type_id IS     NULL) THEN s.formula_link_type_id ELSE u.formula_link_type_id END AS formula_link_type_id,
                CASE WHEN (u.order_nbr            IS     NULL) THEN s.order_nbr            ELSE u.order_nbr            END AS order_nbr,
                CASE WHEN (u.excluded             IS     NULL) THEN s.excluded             ELSE u.excluded             END AS excluded,

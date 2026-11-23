@@ -1,197 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## fix Prio 0
-
-**Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
-(the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-13: 151 left (158 when the
-file lists of "### TODO" were written).
-
-**Overview:** the 151 by kind, with the step of "### TODO" (prompt "no `TODO Prio 0` left and the test clean up" below)
-that holds the file list:
-
-| kind | about | where | step |
-|---|---|---|---|
-| a bare "review" without a reason (done by the human developer) | 11 | backend, `system_form`, `frontend`, write tests | 1 |
-| a failure that is not reported (`key_exists`, "switch back to error", the message status, a missing `$msg`) | 20 | backend, `ListBase`, `about.php` | 2 |
-| security and data correctness (setup flag, user fields, DateTime as ATOM, the usage field, the type cache) | 20 | backend | 3 |
-| a disabled test ("activate", "activate db write") | 25 | `unit`, `unit_write`, `unit_read`, `unit_api` | 4 |
-| a frontend stub ("fill with real code") | 25 | `web/component/execute`, `web/value`, `web/formula` | 5 |
-| a missing unit test | 15 | `shared/helper`, backend lists, test utils | 6 |
-| deprecate | 9 | `frontend`, `user`, `formula_map`, `formula_list`, `html_base` | 7 (deprecate) |
-| merge, one way, const, rename, the test factories | 26 | everywhere | 7 (the rest) |
-
-**Order:** the tests first (the disabled tests, then the stubs with their missing tests), then the deprecated code is
-deleted, so that no later fix is spent on code that goes; then the fixes of the top rules of `docs/llm/coding.md`
-(never fail silently, data correctness), which the tests cover, and the clean up last; each line is one prompt:
-
-1. **activate the disabled tests** (size L): step 4, one agent per test file; an activated test that fails is not
-   switched off again: the cause is fixed, or the TODO becomes a Prio 1 with the reported diff; stop for a run
-2. **stubs and missing tests** (size L): steps 5 and 6; a stub that only a retired page needed is removed instead of
-   filled, and its gap written down in `pending_prio_2.md`; each filled page gets its html snapshot; stop for a run
-   with re-pin if the stubs add system views or components
-3. **deprecate** (size M): the "deprecate" part of step 7; "deprecate" means delete (fewer lines): the deprecated
-   function, var or class goes together with its callers, which use the replacement, and a feature that goes without a
-   replacement is written down as a gap in `pending_prio_2.md`, never rebuilt unasked; every delete of a database row
-   stays the logged `del()`; stop for a run
-4. **ratchet and inventory** (size S, lead): a check in `unit/coding_rule_tests.php` counts the `TODO Prio 0` of the
-   four folders and fails if the count is higher than the const `TODO_PRIO_0_MAX` (the count after prompt 3), so that
-   a new Prio 0 TODO can only be added if another one is solved; every later prompt lowers the const by the number it
-   has solved. The lead rewrites the file lists of "### TODO" from line numbers to file and function name, because the
-   line numbers are outdated (e.g. the TODOs of `system_form.php` moved by about 150 lines, those of `frontend.php`
-   by 60), and adds the Prio 0 TODOs that no step names yet.
-5. **triage and silent failures** (size M): step 1, the bare "review" TODOs, is done by the human developer, because
-   only the developer knows what was meant to be reviewed: the lead lists them with file and function, and the
-   developer replaces each by a concrete TODO with a Prio or by a fix; a triaged "review" can move into another step.
-   Then step 2 with one agent per group of its list; stop for a run: `/test/test.php`
-6. **backend correctness** (size L): step 3, one agent per bullet; a new or changed db field goes into the setup sql
-   and `db_check::db_upgrade_0_0_4`, never a version raise; stop for a run, with re-pin if the database structure
-   changes
-7. **merge, rename and the rest of the clean up** (size L): step 7 without its "deprecate" part, and "clean up"; a
-   merge or a rename includes all callers in the same prompt; stop for a run
-
-**Rules for every prompt** (`docs/llm/coding.md`):
-- the smallest diff that solves the TODO; never tidy up code that the TODO does not name
-- the test comes first, with a positive and a negative case; a fix that needs the database goes to `unit_read` or
-  `unit_write`, test objects only from the `/test/create/` factories and the test users of the test env
-- Edit/Write only, never a shell edit; the agents never commit and never run a `/test/*` script; the developer runs
-  the tests and reports the result
-- a log file in `docs/llm/log/` only if the developer asks for it
-- the lead reports per prompt the number of solved and re-prioritised TODOs, the new `TODO_PRIO_0_MAX`, the line
-  balance, the tests to run and a short commit message
-
-### suggested code changes for activate the disabled tests
-
-... to be filled
-
-### suggested code changes for stubs and missing tests
-
-... to be filled
-
-### suggested code changes for deprecate
-
-... to be filled
-
-## bug fixing
-
-### word
-
-replacing the description with an empty string does not work,
-1. a user changes the description, so that a user word entry is created
-2. if the user removes his description, that original text is shown, but actually it would be more correct if the user_word entry contains an empty string for the description
-
-create a workflow test for this using e.g. something like http://localhost/http/view.php?m=101&id=2072&9m=3&9id=2072&z=2&k=Basel&8k=Basel&py=1&8py=1&o=&8o=Basel+or+Basle+is+a+city+in+northwestern+Switzerland+on+the+river+Rhine%2C+at+the+transition+from+the+High+Rhine+to+the+Upper+Rhine.+Basel+is+Switzerland%27s+third+most+populous+city%2C+with+177%2C595+inhabitants+within+the+city+municipality+limits.&lp=&8lp=&d=3&8d=3&s=1&8s=1&sp=1&8sp=1&6a1=u&6l1=801&6ek1=Q78&86ek1=Q78&6ur1=&86ur1=&6o1=&86o1=&6so1=0&86so1=0&6a2=u&6l2=684&6ek2=Basel&86ek2=Basel&6ur2=&86ur2=&6o2=&86o2=&6so2=0&86so2=0&6a3=a&6lt3=2&6ek3=&6ur3=&6o3=&6so3=0&mo=48&u=11
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### triple
-
-edit triple does not set the from and to phrase
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### add ref
-
-the add ref view called from a new word is not filled with the word to be referenced
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### add word
-
-when adding a new word conceptnet should be used to suggest triples
-and wikipedia should be used to suggest a description and a wikidata link
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### conceptnet.io link
-
-get the phrases of 'is a type of' from conceptnet.io and use them to create a triple
-use add Hamburg as a sample
-
-#### suggested code changes
-
-... replace this with the suggested code changes
-
-### figure link
-
-the link of a figure opens the edit view of the other object type: a value links to the result edit view and a
-result to the value edit view, because the two branches of `web/figure/figure.php::display_linked` (227-236) are
-swapped (`is_result()` gives `views::VALUE_EDIT_ID`)
-
-#### suggested code changes
-
-- `display_linked`: a result links to `views::RESULT_EDIT_ID`, a value to `views::VALUE_EDIT_ID`
-- the tests that expect the swapped view, both with the figure of a value: `unit/figure_tests.php:189` and
-  `unit_write/value_write_tests.php:273` expect `VALUE_EDIT_ID`; the active assert of
-  `unit_write/element_group_write_tests.php:170` checks which object its first figure has and expects the view of
-  that type; the snapshot of `unit_ui/figure_ui_tests.php` (figure of a value) is regenerated by the run
-- add the negative: the figure of a result links to `RESULT_EDIT_ID` (`test_figures::figure_result`)
-- the `element_group::dsp_values` link (`web/element/element_group.php:310`) uses the same function and changes
-  with it
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-## language
-
-### import sample
-
-make here a plan how to add other languages. this should include
-
-allow in import json files to import a translation for where a name is used a translation section like this 
-
-`"words": [
-    {
-        "name": "problem",
-        "translations": [
-            "de": {
-                  {
-                    "name": "Problem",
-                    "description": "Ein Problem ist ..."
-                  }
-             }
-        ]
-    },
-`
-
-where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
-
-add the translations to src/main/resources/messages/solution_prio.json
-
-add how translations can be imported to json_structure.md
-
-import the translation and save it to user_words. define how the standard translation should be saved. 
-If possible without a user or a default user or the owner of the related object.
-
-add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions. 
-So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
-
-apply the translation to all objects that have language specific fields
-
-add the translations to the export and check where changes due to translations might be useful 
-e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes  
-
-and finally show the translated page if the url has something link =de
-
 ## Calculator editor
 
 ### Swiss NPP
-
-add costs of CO2-eq reduction to the npp
-
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
@@ -352,6 +163,12 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
 5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
+### add costs of CO2-eq reduction to the npp
+
+### add to the calculator a 'Share assumptions and vote' button
+
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
 if done remove this prompt from pending.md
 
 **next prompt**
@@ -366,6 +183,91 @@ because the ahv vat use case gets new data). One phase, four agents in parallel:
   check script that every `*_sample.html` has a generated page and is part of the compare and the generation build
 - agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
   version of the formula editor
+
+## create a calculator for the top 5 global problems
+
+### create a 'cost of climate change' calculator
+
+use the estimate that Germany has lost around 20 billion in 2026 due to climate warming
+
+use sliders for the time period that should be included, the increase rate per 0.1 grad temperatur increase, the number of death caused by climate warming and put the costs in relation to the GDP
+
+### link the calculators
+
+if a calculator view for a phrase is defined the calculator should be the default view for the phrase.
+
+the calculator view should also be linked to the related number e.g. in http://localhost/http/view.php?m=1&dla=table_chart the '4' should link to the calculator instead of http://localhost/http/view.php?m=9&id=0q-22_2e_2i_3G_&9m=1&9dla=table_chart
+
+### reduce the list links
+
+in http://localhost/http/view.php?m=1&dla=table_chart the 'one-click hide, ...' link to http://localhost/http/view.php?m=4&id=1293&u=11 and the ... to 'http://localhost/http/view.php?m=2&id=-1616&9m=1&9dla=table_chart&u=11'. the link of '...' is more relevant, but very small to the user. So if a table entry has a '...' use the link for the '...' for both, the first phrase of the list and the '...'
+
+## language
+
+### import sample
+
+make here a plan how to add other languages. this should include
+
+allow in import json files to import a translation for where a name is used a translation section like this
+
+`"words": [
+    {
+        "name": "problem",
+        "translations": [
+            "de": {
+                  {
+                    "name": "Problem",
+                    "description": "Ein Problem ist ..."
+                  }
+             }
+        ]
+    },
+`
+
+where 'translations' is the json field name and 'de' is the wikipedia_code as saved in the table languages
+
+add the translations to src/main/resources/messages/solution_prio.json
+
+add how translations can be imported to json_structure.md
+
+import the translation and save it to user_words. define how the standard translation should be saved.
+If possible without a user or a default user or the owner of the related object.
+
+add the translations to the read queries but only if needed, so probably almost all sql statements will be dublicated with an '*_lan' extentions.
+So additional to src/test/resources/db/word/word_by_id.sql there will be a word_by_id_lan.sql file which loads the word in a given language
+
+apply the translation to all objects that have language specific fields
+
+add the translations to the export and check where changes due to translations might be useful
+e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes
+
+and finally show the translated page if the url has something link =de
+
+## user menu
+
+### to add
+
+#### missing parents
+
+add to the user menu in the navbar a 'to add' view that lists the words that have no linked triple and suggest to use wikipedia, wikidata and conceptnet.io to add triples
+
+missing descriptions
+
+### to check
+
+missing sources
+
+### to correct
+
+contradicting values / results
+
+## create JavaScript based add, edit and del views
+
+if done remove this prompt from pending.md
+
+**next prompt**
+
+**full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
 
 ## ID check
 
@@ -853,17 +755,17 @@ if done remove this prompt from pending.md
 
 **full test run: /test/test.php**
 
-**Prompt:** no `TODO Prio 0` left and the test clean up (size L). The order of the prompts and their rules are in
-"## fix Prio 0" at the top of this file; this block keeps the file list of each step. The rules of "TODO" stay; a file
-that two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
+**Prompt:** no `TODO Prio 1` left and the test clean up (size L). This block keeps the order, the rules and the file
+list of each step. The rules of "TODO" stay; a file that two steps name belongs to the agent of the lower step, which
+takes the TODO of the other step as well.
 
 ### TODO
 
-goal: no `TODO Prio 0` is left in the code; each one is either solved (the comment is removed
+goal: no `TODO Prio 1` is left in the code; each one is either solved (the comment is removed
 together with the fix) or, if the work shows that it is less urgent, given a Prio 1, 2 or 3
 with a concrete text
 
-starting point: 158 `TODO Prio 0` in src, test, http and api (the paths below are relative to
+starting point: 158 `TODO Prio 1` in src, test, http and api (the paths below are relative to
 `src/main/php/` resp. `src/test/php/`)
 
 rules for every step:
@@ -876,6 +778,11 @@ rules for every step:
 - an activated test that fails is not switched off again: the cause is fixed, or the test gets
   a `TODO Prio 1` with the reported diff
 - the LLM never runs the tests; the developer runs them and reports the result
+- Edit/Write only, never a shell edit; the LLM and its agents never commit
+- each step gets the log file that `docs/llm/coding.md` asks for, and every change after the first test of the step
+  goes into its "Unexpected changes"
+- the report of each prompt names the number of solved and re-prioritised TODOs, the number left (counted with
+  `git grep "TODO Prio 1"`), the line balance, the tests to run and a short commit message
 
 1. triage the bare "review" TODOs, because they do not say what is wrong; this step is done by the human developer,
    not by an agent: read the code, then replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a
@@ -1975,9 +1882,6 @@ term_views and any missing main or link class
 Worth fixing
 formula button tooltips lost their object name
 button is now btn_edit () with no $url_arr at view.php:171 and word.php:751.
-Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back (...) but no longer
-used, since btn_edit ()/btn_del () build their own url. The buttons also lost the word= and back context those urls
-carried.
 Unused additions in tests: graph_tests.php:60-62 adds $base_url, $
 lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
 Tooltip regression, visible in base_ui_tests.php:512: the delete title went from delete this formula of scale minute to sec to delete this formula — the object name dropped out of the button title. Intentional?

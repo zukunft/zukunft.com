@@ -68,21 +68,34 @@ class ref_write_url_tests extends ref_url_tests
 
         // the refresh icon of a wikipedia reference is answered by the backend, which reads the live
         // wikipedia page, so this workflow runs only here and not in the read tests; the values of
-        // the live pages are compared first, so that a change of a page is reported as such
-        $this->wikipedia_page_tests();
+        // the live pages are compared first, so that a change of a page is reported as such;
+        // without the live pages e.g. offline every step of the refresh workflows would fail as a
+        // follow-up, so they are skipped, but the cleanups that need only the database still run
+        $wikipedia_live = $this->wikipedia_page_tests();
         $this->cleanup_wikipedia_refresh();
-        $this->wikipedia_refresh_workflow(workflows::WF_WIKIPEDIA_REFRESH_NBR);
-        $this->cleanup_wikipedia_refresh();
+        if ($wikipedia_live) {
+            $this->wikipedia_refresh_workflow(workflows::WF_WIKIPEDIA_REFRESH_NBR);
+            $this->cleanup_wikipedia_refresh();
+        }
 
         // the same refresh on a word without wikidata reference adds the one that wikipedia names
         $this->cleanup_wikidata_refresh();
-        $this->wikidata_refresh_workflow(workflows::WF_WIKIDATA_REFRESH_NBR);
-        $this->cleanup_wikidata_refresh();
+        if ($wikipedia_live) {
+            $this->wikidata_refresh_workflow(workflows::WF_WIKIDATA_REFRESH_NBR);
+            $this->cleanup_wikidata_refresh();
+        } else {
+            $this->t->step('the refresh workflows wf' . workflows::WF_WIKIPEDIA_REFRESH_NBR
+                . ' and wf' . workflows::WF_WIKIDATA_REFRESH_NBR
+                . ' are skipped, because the live wikipedia pages cannot be read');
+        }
 
         // the refresh icon of a wikidata reference imports the values of the live wikidata entity
+        // skipped like the refresh workflows if wikidata cannot be read, but the cleanup still runs
         $this->cleanup_wikidata_import();
-        $this->wikidata_import_workflow(workflows::WF_WIKIDATA_IMPORT_NBR);
-        $this->cleanup_wikidata_import();
+        if ($this->wikidata_import_live()) {
+            $this->wikidata_import_workflow(workflows::WF_WIKIDATA_IMPORT_NBR);
+            $this->cleanup_wikidata_import();
+        }
 
         // the confirm of a description with the change, the delete and the add of a reference writes
         // overlays of usr1 on the base data, so it runs only here and is undone before and after

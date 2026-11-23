@@ -34,12 +34,19 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class ui_rank
 {
@@ -58,23 +65,25 @@ class ui_rank
     }
 
     /**
-     * TODO Prio 0 fill with real code
-     * @param db_object|combine_named|null $dbo the phrase whose ranking parameters should be displayed
-     * @return string the html code showing the parameters used to calculate the ranking
+     * the criterion of the ranking list, which is the impact, because no backend calculates another ranking
+     * @return string the translated text that names the impact as the ranking criterion
      */
-    function ranking_parameters(db_object|combine_named|null $dbo = null): string
+    function ranking_parameters(): string
     {
-        return 'ranking_parameters placeholder';
+        global $mtr;
+        return $mtr->txt(msg_id::RANKING_BY_IMPACT);
     }
 
     /**
-     * TODO Prio 0 fill with real code
-     * @param db_object|combine_named|null $dbo the phrase whose related items should be listed by ranking
-     * @return string the html code showing the items sorted by the calculated ranking
+     * the phrases related to the given phrase with the highest impact first
+     * @param user_message $msg to report a problem of the related phrases
+     * @param db_object|combine_named|null $dbo the phrase whose related phrases should be ranked
+     * @param data_object|null $cfg the request cache with the related phrases
+     * @return string the html code of the related phrases sorted by impact
      */
-    function ranking_list(db_object|combine_named|null $dbo = null): string
+    function ranking_list(user_message $msg, db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
-        return 'ranking_list placeholder';
+        return new ui_list()->phrases_related($msg, $dbo, $cfg);
     }
 
 }

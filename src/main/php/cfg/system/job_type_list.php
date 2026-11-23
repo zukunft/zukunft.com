@@ -45,16 +45,12 @@ class job_type_list extends type_list
 {
 
     /**
-     * adding the job type used for unit tests to a dummy list
-     *  TODO Prio 3: load from csv
+     * fill the list of the job types for the unit tests
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(job_types::VALUE_UPDATE, job_types::VALUE_UPDATE, '', 2);
-        $this->add($type);
-        $type = new type_object(job_types::BASE_IMPORT, job_types::BASE_IMPORT, '', 11);
-        $this->add($type);
+        // from db_code_links/job_types.csv, so that the unit tests use the same ids and names as the database
+        $this->load_from_csv_resource();
     }
 
     /**

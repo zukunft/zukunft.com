@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -69,6 +70,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -189,6 +191,20 @@ class test_values extends test_objects
         $similar->remove($val);
         $val->values_similar = $similar;
         $val->results_related = $t_res->result_list();
+        return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
+    }
+
+    /**
+     * @return value_ui the standard test value as sent for its page with one result whose formula is known,
+     *                  so that the value detail page can name the formulas that use the value
+     */
+    function value_page_formula_ui(user_message $msg): value_ui
+    {
+        $t_res = new test_results($this->env);
+        $val = $this->value_pi();
+        $res_lst = new result_list($this->env->usr1);
+        $res_lst->add($t_res->result_main_max());
+        $val->results_related = $res_lst;
         return new value_ui($val->api_json([api_types::INCL_RELATED, api_types::TEST_MODE], $msg));
     }
 
@@ -318,9 +334,10 @@ class test_values extends test_objects
 
     function value_add(phrase $phr): value
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $lst = new phrase_list($this->env->usr1);
         $lst->add($phr);
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
     }
 
@@ -371,11 +388,12 @@ class test_values extends test_objects
      */
     function value_for_phrases(array $phrases, float $number = values::SAMPLE_FLOAT): value
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $lst = new phrase_list($this->env->usr1);
         foreach ($phrases as $phr) {
             $lst->add($phr);
         }
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         return new value($this->env->usr1, $number, $grp);
     }
 
@@ -400,8 +418,9 @@ class test_values extends test_objects
      */
     function config_ip_user_change(bool $permitted): config_numbers
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->phrase_list_ip_user_change()->get_grp_id(false);
+        $grp = $t_phr->phrase_list_ip_user_change()->get_grp_id($msg, false);
         $val = new value($this->env->usr1, (float)$permitted, $grp);
         $cfg = new config_numbers($this->env->usr1);
         // the config phrases have no database id, so the group id of the value is empty
@@ -431,8 +450,9 @@ class test_values extends test_objects
      */
     function config_switch_value(array $names, bool $allowed): value
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id($msg, false);
         return new value($this->env->usr1, (float)$allowed, $grp);
     }
 
@@ -445,10 +465,11 @@ class test_values extends test_objects
      */
     function config_switches_off(array $names_lst): config_numbers
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $val_lst = [];
         foreach ($names_lst as $names) {
-            $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+            $grp = $t_phr->list_cache_switch($names)->get_grp_id($msg, false);
             $val_lst[] = new value($this->env->usr1, (float)false, $grp);
         }
         $cfg = new config_numbers($this->env->usr1);
@@ -733,8 +754,9 @@ class test_values extends test_objects
      */
     function value_ch_unscaled(): value
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->ch_inhabitants_in_mio_2019_unscaled()->get_grp_id(false);
+        $grp = $t_phr->ch_inhabitants_in_mio_2019_unscaled()->get_grp_id($msg, false);
         return new value($this->env->usr1, values::CH_INHABITANTS_2019_IN_MIO, $grp);
     }
 
@@ -1920,6 +1942,7 @@ class test_values extends test_objects
      */
     function value_list_config_digits(): value_list
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $path = [words::DEFAULT, triples::NUMBER_FORMAT, words::DIGITS];
         $lst = new value_list($this->env->usr1);
@@ -1927,9 +1950,9 @@ class test_values extends test_objects
         // set directly like config_cache_switch, because add() skips a value without a group name
         $lst->set_lst([
             new value($this->env->usr1, shared_config::PRECISE_DIGITS + 1,
-                $t_phr->list_cache_switch([...$path, words::PRECISE])->get_grp_id(false)),
+                $t_phr->list_cache_switch([...$path, words::PRECISE])->get_grp_id($msg, false)),
             new value($this->env->usr1, shared_config::DEFAULT_DIGITS + 1,
-                $t_phr->list_cache_switch($path)->get_grp_id(false)),
+                $t_phr->list_cache_switch($path)->get_grp_id($msg, false)),
         ]);
         return $lst;
     }
@@ -1944,12 +1967,13 @@ class test_values extends test_objects
      */
     function value_list_config_text(array $keys, string $text): value_list
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
         $lst = new value_list($this->env->usr1);
         // set directly like value_list_config_digits, because add() skips a value without a group name
         $lst->set_lst([
-            new value_text($this->env->usr1, $text, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+            new value_text($this->env->usr1, $text, $t_phr->list_cache_switch($path)->get_grp_id($msg, false)),
         ]);
         return $lst;
     }
@@ -1964,12 +1988,13 @@ class test_values extends test_objects
      */
     function value_list_config_number(array $keys, float $number): value_list
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
         $lst = new value_list($this->env->usr1);
         // set directly like value_list_config_digits, because add() skips a value without a group name
         $lst->set_lst([
-            new value($this->env->usr1, $number, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+            new value($this->env->usr1, $number, $t_phr->list_cache_switch($path)->get_grp_id($msg, false)),
         ]);
         return $lst;
     }

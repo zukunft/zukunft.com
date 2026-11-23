@@ -729,12 +729,19 @@ class triple_list extends sandbox_list_named
      * get the triples that does not yet have a database id, but have a name
      * including the linked triples
      * @param user_message $msg to report a triple name that is in the list twice
+     * @param import|null $imp the import to show the throttled progress of a long import, null for none
+     * @param string $lvl_txt the level of the triple save for the progress e.g. "level 0: "
      * @return triple_list with all triples potentially missing in the database
      */
-    function triples_to_add_to_db(user_message $msg): triple_list
+    function triples_to_add_to_db(user_message $msg, ?import $imp = null, string $lvl_txt = ''): triple_list
     {
         $trp_lst = new triple_list($this->get_user());
+        $nbr = 0;
         foreach ($this->lst() as $trp) {
+            // the throttled progress shows if the selection slows down with the size of the selected list
+            $nbr++;
+            $imp?->step_note($lvl_txt . 'select the triples to add, done ' . $nbr
+                . ' with ' . $trp_lst->count() . ' selected of', triple::class, $this->count());
             if ($trp->no_id_but_name()) {
                 $trp_lst->add_by_name_direct($trp, $msg);
             }
@@ -819,11 +826,23 @@ class triple_list extends sandbox_list_named
      * the id of a renamed triple is set from the original so it is excluded from the insert step
      * @param user_message $msg to collect the messages of the triggered rename
      * @param triple_list $db_lst filled with the found database triples, because a triple with an id is not loaded again, but the other fields of the import e.g. the description must still be updated
+     * @param import|null $imp the import to show the throttled progress of a long import, null for none
+     * @param string $lvl_txt the level of the triple save for the progress e.g. "level 0: ", empty before the levels
      * @return void
      */
-    function rename_link_conflicts(user_message $msg, triple_list $db_lst): void
+    function rename_link_conflicts(
+        user_message $msg,
+        triple_list  $db_lst,
+        ?import      $imp = null,
+        string       $lvl_txt = ''
+    ): void
     {
+        $nbr = 0;
         foreach ($this->lst() as $trp) {
+            // the throttled progress shows if the one load per triple or the add to the found list is slow
+            $nbr++;
+            $imp?->step_note($lvl_txt . 'rename the link conflicts, done ' . $nbr
+                . ' with ' . $db_lst->count() . ' found of', triple::class, $this->count());
             if ($trp->id() == 0 and $trp->from_id() != 0 and $trp->to_id() != 0) {
                 $db_trp = new triple($this->get_user());
                 $db_trp->load_by_link_id( $trp->from_id(), $msg, $trp->predicate_id(), $trp->to_id() );
@@ -872,9 +891,13 @@ class triple_list extends sandbox_list_named
             // rename any triple that re-declares an existing from/verb/to link under a different
             // name so the original triple is updated instead of dropping a duplicate-link insert
             // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
+            // the notes of the work between the load and save steps are throttled like the
+            // progress, so that a long import shows where it is without filling the log
             $db_lst_all = new triple_list($this->get_user());
+            $imp->step_note('fill the ids from the cache of', triple::class, $this->count());
             $this->fill_by_name($cache, $msg, true, false);
-            $this->rename_link_conflicts($msg, $db_lst_all);
+            $imp->step_note('rename the link conflicts of', triple::class, $this->count());
+            $this->rename_link_conflicts($msg, $db_lst_all, $imp);
 
             // repeat filling the database id to the triple list
             // and adding missing triples to the database
@@ -903,13 +926,17 @@ class triple_list extends sandbox_list_named
                 $msg_ins->unset_added_depending();
 
                 // collect all triples with names that does not yet have a database id and needs to be added
-                $chk_lst = $this->triples_to_add_to_db($msg_chk);
+                $lvl_txt = 'level ' . $level . ': ';
+                $imp->step_note($lvl_txt . 'select the triples to add of', triple::class, $this->count());
+                $chk_lst = $this->triples_to_add_to_db($msg_chk, $imp, $lvl_txt);
 
                 // add the database id to the triple list of words and triples used until now
+                $imp->step_note($lvl_txt . 'fill the ids from the cache of', triple::class, $chk_lst->count());
                 $chk_lst->fill_by_name($cache, $msg_chk, true, false);
 
                 // get the triples that needs to be added
                 // TODO Prio 2 check if other list save function are using the cache instead of this here
+                $imp->step_note($lvl_txt . 'find the missing ids of', triple::class, $chk_lst->count());
                 $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the triples by name from the database that does not yet have a database id
@@ -923,12 +950,14 @@ class triple_list extends sandbox_list_named
 
                 // fill up the cache to prevent loading the same triple again in the next level
                 // TODO Prio 2 increase speed!
+                $imp->step_note($lvl_txt . 'add the loaded to the cache of', triple::class, $cache->count());
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated
                 $db_lst_all->merge($db_lst);
 
                 // fill up the loaded list with db value to select only the triples that really needs to be inserted
+                $imp->step_note($lvl_txt . 'fill the loaded ids of', triple::class, $load_lst->count());
                 $load_lst->fill_by_name($db_lst, $msg_chk, true, false);
 
                 // only a new triple gets the not set verb, because a triple that the import only names
@@ -938,6 +967,7 @@ class triple_list extends sandbox_list_named
                 // select the triples that are ready to be added to the database
                 // pass the buffer (merged into $msg below) and file name so a triple that cannot be
                 // added surfaces to the user instead of being dropped, like formula_list::save_with_cache
+                $imp->step_note($lvl_txt . 'select the ready of', triple::class, $load_lst->count());
                 $load_lst = $load_lst->get_ready($msg_chk, $imp->file_name);
 
                 // get the triples that still needs to be added
@@ -946,7 +976,8 @@ class triple_list extends sandbox_list_named
 
                 // the from side of a triple can be a triple whose id is known only since this level,
                 // so a link that exists under another name is renamed here instead of a failing insert
-                $new_lst->rename_link_conflicts($msg_ins, $db_lst_all);
+                $imp->step_note($lvl_txt . 'rename the link conflicts of', triple::class, $new_lst->count());
+                $new_lst->rename_link_conflicts($msg_ins, $db_lst_all, $imp, $lvl_txt);
                 $add_lst = $new_lst->missing_ids($msg_chk);
                 if ($add_lst->count() < $new_lst->count()) {
                     // the triples that use a renamed triple are ready for the next level
@@ -970,16 +1001,19 @@ class triple_list extends sandbox_list_named
                 // use a fresh message here too so the reloaded triples keep their name (see above)
                 $db_lst = new triple_list($this->get_user());
                 if (!$new_lst->is_empty()) {
+                    $imp->step_note($lvl_txt . 'reload the added', triple::class, $new_lst->count());
                     $db_lst->load_by_names( $new_lst->names(true), $msg_reload, true );
                 }
 
                 // fill up the cache to prevent loading the same triple again in the next level
                 // TODO Prio 2 increase speed!
+                $imp->step_note($lvl_txt . 'add the reloaded to the cache of', triple::class, $cache->count());
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated
                 $db_lst_all->merge($db_lst);
 
+                $imp->step_note($lvl_txt . 'filter the valid cache of', triple::class, $cache->count());
                 $cache->filter_valid();
 
                 $level++;
@@ -992,16 +1026,21 @@ class triple_list extends sandbox_list_named
             $msg->merge($msg_reload);
 
             // create any missing sql update functions and update the triples
+            $imp->step_note('update the changed of', triple::class, $db_lst_all->count());
             $this->update($db_lst_all, $msg, $imp, triple::class, $upd_per_sec);
 
 
             // fill up the main list with the words
+            $imp->step_note('fill the final ids of', triple::class, $this->count());
             $this->fill_by_name($cache, $msg, true, false);
             // fill up the main list with the triples to check if anything is missing
             $this->fill_by_name($db_lst_all, $msg, true, false);
 
             // report missing triples
+            $imp->step_note('report the missing of', triple::class, $this->count());
             $this->report_missing($msg);
+
+            $imp->step_note('delete the unused of', triple::class, $db_lst_all->count());
 
 
             // create any missing sql delete functions and delete unused sandbox objects
@@ -1118,6 +1157,8 @@ class triple_list extends sandbox_list_named
         $msg = new user_message(); // the message built here IS the return value of this function, so the caller merges it
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
+                // a verb that the import has created is saved before the triples (see data_object::save)
+                $phr->fill_new_verb();
                 // a triple with a database id has its verb in the database, which the update fill takes,
                 // e.g. if only the name and the id are taken from the phrase cache
                 if ($phr->get_verb() == null and $phr->id() == 0) {

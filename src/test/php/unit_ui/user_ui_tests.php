@@ -67,6 +67,7 @@ include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -393,6 +394,28 @@ class user_ui_tests
         $test_name = '... but still the requested undo icon';
         $t->assert_text_contains($test_name, $grouped_page, icons::UNDO);
         $t->html_page_test($grouped_page, 'user', 'user_log_grouped', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'sandbox');
+
+        // the sandbox page shows the overwrites of the requesting user, one table per object type and each
+        // overwrite with its undo; the user of the page is the requesting user of the message
+        $sbx_page = new system_page();
+        $sbx_msg = new user_message($usr_sys_ui);
+        $usr_sys_ui->chg_log = $t_log->log_list_user_overwrites_ui();
+        $sbx_html = $sbx_page->sandbox($sbx_msg, new change_log_list_ui(), true, $url_arr);
+        $test_name = 'the sandbox page groups the overwrites of the requesting user by the object type';
+        $t->assert_text_contains($test_name, $sbx_html, $head_html->text_h4($newest_type));
+        $test_name = '... with the undo of each overwrite';
+        $t->assert_text_contains($test_name, $sbx_html, icons::UNDO);
+        $test_name = '... and the icon to the values of the other users';
+        $t->assert_text_contains($test_name, $sbx_html, icons::OTHERS);
+        $sbx_msg->reset();
+
+        // negative: without a requesting user the page says that nothing has been changed
+        $test_name = 'the sandbox page without a user shows the no-changes message';
+        $t->assert($test_name, $sbx_page->sandbox($msg, new change_log_list_ui(), true, $url_arr),
+            $mtr->txt(msg_id::ALL_USER_OVERWRITES_NONE));
+        $msg->reset();
 
         // a user can have far more overwrites than a page should show (over 15'000 for the system
         // user), so the list is cut to the configured number of rows before the rows are prepared

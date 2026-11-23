@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -47,34 +46,14 @@ class view_relation_write_tests
 
         // init
         $t_msk = new test_views($t);
-        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write view relation ';
         $t->header($ts);
 
         $t->subheader($ts . 'for ' . views::TEST_ADD_NAME);
-        // TODO Prio 0 activate
-        //$t->assert_write_link($t_msk->view_relation_filled_add());
+        $t->assert_write_link($t_msk->view_relation_test_views_add());
 
-    }
-
-    /**
-     * check if the view relations used for unit testing are created
-     * and if not create the missing links
-     *
-     * @param test_cleanup $t
-     * @return void
-     */
-    function create_base_view_relations(test_cleanup $t): void
-    {
-        // init
-        $t_msk = new test_views($t);
-        $msg = new user_message($t->usr1);
-
-        $msk_rel = $t_msk->view_relation_filled_add();
-        // TODO Prio 0 activate
-        //$msk_rel->save($usr_msg);
     }
 
 }

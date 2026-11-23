@@ -27,4 +27,4 @@ SELECT value_text_update_log_0210000
         350,
         'old db text sample value',
         'zukunft.com',
-        '0A-1O+1S+1X+');
+        '0f-2V+2Z+2e+');

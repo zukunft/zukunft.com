@@ -30,6 +30,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO if in the calculator Editor an unknown word is typed use a local embadding model model to suggest a wikipedia link and a list of suggested triples, if the new word has spaces or other parts suggest using the parts and create a triple
     TODO add translations for the pinned view e.g. NPP -> de: AKW
     TODO for CH AKW yes/no to top field is to vote yes or no based on the total price per kWh
+    TODO improve reaction time. if the user chicked an imidiate reaction should be visible
+    TODO if the user saves data in the calculator the page should show the save confirm as soon as possible and refresh the page cased on the previous loaded data. later the page should be updated based on the refreshed data seed from the backend
     TODO by default guess the location of the user e.g. to auto switch the language
     TODO is the user is in Switzerland show in the navbar language menu the list of pinned languages related to the location e.g. de for Zurich, but with fr, it and romantsch as preferrend languages
     TODO base on the location also adjust the pinned pages on the frontpage
@@ -278,7 +280,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
     TODO Substeps: move all display functions from the backend objects to the frontend
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
-    TODO Step 23: deprecate the get_old in value_ui
     TODO remove backend classes from frontend
     TODO remove frontend classes from backend
     TODO review the remaining db write tests

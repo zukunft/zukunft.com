@@ -143,6 +143,8 @@ class phrase_list extends sandbox_list_named
     // the maximum number of link levels that load_by_phr_levels follows, because the level is
     // requested by the url and each level multiplies the number of database reads
     const int MAX_LINK_LEVELS = 3;
+    // the internal error of a caller that asks for the group of an empty list, followed by the callers
+    const string MSG_EMPTY_GROUP = 'Cannot create phrase group for an empty list called by ';
 
 
     /*
@@ -269,10 +271,13 @@ class phrase_list extends sandbox_list_named
             $ids_to_load = $ids;
         }
 
-        // create the sql and load
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_ids($sc, $ids_to_load);
-        $result = $this->load($qp, $msg);
+        // create the sql and load, but only the phrases that are not in the cache
+        $result = false;
+        if ($ids_to_load->count() > 0) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_ids($sc, $ids_to_load);
+            $result = $this->load($qp, $msg);
+        }
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
             if (!$phr_lst_to_add->is_empty()) {
@@ -543,26 +548,27 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @returns array with all unique names of this list with the keys within this list
+     * a phrase is found by the name of its word or triple, a word also by its plural and a triple
+     * also by its generated name; used by the rebuild and the add of the name hash table
+     *
+     * @param object $obj a phrase of this list
+     * @return array the names of the phrase e.g. ["city", "cities"]
      */
-    function name_pos_lst(): array
+    protected function name_index_keys(object $obj): array
     {
-        $result = array();
-        if ($this->is_name_list_dirty()) {
-            foreach ($this->lst() as $key => $phr) {
-                $obj = $phr->obj();
-                $result[$obj->name()] = $key;
-                // TODO Prio 2 add the language forms of words and triples
-                if ($obj::class == word::class) {
-                    $result[$obj->plural] = $key;
-                }
-                if ($obj::class == triple::class) {
-                    $result[$obj->name_generated()] = $key;
-                }
-            }
-            $this->set_name_pos_list($result);
+        $phr_obj = $obj->obj();
+        if ($phr_obj == null) {
+            // e.g. a phrase that is only named by the import yet
+            $result = [$obj->name()];
         } else {
-            $result = parent::name_pos_lst();
+            $result = [$phr_obj->name()];
+            // TODO Prio 2 add the language forms of words and triples
+            if ($phr_obj::class == word::class) {
+                $result[] = $phr_obj->plural;
+            }
+            if ($phr_obj::class == triple::class) {
+                $result[] = $phr_obj->name_generated();
+            }
         }
         return $result;
     }
@@ -1566,12 +1572,17 @@ class phrase_list extends sandbox_list_named
         return $phr;
     }
 
+    /**
+     * @param string $name the year e.g. "2022"
+     * @return phrase|null the time phrase of this list with the year in its name e.g. the word "2022",
+     *                     but not a phrase without the time type e.g. the triple "2022 (year)"
+     */
     function get_year(string $name): ?phrase
     {
         $year = null;
         foreach ($this->lst() as $phr) {
-            // TODO Prio 0 and check if the phrase is of type TIME (or YEAR?)
-            if (str_contains($phr->name(), $name)) {
+            // a year has the time type, because there is no phrase type for a year
+            if ($phr->is_type(phrase_type_shared::TIME) and str_contains($phr->name(), $name)) {
                 $year = $phr;
             }
         }
@@ -2262,9 +2273,9 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO Prio 0 add a unit test
      * sort the phrase object list by id
-     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
+     * @param user_message $msg to report a phrase that is missing in the list
+     * @return phrase_list a new list with the phrases sorted by the phrase id, so the triples with the negative id first
      */
     function sort_by_id(user_message $msg): phrase_list
     {
@@ -2280,9 +2291,9 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO Prio 0 add a unit test
      * sort the phrase object list by id in reverse order
-     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
+     * @param user_message $msg to report a phrase that is missing in the list
+     * @return phrase_list a new list with the phrases sorted by the phrase id descending, so the words first
      */
     function sort_rev_by_id(user_message $msg): phrase_list
     {
@@ -2318,14 +2329,16 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to tell the user and the admin that a caller has asked for the group of an empty list
+     * @param bool $do_save not used yet, because the group is only created in memory
      * @return group|null the group with only the id set based to this list or null if no group matches
      */
-    function get_grp_id(bool $do_save = true): ?group
+    function get_grp_id(user_message $msg, bool $do_save = true): ?group
     {
         $grp = null;
         if ($this->is_empty()) {
-            // TODO Prio 0 switch back to error
-            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+            // an error of the caller, so the text names the callers, which the trace of the log entry does not
+            log_err_msg(self::MSG_EMPTY_GROUP . library::caller_chain(), $msg);
         } else {
             $grp = new group($this->get_user());
             $grp_id = new group_id();
@@ -2421,7 +2434,7 @@ class phrase_list extends sandbox_list_named
     function value(user_message $msg): value
     {
         $val = new value($this->get_user());
-        $val->load_by_grp($this->get_grp_id(), $msg);
+        $val->load_by_grp($this->get_grp_id($msg), $msg);
 
         return $val;
     }

@@ -1,16 +1,16 @@
 phrase_id,phrase_name
--3353,global problem solution
--3352,global problem reason
--303,black-box AI (global problem)
--258,proprietary software (global problem)
--257,GDP mismeasurement (global problem)
--256,citizen participation (global problem)
--255,biased information (global problem)
--254,market power (global problem)
--253,wealth concentration (global problem)
--236,global warming (global problem)
--210,disinformation (global problem)
--180,education can be global problem
--179,poverty (global problem)
--177,health can be a global problem
--176,populism (global problem)
+-3397,global problem solution
+-3396,global problem reason
+-334,black-box AI (global problem)
+-289,proprietary software (global problem)
+-288,GDP mismeasurement (global problem)
+-287,citizen participation (global problem)
+-286,biased information (global problem)
+-285,market power (global problem)
+-284,wealth concentration (global problem)
+-267,global warming (global problem)
+-241,disinformation (global problem)
+-211,education can be global problem
+-210,poverty (global problem)
+-208,health can be a global problem
+-207,populism (global problem)

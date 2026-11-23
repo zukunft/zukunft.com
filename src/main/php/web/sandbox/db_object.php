@@ -37,6 +37,8 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::API_OBJECT . 'api_message.php';
+// the backend value of add_via_api, whose phrases are checked before its save
+include_once html_paths::MODEL_VALUE . 'value_base.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
@@ -70,6 +72,7 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
@@ -775,9 +778,15 @@ class db_object extends TextIdObject
 
     function name(): string|null
     {
-        $msg = 'ERROR:  name not overwritten by ' . $this::class;
-        log_warning($msg);
-        return $this->id;
+        $result = '';
+        // a page without an object e.g. the about page uses this base object as placeholder, which has no name,
+        // so only a child class that misses its own name is an error
+        if ($this::class != self::class) {
+            $msg = 'ERROR:  name not overwritten by ' . $this::class;
+            log_err($msg);
+            $result = $this->id;
+        }
+        return $result;
     }
 
     function get_description(): string
@@ -938,6 +947,11 @@ class db_object extends TextIdObject
         // so the backend object created below is owned by the user of this message
         $usr_msg_db = $map->convertMsgToDb($msg);
         $db_obj = $map->convertToDb($this, $usr_msg_db);
+        // the group of a new value is built from the phrase ids of the url, which the database cannot check
+        // by a foreign key, so they are checked before the save, which itself never loads (see coding.md)
+        if ($db_obj instanceof value_base and !$db_obj->phrases_in_db($usr_msg_db)) {
+            return $map->convertMsgToUi($usr_msg_db);
+        }
         $add_result = $db_obj->save($usr_msg_db);
         // take over the id assigned by the backend save, so the caller can show the added
         // object by its id (see frontend::action_crud)

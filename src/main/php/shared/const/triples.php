@@ -77,6 +77,7 @@ class triples
     const string MAX_CHANGES = 'max changes';
     const string MAX_COLUMNS = 'max columns';
     const string MAX_DELAY = 'max delay';
+    const string MAX_ERRORS = 'max errors';
     const string MAX_LEVELS = 'max levels';
     const string MAX_LIFETIME = 'max lifetime';
     const string MAX_LOGIN = 'max login';
@@ -141,7 +142,7 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 140;
+    const int SYSTEM_CONFIG_ID = 171;
     // the keys of config.yaml above all settings, which are also phrases of each config value
     const array CONFIG_ROOT = [words::THIS_SYSTEM, self::SYSTEM_CONFIG];
     // the settings of the pod below this path can only be changed by an admin (see value_base::is_pod_setting_denied)

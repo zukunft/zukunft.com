@@ -316,24 +316,9 @@ class ip_range extends db_object_seq_id
     {
         global $db_con;
 
+        // the mapper reads each field with key_exists and turns the active flag into a bool, so that e.g. "false"
+        // of a json file is no active range; reset of object not needed, because the caller has just created it
         $this->import_mapper($in_ex_json, $msg);
-
-        // reset of object not needed, because the calling function has just created the object
-        // TODO Prio 0 switch to a key_exists
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == ip_range_db::FLD_FROM) {
-                $this->from = $value;
-            }
-            if ($key == ip_range_db::FLD_TO) {
-                $this->to = $value;
-            }
-            if ($key == ip_range_db::FLD_REASON) {
-                $this->reason = $value;
-            }
-            if ($key == ip_range_db::FLD_ACTIVE) {
-                $this->active = $value;
-            }
-        }
 
         // save the ip range in the database
         if ($db_con->is_open()) {

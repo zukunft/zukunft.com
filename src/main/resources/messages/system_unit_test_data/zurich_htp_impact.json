@@ -142,26 +142,31 @@
     {
       "words": [ "city of Zurich", "impact weighted reach" ],
       "number": "22152",
+      "formula": "impact weighted reach calculation",
       "context": [ "city of Zurich", "person influenced", "city of Zurich", "impact factor on HTP" ]
     },
     {
       "words": [ "canton of Zurich", "impact weighted reach" ],
       "number": "32400",
+      "formula": "impact weighted reach calculation",
       "context": [ "canton of Zurich", "person influenced", "canton of Zurich", "impact factor on HTP" ]
     },
     {
       "words": [ "city of Zurich workplaces", "impact weighted reach" ],
       "number": "49000",
+      "formula": "impact weighted reach calculation",
       "context": [ "city of Zurich workplaces", "person influenced", "city of Zurich workplaces", "impact factor on HTP" ]
     },
     {
       "words": [ "Zurich Insurance", "impact weighted reach" ],
       "number": "22500",
+      "formula": "impact weighted reach calculation",
       "context": [ "Zurich Insurance", "person influenced", "Zurich Insurance", "impact factor on HTP" ]
     },
     {
       "words": [ "average impact weighted reach" ],
       "number": "31513",
+      "formula": "average impact weighted reach calculation",
       "context": [ "city of Zurich", "impact weighted reach", "canton of Zurich", "impact weighted reach", "city of Zurich workplaces", "impact weighted reach", "Zurich Insurance", "impact weighted reach" ]
     }
   ]

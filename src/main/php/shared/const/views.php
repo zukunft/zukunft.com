@@ -592,6 +592,8 @@ class views
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
+    // the child of the view relation write test, because both linked views are added and removed by the test
+    const string TEST_CHILD_NAME = 'System Test View Child';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
@@ -627,7 +629,8 @@ class views
         self::TEST_RENAMED_NAME,
         self::TEST_COMPLETE_NAME,
         self::TEST_EXCLUDED_NAME,
-        self::TEST_TABLE_NAME
+        self::TEST_TABLE_NAME,
+        self::TEST_CHILD_NAME
     );
 
     // array of view names that used for db read testing and that should not be renamed
@@ -655,7 +658,8 @@ class views
         self::TEST_RENAMED_NAME,
         self::TEST_COMPLETE_NAME,
         self::TEST_EXCLUDED_NAME,
-        self::TEST_TABLE_NAME
+        self::TEST_TABLE_NAME,
+        self::TEST_CHILD_NAME
     );
 
     const array TEST_VIEWS_AUTO_CREATE = array(
@@ -1354,8 +1358,8 @@ class views
         self::LOGIN_ACTIVATE_ID,
     ];
 
-    // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
-    // list of views where the id or the code is used for system testing
+    // list of views where the id or the code is used for system testing,
+    // as a map from the id to the code id for code_id_to_id and id_to_code_id
     const array TEST_VIEW_IDS = [
         self::START_ID => self::START_CODE,
         self::WORD_ADD_DETAIL_ID => self::WORD_ADD_DETAIL,

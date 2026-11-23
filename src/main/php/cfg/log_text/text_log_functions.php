@@ -278,6 +278,8 @@ function log_warning(string  $msg_text,
     );
 }
 
+// TODO Prio 1 rename to log_err_without_msg because this should be the exception
+// TODO Prio 2 add function description
 function log_err(string $msg_text,
                  string $function_name = '',
                  string $msg_description = '',
@@ -422,6 +424,7 @@ function log_link_count(): int
 }
 
 /**
+ * TODO Prio 1 review / rename and add samples
  * take out the link that a log call has added after the given count, because the caller reports the error itself
  * @param int $link_count the number of the kept log links before the log call
  * @return void
@@ -437,6 +440,7 @@ function log_take_reported(int $link_count): void
 
 /**
  * log an error message and inform the user about the error
+ * TODO Prio 1 rename this to log_err because this should be the default log_err function and not log_err_without_msg
  * TODO Prio 1 use this if even possible
  * TODO Prio 1 limit the number of error message
  * @param string $msg_txt the error message text
@@ -668,6 +672,21 @@ function critical_error_html(string $msg_text): string
 }
 
 /**
+ * @return string the line below a critical error that tells the user that the admin is informed,
+ *                empty if the translator is not yet created e.g. at the bootstrap
+ */
+function admin_informed_text(): string
+{
+    global $mtr;
+    $result = '';
+    // the log writer must never end in a fatal, so without the translator the line is skipped
+    if ($mtr != null) {
+        $result = $mtr->txt(msg_id::INTERNAL_ADMIN_INFORMED);
+    }
+    return $result;
+}
+
+/**
  * cross-request throttle for the sys_log inserts: allow at most text_log::INSERT_LIMIT inserts
  * per text_log::INSERT_WINDOW_SEC counted over all requests in a small json state file, so a
  * flood of requests each logging a distinct error cannot grow the sys_log table unbounded and
@@ -725,8 +744,8 @@ function sys_log_insert_allowed(
 }
 
 /**
- * write a log message to the database and return the message that should be shown to the user
- * with the link for more details and to trace the resolution process
+ * write a log message to the database and return the message that should be shown to the user,
+ * which tells what went wrong without the sys_log id (pending_prio_2.md "## the sys_log id shown to the user")
  * used also for system messages so no debug calls from here to avoid loops
  *
  * @param string $msg_text is a short description used to group and limit the number of error messages
@@ -736,7 +755,6 @@ function sys_log_insert_allowed(
  * @param string $trace is the complete system trace to get more details
  * @param user|null $usr is the user who has probably seen the error message
  * @return string the text that can be shown to the user in the navigation bar
- * TODO Prio 2 return the link to the log message so that the user can trace the bug fixing
  * TODO Prio 2 check that log_msg is never called from any function used here
  */
 function log_msg(string  $msg_text,
@@ -846,21 +864,19 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                $ref = '';
-                if ($sys_log->id > 0) {
-                    $html = new html_base();
-                    $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID
-                        . url_var::ADD . url_var::ID . url_var::EQ . $sys_log->id;
-                    $url = THIS_URL . $url_rel;
-                    $ref = $html->ref($url_rel, $url);
-                }
+                // the user is told what went wrong, also with the sql and the error (docs/llm/structure.md), and
+                // that the admin is informed, but never the sys_log id (docs/llm/pending_prio_2.md "## the sys_log
+                // id shown to the user"); escaped once where it is shown, because the text can contain request
+                // derived values (xss)
                 if (log_in_api_answer()) {
-                    // the echo would stand in front of the json, so the api answer sends the link (controller::with_internal_errors)
-                    $result = $ref;
+                    // the echo would stand in front of the json, so the api answer sends the text (controller::with_internal_errors);
+                    // unescaped, because json is no html and the frontend escapes it when it shows it (html_base::dsp_notification),
+                    // so that e.g. a quoted name is shown with quotes and not with &quot;
+                    $result = $msg_text;
                 } else {
                     echo_timestamped(critical_error_html($msg_text));
-                    if ($ref != '') {
-                        echo_timestamped('You can track the solving of the error with this link: ' . $ref . '<br>');
+                    if ($sys_log->id > 0) {
+                        echo_timestamped(admin_informed_text() . '<br>');
                     }
                 }
             } else {

@@ -1132,6 +1132,18 @@ class lib_tests
         $result = $lib->csv_clear_col($csv, 'email');
         $t->assert($test_name, $result, ["id,password\n", "1,secret\n"]);
 
+        // the rows with one of the given values in the named column are removed
+        $test_name = 'csv_remove_rows';
+        $csv = ["user_id,user_name\n", "1,system\n", "14,::1\n", "15,127.0.0.1\n"];
+        $result = $lib->csv_remove_rows($csv, 'user_name', ['::1', '127.0.0.1']);
+        $t->assert($test_name, $result, ["user_id,user_name\n", "1,system\n"]);
+
+        // negative: a column that is not in the header changes nothing
+        $test_name = 'csv_remove_rows unknown column';
+        $csv = ["user_id,user_name\n", "14,::1\n"];
+        $result = $lib->csv_remove_rows($csv, 'ip_address', ['::1']);
+        $t->assert($test_name, $result, ["user_id,user_name\n", "14,::1\n"]);
+
         // a value with the delimiter is enclosed and the quote is doubled
         $test_name = 'csv_field';
         $result = $lib->csv_field('a,"b"');
@@ -2211,6 +2223,17 @@ class lib_tests
         $test_name = 'php_code_use_sorted without use line';
         $result = $lib->php_code_use_sorted($code_inc);
         $t->assert($test_name, $result, []);
+
+        // the callers of an internal error e.g. of an empty phrase list, without the library itself
+        $test_name = 'caller_chain names the calling test function';
+        $result = library::caller_chain();
+        $t->assert_text_contains($test_name, $result, 'lib_tests->run@');
+        $test_name = '... but not the library';
+        $t->assert_text_not_contains($test_name, $result, 'library->');
+        // negative: the calls of the skipped class are not named e.g. the internal calls of sql_db
+        $test_name = 'caller_chain without the skipped class';
+        $result = library::caller_chain(self::class);
+        $t->assert_text_not_contains($test_name, $result, 'lib_tests->');
 
         // a use line is converted to the matching include line
         $test_name = 'php_code_use_converted';

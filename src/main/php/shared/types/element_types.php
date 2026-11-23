@@ -37,7 +37,7 @@ class element_types
     // list of the element types that have a coded functionality
     const string WORD_SELECTOR = "word";
     const int WORD_SELECTOR_ID = 1;
-    const string WORD_SELECTOR_NAME = "Word selector";
+    const string WORD_SELECTOR_NAME = "word";
     const string WORD_SELECTOR_COM = 'a reference to a word used to select values using "and"';
     const string WORD_RESULT = "word_result";
     const string VERB_SELECTOR = "verb";

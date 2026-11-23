@@ -61,7 +61,6 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -239,14 +238,6 @@ class api_tests
         $t->assert_api_chg_list(word::class,word_names::MATH_ID);
         $t->assert_api_chg_list(word::class,word_names::MATH_ID, change_fields::FLD_WORD_NAME);
 
-        // TODO Prio 0 fix or check and activate
-        /*
-        $t->assert_api_get_list(
-            sys_log_list::class,
-            [1, 2], url_var::ID_LST,
-            'sys_log_list_api',
-            true);
-        */
         // the admin dashboard of the own frontend gets the system log only for an admin
         $t->assert_api_sys_log_list_admin_only();
 

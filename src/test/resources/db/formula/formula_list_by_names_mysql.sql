@@ -11,6 +11,7 @@ PREPARE formula_list_by_names FROM
                IF(u.all_values_needed IS NULL, s.all_values_needed, u.all_values_needed) AS all_values_needed,
                IF(u.last_update       IS NULL, s.last_update,       u.last_update)       AS last_update,
                IF(u.view_id           IS NULL, s.view_id,           u.view_id)           AS view_id,
+               IF(u.`usage`           IS NULL, s.`usage`,           u.`usage`)           AS `usage`,
                IF(u.impact            IS NULL, s.impact,            u.impact)            AS impact,
                IF(u.excluded          IS NULL, s.excluded,          u.excluded)          AS excluded,
                IF(u.share_type_id     IS NULL, s.share_type_id,     u.share_type_id)     AS share_type_id,

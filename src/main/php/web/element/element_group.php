@@ -227,8 +227,9 @@ class element_group extends ListBase
             $val_phr_lst->set_lst($val_phr_lst_sort);
 
             //asort($val_phr_lst);
-            $val_phr_grp = $val_phr_lst->get_grp_id();
-            log_debug('words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id());
+            // an empty list has no group, which get_grp_id reports
+            $val_phr_grp = $val_phr_lst->get_grp_id($msg);
+            log_debug('words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp?->id());
 
             // try to get a normal value set by the user directly for the phrase list
             // display the word group value and offer the user to change it

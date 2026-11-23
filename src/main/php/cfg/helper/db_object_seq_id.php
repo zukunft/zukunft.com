@@ -929,13 +929,9 @@ class db_object_seq_id extends db_object
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
-        $row_empty = $this->clone_all();
-        if ($sc_par_lst_used->no_log()) {
-            // if the changes are not added to the change log that user must be part of the changed fields
-            $row_empty->reset();
-        } else {
-            $row_empty->reset(true);
-        }
+        // if the changes are not added to the change log that user must be part of the changed fields;
+        // via clone_reset, because e.g. a triple would else first clone its linked phrases (see sandbox_link::clone_all)
+        $row_empty = $this->clone_reset(!$sc_par_lst_used->no_log());
         if ($sc_par_lst_used->do_log()) {
             return $this->sql_write($sc, $row_empty, $msg, $sc_par_lst_used);
         } else {

@@ -37,9 +37,9 @@ enum sys_log_functions: string
 
     // list of system log functions used for unit testing
     const string IMPORT_BASE_CONFIG = "import_base_config";
-    const int IMPORT_BASE_CONFIG_ID = 1;
+    const int IMPORT_BASE_CONFIG_ID = 3; // the row id of db_code_links/sys_log_functions.csv
     const string IMPORT_BASE_CONFIG_NAME = "Import system configuration";
-    const string IMPORT_BASE_CONFIG_COM = "import all zukunft.com base configuration json files";
+    const string IMPORT_BASE_CONFIG_COM = "Import the default system and user configuration";
     const string IMPORT_POD_CONFIG = "import_test_config";
     const string IMPORT_POD_CONFIG_NAME = "Import pod configuration";
     const string IMPORT_TEST_CONFIG = "import_test_config";

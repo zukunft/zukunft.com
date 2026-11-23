@@ -4,7 +4,7 @@ PREPARE phrase_list_by_verb_up (bigint, bigint) AS
                s.user_id,
                s.phrase_type_id,
                CASE WHEN (u.phrase_name <> ''  IS NOT TRUE) THEN s.phrase_name   ELSE u.phrase_name   END AS phrase_name,
-               CASE WHEN (u.description <> ''  IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
+               CASE WHEN (u.description        IS     NULL) THEN s.description   ELSE u.description   END AS description,
                CASE WHEN (u.usage              IS     NULL) THEN s.usage         ELSE u.usage         END AS usage,
                CASE WHEN (u.impact             IS     NULL) THEN s.impact        ELSE u.impact        END AS impact,
                CASE WHEN (u.excluded           IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
@@ -12,6 +12,8 @@ PREPARE phrase_list_by_verb_up (bigint, bigint) AS
                CASE WHEN (u.protect_id         IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
           FROM phrases s
      LEFT JOIN user_phrases u ON s.phrase_id = u.phrase_id
-                             AND u.user_id = $1
-         WHERE s.phrase_id IN (SELECT to_phrase_id FROM triples WHERE verb_id = $2
-           AND COALESCE(excluded, 0) = 0) ORDER BY s.usage DESC, phrase_name;
+                             AND u.user_id = $1 WHERE s.phrase_id IN (SELECT to_phrase_id FROM triples
+         WHERE verb_id = $2
+           AND COALESCE(excluded, 0) = 0)
+      ORDER BY s.usage     DESC,
+               phrase_name;

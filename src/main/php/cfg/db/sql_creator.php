@@ -5895,6 +5895,11 @@ class sql_creator
             $as = $field;
         }
         if ($this->db_type == sql_db::POSTGRES) {
+            // an empty description of a user row is the overwrite that clears the standard description,
+            // so only null shows the standard text, like for every text field in mysql
+            if ($field_format == sql_db::FLD_FORMAT_TEXT and $field == fields::FLD_DESCRIPTION) {
+                $field_format = sql_db::FLD_FORMAT_VAL;
+            }
             if ($field_format == sql_db::FLD_FORMAT_TEXT) {
                 $result = " "
                     . sql::CASE . " (" . $usr_tbl . "." . $field . " <> '' " . sql::NOT_TRUE . ") "

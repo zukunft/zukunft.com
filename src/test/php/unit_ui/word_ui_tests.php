@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_rank;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -772,6 +774,17 @@ class word_ui_tests
         $test_name = 'the stock with the lowest market capitalisation is last';
         $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ZURICH, triple_names::COMPANY_VESTAS);
 
+        $t->subheader($ts . 'ranking by impact');
+        $test_name = 'the ranking lists the stock with the highest market capitalisation first';
+        $rank = new ui_rank();
+        $rank_html = $rank->ranking_list($msg, $wrd_company_rel);
+        $t->assert_text_order($test_name, $rank_html, triple_names::COMPANY_ABB, triple_names::COMPANY_VESTAS);
+        // negative: a word without related phrases has nothing to rank
+        $test_name = 'a word without related phrases ranks nothing';
+        $t->assert($test_name, $rank->ranking_list($msg, $wrd_zh), '');
+        $test_name = 'the ranking names the impact as its criterion';
+        $t->assert($test_name, $rank->ranking_parameters(), $mtr->txt(msg_id::RANKING_BY_IMPACT));
+
         $t->subheader($ts . 'related values sorted by impact');
         $val_html = $list->values_by_word($wrd_zh, $msg, $dto);
         $test_name = 'the value of the phrase with the highest impact is shown first';
@@ -932,6 +945,146 @@ class word_ui_tests
         // negative: a new word has no id yet, so the simple add form never posts one
         $test_name = 'the simple add form does not post an id';
         $t->assert_text_not_contains($test_name, $simple_form->form_word_add_simple(), 'name="' . url_var::ID . '"');
+
+        // the add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
+        $t->subheader($ts . 'add word suggestions');
+        $is_a_id = $cfg->vrb->id(verbs::IS);
+        $city_row = [url_var::ACTION => url_var::CRUD_CREATE, url_var::VERB => $is_a_id, url_var::PHRASE_TO => word_names::CITY];
+        $test_name = 'a triple row is read back from its url';
+        $trp_rows = [1 => $city_row];
+        $trp_url = url_var::ref_row_url_array($trp_rows, [], url_var::TRIPLE_ROW);
+        $t->assert($test_name, url_var::triple_rows($trp_url), $trp_rows);
+        $test_name = '... but never as a reference row';
+        $t->assert($test_name, url_var::ref_rows($trp_url), []);
+        // negative: a triple cannot exist without its to phrase
+        $test_name = 'an add row without to phrase is no triple row';
+        $no_to = [1 => [url_var::ACTION => url_var::CRUD_CREATE, url_var::VERB => $is_a_id]];
+        $t->assert($test_name, url_var::triple_rows(url_var::ref_row_url_array($no_to, [], url_var::TRIPLE_ROW)), []);
+        $test_name = 'the written triple row is removed, but a reference row with the same number is kept';
+        $ref_row_url = url_var::ref_row_url_array([1 => [url_var::ACTION => url_var::CRUD_CREATE]]);
+        $both_url = array_merge($trp_url, $ref_row_url);
+        $t->assert($test_name, url_var::without_ref_row($both_url, 1, url_var::TRIPLE_ROW), $ref_row_url);
+        $t_ref = new test_refs($t);
+        $add_url = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::NAME => word_names::CITY,
+            url_var::STEP => url_var::STEP_CONFIRM];
+        $sug_wrd = new word();
+        $sug_wrd->set_description(word_names::MATH_COM);
+        $sug_wrd->ref_lst = $t_ref->ref_list_math_wikipedia_ui();
+        $sug_wrd->suggested_parents = [word_names::CITY];
+        $sug_step = 'get data from wikipedia ' . word_names::CITY;
+        $sug_wrd->suggest_steps = [$sug_step];
+        $sug_msg = new user_message();
+        $sug_url = $sug_wrd->url_with_suggestions($add_url, $sug_msg);
+        $test_name = 'the suggestions open the add view and not the confirm page';
+        $t->assert_false($test_name, array_key_exists(url_var::STEP, $sug_url));
+        $test_name = '... with the description of wikipedia';
+        $t->assert($test_name, $sug_url[url_var::DESCRIPTION] ?? '', word_names::MATH_COM);
+        $test_name = '... with a reference row of each suggested reference';
+        $t->assert($test_name, count(url_var::ref_rows($sug_url)), $sug_wrd->ref_lst->count());
+        $test_name = '... and an "is a" triple row of each suggested parent';
+        $t->assert($test_name, url_var::triple_rows($sug_url), $trp_rows);
+        // the steps are shown only below the loading text while the data is collected
+        $test_name = '... without the steps of the collection and without an info that a suggestion is missing';
+        $t->assert($test_name, $sug_msg->get_last_info_html(), '');
+        // negative: a description that the user has entered already is never replaced
+        $test_name = 'the suggestions never replace an entered description';
+        $own_url = array_merge($add_url, [url_var::DESCRIPTION => word_names::TEST_ADD_COM]);
+        $own_sug_url = $sug_wrd->url_with_suggestions($own_url, new user_message());
+        $t->assert($test_name, $own_sug_url[url_var::DESCRIPTION] ?? '', word_names::TEST_ADD_COM);
+        // negative: without suggestions the add view gets only the name and the user is told why
+        $test_name = 'without suggestions the add view has no reference and no triple row';
+        $none_msg = new user_message();
+        $none_url = new word()->url_with_suggestions($add_url, $none_msg);
+        $t->assert($test_name, url_var::ref_rows($none_url) + url_var::triple_rows($none_url), []);
+        $test_name = '... and tells the user that the backend has sent no suggestions';
+        $no_answer = $lib->msg_var_text([[msg_id::SUGGEST_NO_ANSWER, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $t->assert($test_name, $none_msg->get_last_info_html(), $html->esc($no_answer));
+        // negative: an answer with steps but without results names what has not been found
+        $test_name = 'an answer without a description and a group tells what has not been found, but not the steps';
+        $found_none = new word();
+        $found_none->suggest_steps = [$sug_step];
+        $found_msg = new user_message();
+        $found_none->url_with_suggestions($add_url, $found_msg);
+        $no_wiki = $lib->msg_var_text([[msg_id::SUGGEST_WIKIPEDIA_MISSING, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $no_parent = $lib->msg_var_text([[msg_id::SUGGEST_PARENTS_MISSING, [msg_id::VAR_NAME => word_names::CITY]]], $mtr);
+        $found_lines = implode('<' . html_base::BR . '>', [$html->esc($no_wiki), $html->esc($no_parent)]);
+        $t->assert($test_name, $found_msg->get_last_info_html(), $found_lines);
+        $test_name = '... but the add of the word is still possible';
+        $t->assert_true($test_name, $none_msg->is_ok());
+
+        // the add view shows the suggestions as editable rows, so that the user can change or remove them
+        $row_form = new system_form();
+        $add_wrd = new word();
+        $test_name = 'the add view shows the suggested triple as an editable row';
+        $trp_html = $row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $sug_url);
+        $trp_posted = $t->posted_vars($trp_html);
+        $t->assert($test_name, array_column(url_var::triple_rows($trp_posted), url_var::PHRASE_TO), [word_names::CITY]);
+        $test_name = '... with the suggested verb';
+        $t->assert($test_name, (int)(url_var::triple_rows($trp_posted)[1][url_var::VERB] ?? 0), $is_a_id);
+        $test_name = '... where every html id of the rows is unique, because each field is shown in each row';
+        preg_match_all('/ id="([^"]+)"/', $trp_html, $id_matches);
+        $t->assert($test_name, count(array_unique($id_matches[1])), count($id_matches[1]));
+        $test_name = '... and a cleared to phrase removes the suggested triple';
+        $trp_cleared = $trp_posted;
+        $trp_cleared[url_var::TRIPLE_ROW . url_var::PHRASE_TO . 1] = '';
+        $t->assert($test_name, url_var::triple_rows($trp_cleared), []);
+        $test_name = '... and the filled empty row adds an own triple';
+        $trp_own = $trp_posted;
+        $trp_own[url_var::TRIPLE_ROW . url_var::PHRASE_TO . 2] = word_names::TEST_ADD;
+        $own_to = array_column(url_var::triple_rows($trp_own), url_var::PHRASE_TO);
+        $t->assert($test_name, $own_to, [word_names::CITY, word_names::TEST_ADD]);
+        $test_name = '... and the add button shows the filled empty row again with a new empty row';
+        $trp_more = $t->posted_vars($row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $trp_own));
+        $more_to = array_column(url_var::triple_rows($trp_more), url_var::PHRASE_TO);
+        $new_to_var = url_var::TRIPLE_ROW . url_var::PHRASE_TO . 3;
+        $t->assert($test_name, [$more_to, $trp_more[$new_to_var] ?? null], [[word_names::CITY, word_names::TEST_ADD], '']);
+        $test_name = '... where only the empty row has the add button';
+        $add_btn = html_base::VALUE . '="' . url_var::REFRESH_ROWS . '"';
+        $t->assert($test_name, substr_count($trp_html, $add_btn), 1);
+        $test_name = '... and only the suggested triple has an include box, which is checked by default';
+        $box_attr = html_base::TYPE . '="' . html_base::INPUT_CHECKBOX . '"';
+        $box_checked = ' checked';
+        $t->assert($test_name, [substr_count($trp_html, $box_attr), substr_count($trp_html, $box_checked)], [1, 1]);
+        // the browser posts no value for a cleared box, so the hidden delete action before it stays
+        $test_name = '... and its cleared include box excludes the suggested triple';
+        $trp_removed = $t->posted_vars(preg_replace('/' . $box_checked . '/', '', $trp_html, 1));
+        $t->assert($test_name, url_var::triple_rows($trp_removed), []);
+        $test_name = '... also from the add view that is shown again';
+        $trp_again = $t->posted_vars($row_form->form_triple_rows($add_wrd, views::WORD_ADD_DETAIL, null, $trp_removed));
+        $t->assert($test_name, url_var::triple_rows($trp_again), []);
+        // negative: only the add of a word writes the triple rows (see frontend::action_crud)
+        $test_name = 'an object that is not a word gets no triple rows';
+        $sug_ref = $sug_wrd->ref_lst->lst()[0];
+        $t->assert($test_name, $row_form->form_triple_rows($sug_ref, views::WORD_ADD_DETAIL, null, $sug_url), '');
+        $test_name = 'the add view shows each suggested reference as an editable row';
+        $ref_html = $row_form->form_ref_rows($add_wrd, views::WORD_ADD_DETAIL, $msg, null, $sug_url, true);
+        $ref_posted = $t->posted_vars($ref_html);
+        $sug_keys = array_column(url_var::ref_rows($sug_url), url_var::EXTERNAL_KEY);
+        $t->assert($test_name, array_column(url_var::ref_rows($ref_posted), url_var::EXTERNAL_KEY), $sug_keys);
+        $test_name = '... and a cleared external key removes the suggested reference';
+        $ref_cleared = $ref_posted;
+        $ref_cleared[url_var::REF_ROW . url_var::EXTERNAL_KEY . 1] = '';
+        $t->assert($test_name, count(url_var::ref_rows($ref_cleared)), count($sug_keys) - 1);
+        $test_name = '... without the description and the source, which only the hidden rows of the suggestion post';
+        $first_fields = [url_var::REF_ROW . url_var::DESCRIPTION . 1, url_var::REF_ROW . url_var::SOURCE . 1];
+        $t->assert($test_name, array_intersect_key($ref_posted, array_flip($first_fields)), []);
+        $test_name = '... where only the empty row has the add button';
+        $t->assert($test_name, substr_count($ref_html, $add_btn), 1);
+        $test_name = '... and each suggested reference a checked include box';
+        $ref_boxes = [substr_count($ref_html, $box_attr), substr_count($ref_html, $box_checked)];
+        $t->assert($test_name, $ref_boxes, [count($sug_keys), count($sug_keys)]);
+        $test_name = '... whose cleared box excludes the suggested reference with its hidden description';
+        $ref_first_cleared = $t->posted_vars(preg_replace('/' . $box_checked . '/', '', $ref_html, 1));
+        $ref_removed = array_merge($sug_url, $ref_first_cleared);
+        $t->assert($test_name, count(url_var::ref_rows($ref_removed)), count($sug_keys) - 1);
+        $test_name = '... also from the add view that is shown again';
+        $ref_again_html = $row_form->form_ref_rows($add_wrd, views::WORD_ADD_DETAIL, $msg, null, $ref_removed, true);
+        $t->assert($test_name, count(url_var::ref_rows($t->posted_vars($ref_again_html))), count($sug_keys) - 1);
+        // negative: the delete of a stored reference has its id and is still a change of the edit view
+        $test_name = 'the delete of a stored reference is still a reference row';
+        $stored_del = url_var::ref_row_url_array([1 => [url_var::ACTION => url_var::CRUD_DELETE, url_var::REF => 1]]);
+        $t->assert($test_name, count(url_var::ref_rows($stored_del)), 1);
+        $msg->reset();
 
         $t->subheader($ts . 'url mapper');
 

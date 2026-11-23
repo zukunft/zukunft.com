@@ -7,6 +7,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_CONST . 'components.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -27,7 +30,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
@@ -54,8 +60,14 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_tests
 {
+    // the levels of the nested triple of the fill test: 2^8 fills take milliseconds, but the 4^8
+    // fills of a fill that repeats the from and to fill on each level exceed the time limit
+    const int FILL_DEPTH = 8;
+
     function run(test_cleanup $t): void
     {
+        global $sys;
+
         $msg = new user_message();
 
 
@@ -146,7 +158,6 @@ class triple_tests
         $t->assert_link_guard($sc, $trp, ['from' => $trp_from, 'verb' => $trp_verb, 'to' => $trp_to]);
 
         $t->subheader($ts . 'sql delete');
-        // TODO Prio 0 activate db write
         $t->assert_sql_delete($sc, $trp);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
         // is covered already by the horizontal tests
@@ -350,6 +361,99 @@ class triple_tests
         $trp_ren->fill($trp_db, $t->usr1);
         $test_name = 'the fill of a renamed triple does not take over the old given name';
         $t->assert_null($test_name, $trp_ren->name_given());
+        // the from and to phrases are filled once per level, so that a nested triple e.g. of an
+        // XBRL import is filled in a time that grows with its triples and not with 4^depth
+        $test_name = 'the fill of a nested triple reaches the deepest triple within the time limit';
+        $trp_db = $t_trp->triple_nested(self::FILL_DEPTH);
+        $trp_req = $t_trp->triple_nested(self::FILL_DEPTH);
+        $deepest = $trp_req;
+        for ($lvl = 1; $lvl < self::FILL_DEPTH; $lvl++) {
+            $deepest = $deepest->get_from()->obj();
+        }
+        $deepest->description = null;
+        $trp_req->fill($trp_db, $t->usr1);
+        $t->assert($test_name, $deepest->description, triple_names::MATH_CONST_COM);
+
+        // the no update import fills a clone of each import triple (see sandbox_list_named::update),
+        // so the clone has its own from and to phrases and the fill never changes the original
+        $test_name = 'the fill of a cloned triple fills the from triple of the clone';
+        $trp_org = $t_trp->triple_nested(2);
+        $from_org = $trp_org->get_from()->obj();
+        $from_org->description = null;
+        $trp_cpy = $trp_org->clone_all();
+        $trp_cpy->fill($t_trp->triple_nested(2), $t->usr1);
+        $t->assert($test_name, $trp_cpy->get_from()->obj()->description, triple_names::MATH_CONST_COM);
+        // negative: the from triple of the original is the one of other import triples, so it keeps its empty field
+        $test_name = '... but not the from triple of the original';
+        $t->assert($test_name, $from_org->description ?? '', '');
+
+        $t->subheader($ts . 'import of an excluded triple');
+        // the undo import names the triple to delete only by its name (see triples_undo.json),
+        // so the generated name of the missing from and to must not replace the name
+        $test_name = 'the import of an excluded triple without from and to keeps the name';
+        $trp = new triple($t->usr1);
+        $trp->import_mapper([
+            json_fields::NAME => triple_names::SYSTEM_TEST_ADD,
+            json_fields::EXCLUDED => true
+        ], $msg);
+        $t->assert($test_name, $trp->name(true), triple_names::SYSTEM_TEST_ADD);
+        // negative: the excluded triple is nevertheless hidden by the name without the excluded
+        $test_name = '... but the name without the excluded is empty';
+        $t->assert($test_name, $trp->name(), '');
+        $msg->reset();
+
+        // the mapping does not write to the database, so a new verb is saved by import_obj or with the data object
+        $t->subheader($ts . 'import of a new verb');
+        $test_name = 'the import of a triple with a new verb sets the verb';
+        $trp = new triple($t->usr1);
+        $vrb_dto = new data_object($t->usr1);
+        $trp->import_mapper([
+            json_fields::EX_FROM => word_names::MATH,
+            json_fields::EX_VERB => verbs::TEST_ADD_NAME,
+            json_fields::EX_TO => word_names::PI
+        ], $msg, $vrb_dto);
+        $trp_vrb_name = $trp->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        $test_name = '... and adds it to the data object for the save before the triples';
+        $dto_vrb_name = $vrb_dto->verb_list()->get_by_name(verbs::TEST_ADD_NAME)?->name();
+        $t->assert($test_name, $dto_vrb_name, verbs::TEST_ADD_NAME);
+        // negative: the mapping has not saved the verb
+        $test_name = '... but does not save it';
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert_null($test_name, $trp_vrb_id);
+        $test_name = '... and a second triple with the same new verb shows the verb';
+        $trp_2 = new triple($t->usr1);
+        $trp_2->import_mapper([
+            json_fields::EX_FROM => word_names::PI,
+            json_fields::EX_VERB => verbs::TEST_ADD_NAME,
+            json_fields::EX_TO => word_names::MATH
+        ], $msg, $vrb_dto);
+        $trp_vrb_name = $trp_2->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        $test_name = '... and uses the same verb, so the data object saves it once';
+        $dto_vrb_count = $vrb_dto->verb_list()->count();
+        $t->assert($test_name, $dto_vrb_count, 1);
+        $msg->reset();
+        // negative: a verb that is not yet saved gives the triple no verb id
+        $test_name = 'the verb id of a new verb is not set before the verb is saved';
+        $trp->fill_new_verb();
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert_null($test_name, $trp_vrb_id);
+        // the save of the data object gives the verb its id, which is simulated here without database
+        $test_name = '... but after the save of the verb the triple has its id';
+        // without the verb in the data object the assert below reports the missing id instead of a fatal
+        $dto_vrb = $vrb_dto->verb_list()->get_by_name(verbs::TEST_ADD_NAME);
+        if ($dto_vrb != null) {
+            $dto_vrb->id = verbs::TEST_ADD_ID;
+        }
+        $trp->fill_new_verb();
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert($test_name, $trp_vrb_id, verbs::TEST_ADD_ID);
+        $test_name = '... and finds the verb in the verb cache by its id';
+        $trp_vrb_name = $trp->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        // the verb cache is shared by all unit tests, so the verb added by fill_new_verb is removed again
+        $sys->typ_lst->vrb->unset_by_id(verbs::TEST_ADD_ID);
 
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();
@@ -491,6 +595,42 @@ class triple_tests
         $t->assert_text_contains($test_name, $form->form_field_weight($t_trp->triple_impact_ui()), 'value="0.5"');
         $test_name = 'the edit form of a triple without a weight starts with an empty weight field';
         $t->assert_false($test_name, str_contains($form->form_field_weight($t_trp->swiss_franc_ui()), 'value='));
+
+        // the edit form shows the from phrase, the verb and the to phrase of the triple read only,
+        // because a changed link would be another triple, and posts their ids unchanged
+        $trp_named = test_triples::triple_add(
+            test_words::word_add()->phrase(), test_verbs::verb_part(), test_words::word_add_to()->phrase());
+        $trp_named_ui = new triple_ui($trp_named->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+        $no_suggestions = new phrase_list_ui();
+        $test_name = 'the triple edit form shows the from phrase read only';
+        $from_html = $form->form_phrase($trp_named_ui, views::TRIPLE_EDIT, $msg_ui,
+            components::FORM_PHRASE_FROM_CODE_ID, $no_suggestions, true);
+        $t->assert_text_contains($test_name, $from_html, 'value="' . word_names::TEST_ADD . '" readonly');
+        $test_name = '... and posts the id of the from phrase unchanged';
+        $t->assert_text_contains($test_name, $from_html,
+            'name="' . url_var::PHRASE_FROM . '" value="' . word_names::TEST_ADD_ID . '"');
+        $test_name = '... and the to phrase';
+        $to_html = $form->form_phrase($trp_named_ui, views::TRIPLE_EDIT, $msg_ui,
+            components::FORM_PHRASE_TO_CODE_ID, $no_suggestions, true);
+        $t->assert_text_contains($test_name, $to_html, 'value="' . word_names::TEST_ADD_TO . '" readonly');
+        $test_name = '... and the verb';
+        $vrb_html = $form->form_verb($trp_named_ui, views::TRIPLE_EDIT, $msg_ui, null);
+        $t->assert_text_contains($test_name, $vrb_html, 'value="' . verbs::PART_NAME . '" readonly');
+        $test_name = '... and posts the id of the verb unchanged';
+        $t->assert_text_contains($test_name, $vrb_html, 'name="' . url_var::VERB . '" value="' . verbs::PART_ID . '"');
+        // negative: a triple without its verb, e.g. a test render of a triple known only by its id,
+        // offers the verb selection like the from and to phrase, so it never posts the verb 0
+        global $ui_sys;
+        $test_name = 'the triple edit form of a triple without verb offers the verb selection';
+        $no_vrb_html = $form->form_verb(new triple_ui(), views::TRIPLE_EDIT, $msg_ui, $ui_sys->typ_lst_cache);
+        $t->assert_text_not_contains($test_name, $no_vrb_html, html_base::READONLY);
+        // negative: the add form of a new triple has no from phrase to preselect and offers the selection
+        $test_name = 'the triple add form starts with an empty from phrase';
+        $add_html = $form->form_phrase(new triple_ui(), views::TRIPLE_ADD, $msg_ui,
+            components::FORM_PHRASE_FROM_CODE_ID, $no_suggestions, true);
+        $t->assert_text_not_contains($test_name, (string)strstr($add_html, '<datalist', true), 'value=');
+        $test_name = '... which the user can change';
+        $t->assert_text_not_contains($test_name, $add_html, html_base::READONLY);
 
         // the url array is the inverse of url_mapper, so it carries the linked phrases, the verb and
         // the triple fields that the edit form posts; a field that is not set is left out, so that a

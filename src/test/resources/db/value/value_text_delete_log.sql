@@ -22,4 +22,4 @@ SELECT value_text_delete_log
         3::smallint,
         350::smallint,
         'zukunft.com'::text,
-        '0A-1O+1S+1X+'::text);
+        '0f-2V+2Z+2e+'::text);

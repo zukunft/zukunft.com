@@ -68,6 +68,8 @@ class triple_write_tests
     const float USED_TRIPLE_NUMBER = 3.5;
     // the description that the second user gives the triple of the delete by the owner test
     const string OWNER_CHANGE_COM = 'the description of the second user';
+    // a user id that a test database never gives, because it is the largest 32 bit id
+    const int UNKNOWN_USER_ID = 2147483647;
 
     function run(test_cleanup $t): void
     {
@@ -430,12 +432,30 @@ class triple_write_tests
         $usr2_msg = new user_message($t->usr2);
         $t->subheader('db write triple delete by the owner');
 
-        $test_name = 'the owner removes a triple that another user has changed';
+        $test_name = 'the new owner is written to the standard row';
         $trp = $t_db->test_triple($msg, word_names::TEST_ADD_VIA_FUNC, verbs::IS, word_names::TEST_PARENT);
         $trp_usr2 = new triple($t->usr2);
         $trp_usr2->load_by_id($trp->id(), $usr2_msg);
         $trp_usr2->description = self::OWNER_CHANGE_COM;
         $trp_usr2->save($usr2_msg);
+        $trp_owned = clone $trp;
+        $trp_owned->set_owner($t->usr2->id, $usr2_msg);
+        $trp_std = new triple($t->usr1);
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr2->id);
+        $test_name = '... and the first owner again';
+        $trp_owned->set_owner($t->usr1->id, $usr2_msg);
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr1->id);
+        // negative: a refused owner change leaves the owner of the standard row and of the object unchanged
+        $test_name = 'the owner change to a user who does not exist is refused';
+        $t->assert_false($test_name, $trp_owned->set_owner(self::UNKNOWN_USER_ID, $usr2_msg));
+        $test_name = '... and the standard row keeps its owner';
+        $trp_std->load_standard($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_std->owner_id(), $t->usr1->id);
+        $test_name = '... and the object continues as its owner';
+        $t->assert($test_name, [$trp_owned->owner_id(), $trp_owned->get_user()->id()], [$t->usr1->id, $t->usr1->id]);
+        $test_name = 'the owner removes a triple that another user has changed';
         $trp->del($msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $test_name = '... is removed for the owner';
@@ -483,9 +503,6 @@ class triple_write_tests
         //$t->test_triple(w$msg, ords::TN_VESTAS, verbs::IS_A, TEST_WORD, words::TN_VESTAS, words::TN_VESTAS);
         $t_db->test_triple($msg, word_names::VESTAS, verbs::IS, word_names::COMPANY, triple_names::COMPANY_VESTAS, triple_names::COMPANY_VESTAS);
         $t_db->test_triple($msg, word_names::YEAR_2014, verbs::FOLLOW, word_names::YEAR_2013, triple_names::YEAR_2013_FOLLOW);
-        // TODO Prio 2 check direction
-        // TODO Prio 0 activate
-        //$t_db->test_triple(triple_names::INCOME_TAX, verbs::PART_NAME, triple_names::CASH_FLOW_STATEMENT, triple_names::TAXES_OF_CF);
 
         $t->subheader($ts . 'base phrases');
         $t_db->test_phrase(triple_names::COMPANY_ZURICH, $msg);
@@ -500,14 +517,32 @@ class triple_write_tests
 
     function create_base_times(test_cleanup|a_selected_test $t): void
     {
+        global $sys;
+
         // start the test section (ts)
         $ts = 'db create test words ';
         $t->header($ts);
 
+        // the years around the current year are created as words and each year follows the year before
+        $test_name = 'the time setup creates the word of the current year';
         $this->create_time_setup($t);
+        $t_db = new test_db_load($t);
+        $msg = new user_message($t->usr1);
+        $this_year = date('Y');
+        $prev_year = strval(intval($this_year) - 1);
+        $year_phr = $t_db->load_phrase($this_year, $msg);
+        $t->assert_greater_zero($test_name, $year_phr->id());
+        $test_name = '... which follows the year before';
+        $follow_trp = $t_db->test_triple($msg, $prev_year, verbs::FOLLOW, $this_year, '', '', false);
+        $t->assert_greater_zero($test_name, $follow_trp->id());
+        // negative: only the is and the follow links are created, so e.g. the year before does not contain the year
+        $test_name = '... but is not linked by another verb to the year before';
+        $prev_phr = $t_db->load_phrase($prev_year, $msg);
+        $part_trp = new triple($t->usr1);
+        $part_trp->load_by_link_id($prev_phr->id(), $msg, $sys->verb(verbs::PART)->id(), $year_phr->id());
+        $t->assert($test_name, $part_trp->id(), 0);
     }
 
-    // TODO Prio 0 review
     /**
      * testing functions to create the main time value
      * @param test_cleanup $t

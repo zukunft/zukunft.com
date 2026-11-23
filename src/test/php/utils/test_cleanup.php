@@ -660,6 +660,9 @@ class test_cleanup extends test_api
                 if ($val->load_by_id($val_id, $val_msg) != 0) {
                     $this->del_value($val, $val_msg);
                     $this->assert_msg('value->del test value ' . $val_id, $val_msg, self::TIMEOUT_LIMIT_DB_MULTI);
+                    // the phrases of a workflow value get the same ids in the next run, because the cleanup
+                    // resets the sequences, so the history of the next value would show this delete
+                    $this->cleanup_change_log_of_deleted([$val]);
                 } else {
                     // a test that has removed its value itself may have left the group row behind
                     $this->del_group_row($val_id, $val_msg);
@@ -847,6 +850,7 @@ class test_cleanup extends test_api
      */
     function term_list_for_tests(array $names): term_list
     {
+        global $sys;
 
         $trm_lst = new term_list($this->usr1);
         $pos = 1;
@@ -864,14 +868,14 @@ class test_cleanup extends test_api
 
             // set types of some special terms
             if ($name == formula_names::THIS_NAME) {
-                $trm->obj()->type_cl = formula_type::THIS;
+                $trm->obj()->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
                 $trm->set_obj_id(formula_names::THIS_ID);
                 $wrd = new word($this->usr1);
                 $wrd->set(word_names::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_phr = $wrd->phrase();
             }
             if ($name == formula_names::PRIOR) {
-                $trm->obj()->type_cl = formula_type::PREV;
+                $trm->obj()->type_id = $sys->typ_lst->frm_typ->id(formula_type::PREV);
                 $trm->set_obj_id(formula_names::PRIOR_ID);
                 $wrd = new word($this->usr1);
                 $wrd->set(word_names::PRIOR_ID, formula_type::PREV);

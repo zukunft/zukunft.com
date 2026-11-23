@@ -1,24 +1,24 @@
 {
-    "id": "0A-1O+1P+1X+",
+    "id": "0f-2V+2W+2e+",
     "description": "the geolocation of the initial development of zukunft.com",
     "phrases": [
         {
-            "id": 227,
+            "id": 298,
             "name": "zukunft.com",
             "class": "word"
         },
         {
-            "id": 140,
+            "id": 171,
             "name": "system configuration",
             "class": "triple"
         },
         {
-            "id": 218,
+            "id": 289,
             "name": "pod",
             "class": "word"
         },
         {
-            "id": 219,
+            "id": 290,
             "name": "point",
             "class": "word"
         }

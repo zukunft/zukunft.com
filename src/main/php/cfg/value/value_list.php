@@ -135,6 +135,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 class value_list extends sandbox_value_list
 {
 
+    // the log text of a value without phrase, which has no group (see set_grp_ids)
+    const string MSG_NO_PHRASE = 'phrase list is empty for value ';
+
     /*
      * construct and map
      */
@@ -197,19 +200,20 @@ class value_list extends sandbox_value_list
     /**
      * set the group id of every value of this list based on its phrase list
      * a value without a phrase is an internal inconsistency that the user cannot fix,
-     * so it is only logged and this function reports nothing to the user
+     * so the user is only told that the admin has been informed
      * the given name and the description of the group are kept, because e.g. the import sets
      * them on the group of the value (see value_base::import_mapper) and the save writes them
+     * @param user_message $msg to report a value without phrase or a problem of the creation of a group
      * @return void
      */
-    function set_grp_ids(): void
+    function set_grp_ids(user_message $msg): void
     {
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
             if ($phr_lst->is_empty()) {
-                log_err('phrase list is empty for value ' . $val->dsp_id());
+                log_err_msg(self::MSG_NO_PHRASE . $val->dsp_id(), $msg);
             } else {
-                $grp = $phr_lst->get_grp_id(false);
+                $grp = $phr_lst->get_grp_id($msg, false);
                 $this->keep_group_texts($val->grp(), $grp);
                 $val->set_grp($grp);
             }
@@ -1280,7 +1284,7 @@ class value_list extends sandbox_value_list
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->get_user());
                 if ($phr_lst->import_lst($value, $msg)) {
-                    $val->set_grp($phr_lst->get_grp_id($do_save));
+                    $val->set_grp($phr_lst->get_grp_id($msg, $do_save));
                 }
             }
 
@@ -1317,7 +1321,12 @@ class value_list extends sandbox_value_list
                 $val->source = $src;
             }
 
-            if ($key == json_fields::VALUES) {
+            // the values depend on the context, the time and the source of the list, so an error there stops them
+            if ($key == json_fields::VALUES and !$msg->is_ok()) {
+                $msg->add(msg_id::IMPORT_STEP_SKIPPED, [
+                    msg_id::VAR_NAME => $lib->class_to_word(value::class)
+                ], true);
+            } elseif ($key == json_fields::VALUES) {
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
@@ -1358,28 +1367,34 @@ class value_list extends sandbox_value_list
         $val_to_add = clone $val;
         $phr_lst_to_add = clone $phr_lst;
         $val_phr = new phrase($this->get_user());
+        // a message per value, because the values of a list are independent, like in save
+        $val_msg = $msg->clone_reset();
+        $val_phr_found = true;
         if ($db_con->is_open()) {
-            $val_phr->load_by_name($val_key, $msg);
-            $phr_lst_to_add->add($val_phr);
+            // a name that is not in the database would else save the number without this phrase
+            $val_phr_found = ($val_phr->load_by_name($val_key, $val_msg) != 0);
+            if ($val_phr_found) {
+                $phr_lst_to_add->add($val_phr);
+            }
         } else {
             $val_phr->set_name($val_key, word::class);
             $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
-        $grp = $phr_lst_to_add->get_grp_id($do_save);
-        if ($grp != null) {
-            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
+        $grp = $phr_lst_to_add->get_grp_id($msg, $do_save);
+        if ($val_phr_found and $grp != null) {
+            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($msg, $do_save));
             if ($db_con->is_open()) {
-                $val_to_add->save($msg);
+                $val_to_add->save($val_msg);
                 $this->add_obj($val_to_add);
             } else {
                 // TODO Prio 2 maybe use add_by_phr_names
                 $this->add_direct($val_to_add);
             }
         } else {
-            // TODO Prio 0 review error
-            log_warning('');
+            $val_msg->add(msg_id::VALUE_PHRASE_NOT_FOUND, [msg_id::VAR_NAME => $val_key]);
         }
+        $msg->merge($val_msg);
         return $msg;
     }
 
@@ -1888,7 +1903,7 @@ class value_list extends sandbox_value_list
         } else {
             // if the group id is not yet set
             $imp->step_start(msg_id::PREPARE, value::class);
-            $this->set_grp_ids();
+            $this->set_grp_ids($msg);
 
             // load the values already in the database
             $grp_lst = $this->grp_ids();
@@ -1911,7 +1926,10 @@ class value_list extends sandbox_value_list
                             msg_id::VAR_NAME_LIST => $this->undefined_phrase_names($val)
                         ]);
                     } else {
-                        $val->save($msg);
+                        // a message per value, so that an issue of one value does not prevent the next one from being saved
+                        $val_usr_msg = $msg->clone_reset();
+                        $val->save($val_usr_msg);
+                        $msg->merge($val_usr_msg);
                     }
                 }
                 $i++;

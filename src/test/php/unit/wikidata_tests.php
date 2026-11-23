@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -44,6 +45,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -66,6 +68,11 @@ class wikidata_tests
     // the wikidata ids of Zurich, of the property population and of the property price
     const string ZURICH_KEY = 'Q72';
     const string ZURICH_CITY = 'Zurich (city)';
+    // the wikidata ids of Hamburg and of two of its "instance of" items, and of a group as deprecated claim
+    const string HAMBURG_KEY = 'Q1055';
+    const string CITY_STATE_ID = 'Q133442';
+    const string PORT_CITY_ID = 'Q2264924';
+    const string DEPRECATED_GROUP_ID = 'Q515';
     const string POPULATION_PROPERTY = 'P1082';
     const string PRICE_PROPERTY = 'P2284';
     const string RESIDENT_POPULATION_WITHOUT_NAME = 'criterion "Q56229488"';
@@ -186,6 +193,93 @@ class wikidata_tests
         $ts = 'wikidata ';
         $t->header($ts);
 
+        $t->subheader($ts . 'request failure');
+        // a local file that does not exist fails like a request without an answer, so no live request is sent
+        $test_name = 'a read without an answer names the php error of the read';
+        import_wikidata::request_clear();
+        $missing = test_paths::IMPORT_WIKIDATA_UNIT . 'System_Test_missing_answer.json';
+        $read = @file_get_contents($missing);
+        $failure = import_wikidata::request_failure();
+        $t->assert_text_contains($test_name, $failure, 'System_Test_missing_answer.json');
+        $test_name = '... and that no http answer has been received';
+        $t->assert_text_contains($test_name, $failure, 'no http answer');
+        $t->assert_false($test_name, $read);
+        // a request without any answer is reported to the user as a missing connection
+        $test_name = '... which counts as a request without connection';
+        $t->assert_true($test_name, import_wikidata::no_answer());
+        // negative: an offline test reads its fixture without a request, so it never reports a missing connection
+        $test_name = 'a missing fixture is no missing connection';
+        $fix_imp = new import_wikidata(test_paths::IMPORT_WIKIDATA_UNIT);
+        $fix_msg = new user_message();
+        // an item id without an answer file in the fixture folder
+        $fix_imp->get_entity_json('Q999999999', $fix_msg);
+        $t->assert($test_name, $fix_imp->missing_host(), '');
+        $test_name = '... but reported as a missing fixture';
+        $t->assert_false($test_name, $fix_msg->is_ok());
+        // negative: after the clear before the next request the old error is never named again
+        $test_name = 'the clear before a request forgets the error of the read before';
+        import_wikidata::request_clear();
+        $t->assert($test_name, import_wikidata::request_failure(), 'no http answer');
+
+        $t->subheader($ts . 'request retry');
+        // the answer headers of a failed try, so that the retry rule is checked without a live request
+        $too_many = ['HTTP/1.1 429 Too Many Requests', 'Content-Type: text/html'];
+        $test_name = 'a refused request is repeated after the pause of the first try';
+        $t->assert($test_name, import_wikidata::retry_pause($too_many, '', 1), import_wikidata::RETRY_PAUSE);
+        $test_name = '... and after the doubled pause of the second try';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 503 Service Unavailable'], '', 2),
+            2 * import_wikidata::RETRY_PAUSE);
+        // negative: the last try is not repeated
+        $test_name = '... but not after the last try';
+        $t->assert_null($test_name, import_wikidata::retry_pause($too_many, '', import_wikidata::REQUEST_TRIES));
+        $test_name = 'a refused request waits as long as wikidata asks for';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 429 Too Many Requests', 'retry-after: 5'], '', 1), 5);
+        $test_name = '... but not longer than the maximal pause';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 429 Too Many Requests', 'Retry-After: 3600'], '', 1),
+            import_wikidata::RETRY_PAUSE_MAX);
+        $test_name = 'after a redirect the status of the last answer counts';
+        $t->assert($test_name, import_wikidata::retry_pause(['HTTP/1.1 303 See Other', 'Retry-After: 5', 'HTTP/1.1 429 Too Many Requests'], '', 1),
+            import_wikidata::RETRY_PAUSE);
+        // negative: an unknown wikidata id gives the same 404 with the next try
+        $test_name = 'a request of an unknown id is not repeated';
+        $t->assert_null($test_name, import_wikidata::retry_pause(['HTTP/1.1 404 Not Found'], '', 1));
+        $test_name = 'a request without an answer e.g. a timeout is repeated';
+        $t->assert($test_name, import_wikidata::retry_pause(null, 'file_get_contents(): Read timed out', 1), import_wikidata::RETRY_PAUSE);
+        // negative: an offline pod would else wait for every request
+        $test_name = '... but not if the host cannot be found';
+        $t->assert_null($test_name, import_wikidata::retry_pause(null,
+            'file_get_contents(): php_network_getaddresses: getaddrinfo for www.wikidata.org failed', 1));
+
+        $t->subheader($ts . 'saved answer');
+        // only failed requests or an importer without fallback folder, so that the test never writes an answer file
+        $test_name = 'without live data the saved answer of the fallback folder is used';
+        $saved_imp = new import_wikidata('', test_paths::IMPORT_WIKIDATA_UNIT);
+        $t->assert($test_name, $saved_imp->live_or_saved_json(self::ZURICH_KEY, false),
+            file_get_contents(test_files::IMPORT_WIKIDATA_UNIT_Q72));
+        // negative: an id without a saved answer stays without data
+        $test_name = '... but an id without a saved answer gives no json';
+        $t->assert($test_name, $saved_imp->live_or_saved_json(refs::CHANGE_NEW_KEY, false), '');
+        // negative: the pod never uses an old answer
+        $test_name = 'the pod without fallback folder uses no saved answer';
+        $pod_imp = new import_wikidata();
+        $t->assert($test_name, $pod_imp->live_or_saved_json(self::ZURICH_KEY, false), '');
+        $test_name = '... but the live answer';
+        $t->assert($test_name, $pod_imp->live_or_saved_json(self::ZURICH_KEY, '{"entities":{}}'), '{"entities":{}}');
+
+        $t->subheader($ts . 'page request');
+        // an import waits long and repeats a failed request, because no user waits for it
+        $test_name = 'an import waits for wikidata as long as an import';
+        $t->assert($test_name, $pod_imp->timeout(), import_wikidata::IMPORT_TIMEOUT);
+        $test_name = '... and repeats a failed request';
+        $t->assert_true($test_name, $pod_imp->is_retried());
+        // negative: a page e.g. the groups of the add word suggestions must not block the user for minutes
+        $page_imp = new import_wikidata();
+        $page_imp->for_page();
+        $test_name = 'a page waits for wikidata only as long as for wikipedia';
+        $t->assert($test_name, $page_imp->timeout(), import_wikidata::READ_TIMEOUT);
+        $test_name = '... and never repeats a failed request';
+        $t->assert_false($test_name, $page_imp->is_retried());
+
         $t->subheader($ts . 'convert');
         // reads the units and criteria only from the hand made answers, so the test never sends a live request
         $imp = new import_wikidata(test_paths::IMPORT_WIKIDATA_UNIT);
@@ -261,6 +355,31 @@ class wikidata_tests
 
         $test_name = 'the import preview finds the properties of the claims of Zurich';
         $t->assert($test_name, $imp->property_ids($entity_json), [self::POPULATION_PROPERTY]);
+
+        // the groups of an item, which the add word button suggests as 'is a' triples if conceptnet knows none
+        $test_name = 'the instance of items of an entity are found without the deprecated claim';
+        $inst_claim = fn(string $id, string $rank) => [
+            import_wikidata::WD_MAINSNAK => [
+                import_wikidata::WD_DATAVALUE => [import_wikidata::WD_VALUE => [import_wikidata::WD_ID => $id]]
+            ],
+            import_wikidata::WD_RANK => $rank,
+        ];
+        $inst_claims = [
+            $inst_claim(self::CITY_STATE_ID, ''),
+            $inst_claim(self::PORT_CITY_ID, ''),
+            $inst_claim(self::DEPRECATED_GROUP_ID, import_wikidata::WD_RANK_DEPRECATED),
+        ];
+        $inst_ent = [
+            import_wikidata::WD_ID => self::HAMBURG_KEY,
+            import_wikidata::WD_CLAIMS => [import_wikidata::WD_INSTANCE_OF => $inst_claims],
+        ];
+        $inst_json = json_encode([import_wikidata::WD_ENTITIES => [self::HAMBURG_KEY => $inst_ent]]);
+        $t->assert($test_name, $imp->instance_of_ids($inst_json), [self::CITY_STATE_ID, self::PORT_CITY_ID]);
+        // negative: an entity without an instance of claim names no group
+        $test_name = '... and none for an entity without instance of claim';
+        $no_inst_ent = [import_wikidata::WD_ID => self::HAMBURG_KEY];
+        $no_inst_json = json_encode([import_wikidata::WD_ENTITIES => [self::HAMBURG_KEY => $no_inst_ent]]);
+        $t->assert($test_name, $imp->instance_of_ids($no_inst_json), []);
 
         // so that the preview loads the phrases of the pod with these references before the convert
         $test_name = 'the import preview finds the wikidata ids of the entity and the criteria of the population';

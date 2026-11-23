@@ -86,7 +86,7 @@ class job_write_tests
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $phr_lst->ex_time($msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $val->load_by_grp($phr_lst->get_grp_id($msg), $msg);
         $result = $val->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('job->value to link', $result, $target);

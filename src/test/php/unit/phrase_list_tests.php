@@ -162,6 +162,23 @@ class phrase_list_tests
         $target = $this->get_phrase_list_ex_time($t)->dsp_id();
         $t->assert('phrase_list->ex_time names', $result, $target);
 
+        // the group of a phrase list is the base of a value or result, so an empty list is an error of its caller
+        $test_name = 'a phrase list with phrases has a group';
+        $grp_pi = $t_phr->phrase_list_pi()->get_grp_id($msg);
+        $t->assert_true($test_name, $grp_pi->is_id_set());
+        // negative: the error names the caller, because only the caller can know why its list is empty
+        $test_name = '... but the group of an empty list is an internal error';
+        $empty_lst = $t_phr->list_empty();
+        $grp_call = function () use ($empty_lst, $msg) {
+            $empty_lst->get_grp_id($msg);
+        };
+        $t->assert_log_err($test_name, $grp_call, phrase_list::MSG_EMPTY_GROUP, $msg);
+        $test_name = '... which names the caller';
+        $t->assert_text_contains($test_name, $msg->log_test_txt, 'phrase_list->get_grp_id@phrase_list_tests.php:');
+        $test_name = '... and the user is told';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t_phr->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all($msg);
@@ -169,12 +186,19 @@ class phrase_list_tests
 
         // TODO Prio 2 add assume time sql statement test
 
+        // the year is the time word e.g. "2022" and not the triple "2022 (year)", which has no phrase type,
+        // like the words and triples of the seed data
         $test_name = 'get this year from a list of years';
         $phr_lst = $t_phr->years();
+        $phr_lst->add($t_wrd->word_2022()->phrase());
         $fix_now = new DateTime(test_const::DUMMY_DATETIME);
         $msg = new user_message();
         $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
-        $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
+        $t->assert($test_name, $phr?->name(), $t_wrd->word_2022()->name());
+        // negative: a phrase that only contains the year in its name is no time phrase
+        $test_name = '... but not from phrases without the time type';
+        $no_year = $t_phr->years()->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
+        $t->assert_null($test_name, $no_year?->name());
         // negative: a phrase that is no time period selects no time and the user is told why
         $test_name = '... but no time for a phrase that is no time period';
         $no_time = $phr_lst->best_matching_time($t_wrd->word()->phrase(), $msg, $fix_now);
@@ -238,16 +262,32 @@ class phrase_list_tests
         $phr_lst->remove_terms($del_lst);
         $t->assert($test_name, $phr_lst->count(), 2);
 
+        $t->subheader($ts . 'sort');
 
-        $t->subheader($ts . 'FOAF');
+        // a triple has a negative phrase id, so it comes before the words
+        // the ids in the order of the list, because the id list itself is sorted
+        $test_name = 'sort by id puts the triple first';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($t_wrd->word_pi()->phrase());
+        $phr_lst->add($t_trp->triple()->phrase());
+        $phr_lst->add($t_wrd->word_const()->phrase());
+        $sorted_ids = $phr_lst->sort_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, [-triple_names::MATH_CONST_ID, word_names::CONST_ID, word_names::PI_ID]);
+        $test_name = 'sort by id in reverse order puts the triple last';
+        $sorted_ids = $phr_lst->sort_rev_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, [word_names::PI_ID, word_names::CONST_ID, -triple_names::MATH_CONST_ID]);
+        // negative: an empty list stays empty
+        $test_name = 'sort by id of an empty list gives an empty list';
+        $empty_lst = new phrase_list($t->usr1);
+        $sorted_ids = $empty_lst->sort_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, []);
+        $test_name = 'sort by id in reverse order of an empty list gives an empty list';
+        $sorted_ids = $empty_lst->sort_rev_by_id($msg)->obj_id_lst();
+        $t->assert($test_name, $sorted_ids, []);
+        $msg->reset();
 
-        $test_name = 'test the verb "are" by getting the phrases that are a city';
-        $wrd_city = $t_wrd->word_city();
-        $city_lst = $wrd_city->are($msg);
-        $target = $t_phr->phrase_list_cities();
-        // TODO Prio 2 activate
-        //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
+        // the FOAF test of the verb "are" reads the children from the database, so it is in phrase_list_read_tests
 
         $t->subheader($ts . 'api');
 
@@ -540,6 +580,17 @@ class phrase_list_tests
         // the phrases of an import have no id yet, so they are added to the list by their name
         $test_name = 'both names of the import are in the phrase list';
         $t->assert($test_name, $phr_lst->count(), 2);
+
+        // the add updates the name hash table without a rebuild, so it must add the plural like the rebuild
+        $test_name = 'a word added to a phrase list is found by its plural';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add_by_key($t_wrd->word_inhabitant()->phrase());
+        // the lookup builds the name hash table, so that the next add updates it
+        $phr_lst->get_by_name(word_names::INHABITANTS, $msg);
+        $phr_lst->add_by_key($t_wrd->word_filled_add()->phrase());
+        $phr = $phr_lst->get_by_name(word_names::TEST_ADD_PLURAL, $msg);
+        $t->assert($test_name, $phr?->name(), word_names::TEST_ADD);
+        $t->assert_msg($test_name, $msg);
 
 
         $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');

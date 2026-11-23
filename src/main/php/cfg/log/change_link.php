@@ -382,12 +382,6 @@ class change_link extends change_log
     }
 
 
-    // TODO Prio 0 this should be dismissed
-    function add_link_ref(user_message $msg): bool
-    {
-        return $this->add($msg);
-    }
-
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
@@ -408,17 +402,16 @@ class change_link extends change_log
         $db_row = $db_con->get1($qp, $msg);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
             $this->row_mapper($db_row, $msg);
-            // TODO Prio 0 use db field const
             if (!$ex_time) {
-                $result .= $db_row['change_time'] . ' ';
+                $result .= $db_row[self::FLD_TIME] . ' ';
             }
             if ($db_row[user_db::FLD_NAME] <> '') {
                 $result .= $db_row[user_db::FLD_NAME] . ' ';
             }
-            if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
-                $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
-            } elseif ($db_row['old_text_from'] <> '' and $db_row['old_text_to'] <> '') {
-                $result .= 'unlinked ' . $db_row['old_text_from'] . ' from ' . $db_row['old_text_to'];
+            if ($db_row[self::FLD_NEW_FROM_TEXT] <> '' and $db_row[self::FLD_NEW_TO_TEXT] <> '') {
+                $result .= 'linked ' . $db_row[self::FLD_NEW_FROM_TEXT] . ' to ' . $db_row[self::FLD_NEW_TO_TEXT];
+            } elseif ($db_row[self::FLD_OLD_FROM_TEXT] <> '' and $db_row[self::FLD_OLD_TO_TEXT] <> '') {
+                $result .= 'unlinked ' . $db_row[self::FLD_OLD_FROM_TEXT] . ' from ' . $db_row[self::FLD_OLD_TO_TEXT];
             }
         }
         // restore the type before saving the log

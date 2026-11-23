@@ -233,10 +233,11 @@ class sandbox_link_list extends sandbox_list
      */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add): void
     {
-        if (!$this->is_key_list_dirty()) {
-            $this->key_pos_lst[$obj_to_add->get_key()] = count($this->lst());
-        }
         parent::add_direct($obj_to_add);
+        // the key of the appended entry and not the count, which is lower after an unset left a gap
+        if (!$this->is_key_list_dirty()) {
+            $this->key_pos_lst[$obj_to_add->get_key()] = array_key_last($this->lst());
+        }
     }
 
 

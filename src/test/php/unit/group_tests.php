@@ -307,7 +307,7 @@ class group_tests
         $grp = $t_grp->group();
         $t->assert($test_name, $grp->name_given(), groups::TN_READ);
         $test_name = 'a group named only by its phrases reports no given name, but still a name';
-        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
+        $grp = $t_phr->phrase_list_pi()->get_grp_id($msg, false);
         $t->assert($test_name, $grp->name_given(), '');
         $t->assert_true($test_name, $grp->name() != '');
         // the given name is unique, so the e group must not repeat the name of the pi group
@@ -490,9 +490,12 @@ class group_tests
         $result = $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg);
         $t->assert($test_name, $result, $target);
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
+        // the key starts with the pinned formula id like the int keys above, so that a new seed formula
+        // does not break the test; the phrases of the lists have fixed test ids
         $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),
-            'J=8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+1FajJ2(4LYK3)1FajJ2)',
+            $res_id->int2alpha_num(formula_names::INCREASE_ID, false, false, true)
+            . '8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+1FajJ2(4LYK3)1FajJ2)',
             $t::TIMEOUT_LIMIT_PAGE);
         $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase(), $msg),
@@ -520,6 +523,20 @@ class group_tests
         $grp->set_saved();
         $t->assert_false($test_name, $grp->needs_similar_check());
 
+        $t->subheader($ts . 'without time');
+        $test_name = 'a group without time phrase keeps its phrases';
+        $grp_pi = $t_grp->group_add($t_wrd->word_pi()->phrase());
+        $grp_ex_time = $grp_pi->get_ex_time($msg);
+        $result = $grp_ex_time?->id();
+        $t->assert($test_name, $result, word_names::PI_ID);
+        // negative: a group of only a time phrase has no group without time, which is no error of the caller
+        $test_name = '... but a group of only the year has none';
+        $grp_year = $t_grp->group_add($t_wrd->word_2020()->phrase());
+        $grp_ex_time = $grp_year->get_ex_time($msg);
+        $result = $grp_ex_time?->id();
+        $t->assert_null($test_name, $result);
+        $msg->reset();
+
         $t->subheader($ts . 'sql statements - setup');
         $grp = new group($t->usr1);
         $t->assert_sql_table_create($grp);
@@ -537,7 +554,6 @@ class group_tests
         $t->assert_sql_user_changes($sc, $t_grp->group_17_plus());
         $this->assert_sql_by_phrase_list($t, $db_con);
 
-        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql statements - write');
         $grp = new group($t->usr1);
         $grp->set_phrase_list($t_phr->phrase_list_prime());

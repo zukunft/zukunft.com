@@ -237,7 +237,7 @@ class user_message extends Message
 
     /**
      * create a json array to send the messages to the frontend
-     * TODO Prio 0 move the message status to a shared const object
+     * with the status of the shared Message class, whose values are the consts of the shared enum messages
      * TODO Prio 1 move the text messages to id message and include it in the json
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
@@ -318,7 +318,7 @@ class user_message extends Message
      */
     function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::INFO);
     }
 
     /**
@@ -331,7 +331,7 @@ class user_message extends Message
      */
     function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add($msg_id, $var_lst, true);
+        $this->add_with_severity($msg_id, $var_lst, msg_id::WARNING);
         $msg = $this->get_last_message_translated();
         log_warning($msg);
     }
@@ -519,6 +519,25 @@ class user_message extends Message
      */
     function all_message_text(): string
     {
+        return $this->message_text($this->var_message_text());
+    }
+
+    /**
+     * the text of all messages, but of the messages with vars only the first errors e.g. for the log of a failed import
+     * @param int $limit the number of errors with vars that are named e.g. the max errors of the import in config.yaml
+     * @return string the message text in the ui language
+     */
+    function error_text(int $limit): string
+    {
+        return $this->message_text($this->var_error_text($limit));
+    }
+
+    /**
+     * @param string $var_part the translated text of the messages with vars
+     * @return string the text messages, the typed messages, the message ids and the given text of the messages with vars
+     */
+    private function message_text(string $var_part): string
+    {
         global $mtr;
         $msg = implode(", ", $this->msg_text);
         $part = '';
@@ -543,13 +562,10 @@ class user_message extends Message
             $msg .= $part;
         }
 
-        // get the text for all messages with vars
-        $part = $this->var_message_text();
-
-        if ($msg != '' and $part <> '') {
-            $msg = $msg . '; ' . $part;
+        if ($msg != '' and $var_part <> '') {
+            $msg = $msg . '; ' . $var_part;
         } else {
-            $msg .= $part;
+            $msg .= $var_part;
         }
         return $msg;
     }

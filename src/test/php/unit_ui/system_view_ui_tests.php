@@ -178,6 +178,11 @@ class system_view_ui_tests
     // and the cleanup of the snapshots below keeps it
     const string START_PAGE_DETAILS_FILE = test_paths::VIEWS_BY_ID . self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR
         . views::START_ID . '_' . self::START_PAGE_FILE_NAME . self::DETAILS_LIST_FILE_POSTFIX;
+    // the classes and the views whose sample object has an id that follows the pinned seed ids, e.g. the group id
+    // of a result is made of its phrase ids, so their snapshot is named without the object id, because every new
+    // seed phrase would rename the snapshot at each re-pin; the view id at the start keeps the name unique
+    const array SNAPSHOT_WITHOUT_ID_CLASSES = [result::class, group::class];
+    const array SNAPSHOT_WITHOUT_ID_VIEWS = [views::TABLE_ID];
 
     function run(test_cleanup $t): void
     {
@@ -300,6 +305,13 @@ class system_view_ui_tests
         $t->assert($test_name,
             $ui->url_to_html([url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true),
             $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true));
+        // the first render of the start page loads its data into the request cache and a later
+        // render reuses it, so a problem of that load is checked on its own with the full message,
+        // and the two renders below compare the page and not the load
+        $test_name = 'the data of the start page loads without a problem';
+        $load_msg = new user_message();
+        $ui->url_to_html([url_var::MASK => views::START_ID], $load_msg, $ui->dto, true);
+        $t->assert_msg($test_name, $load_msg);
         // negative: a url without a view and without an object still shows the start view
         $test_name = 'a url without a view and without an object shows the start view';
         $t->assert($test_name,
@@ -638,7 +650,7 @@ class system_view_ui_tests
         ];
         $fail_msg = new user_message();
         $fail_msg->usr = $usr_sys_ui;
-        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $fail_msg, $ui->dto, false);
+        $result_url = $ui->url_to_action($url_with_back, $fail_msg, $ui->dto, false);
 
         $test_name = 'failed login preserves back mask param in returned url';
         $t->assert($test_name, $result_url[$back_mask_key] ?? '', views::WORD_ID);
@@ -662,14 +674,11 @@ class system_view_ui_tests
         $test_name = 'signup page with name exists notification matches snapshot';
         $t->assert_html_page($test_name, $signup_html, $file_path);
 
-        // test that url_to_action on logout resets both user objects to anonymous state:
-        // the backend user by reference and the frontend user via the message (docs/llm/state-and-messages.md)
-        $logout_backend = clone $t->usr1;
+        // test that url_to_action on logout resets the message user to the anonymous state (docs/llm/state-and-messages.md)
         $logout_msg = new user_message();
-        $logout_msg->usr = $tl->cast_user($logout_backend);
+        $logout_msg->usr = $tl->cast_user($t->usr1);
         $logout_result_url = $ui->url_to_action(
             [url_var::MASK => views::LOGOUT_ID],
-            $logout_backend,
             $logout_msg,
             $ui->dto,
             false
@@ -677,13 +686,6 @@ class system_view_ui_tests
 
         $test_name = 'logout action returns logout view url';
         $t->assert($test_name, $logout_result_url[url_var::MASK] ?? 0, views::LOGOUT_ID);
-
-        $test_name = 'logout action resets backend user to anonymous';
-        $t->assert($test_name, $logout_backend->has_db_id(), false);
-
-        $test_name = '... but the logged in user keeps the database id';
-        $logged_in = $t->usr1->has_db_id();
-        $t->assert_true($test_name, $logged_in);
 
         $test_name = 'logout action resets the message user to ip-only';
         $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
@@ -839,9 +841,8 @@ class system_view_ui_tests
         // negative: url_to_action refuses an admin mask action for a non-admin user and returns the
         // start view instead of acting on it (a fresh frontend user has the ip-only profile)
         $act_msg = new user_message();
-        $act_backend = clone $t->usr1;
         $act_msg->usr = new user_ui();
-        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_msg, $ui->dto, false);
+        $act_url = $ui->url_to_action($admin_url, $act_msg, $ui->dto, false);
         $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
@@ -1027,6 +1028,23 @@ class system_view_ui_tests
         $usr_log_sum = new user_log_sum();
         $api_json = [json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
         $t->assert_false($test_name, $usr_log_sum->api_mapper($api_json));
+
+        // the refusal of the backend is shown to the user instead of being mapped as summed sessions
+        $test_name = 'a refused summed sessions api answer loads no sessions';
+        $only_admin = $mtr->txt(msg_id::USER_LOG_SUM_LIST_ONLY_ADMIN);
+        $usr_log_sum_lst = new user_log_sum_list();
+        $t->assert_false($test_name, $usr_log_sum_lst->api_load([json_fields::MSG => $only_admin], $msg));
+        $test_name = '... but tells the user why';
+        $t->assert($test_name, $msg->get_last_message_translated(), $only_admin);
+        $msg->reset();
+        // negative: the answer with the summed sessions has no message for the user
+        $test_name = 'the summed sessions api answer is loaded';
+        $usr_log_sum_lst = new user_log_sum_list();
+        $api_json = [[json_fields::ID => test_admin_dashboard::LOAD_LIGHT_ID, json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME]];
+        $t->assert_true($test_name, $usr_log_sum_lst->api_load($api_json, $msg));
+        $test_name = '... without a message for the user';
+        $t->assert($test_name, $msg->text(), '');
+        $msg->reset();
     }
 
     /**
@@ -1256,6 +1274,9 @@ class system_view_ui_tests
             $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
             [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
                 $this->view_id_to_url_action(views::TABLE_ID), $page_url, $lib);
+            // named by the page, because the table view is named without the id of its phrase
+            // (see SNAPSHOT_WITHOUT_ID_VIEWS), which would rename the snapshot at each re-pin
+            $dbo_name .= '_global_warming_' . $page_name;
             $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
             $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
             $t->assert_html_page($test_name, $t->link_to_pod($page_html, THIS_URL), $file_path);
@@ -1322,7 +1343,10 @@ class system_view_ui_tests
                 if ($class == phrase::class or $class == term::class) {
                     $dbo_name .= '_' . views::TEST_VIEW_IDS[$id] ?? 'not_found';
                 }
-                $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                if (!in_array($class, self::SNAPSHOT_WITHOUT_ID_CLASSES)
+                    and !in_array($id, self::SNAPSHOT_WITHOUT_ID_VIEWS)) {
+                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                }
             }
             $result = [$domain_class . DIRECTORY_SEPARATOR, $dbo_name, $action . ' ' . $domain_class . ' view'];
         }

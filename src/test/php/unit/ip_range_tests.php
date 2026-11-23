@@ -123,6 +123,22 @@ class ip_range_tests
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 
+        // the active flag of a json file can be a text, which the import turns into a bool
+        $test_name = 'an ip range imported with the active flag "false" is not active';
+        $json_off = $json_in;
+        $json_off[json_fields::IS_ACTIVE] = 'false';
+        $ip_off = new ip_range();
+        $ip_off->set_user($t->usr1);
+        $ip_off->import_obj($json_off, $msg);
+        $t->assert_false($test_name, $ip_off->active);
+        // negative: the text "true" is an active range
+        $test_name = '... but with "true" it is active';
+        $json_off[json_fields::IS_ACTIVE] = 'true';
+        $ip_on = new ip_range();
+        $ip_on->set_user($t->usr1);
+        $ip_on->import_obj($json_off, $msg);
+        $t->assert_true($test_name, $ip_on->active);
+
         // ip_range: the fields are mapped to the export json
         $test_name = 'export the reason';
         $ip_range = $t_ip_range->ip_range_filled();

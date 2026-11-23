@@ -143,7 +143,7 @@ class element_group_write_tests
             */
 
             // remember the figure list for the figure and figure list class test
-            $fig_lst = $elm_grp->figures($t_trm->term_list_years());
+            $fig_lst = $elm_grp->figures($msg, $t_trm->term_list_years());
 
             $t->subheader($ts . 'figure');
 
@@ -167,7 +167,10 @@ class element_group_write_tests
                     $result = $fig_ui->display_linked($msg_ui);
                     // a group id can contain a '+', so the link names it in its short url form
                     // (see html_base::url_back and group_id_url)
-                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode(group_id_url::to_url($fig->id())) . '">8.67</a>';
+                    // and the href is html escaped like every link of html_base::ref, so the '&' is '&amp;'
+                    // the figure is the test value, so it opens the value edit view
+                    $url = '/http/view.php?m=' . views::VALUE_EDIT_ID . '&id=' . rawurlencode(group_id_url::to_url($fig->id()));
+                    $target = '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">8.67</a>';
                     $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
@@ -180,21 +183,23 @@ class element_group_write_tests
             $t->subheader($ts . 'figure list');
 
             // TODO Prio 2 fix it
-            $fig_lst->load_phrases();
+            $fig_lst->load_phrases($msg);
             $result = htmlspecialchars($fig_lst->dsp_id());
             //$target = htmlspecialchars("<style class=\"' . styles::STYLE_USER . '\">35'481</style> (438)");
             $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-            $fig_lst = $elm_grp->figures();
-            $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.6703 {f18}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (58266170593050764)';
+            $fig_lst = $elm_grp->figures($msg);
+            // the id of the figure is the group id of the phrases of the test value (see value_write_tests::create_test_values),
+            // which is the compact key of the phrase ids (docs/llm/group_id.md) and so follows the ids of the database
+            $fig_phr_lst = $t_db->load_phrase_list([words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020]);
+            $fig_id = $fig_phr_lst->get_grp_id($msg, false)->id();
+            $target = ' 8.6703 {f' . formula_names::THIS_ID . '}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_ui = new figure_list($fig_lst->api_json());
             $result = $fig_lst_ui->display($msg_ui);
-            $target = "8.67 ";
-            // TODO Prio 0 activate
-            //$t->assert('figure_list->display', $result, $target);
+            $target = "8.67";
+            $t->assert('figure_list->display', $result, $target);
 
         } else {
             $result = 'formula element group list is empty';

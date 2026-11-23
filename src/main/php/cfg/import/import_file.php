@@ -84,21 +84,27 @@ class import_file
 
     /**
      * import a single json file
-     * TODO Prio 0 add user_message as a parameter
      * TODO Prio 2 set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
+     * @param user_message $msg gets the problems of the import and the summary of the imported objects
      * @param bool $direct true if each object should be saved separately in the database
      * @param bool $ignore_errors true if the import should continue even if some objects cannot be saved
      * @param bool $no_upd true if an existing not empty object field must not be overwritten and only empty fields are filled up
-     * @return user_message
+     * @return bool true if the file has been imported without error
      */
-    function json_file(string $filename, user $usr, bool $direct = true, bool $ignore_errors = false, bool $no_upd = false): user_message
+    function json_file(
+        string       $filename,
+        user         $usr,
+        user_message $msg,
+        bool         $direct = true,
+        bool         $ignore_errors = false,
+        bool         $no_upd = false
+    ): bool
     {
         global $cfg;
 
-        $msg = new user_message($usr); // the message IS the return value, so the caller merges it
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -180,7 +186,8 @@ class import_file
                     }
                 } else {
                     // TODO Prio 1 move to calling function and include save
-                    $err_msg = 'import of ' . $filename . ' failed due to ' . $msg->all_message_text();
+                    $max_errors = $cfg->get_by([triples::MAX_ERRORS, words::IMPORT], def::FALLBACK_IMPORT_MAX_ERRORS);
+                    $err_msg = 'import of ' . $filename . ' failed due to ' . $msg->error_text($max_errors);
                     if (!$ignore_errors) {
                         log_err($err_msg);
                     } else {
@@ -190,7 +197,7 @@ class import_file
             }
         }
 
-        return $msg;
+        return $msg->is_ok();
     }
 
     /**
@@ -358,17 +365,16 @@ class import_file
     }
 
     /**
-     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * TODO Prio 3 add a check bottom for admin to reload the system configuration
      * import zukunft.com system data and data used for unit tests via json file
      * for an import it can be assumed that this type configuration is loaded
      * @param user $usr the owner of the initial system data
+     * @param user_message $msg to collect the warning and error messages of all files
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
-     * @return string any error or warning message during import
+     * @return bool true if every file has been imported without error
      */
-    function import_system_data(user $usr, bool $direct = false): string
+    function import_system_data(user $usr, user_message $msg, bool $direct = false): bool
     {
-        $result = '';
         log_info('system data setup',
             sys_log_functions::IMPORT_BASE_CONFIG_NAME,
             'import of the system and test data',
@@ -377,8 +383,13 @@ class import_file
         );
 
         // the system data import only fills up empty fields so that a later user change is never overwritten
+        $result = true;
         foreach (files::SYSTEM_DATA_FILES as $filename) {
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct, false, true)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            if (!$this->json_file(files::MESSAGE_PATH . $filename, $usr, $imp_msg, $direct, false, true)) {
+                $result = false;
+            }
+            $msg->merge($imp_msg);
         }
 
         log_debug('load base config ... done');
@@ -390,10 +401,13 @@ class import_file
      * import the default pod base configuration json files
      * for an import it can be assumed that this base configuration is loaded
      * even if a user has overwritten some of these definitions the technical import should be possible
+     * @param user $usr the owner of the pod base configuration
+     * @param user_message $msg to collect the warning and error messages of all files
+     * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @return bool true if every file has been imported without error
      */
-    function import_pod_config(user $usr, bool $direct = false): string
+    function import_pod_config(user $usr, user_message $msg, bool $direct = false): bool
     {
-        $result = '';
         log_info('pod setup',
             sys_log_functions::IMPORT_POD_CONFIG_NAME,
             'import of the pod base setup',
@@ -401,8 +415,13 @@ class import_file
             $usr, true
         );
 
+        $result = true;
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            if (!$this->json_file(files::MESSAGE_PATH . $filename, $usr, $imp_msg, $direct)) {
+                $result = false;
+            }
+            $msg->merge($imp_msg);
         }
 
         log_debug('load pod base config ... done');
@@ -415,12 +434,12 @@ class import_file
      * loaded in the db setup right after the system config so that the views can be
      * tested by name without relying on database ids
      * @param user $usr the owner of the sample view data
+     * @param user_message $msg to collect the warning and error messages of all files
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
-     * @return string any error or warning message during import
+     * @return bool true if every file has been imported without error
      */
-    function import_sample_view_data(user $usr, bool $direct = false): string
+    function import_sample_view_data(user $usr, user_message $msg, bool $direct = false): bool
     {
-        $result = '';
         log_info('sample view data setup',
             sys_log_functions::IMPORT_SAMPLE_VIEW_DATA_NAME,
             'import of the sample view test data',
@@ -429,8 +448,13 @@ class import_file
         );
 
         // the file names already carry the full path, so no message path is prepended
+        $result = true;
         foreach (files::SAMPLE_VIEW_DATA_FILES as $filename) {
-            $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            if (!$this->json_file($filename, $usr, $imp_msg, $direct)) {
+                $result = false;
+            }
+            $msg->merge($imp_msg);
         }
 
         log_debug('load sample view data ... done');
@@ -443,13 +467,18 @@ class import_file
      * loaded as the last step of the standard db setup, because a use case builds on the
      * phrases of the start page e.g. the column tiers of solution_prio.json
      * @param user $usr the owner of the use case data
+     * @param user_message $msg to collect the warning and error messages of all files
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
      * @param array $filenames the use case files with the full path in the order of the import
-     * @return string any error or warning message during import
+     * @return bool true if all files have been imported without error
      */
-    function import_use_case_data(user $usr, bool $direct = false, array $filenames = files::USE_CASE_FILES): string
+    function import_use_case_data(
+        user         $usr,
+        user_message $msg,
+        bool         $direct = false,
+        array        $filenames = files::USE_CASE_FILES
+    ): bool
     {
-        $result = '';
         log_info('use case data setup',
             sys_log_functions::IMPORT_USE_CASE_DATA_NAME,
             'import of the use case data',
@@ -458,8 +487,13 @@ class import_file
         );
 
         // the file names already carry the full path, so no message path is prepended
+        $result = true;
         foreach ($filenames as $filename) {
-            $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            if (!$this->json_file($filename, $usr, $imp_msg, $direct)) {
+                $result = false;
+            }
+            $msg->merge($imp_msg);
         }
 
         log_debug('load use case data ... done');
@@ -472,16 +506,36 @@ class import_file
      * have been pinned, e.g. a new chart type; imported as the last step of the db setup like the
      * system data, which only fills up empty fields, so that no pinned database id moves
      * @param user $usr the owner of the system data
+     * @param user_message $msg to collect the warning and error messages of all files
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
-     * @return string any error or warning message during import
+     * @return bool true if all files have been imported without error
      */
-    function import_system_data_appended(user $usr, bool $direct = false): string
+    function import_system_data_appended(user $usr, user_message $msg, bool $direct = false): bool
     {
-        $result = '';
         // the file names already carry the full path, so no message path is prepended
+        $result = true;
         foreach (files::SYSTEM_DATA_APPENDED_FILES as $filename) {
-            $result .= $this->json_file($filename, $usr, $direct, false, true)->get_last_message();
+            $imp_msg = $msg->clone_reset(); // a buffer per file, because an error of one file must not stop the next
+            if (!$this->json_file($filename, $usr, $imp_msg, $direct, false, true)) {
+                $result = false;
+            }
+            $msg->merge($imp_msg);
         }
+        return $result;
+    }
+
+    /**
+     * import the converted XBRL fileset of ABB for 2013 as the very last step of the db setup, so
+     * that every pod and every development reset has the same data and no pinned database id moves
+     * @param user $usr the owner of the XBRL data e.g. the system user of the setup
+     * @param user_message $msg to collect the warning and error messages of the import
+     * @return bool true if the file has been imported without error
+     */
+    function import_xbrl_data(user $usr, user_message $msg): bool
+    {
+        $imp_msg = $msg->clone_reset(); // a buffer, because an earlier error of the setup must not stop this import
+        $result = $this->json_file(files::XBRL_ABB_2013_FILE, $usr, $imp_msg, false);
+        $msg->merge($imp_msg);
         return $result;
     }
 

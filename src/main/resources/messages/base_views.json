@@ -138,11 +138,6 @@
       "type": "values_related"
     },
     {
-      "name": "main value",
-      "description": "show one most relevant value",
-      "type": "main_value"
-    },
-    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"

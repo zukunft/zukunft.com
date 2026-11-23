@@ -47,24 +47,12 @@ class sys_log_level_list extends type_list
 {
 
     /**
-     * adding the system log statuum used for unit tests to the dummy list
-     *  TODO Prio 3: load from csv
+     * fill the list for the unit tests from db_code_links/sys_log_levels.csv,
+     * so that the unit tests use the same ids and names as the database
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(
-            sys_log_levels::WARNING,
-            sys_log_levels::WARNING_NAME,
-            sys_log_levels::WARNING_COM,
-            sys_log_levels::WARNING_ID);
-        $this->add($type);
-        $type = new type_object(
-            sys_log_levels::ERROR,
-            sys_log_levels::ERROR_NAME,
-            sys_log_levels::ERROR_COM,
-            sys_log_levels::ERROR_ID);
-        $this->add($type);
+        $this->load_from_csv_resource();
     }
 
     /**

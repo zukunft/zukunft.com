@@ -1,25 +1,25 @@
 phrase_id,phrase_name
--680,cash flow statement
--678,income taxes
--677,cash flow
--511,CHF is symbol for Swiss franc
--342,Zurich Insurance
--236,global warming (global problem)
--233,happy time points
--180,education can be global problem
--179,poverty (global problem)
--177,health can be a global problem
--176,populism (global problem)
--171,time points
--168,global warming potential
--167,global warming
--144,Geneva (city)
--143,Bern (city)
--142,Zurich (canton)
--141,Zurich (city)
--139,global problem
--59,𝑒 (unit symbol)
--57,Pi (math)
+-711,cash flow statement
+-709,income taxes
+-708,cash flow
+-542,CHF is symbol for Swiss franc
+-373,Zurich Insurance
+-267,global warming (global problem)
+-264,happy time points
+-211,education can be global problem
+-210,poverty (global problem)
+-208,health can be a global problem
+-207,populism (global problem)
+-202,time points
+-199,global warming potential
+-198,global warming
+-175,Geneva (city)
+-174,Bern (city)
+-173,Zurich (canton)
+-172,Zurich (city)
+-170,global problem
+-89,𝑒 (unit symbol)
+-87,Pi (math)
 -5,π (unit symbol)
 -1,mathematical constant
 1,mathematics
@@ -38,57 +38,57 @@ phrase_id,phrase_name
 135,2019
 136,2020
 137,number
-158,million
-159,billion
-160,percent
-200,Bern
-201,canton
-203,city
-204,company
-206,fact
-207,Geneva
-208,government
-209,global
-210,group
-211,hand
-212,inhabitants
-214,man
-215,part
-216,person
-217,place
-220,problem
-221,Switzerland
-223,way
-224,woman
-225,work
-226,world
-228,Zurich
-241,solution
-249,potential
-253,climate
-256,warmer
-260,populism
-276,health
-278,poverty
-280,education
-292,happy
-294,points
-297,htp
-298,trillion
-328,income
-331,tax
-403,2013
-404,2014
-405,2015
-406,2016
-407,2017
-408,2018
-411,total
-470,USD
-484,CHF
-625,ABB
-626,Vestas
-627,sales
-628,cash
-629,statement
-631,parts
+229,million
+230,billion
+231,percent
+271,Bern
+272,canton
+274,city
+275,company
+277,fact
+278,Geneva
+279,government
+280,global
+281,group
+282,hand
+283,inhabitants
+285,man
+286,part
+287,person
+288,place
+291,problem
+292,Switzerland
+294,way
+295,woman
+296,work
+297,world
+299,Zurich
+312,solution
+320,potential
+324,climate
+327,warmer
+331,populism
+347,health
+349,poverty
+351,education
+363,happy
+365,points
+368,htp
+369,trillion
+399,income
+402,tax
+474,2013
+475,2014
+476,2015
+477,2016
+478,2017
+479,2018
+482,total
+541,USD
+555,CHF
+696,ABB
+697,Vestas
+698,sales
+699,cash
+700,statement
+702,parts

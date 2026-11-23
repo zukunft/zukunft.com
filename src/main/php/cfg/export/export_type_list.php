@@ -100,5 +100,13 @@ class export_type_list
         return in_array(export_type::IGNORE_FROM, $this->lst);
     }
 
+    /**
+     * @return bool true if the linked objects should be exported as objects and not only by their name
+     */
+    public function incl_linked(): bool
+    {
+        return in_array(export_type::INCL_LINKED, $this->lst);
+    }
+
 }
 

@@ -620,7 +620,7 @@ class test_views extends test_objects
     function view_relation_filled(): view_relation
     {
         global $sys;
-        // TODO Prio 0 maybe use msk_rel instead of mrl
+        // TODO Prio 2 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
         $mrl->description = test_const::VIEW_RELATION_COM;
         $mrl->exclude();
@@ -651,6 +651,20 @@ class test_views extends test_objects
         // TODO Prio 3 maybe used the added test view and component
         //$msk_rel->set_parent($this->view_filled_add());
         //$msk_rel->set_child($this->view_part_filled_add());
+        return $msk_rel;
+    }
+
+    /**
+     * @return view_relation with all fields set that links two test views with reserved names, because the db write
+     *         test adds both linked views and removes them again, which must never touch a seed view
+     */
+    function view_relation_test_views_add(): view_relation
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set_name(views::TEST_CHILD_NAME);
+        $msk_rel = $this->view_relation_filled_add();
+        $msk_rel->set_parent($this->view_filled_add());
+        $msk_rel->set_child($msk);
         return $msk_rel;
     }
 

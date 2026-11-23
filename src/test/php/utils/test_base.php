@@ -119,7 +119,10 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -167,6 +170,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use DOMDocument;
+use DOMElement;
 use Exception;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -192,8 +197,11 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_list.php';
@@ -1057,6 +1065,56 @@ class test_base
         } else {
             return $this->assert_dsp($msg . ' ' . $err_message, false, $target_str, $result_str, $err_message);
         }
+    }
+
+    /**
+     * the url vars that a browser posts for the given form fields: an input with its value, a checkbox only
+     * if it is checked and a selector with its selected entry, but no disabled field and no field of a disabled
+     * fieldset; a later field with the same name wins
+     * e.g. to check the reference and triple rows of an edit or add form (see reference_ui_tests and word_ui_tests)
+     *
+     * @param string $html the html code of the form fields
+     * @return array the posted url vars e.g. ['6a1' => 'u', '6ek1' => 'Q395']
+     */
+    function posted_vars(string $html): array
+    {
+        $dom = new DOMDocument();
+        // the html5 tags are unknown to libxml, which reports them but reads the fields anyway
+        $use_errors = libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+        $result = [];
+        foreach ($dom->getElementsByTagName('input') as $input) {
+            $is_box = $input->getAttribute('type') == html_base::INPUT_CHECKBOX;
+            if ($input->getAttribute('name') != '' and (!$is_box or $input->hasAttribute('checked'))
+                and !$this->is_disabled_field($input)) {
+                $result[$input->getAttribute('name')] = $input->getAttribute('value');
+            }
+        }
+        foreach ($dom->getElementsByTagName('select') as $select) {
+            foreach ($select->getElementsByTagName('option') as $option) {
+                if ($option->hasAttribute('selected') and !$this->is_disabled_field($select)) {
+                    $result[$select->getAttribute('name')] = $option->getAttribute('value');
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param DOMElement $field an input or select of the form
+     * @return bool true if the browser does not post the field, because it or a fieldset around it is disabled
+     */
+    private function is_disabled_field(DOMElement $field): bool
+    {
+        $result = $field->hasAttribute(html_base::DISABLED);
+        $parent = $field->parentNode;
+        while (!$result and $parent instanceof DOMElement) {
+            $result = ($parent->tagName == html_base::FIELDSET and $parent->hasAttribute(html_base::DISABLED));
+            $parent = $parent->parentNode;
+        }
+        return $result;
     }
 
     /**
@@ -3686,15 +3744,8 @@ class test_base
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset(true);
         $usr_obj->id = 0;
-        // TODO Prio 0 add test view relation
-        //      but first finish the dto based import
-        //      and before that use the global $cac as the main backend cache var
-        if ($usr_obj::class == view_relation::class) {
-            return true;
-        } else {
-            $usr_obj->load_by_id($id, $msg);
-            return $this->assert($test_name, $usr_obj->id(), $id);
-        }
+        $usr_obj->load_by_id($id, $msg);
+        return $this->assert($test_name, $usr_obj->id(), $id);
     }
 
     /**
@@ -3897,7 +3948,7 @@ class test_base
             $db_obj = $dbo->clone_reset();
             $db_obj->load_by_id($dbo->id(), $msg);
             $diff = $db_obj->diff_msg($dbo);
-            $this->assert_true($test_name, $diff->is_ok());
+            $this->assert_msg($test_name, $diff);
         }
         return $msg->is_ok();
     }
@@ -4577,6 +4628,7 @@ class test_base
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
         } elseif ($lnk::class == term_view::class
+            or $lnk::class == view_relation::class
             or $lnk::class == ref::class
             or $lnk::class == triple::class) {
             $old_description = $lnk->description;
@@ -4817,6 +4869,48 @@ class test_base
     }
 
     /**
+     * remove the failed login entries of the system log that a login test with a wrong password has written for
+     * the typed name (see user::login), so that the admin dashboard never lists a test user as the target of a
+     * brute force attack, because the failed logins of a name sum up over all test runs
+     *
+     * @param string $usr_name the name that the test has typed e.g. users::SYSTEM_TEST_NAME
+     * @return void
+     */
+    function cleanup_login_fail_log(string $usr_name): void
+    {
+        global $db_con;
+        $msg = new user_message($this->usr_system); // not reported: a cleanup of the test, like cleanup_change_log_deleted
+        $qp = $this->login_fail_log_del_qp($db_con->sql_creator(), $usr_name);
+        $db_con->delete($qp, 'cleanup failed login log of ' . $usr_name, $msg);
+    }
+
+    /**
+     * build the sql statement to delete the failed login entries of the system log for a typed name
+     * public only so that the sql creation can be checked by a unit test (see sys_log_tests)
+     *
+     * @param sql_creator $sc the sql creator with the target db type set
+     * @param string $usr_name the name that the failed login has typed, which the entry has as its description
+     * @return sql_par the delete statement, its name and the parameter list
+     */
+    function login_fail_log_del_qp(sql_creator $sc, string $usr_name): sql_par
+    {
+        $lib = new library();
+        $sc->set_class(sys_log::class);
+        $tbl = $sc->name_sql_esc($sc->get_table());
+        $qp = new sql_par(sys_log::class, new sql_type_list([sql_type::DELETE]));
+        $qp->name = $lib->class_to_name(sys_log::class) . '_del_login_fails';
+        // register both parameters via add_where so the prepared statement declares their types
+        $sc->add_where(sys_log_db::FLD_TEXT, sys_log_functions::LOGIN_FAILED_TEXT, sql_par_type::TEXT);
+        $sc->add_where(sys_log_db::FLD_DESCRIPTION, $usr_name, sql_par_type::TEXT);
+        $sql = sql::DELETE . ' ' . $tbl
+            . ' ' . sql::WHERE . ' ' . sys_log_db::FLD_TEXT . ' = ' . $sc->par_name(1)
+            . ' ' . sql::AND . ' ' . sys_log_db::FLD_DESCRIPTION . ' = ' . $sc->par_name(2);
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * remove the change log entries of rows that a test has added and deleted again, identified by their
      * database id, because e.g. an added order triple or a value of seed phrases has no reserved test name;
      * a row that can still be loaded keeps its change log, so that the log of a live row is never removed
@@ -4828,7 +4922,12 @@ class test_base
     {
         foreach ($dbo_lst as $dbo) {
             $class = $dbo::class;
-            $chk = new $class($this->usr_system);
+            // a verb is a type object without user, so its constructor takes the id and not the user
+            if ($dbo instanceof verb) {
+                $chk = new verb();
+            } else {
+                $chk = new $class($this->usr_system);
+            }
             $msg = new user_message($this->usr_system);
             $deleted = $chk->load_by_id($dbo->id(), $msg) == 0;
             if ($deleted and $dbo instanceof value) {
@@ -5334,21 +5433,34 @@ class test_base
             $sbx_sys->set_user($this->usr_system);
             $sbx_sys->load_by_name($name, $msg);
             if ($sbx_sys->id() != 0) {
-                // remove the overlay rows of all test users and of the system user, so that the delete below is not
-                // diverted to yet another exclusion overlay by the used by someone else check
-                $owner = $sbx_sys->owner($msg);
-                if ($owner == null) {
-                    $owner = $this->usr_system;
-                }
-                foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
-                    $sbx_sys->set_user($usr);
-                    $sbx_sys->del_usr_cfg($msg);
-                }
-                // deleted by the owner, because the delete of any other user is only an exclusion for this user
-                $sbx_sys->set_user($owner);
-                $sbx_sys->del(new user_message($owner));
+                $this->del_by_owner($sbx_sys, $msg);
             }
         }
+    }
+
+    /**
+     * delete a loaded test row of a user sandbox object independent of the user who owns it, e.g. a
+     * triple that a workflow has written for another test user than the user of the cleanup
+     *
+     * @param sandbox $sbx the loaded user sandbox object e.g. a triple
+     * @param user_message $msg to report an overlay row that cannot be removed
+     * @return void
+     */
+    function del_by_owner(sandbox $sbx, user_message $msg): void
+    {
+        // remove the overlay rows of all test users and of the system user, so that the delete below is not
+        // diverted to yet another exclusion overlay by the used by someone else check
+        $owner = $sbx->owner($msg);
+        if ($owner == null) {
+            $owner = $this->usr_system;
+        }
+        foreach ([$this->usr1, $this->usr2, $this->usr_normal, $this->usr_system] as $usr) {
+            $sbx->set_user($usr);
+            $sbx->del_usr_cfg($msg);
+        }
+        // deleted by the owner, because the delete of any other user is only an exclusion for this user
+        $sbx->set_user($owner);
+        $sbx->del(new user_message($owner));
     }
 
     /**
@@ -5499,6 +5611,12 @@ class test_base
                 log_warning('cleanup of type row ' . $typ->dsp_id() . ' is not allowed');
             } elseif ($msg->is_ok()) {
                 $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $msg);
+                // like verb::del, so that a later test does not find the removed test verb in the
+                // verb cache of the test run and links a triple to an id that no longer exists
+                if ($msg->is_ok() and $typ instanceof verb) {
+                    global $sys;
+                    $sys->typ_lst->vrb->unset_by_id($typ->id());
+                }
             }
         }
     }
@@ -5980,7 +6098,7 @@ class test_base
     }
 
     private
-    function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
+    function write_link_update_description(term_view|view_relation|ref|triple $lnk, user $usr, string $new_description): bool
     {
         $msg = new user_message($usr);
         $id = $lnk->id();
@@ -6000,7 +6118,7 @@ class test_base
     }
 
     private
-    function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
+    function write_link_check_description(term_view|view_relation|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $msg = new user_message();
         $id = $lnk->id();

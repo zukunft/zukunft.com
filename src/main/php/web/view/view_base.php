@@ -237,7 +237,7 @@ class view_base extends sandbox_code_id
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::STYLE] = $this->get_style_id();
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst, $msg);
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
 

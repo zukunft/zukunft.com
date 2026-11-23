@@ -150,6 +150,23 @@ class test_triples extends test_objects
     }
 
     /**
+     * @param int $depth the number of triple levels e.g. 8
+     * @return triple a triple whose from and to phrase is the triple one level below, down to the
+     *                main test triple, like the nested concepts of an XBRL import
+     */
+    function triple_nested(int $depth): triple
+    {
+        $trp = $this->triple();
+        for ($lvl = 1; $lvl < $depth; $lvl++) {
+            $upper = $this->triple();
+            $upper->set_from($trp->phrase());
+            $upper->set_to($trp->phrase());
+            $trp = $upper;
+        }
+        return $trp;
+    }
+
+    /**
      * @return triple "mathematical constant" used for unit testing
      */
     function triple_impact(): triple
@@ -289,7 +306,8 @@ class test_triples extends test_objects
 
 
     /**
-     * TODO Prio 0 use $t_trp->filled() and a to_url function
+     * TODO Prio 2 use $t_trp->filled() as base object and a to_url function to create the array,
+     *      which needs a change of the rule "A test url array is built from the url_var keys" of docs/llm/coding.md
      * the filled triple url posted by the edit form in the second change_triple round, mirroring
      * test_words::fill_url_array: the first round did not touch the weight or the phrase type, so the
      * fill round adds them; the '8'-prefixed opening db values are taken from the change url so the
@@ -311,7 +329,8 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO Prio 0 use to_url function
+     * TODO Prio 2 use to_url function of the triple object (or create the to_url function if it does not yet exist),
+     *      which needs a change of the rule "A test url array is built from the url_var keys" of docs/llm/coding.md
      * the new triple fields posted by the add form on save and shown again in the confirm add view,
      * mirroring test_words::add_url_array; a triple is defined by its from phrase, verb and to phrase,
      * so those are posted instead of just a name (the reserved 'System Test Triple' name lets the

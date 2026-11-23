@@ -39,8 +39,12 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -60,6 +64,13 @@ class horizontal_read_tests
             $base_obj = $t_map->class_to_base_object($class);
             $t->assert_load_by_id($base_obj, $base_obj->id());
         }
+        // negative: the biggest id is never used, so no view relation is loaded
+        $test_name = 'a view relation with an unknown id is not loaded';
+        $msg = new user_message($t->usr1);
+        $mrl = $t_map->class_to_base_object(view_relation::class);
+        $loaded_id = $mrl->load_by_id(PHP_INT_MAX, $msg);
+        $t->assert($test_name, $loaded_id, 0);
+        $msg->reset();
 
         foreach (def::NAME_CLASSES as $class) {
             $base_obj = $t_map->class_to_base_object($class);

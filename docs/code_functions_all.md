@@ -351,8 +351,8 @@
     \-- update - section for function update not yet defined that it should be display in /result/result.php
     \-- save_if_updated - section for function save_if_updated is expected to be save in /result/result.php
     \-- save - section for function save is expected to be save in /result/result.php
-    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
-             if a value without time is already saved in /result/result.php
+    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be save a copy of th
+            is result as the result without time, which is shown if the user asks e.g. for the in /result/result.php
     \-- del - section for function del is expected to be del in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
@@ -508,6 +508,8 @@
     \-- del_term - section for function del_term is expected to be del in /view/view.php
     \-- delta - section for function delta is expected to be del in /view/view.php
     \-- has_components - section for function has_components not yet defined that it should be info in /view/view.php
+    \-- set_term_links_by_db_name - section for function set_term_links_by_db_name is expected to be set and get in /vie
+            w/view.php
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /view/view.php
     \-- del_links - section for function del_links is expected to be del in /view/view.php
 \-- view_relation
@@ -532,6 +534,8 @@
             p
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
     \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/triple.php
+    \-- fill_new_verb - section for function fill_new_verb not yet defined that it should be set and get in /word/triple
+            .php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
     \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be set and get in /word/
             triple.php
@@ -773,8 +777,8 @@
         \-- formula_map - update the expression by setting the human-readable format and try to update the database refe
                 rence format
     \-- get_usr_text
-        \-- formula_map - update the expression by setting the human-readable format and try to update the database refe
-                rence format
+        \-- formula_map - set the user text and mark the reference text as not yet converted,
+                 so that get_ref_text or the save converts it
     \-- get_ref_text
         \-- formula_map - @param user_message $msg to report an expression that cannot be converted
     \-- set_latex
@@ -1022,8 +1026,12 @@
         \-- view - add or update a view in the database or create a user view
     \-- save_component_links
         \-- view - add or update the component links of this view in the database or create a user view
+    \-- set_term_links_by_db_name
+        \-- view - take the database term of each term that this view is assigned to only by its name e.g. a term of ano
+                ther
     \-- save_term_links
-        \-- view - save the terms that the import assigns to this view e.g. "Pi" to "Mathematical constant",
+        \-- view - take the database term of each term that this view is assigned to only by its name e.g. a term of ano
+                ther
     \-- load_sql_user_changes
         \-- view - create an SQL statement to retrieve the user changes of the current view
 \-- message
@@ -1258,6 +1266,10 @@
             _list.php
 \-- component_list
     \-- order error - order of section load sql has difference at load_sql should be before load_sql_by_view_id
+\-- db_check
+    \-- env_lines_setup_off - section for function env_lines_setup_off not yet defined that it should be upgrade in /db/
+            db_check.php
+    \-- setup_allowed - section for function setup_allowed is expected to be set and get in /db/db_check.php
 \-- sql_creator
     \-- db_type - section for function db_type not yet defined that it should be set and get in /db/sql_creator.php
     \-- par_list - section for function par_list not yet defined that it should be set and get in /db/sql_creator.php
@@ -1719,6 +1731,7 @@
     \-- add_id_link_and_user - section for function add_id_link_and_user missing in /db/sql_par_field_list.php
     \-- add_user - section for function add_user missing in /db/sql_par_field_list.php
     \-- add_name_and_description - section for function add_name_and_description missing in /db/sql_par_field_list.php
+    \-- description_changed - section for function description_changed missing in /db/sql_par_field_list.php
     \-- del - section for function del is expected to be del in /db/sql_par_field_list.php
     \-- fill_from_arrays - section for function fill_from_arrays missing in /db/sql_par_field_list.php
     \-- is_empty - section for function is_empty is expected to be info in /db/sql_par_field_list.php
@@ -1804,6 +1817,7 @@
     \-- log_fatal_db - section for function log_fatal_db is expected to be log in /log_text/text_log_functions.php
     \-- log_fatal - section for function log_fatal is expected to be log in /log_text/text_log_functions.php
     \-- critical_error_html - section for function critical_error_html missing in /log_text/text_log_functions.php
+    \-- admin_informed_text - section for function admin_informed_text missing in /log_text/text_log_functions.php
     \-- sys_log_insert_allowed - section for function sys_log_insert_allowed missing in /log_text/text_log_functions.php
     \-- log_msg - section for function log_msg is expected to be log in /log_text/text_log_functions.php
 \-- sql_type_list
@@ -2498,6 +2512,7 @@
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
 \-- import
     \-- __construct - section for function __construct is expected to be construct and map in /import/import.php
+    \-- __destruct - section for function __destruct missing in /import/import.php
     \-- set_start_time - section for function set_start_time is expected to be set and get in /import/import.php
     \-- display_progress - section for function display_progress not yet defined that it should be use to apply the time
              of the parent process for continuous timestamp reporting in /import/import.php
@@ -2516,6 +2531,10 @@
             e parent process for continuous timestamp reporting in /import/import.php
     \-- step_start - section for function step_start not yet defined that it should be use to apply the time of the pare
             nt process for continuous timestamp reporting in /import/import.php
+    \-- step_note - section for function step_note not yet defined that it should be use to apply the time of the parent
+             process for continuous timestamp reporting in /import/import.php
+    \-- show_pending_note - section for function show_pending_note not yet defined that it should be use to apply the ti
+            me of the parent process for continuous timestamp reporting in /import/import.php
     \-- step_end - section for function step_end not yet defined that it should be use to apply the time of the parent p
             rocess for continuous timestamp reporting in /import/import.php
     \-- calc_total_time - section for function calc_total_time not yet defined that it should be use to apply the time o
@@ -2580,14 +2599,21 @@
             n /import/import_file.php
     \-- import_system_data_appended - section for function import_system_data_appended not yet defined that it should be
              set and get in /import/import_file.php
+    \-- import_xbrl_data - section for function import_xbrl_data not yet defined that it should be set and get in /impor
+            t/import_file.php
     \-- echo - section for function echo not yet defined that it should be set and get in /import/import_file.php
 \-- import_wikidata
     \-- __construct - section for function __construct is expected to be construct and map in /import/import_wikidata.ph
             p
+    \-- for_page - section for function for_page missing in /import/import_wikidata.php
+    \-- timeout - section for function timeout missing in /import/import_wikidata.php
+    \-- is_retried - section for function is_retried is expected to be info in /import/import_wikidata.php
     \-- get_entity_json - section for function get_entity_json is expected to be set and get in /import/import_wikidata.
             php
     \-- get_property_json - section for function get_property_json is expected to be set and get in /import/import_wikid
             ata.php
+    \-- missing_host - section for function missing_host missing in /import/import_wikidata.php
+    \-- live_or_saved_json - section for function live_or_saved_json missing in /import/import_wikidata.php
     \-- store_json - section for function store_json missing in /import/import_wikidata.php
     \-- store_text - section for function store_text missing in /import/import_wikidata.php
     \-- convert - section for function convert not yet defined that it should be convert in /import/import_wikidata.php
@@ -2595,6 +2621,10 @@
             php
     \-- property_ids - section for function property_ids not yet defined that it should be convert in /import/import_wik
             idata.php
+    \-- instance_of_names - section for function instance_of_names not yet defined that it should be convert in /import/
+            import_wikidata.php
+    \-- instance_of_ids - section for function instance_of_ids not yet defined that it should be convert in /import/impo
+            rt_wikidata.php
     \-- item_ids - section for function item_ids not yet defined that it should be convert in /import/import_wikidata.ph
             p
     \-- convert_to_file - section for function convert_to_file not yet defined that it should be convert in /import/impo
@@ -2656,7 +2686,6 @@
     \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /log/change_link.php
     \-- load_sql_by_table - section for function load_sql_by_table is expected to be load sql in /log/change_link.php
     \-- load_last_by_user - section for function load_last_by_user is expected to be load in /log/change_link.php
-    \-- add_link_ref - section for function add_link_ref not yet defined that it should be api in /log/change_link.php
     \-- dsp_last - section for function dsp_last not yet defined that it should be api in /log/change_link.php
     \-- add - section for function add not yet defined that it should be api in /log/change_link.php
     \-- sql_insert_link - section for function sql_insert_link not yet defined that it should be sql write in /log/chang
@@ -2854,8 +2883,6 @@
     \-- term_list - section for function term_list not yet defined that it should be cast in /phrase/phrase_list.php
     \-- fill_missing_verbs - section for function fill_missing_verbs not yet defined that it should be set and get in /p
             hrase/phrase_list.php
-    \-- name_pos_lst - section for function name_pos_lst not yet defined that it should be set and get in /phrase/phrase
-            _list.php
     \-- max_impact - section for function max_impact not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- import_lst - section for function import_lst not yet defined that it should be im- and export in /phrase/phrase_
@@ -3063,8 +3090,6 @@
             order of section info has difference at is_valid should be before db_ready,
             order of section im- and export has difference at export_json should be before import_mapper
 \-- term_list
-    \-- name_pos_lst - section for function name_pos_lst not yet defined that it should be set and get in /phrase/term_l
-            ist.php
     \-- id_lst - section for function id_lst not yet defined that it should be get function in /phrase/term_list.php
     \-- ids_txt - section for function ids_txt not yet defined that it should be get function in /phrase/term_list.php
     \-- term_ids - section for function term_ids not yet defined that it should be get function in /phrase/term_list.php
@@ -3095,8 +3120,13 @@
     \-- names - section for function names is expected to be info in /phrase/term_list.php
 \-- trm_ids
     \-- order error - order of section  has difference at count should be before __construct
+\-- ref_link_conceptnet
+    \-- is_a_names - section for function is_a_names is expected to be info in /ref/ref_link_conceptnet.php
+    \-- concept_key - section for function concept_key missing in /ref/ref_link_conceptnet.php
+    \-- names_of_answer - section for function names_of_answer missing in /ref/ref_link_conceptnet.php
 \-- ref_link_wikipedia
     \-- refresh_from_url - section for function refresh_from_url missing in /ref/ref_link_wikipedia.php
+    \-- suggest_from_url - section for function suggest_from_url missing in /ref/ref_link_wikipedia.php
     \-- description - section for function description missing in /ref/ref_link_wikipedia.php
     \-- without_pronunciation - section for function without_pronunciation missing in /ref/ref_link_wikipedia.php
     \-- wikidata_id - section for function wikidata_id missing in /ref/ref_link_wikipedia.php
@@ -3265,6 +3295,8 @@
              should be save fields in /sandbox/sandbox.php
     \-- update_standard_fields - section for function update_standard_fields not yet defined that it should be save fiel
             ds in /sandbox/sandbox.php
+    \-- sql_update_standard - section for function sql_update_standard not yet defined that it should be save fields in 
+            /sandbox/sandbox.php
     \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox.php
     \-- no_diff - section for function no_diff not yet defined that it should be save fields in /sandbox/sandbox.php
     \-- no_non_id_diff - section for function no_non_id_diff not yet defined that it should be save fields in /sandbox/s
@@ -3361,6 +3393,10 @@
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_code_id.php
     \-- order error - order of section info has difference at diff_msg should be before is_similar
 \-- sandbox_link
+    \-- clone_all - section for function clone_all not yet defined that it should be construct and map in /sandbox/sandb
+            ox_link.php
+    \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /sandbox/s
+            andbox_link.php
     \-- fob - section for function fob not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- from_id - section for function from_id not yet defined that it should be set and get in /sandbox/sandbox_link.ph
             p
@@ -3430,7 +3466,8 @@
     \-- add_link_change_refused - section for function add_link_change_refused not yet defined that it should be do not 
             update a link guard in /sandbox/sandbox_link.php
     \-- link_id - section for function link_id is expected to be link in /sandbox/sandbox_link.php
-    \-- order error - order of section info has difference at is_valid should be before db_ready
+    \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset,
+            order of section info has difference at is_valid should be before db_ready
 \-- sandbox_link_list
     \-- add - section for function add not yet defined that it should be modify in /sandbox/sandbox_link_list.php
     \-- add_link - section for function add_link not yet defined that it should be modify in /sandbox/sandbox_link_list.
@@ -3514,11 +3551,7 @@
     \-- sql_insert - section for function sql_insert is expected to be sql write in /sandbox/sandbox_list_named.php
     \-- sql_update - section for function sql_update not yet defined that it should be save in /sandbox/sandbox_list_nam
             ed.php
-    \-- sql_delete - section for function sql_delete not yet defined that it should be save in /sandbox/sandbox_list_nam
-            ed.php
     \-- sql_update_call_with_par - section for function sql_update_call_with_par not yet defined that it should be save 
-            in /sandbox/sandbox_list_named.php
-    \-- sql_delete_call_with_par - section for function sql_delete_call_with_par not yet defined that it should be save 
             in /sandbox/sandbox_list_named.php
     \-- save - section for function save is expected to be save in /sandbox/sandbox_list_named.php
     \-- names - section for function names is expected to be info in /sandbox/sandbox_list_named.php
@@ -4103,12 +4136,14 @@
             hp
     \-- all_message_text - section for function all_message_text not yet defined that it should be get in /user/user_mes
             sage.php
+    \-- error_text - section for function error_text not yet defined that it should be get in /user/user_message.php
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
+    \-- order error - order of section get has difference at get_message should be before error_text
 \-- user_profile
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /user/user_profile.php
@@ -4179,6 +4214,8 @@
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
     \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_base.php
+    \-- phrases_in_db - section for function phrases_in_db not yet defined that it should be @param user_message $msg to
+             enrich with problems and suggested solutions in /value/value_base.php
     \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
             hp
     \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
@@ -4308,6 +4345,8 @@
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /view/view_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /view/view_list.php
     \-- add_by_id - section for function add_by_id not yet defined that it should be load in /view/view_list.php
+    \-- set_term_links_by_db_name - section for function set_term_links_by_db_name is expected to be set and get in /vie
+            w/view_list.php
     \-- save - section for function save is expected to be save in /view/view_list.php
     \-- order error - order of section load has difference at load_sql should be before load_sql_names
 \-- view_relation_list
@@ -4440,26 +4479,27 @@
         \-- application - open the database connection and load the base cache
     \-- load_dummy
         \-- component_link_type_list - adding the view component position types used for unit tests to the dummy list
-        \-- component_type_list - adding the view component types used for unit tests to the dummy list
+        \-- component_type_list - fill the list for the unit tests from db_code_links/component_types.csv like every typ
+                e list with a csv,
         \-- position_type_list - adding the view component position types used for unit tests to the dummy list
         \-- view_style_list - adding the view component types used for unit tests to the dummy list
         \-- element_type_list - adding the view component types used for unit tests to the dummy list
         \-- formula_link_type_list - adding the formula link types used for unit tests to the dummy list
         \-- formula_type_list - adding the formula types used for unit tests to the dummy list
-        \-- db_cache_status_list - adding the db_cache type used for unit tests to a dummy list
-        \-- db_cache_type_list - adding the db_cache type used for unit tests to a dummy list
+        \-- db_cache_status_list - fill the list of the db_cache statuum for the unit tests
+        \-- db_cache_type_list - fill the list of the db_cache types for the unit tests
         \-- language_form_list - create dummy type list for the unit tests without database connection
         \-- language_list - create dummy type list for the unit tests without database connection
-        \-- change_action_list - adding the system log statuum used for unit tests to the dummy list
+        \-- change_action_list - fill the list of the change actions for the unit tests
         \-- change_field_list - adding the system log statuum used for unit tests to the dummy list
         \-- change_table_list - adding the system log statuum used for unit tests to the dummy list
         \-- protection_type_list - create dummy type list for the unit tests without database connection
         \-- share_type_list - create dummy type list for the unit tests without database connection
-        \-- job_status_list - adding the job type used for unit tests to a dummy list
-        \-- job_type_list - adding the job type used for unit tests to a dummy list
+        \-- job_status_list - fill the list of the job statuum for the unit tests
+        \-- job_type_list - fill the list of the job types for the unit tests
         \-- sys_log_function_list - adding the system log functions used for unit tests to the dummy list
-        \-- sys_log_level_list - adding the system log statuum used for unit tests to the dummy list
-        \-- sys_log_status_list - adding the system log statuum used for unit tests to the dummy list
+        \-- sys_log_level_list - fill the list for the unit tests from db_code_links/sys_log_levels.csv,
+        \-- sys_log_status_list - fill the list for the unit tests from db_code_links/sys_log_statuum.csv,
         \-- system_time_type_list - fill the list from the code link csv for the unit tests without database
         \-- user_profile_list - create a dummy type list for the unit tests without database connection
         \-- user_status_list - create a dummy type list for the unit tests without database connection
@@ -4543,14 +4583,11 @@
         \-- import_wikidata - @param string $fixture_path empty for the pod, which reads wikidata by http,
                  or the folder of the wikidata
         \-- import_wikidata_preview - @param user $usr the user who sees the preview and who would write the import
-        \-- user_message - assumes that normally everything is fine
         \-- view_sys_list - 
     \-- reset
         \-- sql_message - clear the accumulated messages so the object can be reused for the next change request
-        \-- user_message - clear the accumulated messages so the object can be reused for the next change request
     \-- clone_reset
         \-- sql_message - create user message list without errors but with the original user
-        \-- user_message - create user message list without errors but with the original user
     \-- has_par
         \-- sql_par - @return bool true if the query has at least one parameter set
     \-- merge
@@ -4588,6 +4625,8 @@
         \-- import_convert_xbrl - end-to-end conversion: read the zip, extract the sales, build the data,
     \-- convert_wiki_json
         \-- convert_wikipedia_table - convert a wikitable2json to a zukunft.com json
+    \-- __destruct
+        \-- import - stop the note timer, so that a finished import never shows its skipped step note
     \-- convert_folder
         \-- import_convert_xbrl - convert an unpacked XBRL fileset folder into the zukunft.com import JSON.
     \-- convert_to_file
@@ -4598,11 +4637,22 @@
         \-- import_convert_xbrl - convert XBRL facts into the zukunft.com import JSON
     \-- convert_facts_to_file
         \-- import_convert_xbrl - convert an XBRL facts file into an import JSON file saved in the same folder
+    \-- for_page
+        \-- import_wikidata - read wikidata for a page that the user waits for e.g. the groups of the add word suggestio
+                ns: each
+    \-- timeout
+        \-- import_wikidata - @return int the seconds that each request waits for the answer of wikidata
+    \-- is_retried
+        \-- import_wikidata - @return bool true if a failed request is repeated after a pause (see retry_pause)
     \-- get_entity_json
         \-- import_wikidata - retrieve the entity data json from wikidata for the given wikidata id e.g. "Q167" for Pi
     \-- get_property_json
         \-- import_wikidata - retrieve the property data json from wikidata for the given property id e.g. "P2284" for p
                 rice
+    \-- missing_host
+        \-- import_wikidata - @return string the host of the last request of this object that has got no answer e.g.
+    \-- live_or_saved_json
+        \-- import_wikidata - the live answer of wikidata, which is also saved in the fallback folder if one is set,
     \-- store_json
         \-- import_wikidata - retrieve and store the json received from wikidata for the given entity or property id as 
                 a test resource file
@@ -4652,8 +4702,7 @@
     \-- log_link_count
         \--  - @return int the number of the kept log links, to find the link that the next log call adds
     \-- log_take_reported
-        \--  - take out the link that a log call has added after the given count,
-                 because the caller reports the error itself
+        \--  - TODO Prio 1 review / rename and add samples
     \-- log_err_msg
         \--  - log an error message and inform the user about the error
     \-- log_err_msg_ui
@@ -4674,15 +4723,26 @@
         \--  - try to write the error message to any possible out device if database connection is lost
     \-- critical_error_html
         \--  - build the html shown to the user for a critical internal error with the (possibly request
+    \-- admin_informed_text
+        \--  - @return string the line below a critical error that tells the user that the admin is informed,
     \-- sys_log_insert_allowed
         \--  - cross-request throttle for the sys_log inserts: allow at most text_log::INSERT_LIMIT inserts
     \-- log_msg
-        \--  - write a log message to the database and return the message that should be shown to the user
+        \--  - write a log message to the database and return the message that should be shown to the user,
+    \-- is_a_names
+        \-- ref_link_conceptnet - @param string $name the name of the new word e.g. "Hamburg"
+    \-- concept_key
+        \-- ref_link_conceptnet - @param string $name the name of a word e.g. "New York"
+    \-- names_of_answer
+        \-- ref_link_conceptnet - public only so that the unit tests can check it with a given answer (see ref_tests)
     \-- read
         \-- ref_link_wikidata - 
     \-- refresh_from_url
         \-- ref_link_wikipedia - take over the description and the wikidata id from the wikipedia page of the phrase if 
                 the
+    \-- suggest_from_url
+        \-- ref_link_wikipedia - fill a word that does not exist yet with the suggestions of one source for its add view
+                 if the url
     \-- description
         \-- ref_link_wikipedia - @param array $summary the summary json of a wikipedia page
     \-- without_pronunciation
@@ -5193,6 +5253,10 @@
 \-- upgrade
     \-- db_check
         \-- db_check - read the version number from the database and compare it with the backend version
+    \-- env_lines_setup_off
+        \-- db_check - public, because it decides which line of the environment file is changed, so it is unit tested
+    \-- setup_allowed
+        \-- db_check - public, because it decides if an empty database is filled, so it is unit tested
     \-- db_upgrade_0_0_3
         \-- db_check - upgrade the database from any version prior of 0.0.3
     \-- db_move_time_phrase_to_group
@@ -5301,28 +5365,20 @@
         \-- sql_creator - get the preloaded table id for change log entries
     \-- set_ok
         \-- sql_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
-        \-- user_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
     \-- set_db_row_id
         \-- sql_message - set the main database row to which this user message is related
-        \-- user_message - set the main database row to which this user message is related
     \-- set_url
         \-- sql_message - @param string $url the url used to trace to progress
-        \-- user_message - @param string $url the url used to trace to progress
     \-- url
         \-- sql_message - @param string $url the url used to trace to progress
-        \-- user_message - @param string $url the url used to trace to progress
     \-- set_checksum
         \-- sql_message - set a simple checksum e.g. for a fast import validation
-        \-- user_message - set a simple checksum e.g. for a fast import validation
     \-- checksum
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- db_row_id_lst
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- added_depending
         \-- sql_message - @return int|null the number of values that have been expected to be imported
-        \-- user_message - @return int|null the number of values that have been expected to be imported
     \-- 3
         \-- combine_named - @param string $name the name of the word, triple, formula or verb
     \-- name
@@ -5428,8 +5484,7 @@
     \-- drop_config_cache
         \-- import_file - the imported values are part of the cached config of every user, which the database cache
     \-- import_system_data
-        \-- import_file - TODO Prio 2 fill a user_message with the warning and error messages and return true if success
-                ful
+        \-- import_file - TODO Prio 3 add a check bottom for admin to reload the system configuration
     \-- import_pod_config
         \-- import_file - import the default pod base configuration json files
     \-- import_sample_view_data
@@ -5438,6 +5493,8 @@
         \-- import_file - import the use case data, which shows how a question is answered with the data
     \-- import_system_data_appended
         \-- import_file - import the system data that has been added after the database ids of the tested phrases
+    \-- import_xbrl_data
+        \-- import_file - import the converted XBRL fileset of ABB for 2013 as the very last step of the db setup, so
     \-- echo
         \-- import_file - display a message immediately to the user
     \-- set_action
@@ -5462,8 +5519,6 @@
         \-- change_log - get the field name base on the field_id
     \-- start_time
         \-- text_log - 
-    \-- name_pos_lst
-        \-- term_list - @returns array with all unique names of this list with the keys within this list
     \-- key_list
         \-- ref_list - map the database rows of one load to the refs of this list
     \-- get_by_type_code_id
@@ -5695,7 +5750,6 @@
 \-- api
     \-- api_array
         \-- sql_message - create a json array to send the messages to the frontend
-        \-- user_message - create a json array to send the messages to the frontend
     \-- api_json
         \-- sql_message - @return string the json message to the backend as a string
         \-- combine_object - create the api json message string of this combine object for the frontend
@@ -5705,11 +5759,9 @@
         \-- type_list - create the api json message string for this list
         \-- type_lists - create the api message based on the loaded types
         \-- list_db_read - create the api json message string for this list
-        \-- user_message - @return string the json message to the backend as a string
     \-- api_mapper
         \-- sql_message - fill the vars with this database message object based on the given api json array
         \-- ref_type - function to import the core reference type values from a json string
-        \-- user_message - fill the vars with this database message object based on the given api json array
     \-- api_json_array
         \-- element - create an array for the api json creation
         \-- combine_object - create an array for the api json message
@@ -5745,8 +5797,6 @@
         \-- change_link - TODO Prio 2 make sure that always a order is defined to allow page views
     \-- load_last_by_user
         \-- change_link - get the last link changed by a user
-    \-- add_link_ref
-        \-- change_link - load the name of the changed word to show it in the change log
     \-- dsp_last
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add
@@ -5773,34 +5823,24 @@
 \-- add
     \-- add_info_with_vars
         \-- sql_message - add an info message id and a list of related variables
-        \-- user_message - add an info message id and a list of related variables
     \-- add_warning_with_vars
         \-- sql_message - add a warning message with variables
-        \-- user_message - add a warning message with variables
     \-- add_type_message
         \-- sql_message - to offer the user to see more details without a retry,
-        \-- user_message - to offer the user to see more details without a retry,
     \-- add_message_text
         \-- sql_message - to offer the user to see more details without a retry
-        \-- user_message - to offer the user to see more details without a retry
     \-- add_warning_text
         \-- sql_message - show the warning message to the user without interrupting the process
-        \-- user_message - show the warning message to the user without interrupting the process
     \-- add_info_text
         \-- sql_message - show the info message to the user without interrupting the process
-        \-- user_message - show the info message to the user without interrupting the process
     \-- merge
         \-- sql_message - combine the given message with this message
-        \-- user_message - combine the given message with this message
     \-- add_list_name_id
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- set_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- unset_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
-        \-- user_message - add the database id and the related name to the id list of the user message
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each
@@ -5821,30 +5861,21 @@
 \-- get
     \-- is_ok
         \-- sql_message - @return bool true if user does not need to be informed
-        \-- user_message - @return bool true if user does not need to be informed
     \-- all_info_text
         \-- sql_message - return the info only message text with all messages
-        \-- user_message - return the info only message text with all messages
     \-- all_message_text
         \-- sql_message - return the translated message text with all messages
-        \-- user_message - return the translated message text with all messages
     \-- get_message
         \-- sql_message - simple return the message text
-        \-- user_message - simple return the message text
     \-- get_last_message
         \-- sql_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
-        \-- user_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
     \-- get_row_id
         \-- sql_message - @return int|string the main database row to which this user message is related
-        \-- user_message - @return int|string the main database row to which this user message is related
     \-- has_msg
         \-- sql_message - @return bool true if any message has been added to this user message
-        \-- user_message - @return bool true if any message has been added to this user message
     \-- has_row
         \-- sql_message - @return bool true if the message is linked to a valid database row of just a database row has 
                 been created
-        \-- user_message - @return bool true if the message is linked to a valid database row of just a database row has
-                 been created
 \-- debug
     \-- dsp_id
         \-- sql_par - combine two sql and the related parameters to one sql statement
@@ -6092,8 +6123,6 @@
         \-- expression - @return array of the term names used in the expression based on the user text
     \-- db_id
         \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
-    \-- get_all_messages
-        \-- user_message - @return array with all the text messages
 \-- internal functions
     \-- get_ref_id
         \-- expression - returns the next positive reference (word, verb or formula) id
@@ -6151,7 +6180,7 @@
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_dummy
         \-- ref_type_list - adding the ref types used for unit tests to the dummy list
-        \-- source_type_list - adding the source types used for unit tests to the dummy list
+        \-- source_type_list - fill the list for the unit tests from db_code_links/source_types.csv,
     \-- default_id
         \-- ref_type_list - return the database id of the default ref type
         \-- source_type_list - return the database id of the default source type
@@ -6206,6 +6235,11 @@
         \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
     \-- property_ids
         \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q72.json
+    \-- instance_of_names
+        \-- import_wikidata - the english names of the groups of an item,
+                 which the add word button of a search suggests as 'is a'
+    \-- instance_of_ids
+        \-- import_wikidata - @param string $entity_json the wikidata json of the entity e.g. the content of Q1055.json
     \-- item_ids
         \-- import_wikidata - the wikidata ids that the convert of the given properties names,
                  so that the caller loads the phrases of
@@ -6343,7 +6377,7 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
-        \-- import - 
+        \-- import - stop the note timer, so that a finished import never shows its skipped step note
     \-- display_progress
         \-- import - show the progress of an import process
     \-- put_yaml
@@ -6363,6 +6397,10 @@
         \-- import - remember how much is done by adding the estimated time done
     \-- step_start
         \-- import - remember how much is done by adding the estimated time done
+    \-- step_note
+        \-- import - write the start of a step of a long import, so that a hang shows the step that has not ended
+    \-- show_pending_note
+        \-- import - show the step note that the throttle has skipped, if its step is still running; called by the
     \-- step_end
         \-- import - @param int $nbr the number of precessed objects e.g. count(word)
     \-- calc_total_time
@@ -6639,8 +6677,6 @@
             nt.php
     \-- word_name - section for function word_name not yet defined that it should be to review in /component/component.p
             hp
-    \-- btn_unlink - section for function btn_unlink not yet defined that it should be to review in /component/component
-            .php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /component/component.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /component/c
             omponent.php
@@ -6812,6 +6848,8 @@
             how password but without auto fill in /component/execute/system_form.php
     \-- show_name_in_formulas - section for function show_name_in_formulas not yet defined that it should be optional wi
             th show password but without auto fill in /component/execute/system_form.php
+    \-- label_with_html - section for function label_with_html not yet defined that it should be optional with show pass
+            word but without auto fill in /component/execute/system_form.php
     \-- show_style - section for function show_style not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- show_formula - section for function show_formula not yet defined that it should be optional with show password b
@@ -6955,6 +6993,8 @@
             hout auto fill in /component/execute/system_form.php
     \-- form_ref_rows - section for function form_ref_rows not yet defined that it should be optional with show password
              but without auto fill in /component/execute/system_form.php
+    \-- form_triple_rows - section for function form_triple_rows not yet defined that it should be optional with show pa
+            ssword but without auto fill in /component/execute/system_form.php
     \-- form_value - section for function form_value not yet defined that it should be optional with show password but w
             ithout auto fill in /component/execute/system_form.php
     \-- form_values - section for function form_values not yet defined that it should be optional with show password but
@@ -7136,7 +7176,6 @@
     \-- value_name - section for function value_name missing in /component/execute/ui_base.php
     \-- group_name - section for function group_name missing in /component/execute/ui_base.php
     \-- num_value - section for function num_value missing in /component/execute/ui_base.php
-    \-- main_value - section for function main_value missing in /component/execute/ui_base.php
     \-- source_name - section for function source_name missing in /component/execute/ui_base.php
     \-- source_doi_link - section for function source_doi_link missing in /component/execute/ui_base.php
     \-- source_url_link - section for function source_url_link missing in /component/execute/ui_base.php
@@ -7369,15 +7408,9 @@
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
-    \-- dsp_used4words - section for function dsp_used4words not yet defined that it should be to review in /formula/for
-            mula.php
     \-- dsp_test_and_samples - section for function dsp_test_and_samples not yet defined that it should be to review in 
             /formula/formula.php
     \-- expression - section for function expression not yet defined that it should be to review in /formula/formula.php
-    \-- direct_assigned_phrases - section for function direct_assigned_phrases not yet defined that it should be to revi
-            ew in /formula/formula.php
-    \-- dsp_unlink_phr - section for function dsp_unlink_phr not yet defined that it should be to review in /formula/for
-            mula.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
     \-- __construct - section for function __construct is expected to be construct and map in /formula/formula_calc.php
@@ -7437,6 +7470,8 @@
     \-- start - section for function start not yet defined that it should be session in /frontend.php
     \-- start_ui - section for function start_ui not yet defined that it should be session in /frontend.php
     \-- end - section for function end not yet defined that it should be session in /frontend.php
+    \-- slow_request_log_level - section for function slow_request_log_level not yet defined that it should be session i
+            n /frontend.php
     \-- load_cache - section for function load_cache is expected to be load in /frontend.php
     \-- set_cache - section for function set_cache is expected to be set and get in /frontend.php
     \-- load_dummy_cache_from_test_resources - section for function load_dummy_cache_from_test_resources is expected to 
@@ -7468,6 +7503,7 @@
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
+    \-- save_logoff - section for function save_logoff is expected to be save in /frontend.php
     \-- calculator_saved_text - section for function calculator_saved_text not yet defined that it should be execute in 
             /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
@@ -7478,6 +7514,8 @@
             te in /frontend.php
     \-- url_with_wikipedia_refresh - section for function url_with_wikipedia_refresh not yet defined that it should be e
             xecute in /frontend.php
+    \-- url_with_word_suggestions - section for function url_with_word_suggestions not yet defined that it should be exe
+            cute in /frontend.php
     \-- url_with_wikidata_refresh - section for function url_with_wikidata_refresh not yet defined that it should be exe
             cute in /frontend.php
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
@@ -7580,6 +7618,8 @@
             php
     \-- view_code_id - section for function view_code_id not yet defined that it should be set and get in /helper/data_o
             bject.php
+    \-- api_json_with_cache - section for function api_json_with_cache not yet defined that it should be set and get in 
+            /helper/data_object.php
     \-- has_view_list - section for function has_view_list not yet defined that it should be set and get in /helper/data
             _object.php
     \-- file_list - section for function file_list not yet defined that it should be set and get in /helper/data_object.
@@ -7768,6 +7808,8 @@
     \-- text_h2 - section for function text_h2 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h4 - section for function text_h4 not yet defined that it should be text formatting in /html/html_base.php
+    \-- form_section_title - section for function form_section_title not yet defined that it should be text formatting i
+            n /html/html_base.php
     \-- logo - section for function logo not yet defined that it should be images in /html/html_base.php
     \-- logo_big - section for function logo_big not yet defined that it should be images in /html/html_base.php
     \-- logo_flex - section for function logo_flex not yet defined that it should be images in /html/html_base.php
@@ -7877,10 +7919,6 @@
             tml_base.php
     \-- dsp_form_hidden - section for function dsp_form_hidden not yet defined that it should be to dismiss / replace in
              /html/html_base.php
-    \-- dsp_form_text - section for function dsp_form_text not yet defined that it should be to dismiss / replace in /ht
-            ml/html_base.php
-    \-- dsp_form_text_big - section for function dsp_form_text_big not yet defined that it should be to dismiss / replac
-            e in /html/html_base.php
     \-- dsp_form_fld_checkbox - section for function dsp_form_fld_checkbox not yet defined that it should be to dismiss 
             / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / 
@@ -7951,6 +7989,8 @@
             _base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- fieldset_disabled - section for function fieldset_disabled not yet defined that it should be internal in /html/h
+            tml_base.php
     \-- div_at - section for function div_at not yet defined that it should be internal in /html/html_base.php
     \-- block - section for function block not yet defined that it should be internal in /html/html_base.php
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
@@ -8125,6 +8165,7 @@
     \-- confirm_url_of_refresh - section for function confirm_url_of_refresh not yet defined that it should be wikipedia
              in /phrase/phrase.php
     \-- save_ref_rows - section for function save_ref_rows is expected to be save in /phrase/phrase.php
+    \-- save_triple_rows - section for function save_triple_rows is expected to be save in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
 \-- phrase_data
     \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
@@ -8520,10 +8561,12 @@
 \-- sandbox_code_id
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_code_id.php
+    \-- to_url_array - section for function to_url_array not yet defined that it should be construct and map in /sandbox
+            /sandbox_code_id.php
     \-- input_valid - section for function input_valid not yet defined that it should be construct and map in /sandbox/s
             andbox_code_id.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_code_id.php
-    \-- order error - order of section construct and map has difference at input_valid should be before api_mapper
+    \-- order error - order of section construct and map has difference at to_url_array should be before api_mapper
 \-- sandbox_link
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_link.php
@@ -8641,6 +8684,7 @@
     \-- status - section for function status not yet defined that it should be set and get in /system/job.php
     \-- priority - section for function priority not yet defined that it should be set and get in /system/job.php
     \-- user_name - section for function user_name not yet defined that it should be set and get in /system/job.php
+    \-- name - section for function name is expected to be debug in /system/job.php
     \-- is_open - section for function is_open is expected to be info in /system/job.php
     \-- is_delayed - section for function is_delayed is expected to be info in /system/job.php
     \-- change - section for function change not yet defined that it should be modify in /system/job.php
@@ -8693,7 +8737,8 @@
     \-- owner - section for function owner not yet defined that it should be display in /system/sys_log.php
     \-- owner_name - section for function owner_name not yet defined that it should be display in /system/sys_log.php
     \-- status_name - section for function status_name not yet defined that it should be display in /system/sys_log.php
-    \-- order error - order of section display has difference at header should be before page_view
+    \-- name - section for function name is expected to be debug in /system/sys_log.php
+    \-- order error - order of section display has difference at name should be before header
 \-- sys_log_list
     \-- api_load - section for function api_load not yet defined that it should be load in /system/sys_log_list.php
     \-- api_json - section for function api_json not yet defined that it should be api in /system/sys_log_list.php
@@ -8916,17 +8961,7 @@
     \-- dsp_tbl_std - section for function dsp_tbl_std not yet defined that it should be to review in /value/value.php
     \-- dsp_tbl_usr - section for function dsp_tbl_usr not yet defined that it should be to review in /value/value.php
     \-- dsp_tbl - section for function dsp_tbl not yet defined that it should be to review in /value/value.php
-    \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /value/value.php
-    \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /value/value
-            .php
-    \-- dsp_samples - section for function dsp_samples not yet defined that it should be TODO Prio 2 recreate based on t
-            he group in /value/value.php
-    \-- dsp_add_fast - section for function dsp_add_fast not yet defined that it should be TODO Prio 2 recreate based on
-             the group in /value/value.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be TODO Prio 2 recreate based on the gro
-            up in /value/value.php
-    \-- display - section for function display not yet defined that it should be TODO Prio 2 recreate based on the group
-             in /value/value.php
+    \-- display - section for function display not yet defined that it should be to review in /value/value.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper,
             order of section base has difference at name_link should be before name_tip
 \-- value_list
@@ -9014,17 +9049,14 @@
             hp
     \-- dsp_navbar_html_no_view - section for function dsp_navbar_html_no_view not yet defined that it should be to revi
             ew / deprecate in /view/view.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /view/view.php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /view/view.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view.p
             hp
-    \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view.php
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
     \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
-    \-- order error - order of section to review has difference at log_err should be before selector_page
 \-- view_base
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_b
             ase.php
@@ -9042,12 +9074,9 @@
     \-- show - section for function show not yet defined that it should be execute in /view/view_exe.php
     \-- add_page_cache - section for function add_page_cache not yet defined that it should be execute in /view/view_exe
             .php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view_e
             xe.php
-    \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view_exe
-            .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
     \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
@@ -9161,6 +9190,9 @@
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be construct and map in /word/
             word.php
     \-- api_array - section for function api_array not yet defined that it should be api in /word/word.php
+    \-- suggestion_url - section for function suggestion_url not yet defined that it should be load in /word/word.php
+    \-- url_with_suggestions - section for function url_with_suggestions not yet defined that it should be load in /word
+            /word.php
     \-- impact - section for function impact not yet defined that it should be set and get in /word/word.php
     \-- word - section for function word not yet defined that it should be cast in /word/word.php
     \-- parents - section for function parents is expected to be foaf in /word/word.php
@@ -9239,7 +9271,8 @@
     \-- __construct
         \-- frontend - define the settings for this word object
         \-- data_object - init the data object vars and set the lists based on the given api json
-        \-- user_request - @param user_backend $usr_backend the backend user, updated in place e.g. on login
+        \-- user_request - @param user_message $msg the message buffer enriched with potential errors; must carry the re
+                questing frontend user as $msg->usr
         \-- verb_list - create an empty list, which needs no message; a caller with an api json message
     \-- reset
         \-- data_object - init the data object vars and set the lists based on the given api json
@@ -9260,6 +9293,7 @@
         \-- sys_log_list - @return array the json message array to send the updated data to the backend
     \-- load_by_id_with_related
         \-- component - load the component by id AND ask the backend to include the owner, the change log and the
+        \-- view - load the view by id AND ask the backend to include the owner, the change log and the user
     \-- api_get
         \-- frontend - get an api json as a string from the backend
     \-- load
@@ -9270,6 +9304,20 @@
     \-- checksum
         \-- wikidata_import - @return string the checksum of the import json,
                  so that the confirm imports only what the user has seen
+    \-- url_mapper
+        \-- view - set the vars of this view bases on the url array
+    \-- to_url_array
+        \-- view - @return array parent url array with the type and the style url vars of the view form,
+    \-- sandbox_fld_order
+        \-- view - @return array the ordered db field names of a view used for the change preview order
+    \-- db_fld_to_url
+        \-- view - @return array all sandbox view db field names mapped to their url var key so that the undo
+    \-- dsp_navbar
+        \-- view - show the navigation bar, which allow the user to search, to log in or change the settings
+    \-- dsp_navbar_no_view
+        \-- view - same as dsp_navbar, but without the view change used for the view editors
+    \-- dsp_navbar_simple
+        \-- view - the basic zukunft top elements that should be shown always
 \-- base
     \-- name_link
         \-- component - create the html code to show the component name with the link to change the component parameters
@@ -9447,18 +9495,17 @@
         \-- component - @return string the end of the collapsed block that details_start has opened
     \-- word_name
         \-- component - @return string the name of a phrase and give the user the possibility to change the phrase name
-    \-- btn_unlink
-        \-- component - lists of all views where this component is used
-    \-- 1
-        \-- view_exe - HTML code to edit all word fields
     \-- dsp_hist
         \-- component - display the history of a view component
+        \-- view - display the history of a view
         \-- view_exe - display the history of a view
     \-- dsp_hist_links
         \-- component - display the link history of a view component
+        \-- view - display the link history of a view
         \-- view_exe - display the link history of a view
     \-- log_err
         \-- component - display the link history of a view component
+        \-- view - display the link history of a view
     \-- log_debug
         \-- component - display the link history of a view component
     \-- phrase_selector
@@ -9475,8 +9522,6 @@
         \-- sys_log_list - @return string the HTML code for the table headline
     \-- get_html_footer
         \-- sys_log_list - @return string the HTML code for the table headline
-    \-- selector_page
-        \-- view_exe - create a selection page where the user can select a view
 \-- load
     \-- add_page_cache
         \-- component_exe - fill the request cache with the data that this component shows, before the html of the
@@ -9628,8 +9673,11 @@
         \-- sandbox_link - the children overwrite this with the type list of their own link type
     \-- link_preview
         \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
+    \-- 3
+        \-- view - the switch icon that opens the edit view of the shown object with this view preselected as
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
+        \-- view - return the html code to display a view name with the link
     \-- display_with_actions
         \-- job_list - @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
     \-- pending_first
@@ -9742,6 +9790,9 @@
         \-- data_object - the view with its name from the request cache, asked in both view caches, because the
     \-- view_code_id
         \-- data_object - @param int $id the database id of the view e.g. of the page that shows a component
+    \-- api_json_with_cache
+        \-- data_object - the api json of an object completed by the fields of the cached object with the same class and
+                 id,
     \-- has_view_list
         \-- data_object - @return bool true if this context object contains a view list
     \-- file_list
@@ -9841,7 +9892,8 @@
     \-- url_mapper
         \-- sandbox - set the vars of this object bases on the url array
     \-- to_url_array
-        \-- sandbox - @return array parent url array extended with the share and protection of this sandbox object
+        \-- sandbox - @return array parent url array extended with the share, protection, owner and, only if set,
+                 the exclusion
     \-- set_owner_name
         \-- sandbox - set the owner by the user name e.g. as sent by the api message or the page url
     \-- owner_name
@@ -9849,11 +9901,11 @@
     \-- view_id
         \-- sandbox - @return string the name of the user who owns the object or an empty string if not known
     \-- share_id
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- protection_id
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- is_excluded
-        \-- sandbox - @return array the json message array to send the updated data to the backend
+        \-- sandbox - @param mixed $val the value of a field of the json message array
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
         \-- system_time_list - set the request times based on the api json array
@@ -9939,9 +9991,9 @@
     \-- system_sub_tile_var
         \-- system_page - HTML for a subtitle
     \-- preview
-        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+        \-- system_page - the preview of the edited component for the sample phrase of the url (url_var::SAMPLE_PHRASE),
     \-- about_body
-        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+        \-- system_page - @param int $phr_id the id of the sample phrase of the url, 0 if the url has none
     \-- setup_body
         \-- system_page - request from the user the values relevant for the initial setup
     \-- signup_body
@@ -9960,21 +10012,29 @@
     \-- body_search_full
         \-- system_page - like body_search but with all possible fields
     \-- value_details
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - all details of one value on one page: the fields of the value,
+                 the formulas whose results depend on
     \-- result_explain
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the formulas that have calculated a result from the given value,
+                 so these are the formulas whose
     \-- formula_test
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the formulas that have calculated a result from the given value,
+                 so these are the formulas whose
     \-- sandbox
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- undo
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- user_setting
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- process
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- error_log
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - the overwrites of the requesting user grouped by the type of the changed object,
+                 each with its undo,
     \-- error_update
         \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
     \-- not_yet_available
@@ -10010,8 +10070,6 @@
         \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- num_value
         \-- ui_base - TODO Prio 2 move to a component exe part class
-    \-- main_value
-        \-- ui_base - TODO Prio 0 fill with real code
     \-- source_name
         \-- ui_base - @param db_object|type_object|null $dbo the source whose name should be shown
     \-- source_doi_link
@@ -10247,7 +10305,7 @@
     \-- triples_of_types
         \-- ui_list - the triples that point to the given type, one column per sub type of the type below its name,
     \-- phrases_related
-        \-- ui_list - TODO Prio 0 fill with real code
+        \-- ui_list - the phrases related to the given phrase with the highest impact first, e.g. the global problems
     \-- list_sort
         \-- ui_list - @return string the html code of a sortable list
         \-- list_sort - @param phrase $phr the start phrase to select the rows
@@ -10284,9 +10342,10 @@
     \-- system_phrases
         \-- ui_rank - the triple names that are used by the system
     \-- ranking_parameters
-        \-- ui_rank - TODO Prio 0 fill with real code
+        \-- ui_rank - the criterion of the ranking list, which is the impact,
+                 because no backend calculates another ranking
     \-- ranking_list
-        \-- ui_rank - TODO Prio 0 fill with real code
+        \-- ui_rank - the phrases related to the given phrase with the highest impact first
     \-- phrase_select
         \-- ui_select - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- view_select
@@ -10566,6 +10625,9 @@
         \-- html_base - wrap the main tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
+    \-- fieldset_disabled
+        \-- html_base - wrap a disabled fieldset around html code within a form,
+                 so that its fields are shown but neither
     \-- div_at
         \-- html_base - @param string $style the html class name of an absolute positioned block e.g. a needle
     \-- block
@@ -10633,6 +10695,8 @@
         \-- system_form - @param verb|db_object $dbo the verb
     \-- show_name_in_formulas
         \-- system_form - @param verb|db_object $dbo the verb
+    \-- label_with_html
+        \-- system_form - like show_field_labeled, but for a value that is html already, e.g. the link of a formula,
     \-- show_style
         \-- system_form - @param view|component|component_link|term_view|db_object $dbo the object whose display style i
                 s shown
@@ -10780,6 +10844,9 @@
     \-- form_ref_rows
         \-- system_form - the references of the phrase as '6'-prefixed rows of the edit form (see url_var::REF_ROW),
                  so that the
+    \-- form_triple_rows
+        \-- system_form - the triples of a new word as '5'-prefixed rows of its add form (see url_var::TRIPLE_ROW),
+                 so that the
     \-- form_value
         \-- system_form - create the html code for the form element to select a value
     \-- form_values
@@ -10839,7 +10906,7 @@
     \-- form_protection_type
         \-- system_form - create the html code for the form element to select the protection type
     \-- form_table_linked_view
-        \-- system_form - TODO Prio 0 review
+        \-- system_form - TODO Prio 1 review
     \-- form_formula_expression
         \-- system_form - create the html code for the form element to enter the formula expression
     \-- form_formula_latex
@@ -10860,7 +10927,7 @@
         \-- system_form - the export button of an export view,
                  which shows the same view again with the request to download the export
     \-- button_request
-        \-- system_form - TODO Prio 0 wire up the request action
+        \-- system_form - TODO Prio 2 let a user who is no admin request a new language that an admin confirms
     \-- form_end
         \-- system_form - @return string that simply closes the form
     \-- row_start
@@ -11094,6 +11161,9 @@
         \-- frontend - start a frontend session via api
     \-- end
         \-- frontend - write the execution time if it took too long
+    \-- slow_request_log_level
+        \-- frontend - the log level of a page of the given duration,
+                 based on the response time limits of the frontend behaviour
     \-- load_cache
         \-- frontend - load the frontend cache once upfront via api
     \-- set_cache
@@ -11110,6 +11180,9 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- save_logoff
+        \-- frontend - write the logoff time of the requesting user to the account; separated from action_logout,
+                 which also
     \-- calculator_saved_text
         \-- frontend - the confirmation of one saved number as html,
                  because the new number links to the default view of the value
@@ -11121,6 +11194,9 @@
         \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
     \-- url_with_wikipedia_refresh
         \-- frontend - the confirm page of the description and the wikidata id that the backend takes from the
+    \-- url_with_word_suggestions
+        \-- frontend - the add view of a new word filled with the description,
+                 the references and the 'is a' triples that
     \-- url_with_wikidata_refresh
         \-- frontend - the import preview of the values that wikidata would add to a phrase,
                  because the refresh icon of a wikidata
@@ -11337,6 +11413,9 @@
         \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h4
         \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
+    \-- form_section_title
+        \-- html_base - the title of a group of rows within a form e.g. "References" of the add word view,
+                 bigger than a field
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page
@@ -11456,10 +11535,6 @@
     \-- dsp_form_id
         \-- html_base - centre a html page
     \-- dsp_form_hidden
-        \-- html_base - html hidden field
-    \-- dsp_form_text
-        \-- html_base - html hidden field
-    \-- dsp_form_text_big
         \-- html_base - html hidden field
     \-- dsp_form_fld_checkbox
         \-- html_base - add the field to a form
@@ -11671,5 +11746,8 @@
 \-- chart
     \-- svg
         \-- table_chart - the table as a chart of the given type
+\-- to review / deprecate
+    \-- dsp_navbar_html_no_view
+        \-- view - same as dsp_navbar, but without the view change used for the view editors
 ```
 

@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -86,14 +87,13 @@ class term_write_tests
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
-        // ... check also for a verb
+        // ... check also for a verb, which is found by its name and not by its code id
         $term = new term($t->usr1);
-        $term->load_by_obj_name(verbs::IS, $msg);
-        $target = '<span class="text-danger">A word with the name "" already exists. '
-            . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</span>';
+        $term->load_by_obj_name(verbs::IS_NAME, $msg);
+        $target = '<span class="text-danger">A verb with the name "' . verbs::IS_NAME . '" already exists. '
+            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</span>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
-        // TODO Prio 0 activate
-        //$t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
+        $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a formula
         $term = new term($t->usr1);

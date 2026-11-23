@@ -56,6 +56,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::REF . 'ref_list.php';
@@ -91,6 +92,7 @@ include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'ref_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'api.php';
@@ -130,7 +132,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -186,6 +190,10 @@ class word extends sandbox_code_id
     // each entry ['phrase' => phrase, 'formulas' => formula_list] to render 'assigned to <ancestor>'
     public ?array $parent_formulas = null;
     public ?ref_list $ref_lst = null;
+    // the 'is a' concepts that conceptnet suggests for a new word e.g. "city" for Hamburg (see suggestion_url)
+    public array $suggested_parents = [];
+    // the translated steps of the suggestions e.g. "get data from wikipedia 'https://en.wikipedia.org/wiki/Hamburg'"
+    public array $suggest_steps = [];
 
 
     /*
@@ -285,7 +293,6 @@ class word extends sandbox_code_id
     }
 
     /**
-     * TODO Prio 0 make sure that all fields are mapped to the url
      * @return array parent url array extended with the plural and view of this word, without empty strings
      */
     function to_url_array(user_message $msg): array
@@ -425,6 +432,8 @@ class word extends sandbox_code_id
         } else {
             $this->ref_lst = null;
         }
+        $this->suggested_parents = $json_array[json_fields::SUGGESTED_PARENTS] ?? [];
+        $this->suggest_steps = $json_array[json_fields::SUGGEST_STEPS] ?? [];
         return $msg->is_ok();
     }
 
@@ -454,13 +463,190 @@ class word extends sandbox_code_id
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $this->api_array_set($vars);
     }
 
 
     /*
      * load
      */
+
+    /**
+     * the add view of a new word filled with the suggestions of wikipedia, conceptnet and wikidata, so that
+     * the user can adjust and confirm them (the add word button of a search, see system_page::add_word_button);
+     * each source is asked in its own request, so that the loading text shows each step while the user waits;
+     * wikidata is asked for the groups only if conceptnet knows none
+     *
+     * @param array $url_array the url of the add view with the name of the new word
+     * @param user_message $msg with the requesting user and to tell the user which suggestion is missing
+     * @return array the url of the add view with the description, the reference rows and the triple rows
+     */
+    function suggestion_url(array $url_array, user_message $msg): array
+    {
+        $name = (string)($url_array[url_var::NAME] ?? '');
+        // the wikipedia page has an underscore for each space of the name e.g. "New_York"
+        $page_url = ref_types::WIKIPEDIA_PAGE_URL . str_replace(' ', '_', $name);
+        $wiki_step = $this->step_text(msg_id::SUGGEST_READ_WIKIPEDIA, $page_url);
+        $wiki = $this->suggestion_of(url_var::REFRESH_SUGGEST_WIKIPEDIA, $name, $wiki_step, $msg);
+        $this->description = $wiki->description;
+        $this->ref_lst = $wiki->ref_lst;
+        $cpn_step = $this->step_text(msg_id::SUGGEST_READ_CONCEPTNET, $name);
+        $cpn = $this->suggestion_of(url_var::REFRESH_SUGGEST_CONCEPTNET, $name, $cpn_step, $msg);
+        $this->add_suggested_refs($cpn);
+        $this->suggested_parents = $cpn->suggested_parents;
+        $this->suggest_steps = array_merge($wiki->suggest_steps, $cpn->suggest_steps);
+        $wd_id = $this->suggested_wikidata_id();
+        if ($this->suggested_parents == [] and $wd_id != '') {
+            $wd_step = $this->step_text(msg_id::SUGGEST_READ_WIKIDATA, ref_types::WIKIDATA_ITEM_URL . $wd_id);
+            $wd_data = [url_var::EXTERNAL_KEY => $wd_id];
+            $wd = $this->suggestion_of(url_var::REFRESH_SUGGEST_WIKIDATA, $name, $wd_step, $msg, $wd_data);
+            $this->suggested_parents = $wd->suggested_parents;
+            $this->suggest_steps = array_merge($this->suggest_steps, $wd->suggest_steps);
+        }
+        return $this->url_with_suggestions($url_array, $msg);
+    }
+
+    /**
+     * ask the backend for the suggestions of one source and show the steps below the loading text
+     *
+     * @param string $source the source of the suggestions e.g. url_var::REFRESH_SUGGEST_WIKIPEDIA
+     * @param string $name the name of the new word e.g. "Hamburg"
+     * @param string $read_step the step shown while the backend reads the source
+     * @param user_message $msg with the requesting user
+     * @param array $data more parameters of the request e.g. the wikidata id for the groups of wikidata
+     * @return word the word with the suggestions and the result steps of this source
+     */
+    private function suggestion_of(string $source, string $name, string $read_step, user_message $msg, array $data = []): word
+    {
+        rest_call::send_loading_text($read_step);
+        $api = new rest_call();
+        $data[url_var::REFRESH] = $source;
+        $wrd = new word();
+        $wrd->api_mapper($api->api_call_name($this->api_class(), $name, $msg, $data), $msg);
+        foreach ($wrd->suggest_steps as $step) {
+            rest_call::send_loading_text($step);
+        }
+        return $wrd;
+    }
+
+    /**
+     * @param msg_id $msg_id the text of the step e.g. msg_id::SUGGEST_READ_WIKIPEDIA
+     * @param string $name the url or the name of the step e.g. "https://en.wikipedia.org/wiki/Hamburg"
+     * @return string the translated step
+     */
+    private function step_text(msg_id $msg_id, string $name): string
+    {
+        global $mtr;
+        return new library()->msg_var_text([[$msg_id, [msg_id::VAR_NAME => $name]]], $mtr);
+    }
+
+    /**
+     * @param word $wrd the suggestions of a later source e.g. the conceptnet reference
+     * @return void
+     */
+    private function add_suggested_refs(word $wrd): void
+    {
+        foreach ($wrd->ref_lst?->lst() ?? [] as $ref) {
+            $this->ref_lst ??= new ref_list();
+            // the suggested references have no id yet, so they are no double of each other
+            $this->ref_lst->add_obj($ref, true);
+        }
+    }
+
+    /**
+     * @return string the wikidata id of the suggested wikidata reference e.g. "Q1055", empty if wikipedia names none
+     */
+    private function suggested_wikidata_id(): string
+    {
+        global $ui_sys;
+        $wd_type_id = $ui_sys->typ_lst_cache->ref_typ->id(ref_types::WIKIDATA);
+        return $this->ref_lst?->get_by_type_id($wd_type_id)?->external_key() ?? '';
+    }
+
+    /**
+     * public only so that the unit tests can check it with given suggestions (see word_ui_tests)
+     *
+     * @param array $url_array the url of the add view with the name of the new word
+     * @param user_message $msg to tell the user what has not been found
+     * @return array the add view url with the suggested description, references and 'is a' triples
+     */
+    function url_with_suggestions(array $url_array, user_message $msg): array
+    {
+        $result = $url_array;
+        // the add view and not the confirm, so that the user can adjust the suggestions first
+        unset($result[url_var::STEP]);
+        // a description that the user has entered already is never replaced
+        if (($result[url_var::DESCRIPTION] ?? '') == '' and ($this->description ?? '') != '') {
+            $result[url_var::DESCRIPTION] = $this->description;
+        }
+        $this->add_missing_suggestions((string)($url_array[url_var::NAME] ?? ''), $msg);
+        $result = array_merge($result, url_var::ref_row_url_array($this->suggested_ref_rows()));
+        $triple_rows = $this->suggested_triple_rows();
+        return array_merge($result, url_var::ref_row_url_array($triple_rows, [], url_var::TRIPLE_ROW));
+    }
+
+    /**
+     * tell the user on the add view what has not been found, because that explains an empty field, whereas
+     * the steps of the collection are shown only below the loading text (see suggestion_of); as one info,
+     * because the page shows one notification
+     *
+     * @param string $name the name of the new word e.g. "Hamburg"
+     * @param user_message $msg that gets what has not been found as one info with a line each
+     * @return void
+     */
+    private function add_missing_suggestions(string $name, user_message $msg): void
+    {
+        global $ui_sys;
+        $html = new html_base();
+        $missing = [];
+        $wiki_type_id = $ui_sys->typ_lst_cache->ref_typ->id(ref_types::WIKIPEDIA);
+        if ($this->ref_lst?->get_by_type_id($wiki_type_id) == null) {
+            $missing[] = msg_id::SUGGEST_WIKIPEDIA_MISSING;
+        }
+        if ($this->suggested_parents == []) {
+            $missing[] = msg_id::SUGGEST_PARENTS_MISSING;
+        }
+        // the backend names the result of each source, so without any step no source has been read at all
+        if ($this->suggest_steps == []) {
+            $missing = [msg_id::SUGGEST_NO_ANSWER];
+        }
+        $lines = array_map(fn($msg_id) => $html->esc($this->step_text($msg_id, $name)), $missing);
+        $msg->add_info_html(implode('<' . html_base::BR . '>', $lines));
+    }
+
+    /**
+     * @return array a reference row to add each suggested reference e.g. [1 => ['a' => 'a', 'lt' => 3, 'ek' => 'Hamburg']]
+     */
+    private function suggested_ref_rows(): array
+    {
+        $result = [];
+        foreach ($this->ref_lst?->lst() ?? [] as $ref) {
+            $result[count($result) + 1] = [
+                url_var::ACTION => url_var::CRUD_CREATE,
+                url_var::REF_TYPE => $ref->predicate_id(),
+                url_var::EXTERNAL_KEY => $ref->external_key(),
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * @return array a triple row to add "is a" each suggested parent e.g. [1 => ['a' => 'a', 'b' => 2, 'pt' => 'city']]
+     */
+    private function suggested_triple_rows(): array
+    {
+        global $ui_sys;
+        $is_a_id = $ui_sys->typ_lst_cache->vrb->id(verbs::IS);
+        $result = [];
+        foreach ($this->suggested_parents as $parent) {
+            $result[count($result) + 1] = [
+                url_var::ACTION => url_var::CRUD_CREATE,
+                url_var::VERB => $is_a_id,
+                url_var::PHRASE_TO => $parent,
+            ];
+        }
+        return $result;
+    }
 
     /**
      * load the word by id AND ask the backend to include the related-phrases view-model

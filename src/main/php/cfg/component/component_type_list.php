@@ -47,10 +47,10 @@ class component_type_list extends type_list
 {
 
     /**
-     * adding the view component types used for unit tests to the dummy list
+     * fill the list for the unit tests from db_code_links/component_types.csv like every type list with a csv,
+     * so that the unit tests use the same ids and names as the database
      */
     function load_dummy(): void {
-        // TODO Prio 0 check if and why any other load_dummy function uses something else
         parent::load_from_csv_resource();
     }
 

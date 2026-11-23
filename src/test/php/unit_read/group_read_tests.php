@@ -74,7 +74,7 @@ class group_read_tests
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names([word_names::ZH, word_names::CANTON, word_names::INHABITANTS], $msg);
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
-        $grp = $phr_lst->get_grp_id();
+        $grp = $phr_lst->get_grp_id($msg);
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
@@ -85,7 +85,7 @@ class group_read_tests
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
-        $grp = $phr_lst->get_grp_id();
+        $grp = $phr_lst->get_grp_id($msg);
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();

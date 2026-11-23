@@ -91,21 +91,12 @@ class source_type_list extends type_list
     }
 
     /**
-     * adding the source types used for unit tests to the dummy list
-     * TODO Prio 3: load from csv
+     * fill the list for the unit tests from db_code_links/source_types.csv,
+     * so that the unit tests use the same ids and names as the database
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new source_type(source_types::XBRL, source_types::XBRL);
-        $type->id = source_types::XBRL_ID;
-        $this->add($type);
-        $type = new source_type(source_types::CSV, source_types::CSV);
-        $type->id = source_types::CSV_ID;
-        $this->add($type);
-        $type = new source_type(source_types::PDF, source_types::PDF);
-        $type->id = source_types::PDF_ID;
-        $this->add($type);
+        $this->load_from_csv_resource();
     }
 
     /**

@@ -250,6 +250,18 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the related phrases of the row phrase "global problem" instead of the page
+     *                   phrase, like the component "problem definition" of the global problem view
+     */
+    function component_phrases_related_global_problem(): component
+    {
+        $t_trp = new test_triples($this->env);
+        $cmp = $this->component_use_case(components::TEST_VALUES_NAME, component_types::PHRASES_RELATED);
+        $cmp->set_row_phrase($t_trp->global_problem()->phrase());
+        return $cmp;
+    }
+
+    /**
      * @return component the value table with the inhabitants as its own column, like the lifetime
      *                   and the annual column of the main results of a use case page
      */

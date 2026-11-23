@@ -91,6 +91,25 @@ class triple_read_tests
         $t->assert($test_name, $trp_by_id->name(), triple_names::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triple_names::MATH_CONST_COM);
 
+        $test_name = 'load the standard of ' . triple_names::MATH_CONST . ' by its from, verb and to';
+        $trp_std = new triple($t->usr1);
+        $trp_std->load_standard_by_type_link(word_names::CONST_ID, verbs::PART_ID, word_names::MATH_ID, $msg);
+        $t->assert($test_name, $trp_std->id(), triple_names::MATH_CONST_ID);
+        // negative: the reversed link is another triple, which does not exist
+        $test_name = '... but not by the reversed link';
+        $trp_rev = new triple($t->usr1);
+        $trp_rev->load_standard_by_type_link(word_names::MATH_ID, verbs::PART_ID, word_names::CONST_ID, $msg);
+        $t->assert($test_name, $trp_rev->id(), 0);
+        $test_name = 'load the standard of ' . triple_names::MATH_CONST . ' by its from and to';
+        $trp_std = new triple($t->usr1);
+        $trp_std->load_standard_by_link(word_names::CONST_ID, word_names::MATH_ID, $msg);
+        $t->assert($test_name, $trp_std->id(), triple_names::MATH_CONST_ID);
+        $test_name = '... but not by the reversed from and to';
+        $trp_rev = new triple($t->usr1);
+        $trp_rev->load_standard_by_link(word_names::MATH_ID, word_names::CONST_ID, $msg);
+        $t->assert($test_name, $trp_rev->id(), 0);
+        $msg->reset();
+
         // a triple can carry a phrase type like a word: the unit triple "gram per kWh" of the
         // use case import is typed "measure unit", so the type must survive the db round trip
         // (import, save, load), else a table header shows the unit like a normal phrase

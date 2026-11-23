@@ -39,6 +39,7 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'groups.php';
 include_once test_paths::CONST . 'word_names.php';
 
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 
 class test_groups extends test_objects
@@ -73,9 +75,10 @@ class test_groups extends test_objects
      */
     function group(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_pi();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_READ;
         return $grp;
     }
@@ -110,9 +113,10 @@ class test_groups extends test_objects
 
     function group_add(phrase $phr): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $lst = new phrase_list($this->env->usr1);
         $lst->add($phr);
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     /**
@@ -120,9 +124,10 @@ class test_groups extends test_objects
      */
     function group_pi_symbol(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_pi();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_READ;
         return $grp;
     }
@@ -132,10 +137,11 @@ class test_groups extends test_objects
      */
     function group_pi_math(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_phr->phrase_pi_math());
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     /**
@@ -143,9 +149,10 @@ class test_groups extends test_objects
      */
     function group_e(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_e();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     /**
@@ -153,9 +160,10 @@ class test_groups extends test_objects
      */
     function group_speed_of_light(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->si_unit_speed_of_light();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::LENGTH_DEFINITION;
         return $grp;
     }
@@ -165,11 +173,12 @@ class test_groups extends test_objects
      */
     function group_speed_of_light_with_two_units(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_wrd = new test_words($this->env);
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->si_unit_speed_of_light();
         $lst->add($t_wrd->Hz());
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::LENGTH_DEFINITION;
         return $grp;
     }
@@ -179,9 +188,10 @@ class test_groups extends test_objects
      */
     function transition_cs_133(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->si_unit_transition_cs_133();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TIME_DEFINITION;
         return $grp;
     }
@@ -191,9 +201,10 @@ class test_groups extends test_objects
      */
     function group_pod_launch(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_pod_launch();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_TIME_VALUE;
         $grp->description = groups::TD_TIME_VALUE;
         return $grp;
@@ -204,9 +215,10 @@ class test_groups extends test_objects
      */
     function group_pod_url(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_pod_url();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_TEXT_VALUE;
         $grp->description = groups::TD_TEXT_VALUE;
         return $grp;
@@ -217,9 +229,10 @@ class test_groups extends test_objects
      */
     function group_pod_point(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_pod_point();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_GEO_VALUE;
         $grp->description = groups::TD_GEO_VALUE;
         return $grp;
@@ -230,9 +243,10 @@ class test_groups extends test_objects
      */
     function group_prime_3(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_zh_2019();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_ZH_2019;
         return $grp;
     }
@@ -242,9 +256,10 @@ class test_groups extends test_objects
      */
     function group_prime_max(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_zh_mio();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_ZH_2019_IN_MIO;
         return $grp;
     }
@@ -255,9 +270,10 @@ class test_groups extends test_objects
      */
     function group_prime_4(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_prime();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     /**
@@ -265,27 +281,30 @@ class test_groups extends test_objects
      */
     function group_main_max(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_increase();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_CH_INCREASE_2020;
         return $grp;
     }
 
     function group_16(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_16();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_READ;
         return $grp;
     }
 
     function group_17_plus(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_17_plus();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_READ;
         return $grp;
     }
@@ -295,9 +314,10 @@ class test_groups extends test_objects
      */
     function group_const(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_const();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_READ;
         return $grp;
     }
@@ -307,9 +327,10 @@ class test_groups extends test_objects
      */
     function group_zh(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_zh_city();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::ZH_CITY_INHABITANTS;
         $grp->description = groups::ZH_CITY_INHABITANTS_COM;
         return $grp;
@@ -317,18 +338,20 @@ class test_groups extends test_objects
 
     function group_zh_2019(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_zh_2019();
-        $grp = $lst->get_grp_id(false);
+        $grp = $lst->get_grp_id($msg, false);
         $grp->name = groups::TN_ZH_2019;
         return $grp;
     }
 
     function group_zh_2020(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_zh_city_2020();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     /**
@@ -336,23 +359,26 @@ class test_groups extends test_objects
      */
     function group_canton_mio_symbol(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_canton_mio_symbol();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     function group_canton(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_canton_mio();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     function group_ch(): group
     {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->ch_inhabitants_in_mio_2019();
-        return $lst->get_grp_id(false);
+        return $lst->get_grp_id($msg, false);
     }
 
     function group_list(): group_list

@@ -36,8 +36,15 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -69,10 +76,20 @@ include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_differences.php';
 include_once test_paths::UTILS . 'test_object_overview.php';
+include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
+include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as files_cfg;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
@@ -104,6 +121,9 @@ use Zukunft\ZukunftCom\test\php\utils\test_differences;
 use Zukunft\ZukunftCom\test\php\utils\test_object_overview;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\unit_workflow\url_test_base;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use ReflectionClass;
 use ReflectionClassConstant;
 
@@ -133,6 +153,24 @@ class coding_rule_tests
         . 'except in the system language, which shows the message id itself, and each document of the about page '
         . 'needs a translation with the same headings per level, which src/main/resources/translations/docs.csv names' . "\n\n";
     const string TRANSLATION_FINDINGS_NONE = 'no findings';
+
+    // the text of a stub that a child class must overwrite e.g. 'name not overwritten by ' . $this::class
+    const string STUB_MARK = 'not overwritten by';
+    // a date of a json field formatted by a literal e.g. $vars[json_fields::TIME] = $time->format('Y-m-d')
+    // instead of DateTimeInterface::ATOM or a named const, so that every json date has the same format
+    const string JSON_DATE_LITERAL_PATTERN = '/\$vars\[.*->format\(\s*[\'"]/';
+    // the creation of the bare shared message, which an http entry point replaces by the message of its layer
+    const string BARE_MESSAGE_MARK = 'new Message(';
+    // the file extension of a php class file e.g. of an enum class that is named like its code link csv
+    const string PHP_EXT = '.php';
+    // the suffixes of the consts that repeat the id, the name and the description of a code link csv row
+    const string CSV_ID_SUFFIX = '_ID';
+    const string CSV_NAME_SUFFIX = '_NAME';
+    const string CSV_COM_SUFFIX = '_COM';
+    // the value of an empty field of a code link csv e.g. a missing description
+    const string CSV_NULL = 'NULL';
+    // the end of the name column of a code link csv e.g. user_status_name or type_name
+    const string CSV_NAME_COLUMN_SUFFIX = '_name';
 
     // the continuation lines of a wrapped md line start with this marker plus the indent of the
     // line that is continued, so that a wrapped line is not read as an own entry of the tree
@@ -362,6 +400,22 @@ class coding_rule_tests
 
         $this->php_cfg_no_web_tests($t);
 
+        $t->subheader($ts . 'error log of a missing overwrite or mapping');
+        $this->stub_error_log_tests($t);
+        $this->class_mapper_error_log_tests($t);
+
+        $t->subheader($ts . 'message of the http entry points');
+        $this->http_no_bare_message_tests($t);
+
+        $t->subheader($ts . 'date format of the json fields');
+        $this->json_date_format_tests($t);
+
+        $t->subheader($ts . 'enum consts of the code link csv');
+        $this->enum_csv_tests($t);
+
+        $t->subheader($ts . 'change fields of the code link csv');
+        $this->change_field_csv_tests($t);
+
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
 
@@ -412,6 +466,89 @@ class coding_rule_tests
         $t->subheader($ts . 'retired scripts');
         $this->retired_script_link_tests($t);
 
+        $t->subheader($ts . 'workflow snapshot ids');
+        $this->workflow_id_list_tests($t);
+
+        $t->subheader($ts . 'test value registration');
+        $this->test_word_name_tests($t);
+
+    }
+
+    /**
+     * check that a value found by test_db_load::add_value is registered for the cleanup only if
+     * it has a test word, so that a value left by a stopped run is removed, but never a seed value
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function test_word_name_tests(test_cleanup $t): void
+    {
+        $t_db = new test_db_load($t);
+
+        $test_name = 'a value of test words is a test value';
+        $names = [word_names::TEST_SHARE, word_names::TEST_CHF];
+        $t->assert_true($test_name, $t_db->has_test_word_name($names));
+        $test_name = '... also with only one test word among seed words';
+        $names = [words::CH, word_names::INHABITANTS, word_names::TEST_INCREASE, words::PCT, word_names::YEAR_2020];
+        $t->assert_true($test_name, $t_db->has_test_word_name($names));
+        // negative: a seed value must never be registered, because the cleanup would delete it
+        $test_name = 'a value of only seed words is no test value';
+        $names = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020];
+        $t->assert_false($test_name, $t_db->has_test_word_name($names));
+        $test_name = '... and nor is a value without words';
+        $t->assert_false($test_name, $t_db->has_test_word_name([]));
+    }
+
+    /**
+     * check that the workflow snapshots replace the db ids also within a list of ids, because only
+     * the first id of a list follows the '=', so e.g. the second phrase id of a value would change
+     * the snapshot whenever the test words get other db ids (see url_test_base::normalize_ids)
+     * TODO Prio 2 use existing const for the id
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function workflow_id_list_tests(test_cleanup $t): void
+    {
+        $wf = new url_test_base();
+        // the db ids of the two test words of a value and their fixed snapshot ids
+        $norm_ids = [3271 => 999, 3272 => 997];
+
+        $test_name = 'each known db id of a list is replaced by its fixed id';
+        $t->assert($test_name, $wf->normalize_list_ids('5,3271,3272', $norm_ids), '5,999,997');
+        $test_name = '... also with the url encoded separator';
+        $t->assert($test_name, $wf->normalize_list_ids('3271%2C3272', $norm_ids), '999%2C997');
+        $test_name = '... and the negative phrase id of a triple';
+        $t->assert($test_name, $wf->normalize_list_ids('-3271,3272', [-3271 => -998]), '-998,3272');
+        // negative: only a whole id is replaced, never a part of another id
+        $test_name = 'an id that only contains a known db id is kept';
+        $t->assert($test_name, $wf->normalize_list_ids('32712,13271', $norm_ids), '32712,13271');
+        $test_name = '... and without a fixed id the db id is kept';
+        $t->assert($test_name, $wf->normalize_list_ids('3271,3272', [3271 => 0]), '3271,3272');
+
+        $test_name = 'the lists of an url, a html link and a json text are found';
+        $content = 'pl=999%2C3272&n=1' . "\n"
+            . '<a href="view.php?pl=3271,3272&amp;p-=999">' . "\n"
+            . '"phrase_ids": "3271,3272",';
+        $expected = 'pl=999%2C997&n=1' . "\n"
+            . '<a href="view.php?pl=999,997&amp;p-=999">' . "\n"
+            . '"phrase_ids": "999,997",';
+        $t->assert($test_name, $wf->normalize_id_lists($content, $norm_ids), $expected);
+        // negative: a single id is no list, so it is left to the replacement of normalize_ids
+        $test_name = 'a single id is kept';
+        $t->assert($test_name, $wf->normalize_id_lists('id=3271&pl=3272', $norm_ids), 'id=3271&pl=3272');
+
+        // the group id of a new value is built from the db ids of its test words, so the add value workflows
+        // map it to the group id of the fixed test ids (value_url_tests::set_value_norm_id)
+        $real_grp_id = 3281 * 65536 + 3280;
+        $fixed_grp_id = word_names::TEST_ADD_ID * 65536 + word_names::TEST_ADD_TO_ID;
+        $test_name = 'the shown new value of a workflow without fixed id gets the fixed group id';
+        $map = $wf->norm_id_map($real_grp_id, 0, 0, [$real_grp_id => $fixed_grp_id]);
+        $t->assert($test_name, $map[$real_grp_id] ?? 0, $fixed_grp_id);
+        $test_name = '... and the object of a workflow with a fixed id gets the fixed id';
+        $map = $wf->norm_id_map(3271, 3271, word_names::TEST_ADD_ID, [3271 => word_names::TEST_ADD_TO_ID]);
+        $t->assert($test_name, $map[3271] ?? 0, word_names::TEST_ADD_ID);
+        // negative: without a fixed id the object id is not replaced at all
+        $test_name = '... but without a fixed id and no other mapping the object id is kept';
+        $t->assert_false($test_name, array_key_exists($real_grp_id, $wf->norm_id_map($real_grp_id, 0, 0, [])));
     }
 
     /**
@@ -1109,6 +1246,17 @@ class coding_rule_tests
             $t->assert($test_name, array_keys($hits), []);
         }
 
+        // the number of a table keyword is a setting of the table e.g. the row limit of table_editor_sample.json
+        $test_name = 'a table setting without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, triples::SYSTEM_ROW_LIMIT];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+        $test_name = '... because every table keyword exempts a value from the source check';
+        $t->assert_true($test_name, in_array(triples::SYSTEM_VIEW_VERSION, $chk->source_exempt_phrases()));
+        // negative: a phrase that is no table keyword and no estimate still needs a source
+        $test_name = '... but a measured value next to the table setting phrases still needs a source';
+        $t->assert_false($test_name, in_array(words::YEAR, $chk->source_exempt_phrases()));
+
         $test_name = 'a value with a source of the file is not listed';
         $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];
         $src = [json_fields::NAME => sources::WIKIDATA];
@@ -1748,10 +1896,587 @@ class coding_rule_tests
         return $result;
     }
 
+    /**
+     * check that every stub of a function that a child class must overwrite logs an error and not only a warning,
+     * because a missing overwrite is a program error that the admin has to see
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function stub_error_log_tests(test_cleanup $t): void
+    {
+        $stub_txt = "        \$msg = 'name " . self::STUB_MARK . " ' . \$this::class;";
+        $test_name = 'a stub that logs an error is fine';
+        $err_stub = ['    function name(): string', '    {', $stub_txt, '        log_err($msg);', '        return $msg;', '    }'];
+        $t->assert($test_name, $this->stubs_without_error_log($err_stub), []);
+        // negative: a stub that only logs a warning is reported with its line
+        $test_name = '... but not a stub that only logs a warning';
+        $wrn_stub = ['    function name(): string', '    {', $stub_txt, '        log_warning($msg);', '        return $msg;', '    }'];
+        $t->assert($test_name, $this->stubs_without_error_log($wrn_stub), [3]);
+
+        $missing = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(paths::PHP_LIB) as $code_file) {
+            $files_checked++;
+            foreach ($this->stubs_without_error_log(file($code_file)) as $line_nbr) {
+                $missing[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'stubs checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every stub of a function that a child class must overwrite logs an error';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers of the stub texts whose function does not log an error
+     */
+    private function stubs_without_error_log(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if ($this->is_stub_text($line) and !$this->logs_error_until_function_end($lines, $pos)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $line one line of a code file
+     * @return bool true if the line builds the text of a stub, but not a comment or a message enum case
+     */
+    private function is_stub_text(string $line): bool
+    {
+        $code = ltrim($line);
+        $is_code = (!str_starts_with($code, '*') and !str_starts_with($code, '//') and !str_starts_with($code, '.'));
+        return ($is_code and str_contains($code, self::STUB_MARK));
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @param int $pos the index of the line from which the function is read until its end
+     * @return bool true if the function logs an error from the given line until its end
+     */
+    private function logs_error_until_function_end(array $lines, int $pos): bool
+    {
+        $result = false;
+        $is_end = false;
+        for ($i = $pos; $i < count($lines) and !$is_end; $i++) {
+            if (str_contains($lines[$i], 'log_err') or str_contains($lines[$i], 'add_err')) {
+                $result = true;
+            }
+            $is_end = (rtrim($lines[$i]) == '    }');
+        }
+        return $result;
+    }
+
+    /**
+     * check that every mapper that creates an object by the class of another object e.g. the frontend object of a
+     * backend object logs an error for a class that it does not know, and does not only return false
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function class_mapper_error_log_tests(test_cleanup $t): void
+    {
+        $head = '        $result = match ($dbo::class) {';
+        $arm = '            word::class => new word_ui(),';
+        $test_name = 'a class mapper that logs an unknown class is fine';
+        $log_mapper = [$head, $arm, '            default => false,', '        };', '        if (!$result) {', "            log_err('ui object missing');", '        }', '    }'];
+        $t->assert($test_name, $this->class_mappers_without_error_log($log_mapper), []);
+        // negative: a class mapper that only returns false for an unknown class is reported with its line
+        $test_name = '... but not a class mapper that only returns false';
+        $mute_mapper = [$head, $arm, '            default => false,', '        };', '        return $result;', '    }'];
+        $t->assert($test_name, $this->class_mappers_without_error_log($mute_mapper), [1]);
+
+        $missing = [];
+        $files_checked = 0;
+        foreach ([paths::PHP_LIB, TEST_PHP_PATH] as $root) {
+            foreach ($this->php_file_list($root) as $code_file) {
+                $files_checked++;
+                foreach ($this->class_mappers_without_error_log(file($code_file)) as $line_nbr) {
+                    $missing[] = $code_file . ':' . $line_nbr;
+                }
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'class mappers checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every mapper that creates an object by a class logs an unknown class';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * a match by a class whose arms return a default value e.g. a default view id is no mapper and is not reported
+     * @param array $lines the lines of a code file
+     * @return array the line numbers of the class matches that create objects, but do not log an unknown class
+     */
+    private function class_mappers_without_error_log(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if ($this->is_class_mapper($lines, $pos) and !$this->logs_error_until_function_end($lines, $pos)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @param int $pos the index of the line that may start a match by a class
+     * @return bool true if the line starts a match by a class whose next line creates an object,
+     *              but not a text with such a match e.g. the test lines of class_mapper_error_log_tests
+     */
+    private function is_class_mapper(array $lines, int $pos): bool
+    {
+        $code = ltrim($lines[$pos]);
+        $is_class_match = (str_contains($code, 'match (') and str_contains($code, '::class)'));
+        $is_class_match = ($is_class_match and !str_contains($code, "'"));
+        $next_line = $lines[$pos + 1] ?? '';
+        return ($is_class_match and str_contains($next_line, '=> new '));
+    }
+
+    /**
+     * check that no http entry point creates the bare shared message, because the frontend shows only the messages
+     * of its own message class and the backend entry points use the backend message
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function http_no_bare_message_tests(test_cleanup $t): void
+    {
+        $test_name = 'an entry point with the frontend message is fine';
+        $ui_lines = ['$msg_ui = new user_message_ui(); // frontend entry point'];
+        $t->assert($test_name, $this->bare_message_lines($ui_lines), []);
+        // negative: the bare shared message is reported with its line
+        $test_name = '... but not an entry point with the bare shared message';
+        $bare_lines = ['$app = new frontend();', '$msg = ' . self::BARE_MESSAGE_MARK . ');'];
+        $t->assert($test_name, $this->bare_message_lines($bare_lines), [2]);
+
+        $found = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(html_paths::HTTP) as $code_file) {
+            $files_checked++;
+            foreach ($this->bare_message_lines(file($code_file)) as $line_nbr) {
+                $found[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'http entry points checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'no http entry point creates the bare shared message';
+        $t->assert($test_name, $found, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers that create the bare shared message
+     */
+    private function bare_message_lines(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if (str_contains($line, self::BARE_MESSAGE_MARK)) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check that every date of an api or export json field is formatted by DateTimeInterface::ATOM or a named const
+     * and not by a literal, because a literal e.g. 'Y-m-d H:i:s' drops the time zone
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_date_format_tests(test_cleanup $t): void
+    {
+        $test_name = 'a json date with the atom format is fine';
+        $atom_lines = ['$vars[json_fields::TIME] = $this->time?->format(DateTimeInterface::ATOM);'];
+        $t->assert($test_name, $this->json_date_literal_lines($atom_lines), []);
+        // negative: a literal format is reported with its line
+        $test_name = '... but not a json date with a literal format';
+        $literal_lines = ['$vars = [];', '$vars[json_fields::TIME] = $this->time->format(\'Y-m-d H:i:s\');'];
+        $t->assert($test_name, $this->json_date_literal_lines($literal_lines), [2]);
+
+        $found = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(paths::PHP_LIB) as $code_file) {
+            $files_checked++;
+            foreach ($this->json_date_literal_lines(file($code_file)) as $line_nbr) {
+                $found[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'json dates checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'no json date is formatted by a literal';
+        $t->assert($test_name, $found, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers that format the date of a json field by a literal
+     */
+    private function json_date_literal_lines(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if (preg_match(self::JSON_DATE_LITERAL_PATTERN, $line) === 1) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check that the id, the name and the description consts of an enum or type class match the row of the code link
+     * csv with the same name, from which the database and the type lists take them, because the consts are written
+     * by hand e.g. user_statuum::READ_ONLY_ID was 3 for the row 2 of "read-only"
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function enum_csv_tests(test_cleanup $t): void
+    {
+        $csv_lines = ['user_status_id, user_status_name, code_id, description', "2, 'read-only', 'read-only', 'no write'"];
+        $consts = ['READ_ONLY' => 'read-only', 'READ_ONLY_ID' => 2, 'READ_ONLY_NAME' => 'read-only', 'READ_ONLY_COM' => 'no write'];
+        $test_name = 'the consts that match their csv row are fine';
+        $diffs = $this->enum_csv_differences('user_statuum', $consts, $csv_lines);
+        $t->assert($test_name, $diffs, []);
+        // negative: the id of another row is reported with the class, the const and both ids
+        $test_name = '... but an id of another row is reported';
+        $id_consts = array_merge($consts, ['READ_ONLY_ID' => 3]);
+        $diffs = $this->enum_csv_differences('user_statuum', $id_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_ID is 3, but the csv row of "read-only" has the id 2']);
+        $test_name = '... and another name';
+        $name_consts = array_merge($consts, ['READ_ONLY_NAME' => 'read only']);
+        $diffs = $this->enum_csv_differences('user_statuum', $name_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_NAME is "read only", but the csv has "read-only"']);
+        $test_name = '... and another description';
+        $com_consts = array_merge($consts, ['READ_ONLY_COM' => 'no writing']);
+        $diffs = $this->enum_csv_differences('user_statuum', $com_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_COM is "no writing", but the csv has "no write"']);
+        $test_name = '... and a code id without csv row';
+        $code_consts = array_merge($consts, ['READ_ONLY' => 'read-write']);
+        $diffs = $this->enum_csv_differences('user_statuum', $code_consts, $csv_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_ID is set, but the csv has no row with the code id "read-write"']);
+        // a NULL of the csv is an empty description, so only a const with a text differs from it
+        $test_name = 'an empty description const matches a NULL of the csv';
+        $null_lines = [$csv_lines[0], "2, 'read-only', 'read-only', NULL"];
+        $null_consts = array_merge($consts, ['READ_ONLY_COM' => '']);
+        $diffs = $this->enum_csv_differences('user_statuum', $null_consts, $null_lines);
+        $t->assert($test_name, $diffs, []);
+        $test_name = '... but a description const with a text does not';
+        $diffs = $this->enum_csv_differences('user_statuum', $consts, $null_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_COM is "no write", but the csv has ""']);
+        // a X_NAME const with its own X_NAME_ID is the code id of another row e.g. component_types::PHRASE_NAME
+        $test_name = 'a name const with its own id is not compared as the name';
+        $code_name_consts = array_merge($consts, ['READ_ONLY_NAME' => 'read-only-name', 'READ_ONLY_NAME_ID' => 5]);
+        $code_name_lines = array_merge($csv_lines, ["5, 'read-only-name', 'read-only-name', 'no write'"]);
+        $diffs = $this->enum_csv_differences('user_statuum', $code_name_consts, $code_name_lines);
+        $t->assert($test_name, $diffs, []);
+        $test_name = '... but as the code id of its own row';
+        $code_name_consts['READ_ONLY_NAME_ID'] = 6;
+        $diffs = $this->enum_csv_differences('user_statuum', $code_name_consts, $code_name_lines);
+        $t->assert($test_name, $diffs, ['user_statuum::READ_ONLY_NAME_ID is 6, but the csv row of "read-only-name" has the id 5']);
+
+        $diffs = [];
+        $files_checked = 0;
+        foreach (glob(files_cfg::CODE_LINK_PATH . '*' . files_cfg::CSV) as $csv_file) {
+            $name = basename($csv_file, files_cfg::CSV);
+            $consts = $this->enum_consts_by_name($name);
+            if ($consts !== null) {
+                $files_checked++;
+                $diffs = array_merge($diffs, $this->enum_csv_differences($name, $consts, file($csv_file)));
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'enum consts checked against ' . $files_checked . ' code link csv files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'the id, name and description consts of an enum match the row of its code link csv';
+        $t->assert($test_name, $diffs, []);
+    }
+
+    /**
+     * the setup writes each column of a code link csv with the change log (sql_db::db_fill_code_links),
+     * so every column needs its row in change_fields.csv, else the setup of an empty database fails
+     * (see docs/llm/architecture.md); the change log csv files themselves are written without log
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function change_field_csv_tests(test_cleanup $t): void
+    {
+        $csv_head = 'phrase_type_id, type_name, scaling_factor';
+        $tbl_ids = ['phrase_types' => '26'];
+        $test_name = 'the columns of a code link csv with their change fields are fine';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, $tbl_ids, ['26' => ['type_name', 'scaling_factor']]);
+        $t->assert($test_name, $missing, []);
+        $test_name = '... but a column without change field is reported';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, $tbl_ids, ['26' => ['type_name']]);
+        $t->assert($test_name, $missing, ['phrase_types.scaling_factor has no row in change_fields.csv']);
+        $test_name = '... and a csv without change table';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, [], []);
+        $t->assert($test_name, $missing, ['phrase_types has no row in change_tables.csv']);
+
+        $db_con = new sql_db();
+        $log_tables = array_map(fn($cls) => $db_con->get_table_name($cls), def::LOG_CODE_LINK_FILES);
+        $tbl_ids = $this->csv_column_map($db_con->get_table_name(change_table::class), change_table::FLD_NAME, change_table::FLD_ID);
+        $tbl_flds = $this->change_fields_by_table($db_con->get_table_name(change_field::class));
+        $missing = [];
+        $files_checked = 0;
+        foreach (glob(files_cfg::CODE_LINK_PATH . '*' . files_cfg::CSV) as $csv_file) {
+            $name = basename($csv_file, files_cfg::CSV);
+            if (!in_array($name, $log_tables)) {
+                $files_checked++;
+                $csv_head = file($csv_file)[0] ?? '';
+                $missing = array_merge($missing, $this->csv_columns_without_change_field($name, $csv_head, $tbl_ids, $tbl_flds));
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'change fields checked for ' . $files_checked . ' code link csv files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every column of a code link csv has its row in change_fields.csv';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * @param string $tbl_name the name of the code link csv and its table e.g. phrase_types
+     * @param string $csv_head the first line of the csv with the column names, of which the first is the row id
+     * @param array $tbl_ids the change table id of each table name
+     * @param array $tbl_flds the field names of each change table id
+     * @return array the description of each column without change field
+     */
+    private function csv_columns_without_change_field(string $tbl_name, string $csv_head, array $tbl_ids, array $tbl_flds): array
+    {
+        $result = [];
+        $lib = new library();
+        $tbl_id = $tbl_ids[$tbl_name] ?? null;
+        if ($tbl_id === null) {
+            $result[] = $tbl_name . ' has no row in change_tables.csv';
+        } else {
+            // the row id is not written as a change field
+            $cols = array_slice($lib->array_trim($lib->csv_line_to_array($csv_head)), 1);
+            foreach ($cols as $col) {
+                if (!in_array($col, $tbl_flds[$tbl_id] ?? [])) {
+                    $result[] = $tbl_name . '.' . $col . ' has no row in change_fields.csv';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the code link csv e.g. change_tables
+     * @param string $key_col the column of the keys e.g. change_table_name
+     * @param string $val_col the column of the values e.g. change_table_id
+     * @return array the value of each key of the csv rows
+     */
+    private function csv_column_map(string $csv_name, string $key_col, string $val_col): array
+    {
+        $result = [];
+        foreach ($this->csv_column_pairs($csv_name, $key_col, $val_col) as [$key, $val]) {
+            $result[$key] = $val;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the change fields csv
+     * @return array the field names of each change table id
+     */
+    private function change_fields_by_table(string $csv_name): array
+    {
+        $result = [];
+        foreach ($this->csv_column_pairs($csv_name, change_field::FLD_TABLE, change_field::FLD_NAME) as [$tbl_id, $fld_name]) {
+            $result[$tbl_id][] = $fld_name;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the code link csv e.g. change_fields
+     * @param string $key_col the column of the first value of each pair e.g. table_id
+     * @param string $val_col the column of the second value of each pair e.g. change_field_name
+     * @return array the two trimmed values of each csv row
+     */
+    private function csv_column_pairs(string $csv_name, string $key_col, string $val_col): array
+    {
+        $result = [];
+        $lib = new library();
+        $lines = file(files_cfg::CODE_LINK_PATH . $csv_name . files_cfg::CSV);
+        $cols = $lib->array_trim($lib->csv_line_to_array($lines[0]));
+        $key_pos = array_search($key_col, $cols);
+        $val_pos = array_search($val_col, $cols);
+        foreach (array_slice($lines, 1) as $line) {
+            if (trim($line) != '') {
+                // trimmed per field and not with array_trim, which drops an empty field and would move the columns
+                $fields = array_map('trim', $lib->csv_line_to_array($line));
+                $result[] = [$fields[$key_pos] ?? '', $fields[$val_pos] ?? ''];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name the name of the code link csv e.g. user_statuum
+     * @return array|null the consts of the enum or type class with the same name or null if there is no such class
+     */
+    private function enum_consts_by_name(string $name): ?array
+    {
+        $result = null;
+        $lib = new library();
+        $folders = [
+            paths::SHARED_ENUM => $lib->str_left_of_last(user_statuum::class, '\\'),
+            paths::SHARED_TYPES => $lib->str_left_of_last(component_types::class, '\\'),
+        ];
+        foreach ($folders as $path => $name_space) {
+            $class_file = $path . $name . self::PHP_EXT;
+            if ($result === null and file_exists($class_file)) {
+                // the class is found only by the name of the csv, so it cannot be included upfront
+                include_once $class_file;
+                $result = new ReflectionClass($name_space . '\\' . $name)->getConstants();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cls_name the name of the class of the consts for the report e.g. user_statuum
+     * @param array $consts the consts of the class with the name as key
+     * @param array $csv_lines the lines of the code link csv with the column names as the first line
+     * @return array the description of each const that differs from its csv row
+     */
+    private function enum_csv_differences(string $cls_name, array $consts, array $csv_lines): array
+    {
+        $result = [];
+        $lib = new library();
+        $cols = $lib->array_trim($lib->csv_line_to_array($csv_lines[0]));
+        $code_col = array_search(json_fields::CODE_ID, $cols);
+        // e.g. the change fields have no code id, so no const can name one of their rows
+        if ($code_col !== false) {
+            $rows = $this->csv_rows_by_code(array_slice($csv_lines, 1), $code_col);
+            foreach ($consts as $key => $code) {
+                if ($this->is_csv_code_const($consts, $key)) {
+                    $row = $rows[$code] ?? null;
+                    $result = array_merge($result, $this->enum_const_differences($cls_name, $consts, $key, $row, $cols));
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $lines the data lines of a code link csv
+     * @param int $code_col the position of the code id column
+     * @return array the trimmed fields of each row with the code id as key
+     */
+    private function csv_rows_by_code(array $lines, int $code_col): array
+    {
+        $result = [];
+        $lib = new library();
+        foreach ($lines as $line) {
+            if (trim($line) != '') {
+                // trimmed per field and not with array_trim, which drops an empty field and would move the columns
+                $fields = array_map('trim', $lib->csv_line_to_array($line));
+                $result[$fields[$code_col] ?? ''] = $fields;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $consts the consts of the class with the name as key
+     * @param string $key the name of a const
+     * @return bool true if the const is a code id that has an id const e.g. READ_ONLY with READ_ONLY_ID
+     */
+    private function is_csv_code_const(array $consts, string $key): bool
+    {
+        $has_id = is_int($consts[$key . self::CSV_ID_SUFFIX] ?? null);
+        return ($has_id and is_string($consts[$key]));
+    }
+
+    /**
+     * @param string $cls_name the name of the class for the report
+     * @param array $consts the consts of the class with the name as key
+     * @param string $key the name of the code id const e.g. READ_ONLY
+     * @param array|null $row the csv row with the code id of the const or null if the csv has none
+     * @param array $cols the column names of the csv
+     * @return array the description of each const of this code id that differs from the csv row
+     */
+    private function enum_const_differences(string $cls_name, array $consts, string $key, ?array $row, array $cols): array
+    {
+        $result = [];
+        $code = $consts[$key];
+        $id_key = $key . self::CSV_ID_SUFFIX;
+        if ($row === null) {
+            $result[] = $cls_name . '::' . $id_key . ' is set, but the csv has no row with the code id "' . $code . '"';
+        } else {
+            // the first column of each code link csv is the row id
+            $id = (int)$row[0];
+            if ($consts[$id_key] != $id) {
+                $result[] = $cls_name . '::' . $id_key . ' is ' . $consts[$id_key]
+                    . ', but the csv row of "' . $code . '" has the id ' . $id;
+            }
+            // a const X_NAME with its own X_NAME_ID is the code id of another row and not the name of this one
+            if (!array_key_exists($key . self::CSV_NAME_SUFFIX . self::CSV_ID_SUFFIX, $consts)) {
+                $name_col = $this->csv_name_column($cols);
+                $result = array_merge($result, $this->enum_text_difference($cls_name, $consts, $key . self::CSV_NAME_SUFFIX, $row, $name_col));
+            }
+            $desc_col = array_search(fields::FLD_DESCRIPTION, $cols);
+            $result = array_merge($result, $this->enum_text_difference($cls_name, $consts, $key . self::CSV_COM_SUFFIX, $row, $desc_col));
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $cols the column names of a code link csv
+     * @return int|false the position of the name column e.g. user_status_name or type_name, or false if there is none
+     */
+    private function csv_name_column(array $cols): int|false
+    {
+        $result = false;
+        foreach ($cols as $pos => $col) {
+            if ($result === false and str_ends_with($col, self::CSV_NAME_COLUMN_SUFFIX)) {
+                $result = $pos;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cls_name the name of the class for the report
+     * @param array $consts the consts of the class with the name as key
+     * @param string $txt_key the name of the text const e.g. READ_ONLY_NAME
+     * @param array $row the csv row of the code id
+     * @param int|false $col the position of the text column or false if the csv has none
+     * @return array the description of the difference or an empty array if the text matches or is not set
+     */
+    private function enum_text_difference(string $cls_name, array $consts, string $txt_key, array $row, int|false $col): array
+    {
+        $result = [];
+        if ($col !== false and array_key_exists($txt_key, $consts)) {
+            $csv_txt = $row[$col] ?? '';
+            if ($csv_txt == self::CSV_NULL) {
+                $csv_txt = '';
+            }
+            if ($consts[$txt_key] != $csv_txt) {
+                $result[] = $cls_name . '::' . $txt_key . ' is "' . $consts[$txt_key] . '", but the csv has "' . $csv_txt . '"';
+            }
+        }
+        return $result;
+    }
+
     function php_function_tree(): string
     {
         $fnc_lst = [];
-        // TODO Prio 0 the target class sections are
+        // TODO Prio 2 the target class sections are
         $main_classes = array_merge(def::MAIN_CLASSES, def::MAIN_SUB_CLASSES);
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', $main_classes));
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], $main_classes));

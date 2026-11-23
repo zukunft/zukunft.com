@@ -38,7 +38,7 @@ enum language_forms: string
     // list of the language forms that have a coded functionality
     const string DEFAULT = "standard";
     const string PLURAL = "plural";
-    const int PLURAL_ID = 1;
+    const int PLURAL_ID = 2; // the row id of db_code_links/language_forms.csv
     const string PLURAL_NAME = "plural";
     const string PLURAL_COM = "The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one";
 

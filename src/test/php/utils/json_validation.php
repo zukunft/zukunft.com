@@ -336,7 +336,8 @@ class json_validation
             'a measured value names the source it is taken from, so that a reader can check it;'
             . ' a value with one of the phrases "' . implode('", "', self::SOURCE_EXEMPT_PHRASES) . '"'
             . ' is an own estimate, the output of a model or a formula, a setting of an input field or assesses'
-            . ' the uncertainty of another value and needs none;'
+            . ' the uncertainty of another value and needs none, like a value with a keyword of a table'
+            . ' definition e.g. "' . triples::SYSTEM_ROW_LIMIT . '", which is a setting of the table;'
             . ' the import resolves the source by its name within the file only (import_mapper'
             . ' reads the data object of the file), so a source that the file does not define in'
             . ' its "sources" section is reported as missing on import; the list shows the values'
@@ -902,6 +903,19 @@ class json_validation
     }
 
     /**
+     * the phrases that mark a value as no measured data, so that it needs no source: the own
+     * estimates and settings of SOURCE_EXEMPT_PHRASES and every keyword of a table definition,
+     * because a number with a table keyword e.g. "limit row (system)" is a setting of the table
+     * (see triples::TABLE_KEYWORDS), which a later numeric table setting is part of without a change
+     *
+     * @return array the names of the phrases that exempt a value from the source check
+     */
+    function source_exempt_phrases(): array
+    {
+        return array_merge(self::SOURCE_EXEMPT_PHRASES, array_keys(triples::TABLE_KEYWORDS));
+    }
+
+    /**
      * the values of the given file that name no source or a source that the file does not define
      *
      * a measured value needs its source, while an own estimate or assessment needs none (see
@@ -929,7 +943,7 @@ class json_validation
                 $src_name = $val[json_fields::SOURCE_NAME] ?? '';
                 $reason = '';
                 if (!is_string($src_name) or $src_name == '') {
-                    if (empty(array_intersect(self::SOURCE_EXEMPT_PHRASES, $phr_names))) {
+                    if (empty(array_intersect($this->source_exempt_phrases(), $phr_names))) {
                         $reason = self::SOURCE_MISSING;
                     }
                 } elseif (!in_array($src_name, $src_names, true)) {

@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -142,6 +144,17 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the exclusion of an included link is logged as the removal of the link
+        $lnk_excluded = clone $lnk;
+        $lnk_excluded->exclude();
+        $t->assert_sql_update($sc, $lnk_excluded, $lnk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $lnk_excluded, $lnk, [sql_type::LOG, sql_type::USER]);
+        $test_name = 'the reorder of an excluded link does not log the removal of the link again';
+        $lnk_excl_reordered = clone $lnk_excluded;
+        $lnk_excl_reordered->order_nbr = 1;
+        $sc_par_lst = new sql_type_list([sql_type::LOG, sql_type::USER]);
+        $reorder_sql = $lnk_excl_reordered->sql_update($sc, $lnk_excluded, $msg, $sc_par_lst)->sql;
+        $t->assert_text_not_contains($test_name, $reorder_sql, change_link::FLD_OLD_FROM_TEXT);
         // the do not update a link guard: the link type of a formula link is a normal field, so only the
         // formula and the phrase identify the link
         $t_wrd = new test_words($t);
@@ -274,6 +287,41 @@ class formula_link_tests
         $frm_lnk_typ->api_mapper([json_fields::ID => $time_id, json_fields::FORMULA_ID => '', json_fields::PHRASE_TYPE_ID => ''], $msg);
         $t->assert_null($test_name, $frm_lnk_typ->frm_id);
         $msg->reset();
+
+        // an import and an export name the formula and the phrase type, because they have no database id
+        $t->subheader($ts . 'type im- and export');
+        $test_name = 'the import sets the formula of a formula link type by its name';
+        $imp_msg = new user_message($t->usr_admin); // only an admin may import a type, the other tests use a normal user
+        $dto = new data_object($t->usr1);
+        $dto->add_formula($t_frm->formula(), $imp_msg);
+        $frm_lnk_typ = new formula_link_type('');
+        $typ_json = [
+            json_fields::CODE_ID => formula_link_types::TIME_PERIOD,
+            json_fields::FORMULA_NAME => formula_names::SCALE_TO_SEC
+        ];
+        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $dto);
+        $t->assert($test_name, $frm_lnk_typ->frm_id, formula_names::SCALE_TO_SEC_ID);
+        $imp_msg->reset();
+        // negative: the formula is not part of the import
+        $test_name = '... but a formula that the import does not contain is reported';
+        $frm_lnk_typ = new formula_link_type('');
+        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, new data_object($t->usr1));
+        $imp_txt = $imp_msg->text();
+        $t->assert_text_contains($test_name, $imp_txt, formula_names::SCALE_TO_SEC);
+        $imp_msg->reset();
+        $test_name = '... and an empty formula name leaves it valid for all formulas';
+        $frm_lnk_typ = new formula_link_type('');
+        $typ_json[json_fields::FORMULA_NAME] = '';
+        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $dto);
+        $t->assert_null($test_name, $frm_lnk_typ->frm_id);
+        $imp_msg->reset();
+        $test_name = 'the export names the phrase type of a formula link type by its code id';
+        $frm_lnk_typ = new formula_link_type('');
+        $frm_lnk_typ->phr_id = $sys->typ_lst->phr_typ->id(phrase_types::TIME);
+        $exp = $frm_lnk_typ->export_json($msg, [], false);
+        $exp_phr_typ = $exp[json_fields::PHRASE_TYPE];
+        $t->assert($test_name, $exp_phr_typ, phrase_types::TIME);
+        $msg->reset();
         $test_name = 'the frontend api mapper sets the priority of the formula link';
         $lnk_ui = new formula_link_ui();
         $lnk_ui->api_mapper(json_decode($t_frm->formula_link()->api_json([], $msg), true), $msg_ui);
@@ -395,11 +443,18 @@ class formula_link_tests
         $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
         $msg->reset();
 
-        // a link type limited to one formula exports the formula
-        $test_name = 'the formula of a limited link type is exported';
+        // a link type limited to one formula exports the formula name, which is loaded from the database
+        // (formula_read_tests), so without the database it exports no formula and never the formula id
+        $test_name = 'the formula of a limited link type is not exported without the database';
         $frm_lnk_typ = $t_frm->link_type_limited();
         $exp = $frm_lnk_typ->export_json($msg, [], false);
-        $t->assert($test_name, $exp[json_fields::FORMULA], formula_names::SCALE_TO_SEC_ID);
+        $t->assert_key_not_exists($test_name, json_fields::FORMULA_NAME, $exp);
+        $msg->reset();
+        // negative: the formula is loaded for the requesting user, so an export without user is refused
+        $test_name = '... and an export with the database but without user reports the missing user';
+        $frm_lnk_typ->export_json($msg);
+        $exp_ok = $msg->is_ok();
+        $t->assert_false($test_name, $exp_ok);
         $msg->reset();
 
         // negative: a link type for all formulas exports no formula

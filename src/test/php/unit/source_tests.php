@@ -43,7 +43,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -172,6 +174,23 @@ class source_tests
         $src = new source($t->usr1);
         $src->row_mapper_sandbox($db_row, $msg);
         $t->assert($test_name, $src->get_view_id(), 0);
+        // the chain of the typed and code id mappers returns $msg->is_ok(), so a found row is mapped
+        $test_name = 'a found row is mapped';
+        $src = new source($t->usr1);
+        $mapped = $src->row_mapper_sandbox($db_row, $msg);
+        $t->assert_true($test_name, $mapped);
+        $test_name = 'a missing row is not mapped';
+        $src = new source($t->usr1);
+        $mapped = $src->row_mapper_sandbox(null, $msg);
+        $t->assert_false($test_name, $mapped);
+        // the caller maps only a found row, so a missing row is a problem of the program
+        $test_name = '... and is reported';
+        $exp_msg = new user_message();
+        $exp_msg->add(msg_id::DB_ROW_ID_MISSING, [
+            msg_id::VAR_CLASS_NAME => library::class_to_name_translated(source::class),
+            msg_id::VAR_NAME => source_fields::FLD_ID,
+        ]);
+        $t->assert_msg_false($test_name, $msg, $exp_msg->text());
 
         $t->subheader($ts . 'base object handling');
         $src = $t_src->source_filled();

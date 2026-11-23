@@ -136,13 +136,9 @@ class sandbox extends db_object
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
+        // an api message with only the id is completed from the request cache before this mapping
+        // (data_object::api_json_with_cache), because the fields that the json lacks are reset below
         parent::api_mapper($json_array, $msg);
-
-        // TODO Prio 0 add dto cache object to api mapper
-        //if ($this->has_id()) {
-        //    $cac_obj = $dto->get_object_by_id($this);
-        //    $this->fill($cac_obj, $this->user());
-        //}
 
         if (array_key_exists(json_fields::SHARE, $json_array)) {
             $this->share_id = $json_array[json_fields::SHARE];
@@ -230,7 +226,7 @@ class sandbox extends db_object
     }
 
     /**
-     * @return array parent url array extended with the share and protection of this sandbox object
+     * @return array parent url array extended with the share, protection, owner and, only if set, the exclusion
      */
     function to_url_array(user_message $msg): array
     {
@@ -239,6 +235,9 @@ class sandbox extends db_object
         $url_array[url_var::PROTECTION] = $this->protection_id;
         if ($this->owner_name() != '') {
             $url_array[url_var::OWNER] = $this->owner_name();
+        }
+        if ($this->is_excluded()) {
+            $url_array[url_var::EXCLUDED] = url_var::TRUE;
         }
         return $url_array;
     }
@@ -432,6 +431,30 @@ class sandbox extends db_object
             $vars[json_fields::EXCLUDED] = $this->excluded;
         }
         return $vars;
+    }
+
+    /**
+     * @param array $vars the json message array of the object to send to the backend
+     * @return array the json message array without the fields that are not set
+     */
+    protected function api_array_set(array $vars): array
+    {
+        return array_filter($vars, fn($val, $key) => $this->api_value_set($val, $key), ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * @param mixed $val the value of a field of the json message array
+     * @param int|string $key the json field name
+     * @return bool true if the field is sent to the backend: an empty description too, because it
+     *              clears the description of the user, but never an unknown description
+     */
+    private function api_value_set(mixed $val, int|string $key): bool
+    {
+        $result = (!is_null($val) and $val !== '');
+        if ($key === json_fields::DESCRIPTION) {
+            $result = !is_null($val);
+        }
+        return $result;
     }
 
 

@@ -319,6 +319,11 @@ class files
     // most relevant base data around learning, cognition, Bloom's taxonomy and the zone of proximal development used as a real-world demo and for system testing
     const string EDUCATION_FILE = self::BASE_DATA_PATH . 'education' . self::JSON;
 
+    // the XBRL fileset of ABB for 2013 converted by import_convert_xbrl, used as a real-world demo of a company
+    // report and for system testing; imported by every pod as the last step of the db setup
+    // (import_file::import_xbrl_data), so that the workflow tests see the same data after any reset
+    const string XBRL_ABB_2013_FILE = self::BASE_DATA_PATH . 'abb-2013-xbrl_fileset-20131231' . self::JSON;
+
     // the formulas of the propagation of uncertainty with assumed sample inputs, so that the variance formulas are calc-validated on import
     const string MATH_PROPAGATION_OF_UNCERTAINTY_FILE = self::BASE_DATA_PATH . 'math_propagation_of_uncertainty' . self::JSON;
 
@@ -342,10 +347,11 @@ class files
         self::CURRENCIES,
         self::COMPANY,
         self::COMPANIES,
-        // last, because it only links phrases and views of the files above, so no id shifts
+        // after the files that add its words, triples and components, because it adds none of them but only links
+        // e.g. "mathematical constant" of units to its view and "problem size" of base_views to its row
+        // "potential loss" of solution_prio, so it shifts no id of the files below
         self::ASSIGNED_VIEWS_FILE,
-        // TODO Prio 0 activate
-        //self::ZURICH_HTP_IMPACT_FILE,
+        self::ZURICH_HTP_IMPACT_FILE,
     ];
 
     // to load the default system data for a standard pod

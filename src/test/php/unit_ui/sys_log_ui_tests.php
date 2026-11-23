@@ -421,6 +421,21 @@ class sys_log_ui_tests
         $t->assert_false($test_name, $slg_ui->api_mapper($api_json, $msg_ui));
         $msg_ui->reset();
 
+        // the filled entry carries every field of the backend api, so its frontend json is the backend json
+        $test_name = 'the system log mapper maps every field of the api json';
+        $api_json = $t_sys->sys_log_filled()->api_json_array([], $msg);
+        $slg_ui = new sys_log_ui();
+        $slg_ui->api_mapper($api_json, $msg_ui);
+        $t->assert_json($test_name, $slg_ui->api_array([], $msg_ui), $api_json);
+        $msg_ui->reset();
+
+        // negative: a system log json without solver leaves the solver empty
+        $test_name = 'the system log mapper leaves a missing solver empty';
+        $slg_ui = new sys_log_ui();
+        $slg_ui->api_mapper($t_sys->sys_log()->api_json_array([], $msg), $msg_ui);
+        $t->assert($test_name, $slg_ui->owner_id(), 0);
+        $msg_ui->reset();
+
         // the log part of the mapper is shared by all log entries, so it is tested with a system log json
         $test_name = 'the log part of the mapper sets the user id';
         $log_ui = new log_ui();

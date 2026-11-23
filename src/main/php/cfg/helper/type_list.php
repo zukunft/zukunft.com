@@ -302,10 +302,10 @@ class type_list extends ListOfIdNamedCodeObjects
 
     /**
      * get the type object with this name from the list
-     * or add the name to the database and trigger the update of the type list cache
+     * or a new type object with this name, which is not yet saved (see the TODO below)
      *
-     * @param string $name
-     * @param Message $msg
+     * @param string $name the name of the type e.g. of an import
+     * @param Message $msg to report a list class without a type object for a new type
      * @return type_object
      */
     function get_or_insert(string $name, Message $msg): type_object
@@ -313,7 +313,8 @@ class type_list extends ListOfIdNamedCodeObjects
         $typ = $this->get_by_name($name);
         if ($typ == null) {
             $typ = $this->get_new($name, $msg);
-            // TODO Prio 0 save the new type in the database
+            // TODO Prio 2 save the new type with its logged insert and update the types cache,
+            //      once a caller needs it, because get_or_insert has no caller yet
         }
         return $typ;
     }
@@ -388,7 +389,7 @@ class type_list extends ListOfIdNamedCodeObjects
         $qp = new sql_par($db_type);
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
-        // TODO Prio 0 use the object load_sql function overwrites
+        // TODO Prio 1 use the object load_sql function overwrites
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
@@ -764,18 +765,12 @@ class type_list extends ListOfIdNamedCodeObjects
                         if (in_array(json_fields::CODE_ID, $col_names)) {
                             $code_id_col = array_search(json_fields::CODE_ID, $col_names);
                         }
-                        if (in_array(type_object::FLD_NAME, $col_names)) {
-                            $name_col = array_search(type_object::FLD_NAME, $col_names);
-                        } elseif (in_array(change_table::FLD_NAME, $col_names)) {
-                            $name_col = array_search(change_table::FLD_NAME, $col_names);
-                        } elseif (in_array(change_field::FLD_NAME, $col_names)) {
-                            $name_col = array_search(change_field::FLD_NAME, $col_names);
-                        } elseif (in_array(user_profile::FLD_NAME, $col_names)) {
-                            $name_col = array_search(user_profile::FLD_NAME, $col_names);
-                        } elseif (in_array(language::FLD_NAME, $col_names)) {
-                            $name_col = array_search(language::FLD_NAME, $col_names);
-                        } elseif (in_array(language_form::FLD_NAME, $col_names)) {
-                            $name_col = array_search(language_form::FLD_NAME, $col_names);
+                        // the name column of the type class e.g. status_name for a job status or level_name for a log level
+                        $name_fld = $this->class_to_type_object($this->list_class_to_type($list::class))->name_field();
+                        if (in_array($name_fld, $col_names)) {
+                            $name_col = array_search($name_fld, $col_names);
+                        } else {
+                            log_err('the name column ' . $name_fld . ' is missing in ' . $csv_path);
                         }
 
                         if (in_array(language::FLD_WIKI_CODE, $col_names)) {
@@ -829,10 +824,13 @@ class type_list extends ListOfIdNamedCodeObjects
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id_db($data[$code_id_col]);
                         }
-                        if (array_key_exists($desc_col, $data)) {
-                            $typ_obj->set_description($data[$desc_col]);
-                        } else {
-                            log_err($desc_col . ' is missing in ' . $lib->dsp_array($data));
+                        // e.g. change_actions.csv has no description column
+                        if ($desc_col > 0) {
+                            if (array_key_exists($desc_col, $data)) {
+                                $typ_obj->set_description($data[$desc_col]);
+                            } else {
+                                log_err($desc_col . ' is missing in ' . $lib->dsp_array($data));
+                            }
                         }
                         $list->add($typ_obj);
                     }
@@ -855,6 +853,10 @@ class type_list extends ListOfIdNamedCodeObjects
             // are already the plural and the matching list class is named by the singular
             if (str_ends_with($csv_file_name, 'statuum')) {
                 $csv_singular = str_replace('statuum', 'status', $csv_file_name);
+            } elseif (str_ends_with($csv_file_name, 'status')) {
+                // a type class named by the singular e.g. job_status has the csv file job_statuum
+                $csv_singular = $csv_file_name;
+                $csv_file_name = str_replace('status', 'statuum', $csv_file_name);
             } else {
                 $csv_singular = $csv_file_name;
                 $csv_file_name .= sql_db::TABLE_EXTENSION;

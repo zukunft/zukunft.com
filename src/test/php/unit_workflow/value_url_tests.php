@@ -329,11 +329,12 @@ class value_url_tests extends url_test_base
      */
     protected function value_id(array $phr_ids): int
     {
+        $msg = new user_message(); // a test helper is an entry point, so it creates the message the conversion reports into
         $phr_lst = new phrase_list($this->t->usr1);
         foreach ($phr_ids as $phr_id) {
             $phr_lst->add_id($phr_id);
         }
-        return $phr_lst->get_grp_id(false)->id();
+        return $phr_lst->get_grp_id($msg, false)->id();
     }
 
     /**
@@ -404,8 +405,32 @@ class value_url_tests extends url_test_base
         $url_arr[url_var::PHRASE_LIST] = $chosen_ids;
         $url_arr[url_var::NUMERIC_VALUE] = values::SAMPLE_FLOAT;
         $url_arr[url_var::BACK . url_var::MASK] = views::VALUE_DEFAULT_ID;
+        $this->set_value_norm_id($chosen_ids);
         // the form posts the mask of the pure add view itself, which is an add mask like the detailed one
         $this->assert_step(workflows::CONFIRMED, $url_arr, views::VALUE_ADD_NO_JS_ID);
+    }
+
+    /**
+     * add the group id of the new value to the snapshot id normalization, because the saved value
+     * is shown by its id, which is the group id of its phrases and so changes with the ids of the
+     * test words e.g. after an import of the setup; the fixed id is the group id of the same phrases
+     * with the fixed test ids, like the fixed id of the change_value_group workflow
+     *
+     * @param string $chosen_ids the ids of the phrases of the new value e.g. "203,3271,3272"
+     */
+    private function set_value_norm_id(string $chosen_ids): void
+    {
+        $real_ids = array_map('intval', explode(',', $chosen_ids));
+        $fixed_ids = [];
+        foreach ($real_ids as $phr_id) {
+            $fixed_ids[] = $this->wf_norm_ids[$phr_id] ?? $phr_id;
+        }
+        $real_grp_id = $this->value_id($real_ids);
+        $fixed_grp_id = $this->value_id($fixed_ids);
+        // a read run uses the fixed ids already, so there is nothing to replace
+        if ($real_grp_id != $fixed_grp_id) {
+            $this->wf_norm_ids[$real_grp_id] = $fixed_grp_id;
+        }
     }
 
     /**

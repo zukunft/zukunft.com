@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -70,6 +72,8 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_read_tests
 {
+    // a formula id that a test database never gives, because it is the largest 32 bit id
+    const int UNKNOWN_FORMULA_ID = 2147483647;
 
     function run(test_cleanup $t): void
     {
@@ -123,6 +127,23 @@ class formula_read_tests
         // check the estimates for the calculation blocks
         $calc_blocks = new formula_list($t->usr1)->calc_blocks($db_con, $msg);
         $t->assert_greater_zero('calc_blocks', $calc_blocks);
+
+        // a formula link type that is limited to one formula exports its name, because an export has no database id
+        $test_name = 'the export names the formula of a formula link type';
+        $exp_msg = new user_message($t->usr1); // the export loads the formula for the user of the message
+        $frm_lnk_typ = new formula_link_type('');
+        $frm_lnk_typ->frm_id = formula_names::SCALE_TO_SEC_ID;
+        $exp = $frm_lnk_typ->export_json($exp_msg);
+        $exp_frm_name = $exp[json_fields::FORMULA_NAME] ?? null;
+        $t->assert($test_name, $exp_frm_name, formula_names::SCALE_TO_SEC);
+        $exp_msg->reset();
+        // negative: a formula id that is not in the database is reported
+        $test_name = '... but a missing formula is reported';
+        $frm_lnk_typ->frm_id = self::UNKNOWN_FORMULA_ID;
+        $frm_lnk_typ->export_json($exp_msg);
+        $exp_txt = $exp_msg->text();
+        $t->assert_text_contains($test_name, $exp_txt, (string)self::UNKNOWN_FORMULA_ID);
+        $exp_msg->reset();
 
         $t->subheader($ts . 'api');
 

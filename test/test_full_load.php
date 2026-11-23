@@ -144,7 +144,10 @@ if ($db_con->is_open()) {
             // additionally load the complete initial setup data into the database
             $t->header('Load the full initial setup data');
             $result = $t->import_base_data($t->usr1);
-            $result .= $t->import_test_data($t->usr1);
+            $imp_msg = $msg->clone_reset(); // a buffer, because $msg holds the reports of the tests before
+            if (!$t->import_test_data($t->usr1, $imp_msg)) {
+                $result .= $imp_msg->all_message_text();
+            }
             if ($result != '') {
                 echo $result . "\n";
             }

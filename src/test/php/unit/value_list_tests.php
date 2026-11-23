@@ -102,7 +102,7 @@ class value_list_tests
         $test_name = 'setting the group ids keeps the description of the group';
         $desc_lst = new value_list($t->usr1);
         $desc_lst->add($t_val->value_with_description());
-        $desc_lst->set_grp_ids();
+        $desc_lst->set_grp_ids($msg);
         $desc_txt = $desc_lst->lst()[0]->get_description() ?? '';
         $t->assert($test_name, $desc_txt, groups::TN_READ_COM);
         $test_name = '... and the given name of the group';
@@ -112,7 +112,7 @@ class value_list_tests
         $test_name = '... but adds no description to a group without one';
         $plain_lst = new value_list($t->usr1);
         $plain_lst->add($t_val->value_pi());
-        $plain_lst->set_grp_ids();
+        $plain_lst->set_grp_ids($msg);
         $plain_desc = $plain_lst->lst()[0]->get_description() ?? '';
         $t->assert($test_name, $plain_desc, '');
 

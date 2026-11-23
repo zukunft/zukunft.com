@@ -608,6 +608,9 @@ class test_mappers
                 break;
             case word::class:
                 $obj = $t_wrd->word_add();
+                // an insert writes a new row, so without the fixed snapshot id of the unit tests
+                // (word_names::TEST_ADD_ID), which is the id of another word in the database, e.g. "index"
+                $obj->id = 0;
                 break;
             case verb::class:
                 $obj = $t_vrb->verb_add();
@@ -890,7 +893,6 @@ class test_mappers
             case component_types::RANKING_LIST:
             case component_types::RESULTS_RELATED:
             case component_types::PHRASES_RELATED:
-            case component_types::MAIN_VALUE:
             case component_types::BUTTON_REQUEST:
             case component_types::SYSTEM_ADMIN_URL_DELAY:
             case component_types::SYSTEM_ADMIN_LOGIN_FAILS:
@@ -933,6 +935,7 @@ class test_mappers
             case component_types::FORM_SELECT_FILE:
             case component_types::FORM_SELECT_FORMAT_EXPORT:
             case component_types::FORM_REF_ROWS:
+            case component_types::FORM_TRIPLE_ROWS:
                 $obj = $t_wrd->word_filled();
                 break;
             case component_types::VERB_NAME:

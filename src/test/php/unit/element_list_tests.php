@@ -36,12 +36,15 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
@@ -95,7 +98,6 @@ class element_list_tests
         $this->assert_sql_del_by_id_lst($t, $sc, $elm_lst, $test_name);
 
         $test_name = 'element list name of the elements of one formula';
-        // TODO Prio 0 add fail test cases
         $frm = $t_frm->formula();
         $trm_lst = $t_trm->term_list_time();
         $elm_lst = $frm->elements($msg, $trm_lst);
@@ -108,6 +110,22 @@ class element_list_tests
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
         $frm->elements($msg, $trm_lst);
         $t->assert_msg_false($test_name, $msg, '"' . formula_names::REF_ID_NOT_A_NUMBER . '"');
+
+        // the biggest valid id, because a term that is missing in the list is loaded from the database if it is open
+        $test_name = 'element list reports a term id that is not in the term list';
+        $frm = $t_frm->formula();
+        $missing_sym = chars::TERM_START . chars::WORD_SYMBOL . term::OBJ_ID_MAX . chars::TERM_END;
+        $frm->ref_text = str_replace(formula_names::SCALE_TO_SEC_MINUTE_SYMBOL, $missing_sym, formula_names::SCALE_TO_SEC_EXP_REF);
+        $frm->elements($msg, $trm_lst);
+        $t->assert_msg_false($test_name, $msg, (string)term::OBJ_ID_MAX);
+
+        // an id whose term id would not fit into an int is reported as not valid instead of ending in a fatal
+        $test_name = 'element list reports a term id that is too big';
+        $frm = $t_frm->formula();
+        $too_big_sym = chars::TERM_START . chars::WORD_SYMBOL . PHP_INT_MAX . chars::TERM_END;
+        $frm->ref_text = str_replace(formula_names::SCALE_TO_SEC_MINUTE_SYMBOL, $too_big_sym, formula_names::SCALE_TO_SEC_EXP_REF);
+        $frm->elements($msg, $trm_lst);
+        $t->assert_msg_false($test_name, $msg, (string)PHP_INT_MAX);
 
         $t->subheader($ts . 'add');
 
@@ -153,6 +171,14 @@ class element_list_tests
         $test_name = 'an element group without prior next to another phrase reads no previous row';
         $elm_grp = $t_frm->element_group();
         $t->assert($test_name, $elm_grp->reads_prior_row(), false);
+
+        // the prior formula is detected by the code id of its formula type, also without a database row
+        $test_name = 'an element group with prior next to another phrase reads the previous row';
+        $elm_grp = $t_frm->element_group();
+        $elm_prior = $t_frm->element();
+        $elm_prior->obj = $t_frm->formula_prior();
+        $elm_grp->add_obj($elm_prior, true, $msg);
+        $t->assert($test_name, $elm_grp->reads_prior_row(), true);
 
         $t->subheader($ts . 'group debug id');
 

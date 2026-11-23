@@ -52,7 +52,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types as view_type_shared;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_read_tests
@@ -98,6 +100,16 @@ class view_read_tests
         // TODO Prio 2 activate
         //$msk->load_by_term($t_frm->formula()->term());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
+
+        // a view of an import may be assigned to a term of another file only by its name, so before the save the
+        // term link gets the term of the database by the name
+        $test_name = 'a term link by name gets the term of the database';
+        $msk_trm = new view($t->usr1);
+        $msk_trm->add_term(new test_terms($t)->by_name(word_names::MATH), $msg);
+        $msk_trm->set_term_links_by_db_name($msg);
+        $lnk = $msk_trm->trm_msk_lst->lst()[0];
+        $t->assert($test_name, $lnk->term()->id_obj(), word_names::MATH_ID);
+        $msg->reset();
 
         $t->subheader($ts . 'types');
 

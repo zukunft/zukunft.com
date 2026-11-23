@@ -145,7 +145,8 @@ class sql_par
      * merge two sql and the related parameters to one sql statement
      *
      * @param sql_par $qp
-     * @param bool $unique true if the parameters should be unique
+     * @param bool $unique true if the branches of the union reuse the placeholders e.g. $1 of postgres,
+     *                     so that the parameter of each position is used once and has the same value in each branch
      * @param sql_type_list $sc_par_typ the sql type list for the sql statement creation
      * @return sql_par
      */
@@ -165,8 +166,8 @@ class sql_par
             }
         }
         if ($unique) {
-            // TODO Prio 0 unique including keys
-            $this->par = array_unique(array_merge($this->par, $qp->par));
+            // unique by the position and not by the value, which would drop e.g. the user id 1 after the phrase id 1
+            $this->par = $this->par + $qp->par;
         } else {
             $this->par = array_merge($this->par, $qp->par);
         }

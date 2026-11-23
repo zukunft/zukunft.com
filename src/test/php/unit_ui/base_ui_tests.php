@@ -40,6 +40,9 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'controller.php';
@@ -50,6 +53,9 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
@@ -105,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -1157,6 +1164,29 @@ class base_ui_tests
         $test_name = '... and a loading start without the count stays unchanged';
         $t->assert($test_name, $t->fix_volatile_loading_seconds($at_limit), $at_limit);
 
+        // a slow page is written to the log, so that the developer can improve the really time critical parts
+        $t->subheader($ts . 'slow request');
+        $test_name = 'a page slower than the detail limit is a warning';
+        $sec = def::FALLBACK_RESPONSE_TIME_DETAIL * 2;
+        $t->assert($test_name, $ui->slow_request_log_level($sec, $msg_ui), sys_log_levels::WARNING_ID);
+        $test_name = 'a page between the log and the detail limit is a debug line';
+        $sec = (def::FALLBACK_RESPONSE_TIME_LOG + def::FALLBACK_RESPONSE_TIME_DETAIL) / 2;
+        $t->assert($test_name, $ui->slow_request_log_level($sec, $msg_ui), sys_log_levels::DEBUG_ID);
+        // negative: a page that is fast enough is not logged
+        $test_name = 'a page faster than the log limit is not logged';
+        $sec = def::FALLBACK_RESPONSE_TIME_LOG / 2;
+        $t->assert_null($test_name, $ui->slow_request_log_level($sec, $msg_ui));
+
+        // the page title shows only the view name for an object without name, and no database id
+        $t->subheader($ts . 'page object without name');
+        $test_name = 'a log entry has no name';
+        $t->assert($test_name, new sys_log_ui()->name(), '');
+        $test_name = '... nor a job';
+        $t->assert($test_name, new job_ui()->name(), '');
+        // the placeholder of a page without object e.g. the about page has no name, which is no missing overwrite
+        $test_name = '... nor the placeholder of a page without object';
+        $t->assert($test_name, new db_object_ui()->name(), '');
+
 
         $t->subheader($ts . 'unit html table tests');
 
@@ -1666,7 +1696,8 @@ class base_ui_tests
 
         // a value or result url names the group by its short form: without the zero chars and the
         // empty slots of the database key and with "_" for the "+" of a word (see group_id_url)
-        $grp_key = $t_phr->phrase_list()->get_grp_id(false)->id();
+        $grp_msg = new user_message(); // the backend message of the group, because $msg is the frontend message here
+        $grp_key = $t_phr->phrase_list()->get_grp_id($grp_msg, false)->id();
         $url_key = group_id_url::to_url($grp_key);
         $test_name = 'a value url names the group in its short form';
         $t->assert_text_contains($test_name, html_base::url(views::VALUE_DEFAULT_ID, $grp_key),
@@ -1750,6 +1781,17 @@ class base_ui_tests
         $t->assert($test_name, count($msg_ui->get_all_var_messages()), count($links));
         $test_name = '... as an error';
         $t->assert_false($test_name, $msg_ui->is_ok());
+        // the backend sends the text of an internal error unescaped (log_msg), because the frontend escapes it
+        // once when it shows it, so that a quoted name is shown with its quotes
+        $quoted_err = 'the word "' . word_names::ZH . '" cannot be saved';
+        $quoted_msg = new user_message_ui();
+        rest_call::without_internal_errors(controller::json_with_internal_errors($api_json, [$quoted_err]), $quoted_msg);
+        $quoted_html = new frontend()->user_msg_html($quoted_msg);
+        $test_name = 'the quoted name of an internal error is shown with quotes';
+        $t->assert_text_contains($test_name, $quoted_html, htmlspecialchars($quoted_err));
+        // negative: a text that has been escaped before would show &quot; instead of the quotes
+        $test_name = '... because it is escaped only once';
+        $t->assert_text_not_contains($test_name, $quoted_html, htmlspecialchars(htmlspecialchars('"')));
         // a list, an error message and an empty answer come back exactly, because the answer is sent as a string
         $err_list = controller::json_with_internal_errors('[]', $links);
         $test_name = 'a json list with internal errors comes back as it is';
@@ -1863,7 +1905,7 @@ class base_ui_tests
             url_var::NAME => word_names::TEST_ADD,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         $test_name = 'a confirm carries the mask of the change as origin mask';
@@ -1873,7 +1915,7 @@ class base_ui_tests
             url_var::MASK => views::WORD_ADD_DETAIL_ID,
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::NAME => word_names::TEST_ADD
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
         $cfm_msg->reset();
         $test_name = 'a change from the start page returns to the own view of the object';
@@ -1883,7 +1925,7 @@ class base_ui_tests
             url_var::ID => word_names::MINUTE_ID,
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::START_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
         $cfm_msg->reset();
         $test_name = 'a change from the start page returns to the id of the object';
@@ -1898,7 +1940,7 @@ class base_ui_tests
             url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         $test_name = 'a confirmed change from the own page shows the changed object';
@@ -1910,7 +1952,7 @@ class base_ui_tests
             url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
         $cfm_msg->reset();
         // a url without origin mask (e.g. of a workflow test) takes the back mask as the own view
@@ -1922,7 +1964,7 @@ class base_ui_tests
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
         $cfm_msg->reset();
         $test_name = 'a confirmed change without origin mask keeps the id of another object';
@@ -1933,7 +1975,7 @@ class base_ui_tests
             url_var::NAME => word_names::MINUTE,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::ZH_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         // the add form that has opened the detailed add form of the same object is done with the add
@@ -1946,7 +1988,7 @@ class base_ui_tests
             url_var::NUMERIC_VALUE => values::SAMPLE_INT,
             url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID,
             url_var::BACK . url_var::PATTERN => word_names::ZH
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_DEFAULT_ID);
         $test_name = '... without the vars of the add form';
         $t->assert($test_name, $cfm_url[url_var::PATTERN] ?? '', '');
@@ -1957,7 +1999,7 @@ class base_ui_tests
             url_var::STEP => url_var::STEP_CONFIRMED,
             url_var::ORIGIN_MASK => views::FORMULA_ADD_ID,
             url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_ADD_NO_JS_ID);
         $cfm_msg->reset();
 
@@ -2022,7 +2064,7 @@ class base_ui_tests
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
         ];
-        $cfm_url = $ui->url_to_action($frm_url, $t->usr1, $cfm_msg, $ui->dto, false);
+        $cfm_url = $ui->url_to_action($frm_url, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
         $test_name = '... on the confirm view';
         $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::CONFIRM_ADD_ID);
@@ -2035,7 +2077,7 @@ class base_ui_tests
             url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
             url_var::BACK . url_var::MASK => views::WORD_ID,
             url_var::BACK . url_var::ID => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        ], $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? '', '');
         $cfm_msg->reset();
 

@@ -179,6 +179,14 @@ class url_mapper
         if ($ref_rows != []) {
             $json[json_fields::URL_PART_REF_ROW] = $ref_rows;
         }
+        // the triple rows of a new word in the same way
+        $triple_rows = [];
+        foreach (url_var::triple_rows($url_array) as $row => $fields) {
+            $triple_rows[$row] = $this->to_human_assoc($fields, $msg);
+        }
+        if ($triple_rows != []) {
+            $json[json_fields::URL_PART_TRIPLE_ROW] = $triple_rows;
+        }
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 

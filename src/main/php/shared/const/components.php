@@ -167,7 +167,9 @@ class components
     const string FORM_PHRASE_COL_SUB = 'form_field_select_phrase_col_sub';
 
     // ref only fields
-    const string FORM_PHRASE_REF_CODE_ID = 'form_select_phrase_ref';
+    // the code id of the component "system form select reference phrase" of system_views.json,
+    // not its ui_msg_code_id form_select_phrase_ref, because the form selects the field by the code id
+    const string FORM_PHRASE_REF_CODE_ID = 'form_field_ref_phrase';
 
     const string FORM_SHARE_TYPE = 'form_field_share_type';
     const string FORM_SHARE_TYPE_NAME = 'form field share type';

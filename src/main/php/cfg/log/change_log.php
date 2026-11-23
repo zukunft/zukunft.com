@@ -740,7 +740,7 @@ class change_log extends db_object_seq_id_user
         if ($this->other_values != []) {
             $vars[json_fields::OTHER_VALUES] = $this->other_values;
         }
-        $vars[json_fields::CHANGE_TIME] = $this->time()->format("c");
+        $vars[json_fields::CHANGE_TIME] = $this->time()->format(DateTimeInterface::ATOM);
 
         return $vars;
     }
@@ -871,8 +871,9 @@ class change_log extends db_object_seq_id_user
     {
         // a local message, because the is_ok() verdict below must judge only this insert: with a
         // shared message an error that the caller collected earlier would make the setter log
-        // "Cannot add ..." for a reference row that was written fine; a real failure is merged
-        $add_msg = new user_message();
+        // "Cannot add ..." for a reference row that was written fine; a real failure is merged;
+        // with the user of the caller, because the save of the reference row checks the right of the user
+        $add_msg = new user_message($msg->usr);
         // check parameter
         if ($table_name == "") {
             log_err("missing table name", "user_log->set_table");
@@ -916,8 +917,9 @@ class change_log extends db_object_seq_id_user
     {
         // a local message, because the is_ok() verdict below must judge only this insert: with a
         // shared message an error that the caller collected earlier would make the setter log
-        // "Cannot add ..." for a reference row that was written fine; a real failure is merged
-        $add_msg = new user_message();
+        // "Cannot add ..." for a reference row that was written fine; a real failure is merged;
+        // with the user of the caller, because the save of the reference row checks the right of the user
+        $add_msg = new user_message($msg->usr);
         // check parameter
         if ($tbl_id <= 0) {
             log_err("missing table_id", "user_log->set_field");
@@ -960,8 +962,9 @@ class change_log extends db_object_seq_id_user
 
         // a local message, because the is_ok() verdict below must judge only this insert: with a
         // shared message an error that the caller collected earlier would make the setter log
-        // "Cannot add ..." for a reference row that was written fine; a real failure is merged
-        $add_msg = new user_message();
+        // "Cannot add ..." for a reference row that was written fine; a real failure is merged;
+        // with the user of the caller, because the save of the reference row checks the right of the user
+        $add_msg = new user_message($msg->usr);
 
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $act = new change_action();

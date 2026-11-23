@@ -41,8 +41,10 @@ include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -111,16 +113,15 @@ class expression_tests
         $t->assert($test_name, $result, $target);
         $msg->reset();
 
+        // without the user text too, because else the expression recreates the reference text from it and reads
+        // its terms from the database, which a unit test has not
         $test_name = 'reference text is invalid because it is an empty string';
         $frm->ref_text = '';
+        $frm->usr_text = '';
         $exp = $frm->expression($msg);
-        // the factory tries to recreate the reference text from the user text and reports the
-        // terms it cannot resolve without a term list; that conversion fails on purpose here,
-        // so the reports are cleared to test only the empty check below
-        $msg->reset();
         $exp->term_id_list($msg);
         $result = $msg->all_message_text();
-        $target = 'no word, triple, formula or verb found for "second (time)", no word, triple, formula or verb found for "minute", the expression of formula "scale minute to sec" is empty';
+        $target = 'the expression of formula "' . formula_names::SCALE_TO_SEC . '" is empty';
         $t->assert($test_name, $result, $target);
         $msg->reset();
 
@@ -176,30 +177,35 @@ class expression_tests
             'including a triple',
             formula_names::DIAMETER,
             formula_names::DIAMETER_DB,
+            formula_names::DIAMETER_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including the min function',
             formula_names::MIN_CIRCUMFERENCE_PI,
             formula_names::MIN_CIRCUMFERENCE_PI_DB,
+            formula_names::MIN_CIRCUMFERENCE_PI_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including the max function',
             formula_names::MAX_CIRCUMFERENCE_PI,
             formula_names::MAX_CIRCUMFERENCE_PI_DB,
+            formula_names::MAX_CIRCUMFERENCE_PI_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including fixed formulas',
             formula_names::INCREASE_EXP,
             formula_names::INCREASE_DB,
+            formula_names::INCREASE_FROM_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
             'including verbs',
             formula_names::PARTS_IN_PERCENT_EXP,
             formula_names::PARTS_IN_PERCENT_DB,
+            formula_names::PARTS_IN_PERCENT_FROM_DB,
             $trm_lst
         );
 
@@ -219,6 +225,28 @@ class expression_tests
             . word_names::CIRCUMFERENCE_ID . ','
             . word_names::PI_ID . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
+
+        // a term that the preloaded terms do not know fails the conversion without a database read, because the
+        // read could not change the result and would e.g. read in a unit test on the dummy connection
+        $test_name = 'a term that the preloaded terms do not know is reported';
+        $miss_msg = new user_message($t->usr1);
+        $miss_msg->log_test_only = true;
+        $exp = new expression($frm);
+        $exp->set_user_text(formula_names::INCREASE_EXP, $miss_msg, $t_trm->term_list_time());
+        $read_err = $miss_msg->log_test_txt;
+        $t->assert_msg_false($test_name, $miss_msg, words::PERCENT);
+        // negative: without a database read no internal error is kept on the message
+        $test_name = '... without a database read';
+        $t->assert($test_name, $read_err, '');
+
+        // negative: an empty reference text is no conversion, so the user text stays as it is
+        $test_name = 'an empty reference text does not change the user text';
+        $exp_keep = new expression($frm);
+        $exp_keep->set_user_text(formula_names::SCALE_TO_SEC_EXP, $msg, $t_trm->term_list_time());
+        $exp_keep->set_ref_text('', $msg, $t_trm->term_list_time());
+        $result = $exp_keep->user_text_ui($t_trm->term_list_time());
+        $t->assert($test_name, $result, formula_names::SCALE_TO_SEC_EXP);
+        $msg->reset();
 
         // test the phrase list of the left side
         $test_name = 'get the result phrases';
@@ -296,17 +324,30 @@ class expression_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($msg, $trm_lst);
         $result = $elm_lst->dsp_id();
+        // the ids are built from the pinned ids like above, so that a new seed formula or word does not break the test
+        $frm_id = formula_names::INCREASE_ID . '/';
         $target = '"' . formula_names::THIS_NAME . '","'
             . formula_names::PRIOR . '","'
-            . formula_names::PRIOR . '" (element_id 21/18,21/20,21/20) for user 3 (zukunft.com system test)';
+            . formula_names::PRIOR . '" (element_id '
+            . $frm_id . formula_names::THIS_ID . ','
+            . $frm_id . formula_names::PRIOR_ID . ','
+            . $frm_id . formula_names::PRIOR_ID
+            . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
         $trm_lst = $exp->terms($msg, $trm_lst);
         $result = $trm_lst->dsp_id();
+        // the names and the term ids are each listed in their sort order
+        $trm_ids = [
+            $lib->term_id(formula_names::THIS_ID, formula::class),
+            $lib->term_id(formula_names::PRIOR_ID, formula::class),
+            $lib->term_id(words::PCT_ID, word::class)
+        ];
+        sort($trm_ids);
         $target = '"' . words::PERCENT . '","'
             . formula_names::PRIOR . '","'
-            . formula_names::THIS_NAME . '" (36,40,319)';
+            . formula_names::THIS_NAME . '" (' . implode(',', $trm_ids) . ')';
         $t->assert($test_name, $result, $target);
 
         // element_special_following
@@ -349,7 +390,9 @@ class expression_tests
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($frm);
-        $exp_sector->set_ref_text(formula_names::PARTS_IN_PERCENT_DB, $msg, $trm_lst);
+        // only the reference text, because only its ids are tested and the conversion to the user text would read
+        // the terms that the term list does not contain from the database
+        $exp_sector->set_ref_and_user_text(formula_names::PARTS_IN_PERCENT_DB, null);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part($msg));
         $result = $phr_lst->dsp_id();
         $target = '"","" (phrase_id ' . word_names::PARTS_ID . ',' . words::TOTAL_ID
@@ -358,7 +401,7 @@ class expression_tests
 
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($frm);
-        $exp_scale->set_ref_text(formula_names::SCALE_MIO_DB, $msg, $trm_lst);
+        $exp_scale->set_ref_and_user_text(formula_names::SCALE_MIO_DB, null);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part($msg));
         $result = $phr_lst->dsp_id();
         $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';
@@ -428,6 +471,7 @@ class expression_tests
      * @param string $test_name the part that should be tested e.g. with fixed formulas
      * @param string $usr_frm_exp the formula expression in the human-readable format
      * @param string $db_ref_frm_exp the formula expression in the database reference format
+     * @param string $usr_frm_from_db the user text that the conversion of the reference text writes, without spaces
      * @param ?term_list $in_trm_lst the term list cache to be used for the conversion
      * @return void
      */
@@ -437,13 +481,15 @@ class expression_tests
         string       $test_name,
         string       $usr_frm_exp,
         string       $db_ref_frm_exp,
+        string       $usr_frm_from_db,
         ?term_list   $in_trm_lst = null
     ): void
     {
         $t_frm = new test_formulas($t);
         $frm = $t_frm->formula();
 
-        $test_name = 'conversion of the user text to the database reference text ' . $test_name;
+        $case_name = $test_name;
+        $test_name = 'conversion of the user text to the database reference text ' . $case_name;
         $exp = new expression($frm);
         $exp->set_user_text($usr_frm_exp, $msg, $in_trm_lst);
         $trm_names = $exp->get_usr_names();
@@ -452,10 +498,22 @@ class expression_tests
         $target = $db_ref_frm_exp;
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'conversion of the database reference text to the user text ' . $test_name;
+        $test_name = 'conversion of the database reference text to the user text ' . $case_name;
         $result = $exp->user_text_ui($trm_lst);
         $target = $usr_frm_exp;
         $t->assert($test_name, $result, $target);
+
+        // the same from an expression that only gets the reference text, with all its terms preloaded
+        // by the list that has created the reference ids, because the test term list numbers its terms from one
+        $test_name = 'the reference text sets the user text ' . $case_name;
+        $ref_trm_lst = $trm_lst;
+        if ($in_trm_lst != null) {
+            $ref_trm_lst = $in_trm_lst;
+        }
+        $exp_ref = new expression($frm);
+        $exp_ref->set_ref_text($db_ref_frm_exp, $msg, $ref_trm_lst);
+        $result = $exp_ref->user_text_ui($ref_trm_lst);
+        $t->assert($test_name, $result, $usr_frm_from_db);
     }
 
 }

@@ -42,6 +42,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -64,14 +65,56 @@ class import_wikidata
     private array $item_labels = [];
     // the folder of the wikidata answers of an offline test, empty to read wikidata by http
     private string $fixture_path;
+    // the host of the last request of this object that got no answer at all e.g. without internet,
+    // empty if the last request got an answer, also a http error, or if no request has been sent
+    private string $missing_host = '';
+    // the folder in which each live answer is saved and from which the saved answer is read if wikidata
+    // gives no live data e.g. for the live tests, empty for the pod, which never uses an old answer
+    private string $fallback_path;
+    // the seconds to wait for each answer and if a failed request is repeated after a pause: an import waits
+    // long and repeats, because no user waits for it, a page waits shortly and only once (see for_page)
+    private int $timeout = self::IMPORT_TIMEOUT;
+    private bool $retry = true;
 
     /**
      * @param string $fixture_path empty for the pod, which reads wikidata by http, or the folder of the wikidata
      *                             answers of an offline test, which never sends a request and reports a missing file
+     * @param string $fallback_path empty for the pod, or the folder of the saved answers of a live test, which
+     *                              keeps each live answer there and reads it if wikidata gives no live data
      */
-    function __construct(string $fixture_path = '')
+    function __construct(string $fixture_path = '', string $fallback_path = '')
     {
         $this->fixture_path = $fixture_path;
+        $this->fallback_path = $fallback_path;
+    }
+
+    /**
+     * read wikidata for a page that the user waits for e.g. the groups of the add word suggestions: each
+     * request waits only as long as for wikipedia and is not repeated, because a repeat after a pause would
+     * block the page and the php process for minutes
+     *
+     * @return void
+     */
+    function for_page(): void
+    {
+        $this->timeout = self::READ_TIMEOUT;
+        $this->retry = false;
+    }
+
+    /**
+     * @return int the seconds that each request waits for the answer of wikidata
+     */
+    function timeout(): int
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @return bool true if a failed request is repeated after a pause (see retry_pause)
+     */
+    function is_retried(): bool
+    {
+        return $this->retry;
     }
 
     // the base url of the wikidata entity data json api; the wikidata id and the json extension are added
@@ -90,6 +133,24 @@ class import_wikidata
     const string HTTP_HEADER = 'header';
     const string HTTP_TIMEOUT = 'timeout';
     const string HTTP_USER_AGENT = 'User-Agent: ';
+    // a failed wikidata request is repeated, because wikidata refuses e.g. with a http 429 or does not
+    // answer for some seconds during a long import; the number of tries including the first request
+    const int REQUEST_TRIES = 3;
+    // the seconds to wait before the second try, doubled for each further try e.g. 2 and 4 seconds
+    const int RETRY_PAUSE = 2;
+    // the maximal seconds to wait, also if wikidata asks for a longer pause via the Retry-After header
+    const int RETRY_PAUSE_MAX = 30;
+    // the http status of an answer that may be fine with the next try: too many requests and the
+    // server errors; e.g. a 404 of an unknown wikidata id stays the same, so it is not repeated
+    const array RETRY_HTTP_STATUS = [429, 500, 502, 503, 504];
+    // the header in which wikidata names the seconds to wait e.g. "Retry-After: 5"
+    const string HTTP_RETRY_AFTER = 'retry-after';
+    const string HTTP_HEADER_SEPARATOR = ':';
+    // the status line of a http answer e.g. "HTTP/1.1 429 Too Many Requests" with the status as group 1
+    const string HTTP_STATUS_PATTERN = '#^HTTP/\S+\s+(\d{3})#';
+    // the part of the php error of a failed dns lookup, which means that the pod is offline,
+    // so it is not repeated, because an offline test run would else wait for every request
+    const string DNS_FAILURE = 'getaddrinfo';
 
     // the field names of the wikidata json structure used by the converter
     const string WD_ENTITIES = 'entities';
@@ -114,6 +175,8 @@ class import_wikidata
     // the wikidata property id of the "determination method" qualifier, which says how the number has been found
     // e.g. by a census, but not what it means, so a value with it is imported like one without it
     const string WD_DETERMINATION_METHOD = 'P459';
+    // the wikidata property id of "instance of", which names the groups of an item e.g. "city-state" for Hamburg
+    const string WD_INSTANCE_OF = 'P31';
     // the qualifiers that never change what the number of a claim means; any other e.g. P518 "applies to
     // part" does, so the claim is not imported
     const array WD_KNOWN_QUALIFIERS = [
@@ -159,12 +222,16 @@ class import_wikidata
 
     /**
      * retrieve the entity data json from wikidata for the given wikidata id e.g. "Q167" for Pi
+     * an offline test reads the answer from its fixture folder like the units and criteria, so that
+     * e.g. the preview of Q72 in the read tests never depends on wikidata being reachable
+     *
      * @param string $wikidata_id the wikidata entity id e.g. "Q167" that selects the entity to read
+     * @param user_message $msg to report a missing answer file of an offline test
      * @return string the raw json text returned by wikidata or an empty string if the request failed
      */
-    function get_entity_json(string $wikidata_id): string
+    function get_entity_json(string $wikidata_id, user_message $msg): string
     {
-        return $this->request_json($wikidata_id);
+        return $this->read_json($wikidata_id, $msg);
     }
 
     /**
@@ -195,6 +262,99 @@ class import_wikidata
     }
 
     /**
+     * forget the error and the http answer of an earlier request, called before each request, so
+     * that request_failure never names the status or the error of an older request
+     *
+     * @return void
+     */
+    static function request_clear(): void
+    {
+        error_clear_last();
+        http_clear_last_response_headers();
+    }
+
+    /**
+     * why the last http request via file_get_contents has failed, for the log of a failed read of
+     * wikidata or wikipedia; the caller clears the last request before it (request_clear), so that
+     * the status or the error of an older request is never named
+     *
+     * @return string the http status e.g. "HTTP/1.1 429 Too Many Requests" or, without an answer,
+     *                the php error e.g. a timeout, a failed dns lookup or too many open files
+     */
+    static function request_failure(): string
+    {
+        $status = http_get_last_response_headers()[0] ?? 'no http answer';
+        $reason = error_get_last()['message'] ?? '';
+        return trim($status . ' ' . $reason);
+    }
+
+    /**
+     * if the last http request via file_get_contents has got no answer at all, the pod has most
+     * likely no connection e.g. no network or no dns server, whereas e.g. a http 404 is an answer;
+     * only valid directly after a request, which the caller has cleared before (request_clear)
+     *
+     * @return bool true if the last request has got no http answer
+     */
+    static function no_answer(): bool
+    {
+        return http_get_last_response_headers() === null;
+    }
+
+    /**
+     * the seconds to wait before the next try of a failed wikidata request (see REQUEST_TRIES):
+     * a refusal or a server error is repeated after the pause that wikidata asks for or else after
+     * the doubled pause of each try, and a request without an answer only if the host is known
+     *
+     * @param array|null $headers the http answer headers of the failed try or null without an answer
+     *                            (http_get_last_response_headers); after a redirect the last status counts
+     * @param string $error the php error of the failed try e.g. a timeout or a failed dns lookup
+     * @param int $try the number of the failed try, starting with 1 for the first request
+     * @return int|null the seconds to wait before the next try or null if the request is not repeated
+     */
+    static function retry_pause(?array $headers, string $error, int $try): ?int
+    {
+        $result = null;
+        if ($try < self::REQUEST_TRIES) {
+            $pause = self::RETRY_PAUSE * (2 ** ($try - 1));
+            if ($headers === null) {
+                if (!str_contains($error, self::DNS_FAILURE)) {
+                    $result = $pause;
+                }
+            } else {
+                $status = 0;
+                $retry_after = null;
+                foreach ($headers as $header) {
+                    if (preg_match(self::HTTP_STATUS_PATTERN, $header, $matches) === 1) {
+                        // a new answer e.g. after a redirect, so the wait of an earlier answer is forgotten
+                        $status = (int)$matches[1];
+                        $retry_after = null;
+                    } else {
+                        $parts = explode(self::HTTP_HEADER_SEPARATOR, $header, 2);
+                        if (count($parts) == 2
+                            and strtolower(trim($parts[0])) == self::HTTP_RETRY_AFTER
+                            and ctype_digit(trim($parts[1]))) {
+                            $retry_after = (int)trim($parts[1]);
+                        }
+                    }
+                }
+                if (in_array($status, self::RETRY_HTTP_STATUS)) {
+                    $result = min($retry_after ?? $pause, self::RETRY_PAUSE_MAX);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the host of the last request of this object that has got no answer e.g.
+     *                "www.wikidata.org", empty if it has got an answer or no request has been sent
+     */
+    function missing_host(): string
+    {
+        return $this->missing_host;
+    }
+
+    /**
      * retrieve the json from the wikidata EntityData endpoint for the given entity or property id
      * @param string $id the wikidata entity or property id e.g. "Q167" or "P2284"
      * @return string the raw json text returned by wikidata or an empty string if the request failed
@@ -203,14 +363,72 @@ class import_wikidata
     {
         $result = '';
         $url = self::ENTITY_DATA_URL . $id . self::JSON_EXTENSION;
-        $context = self::request_context(self::IMPORT_TIMEOUT);
+        $context = self::request_context($this->timeout);
         // the @ suppresses the php warning of a failed http request (e.g. a http 403 or no network)
-        // so that the failure is reported as a log warning and the program continues
-        $json = @file_get_contents($url, false, $context);
+        // so that the failure is reported as a log warning and the program continues;
+        // the last request is cleared before each try, so that the warning below never names an older error
+        // a refusal or a missing answer is repeated after a pause (see retry_pause)
+        $try = 1;
+        $pause = 0;
+        $json = false;
+        while ($pause !== null) {
+            self::request_clear();
+            // the request and the pause are never interrupted by the note timer of a long import
+            $json = import::without_note_timer(fn() => @file_get_contents($url, false, $context));
+            $pause = null;
+            // a page that the user waits for gets no repeat (see for_page)
+            if ($json === false and $this->retry) {
+                $pause = self::retry_pause(http_get_last_response_headers(), error_get_last()['message'] ?? '', $try);
+                if ($pause !== null) {
+                    log_info('the wikidata request for ' . $id . ' failed with ' . self::request_failure()
+                        . ' and is repeated in ' . $pause . ' seconds', 'import_wikidata->request_json');
+                    import::without_note_timer(fn() => sleep($pause));
+                    $try++;
+                }
+            }
+        }
+        // checked before the log, so that it names this request
+        $this->missing_host = self::no_answer() ? (string)parse_url($url, PHP_URL_HOST) : '';
         if ($json === false) {
-            log_warning('the wikidata request for ' . $id . ' via ' . $url . ' failed', 'import_wikidata->request_json');
-        } else {
+            log_warning('the wikidata request for ' . $id . ' via ' . $url . ' failed with '
+                . self::request_failure(), 'import_wikidata->request_json');
+        }
+        $result = $this->live_or_saved_json($id, $json);
+        if ($result != '') {
+            // the caller has the data of a saved answer, so the user should not check the connection
+            $this->missing_host = '';
+        }
+        return $result;
+    }
+
+    /**
+     * the live answer of wikidata, which is also saved in the fallback folder if one is set,
+     * or without live data the answer saved there by an earlier request (see __construct)
+     *
+     * @param string $id the wikidata entity or property id e.g. "Q4917"
+     * @param string|false $json the live answer or false if the request has failed
+     * @return string the live or the saved json or an empty string if there is neither
+     */
+    function live_or_saved_json(string $id, string|false $json): string
+    {
+        $result = '';
+        if ($json !== false) {
             $result = $json;
+            if ($this->fallback_path != '') {
+                $save_msg = $this->store_text($id, $json, $this->fallback_path);
+                if (!$save_msg->is_ok()) {
+                    log_warning('the wikidata answer for ' . $id . ' cannot be saved: '
+                        . $save_msg->all_message_text(), 'import_wikidata->live_or_saved_json');
+                }
+            }
+        } elseif ($this->fallback_path != '') {
+            $file = $this->fallback_path . $id . self::JSON_EXTENSION;
+            $saved = file_exists($file) ? file_get_contents($file) : false;
+            if ($saved !== false) {
+                $result = $saved;
+                log_info('without live data from wikidata the saved answer ' . $file . ' is used',
+                    'import_wikidata->live_or_saved_json');
+            }
         }
         return $result;
     }
@@ -224,7 +442,12 @@ class import_wikidata
      */
     function store_json(string $wikidata_id, string $path): user_message
     {
-        return $this->store_text($wikidata_id, $this->request_json($wikidata_id), $path);
+        $json = $this->request_json($wikidata_id);
+        if ($json != '' and $path == $this->fallback_path) {
+            // the answer is already in the fallback folder (see live_or_saved_json), so it is written only once
+            return new user_message();
+        }
+        return $this->store_text($wikidata_id, $json, $path);
     }
 
     /**
@@ -368,6 +591,46 @@ class import_wikidata
             $result = array_keys($this->first_entity($entity)[self::WD_CLAIMS] ?? []);
         }
         return $result;
+    }
+
+    /**
+     * the english names of the groups of an item, which the add word button of a search suggests as 'is a'
+     * triples if conceptnet knows none (see ref_link_wikipedia::suggest_from_url)
+     *
+     * @param string $wikidata_id the wikidata id of the item e.g. "Q1055" for Hamburg
+     * @param user_message $msg to report a missing answer file of an offline test
+     * @return array the labels of the "instance of" items each once e.g. ["city-state", "port city"], empty if none can be read
+     */
+    function instance_of_names(string $wikidata_id, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->instance_of_ids($this->read_json($wikidata_id, $msg)) as $item_id) {
+            $label = $this->item_label($item_id, $msg);
+            if ($label != '' and !in_array($label, $result)) {
+                $result[] = $label;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $entity_json the wikidata json of the entity e.g. the content of Q1055.json
+     * @return array the wikidata ids of the "instance of" items e.g. ["Q133442", "Q2264924"], without the deprecated claims
+     */
+    function instance_of_ids(string $entity_json): array
+    {
+        $entity = json_decode($entity_json, true);
+        $result = [];
+        if (is_array($entity)) {
+            foreach ($this->first_entity($entity)[self::WD_CLAIMS][self::WD_INSTANCE_OF] ?? [] as $claim) {
+                // a claim that wikidata marks as wrong or outdated names no group of the item
+                if (($claim[self::WD_RANK] ?? '') != self::WD_RANK_DEPRECATED) {
+                    $result[] = $claim[self::WD_MAINSNAK][self::WD_DATAVALUE][self::WD_VALUE][self::WD_ID] ?? '';
+                }
+            }
+        }
+        // a claim of an unknown or no value has no id
+        return array_values(array_filter($result, fn($id) => $id != ''));
     }
 
     /**

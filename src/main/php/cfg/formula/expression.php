@@ -692,10 +692,16 @@ class expression extends shared_expression
                 ]);
                 $id = null;
             } else {
-                if ($id == 0) {
+                // an id that is no int (e.g. above PHP_INT_MAX) or above the max would overflow the term id to
+                // a float, so it is no valid object id; filter_var compares exactly, a float cast would round
+                $int_id = filter_var($id, FILTER_VALIDATE_INT);
+                if ($int_id === false or $int_id == 0 or abs($int_id) > term::OBJ_ID_MAX) {
                     $msg->add(msg_id::EXPRESSION_ID_NOT_VALID, [
                         msg_id::VAR_NAME => $obj_sym
                     ]);
+                    $id = null;
+                } else {
+                    $id = $int_id;
                 }
             }
         }
@@ -721,11 +727,8 @@ class expression extends shared_expression
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids, $msg);
         } else {
-            $cac_lst = $trm_lst->get_by_ids($phr_ids->trm_ids());
-            $ids_to_load = array_diff($phr_ids->lst, $cac_lst->id_lst());
-            if (count($ids_to_load) > 0) {
-                $phr_lst->load_by_ids($phr_ids, $msg, $trm_lst->phrase_list());
-            }
+            // takes the phrases of the cache and loads only the others
+            $phr_lst->load_by_ids($phr_ids, $msg, $trm_lst->phrase_list());
         }
 
         return $phr_lst;
@@ -757,9 +760,9 @@ class expression extends shared_expression
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {
                     if ($elm->obj != null) {
-                        if ($elm->obj->type_cl == formula_type::THIS
-                            or $elm->obj->type_cl == formula_type::NEXT
-                            or $elm->obj->type_cl == formula_type::PREV) {
+                        if ($elm->obj->type_code_id() == formula_type::THIS
+                            or $elm->obj->type_code_id() == formula_type::NEXT
+                            or $elm->obj->type_code_id() == formula_type::PREV) {
                             $frm_lst->add($elm->obj);
                         }
                     }
@@ -1013,11 +1016,11 @@ class expression extends shared_expression
 
                     // update work text
                     $work = $lib->str_right_of($work, chars::TERM_END);
+                    // a filtered element is skipped, but the loop continues with the next symbol
+                    $found = true;
 
                     // add reference to result
                     if ($elm?->obj != null) {
-
-                        $found = true;
 
                         // group the references if needed
                         if ($group_it) {
