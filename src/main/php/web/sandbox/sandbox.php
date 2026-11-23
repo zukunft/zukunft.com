@@ -136,13 +136,9 @@ class sandbox extends db_object
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
+        // an api message with only the id is completed from the request cache before this mapping
+        // (data_object::api_json_with_cache), because the fields that the json lacks are reset below
         parent::api_mapper($json_array, $msg);
-
-        // TODO Prio 0 add dto cache object to api mapper
-        //if ($this->has_id()) {
-        //    $cac_obj = $dto->get_object_by_id($this);
-        //    $this->fill($cac_obj, $this->user());
-        //}
 
         if (array_key_exists(json_fields::SHARE, $json_array)) {
             $this->share_id = $json_array[json_fields::SHARE];

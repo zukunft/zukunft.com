@@ -37,14 +37,19 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 // including off child objects deactivated to avoid loops in including
+//include_once html_paths::COMPONENT . 'component.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
+//include_once html_paths::FORMULA . 'formula.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::FORMULA . 'formula_link_list.php';
 //include_once html_paths::LOG . 'change_log_list.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::REF . 'ref.php';
+//include_once html_paths::REF . 'source.php';
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::SYSTEM . 'job_list.php';
 //include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::SYSTEM . 'system_time_list.php';
@@ -55,20 +60,27 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::USER . 'user.php';
+//include_once html_paths::WORD . 'triple.php';
+//include_once html_paths::WORD . 'word.php';
 //include_once html_paths::WORD . 'word_list.php';
 //include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
@@ -79,7 +91,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -676,6 +690,54 @@ class data_object
         $msk = $this->get_view_by_id($id);
         if ($msk != null) {
             $result = $msk->code_id ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * the api json of an object completed by the fields of the cached object with the same class and id,
+     * so that e.g. an api message with only the id of a word is mapped with the name of the cached word;
+     * the json is completed before the mapping, because each api_mapper resets the fields that its json lacks
+     *
+     * @param db_object $dbo the frontend object that the json is mapped to e.g. an empty word
+     * @param array $json the api json of the object e.g. with only the id
+     * @param user_message $msg to collect the problems of the api json of the cached object
+     * @return array the api json with the fields of the cached object that the given json lacks
+     */
+    function api_json_with_cache(db_object $dbo, array $json, user_message $msg): array
+    {
+        $result = $json;
+        $cached = $this->cached_by_id($dbo::class, $json[json_fields::ID] ?? 0);
+        if ($cached != null) {
+            // the given fields win, because they are newer than the cache
+            $result = array_merge($cached->api_array([], $msg), $json);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $class the frontend class of the object e.g. word::class
+     * @param int|string $id the database id of the object
+     * @return db_object|null the cached object or null if this cache has none of this class and id
+     */
+    private function cached_by_id(string $class, int|string $id): ?db_object
+    {
+        $lst = match ($class) {
+            word::class => $this->wrd_lst,
+            triple::class => $this->trp_lst,
+            source::class => $this->src_lst,
+            ref::class => $this->ref_lst,
+            formula::class => $this->frm_lst,
+            component::class => $this->cmp_lst,
+            default => null,
+        };
+        $result = null;
+        // a view is cached in the type list or the view list (see get_view_by_id)
+        if ($class == view::class) {
+            $result = $this->get_view_by_id((int)$id);
+        } elseif ($lst != null and $id != 0 and $lst->has_id($id)) {
+            // asked with has_id, because a get of a missing id writes a log entry
+            $result = $lst->get($id);
         }
         return $result;
     }

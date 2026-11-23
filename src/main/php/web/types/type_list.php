@@ -558,7 +558,7 @@ class type_list
 
     /**
      * create the HTML code to select a type
-     * TODO Prio 0 use this var order for all selectors
+     * TODO Prio 1 use this var order for all selectors
      * TODO Prio 2 use the label_id for all function calls
      * @param string $form the unique name of the html form
      * @param int|null $selected the id of the preselected phrase

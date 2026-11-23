@@ -45,13 +45,12 @@ class db_cache_type_list extends type_list
 {
 
     /**
-     * adding the db_cache type used for unit tests to a dummy list
+     * fill the list of the db_cache types for the unit tests
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(db_cache_types::SYSTEM_CONFIG, db_cache_types::SYSTEM_CONFIG_NAME, db_cache_types::SYSTEM_CONFIG_COM, db_cache_types::SYSTEM_CONFIG_ID);
-        $this->add($type);
+        // from db_code_links/db_cache_types.csv, so that the unit tests use the same ids and names as the database
+        $this->load_from_csv_resource();
     }
 
     /**

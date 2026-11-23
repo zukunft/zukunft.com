@@ -598,16 +598,18 @@ class sandbox_list_named extends sandbox_list
      */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|sandbox_named|triple|phrase|term|null $obj_to_add): void
     {
+        parent::add_direct($obj_to_add);
+        // the key of the appended entry and not the count, which is lower after an unset left a gap
+        $pos = array_key_last($this->lst());
         if (!$this->is_name_list_dirty()) {
             foreach ($this->name_index_keys($obj_to_add) as $name) {
-                $this->name_pos_lst[$name] = count($this->lst());
+                $this->name_pos_lst[$name] = $pos;
             }
         }
         if (!$this->is_all_name_list_dirty()) {
             // TODO Prio 2 add handling of excluded named objects
-            $this->name_pos_lst_all[$obj_to_add->name(true)] = count($this->lst());
+            $this->name_pos_lst_all[$obj_to_add->name(true)] = $pos;
         }
-        parent::add_direct($obj_to_add);
     }
 
     /**

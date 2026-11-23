@@ -47,25 +47,12 @@ class job_status_list extends type_list
     const string VALUE_UPDATE = "value_update";
 
     /**
-     * adding the job type used for unit tests to a dummy list
-     *  TODO Prio 3: load from csv
+     * fill the list of the job statuum for the unit tests
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        // the ids are the ones of db_code_links/job_statuum.csv, so that e.g. the default status of a new job is found
-        $type = new type_object(job_statuum::STATUS_NEW, job_statuum::STATUS_NEW_NAME, '', job_statuum::STATUS_NEW_ID);
-        $this->add($type);
-        $type = new type_object(job_statuum::STATUS_FORCED, job_statuum::STATUS_FORCED, '', 3);
-        $this->add($type);
-        $type = new type_object(job_statuum::STATUS_DELAYED, job_statuum::STATUS_DELAYED, '', 4);
-        $this->add($type);
-        $type = new type_object(job_statuum::STATUS_DONE, job_statuum::STATUS_DONE, '', 8);
-        $this->add($type);
-        $type = new type_object(job_statuum::STATUS_FAILED, job_statuum::STATUS_FAILED, '', 9);
-        $this->add($type);
-        $type = new type_object(job_statuum::STATUS_CANCELLED, job_statuum::STATUS_CANCELLED, '', 11);
-        $this->add($type);
+        // from db_code_links/job_statuum.csv, so that e.g. the default status of a new job is found by its database id
+        $this->load_from_csv_resource();
     }
 
     /**

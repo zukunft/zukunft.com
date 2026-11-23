@@ -263,10 +263,11 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
      */
     protected function add_direct(type_object|IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
-        if (!$this->lst_code_id_dirty) {
-            $this->code_id_pos_lst[$obj_to_add->code_id] = count($this->lst());
-        }
         parent::add_direct($obj_to_add);
+        // the key of the appended entry and not the count, which is lower after an unset left a gap
+        if (!$this->lst_code_id_dirty) {
+            $this->code_id_pos_lst[$obj_to_add->code_id] = array_key_last($this->lst());
+        }
     }
 
     /**

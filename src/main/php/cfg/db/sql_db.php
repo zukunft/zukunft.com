@@ -1496,9 +1496,19 @@ class sql_db
         // (an id lookup on an empty list returns -1 which the database rejects)
         $sys->typ_lst->load_log_if_empty($this, $msg);
 
+        // the change log code links first and without log like in db_log_code_links,
+        // because e.g. a new change field would need a change table of the change fields for its own log
+        foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $msg);
+        }
+        // reloaded, because the logged code links below need e.g. the id of a change field that has just been added
+        $sys->typ_lst->load_log($this, $msg);
+
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
+            if (!in_array($csv_file_name, def::LOG_CODE_LINK_FILES)) {
+                $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
+            }
         }
 
         // the cached types api message is the state before the csv load

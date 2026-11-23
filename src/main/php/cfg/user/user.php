@@ -1639,7 +1639,7 @@ class user extends db_id_object_non_sandbox
             // endpoints only forward $msg to the user and would otherwise drop the
             // reason returned as text (add_message_text does not repeat the same text,
             // so endpoints that additionally add the returned text do not duplicate it)
-            // TODO Prio 0 use merge?
+            // TODO Prio 0 use merge? Yes, use merge
             $msg->add_message_text($test_result->all_message_text());
             log_info('ip_check rejects due to ' . $test_result->text());
         }

@@ -111,7 +111,7 @@ class expression_write_tests
         $exp_db = new expression($frm);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}', $msg);
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
-        // TODO Prio 0 rename to user_text
+        // TODO Prio 0 rename the function from user_text_ui to user_text
         $result = $exp_db->user_text_ui();
         $t->assert('get_usr_text for "' . $exp_db->ref_text_ui($msg) . '"', $result, $target);
 

@@ -433,6 +433,28 @@ class base_object_tests
         $missing_id = $lst->id_by_code_id(phrase_types::CALC);
         $t->assert($test_name, $missing_id, 0);
 
+        // an object added after an unset gets the key after the gap and not the count of the list,
+        // else its id, name and code id would point to another object or to no object
+        $test_name = 'an object added after an unset is found by its id';
+        $gap_lst = new ListOfIdNamedCodeObjects([$t_typ->phrase_type(), $t_typ->phrase_type_measure(), $t_typ->phrase_type_time()]);
+        $gap_lst->unset_by_id(phrase_types::MEASURE_ID);
+        // the lookups rebuild the name and code id hashes, so that the add below has to extend them
+        $gap_lst->has_name(phrase_types::NORMAL_NAME);
+        $gap_lst->has_code_id(phrase_types::NORMAL);
+        $gap_lst->add_obj($t_typ->phrase_type_scaling());
+        $gap_id = $gap_lst->get(phrase_types::SCALING_ID)?->id();
+        $t->assert($test_name, $gap_id, phrase_types::SCALING_ID);
+        $test_name = '... and by its name';
+        $gap_name_id = $gap_lst->get_by_name(phrase_types::SCALING_NAME)?->id();
+        $t->assert($test_name, $gap_name_id, phrase_types::SCALING_ID);
+        $test_name = '... and by its code id';
+        $gap_code_id = $gap_lst->get_by_code_id(phrase_types::SCALING)?->id();
+        $t->assert($test_name, $gap_code_id, phrase_types::SCALING_ID);
+        // negative: the object behind the gap is still found by its own id and not replaced by the added one
+        $test_name = '... and the object behind the gap keeps its id';
+        $gap_time_id = $gap_lst->get(phrase_types::TIME_ID)?->id();
+        $t->assert($test_name, $gap_time_id, phrase_types::TIME_ID);
+
         $test_name = 'id_by_code_id returns zero if name is missing';
         $t->assert($test_name, $lst->id_by_name(phrase_types::CALC), 0);
         $test_name = 'add_obj_by_name can add objects without id';

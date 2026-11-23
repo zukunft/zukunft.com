@@ -410,21 +410,27 @@ class triple_tests
             json_fields::EX_VERB => verbs::TEST_ADD_NAME,
             json_fields::EX_TO => word_names::PI
         ], $msg, $vrb_dto);
-        $t->assert($test_name, $trp->get_verb_name(), verbs::TEST_ADD_NAME);
+        $trp_vrb_name = $trp->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
         $test_name = '... and adds it to the data object for the save before the triples';
-        $t->assert_true($test_name, $vrb_dto->verb_list()->get_by_name(verbs::TEST_ADD_NAME) != null);
+        $dto_vrb_name = $vrb_dto->verb_list()->get_by_name(verbs::TEST_ADD_NAME)?->name();
+        $t->assert($test_name, $dto_vrb_name, verbs::TEST_ADD_NAME);
         // negative: the mapping has not saved the verb
         $test_name = '... but does not save it';
-        $t->assert($test_name, $trp->get_verb_id() ?? 0, 0);
-        $test_name = '... and a second triple with the same new verb uses the same verb';
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert_null($test_name, $trp_vrb_id);
+        $test_name = '... and a second triple with the same new verb shows the verb';
         $trp_2 = new triple($t->usr1);
         $trp_2->import_mapper([
             json_fields::EX_FROM => word_names::PI,
             json_fields::EX_VERB => verbs::TEST_ADD_NAME,
             json_fields::EX_TO => word_names::MATH
         ], $msg, $vrb_dto);
-        $t->assert($test_name, $vrb_dto->verb_list()->count(), 1);
-        $t->assert($test_name, $trp_2->get_verb_name(), verbs::TEST_ADD_NAME);
+        $trp_vrb_name = $trp_2->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        $test_name = '... and uses the same verb, so the data object saves it once';
+        $dto_vrb_count = $vrb_dto->verb_list()->count();
+        $t->assert($test_name, $dto_vrb_count, 1);
         $msg->reset();
 
         $t->subheader($ts . 'api');

@@ -343,12 +343,13 @@ class ListOfIdObjects extends ListOf
      */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
-        // only the first entry of an id like the rebuild (set_id_pos_lst), so that e.g. a lookup of id 0
-        // finds the same unsaved object after an add of a second one as after a rebuild
-        if (!$this->is_dirty() and !array_key_exists($obj_to_add->id(), $this->id_pos_lst)) {
-            $this->id_pos_lst[$obj_to_add->id()] = count($this->lst());
-        }
         parent::add_direct($obj_to_add);
+        // only the first entry of an id like the rebuild (set_id_pos_lst), so that e.g. a lookup of id 0
+        // finds the same unsaved object after an add of a second one as after a rebuild;
+        // the key of the appended entry and not the count, which is lower after an unset left a gap
+        if (!$this->is_dirty() and !array_key_exists($obj_to_add->id(), $this->id_pos_lst)) {
+            $this->id_pos_lst[$obj_to_add->id()] = array_key_last($this->lst());
+        }
     }
 
     /**

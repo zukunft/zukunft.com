@@ -84,6 +84,9 @@ class phrase_type extends type_object
     const string FLD_SYMBOL_COM = 'e.g. for percent the symbol is %';
     const string FLD_SYMBOL = 'symbol';
 
+    // the log text of a scaling factor that is not an integer (see scale_from_row)
+    const string MSG_SCALE_NO_INT = 'the scaling factor of a phrase type is not an integer: ';
+
     // field lists for the table creation of phrase type
     const array FLD_LST_EXTRA = array(
         [self::FLD_SCALE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_SCALE_COM],
@@ -140,23 +143,35 @@ class phrase_type extends type_object
         $result = parent::row_mapper_typ_obj($db_row, $msg, $class);
         if ($result) {
             if (array_key_exists(self::FLD_SCALE, $db_row)) {
-                // TODO Prio 0 use a more general conversion for all fields
-                //      e.g. $lib->convert($in_value, sql_type::INT, $msg)
-                if ($db_row[self::FLD_SCALE] = 'NULL') {
-                    $this->scale = null;
-                } else {
-                    if (is_integer($db_row[self::FLD_SCALE])) {
-                        $this->scale = $db_row[self::FLD_SCALE];
-                    } else {
-                        log_err_msg('scale csv value ' . $db_row[self::FLD_SCALE] . ' seems to be not an expected integer value', $msg);
-                    }
-                }
+                // TODO Prio 2 use a more general conversion for all fields of a database or csv row
+                //      e.g. $lib->convert($in_value, sql_type::INT, $msg) instead of scale_from_row
+                $this->scale = $this->scale_from_row($db_row[self::FLD_SCALE], $msg);
             }
             if (array_key_exists(self::FLD_SYMBOL, $db_row)) {
                 $this->symbol = $db_row[self::FLD_SYMBOL];
             }
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * the scaling factor of a database row or of a csv row of the setup (sql_db::db_fill_code_links)
+     * @param int|string|null $scale e.g. 100 for percent, or null, the text NULL or empty for a type without scaling
+     * @param user_message $msg to report a value that is not an integer e.g. a typo in phrase_types.csv
+     * @return int|null the scaling factor or null if the type has none
+     */
+    private function scale_from_row(int|string|null $scale, user_message $msg): ?int
+    {
+        $result = null;
+        if ($scale !== null and $scale !== sql::NULL_VALUE and $scale !== '') {
+            $scale_int = filter_var($scale, FILTER_VALIDATE_INT);
+            if ($scale_int === false) {
+                log_err_msg(self::MSG_SCALE_NO_INT . $scale, $msg);
+            } else {
+                $result = $scale_int;
+            }
+        }
+        return $result;
     }
 
     /**

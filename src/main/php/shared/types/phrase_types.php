@@ -101,6 +101,7 @@ class phrase_types
     ];
     const string SCALING_PCT = "scaling_percent"; // TODO Prio 3 used to define the scaling formula word to scale percentage values ?
     const string SCALING_PCT_NAME = "scaling word percent";
+    const int SCALING_PCT_ID = 10;
     const string SCALED_MEASURE = "scaled_measure"; // TODO Prio 3 add usage sample
     const string SCALED_MEASURE_NAME = "scaled measure";
     const string FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas

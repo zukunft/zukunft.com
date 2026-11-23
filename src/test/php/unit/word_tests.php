@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -337,6 +338,29 @@ class word_tests
         $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::PLURAL => ''], $msg);
         $t->assert_null($test_name, $wrd_map->plural);
         $msg->reset();
+
+        // an api message with only the id is completed from the request cache before the mapping
+        $test_name = 'an api message with only the id gets the name of the cached word';
+        $dto_ui = new data_object_ui();
+        $dto_ui->wrd_lst->add($t_wrd->zh_ui(), $msg_ui);
+        $wrd_ui = new word_ui();
+        $wrd_json = $dto_ui->api_json_with_cache($wrd_ui, [json_fields::ID => word_names::ZH_ID], $msg_ui);
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $wrd_ui_name = $wrd_ui->name();
+        $t->assert($test_name, $wrd_ui_name, word_names::ZH);
+        $msg_ui->reset();
+        // the newer fields of the api message win over the cached ones
+        $test_name = '... but a name of the api message wins over the cached name';
+        $wrd_json = $dto_ui->api_json_with_cache($wrd_ui, [json_fields::ID => word_names::ZH_ID, json_fields::NAME => word_names::MATH], $msg_ui);
+        $wrd_json_name = $wrd_json[json_fields::NAME];
+        $t->assert($test_name, $wrd_json_name, word_names::MATH);
+        $msg_ui->reset();
+        // negative: a word that the cache does not hold keeps the api message as it is
+        $test_name = '... and a word that is not cached keeps the api message';
+        $no_cac_json = [json_fields::ID => word_names::MATH_ID];
+        $wrd_json = $dto_ui->api_json_with_cache($wrd_ui, $no_cac_json, $msg_ui);
+        $t->assert($test_name, $wrd_json, $no_cac_json);
+        $msg_ui->reset();
 
         $t->subheader($ts . 'api json array');
 

@@ -620,7 +620,7 @@ class test_views extends test_objects
     function view_relation_filled(): view_relation
     {
         global $sys;
-        // TODO Prio 0 maybe use msk_rel instead of mrl
+        // TODO Prio 2 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
         $mrl->description = test_const::VIEW_RELATION_COM;
         $mrl->exclude();

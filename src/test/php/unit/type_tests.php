@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -43,6 +44,7 @@ include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -55,7 +57,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
@@ -74,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
@@ -485,6 +490,25 @@ class type_tests
         $usr_sta_lst->load_dummy();
         $test_name = 'the user statuum csv fills the user status dummy list';
         $t->assert_false($test_name, $usr_sta_lst->is_empty());
+        // the name column is the one of the type class e.g. user_status_name, so a name is never the id of the row
+        $test_name = '... with the name of the csv row';
+        $usr_sta_name = $usr_sta_lst->get(user_statuum::READ_ONLY_ID)?->name();
+        $t->assert($test_name, $usr_sta_name, user_statuum::READ_ONLY_NAME);
+        // a type class named by the singular e.g. job_status has the csv file job_statuum
+        $test_name = 'the job statuum csv fills the job status dummy list with the database id';
+        $job_sta_lst = new job_status_list();
+        $job_sta_lst->load_dummy();
+        $job_sta_id = $job_sta_lst->id(job_statuum::STATUS_NEW);
+        $t->assert($test_name, $job_sta_id, job_statuum::STATUS_NEW_ID);
+        $test_name = '... and the name of the csv row';
+        $job_sta_name = $job_sta_lst->get(job_statuum::STATUS_NEW_ID)?->name();
+        $t->assert($test_name, $job_sta_name, job_statuum::STATUS_NEW_NAME);
+        // negative: a csv without description column e.g. change_actions.csv gives no description
+        $test_name = 'a change action of the dummy list has no description, because its csv has none';
+        $cng_act_lst = new change_action_list();
+        $cng_act_lst->load_dummy();
+        $cng_act_com = $cng_act_lst->get_by_code_id(change_actions::ADD)?->description;
+        $t->assert_null($test_name, $cng_act_com);
 
         // the code link csv loader maps each csv row via the id field name derived from the class,
         // so the derived name must match the csv and table column even for the enum classes
@@ -517,6 +541,34 @@ class type_tests
         $t->assert_log_err($test_name, $map_row, 'id field is missing for ' . sys_log_statuum::class, $msg);
         $test_name = '... and the mapping is not ok';
         $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
+        // the setup maps each row of phrase_types.csv, which has the text NULL for a type without scaling
+        $test_name = 'the scaling factor of a phrase type is filled from the csv row';
+        $phr_typ = new phrase_type('');
+        $phr_id_fld = $db_con->get_id_field_name(phrase_type::class);
+        $csv_row = [
+            $phr_id_fld => phrase_type_shared::SCALING_PCT_ID,
+            type_object::FLD_NAME => phrase_type_shared::SCALING_PCT_NAME,
+            fields::FLD_CODE_ID => phrase_type_shared::SCALING_PCT,
+            phrase_type::FLD_SCALE => (string)test_types::SCALING_PCT_SCALE
+        ];
+        $phr_typ->row_mapper_typ_obj($csv_row, $msg, phrase_type::class);
+        $t->assert($test_name, $phr_typ->scale, test_types::SCALING_PCT_SCALE);
+        $msg->reset();
+        // negative: a type without scaling has no scaling factor
+        $test_name = '... but not from the text NULL of a type without scaling';
+        $phr_typ = new phrase_type('');
+        $csv_row[phrase_type::FLD_SCALE] = sql::NULL_VALUE;
+        $phr_typ->row_mapper_typ_obj($csv_row, $msg, phrase_type::class);
+        $t->assert_null($test_name, $phr_typ->scale);
+        $msg->reset();
+        $test_name = '... and a scaling factor that is not an integer is an internal error';
+        $phr_typ = new phrase_type('');
+        $csv_row[phrase_type::FLD_SCALE] = phrase_type_shared::SCALING_PCT;
+        $map_row = fn() => $phr_typ->row_mapper_typ_obj($csv_row, $msg, phrase_type::class);
+        $t->assert_log_err($test_name, $map_row, phrase_type::MSG_SCALE_NO_INT, $msg);
+        $msg->reset();
 
         $t->subheader($ts . 'type load sql');
         // a type child class must create its load sql with its own table and id field

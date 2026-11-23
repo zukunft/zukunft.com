@@ -48,36 +48,12 @@ class sys_log_status_list extends type_list
 {
 
     /**
-     * adding the system log statuum used for unit tests to the dummy list
-     *  TODO Prio 3: load from csv
+     * fill the list for the unit tests from db_code_links/sys_log_statuum.csv,
+     * so that the unit tests use the same ids, names and actions as the database
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(
-            sys_log_statuum::OPEN,
-            sys_log_statuum::OPEN,
-            sys_log_statuum::OPEN_COM,
-            sys_log_statuum::OPEN_ID);
-        $this->add($type);
-        $type = new type_object(
-            sys_log_statuum::ASSIGNED,
-            sys_log_statuum::ASSIGNED,
-            sys_log_statuum::ASSIGNED_COM,
-            sys_log_statuum::ASSIGNED_ID);
-        $this->add($type);
-        $type = new type_object(
-            sys_log_statuum::RESOLVED,
-            sys_log_statuum::RESOLVED,
-            sys_log_statuum::RESOLVED_COM,
-            sys_log_statuum::RESOLVED_ID);
-        $this->add($type);
-        $type = new type_object(
-            sys_log_statuum::CLOSED,
-            sys_log_statuum::CLOSED,
-            sys_log_statuum::CLOSED_COM,
-            sys_log_statuum::CLOSED_ID);
-        $this->add($type);
+        $this->load_from_csv_resource();
     }
 
     /**

@@ -36,8 +36,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
@@ -80,6 +83,9 @@ include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as files_cfg;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
@@ -406,6 +412,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'enum consts of the code link csv');
         $this->enum_csv_tests($t);
+
+        $t->subheader($ts . 'change fields of the code link csv');
+        $this->change_field_csv_tests($t);
 
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
@@ -2195,6 +2204,127 @@ class coding_rule_tests
     }
 
     /**
+     * the setup writes each column of a code link csv with the change log (sql_db::db_fill_code_links),
+     * so every column needs its row in change_fields.csv, else the setup of an empty database fails
+     * (see docs/llm/architecture.md); the change log csv files themselves are written without log
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function change_field_csv_tests(test_cleanup $t): void
+    {
+        $csv_head = 'phrase_type_id, type_name, scaling_factor';
+        $tbl_ids = ['phrase_types' => '26'];
+        $test_name = 'the columns of a code link csv with their change fields are fine';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, $tbl_ids, ['26' => ['type_name', 'scaling_factor']]);
+        $t->assert($test_name, $missing, []);
+        $test_name = '... but a column without change field is reported';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, $tbl_ids, ['26' => ['type_name']]);
+        $t->assert($test_name, $missing, ['phrase_types.scaling_factor has no row in change_fields.csv']);
+        $test_name = '... and a csv without change table';
+        $missing = $this->csv_columns_without_change_field('phrase_types', $csv_head, [], []);
+        $t->assert($test_name, $missing, ['phrase_types has no row in change_tables.csv']);
+
+        $db_con = new sql_db();
+        $log_tables = array_map(fn($cls) => $db_con->get_table_name($cls), def::LOG_CODE_LINK_FILES);
+        $tbl_ids = $this->csv_column_map($db_con->get_table_name(change_table::class), change_table::FLD_NAME, change_table::FLD_ID);
+        $tbl_flds = $this->change_fields_by_table($db_con->get_table_name(change_field::class));
+        $missing = [];
+        $files_checked = 0;
+        foreach (glob(files_cfg::CODE_LINK_PATH . '*' . files_cfg::CSV) as $csv_file) {
+            $name = basename($csv_file, files_cfg::CSV);
+            if (!in_array($name, $log_tables)) {
+                $files_checked++;
+                $csv_head = file($csv_file)[0] ?? '';
+                $missing = array_merge($missing, $this->csv_columns_without_change_field($name, $csv_head, $tbl_ids, $tbl_flds));
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'change fields checked for ' . $files_checked . ' code link csv files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'every column of a code link csv has its row in change_fields.csv';
+        $t->assert($test_name, $missing, []);
+    }
+
+    /**
+     * @param string $tbl_name the name of the code link csv and its table e.g. phrase_types
+     * @param string $csv_head the first line of the csv with the column names, of which the first is the row id
+     * @param array $tbl_ids the change table id of each table name
+     * @param array $tbl_flds the field names of each change table id
+     * @return array the description of each column without change field
+     */
+    private function csv_columns_without_change_field(string $tbl_name, string $csv_head, array $tbl_ids, array $tbl_flds): array
+    {
+        $result = [];
+        $lib = new library();
+        $tbl_id = $tbl_ids[$tbl_name] ?? null;
+        if ($tbl_id === null) {
+            $result[] = $tbl_name . ' has no row in change_tables.csv';
+        } else {
+            // the row id is not written as a change field
+            $cols = array_slice($lib->array_trim($lib->csv_line_to_array($csv_head)), 1);
+            foreach ($cols as $col) {
+                if (!in_array($col, $tbl_flds[$tbl_id] ?? [])) {
+                    $result[] = $tbl_name . '.' . $col . ' has no row in change_fields.csv';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the code link csv e.g. change_tables
+     * @param string $key_col the column of the keys e.g. change_table_name
+     * @param string $val_col the column of the values e.g. change_table_id
+     * @return array the value of each key of the csv rows
+     */
+    private function csv_column_map(string $csv_name, string $key_col, string $val_col): array
+    {
+        $result = [];
+        foreach ($this->csv_column_pairs($csv_name, $key_col, $val_col) as [$key, $val]) {
+            $result[$key] = $val;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the change fields csv
+     * @return array the field names of each change table id
+     */
+    private function change_fields_by_table(string $csv_name): array
+    {
+        $result = [];
+        foreach ($this->csv_column_pairs($csv_name, change_field::FLD_TABLE, change_field::FLD_NAME) as [$tbl_id, $fld_name]) {
+            $result[$tbl_id][] = $fld_name;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $csv_name the name of the code link csv e.g. change_fields
+     * @param string $key_col the column of the first value of each pair e.g. table_id
+     * @param string $val_col the column of the second value of each pair e.g. change_field_name
+     * @return array the two trimmed values of each csv row
+     */
+    private function csv_column_pairs(string $csv_name, string $key_col, string $val_col): array
+    {
+        $result = [];
+        $lib = new library();
+        $lines = file(files_cfg::CODE_LINK_PATH . $csv_name . files_cfg::CSV);
+        $cols = $lib->array_trim($lib->csv_line_to_array($lines[0]));
+        $key_pos = array_search($key_col, $cols);
+        $val_pos = array_search($val_col, $cols);
+        foreach (array_slice($lines, 1) as $line) {
+            if (trim($line) != '') {
+                // trimmed per field and not with array_trim, which drops an empty field and would move the columns
+                $fields = array_map('trim', $lib->csv_line_to_array($line));
+                $result[] = [$fields[$key_pos] ?? '', $fields[$val_pos] ?? ''];
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param string $name the name of the code link csv e.g. user_statuum
      * @return array|null the consts of the enum or type class with the same name or null if there is no such class
      */
@@ -2346,7 +2476,7 @@ class coding_rule_tests
     function php_function_tree(): string
     {
         $fnc_lst = [];
-        // TODO Prio 0 the target class sections are
+        // TODO Prio 2 the target class sections are
         $main_classes = array_merge(def::MAIN_CLASSES, def::MAIN_SUB_CLASSES);
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', $main_classes));
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], $main_classes));

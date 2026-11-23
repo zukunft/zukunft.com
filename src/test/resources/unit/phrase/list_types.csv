@@ -3,12 +3,12 @@ phrase_type_id,type_name,code_id,description,scaling_factor,symbol
 2,measure unit,measure_unit,"a unit word such as metre, kilogram, ... in which a number is stated",,
 3,measure non unit,measure_non_unit,"what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in",,
 4,measure divisor,measure_divisor,"a measure divisor like per year, per kg, ...",,
-5,scaled measure,scaled_measure,a combination of scaling and measure e.g. 100ml,,
+5,scaled measure,scaled_measure,a combination of scaling and measure e.g. 100ml,0,
 6,scaling,scaling,"a scaling word such as millions, one, ...",,
 7,hidden scaling,scaling_hidden,"""one"" is needed as a scaling word for correct calculations, but it is not useful to display it",,
 8,scaling factor,factor,a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x,,x
 9,format percent,percent,terms that force the result to be formatted in percent,,
-10,scaling word percent,scaling_percent,all words that represent percent,,%
+10,scaling word percent,scaling_percent,all words that represent percent,100,%
 11,time,time,A time word defines the time period for which a value is valid and values with a time can be used to display time series.,,
 12,time number,time_number,A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.,,
 13,time jump,time_jump,these terms describe a change of a timestamp term,,
@@ -18,7 +18,7 @@ phrase_type_id,type_name,code_id,description,scaling_factor,symbol
 17,prior,previous,"not sure, why this is needed",,
 18,value quality,value_quality,"how a number has been found e.g. assumed, official statistics or double-blind randomized controlled trial, so that a value tagged with it shows how far it can be trusted",,
 19,value status,value_status,"what happened to a number after it has been found e.g. disputed, retracted, superseded or outdated, which is shown next to the value quality, because a value of any quality can lose its validity",,
-20,math constant,constant,A mathematical constant is a key number whose value is fixed by an unambiguous definition,,
+20,math constant,constant,A mathematical constant is a key number whose value is fixed by an unambiguous definition,0,
 21,formula link,formula_link,"A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten",,
 22,calc,NULL,a calculated word in R; e.g. this year returns always a different term,,
 23,unique key,unique_key,"a key that identifies exactly one item worldwide e.g. the ISBN of a book, the ISIN of a security or the EAN of a product, so that the item can be found in other systems by this key",,

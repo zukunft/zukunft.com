@@ -596,8 +596,9 @@ class triple extends sandbox_link_named
                         $new_vrb = new verb();
                         $new_vrb->set_name($name);
                         $new_vrb->set_user($this->get_user());
+                        // an info, because a not ok message would stop the import before the verb is saved
                         if ($db_con->is_open()) {
-                            $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
+                            $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name], true);
                         }
                         $dto?->add_verb($new_vrb, $msg);
                     }

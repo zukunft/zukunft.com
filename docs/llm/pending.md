@@ -4,7 +4,7 @@
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
 (the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 30 left (151 on
+3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-23: 21 left (151 on
 2026-11-13); the limit test of `unit/coding_rule_tests.php` has been removed by the developer on 2026-11-22, so the
 number is counted with `git grep "TODO Prio 0"` in these folders.
 
@@ -32,8 +32,14 @@ const (`coding_rule_tests::json_date_format_tests`), the time type in `phrase_li
 per placeholder in `sql_par::merge`, by the decisions of the developer of 2026-11-22 the new `export_type::INCL_LINKED`
 of `view_relation::export_json`, the save of a new verb in `triple::import_obj` instead of the mapper and
 `sandbox::load_owner` with `set_owner`, and as Prio 2 the second column phrase of `component` in `load_standard`,
-`sandbox::save_related` for a list import and the forced usage of the two delete workflow tests; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
-`all_unit_read_tests::run_unit_db_tests`. The inventory by file and function, with the plan of each open prompt, is
+`sandbox::save_related` for a list import and the forced usage of the two delete workflow tests, and on 2026-11-23
+the type cache bullet: the scaling factor of `phrase_type::row_mapper_typ_obj`, the types cache of `type_lists`, by the
+decisions of the developer the formula name and the phrase type code id in the im- and export of `formula_link_type`,
+the csv of every type list in its `load_dummy` (the name column by `name_field`, the statuum csv of a status class),
+`data_object::api_json_with_cache` of the frontend and as Prio 2 the save of `type_list::get_or_insert` and the
+general conversion of a row field; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
+`all_unit_read_tests::run_unit_db_tests`; on 2026-11-23 by the developer `db_object_seq_id_user::row_mapper` and
+`type_list::load_sql` as Prio 1. The inventory by file and function, with the plan of each open prompt, is
 `docs/llm/log/fix_prio0_rest_2026-11-21.md`.
 
 **Order:** the fixes of the top rules of `docs/llm/coding.md` (never fail silently, data correctness) first and the
@@ -42,10 +48,7 @@ clean up last; each line is one prompt:
 5. **the callers of `get_grp_id` with an empty list** (size S, no TODO): the first run has named only
    `sandbox_value::load_by_names`, which is fixed; fix each further caller that a run names ("Cannot create phrase
    group for an empty list called by ...") at its source, with a `msg_id` where the user can act
-6. **backend correctness** (size M, 8 TODOs, the security and the data correctness bullet are done): the type cache
-   bullet; a new or changed db field goes into the setup sql and `db_check::db_upgrade_0_0_4`, never a version raise;
-   stop for a run, with re-pin if the database structure changes
-7. **merge, rename and the rest of the clean up** (size L, 21 TODOs): a merge or a rename includes all callers in the
+7. **merge, rename and the rest of the clean up** (size L, 20 TODOs): a merge or a rename includes all callers in the
    same prompt; for the developer to decide: `test_views::view_relation_filled` "msk_rel instead of mrl", because
    `view_relation` declares `$mrl` as its var name, and `expression_write_tests::run` "rename to user_text", because the
    backend test calls `user_text_ui()` and `user_text($msg)` converts again; stop for a run

@@ -4480,26 +4480,27 @@
         \-- application - open the database connection and load the base cache
     \-- load_dummy
         \-- component_link_type_list - adding the view component position types used for unit tests to the dummy list
-        \-- component_type_list - adding the view component types used for unit tests to the dummy list
+        \-- component_type_list - fill the list for the unit tests from db_code_links/component_types.csv like every typ
+                e list with a csv,
         \-- position_type_list - adding the view component position types used for unit tests to the dummy list
         \-- view_style_list - adding the view component types used for unit tests to the dummy list
         \-- element_type_list - adding the view component types used for unit tests to the dummy list
         \-- formula_link_type_list - adding the formula link types used for unit tests to the dummy list
         \-- formula_type_list - adding the formula types used for unit tests to the dummy list
-        \-- db_cache_status_list - adding the db_cache type used for unit tests to a dummy list
-        \-- db_cache_type_list - adding the db_cache type used for unit tests to a dummy list
+        \-- db_cache_status_list - fill the list of the db_cache statuum for the unit tests
+        \-- db_cache_type_list - fill the list of the db_cache types for the unit tests
         \-- language_form_list - create dummy type list for the unit tests without database connection
         \-- language_list - create dummy type list for the unit tests without database connection
-        \-- change_action_list - adding the system log statuum used for unit tests to the dummy list
+        \-- change_action_list - fill the list of the change actions for the unit tests
         \-- change_field_list - adding the system log statuum used for unit tests to the dummy list
         \-- change_table_list - adding the system log statuum used for unit tests to the dummy list
         \-- protection_type_list - create dummy type list for the unit tests without database connection
         \-- share_type_list - create dummy type list for the unit tests without database connection
-        \-- job_status_list - adding the job type used for unit tests to a dummy list
-        \-- job_type_list - adding the job type used for unit tests to a dummy list
+        \-- job_status_list - fill the list of the job statuum for the unit tests
+        \-- job_type_list - fill the list of the job types for the unit tests
         \-- sys_log_function_list - adding the system log functions used for unit tests to the dummy list
-        \-- sys_log_level_list - adding the system log statuum used for unit tests to the dummy list
-        \-- sys_log_status_list - adding the system log statuum used for unit tests to the dummy list
+        \-- sys_log_level_list - fill the list for the unit tests from db_code_links/sys_log_levels.csv,
+        \-- sys_log_status_list - fill the list for the unit tests from db_code_links/sys_log_statuum.csv,
         \-- system_time_type_list - fill the list from the code link csv for the unit tests without database
         \-- user_profile_list - create a dummy type list for the unit tests without database connection
         \-- user_status_list - create a dummy type list for the unit tests without database connection
@@ -6183,7 +6184,7 @@
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_dummy
         \-- ref_type_list - adding the ref types used for unit tests to the dummy list
-        \-- source_type_list - adding the source types used for unit tests to the dummy list
+        \-- source_type_list - fill the list for the unit tests from db_code_links/source_types.csv,
     \-- default_id
         \-- ref_type_list - return the database id of the default ref type
         \-- source_type_list - return the database id of the default source type
@@ -7621,6 +7622,8 @@
             php
     \-- view_code_id - section for function view_code_id not yet defined that it should be set and get in /helper/data_o
             bject.php
+    \-- api_json_with_cache - section for function api_json_with_cache not yet defined that it should be set and get in 
+            /helper/data_object.php
     \-- has_view_list - section for function has_view_list not yet defined that it should be set and get in /helper/data
             _object.php
     \-- file_list - section for function file_list not yet defined that it should be set and get in /helper/data_object.
@@ -9791,6 +9794,9 @@
         \-- data_object - the view with its name from the request cache, asked in both view caches, because the
     \-- view_code_id
         \-- data_object - @param int $id the database id of the view e.g. of the page that shows a component
+    \-- api_json_with_cache
+        \-- data_object - the api json of an object completed by the fields of the cached object with the same class and
+                 id,
     \-- has_view_list
         \-- data_object - @return bool true if this context object contains a view list
     \-- file_list

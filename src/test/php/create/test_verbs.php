@@ -111,7 +111,7 @@ class test_verbs extends test_objects
     }
 
     /**
-     * TODO Prio 0 used a real filled verb
+     * TODO Prio 1 used a real filled verb
      * @return verb the default verb with all vars set
      */
     function verb_filled(): verb

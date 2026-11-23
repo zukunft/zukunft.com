@@ -40,6 +40,9 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
+// not included, because formula_map includes this file and formula extends formula_map,
+// so the include would declare formula before its parent; the export loads a formula only at runtime
+//include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -51,6 +54,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -71,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula_link_type extends type_object
@@ -196,9 +201,8 @@ class formula_link_type extends type_object
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
-                // TODO Prio 0 convert the name to the id based on the data cache in $dto
                 // TODO Prio 2 check that for import always the name or code id is converted to the id
-                $this->frm_id = $in_ex_json[json_fields::FORMULA_NAME];
+                $this->frm_id = $this->formula_id_by_name($in_ex_json, $msg, $dto);
             }
             if (key_exists(json_fields::PHRASE_TYPE, $in_ex_json)) {
                 // TODO Prio 2 check that for import always the name or code id is converted to the id
@@ -208,6 +212,33 @@ class formula_link_type extends type_object
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * the id of the formula that the import names, taken from the formulas of the same import
+     * @param array $in_ex_json the json of the formula link type with the formula name e.g. "increase"
+     * @param user_message $msg to report a formula that the import does not contain or has not yet saved
+     * @param data_object|null $dto the formulas imported until now, without them every named formula is missing
+     * @return int|null the formula id or null if the link type is valid for all formulas or the formula is missing
+     */
+    private function formula_id_by_name(array $in_ex_json, user_message $msg, ?data_object $dto): ?int
+    {
+        $frm_id = null;
+        $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
+        // an empty name like the empty formula of formula_link_types.csv is valid for all formulas
+        if ($frm_name != '') {
+            $frm = $dto?->get_formula_by_name($frm_name, $msg);
+            if ($frm == null or $frm->id() <= 0) {
+                $lib = new library();
+                $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
+                    msg_id::VAR_FORMULA => $frm_name,
+                    msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+                ]);
+            } else {
+                $frm_id = $frm->id();
+            }
+        }
+        return $frm_id;
     }
 
 
@@ -248,13 +279,43 @@ class formula_link_type extends type_object
      */
     function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
+        global $sys;
+
         $vars = parent::export_json($msg, $exp_typ, $do_load);
-        if ($this->frm_id !== null) {
-            // TODO Prio 0 get formula name based on the data cache so add a $dto or formula list parameter
-            $vars[json_fields::FORMULA] = $this->frm_id;
-            $vars[json_fields::PHRASE_TYPE] = $this->phr_id;
+        // by name and code id like the import reads them, because an export has no database id
+        $frm_name = $this->formula_name($msg, $do_load);
+        if ($frm_name != null) {
+            $vars[json_fields::FORMULA_NAME] = $frm_name;
+        }
+        if ($this->phr_id !== null) {
+            $vars[json_fields::PHRASE_TYPE] = $sys->typ_lst->phr_typ->code_id($this->phr_id);
         }
         return $vars;
+    }
+
+    /**
+     * the name of the formula that this link type is limited to
+     * @param user_message $msg with the requesting user and to report a formula id that is not in the database
+     * @param bool $do_load false for the unit tests, which have no database to load the formula name from
+     * @return string|null the formula name or null if the link type is valid for all formulas or not loaded
+     */
+    private function formula_name(user_message $msg, bool $do_load): ?string
+    {
+        $frm_name = null;
+        if ($this->frm_id !== null and $do_load and $msg->usr != null) {
+            $frm = new formula($msg->usr);
+            if ($frm->load_by_id($this->frm_id, $msg) > 0) {
+                $frm_name = $frm->name();
+            } elseif ($msg->is_ok()) {
+                // only if the load has not reported another reason
+                $lib = new library();
+                $msg->add(msg_id::OBJECT_NOT_FOUND, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name(formula::class),
+                    msg_id::VAR_ID => (string)$this->frm_id
+                ]);
+            }
+        }
+        return $frm_name;
     }
 
 

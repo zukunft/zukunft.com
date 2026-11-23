@@ -3396,3 +3396,19 @@ Found on 2026-11-22 with the "switch back to error" of `get_grp_id`: `group::get
 its id; its only caller `group::result` does not use the returned group and loads again with `$this`. Remove the time
 phrases from a clone, use the returned group in `group::result` for the load of a result of any time, with a unit test
 that the group keeps its time phrase, and negative: the returned group has none.
+
+## the verb name of a triple reports to the user
+
+Found on 2026-11-23 with the new verb of an imported triple: `triple::get_verb_name` and `get_verb_code_id` log a verb
+id that is missing in the verb cache with a bare `log_err`, so the user is not told (rule 121 of
+`docs/llm/coding.md`). Add the `user_message $msg` parameter and switch to `log_err_msg`, which changes the 16 callers
+of `get_verb_name` and, via `triple::predicate_name`, the 21 callers of `sandbox_link::predicate_name`; with a unit
+test of a triple with a verb id that is not in the cache, and negative: a cached verb gives its name and no message.
+
+## the callers of the frontend api json with cache
+
+Added on 2026-11-23 for the TODO of `web/sandbox::api_mapper`: `web/helper/data_object::api_json_with_cache` completes
+an api message with only the id from the request cache, but no frontend caller uses it yet, because the known id-only
+cases are solved object by object (`sandbox_link::named_from_cache`, `phrase_list::cached_phrase`). Use it where a run
+reports an empty link (`coding_rule_tests::html_no_empty_link_tests`) or an id-only api message, and then check
+whether the object helpers can call it instead; with a unit test per caller.

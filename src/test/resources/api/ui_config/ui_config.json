@@ -7375,6 +7375,13 @@
                 "description": "",
                 "id": 908,
                 "table_id": 32
+            },
+            {
+                "name": "26scaling_factor",
+                "code_id": "26scaling_factor",
+                "description": "",
+                "id": 909,
+                "table_id": 26
             }
         ],
         "db_cache_types": [

@@ -605,7 +605,11 @@ class db_check
             $sys_msg = new user_message(user::system());
             $db_con->db_fill_code_links($sys_msg);
             $db_con->db_check_missing_owner($sys_msg);
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
+            // only a complete check is remembered, so that a failed one is repeated at the next start
+            // instead of leaving e.g. the missing phrase types of a failed code link fill for a day
+            if ($sys_msg->is_ok()) {
+                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
+            }
             $msg->merge($sys_msg);
         }
     }

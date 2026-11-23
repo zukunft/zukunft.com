@@ -285,7 +285,6 @@ class type_lists
      * load
      */
 
-    // TODO Prio 0 use the dto object and cache the type data
     /**
      * load the type lists from the cached types json with one database read
      * or if the cache is missing or outdated with one select per type list

@@ -408,22 +408,28 @@ class word_write_tests
         // before the protection tests, because the admin protection would also protect the owner of the standard row
         $t->subheader($ts . 'owner');
         $test_name = 'the owner of "' . word_names::TEST_ADD . '" is loaded';
-        $own_msg = new user_message($t->usr1);
-        $wrd_own = $t_db->load_word($own_msg, word_names::TEST_ADD);
+        $wrd_own = $t_db->load_word($msg, word_names::TEST_ADD);
         $own_before = $wrd_own->owner_id();
-        $t->assert_true($test_name, $wrd_own->load_owner($own_msg));
+        $own_loaded = $wrd_own->load_owner($msg);
+        $t->assert_true($test_name, $own_loaded);
+        $msg->reset();
         $test_name = '... and a word without owner takes the ownership for its user';
-        $wrd_own = $t_db->load_word($own_msg, word_names::TEST_ADD);
+        $wrd_own = $t_db->load_word($msg, word_names::TEST_ADD);
         $wrd_own->set_owner_id(null);
-        $wrd_own->load_owner($own_msg);
-        $t->assert($test_name, $wrd_own->owner_id(), $t->usr1->id());
+        $wrd_own->load_owner($msg);
+        $own_id = $wrd_own->owner_id();
+        $t->assert($test_name, $own_id, $t->usr1->id());
+        $msg->reset();
         // the owner of the standard row is set back, if a previous run has left it to another user
         if ($own_before != null and $own_before != $t->usr1->id()) {
-            $wrd_own->set_owner($own_before, $own_msg);
+            $wrd_own->set_owner($own_before, $msg);
         }
         // negative: a word that is not in the database has no owner
         $test_name = '... but a word without id loads no owner';
-        $t->assert_false($test_name, new word($t->usr1)->load_owner($own_msg));
+        $wrd_no_id = new word($t->usr1);
+        $own_loaded = $wrd_no_id->load_owner($msg);
+        $t->assert_false($test_name, $own_loaded);
+        $msg->reset();
 
         $t->subheader($ts . 'protection');
         $test_name = 'the owner can raise the protection of "' . word_names::TEST_ADD . '" to admin';
