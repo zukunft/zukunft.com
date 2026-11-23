@@ -89,7 +89,6 @@ calculator: $btn_calc, $calc, $calc_base, $calc_be, $calc_empty, $calc_in, $calc
 calculator_definition_report: $def_rpt
 calculator_report: $rpt
 change_action: $act, $typ
-change_action_list: $cng_act_lst
 change_field: $fld, $tbl, $typ, $type
 change_field_list: $cac_fld_lst, $cng_fld_cac, $cng_fld_lst
 change_link: $chg, $log, $log_empty
@@ -125,7 +124,7 @@ component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_digits, $cfg_none, $cfg_sys, $sys_cfg
 controller: $ctrl
 csv_table_diff: $ctd
-data_object: $cac, $cac_sys, $cache_dto, $cfg, $ctg_dto, $dto, $dto_as, $dto_base_ui, $dto_calc, $dto_col, $dto_conf, $dto_ctx, $dto_empty, $dto_frm, $dto_in, $dto_lst, $dto_no, $dto_no_frm, $dto_no_links, $dto_no_reasons, $dto_off, $dto_prio, $dto_reasons, $dto_res, $dto_row, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_style, $dto_ui, $dto_vp, $dto_width, $frm_dto, $pre_dto, $pre_dto_empty, $res_cfg, $steps_dto, $vrb_dto
+data_object: $cac, $cac_sys, $cache_dto, $cfg, $ctg_dto, $dto, $dto_as, $dto_base_ui, $dto_calc, $dto_col, $dto_conf, $dto_ctx, $dto_empty, $dto_frm, $dto_in, $dto_lst, $dto_no, $dto_no_frm, $dto_no_links, $dto_no_reasons, $dto_off, $dto_prio, $dto_reasons, $dto_res, $dto_row, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_style, $dto_ui, $dto_vp, $dto_width, $pre_dto, $pre_dto_empty, $res_cfg, $steps_dto, $vrb_dto
 db_cache: $cac, $cac_cfg, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -163,7 +162,6 @@ ip_range: $ip, $ip_off, $ip_on, $ip_range
 ip_range_list: $db_lst, $ip_lst, $ip_range_lst
 job_list: $empty_lst, $job_lst, $jobs, $no_job_lst, $result
 job_status: $job_sta
-job_status_list: $job_sta_lst
 job_time: $job_tim
 job_type: $job_typ
 job_type_list: $job_typ_cac, $lst

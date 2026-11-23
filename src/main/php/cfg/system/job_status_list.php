@@ -5,6 +5,8 @@
     model/system/job_status_list.php - list of predefined system batch jobs
     ------------------------------------
 
+    $job_sta_lst is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

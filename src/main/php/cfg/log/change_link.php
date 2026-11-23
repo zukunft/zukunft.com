@@ -382,12 +382,6 @@ class change_link extends change_log
     }
 
 
-    // TODO Prio 0 this should be dismissed
-    function add_link_ref(user_message $msg): bool
-    {
-        return $this->add($msg);
-    }
-
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing

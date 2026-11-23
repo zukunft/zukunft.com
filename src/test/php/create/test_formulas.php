@@ -352,7 +352,8 @@ class test_formulas extends test_objects
     }
 
     /**
-     * TODO Prio 0 use to_url function of the formula object (or create the to_url function if it does not yet exist)
+     * TODO Prio 2 use to_url function of the formula object (or create the to_url function if it does not yet exist),
+     *      which needs a change of the rule "A test url array is built from the url_var keys" of docs/llm/coding.md
      * the new formula fields posted by the add form on save and shown again in the confirm add view,
      * mirroring test_triples::add_url_array; a formula is defined by its name and expression, and the
      * reserved 'System Test Formula' name lets a later workflow load the added formula back

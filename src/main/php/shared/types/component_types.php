@@ -365,7 +365,7 @@ class component_types
     const string SYSTEM_SHOW_RESULT_DIFF = "system_show_result_diff";
     const int SYSTEM_SHOW_RESULT_DIFF_ID = 80;
 
-    // TODO Prio 0 group and move the lines below
+    // TODO Prio 2 group the lines below by their component group (paste table, title, form) and move them there
     const string SYSTEM_PASTE_TABLE_CONTEXT = "system_paste_table_context";
     const int SYSTEM_PASTE_TABLE_CONTEXT_ID = 225;
     const string SYSTEM_PASTE_TABLE_BODY = "system_paste_table_body";

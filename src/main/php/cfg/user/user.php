@@ -645,7 +645,8 @@ class user extends db_id_object_non_sandbox
         $this->msk = $map->get_view($in_ex_json, $msg, $dto);
         $this->src = $map->get_source($in_ex_json, $msg, $dto);
 
-        // TODO Prio 0 create and use an object mapper library (one for backend and one for the frontend)
+        // TODO Prio 2 create and use an object mapper library (one for backend and one for the frontend),
+        //      which maps the view, source and other references of every import_mapper by one function
         // TODO Prio 2 create the view if the json is an array with more information than just the view name
 
         return $msg->is_ok();
@@ -1637,10 +1638,10 @@ class user extends db_id_object_non_sandbox
             $this->id = 0; // switch off the permission
             // record the block reason also on the request message, because most api
             // endpoints only forward $msg to the user and would otherwise drop the
-            // reason returned as text (add_message_text does not repeat the same text,
+            // reason returned as text; merged, so that also the status and the message ids are kept
+            // (merge adds the texts with add_message_text, which does not repeat the same text,
             // so endpoints that additionally add the returned text do not duplicate it)
-            // TODO Prio 0 use merge? Yes, use merge
-            $msg->add_message_text($test_result->all_message_text());
+            $msg->merge($test_result);
             log_info('ip_check rejects due to ' . $test_result->text());
         }
         return $test_result->all_message_text();

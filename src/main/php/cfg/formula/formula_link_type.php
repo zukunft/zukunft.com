@@ -302,17 +302,22 @@ class formula_link_type extends type_object
     private function formula_name(user_message $msg, bool $do_load): ?string
     {
         $frm_name = null;
-        if ($this->frm_id !== null and $do_load and $msg->usr != null) {
-            $frm = new formula($msg->usr);
-            if ($frm->load_by_id($this->frm_id, $msg) > 0) {
-                $frm_name = $frm->name();
-            } elseif ($msg->is_ok()) {
-                // only if the load has not reported another reason
-                $lib = new library();
-                $msg->add(msg_id::OBJECT_NOT_FOUND, [
-                    msg_id::VAR_CLASS_NAME => $lib->class_to_name(formula::class),
-                    msg_id::VAR_ID => (string)$this->frm_id
-                ]);
+        if ($this->frm_id !== null and $do_load) {
+            // the formula is loaded for the requesting user, so without user the export would lose the formula silently
+            if ($msg->usr === null) {
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } else {
+                $frm = new formula($msg->usr);
+                if ($frm->load_by_id($this->frm_id, $msg) > 0) {
+                    $frm_name = $frm->name();
+                } elseif ($msg->is_ok()) {
+                    // only if the load has not reported another reason
+                    $lib = new library();
+                    $msg->add(msg_id::OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name(formula::class),
+                        msg_id::VAR_ID => (string)$this->frm_id
+                    ]);
+                }
             }
         }
         return $frm_name;

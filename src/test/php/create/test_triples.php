@@ -306,7 +306,8 @@ class test_triples extends test_objects
 
 
     /**
-     * TODO Prio 0 use $t_trp->filled() as base object and a to_url function to create the array
+     * TODO Prio 2 use $t_trp->filled() as base object and a to_url function to create the array,
+     *      which needs a change of the rule "A test url array is built from the url_var keys" of docs/llm/coding.md
      * the filled triple url posted by the edit form in the second change_triple round, mirroring
      * test_words::fill_url_array: the first round did not touch the weight or the phrase type, so the
      * fill round adds them; the '8'-prefixed opening db values are taken from the change url so the
@@ -328,7 +329,8 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO Prio 0 use to_url function of the triple object (or create the to_url function if it does not yet exist)
+     * TODO Prio 2 use to_url function of the triple object (or create the to_url function if it does not yet exist),
+     *      which needs a change of the rule "A test url array is built from the url_var keys" of docs/llm/coding.md
      * the new triple fields posted by the add form on save and shown again in the confirm add view,
      * mirroring test_words::add_url_array; a triple is defined by its from phrase, verb and to phrase,
      * so those are posted instead of just a name (the reserved 'System Test Triple' name lets the

@@ -642,6 +642,15 @@ class base_object_tests
         $cnt = count($exp_typ_lst->lst);
         $t->assert($test_name, $cnt, 1);
 
+        // the linked objects are exported as objects only if requested, e.g. the views of a view relation
+        $test_name = 'export type list with the linked objects requests them';
+        $exp_typ_lst = new export_type_list([export_type::INCL_LINKED]);
+        $t->assert_true($test_name, $exp_typ_lst->incl_linked());
+        // negative: another export type does not request the linked objects
+        $test_name = '... but not a list without it';
+        $exp_typ_lst = new export_type_list([export_type::IGNORE_FROM]);
+        $t->assert_false($test_name, $exp_typ_lst->incl_linked());
+
         // an api type is added to the api type list
         $test_name = 'api type list adds a type';
         $api_typ_lst = new api_type_list();

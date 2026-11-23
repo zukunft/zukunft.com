@@ -1358,8 +1358,8 @@ class views
         self::LOGIN_ACTIVATE_ID,
     ];
 
-    // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
-    // list of views where the id or the code is used for system testing
+    // list of views where the id or the code is used for system testing,
+    // as a map from the id to the code id for code_id_to_id and id_to_code_id
     const array TEST_VIEW_IDS = [
         self::START_ID => self::START_CODE,
         self::WORD_ADD_DETAIL_ID => self::WORD_ADD_DETAIL,

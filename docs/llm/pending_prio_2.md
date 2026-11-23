@@ -1110,7 +1110,7 @@ fix the last violation of the default-value rule (docs/llm/constants.md "Default
 
 cosmetic alignment with the default-value rule (no data-loss risk, round trip is safe): web/user/user.php api_mapper defaults profile_id, type_id and status_id to 0 instead of null (api_array drops them via the >0 and is_profile_valid() checks) and web/component/component.php api_mapper sets pos_type_id to position_types::DEFAULT_ID (the property is declared non-nullable with that default and api_array suppresses the default), so the frontend mirrors cannot express "not specified"; align them to nullable properties mapping to null when the field is missing
 
-fix as many TODO Prio 0 as possible
+fix as many TODO Prio 1 as possible
 
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible.
 
@@ -1446,7 +1446,7 @@ add an in-use check to the delete of a view: web/view/view.php has no input_vali
 
 ### component edit view (missing parts of the legacy web/component/component.php::dsp_edit)
 
-The following parts have no equivalent yet and block the removal (see the TODO Prio 0 at component.php:883).
+The following parts have no equivalent yet and block the removal (see the TODO Prio 1 at component.php:883).
 
 the preview of the component edit view renders the component for the sample phrase of the url (`url_var::SAMPLE_PHRASE`, posted again as a hidden field); open: no page link carries the sample phrase yet (e.g. the component list of the view edit view or a word page that opens a component), and the title does not name it ('Edit the view component "<name>" (used for <word>)' of the old page)
 
@@ -1538,11 +1538,11 @@ show all open program issues to an admin user in the user view (views::USER_ID):
 
 ### result explain view (missing parts of the retired http_old/formula_result.php)
 
-the legacy controller http_old/formula_result.php ('explains one formula result') has a mask in the new frontend: the result explain view (views::RESULT_EXPLAIN_ID). But the component of the view is a stub: web/component/execute/system_page.php::result_explain() returns the text 'result_explain placeholder' and carries the TODO Prio 0 'fill with real code' (see the snapshot src/test/resources/web/html/views_by_id/result/70_result_*.html). The old page had no caller in the program code, but it was the only place that really explained a result, so the explanation of a result is currently not available.
+the legacy controller http_old/formula_result.php ('explains one formula result') has a mask in the new frontend: the result explain view (views::RESULT_EXPLAIN_ID). But the component of the view is a stub: web/component/execute/system_page.php::result_explain() returns the text 'result_explain placeholder' and carries the TODO Prio 1 'fill with real code' (see the snapshot src/test/resources/web/html/views_by_id/result/70_result_*.html). The old page had no caller in the program code, but it was the only place that really explained a result, so the explanation of a result is currently not available.
 
 fill web/component/execute/system_page.php::result_explain() with the real code: web/result/result.php::explain($lead_phr_id, $back) already creates the explanation (which values and which formula lead to the result) and has no caller any more since http_old/formula_result.php is retired. Read the result of the view from the url (the old page took the result id, and alternatively the formula id, the leading phrase to sort the explanation and the time phrase) and add a page test with the html snapshot
 
-the same TODO Prio 0 placeholders exist for the other system body components of web/component/execute/system_page.php: value_details, formula_test, sandbox and undo (and 'user_setting' in the user view, see the section above). Fill them all with the real code, so that the views that replace the retired controllers really show their content, and add a page test per component
+the same TODO Prio 1 placeholders exist for the other system body components of web/component/execute/system_page.php: value_details, formula_test, sandbox and undo (and 'user_setting' in the user view, see the section above). Fill them all with the real code, so that the views that replace the retired controllers really show their content, and add a page test per component
 
 ### formula test view (missing parts of the retired http_old/formula_test.php)
 
@@ -2063,7 +2063,7 @@ pure html value add view with one form (ui_select::value_add_fields):
 
 found 2026-10-14 while fixing the used by box of views_by_object/view/view_edit_view_1.html:
 
-- sql_db (after the import, "TODO Prio 0 review") saves a term view of the word mathematics to the
+- sql_db (after the import, "TODO Prio 1 review") saves a term view of the word mathematics to the
   start view with the test description 'add usage and log of a word' as the system user, while
   test_db_load::test_term_view_unlink says that no term view is expected after a reset; decide
   whether the reset should create it (then move it to an import file) or not (then remove it and

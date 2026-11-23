@@ -106,14 +106,20 @@ class expression_write_tests
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
         $result = $exp->ref_text_ui($msg);
         $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
+        $msg->reset();
 
         // test the expression processing of the database reference
         $exp_db = new expression($frm);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}', $msg);
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
-        // TODO Prio 0 rename the function from user_text_ui to user_text
-        $result = $exp_db->user_text_ui();
+        // user_text and not user_text_ui, so that a problem of the conversion is reported on the message of the test
+        $result = $exp_db->user_text($msg);
         $t->assert('get_usr_text for "' . $exp_db->ref_text_ui($msg) . '"', $result, $target);
+        // the conversion of a valid reference text reports no problem
+        $test_name = '... and the conversion reports no problem';
+        $exp_ok = $msg->is_ok();
+        $t->assert_true($test_name, $exp_ok);
+        $msg->reset();
 
         // test getting phrases that should be added to the result of a formula
         $phr_lst_res = $exp->load_result_phrases($msg);

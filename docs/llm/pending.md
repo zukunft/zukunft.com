@@ -1,69 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## fix Prio 0
-
-**Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
-(the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-23: 21 left (151 on
-2026-11-13); the limit test of `unit/coding_rule_tests.php` has been removed by the developer on 2026-11-22, so the
-number is counted with `git grep "TODO Prio 0"` in these folders.
-
-**Done:** prompts 1 to 3 (the disabled tests, the stubs and the missing tests, deprecate) with the log
-`docs/llm/log/fix_prio0_2026-11-13.md`, prompt 4 (the ratchet and the inventory) and of prompt 5 on 2026-11-21 the five
-"switch to a key_exists", `sql_db::fetch`, `sql_db::insert`, `sandbox_typed::row_mapper_sandbox`, the message status of
-both messages, the message per item of the list saves, the `$msg` parameter of `import_file::json_file`, the triage of
-the 12 "review" TODOs by the developer, the unknown value name of `value_list::add_value`, the docblock of
-`result::save_without_time`, the log of a slow page in `frontend::end` and on 2026-11-22 the error status of
-`Message::add_err` with a severity per message entry and the error text of a failed import up to `import > max
-errors` of `config.yaml` (the tests of `phrase::import_mapper` and `term::import_mapper`), the critical fields of
-`user::import_obj`, the copy of a result without its time phrase in `result::save_if_updated`, `term_view::set_math_start`
-for `sql_db::setup_db` and the tests of `word_write_tests::run`, `triple_write_tests::create_base_times` and
-`group_write_tests::run` (the developer has decided on 2026-11-22 that the time word is part of a phrase group), and
-by the decisions of the developer the frontend message of `http/about.php`, the check of a stored reference text in
-`formula_map::expression` and the coding rule checks of the error log of a stub and of a class mapper, the
-"switch back to error" of `get_grp_id` in `cfg/` and `web/` with the callers of the error text
-(`library::caller_chain`, decided by the developer on 2026-11-22), its first caller `sandbox_value::load_by_names`
-and the `user_message $msg` parameter of `get_grp_id` with `log_err_msg` for its 28 backend and 86 test callers;
-of prompt 6 the security bullet: the setup of an empty database only with `DB_SETUP=true` in prod and test
-(`db_check::setup_allowed`), the test that the api message of a user has no password hash, and the list limits of
-`shared/helper/Config.php` only as the fallback of `config.yaml` (`web/helper/list_size`), all decided by the
-developer on 2026-11-22, and the data correctness bullet: every json date by `DateTimeInterface::ATOM` or a named
-const (`coding_rule_tests::json_date_format_tests`), the time type in `phrase_list::get_year`, the unique parameters
-per placeholder in `sql_par::merge`, by the decisions of the developer of 2026-11-22 the new `export_type::INCL_LINKED`
-of `view_relation::export_json`, the save of a new verb in `triple::import_obj` instead of the mapper and
-`sandbox::load_owner` with `set_owner`, and as Prio 2 the second column phrase of `component` in `load_standard`,
-`sandbox::save_related` for a list import and the forced usage of the two delete workflow tests, and on 2026-11-23
-the type cache bullet: the scaling factor of `phrase_type::row_mapper_typ_obj`, the types cache of `type_lists`, by the
-decisions of the developer the formula name and the phrase type code id in the im- and export of `formula_link_type`,
-the csv of every type list in its `load_dummy` (the name column by `name_field`, the statuum csv of a status class),
-`data_object::api_json_with_cache` of the frontend and as Prio 2 the save of `type_list::get_or_insert` and the
-general conversion of a row field; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
-`all_unit_read_tests::run_unit_db_tests`; on 2026-11-23 by the developer `db_object_seq_id_user::row_mapper` and
-`type_list::load_sql` as Prio 1. The inventory by file and function, with the plan of each open prompt, is
-`docs/llm/log/fix_prio0_rest_2026-11-21.md`.
-
-**Order:** the fixes of the top rules of `docs/llm/coding.md` (never fail silently, data correctness) first and the
-clean up last; each line is one prompt:
-
-5. **the callers of `get_grp_id` with an empty list** (size S, no TODO): the first run has named only
-   `sandbox_value::load_by_names`, which is fixed; fix each further caller that a run names ("Cannot create phrase
-   group for an empty list called by ...") at its source, with a `msg_id` where the user can act
-7. **merge, rename and the rest of the clean up** (size L, 20 TODOs): a merge or a rename includes all callers in the
-   same prompt; for the developer to decide: `test_views::view_relation_filled` "msk_rel instead of mrl", because
-   `view_relation` declares `$mrl` as its var name, and `expression_write_tests::run` "rename to user_text", because the
-   backend test calls `user_text_ui()` and `user_text($msg)` converts again; stop for a run
-
-**Rules for every prompt** (`docs/llm/coding.md`):
-- the smallest diff that solves the TODO; never tidy up code that the TODO does not name
-- the test comes first, with a positive and a negative case; a fix that needs the database goes to `unit_read` or
-  `unit_write`, test objects only from the `/test/create/` factories and the test users of the test env
-- Edit/Write only, never a shell edit; the agents never commit and never run a `/test/*` script; the developer runs
-  the tests and reports the result
-- the changes after the first test of a prompt go into "Unexpected changes" of
-  `docs/llm/log/fix_prio0_rest_2026-11-21.md`
-- the lead reports per prompt the number of solved and re-prioritised TODOs, the number left, the line balance, the
-  tests to run and a short commit message
-
 ## improve the new word / triple process
 
 if the user searches for a word that does not jet exist, suggest to add the word (or the triple, if the word contains spaces)
@@ -824,17 +760,17 @@ if done remove this prompt from pending.md
 
 **full test run: /test/test.php**
 
-**Prompt:** no `TODO Prio 0` left and the test clean up (size L). The order of the prompts and their rules are in
+**Prompt:** no `TODO Prio 1` left and the test clean up (size L). The order of the prompts and their rules are in
 "## fix Prio 0" at the top of this file; this block keeps the file list of each step. The rules of "TODO" stay; a file
 that two steps name belongs to the agent of the lower step, which takes the TODO of the other step as well.
 
 ### TODO
 
-goal: no `TODO Prio 0` is left in the code; each one is either solved (the comment is removed
+goal: no `TODO Prio 1` is left in the code; each one is either solved (the comment is removed
 together with the fix) or, if the work shows that it is less urgent, given a Prio 1, 2 or 3
 with a concrete text
 
-starting point: 158 `TODO Prio 0` in src, test, http and api (the paths below are relative to
+starting point: 158 `TODO Prio 1` in src, test, http and api (the paths below are relative to
 `src/main/php/` resp. `src/test/php/`)
 
 rules for every step:

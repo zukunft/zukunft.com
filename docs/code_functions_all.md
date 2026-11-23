@@ -2686,7 +2686,6 @@
     \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /log/change_link.php
     \-- load_sql_by_table - section for function load_sql_by_table is expected to be load sql in /log/change_link.php
     \-- load_last_by_user - section for function load_last_by_user is expected to be load in /log/change_link.php
-    \-- add_link_ref - section for function add_link_ref not yet defined that it should be api in /log/change_link.php
     \-- dsp_last - section for function dsp_last not yet defined that it should be api in /log/change_link.php
     \-- add - section for function add not yet defined that it should be api in /log/change_link.php
     \-- sql_insert_link - section for function sql_insert_link not yet defined that it should be sql write in /log/chang
@@ -5485,8 +5484,7 @@
     \-- drop_config_cache
         \-- import_file - the imported values are part of the cached config of every user, which the database cache
     \-- import_system_data
-        \-- import_file - TODO Prio 0 add $msg parameter and fill the user_message with the warning and error messages a
-                nd return true if successful
+        \-- import_file - TODO Prio 3 add a check bottom for admin to reload the system configuration
     \-- import_pod_config
         \-- import_file - import the default pod base configuration json files
     \-- import_sample_view_data
@@ -5799,8 +5797,6 @@
         \-- change_link - TODO Prio 2 make sure that always a order is defined to allow page views
     \-- load_last_by_user
         \-- change_link - get the last link changed by a user
-    \-- add_link_ref
-        \-- change_link - load the name of the changed word to show it in the change log
     \-- dsp_last
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add

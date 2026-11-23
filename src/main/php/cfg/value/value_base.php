@@ -2077,7 +2077,7 @@ class value_base extends sandbox_value
     $log->new_to    = $wrd_id;
     $log->row_id    = $this->id();
     $log->link_text = 'word';
-    $log->add_link_ref();
+    $log->add($msg);
 
     return $log;
     }
@@ -2092,7 +2092,7 @@ class value_base extends sandbox_value
     $log->old_to    = $wrd_id;
     $log->row_id    = $this->id();
     $log->link_text = 'word';
-    $log->add_link_ref();
+    $log->add($msg);
 
     return $log;
     }

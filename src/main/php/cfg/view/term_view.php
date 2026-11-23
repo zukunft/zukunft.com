@@ -592,7 +592,8 @@ class term_view extends sandbox_link
         if ($typ != null) {
             return $typ->get_code_id();
         } else {
-            // TODO Prio 0 use a translatable msg_id
+            // TODO Prio 2 use a translatable msg_id with log_err_msg, which needs the user_message parameter
+            //      in every get_predicate_code_id (see docs/llm/pending_prio_2.md "the verb name of a triple")
             $msg = 'term view link type with id ' . $id . ' is missing';
             log_err($msg);
             return $msg;

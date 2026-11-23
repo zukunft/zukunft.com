@@ -2416,7 +2416,8 @@ class html_base
 
     /**
      * a plain input field of the simple html forms e.g. the login, with its label linked to the field
-     * TODO Prio 0 use this function for all html input fields
+     * TODO Prio 2 use this function for all html input fields, which are the 22 raw input tags of
+     *      html_base, html_selector, system_form and ui_list, each with its html snapshot test
      * @param string $type the input type e.g. self::INPUT_TEXT
      * @param string $name the submitted field name, which is the url var e.g. url_var::USERNAME
      * @param string $value the pre-filled value e.g. the username after a failed signup

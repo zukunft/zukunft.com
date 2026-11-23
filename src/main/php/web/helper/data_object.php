@@ -227,7 +227,7 @@ class data_object
     // view selectors take as the complete list of views (ui_select::view_list_for)
     public ?view $msk = null;
     private component_list $cmp_lst;
-    // TODO Prio 0 rename to $typ_lst
+    // TODO Prio 2 rename to $typ_lst together with its about 265 uses in src/main and src/test in an own change
     public ?type_lists $typ_lst_cache = null;
 
     // the user-specific frontend configuration (loaded once at request start)

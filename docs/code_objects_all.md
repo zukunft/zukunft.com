@@ -283,7 +283,7 @@ the object structure is:
 │       │           ├── db_cache_type_list - list of predefined system batch database cache types
 │       │           ├── language_form_list - a database based enum list of all languages
 │       │           ├── language_list - a database based enum list of all languages
-│       │           ├── change_action_list - the const for the change log action table
+│       │           ├── change_action_list - $cng_act_lst - the const for the change log action table
 │       │           ├── change_field_list - the const for the change log field table
 │       │           ├── change_table_list - to link coded functionality to a log log table
 │       │           ├── phrase_types - to link coded functionality to a word or a triple, which means to every phrase
@@ -291,7 +291,7 @@ the object structure is:
 │       │           ├── source_type_list - to link coded functionality to a source
 │       │           ├── protection_type_list - $ptc_typ - a database based enum list for the data protection types
 │       │           ├── share_type_list - a database based enum list for the data share types
-│       │           ├── job_status_list - list of predefined system batch jobs
+│       │           ├── job_status_list - $job_sta_lst - list of predefined system batch jobs
 │       │           ├── job_type_list - list of predefined system batch jobs
 │       │           ├── sys_log_function_list - to group the system log entries by function
 │       │           ├── sys_log_level_list - list of the system log types

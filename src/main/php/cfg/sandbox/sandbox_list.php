@@ -370,7 +370,8 @@ class sandbox_list extends list_db_write
     ): sql_par
     {
         $qp = new sql_par($sbx::class);
-        // TODO Prio 0 fill, so create the prepared sql functions to save the user data and use them to update the user data
+        // TODO Prio 2 fill, so create the prepared sql functions to save the user data and use them to update the user data,
+        //      once load_user_changes has a caller, because until then this empty statement is never executed
         /* $sql = "SELECT u.formula_name,
                  u.resolved_text AS usr_formula_text,
                  f.resolved_text AS formula_text,

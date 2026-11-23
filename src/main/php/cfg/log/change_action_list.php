@@ -5,6 +5,7 @@
     model/log/change_action_list.php - the const for the change log action table
     -----------------------------
 
+    $cng_act_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

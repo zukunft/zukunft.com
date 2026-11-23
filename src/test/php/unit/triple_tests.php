@@ -66,6 +66,8 @@ class triple_tests
 
     function run(test_cleanup $t): void
     {
+        global $sys;
+
         $msg = new user_message();
 
 
@@ -432,6 +434,26 @@ class triple_tests
         $dto_vrb_count = $vrb_dto->verb_list()->count();
         $t->assert($test_name, $dto_vrb_count, 1);
         $msg->reset();
+        // negative: a verb that is not yet saved gives the triple no verb id
+        $test_name = 'the verb id of a new verb is not set before the verb is saved';
+        $trp->fill_new_verb();
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert_null($test_name, $trp_vrb_id);
+        // the save of the data object gives the verb its id, which is simulated here without database
+        $test_name = '... but after the save of the verb the triple has its id';
+        // without the verb in the data object the assert below reports the missing id instead of a fatal
+        $dto_vrb = $vrb_dto->verb_list()->get_by_name(verbs::TEST_ADD_NAME);
+        if ($dto_vrb != null) {
+            $dto_vrb->id = verbs::TEST_ADD_ID;
+        }
+        $trp->fill_new_verb();
+        $trp_vrb_id = $trp->get_verb_id();
+        $t->assert($test_name, $trp_vrb_id, verbs::TEST_ADD_ID);
+        $test_name = '... and finds the verb in the verb cache by its id';
+        $trp_vrb_name = $trp->get_verb_name();
+        $t->assert($test_name, $trp_vrb_name, verbs::TEST_ADD_NAME);
+        // the verb cache is shared by all unit tests, so the verb added by fill_new_verb is removed again
+        $sys->typ_lst->vrb->unset_by_id(verbs::TEST_ADD_ID);
 
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();

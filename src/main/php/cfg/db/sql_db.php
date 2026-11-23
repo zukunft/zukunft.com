@@ -1261,12 +1261,12 @@ class sql_db
 
             $import = new import_file();
             $this->import_verbs($usr, $sys_msg);
-            $import->import_system_data($usr);
+            $import->import_system_data($usr, $sys_msg);
             $this->create_internal_words($usr, $sys_msg);
             $import->import_config_yaml($usr, $sys_msg);
             // load the view unit-test sample data once the system config it references is in place
-            $import->import_sample_view_data($usr);
-            $import->import_pod_config($usr);
+            $import->import_sample_view_data($usr, $sys_msg);
+            $import->import_pod_config($usr, $sys_msg);
             // the use cases come last, because they build on the phrases of the start page
             $import->import_use_case_data($usr, $sys_msg);
             // followed only by the system data added after the test ids have been pinned

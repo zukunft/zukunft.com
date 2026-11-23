@@ -292,14 +292,14 @@ class formula_link_tests
         $t->subheader($ts . 'type im- and export');
         $test_name = 'the import sets the formula of a formula link type by its name';
         $imp_msg = new user_message($t->usr_admin); // only an admin may import a type, the other tests use a normal user
-        $frm_dto = new data_object($t->usr1);
-        $frm_dto->add_formula($t_frm->formula(), $imp_msg);
+        $dto = new data_object($t->usr1);
+        $dto->add_formula($t_frm->formula(), $imp_msg);
         $frm_lnk_typ = new formula_link_type('');
         $typ_json = [
             json_fields::CODE_ID => formula_link_types::TIME_PERIOD,
             json_fields::FORMULA_NAME => formula_names::SCALE_TO_SEC
         ];
-        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $frm_dto);
+        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $dto);
         $t->assert($test_name, $frm_lnk_typ->frm_id, formula_names::SCALE_TO_SEC_ID);
         $imp_msg->reset();
         // negative: the formula is not part of the import
@@ -312,7 +312,7 @@ class formula_link_tests
         $test_name = '... and an empty formula name leaves it valid for all formulas';
         $frm_lnk_typ = new formula_link_type('');
         $typ_json[json_fields::FORMULA_NAME] = '';
-        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $frm_dto);
+        $frm_lnk_typ->import_mapper($typ_json, $imp_msg, $dto);
         $t->assert_null($test_name, $frm_lnk_typ->frm_id);
         $imp_msg->reset();
         $test_name = 'the export names the phrase type of a formula link type by its code id';
@@ -449,6 +449,12 @@ class formula_link_tests
         $frm_lnk_typ = $t_frm->link_type_limited();
         $exp = $frm_lnk_typ->export_json($msg, [], false);
         $t->assert_key_not_exists($test_name, json_fields::FORMULA_NAME, $exp);
+        $msg->reset();
+        // negative: the formula is loaded for the requesting user, so an export without user is refused
+        $test_name = '... and an export with the database but without user reports the missing user';
+        $frm_lnk_typ->export_json($msg);
+        $exp_ok = $msg->is_ok();
+        $t->assert_false($test_name, $exp_ok);
         $msg->reset();
 
         // negative: a link type for all formulas exports no formula

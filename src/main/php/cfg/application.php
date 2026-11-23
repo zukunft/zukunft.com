@@ -337,7 +337,8 @@ class application
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        // TODO Prio 0 combine with frontend.php
+        // TODO Prio 2 combine with frontend.php once the frontend and the backend are split into two apps,
+        //      because until then docs/llm/coding.md keeps their start() apart and changes both
         $sys->pod_name = POD_NAME;
 
         $sys->errors = 0;
