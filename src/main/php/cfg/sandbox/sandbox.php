@@ -1185,8 +1185,10 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * load the object parameters for all users
-     * TODO Prio 0 check to which function call the removed load_owner needs to be added
-     * TODO Prio 0 for component additional reload_phrases needs to be called
+     * the owner is not loaded here, because load_owner calls get_standard and so this function again,
+     * so a caller that needs the owner uses owner() or load_owner() after this load
+     * TODO Prio 2 for component also load the second column phrase, which the row mapper sets only by its id,
+     *      e.g. by a component::load_standard that calls reload_wrd_col2 after this load
      * TODO Prio 1 create load_standard_by_name function if needed
      * @param int $id the database row id to select the standard row
      * @param user_message $msg to collect the error messages and suggested solutions for the calling user
@@ -1423,9 +1425,16 @@ class sandbox extends db_object_seq_id_user
         return array();
     }
 
+    /**
+     * set the owner of the standard row as the user of this object
+     * or take the ownership for the user of this object if the standard row has no owner,
+     * which is probably due to an error in an older program version
+     * not called by load_standard, because get_standard calls load_standard, so the load would recurse
+     * @param user_message $msg to collect the problems of loading or changing the owner
+     * @return bool true if the owner has been loaded or the ownership has been taken
+     */
     function load_owner(user_message $msg): bool
     {
-        global $db_con;
         $result = false;
 
         if ($this->id() > 0) {
@@ -1438,11 +1447,8 @@ class sandbox extends db_object_seq_id_user
                     $result = true;
                 }
             } else {
-                // TODO Prio 0 move to each calling function after the load_standard call
-                // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $std_rec = $this->get_standard($msg);
-                $std_rec->owner_id = $this->get_user()->id;
-                $this->update_standard_fields($db_con, $std_rec, $msg);
+                // set_owner writes the owner to the standard row and sets it for this object only if the write has worked
+                $result = $this->set_owner($this->get_user()->id, $msg);
             }
         }
         return $result;
@@ -3329,7 +3335,10 @@ class sandbox extends db_object_seq_id_user
      * store the related objects to the database
      * or fill missing data based on the database entry
      * e.g. for triples that have only the to and from name get the db id
-     * TODO Prio 0 use it for import
+     * a single import calls it via save, and the list import has its own e.g. triple_list::fill_by_name
+     * and formula_list::save_formulas_words
+     * TODO Prio 2 if a list import needs the related saves of each changed object,
+     *      call save_related from sandbox_list_named::update and also after the add of a new object
      *
      * @param user_message $msg to enrich with warnings, problems and solutions
      * @param sandbox|null $db_rec the object as it is in the database before the change e.g. to see the old name

@@ -503,8 +503,11 @@ class triple_url_tests extends url_test_base
 
         // initial url with the in-use triple; the url carries the current db ids of the triple and of its
         // from and to words (the snapshot files normalize the ids back to the fixed test ids); the usage
-        // is forced so the frontend check reads the triple as still in use and blocks the deletion
-        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        // is forced so the frontend check reads the triple as still in use and blocks the deletion, because
+        // the unit workflow renders from the url without a backend call and the test triple is not linked
+        // TODO Prio 2 remove the forced usage once the test triple is linked e.g. by a test value and the backend
+        //      fills the usage on load (a triple::update_usage like word::update_usage)
+        //      or a batch maintains the usage of the triples like verb_list::calc_usage
         $t_trp = new test_triples($this->t);
         $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;

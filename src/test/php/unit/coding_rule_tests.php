@@ -150,6 +150,9 @@ class coding_rule_tests
 
     // the text of a stub that a child class must overwrite e.g. 'name not overwritten by ' . $this::class
     const string STUB_MARK = 'not overwritten by';
+    // a date of a json field formatted by a literal e.g. $vars[json_fields::TIME] = $time->format('Y-m-d')
+    // instead of DateTimeInterface::ATOM or a named const, so that every json date has the same format
+    const string JSON_DATE_LITERAL_PATTERN = '/\$vars\[.*->format\(\s*[\'"]/';
     // the creation of the bare shared message, which an http entry point replaces by the message of its layer
     const string BARE_MESSAGE_MARK = 'new Message(';
     // the file extension of a php class file e.g. of an enum class that is named like its code link csv
@@ -397,6 +400,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'message of the http entry points');
         $this->http_no_bare_message_tests($t);
+
+        $t->subheader($ts . 'date format of the json fields');
+        $this->json_date_format_tests($t);
 
         $t->subheader($ts . 'enum consts of the code link csv');
         $this->enum_csv_tests($t);
@@ -2073,6 +2079,53 @@ class coding_rule_tests
     }
 
     /**
+     * check that every date of an api or export json field is formatted by DateTimeInterface::ATOM or a named const
+     * and not by a literal, because a literal e.g. 'Y-m-d H:i:s' drops the time zone
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_date_format_tests(test_cleanup $t): void
+    {
+        $test_name = 'a json date with the atom format is fine';
+        $atom_lines = ['$vars[json_fields::TIME] = $this->time?->format(DateTimeInterface::ATOM);'];
+        $t->assert($test_name, $this->json_date_literal_lines($atom_lines), []);
+        // negative: a literal format is reported with its line
+        $test_name = '... but not a json date with a literal format';
+        $literal_lines = ['$vars = [];', '$vars[json_fields::TIME] = $this->time->format(\'Y-m-d H:i:s\');'];
+        $t->assert($test_name, $this->json_date_literal_lines($literal_lines), [2]);
+
+        $found = [];
+        $files_checked = 0;
+        foreach ($this->php_file_list(paths::PHP_LIB) as $code_file) {
+            $files_checked++;
+            foreach ($this->json_date_literal_lines(file($code_file)) as $line_nbr) {
+                $found[] = $code_file . ':' . $line_nbr;
+            }
+        }
+        // a scanner that reads no file would else pass silently
+        $test_name = 'json dates checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
+        $test_name = 'no json date is formatted by a literal';
+        $t->assert($test_name, $found, []);
+    }
+
+    /**
+     * @param array $lines the lines of a code file
+     * @return array the line numbers that format the date of a json field by a literal
+     */
+    private function json_date_literal_lines(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $pos => $line) {
+            if (preg_match(self::JSON_DATE_LITERAL_PATTERN, $line) === 1) {
+                $result[] = $pos + 1;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * check that the id, the name and the description consts of an enum or type class match the row of the code link
      * csv with the same name, from which the database and the type lists take them, because the consts are written
      * by hand e.g. user_statuum::READ_ONLY_ID was 3 for the row 2 of "read-only"
@@ -2289,7 +2342,6 @@ class coding_rule_tests
         }
         return $result;
     }
-
 
     function php_function_tree(): string
     {

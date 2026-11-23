@@ -740,7 +740,7 @@ class change_log extends db_object_seq_id_user
         if ($this->other_values != []) {
             $vars[json_fields::OTHER_VALUES] = $this->other_values;
         }
-        $vars[json_fields::CHANGE_TIME] = $this->time()->format("c");
+        $vars[json_fields::CHANGE_TIME] = $this->time()->format(DateTimeInterface::ATOM);
 
         return $vars;
     }

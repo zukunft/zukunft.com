@@ -196,7 +196,7 @@ class formula_link_type extends type_object
             $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
-                // TODO Prio 0 convert the name to the id based on the data cache
+                // TODO Prio 0 convert the name to the id based on the data cache in $dto
                 // TODO Prio 2 check that for import always the name or code id is converted to the id
                 $this->frm_id = $in_ex_json[json_fields::FORMULA_NAME];
             }
@@ -250,7 +250,7 @@ class formula_link_type extends type_object
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->frm_id !== null) {
-            // TODO Prio 0 get formula name based on the data cache
+            // TODO Prio 0 get formula name based on the data cache so add a $dto or formula list parameter
             $vars[json_fields::FORMULA] = $this->frm_id;
             $vars[json_fields::PHRASE_TYPE] = $this->phr_id;
         }

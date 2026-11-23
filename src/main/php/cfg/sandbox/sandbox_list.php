@@ -370,7 +370,7 @@ class sandbox_list extends list_db_write
     ): sql_par
     {
         $qp = new sql_par($sbx::class);
-        // TODO Prio 0 fill
+        // TODO Prio 0 fill so create prepared sql functions tp save user data and use them for updating user data
         /* $sql = "SELECT u.formula_name,
                  u.resolved_text AS usr_formula_text,
                  f.resolved_text AS formula_text,

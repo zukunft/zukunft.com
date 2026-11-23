@@ -287,6 +287,9 @@ class triple extends sandbox_link_named
         }
     }
     private ?array $ref_lst = [];
+    // a verb that the import has created and that is not yet saved
+    // kept here, because the triple itself has only the verb id (see fill_new_verb)
+    private ?verb $new_vrb = null;
 
     // values where this triple is used; populated lazily by load_values_related() and only
     // emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the default
@@ -346,6 +349,7 @@ class triple extends sandbox_link_named
 
         $this->view = null;
         $this->ref_lst = [];
+        $this->new_vrb = null;
 
         $this->create_objects();
     }
@@ -579,18 +583,27 @@ class triple extends sandbox_link_named
         if (key_exists(json_fields::EX_VERB, $in_ex_json)) {
             $name = $in_ex_json[json_fields::EX_VERB];
             $vrb = $sys->typ_lst->vrb->get_by_name($name);
+            $this->new_vrb = null;
             if ($vrb == null) {
                 if ($name <> '') {
-                    $vrb = new verb();
-                    $vrb->set_name($name);
-                    // TODO Prio 0 move saving from the mapper to the import_obj to avoid db interaction during the mapping
-                    if ($db_con->is_open()) {
-                        $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
-                        $vrb->set_user($this->get_user());
-                        // TODO Prio 2 remove this exception
-                        $vrb->save($msg);
+                    // the mapping does not write to the database, so the new verb is saved by import_obj
+                    // or with the verbs of the data object before the triples (see data_object::save)
+                    // TODO Prio 2 remove this exception that an import of a triple can create a verb
+                    // another triple of the same import may have created the verb already,
+                    // so both triples get the same verb object that the data object saves once
+                    $new_vrb = $dto?->verb_list()->get_by_name($name);
+                    if ($new_vrb == null) {
+                        $new_vrb = new verb();
+                        $new_vrb->set_name($name);
+                        $new_vrb->set_user($this->get_user());
+                        if ($db_con->is_open()) {
+                            $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
+                        }
+                        $dto?->add_verb($new_vrb, $msg);
                     }
-                    $dto?->add_verb($vrb, $msg);
+                    // the verb id is set by fill_new_verb after the verb is saved
+                    $this->new_vrb = $new_vrb;
+                    $vrb = null;
                 } else {
                     $vrb = $sys->verb(verbs::NOT_SET);
                     $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
@@ -603,7 +616,8 @@ class triple extends sandbox_link_named
                     }
                 }
             }
-            if ($vrb->check($msg, $this->dsp_id())) {
+            // a new verb is not yet in the verb list, so the check would report it as missing
+            if ($vrb != null and $vrb->check($msg, $this->dsp_id())) {
                 $this->set_verb($vrb);
             }
         }
@@ -1117,6 +1131,11 @@ class triple extends sandbox_link_named
 
         // save the triple in the database
         if ($db_con->is_open()) {
+            // a new verb that the mapper has created is saved first, because the triple needs its id
+            if ($msg->is_ok() and $this->new_vrb != null and $this->new_vrb->id() == 0) {
+                $this->new_vrb->save($msg);
+            }
+            $this->fill_new_verb();
             if ($msg->is_ok()) {
                 $this->save($msg);
             } else {
@@ -1284,6 +1303,25 @@ class triple extends sandbox_link_named
         $this->set_predicate_id($id);
     }
 
+    /**
+     * set the verb id of a verb that the import has created, once the verb is saved
+     * and add the saved verb to the verb cache so that get_verb and get_verb_name find it
+     * e.g. the verb "System Test Verb" of an imported triple after data_object::save_verbs
+     *
+     * @return void
+     */
+    function fill_new_verb(): void
+    {
+        global $sys;
+        if ($this->new_vrb != null and $this->new_vrb->id() > 0) {
+            if ($sys->typ_lst->vrb->get($this->new_vrb->id()) == null) {
+                $sys->add_verb($this->new_vrb);
+            }
+            $this->set_verb_id($this->new_vrb->id());
+            $this->new_vrb = null;
+        }
+    }
+
     function get_verb(): verb|null
     {
         global $sys;
@@ -1330,7 +1368,8 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } else {
-            return '';
+            // the name of a verb that the import has created and that is not yet saved
+            return $this->new_vrb?->name() ?? '';
         }
     }
 

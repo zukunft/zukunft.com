@@ -405,7 +405,10 @@ class result extends sandbox_value
             $src_phr_lst->import_mapper($in_ex_json[json_fields::CONTEXT], $msg, $dto);
             if ($msg->is_ok()) {
                 $src_grp = $src_phr_lst->get_grp_id($msg, false);
-                $this->set_src_grp($src_grp);
+                // an empty context has no group, which get_grp_id reports
+                if ($src_grp != null) {
+                    $this->set_src_grp($src_grp);
+                }
             }
         }
 
@@ -1686,9 +1689,12 @@ class result extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             if ($phr_lst->import_lst($in_ex_json[json_fields::WORDS], $msg)) {
                 $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
-                log_debug('got word group ' . $phr_grp->dsp_id());
-                $this->set_grp($phr_grp);
-                log_debug('set grp id to ' . $this->grp_id());
+                // an empty list has no group, which get_grp_id reports
+                if ($phr_grp != null) {
+                    log_debug('got word group ' . $phr_grp->dsp_id());
+                    $this->set_grp($phr_grp);
+                    log_debug('set grp id to ' . $this->grp_id());
+                }
             }
         }
 
@@ -1697,9 +1703,12 @@ class result extends sandbox_value
             $phr_lst = new phrase_list($this->get_user());
             if ($phr_lst->import_lst($in_ex_json[json_fields::CONTEXT], $msg)) {
                 $phr_grp = $phr_lst->get_grp_id($msg, $do_save);
-                log_debug('got context ' . $phr_grp->dsp_id());
-                $this->set_src_grp($phr_grp);
-                log_debug('set grp id to ' . $this->src_grp_id());
+                // an empty context has no group, which get_grp_id reports
+                if ($phr_grp != null) {
+                    log_debug('got context ' . $phr_grp->dsp_id());
+                    $this->set_src_grp($phr_grp);
+                    log_debug('set grp id to ' . $this->src_grp_id());
+                }
             }
         }
 

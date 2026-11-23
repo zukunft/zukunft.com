@@ -40,4 +40,8 @@ enum export_type: string
     //      the view itself does not need to be repeated in the sub array
     case IGNORE_FROM = 'ignore_from';
 
+    // to export the linked objects as objects and not only by their name
+    // e.g. the parent and the child view of a view relation
+    case INCL_LINKED = 'incl_linked';
+
 }

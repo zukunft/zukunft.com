@@ -186,12 +186,19 @@ class phrase_list_tests
 
         // TODO Prio 2 add assume time sql statement test
 
+        // the year is the time word e.g. "2022" and not the triple "2022 (year)", which has no phrase type,
+        // like the words and triples of the seed data
         $test_name = 'get this year from a list of years';
         $phr_lst = $t_phr->years();
+        $phr_lst->add($t_wrd->word_2022()->phrase());
         $fix_now = new DateTime(test_const::DUMMY_DATETIME);
         $msg = new user_message();
         $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
-        $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
+        $t->assert($test_name, $phr?->name(), $t_wrd->word_2022()->name());
+        // negative: a phrase that only contains the year in its name is no time phrase
+        $test_name = '... but not from phrases without the time type';
+        $no_year = $t_phr->years()->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
+        $t->assert_null($test_name, $no_year?->name());
         // negative: a phrase that is no time period selects no time and the user is told why
         $test_name = '... but no time for a phrase that is no time period';
         $no_time = $phr_lst->best_matching_time($t_wrd->word()->phrase(), $msg, $fix_now);

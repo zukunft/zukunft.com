@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
@@ -564,21 +565,28 @@ class view_tests
 
         $t->subheader($ts . 'export');
 
-        // without the database load the parent and the child view are exported as objects
+        // if requested the parent and the child view are exported as objects
         $test_name = 'export parent';
         $mrl = $t_msk->view_relation();
-        $exp = $mrl->export_json($msg, [], false);
+        $exp = $mrl->export_json($msg, [export_type::INCL_LINKED], false);
         $parent = $exp[json_fields::PARENT];
         $t->assert($test_name, $parent[json_fields::NAME], views::WORD_EDIT);
         $test_name = 'export child';
         $child = $exp[json_fields::CHILD];
         $t->assert($test_name, $child[json_fields::NAME], views::WORD_LOG);
         $msg->reset();
+        // negative: without the request, also without the database load, only their names are exported
+        $test_name = '... but only the name of the parent if the objects are not requested';
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PARENT], views::WORD_EDIT);
+        $test_name = '... and of the child';
+        $t->assert($test_name, $exp[json_fields::CHILD], views::WORD_LOG);
+        $msg->reset();
 
         // negative: a view relation without a child view exports no child view
         $test_name = 'export no child';
         $mrl = $t_msk->view_relation_incomplete();
-        $exp = $mrl->export_json($msg, [], false);
+        $exp = $mrl->export_json($msg, [export_type::INCL_LINKED], false);
         $t->assert_null($test_name, $exp[json_fields::CHILD]);
         $msg->reset();
 

@@ -1157,6 +1157,8 @@ class triple_list extends sandbox_list_named
         $msg = new user_message(); // the message built here IS the return value of this function, so the caller merges it
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
+                // a verb that the import has created is saved before the triples (see data_object::save)
+                $phr->fill_new_verb();
                 // a triple with a database id has its verb in the database, which the update fill takes,
                 // e.g. if only the name and the id are taken from the phrase cache
                 if ($phr->get_verb() == null and $phr->id() == 0) {

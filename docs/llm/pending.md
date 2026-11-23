@@ -4,7 +4,7 @@
 
 **Target:** no `TODO Prio 0` is left in `src/main/php`, `src/test/php`, `api` and `http`. Each one is either solved
 (the comment goes together with the fix and its test) or, if the work shows that it is less urgent, gets a Prio 1, 2 or
-3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 42 left (151 on
+3 with a text that names the concrete open work; a TODO is never reworded to "done". 2026-11-22: 30 left (151 on
 2026-11-13); the limit test of `unit/coding_rule_tests.php` has been removed by the developer on 2026-11-22, so the
 number is counted with `git grep "TODO Prio 0"` in these folders.
 
@@ -27,7 +27,12 @@ and the `user_message $msg` parameter of `get_grp_id` with `log_err_msg` for its
 of prompt 6 the security bullet: the setup of an empty database only with `DB_SETUP=true` in prod and test
 (`db_check::setup_allowed`), the test that the api message of a user has no password hash, and the list limits of
 `shared/helper/Config.php` only as the fallback of `config.yaml` (`web/helper/list_size`), all decided by the
-developer on 2026-11-22; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
+developer on 2026-11-22, and the data correctness bullet: every json date by `DateTimeInterface::ATOM` or a named
+const (`coding_rule_tests::json_date_format_tests`), the time type in `phrase_list::get_year`, the unique parameters
+per placeholder in `sql_par::merge`, by the decisions of the developer of 2026-11-22 the new `export_type::INCL_LINKED`
+of `view_relation::export_json`, the save of a new verb in `triple::import_obj` instead of the mapper and
+`sandbox::load_owner` with `set_owner`, and as Prio 2 the second column phrase of `component` in `load_standard`,
+`sandbox::save_related` for a list import and the forced usage of the two delete workflow tests; of prompt 7 the field consts of `change_link::dsp_last` and the `$t` of
 `all_unit_read_tests::run_unit_db_tests`. The inventory by file and function, with the plan of each open prompt, is
 `docs/llm/log/fix_prio0_rest_2026-11-21.md`.
 
@@ -37,10 +42,9 @@ clean up last; each line is one prompt:
 5. **the callers of `get_grp_id` with an empty list** (size S, no TODO): the first run has named only
    `sandbox_value::load_by_names`, which is fixed; fix each further caller that a run names ("Cannot create phrase
    group for an empty list called by ...") at its source, with a `msg_id` where the user can act
-6. **backend correctness** (size L, 20 TODOs, the security bullet is done): one bullet per prompt, because
-   `cfg/user/user.php` is part of both open bullets; a new or changed db field goes into the
-   setup sql and `db_check::db_upgrade_0_0_4`, never a version raise; stop for a run, with re-pin if the database
-   structure changes
+6. **backend correctness** (size M, 8 TODOs, the security and the data correctness bullet are done): the type cache
+   bullet; a new or changed db field goes into the setup sql and `db_check::db_upgrade_0_0_4`, never a version raise;
+   stop for a run, with re-pin if the database structure changes
 7. **merge, rename and the rest of the clean up** (size L, 21 TODOs): a merge or a rename includes all callers in the
    same prompt; for the developer to decide: `test_views::view_relation_filled` "msk_rel instead of mrl", because
    `view_relation` declares `$mrl` as its var name, and `expression_write_tests::run` "rename to user_text", because the

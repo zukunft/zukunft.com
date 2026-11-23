@@ -135,6 +135,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 class value_list extends sandbox_value_list
 {
 
+    // the log text of a value without phrase, which has no group (see set_grp_ids)
+    const string MSG_NO_PHRASE = 'phrase list is empty for value ';
+
     /*
      * construct and map
      */
@@ -197,10 +200,10 @@ class value_list extends sandbox_value_list
     /**
      * set the group id of every value of this list based on its phrase list
      * a value without a phrase is an internal inconsistency that the user cannot fix,
-     * so it is only logged and this function reports nothing to the user
+     * so the user is only told that the admin has been informed
      * the given name and the description of the group are kept, because e.g. the import sets
      * them on the group of the value (see value_base::import_mapper) and the save writes them
-     * @param user_message $msg to report a problem of the creation of a group
+     * @param user_message $msg to report a value without phrase or a problem of the creation of a group
      * @return void
      */
     function set_grp_ids(user_message $msg): void
@@ -208,7 +211,7 @@ class value_list extends sandbox_value_list
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
             if ($phr_lst->is_empty()) {
-                log_err('phrase list is empty for value ' . $val->dsp_id());
+                log_err_msg(self::MSG_NO_PHRASE . $val->dsp_id(), $msg);
             } else {
                 $grp = $phr_lst->get_grp_id($msg, false);
                 $this->keep_group_texts($val->grp(), $grp);

@@ -50,7 +50,7 @@ class component_type_list extends type_list
      * adding the view component types used for unit tests to the dummy list
      */
     function load_dummy(): void {
-        // TODO Prio 0 check if and why any other load_dummy function uses something else
+        // TODO Prio 0 check if and why any other load_dummy function uses something else so using const instead of a csv
         parent::load_from_csv_resource();
     }
 

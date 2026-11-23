@@ -558,18 +558,22 @@ class view_relation extends sandbox_link
      */
 
     /**
-     * create an array with the export json fields of this component
+     * create an array with the export json fields of this view relation
      * which does not include the internal database id
      * @param user_message $msg to collect the export errors
-     * @param export_type_list|array $exp_typ define the export format
+     * @param export_type_list|array $exp_typ define the export format e.g. with INCL_LINKED
+     *                                        to export the parent and the child view as objects and not by name
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
     function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
-        // TODO Prio 0 if requested export the object
-        if (!$do_load) {
+        if (is_array($exp_typ)) {
+            $exp_typ = new export_type_list($exp_typ);
+        }
+        // the import reads the parent and the child view by name or as an object
+        if ($exp_typ->incl_linked()) {
             $vars[json_fields::PARENT] = $this->parent()?->export_json($msg, $exp_typ, $do_load);
             $vars[json_fields::CHILD] = $this->child()?->export_json($msg, $exp_typ, $do_load);
         } else {

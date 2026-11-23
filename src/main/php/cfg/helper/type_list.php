@@ -388,7 +388,7 @@ class type_list extends ListOfIdNamedCodeObjects
         $qp = new sql_par($db_type);
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
-        // TODO Prio 0 use the object load_sql function overwrites
+        // TODO Prio 1 use the object load_sql function overwrites
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {

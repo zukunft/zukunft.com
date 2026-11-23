@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -364,6 +365,23 @@ class sql_tests
         $whr_lst->add($t_sql->where());
         $added = $whr_lst->lst[0];
         $t->assert($test_name, $added->fld, word_fields::FLD_NAME);
+
+        // the branches of a union reuse the placeholders e.g. $1 and $2 of postgres
+        $t->subheader($ts . 'merge of a union');
+        $test_name = 'a unique merge keeps one parameter per placeholder, also if two have the same value';
+        $qp_branch = new sql_par(phrase::class);
+        // e.g. the phrase id and the user id are both 1
+        $qp_branch->par = [1, 1];
+        $qp_union = new sql_par(phrase::class);
+        $qp_union->merge($qp_branch, true);
+        $qp_union->merge(clone $qp_branch, true);
+        $t->assert($test_name, $qp_union->par, [1, 1]);
+        // negative: without unique, e.g. for mysql, each branch adds its parameters
+        $test_name = '... but a merge without unique adds the parameters of each branch';
+        $qp_all = new sql_par(phrase::class);
+        $qp_all->merge($qp_branch);
+        $qp_all->merge(clone $qp_branch);
+        $t->assert($test_name, $qp_all->par, [1, 1, 1, 1]);
 
         $t->subheader($ts . 'debug id');
 

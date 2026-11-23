@@ -1572,12 +1572,17 @@ class phrase_list extends sandbox_list_named
         return $phr;
     }
 
+    /**
+     * @param string $name the year e.g. "2022"
+     * @return phrase|null the time phrase of this list with the year in its name e.g. the word "2022",
+     *                     but not a phrase without the time type e.g. the triple "2022 (year)"
+     */
     function get_year(string $name): ?phrase
     {
         $year = null;
         foreach ($this->lst() as $phr) {
-            // TODO Prio 0 and check if the phrase is of type TIME (or YEAR?)
-            if (str_contains($phr->name(), $name)) {
+            // a year has the time type, because there is no phrase type for a year
+            if ($phr->is_type(phrase_type_shared::TIME) and str_contains($phr->name(), $name)) {
                 $year = $phr;
             }
         }

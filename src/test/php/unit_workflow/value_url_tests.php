@@ -329,7 +329,7 @@ class value_url_tests extends url_test_base
      */
     protected function value_id(array $phr_ids): int
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a test helper is an entry point, so it creates the message the conversion reports into
         $phr_lst = new phrase_list($this->t->usr1);
         foreach ($phr_ids as $phr_id) {
             $phr_lst->add_id($phr_id);

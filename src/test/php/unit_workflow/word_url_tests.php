@@ -768,9 +768,12 @@ class word_url_tests extends url_test_base
             // (a zero id url would be rejected by url_to_html with 'id of word is empty')
             $this->wf_id = word_names::TEST_ADD_ID;
         }
-        // the api json does not yet carry the usage, and the test word is not really linked, so force
-        // the usage that blocks the deletion (the frontend check reads the usage posted with the url)
-        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        // the unit workflow renders from the url without a backend call, and the test word is not linked to
+        // anything in a read-only run, so force the usage that blocks the deletion (the frontend check reads
+        // the usage posted with the url)
+        // TODO Prio 2 remove the forced usage once the test word is linked e.g. by a test value and the backend
+        //      fills the usage on load (word::api_json_array with incl_related calls update_usage)
+        //      or a batch maintains the usage of the words like verb_list::calc_usage
         $usage = $wrd->usage ?? 0;
         if ($usage == 0) {
             $usage = 1;

@@ -785,45 +785,27 @@ class value_base extends sandbox_value
     }
 
     /**
-     * get the best matching value
+     * get the best matching value, which is for now only the value of the group of the phrases
+     * planned (see the TODO below):
      * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","sales","2014" the value for "ABB","sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "sales" are in ,"million","CHF"
      *
      * @param phrase_list $phr_lst with the phrases used for the selection
+     * @param user_message $msg to report a selection without phrases
      */
     function load_best(phrase_list $phr_lst, user_message $msg): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
+        // an empty list has no group, which get_grp_id reports, and a list that has no value is a normal outcome
+        // TODO Prio 2 if no value is found try the list without scaling and then with a converted measure,
+        //      but only with the number converted to the requested scaling and measure, so never a wrong number;
+        //      then check if there are any matching values at all, take the most often used phrase
+        //      and repeat adding a phrase until a number is found
         $grp = $phr_lst->get_grp_id($msg);
-        $this->load_by_grp($grp, $msg);
-        // if not found try without scaling
-        if (!$this->is_id_set()) {
-            if (!$phr_lst->is_empty()) {
-                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
-            } else {
-                // try to get a value with another scaling
-                $phr_lst_unscaled = clone $phr_lst;
-                $phr_lst_unscaled->ex_scaling();
-                log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp_id($msg);
-                $this->load_by_grp($grp_unscale, $msg);
-                // if not found try with converted measure
-                if (!$this->is_id_set()) {
-                    // try to get a value with another measure
-                    $phr_lst_converted = clone $phr_lst_unscaled;
-                    $phr_lst_converted->ex_measure($msg);
-                    log_debug('try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp_id($msg);
-                    $this->grp()->set_id($grp_unscale->id());
-                    $this->load_by_grp($grp_unscale, $msg);
-                    // TODO Prio 2
-                    // check if there are any matching values at all
-                    // if yes, get the most often used phrase
-                    // repeat adding a phrase utils a number is found
-                }
-            }
+        if ($grp != null) {
+            $this->load_by_grp($grp, $msg);
         }
         log_debug('got ' . $this->get_value() . ' for ' . $this->dsp_id());
     }

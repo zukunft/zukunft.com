@@ -426,8 +426,9 @@ class job extends db_object
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
-        $vars[json_fields::TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
-        $vars[json_fields::TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
+        // a job that has not yet started or ended has no time, which the api sends as null
+        $vars[json_fields::TIME_START] = $this->start_time()?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::TIME_END] = $this->end_time()?->format(DateTimeInterface::ATOM);
         $vars[json_fields::USER_ID] = $this->user_id();
         $vars[json_fields::TYPE] = $this->type();
         $vars[json_fields::STATUS] = $this->status();

@@ -592,7 +592,7 @@ class term_view extends sandbox_link
         if ($typ != null) {
             return $typ->get_code_id();
         } else {
-            // TODO Prio 0 use msg_id
+            // TODO Prio 0 use a translatable msg_id
             $msg = 'term view link type with id ' . $id . ' is missing';
             log_err($msg);
             return $msg;

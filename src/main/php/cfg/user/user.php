@@ -645,7 +645,7 @@ class user extends db_id_object_non_sandbox
         $this->msk = $map->get_view($in_ex_json, $msg, $dto);
         $this->src = $map->get_source($in_ex_json, $msg, $dto);
 
-        // TODO Prio 0 create and use an object mapper library (one for backend and one for the fromtend)
+        // TODO Prio 0 create and use an object mapper library (one for backend and one for the frontend)
         // TODO Prio 2 create the view if the json is an array with more information than just the view name
 
         return $msg->is_ok();
@@ -776,7 +776,7 @@ class user extends db_id_object_non_sandbox
         // the user himself, so the remaining email is only shown to them
         $vars[json_fields::EMAIL] = $this->email;
 
-        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        // the dates with the time zone and null if not set, like every json date (coding_rule_tests::json_date_format_tests)
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
         $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);
@@ -2329,7 +2329,7 @@ class user extends db_id_object_non_sandbox
         // the activation key is intentionally not exported: it is the account activation secret,
         // so leaking it in an export or backup file would enable an account takeover; the key stays
         // backend only (like in api_json_array), a re-imported account simply re-requests activation
-        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        // the dates with the time zone and null if not set, like every json date (coding_rule_tests::json_date_format_tests)
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
         $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);

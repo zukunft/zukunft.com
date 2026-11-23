@@ -534,6 +534,8 @@
             p
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
     \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/triple.php
+    \-- fill_new_verb - section for function fill_new_verb not yet defined that it should be set and get in /word/triple
+            .php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
     \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be set and get in /word/
             triple.php

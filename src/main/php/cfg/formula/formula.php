@@ -1018,10 +1018,14 @@ class formula extends formula_map
     {
         $rst = new result($this->get_user());
         $rst->frm = $this;
-        $rst->src_grp = $phr_lst->get_grp_id($msg);
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
-        $rst->src_grp->set_phrase_list(clone $phr_lst);
+        // an empty list has no group, which get_grp_id reports, so the result keeps its empty source group
+        $src_grp = $phr_lst->get_grp_id($msg);
+        if ($src_grp != null) {
+            $rst->src_grp = $src_grp;
+            $rst->src_grp->set_phrase_list(clone $phr_lst);
+        }
         $rst->grp()->set_phrase_list(clone $phr_lst);
         if ($rst->last_val_update < $this->last_update) {
             $rst->last_val_update = $this->last_update;

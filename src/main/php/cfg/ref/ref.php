@@ -497,7 +497,7 @@ class ref extends sandbox_link
                 $vars[json_fields::IMPACT] = $this->impact;
             }
             if ($this->last_update() != null) {
-                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format('Y-m-d H:i:s');
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
             // with the time zone, because the frontend shows the utc time of wikipedia in the time zone of the pod
             if ($this->page_time() != null) {
