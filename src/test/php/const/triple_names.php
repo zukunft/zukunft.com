@@ -617,6 +617,9 @@ class triple_names
     const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
     // a result phrase of the rows of the split walk, which names no page
     const string UNIT_VALUE = 'unit value';
+    // the results of the rows of the split walk that the next row reads with prior and the count of a child per row
+    const string CUMULATIVE_DEVIATION = 'cumulative deviation';
+    const string SPLIT_COUNT = 'split count';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on

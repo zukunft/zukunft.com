@@ -372,6 +372,32 @@ class expression_tests
             . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
+        // the phrases of an operand joined by the separator select one number e.g. "cumulative deviation","prior"
+        $test_name = 'an operand of several phrases is one element group';
+        $trm_lst_prio = $t_trm->term_list_solution_prio();
+        $exp_htp = new expression($frm);
+        $exp_htp->set_user_text(formula_names::GLOBAL_HTP_EXP, $msg, $trm_lst_prio);
+        $htp_grp_lst = $exp_htp->element_grp_lst($msg, $trm_lst_prio)->lst();
+        $t->assert($test_name, count($htp_grp_lst), 2);
+        $test_name = '... with the phrases of the operand';
+        $htp_names = [word_names::HTP, words::PERCENT];
+        $t->assert($test_name, $htp_grp_lst[0]->name(), $lib->dsp_array($htp_names));
+        // the symbol is the text of the expression, so that the number of the operand replaces it
+        $test_name = '... and the symbol with the separator, which is part of the expression';
+        $htp_symbol = $htp_grp_lst[0]->build_symbol();
+        $t->assert_text_contains($test_name, $exp_htp->r_part($msg), $htp_symbol);
+        $test_name = '... and that names both phrases';
+        $t->assert_text_contains($test_name, $htp_symbol, chars::SEPARATOR);
+        $msg->reset();
+        // negative: a math symbol between two phrases ends the group, so each phrase selects its own number
+        $test_name = 'an operator between two phrases gives two element groups';
+        $exp_two = new expression($frm);
+        $two_txt = '"' . word_names::HTP . '" = "' . word_names::HTP . '" * "' . words::PERCENT . '"';
+        $exp_two->set_user_text($two_txt, $msg, $trm_lst_prio);
+        $two_grp_lst = $exp_two->element_grp_lst($msg, $trm_lst_prio)->lst();
+        $t->assert($test_name, $two_grp_lst[0]->name(), word_names::HTP);
+        $msg->reset();
+
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
         $phr_lst_res = $exp->load_result_phrases($msg, $trm_lst);
         $result = $phr_lst_res->dsp_name();

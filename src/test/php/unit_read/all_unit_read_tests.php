@@ -120,6 +120,7 @@ class all_unit_read_tests extends all_unit_tests
         (new formula_list_read_tests)->run($this);
         (new expression_read_tests)->run($this);
         (new element_list_read_tests)->run($this);
+        (new element_group_read_tests)->run($this);
         (new result_list_read_tests)->run($this);
         (new view_read_tests)->run($this);
         (new view_list_read_tests)->run($this);

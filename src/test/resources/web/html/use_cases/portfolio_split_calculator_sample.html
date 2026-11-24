@@ -183,6 +183,7 @@
           <span class="hint">CHF per unit of currency, bank report [1]</span>
         </div>
         <div class="fx" id="fxBox"></div>
+        <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import FX rates</button>
         <p class="hint" style="font-size:.76rem;color:var(--muted);margin:8px 0 0">CHF per unit of currency, bank report <span class="tag m">measured</span></p>
       </details>
     </aside>
@@ -250,15 +251,6 @@
         <p><strong>Deviation.</strong> The carried deviation is the realised value minus the plain weighted value over all positions split so far, kept per child. It is subtracted once from the next target; it is not added again per step.</p>
         <p><strong>Why the order matters.</strong> LISP has a single unit of CHF 117,000. Rounding 3.5 shares to 4 gives the first child CHF 58,500 too much; the next positions take that back. With the sample data the stocks and bonds bring the drift down to about CHF 13 per child; splitting the cash then closes the gap to below one centime.</p>
       </div>
-      </details>
-
-      <details class="src">
-        <summary>Inputs from</summary>
-        <!-- placement test only: the imports do nothing yet -->
-        <div class="imports">
-          <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import portfolio</button>
-          <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import FX rates</button>
-        </div>
       </details>
 
       <details>

@@ -221,8 +221,12 @@ class figure_list extends sandbox_list
         // check parameters
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
-            if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
+            if ($fig_to_add->id() <> 0) {
                 parent::add_obj($fig_to_add, false, $msg);
+            } elseif ($fig_to_add->name() != '') {
+                // a number that is not stored has no id e.g. the 0 of the row before the first row of a walk,
+                // which the add of a sandbox list would skip
+                $this->add_direct($fig_to_add);
             }
         }
         return $msg->is_ok();

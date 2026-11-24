@@ -6,20 +6,50 @@
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
-- phase 1, five agents in parallel:
-  - agent import: "import": the csv of the sample, the csv of the existing test data and the json created from each
-  - agent cases: "step 2", the add two children and remove one child test case
-  - agent look: "check", step 4, step 5 (the colours and the hint) and the icons of step 7
-  - agent prior: part 1 of step 9, the write test of the previous row
-  - agent cell: the unit test of a cell with a result of part 4 of step 9
-  - stop for a run: `/test/test.php`
-- phase 2, one agent: parts 2 and 3 of step 9 (the walk order and the formulas, because they decide together);
-  stop for a run with re-pin
-- phase 3, two agents in parallel: agent fields with part 5 of step 9 (the number fields of the holdings) and agent
-  child with step 3 (add child and remove, the warnings by the instances)
 
 The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
 and the related reports.
+
+Status of 2026-11-24: the case reports list 0 differences for differ, 33 for low, 35 for high, 38 for standard and
+54 for over; nearly all of them are the walk rows, which follow the order and the rounding of the walk (parts 2 and 3
+of step 9), and the realised rows, which follow the walk rows.
+- done: the exchange rate field of the js page ("check"), the realised rows (part 5 of step 9, its three changes) and
+  part 4 of step 9 except its unit test
+- done, waiting for the run: part 1 of step 9 (the previous row in the backend)
+
+The remaining tasks in the suggested order:
+1. step 8: the "Import" button replaces "Import portfolio" and the section "Exchange rates" gets an
+   "Import FX rates" button (without a function until its task of step 7; done, waiting for the run)
+2. phase 1, in parallel:
+   - the run of part 1 of step 9 and its open check of the context of a walk formula with a calculation job
+   - "import" (at the end of this section): the csv of the sample, the csv of the existing test data and the json
+     created from each
+   - step 2: the add two children and remove one child test case
+   - the look: "check", step 4 (the style of a negative deviation), step 5 (the colours of the walk cells and the
+     hint) and the icons of step 7
+   - part 4 of step 9: the unit test of a cell with a result
+   - stop for a run: `/test/test.php`
+3. phase 2: parts 2 and 3 of step 9 together, because the walk order and the formulas decide each other, e.g. the
+   high case walks the bonds in the order of the lot value and the sample in the order of the bank report; stop for a
+   run with re-pin (the rows of the standard and the low case differed for another reason: the case runner
+   `src/test/js/use_case_cases.js` emptied a select whose option it found by the text, so the sample walked in the
+   order of the bank report; fixed on 2026-11-24, waiting for the run)
+4. phase 3, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
+   and remove, the warnings by the instances)
+5. after step 9: the functions of the buttons of step 7, each a task of its own
+
+#### step 8: decide what the generated page keeps
+
+- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
+- which the generated page shows at the assumptions and the holdings
+- decision of the developer (2026-11-24): `src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html`
+  has an "Import" button, which replaces "Import portfolio"; below it is the section "Exchange rates", which gets an
+  "Import FX rates" button (done, waiting for the run, `docs/llm/log/fx_import_button_2026-11-24.md`)
+
+#### step 2: add a "Add child" and remove
+
+Add an add two children and remove one child test case similar to the high and low test cases 
+so that all main test cases are covered
 
 #### check
 
@@ -29,17 +59,34 @@ Differences remaining
 - Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
 - Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
 - Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
-- Exchange rate field of the js page: the field `exchange rate` has six values of the same rank (one per currency);
-  `ui_list::calculator_value` picks one by `sandbox_value::sorted` (CHF per DKK, like the sample), but
-  `calculator_json.js::fieldEntry` refuses the tie by `onlyOne` and shows the field without value, unit, tag and source
-  ref. Decide first: let `fieldEntry` pick like `sandbox_value::sorted` (needs the impact of each value in the phrase
-  data, and changes every calculator page with a tied field), or show one field per currency like the rate list of the
-  sample below the field
+- Exchange rate field of the js page: done, `calculator_json.js::fieldEntry` picks a tied value like `sandbox_value::sorted`
 
-#### step 2: add a "Add child" and remove
+#### step 4: the result table (9), (17)
 
-Add an add two children and remove one child test case similar to the high and low test cases 
-so that all main test cases are covered
+- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first. The case reports of 2026-11-24 list no sign difference of the text any more, so only the style is left to check
+
+#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+
+- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
+- the colours of the walk cells and the hint below the holdings
+
+#### step 7: the buttons (13)
+
+- the buttons "Download", "Import", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the icons of the sample
+
+#### step 9: calculate the split again in the browser (18)
+
+The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The rounding of a tie differs, see part 3, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
+
+1. the previous row in the backend: `element_group::figures` reads it; the operand of several phrases joined by a comma is now one element group with the symbol of the expression, it selects one number with all its words and triples, and the 0 of the first row is kept; `unit_read/element_group_read_tests.php` reads the stored rows of the walk: a first row, a row in the middle, two chains in the context and the operands of a row (done, waiting for the run, `docs/llm/log/operand_groups_2026-11-24.md`). Still open: a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
+2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3. The case high of `portfolio_split_calculator_cases.js` selects "Bank report order", so its report lists the rows from 3 on until the generated page has this order: the sample walks the stocks first and the five bonds as the rows 31 to 35
+3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
+4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
+5. add the number fields of the holdings and the add child task. The realised rows (the totals per kind of holding, the realised value, the realised share and the split deviation) are calculated by a sum over the rows of the walk in three changes, each with a run before the next one (`docs/llm/log/sum_over_results_2026-11-24.md`):
+   1. a list function takes the results of its operand too, in the backend, on both pages and in the import check (done)
+   2. a list function takes the rows of a kind e.g. the holdings that are a stock, because a row names its holding (LISP) and `LISP is a stock` names the kind (done, `docs/llm/log/list_kinds_2026-11-24.md`)
+   3. the formulas in `portfolio_split_calculator.json`: the value that a beneficiary receives of a holding per row, its sum per kind, the realised value and the realised share instead of the modelled values (done, `docs/llm/log/realised_formulas_2026-11-24.md`)
 
 #### step 3: the input fields (1), (2), (3), (4)
 
@@ -50,38 +97,6 @@ The buttons "Add child" and remove are a separate task after step 9,
 because a new child has no allocation before the walk is calculated: 
 a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
 and the page needs the remove button per field. The button stays without a function until then.
-
-#### step 4: the result table (9), (17)
-
-- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
-
-#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
-
-- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
-- the colours of the walk cells and the hint below the holdings
-
-#### step 7: the buttons (13)
-
-- the buttons "Download", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
-- the icons of the sample
-
-#### step 8: decide what the generated page keeps
-
-- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
-- which the generated page shows at the assumptions and the holdings
-
-#### step 9: calculate the split again in the browser (18)
-
-The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The rounding of a tie differs, see part 3, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
-
-1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
-2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
-3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
-4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
-5. add the number fields of the holdings and the add child task. The realised rows (the totals per kind of holding, the realised value, the realised share and the split deviation) are calculated by a sum over the rows of the walk in three changes, each with a run before the next one (`docs/llm/log/sum_over_results_2026-11-24.md`):
-   1. a list function takes the results of its operand too, in the backend, on both pages and in the import check (done)
-   2. a list function takes the rows of a kind e.g. the holdings that are a stock, because a row names its holding (LISP) and `LISP is a stock` names the kind (done, `docs/llm/log/list_kinds_2026-11-24.md`)
-   3. the formulas in `portfolio_split_calculator.json`: the value that a beneficiary receives of a holding per row, its sum per kind, the realised value and the realised share instead of the modelled values (done, waiting for the run, `docs/llm/log/realised_formulas_2026-11-24.md`)
 
 #### import
 

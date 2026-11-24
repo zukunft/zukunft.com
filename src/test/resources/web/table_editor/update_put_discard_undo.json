@@ -9,7 +9,7 @@
         "words": [],
         "triples": [
             {
-                "id": 5718,
+                "id": 5713,
                 "name": "sector of revenue title",
                 "description": "Revenue by business area",
                 "from": "sector of revenue",
@@ -20,7 +20,7 @@
         "formulas": [],
         "values": [
             {
-                "id": 2382075429,
+                "id": 2382075424,
                 "number": 20
             }
         ],

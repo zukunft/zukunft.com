@@ -250,6 +250,8 @@ class word_names
     const string INHABITANTS = 'inhabitants';
     // a row of the split walk of portfolio_split_calculator.json and the word of its quantity
     const string LISP = 'LISP';
+    // the row of the split walk after LISP, so that its previous row is LISP
+    const string LISN = 'LISN';
     const string ORIGINAL = 'original';
     // the word of solution_prio.json whose values of populism have a variance range
     const string FIFTEEN_YEAR = '15-year';

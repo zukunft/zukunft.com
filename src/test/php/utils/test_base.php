@@ -342,6 +342,7 @@ include_once test_paths::UNIT_READ . 'formula_read_tests.php';
 include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'expression_read_tests.php';
 include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'element_group_read_tests.php';
 include_once test_paths::UNIT_READ . 'result_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_list_read_tests.php';

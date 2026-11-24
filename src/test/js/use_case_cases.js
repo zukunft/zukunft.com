@@ -32,7 +32,9 @@ function selectOption(field, value) {
             o.removeAttribute("selected");
         });
         opt.setAttribute("selected", "");
-        field.value = value;
+        // the value of the option, because an option found by its text has another value e.g. "lot",
+        // and a value that no option has empties the select
+        field.value = opt.value;
     }
     return opt !== undefined;
 }

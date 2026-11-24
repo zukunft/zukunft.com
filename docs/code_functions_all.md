@@ -1880,6 +1880,7 @@
     \-- id - section for function id not yet defined that it should be display in /element/element_group.php
     \-- build_symbol - section for function build_symbol not yet defined that it should be display in /element/element_g
             roup.php
+    \-- set_join - section for function set_join is expected to be set and get in /element/element_group.php
     \-- figures - section for function figures not yet defined that it should be display in /element/element_group.php
     \-- reads_prior_row - section for function reads_prior_row not yet defined that it should be display in /element/ele
             ment_group.php
@@ -6067,6 +6068,8 @@
         \-- element_group - show the element group name to the user in the most simple form (without any ids)
     \-- build_symbol
         \-- element_group - show the element group name to the user in the most simple form (without any ids)
+    \-- set_join
+        \-- element_group - remember the text of the expression between the last element of this group and the next one
     \-- figures
         \-- element_group - get a list of figures related to the formula element group and a context defined by a list o
                 f words

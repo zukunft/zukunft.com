@@ -623,13 +623,8 @@
     {"name": "JPY cash hint", "description": "Cash JPY", "from": "JPY cash", "verb": "has a", "to": "calculator hint"},
     {"name": "DKK cash hint", "description": "Cash DKK", "from": "DKK cash", "verb": "has a", "to": "calculator hint"},
     {"name": "SEK cash hint", "description": "Cash SEK", "from": "SEK cash", "verb": "has a", "to": "calculator hint"},
-    {"name": "portfolio split imports", "from": "portfolio split", "verb": "has a", "to": "calculator file import"},
-    {"name": "portfolio split imports label", "description": "Inputs from", "from": "portfolio split imports", "verb": "has a", "to": "calculator label"},
-    {"name": "portfolio split import portfolio", "from": "portfolio split imports", "verb": "has a", "to": "portfolio file"},
-    {"name": "portfolio split import portfolio label", "description": "Import portfolio", "from": "portfolio split import portfolio", "verb": "has a", "to": "calculator label"},
-    {"name": "portfolio split import exchange rate", "from": "portfolio split imports", "verb": "has a", "to": "exchange rate file"},
-    {"name": "portfolio split import exchange rate order", "from": "portfolio split import exchange rate", "verb": "is follower of", "to": "portfolio split import portfolio"},
-    {"name": "portfolio split import exchange rate label", "description": "Import FX rates", "from": "portfolio split import exchange rate", "verb": "has a", "to": "calculator label"}
+    {"name": "portfolio split assumptions import", "from": "portfolio split assumptions", "verb": "has a", "to": "calculator file import"},
+    {"name": "portfolio split assumptions import label", "description": "Import FX rates", "from": "portfolio split assumptions import", "verb": "has a", "to": "calculator label"}
   ],
   "formulas": [
     {"name": "stock holding value", "description": "the market value of a stock holding: the shares times the stock price", "expression": "\"holding value\" = \"shares\" * \"stock price\"", "assigned_word": "stock price"},

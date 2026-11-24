@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1757 of 6552 public functions have at least 2 unit test calls; the 4585 functions below do not; the 210 functions of the last section are called nowhere
+1757 of 6553 public functions have at least 2 unit test calls; the 4586 functions below do not; the 210 functions of the last section are called nowhere
 
-## 1827 functions of main backend have no test at all
+## 1826 functions of main backend have no test at all
 
 ```
 \-- application
@@ -146,7 +146,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_col_sub_phrase - 0 unit test calls
     \-- set_col_sub_phrase_by_id - 0 unit test calls
     \-- set_formula_by_id - 0 unit test calls
-    \-- set_join - 0 unit test calls shared by 2 classes
+    \-- set_join - 0 unit test calls shared by 3 classes
     \-- set_link_type - 0 unit test calls
     \-- set_link_type_by_id - 0 unit test calls
     \-- set_row_phrase_by_id - 0 unit test calls
@@ -335,8 +335,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- type - 0 unit test calls shared by 6 classes
     \-- validate_type - 0 unit test calls
 \-- element_group
-    \-- build_symbol - 0 unit test calls shared by 2 classes
-    \-- figures - 0 unit test calls shared by 2 classes
+    \-- set_join - 0 unit test calls shared by 3 classes
 \-- element_list
     \-- add_by_link - 0 unit test calls shared by 2 classes
     \-- del_without_log - 0 unit test calls shared by 2 classes
@@ -1892,7 +1891,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_terms_related - 0 unit test calls
     \-- name_field - 0 unit test calls shared by 36 classes
     \-- save_component_links - 0 unit test calls
-    \-- set_join - 0 unit test calls shared by 2 classes
+    \-- set_join - 0 unit test calls shared by 3 classes
     \-- set_style_by_id - 0 unit test calls shared by 4 classes
 \-- view_list
     \-- load_by_pattern - 0 unit test calls shared by 2 classes
@@ -2100,7 +2099,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 896 functions of frontend have no test at all
+## 894 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2273,10 +2272,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- view_relation_type_selector - 0 unit test calls shared by 2 classes
     \-- view_type_selector - 0 unit test calls shared by 2 classes
 \-- element_group
-    \-- build_symbol - 0 unit test calls shared by 2 classes
     \-- dsp_names - 0 unit test calls
     \-- dsp_values - 0 unit test calls
-    \-- figures - 0 unit test calls shared by 2 classes
 \-- figure
     \-- display_linked - 0 unit test calls shared by 7 classes
     \-- is_result - 0 unit test calls shared by 2 classes
@@ -3101,7 +3098,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1200 functions of main backend have incomplete tests
+## 1202 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3317,6 +3314,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_delete - 1 unit test calls shared by 6 classes
     \-- sql_insert - 4 unit test calls shared by 9 classes
     \-- sql_update - 5 unit test calls shared by 8 classes
+\-- element_group
+    \-- build_symbol - 1 unit test calls shared by 2 classes
+    \-- figures - 1 unit test calls shared by 2 classes
 \-- element_list
     \-- del_sql_without_log - 1 unit test calls shared by 2 classes
     \-- diff - 4 unit test calls shared by 3 classes
@@ -4523,7 +4523,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 554 functions of frontend have incomplete tests
+## 556 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4646,6 +4646,9 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- element
     \-- api_array - 21 unit test calls shared by 37 classes
     \-- link - 3 unit test calls shared by 2 classes
+\-- element_group
+    \-- build_symbol - 1 unit test calls shared by 2 classes
+    \-- figures - 1 unit test calls shared by 2 classes
 \-- figure
     \-- api_array - 21 unit test calls shared by 37 classes
     \-- display - 9 unit test calls shared by 24 classes

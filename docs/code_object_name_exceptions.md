@@ -139,7 +139,7 @@ element_list: $db_lst, $elm_lst, $frm_elm_lst, $result
 element_type: $elm_typ
 export: $exp
 export_type_list: $exp_typ, $exp_typ_lst
-expression: $chk_exp, $exp, $exp_db, $exp_keep, $exp_no_calc, $exp_pe, $exp_ref, $exp_scale, $exp_sector
+expression: $chk_exp, $exp, $exp_db, $exp_htp, $exp_keep, $exp_no_calc, $exp_pe, $exp_ref, $exp_scale, $exp_sector, $exp_two
 figure_list: $add_lst, $fig_lst, $fig_lst_ui, $lst
 formula_calc: $calc, $formula_calc
 formula_dsp: $frm_html

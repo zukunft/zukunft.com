@@ -172,6 +172,7 @@ use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\change_log_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\component_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\component_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\element_group_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\element_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\formula_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\formula_read_tests;
@@ -637,6 +638,8 @@ class a_selected_test extends all_unit_tests
             //new formula_list_read_tests()->run($this);
             //new expression_read_tests()->run($this);
             //new element_list_read_tests()->run($this);
+            // the previous row and the operands of the split walk read from the stored rows
+            new element_group_read_tests()->run($this);
             //new result_list_read_tests()->run($this);
             new view_read_tests()->run($this);
             //new view_list_read_tests()->run($this);
