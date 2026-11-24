@@ -148,7 +148,7 @@
         <div class="field">
           <label>Target weight parent</label>
           <div class="ro" id="wp">30 %</div>
-          <span class="hint">The parent keeps the remainder of every position [1]</span>
+          <span class="hint">The parent keeps the remainder of every position [2]</span>
         </div>
         <div class="warn" id="sumWarn" hidden>The weights of the children exceed 100 %.</div>
         <label class="check"><input id="mirror" type="checkbox" checked><span>Mirror the children<span class="hint" style="font-size:.76rem;color:var(--muted)">Every child gets exactly the first child's share count; needs equal weights</span></span></label>
@@ -180,7 +180,7 @@
         <div class="field">
           <label for="fxRate">Exchange rate <span class="tag m">measured</span></label>
           <div class="row"><input id="fxRate" type="number" value="0.1304"><span class="unit">CHF per DKK</span></div>
-          <span class="hint">CHF per unit of currency, bank report [2]</span>
+          <span class="hint">CHF per unit of currency, bank report [1]</span>
         </div>
         <div class="fx" id="fxBox"></div>
         <p class="hint" style="font-size:.76rem;color:var(--muted);margin:8px 0 0">CHF per unit of currency, bank report <span class="tag m">measured</span></p>
@@ -267,8 +267,8 @@
           <div class="src">
             <h2>Sources</h2>
             <ol>
-              <li>split agreement</li>
               <li><a href="https://bankleu.com/api/client_xy/portfolio_reporting.json">bank reporting bank leu client xy</a></li>
+              <li>split agreement</li>
             </ol>
           </div>
         </div>
@@ -755,7 +755,7 @@ function renderChildren() {
       remove = '<button class="btn btn-outline-secondary btn-sm" type="button" data-remove="' + k + '" title="Remove the ' + name + '" aria-label="Remove the ' + name + '"><i class="fas fa-times"></i></button>';
     }
     html.push('<div class="field"><label for="w' + k + '">Target weight ' + name + '</label>'
-      + '<div class="row"><input id="w' + k + '" type="number" min="0" max="100" step="0.5" value="' + c.w + '"><span class="unit">%</span>' + remove + '</div><span class="hint">[1]</span></div>');
+      + '<div class="row"><input id="w' + k + '" type="number" min="0" max="100" step="0.5" value="' + c.w + '"><span class="unit">%</span>' + remove + '</div><span class="hint">[2]</span></div>');
   });
   document.getElementById("children").innerHTML = html.join("");
   document.getElementById("addChild").disabled = CHILDREN.length >= ORDINALS.length;

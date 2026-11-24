@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -355,6 +356,41 @@ class use_case_ui_tests
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        // a result of the operand is a number of the list too e.g. the value that a beneficiary receives per row of a walk
+        $test_name = 'a list function takes the results of its operand too';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
+        $res_list_lst = $t_val->value_list_list_function_ui();
+        $res_list_lst->add_results($t_res->result_list_list_function_ui(true, false), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $res_list_lst, $frm_list_lst), 30.0);
+        // negative: a result outside the context is no number of the list, like a value
+        $test_name = '... but not a result outside the context';
+        $out_list_lst = $t_val->value_list_list_function_ui();
+        $out_list_lst->add_results($t_res->result_list_list_function_ui(false, false), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $out_list_lst, $frm_list_lst), 15.0);
+        // negative: the stored number of the formula that is calculated is its result before this calculation
+        $test_name = '... and never a result of the formula that is calculated';
+        $own_list_lst = $t_val->value_list_list_function_ui();
+        $own_list_lst->add_results($t_res->result_list_list_function_ui(true, true), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $own_list_lst, $frm_list_lst), 15.0);
+        // a list takes the numbers of a kind e.g. the walk rows of LISP for the stocks, because LISP is a stock
+        $test_name = 'a list function takes the numbers of a kind of its operand';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '","' . word_names::CITY . '" )');
+        $kind_links = phrase_kinds::with_link([], triple_names::CITY_ZH_NAME, word_names::CITY);
+        $kind_sum = new formula_calc([], $kind_links)->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst);
+        $t->assert($test_name, $kind_sum, 30.0);
+        // negative: without the is a link no number of the list names the city, so the list gives no number
+        $test_name = '... but only by an is a link of the page';
+        $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        // the page reads the is a links from its triples e.g. Zurich is a city
+        $test_name = 'the is a links of the page are the triples with the verb is a';
+        $dto_knd = new data_object();
+        $dto_knd->phr_lst = new test_phrases($t)->list_zh_ui();
+        $zh_kinds = new ui_list()->kind_names($dto_knd)[word_names::ZH] ?? [];
+        $t->assert_contains($test_name, $zh_kinds, [word_names::CITY, word_names::CANTON]);
+        // negative: a page without triples has no is a link
+        $test_name = '... and a page without triples has none';
+        $dto_knd->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, new ui_list()->kind_names($dto_knd), []);
 
         $t->subheader($ts . 'result tooltip');
         // the tooltip of a result shows the result number with the numbers of the page used and below the formula with the term names

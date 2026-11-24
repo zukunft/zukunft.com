@@ -497,6 +497,19 @@ value first and its probability range from that target afterwards. A result that
 did not reproduce is never an operand, else a wrong number would confirm the next
 one instead of being reported.
 
+An operand of `sum`, `count` or `mean` stands for all numbers that name the operand and
+**all** phrases of the `context`: the values of the file and the reproduced results, a
+result of the phrases of a value only once by the value, and never a result of the
+formula that is checked, the same rule as the backend (`formula::list_numbers`) and the
+page. So the `context` of a list check names only the phrases that the numbers of the
+list share, e.g. `["fruit basket", "weight", "kg"]` for the weight of the apple and of the
+pear. A number also counts for a phrase if it has a phrase that is a kind of it by an
+`is a` triple of the file, over several levels, e.g. `["fruit basket", "fruit", "weight",
+"kg"]` sums the apple and the cherry, because the cherry is a stone fruit and a stone fruit
+is a fruit, like the walk rows of LISP for the stocks of the portfolio split. A calculation inside the list (`sum( "a" * "b" )`) and an operand that is also used
+outside its list are refused, because a list would need pairs of numbers or would replace
+the other use.
+
 The database is never asked for an operand, so a chain that needs the numbers of
 another file belongs into that file: the climate solutions are calculated in
 `problem_global_warming.json`, because their gain uses the welfare loss share of

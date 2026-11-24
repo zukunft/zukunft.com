@@ -40,6 +40,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_CALC . 'arithmetic.php';
+include_once paths::SHARED_CALC . 'phrase_kinds.php';
 include_once paths::SHARED_CALC . 'prior_operand.php';
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
@@ -147,6 +149,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -1487,8 +1491,48 @@ class data_object
         // the values of the file first, so that a value wins over a checked result with as few foreign phrases
         $numbers = array_merge($val_names, $checked);
         $result = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
-        $exp_part_lst = explode(chars::TERM_DELIMITER, $result);
-        // the phrase names are the odd entries between the term delimiters
+        [$groups, $plain_txt] = $this->operand_groups(explode(chars::TERM_DELIMITER, $result));
+        // the operands in and outside a list, because the numbers of a list replace every use of its operand
+        $list_keys = [];
+        $one_keys = [];
+        foreach ($groups as [$phr_names, $grp_parts, $before]) {
+            $is_list = arithmetic::is_list_argument($before);
+            if ($is_list) {
+                $list_keys[] = implode(chars::SEPARATOR, $phr_names);
+            } else {
+                $one_keys[] = implode(chars::SEPARATOR, $phr_names);
+            }
+            $num = $this->operand_text($phr_names, $is_list, $numbers, $ctx_names, $res_set, $frm, $pri);
+            if ($num === null) {
+                $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
+                    msg_id::VAR_WORD_NAME => implode(chars::SEPARATOR, $phr_names),
+                    msg_id::VAR_NAME => $res_name
+                ]);
+            } else {
+                // the group is replaced as it is written, so that a separator with a blank
+                // or a name with a separator inside the quotes is replaced as well
+                $result = str_replace(
+                    chars::TERM_DELIMITER . implode(chars::TERM_DELIMITER, $grp_parts) . chars::TERM_DELIMITER,
+                    $num, $result);
+            }
+        }
+        // never a wrong number: a list that cannot take all numbers of its operand is refused like by the backend (formula::to_num_new)
+        $is_used_outside = array_intersect($list_keys, $one_keys) != [];
+        if (!arithmetic::list_args_are_plain($plain_txt) or $is_used_outside) {
+            $msg->add(msg_id::FORMULA_LIST_ARGUMENT, [msg_id::VAR_EXPRESSION => $frm->usr_text]);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $exp_part_lst the expression split by the term delimiter, so the phrase names are the odd entries
+     * @return array the operands, each with its phrase names, its parts as written and the expression before it with x
+     *               for each operand, and the whole expression with x for each operand (arithmetic::list_args_are_plain)
+     */
+    private function operand_groups(array $exp_part_lst): array
+    {
+        $groups = [];
+        $plain_txt = '';
         $i = 1;
         while ($i < count($exp_part_lst)) {
             $first = $i;
@@ -1498,27 +1542,99 @@ class data_object
                 $i = $i + 2;
                 $phr_names[] = $exp_part_lst[$i];
             }
-            [$sel_names, $sel_ctx] = $pri->select($phr_names, $ctx_names);
-            $sel_set = array_flip($sel_ctx);
-            $val = $this->number_by_names($numbers, $sel_names, $sel_set, $res_set);
-            // the first row has no previous row and the number 0
-            $num = $pri->is_first($phr_names, $ctx_names) ? 0 : $val?->number();
-            if ($num === null) {
-                $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
-                    msg_id::VAR_WORD_NAME => implode(chars::SEPARATOR, $phr_names),
-                    msg_id::VAR_NAME => $res_name
-                ]);
-            } else {
-                // the group is replaced as it is written, so that a separator with a blank
-                // or a name with a separator inside the quotes is replaced as well
-                $grp_parts = array_slice($exp_part_lst, $first, $i - $first + 1);
-                $result = str_replace(
-                    chars::TERM_DELIMITER . implode(chars::TERM_DELIMITER, $grp_parts) . chars::TERM_DELIMITER,
-                    $num, $result);
-            }
+            $plain_txt .= $exp_part_lst[$first - 1];
+            $groups[] = [$phr_names, array_slice($exp_part_lst, $first, $i - $first + 1), $plain_txt];
+            $plain_txt .= 'x';
             $i = $i + 2;
         }
+        $plain_txt .= $exp_part_lst[count($exp_part_lst) - 1];
+        return [$groups, $plain_txt];
+    }
+
+    /**
+     * @param array $phr_names the phrase names of one operand e.g. "weight"
+     * @param bool $is_list true for an argument of a list function, which stands for all numbers of the operand
+     * @param array $numbers the values and then the checked results of this file with their phrase names
+     * @param array $ctx_names the phrase names that limit the selection
+     * @param array $res_set the phrase names of the checked result as the keys of a set
+     * @param formula $frm the formula that is checked, whose results are never a number of its own list
+     * @param prior_operand $pri the previous rows of the follower chains of this file
+     * @return string|null the number of the operand or the numbers of a list, null if the file has none
+     */
+    private function operand_text(
+        array         $phr_names,
+        bool          $is_list,
+        array         $numbers,
+        array         $ctx_names,
+        array         $res_set,
+        formula       $frm,
+        prior_operand $pri
+    ): ?string
+    {
+        [$sel_names, $sel_ctx] = $pri->select($phr_names, $ctx_names);
+        if ($is_list) {
+            $nums = $this->list_numbers($numbers, [...$sel_names, ...$sel_ctx], $frm);
+            $result = $nums == [] ? null : implode(chars::FUNC_ARG_SEPARATOR, $nums);
+        } elseif ($pri->is_first($phr_names, $ctx_names)) {
+            // the first row has no previous row and the number 0
+            $result = '0';
+        } else {
+            $val = $this->number_by_names($numbers, $sel_names, array_flip($sel_ctx), $res_set);
+            $result = $val === null ? null : (string)$val->number();
+        }
         return $result;
+    }
+
+    /**
+     * the numbers of an operand of a list function e.g. sum( "weight" ): the values and the checked results with all
+     * phrases of the operand and the context or a kind of them, the same rule as the backend (formula::list_numbers)
+     *
+     * @param array $numbers the values and then the checked results of this file with their phrase names
+     * @param array $wanted the phrase names that each number of the list has or a kind of it: the operand and the context
+     * @param formula $frm the formula that is checked, whose results are never a number of its own list
+     * @return array the numbers of the list, a checked result of the phrases of a value only once by the value
+     */
+    private function list_numbers(array $numbers, array $wanted, formula $frm): array
+    {
+        $result = [];
+        $keys = [];
+        // e.g. the walk rows of LISP for the stocks, because LISP is a stock
+        $knd = new phrase_kinds($this->kind_names());
+        foreach ($numbers as [$num, $names]) {
+            $key = $this->name_set_key($names);
+            if ($this->is_list_number($num, $names, $wanted, $knd, $frm) and !in_array($key, $keys)) {
+                $result[] = $num->number();
+                $keys[] = $key;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param value|result $num a value or a checked result of this file
+     * @param array $names the phrase names of the number as the keys of a set
+     * @param array $wanted the phrase names of the operand and the context, of which the number has each or a kind of it
+     * @param phrase_kinds $knd the is a links of this file
+     * @param formula $frm the formula that is checked
+     * @return bool true if the list function takes the number (see list_numbers)
+     */
+    private function is_list_number(value|result $num, array $names, array $wanted, phrase_kinds $knd, formula $frm): bool
+    {
+        $has_all = $knd->has_all(array_map('strval', array_keys($names)), $wanted);
+        $is_excluded = array_intersect_key($names, array_flip(words::LIST_FUNCTION_EXCLUDED)) != [];
+        $is_own = ($num instanceof result and isset($num->frm) and $num->frm->name() == $frm->name());
+        return ($has_all and !$is_excluded and !$is_own);
+    }
+
+    /**
+     * @param array $names the phrase names of a number as the keys of a set
+     * @return string the names in alphabetic order, the same for two numbers of the same phrases
+     */
+    private function name_set_key(array $names): string
+    {
+        $sorted = array_map('strval', array_keys($names));
+        sort($sorted, SORT_STRING);
+        return implode(chars::SEPARATOR, $sorted);
     }
 
     /**
@@ -1532,6 +1648,22 @@ class data_object
             $to = $trp->get_to()?->name();
             if ($trp->get_verb_code_id() == verbs::FOLLOW and $from != null and $to != null) {
                 $result = prior_operand::with_link($result, $from, $to);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per phrase name the names of the phrases that it is a kind of by an "is a" triple of this import (shared\calc\phrase_kinds)
+     */
+    private function kind_names(): array
+    {
+        $result = [];
+        foreach ($this->triple_list()->lst() as $trp) {
+            $from = $trp->get_from()?->name();
+            $to = $trp->get_to()?->name();
+            if ($trp->get_verb_code_id() == verbs::IS and $from != null and $to != null) {
+                $result = phrase_kinds::with_link($result, $from, $to);
             }
         }
         return $result;

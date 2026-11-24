@@ -75,6 +75,7 @@ include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CALC . 'phrase_kinds.php';
 include_once html_paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -1989,7 +1991,7 @@ class ui_list extends ui_base
         api_type_list $typ_lst = new api_type_list()
     ): void
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $frm_lst = $dto?->formula_list() ?? new formula_list();
         $page_lst = null;
         if ($dto != null) {
@@ -2169,6 +2171,31 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * @param data_object|null $dto the data cache of the page with the phrases
+     * @return array per phrase name the names of the phrases that it is a kind of e.g. stock for LISP (shared\calc\phrase_kinds)
+     */
+    function kind_names(?data_object $dto): array
+    {
+        $result = [];
+        foreach ($dto?->phr_lst?->lst() ?? [] as $phr) {
+            $is_kind = ($phr->is_triple() and $phr->get_verb()?->id() == verbs::IS_ID);
+            if ($is_kind and $phr->get_from() != null and $phr->get_to() != null) {
+                $result = phrase_kinds::with_link($result, $phr->get_from()->name(), $phr->get_to()->name());
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param data_object|null $dto the data cache of the page with the phrases
+     * @return formula_calc the calculation of the page with its follower chains and its "is a" links
+     */
+    private function page_calc(?data_object $dto): formula_calc
+    {
+        return new formula_calc($this->prior_names($dto), $this->kind_names($dto));
     }
 
     /**
@@ -2537,7 +2564,7 @@ class ui_list extends ui_base
     {
         $result = [];
         $this->add_phrase_results($dto, $dbo->phrase(), $msg);
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         // in a fixed order, because the order of the operands is the order of their sources on the page
         foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
             $this->add_context_values($res, $dto, $msg, $typ_lst);
@@ -3340,7 +3367,7 @@ class ui_list extends ui_base
      */
     private function recalculate(value_list $lst, data_object $dto, user_message $msg): void
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $frm_lst = $dto->formula_list();
         $changed = true;
         $pass = 0;
@@ -3656,7 +3683,7 @@ class ui_list extends ui_base
     private function calculator_field_basis(phrase $phr, ?sandbox_value $val, data_object $dto, user_message $msg): array
     {
         if ($val instanceof result) {
-            $calc = new formula_calc($this->prior_names($dto));
+            $calc = $this->page_calc($dto);
             $result = $calc->operands($val, $this->values_and_results($dto, $msg), $dto->formula_list());
         } else {
             $result = $this->calculator_basis_values($phr, $val, $dto, $msg);
@@ -5453,7 +5480,7 @@ class ui_list extends ui_base
      */
     private function calculator_result_plan(value_list $lst, data_object $dto): array
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $result = [];
         foreach ($lst->lst() as $res) {
             if ($res instanceof result) {

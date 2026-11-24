@@ -3443,3 +3443,14 @@ phrases that neither the operand nor the result names, like `data_object::number
 is about something else (the gross avoided emission over the lifetime); `result_zh_sum_ui` has no context phrase of
 the result outside `zh`, so add a result with such a phrase and a unit test that a number with more phrases of the
 result but a foreign phrase loses against the plain value, and negative: on a tie the first number of the list.
+
+## a unit test of the javascript selection of the calculator page
+
+Added on 2026-11-24: `calculator_json.js` repeats the selection rules of `ui_list` and `formula_calc`, but only the
+html snapshots of the use cases and their case reports test it, because no test runs the script on a seed without a
+browser. Two rules of 2026-11-24 have no test of the script of their own: `fieldEntry` takes the first of the values of
+the same rank in the order of `sandbox_value::sorted` (`sortedEntries`, e.g. CHF per DKK of the six exchange rates) and
+no value for an option whose numbers differ, and `listEntries` takes the results of the operand without a second result
+of the phrases of a value and without a result of the formula that is calculated, and the numbers of a kind of a
+wanted phrase over several levels of `is a` (`hasAllKinds`, `withKinds`). Add a node test that loads the
+script with a small seed, positive and negative for each, like the php tests in `unit_ui/use_case_ui_tests.php`.

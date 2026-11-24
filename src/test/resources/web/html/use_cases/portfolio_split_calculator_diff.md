@@ -4,12 +4,7 @@ Change the generated page portfolio_split_calculator_no_js.html so that it shows
 
 ## Missing in the generated page (0)
 
-## Different (4)
-
-- field: Target weight first child, hint: the sample shows "[1]" and the generated page "[2]"
-- field: Target weight second child, hint: the sample shows "[1]" and the generated page "[2]"
-- field: Target weight parent, hint: the sample shows "The parent keeps the remainder of every position [1]" and the generated page "The parent keeps the remainder of every position [2]"
-- field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report [1]"
+## Different (0)
 
 ## Only in the generated page (0)
 

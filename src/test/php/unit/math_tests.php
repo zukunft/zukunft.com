@@ -330,6 +330,9 @@ class math_tests
         $t->assert_false($ts . 'no calculation in a list argument', arithmetic::list_args_are_plain('sum( x * x )'));
         $t->assert_false($ts . 'no bracket in a list argument', arithmetic::list_args_are_plain('mean( ( x ) )'));
         $t->assert_false($ts . 'no empty list', arithmetic::list_args_are_plain('count( )'));
+        // an operand inside a list function stands for all its numbers
+        $t->assert_true($ts . 'a list argument', arithmetic::is_list_argument('1 + sum( "a" ; '));
+        $t->assert_false($ts . 'no list argument after the list', arithmetic::is_list_argument('sum( "a" ) + '));
         // the backend finds the symbols of the lists, and refuses a symbol that is also used outside a list
         $frm = new formula($t->usr1);
         $t->assert($ts . 'list symbols', $frm->list_symbols('=sum({w1};{w2})/{w3}'), ['{w1}', '{w2}']);

@@ -46,6 +46,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_CALC . 'arithmetic.php';
+include_once html_paths::SHARED_CALC . 'phrase_kinds.php';
 include_once html_paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'words.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -84,13 +86,17 @@ class formula_calc
     private array $names_by_val = [];
     // reads the number of the previous row for an operand with the name prior
     private prior_operand $pri;
+    // the kinds of the phrases of a number e.g. stock for LISP, so that a list takes the rows of a kind
+    private phrase_kinds $knd;
 
     /**
      * @param array $prior per phrase name of the page the phrase before it in its "is follower of" chain
+     * @param array $kinds per phrase name of the page the phrases that it is a kind of (phrase_kinds::with_link)
      */
-    function __construct(array $prior = [])
+    function __construct(array $prior = [], array $kinds = [])
     {
         $this->pri = new prior_operand($prior);
+        $this->knd = new phrase_kinds($kinds);
     }
 
     /**
@@ -322,8 +328,7 @@ class formula_calc
      */
     private function is_list_argument(string $exp, int $start): bool
     {
-        $names = implode('|', chars::FUNC_LIST);
-        return preg_match('/\b(?:' . $names . ')\s*\([^()]*$/', substr($exp, 0, $start)) === 1;
+        return arithmetic::is_list_argument(substr($exp, 0, $start));
     }
 
     /**
@@ -338,7 +343,7 @@ class formula_calc
     {
         [$sel_names, $sel_ctx] = $this->pri->select($names, $ctx);
         if ($is_list) {
-            $result = $this->list_values($sel_names, $sel_ctx, $val_lst);
+            $result = $this->list_values($sel_names, $sel_ctx, $res, $val_lst);
         } else {
             $val = $this->value_of($sel_names, $sel_ctx, $res, $val_lst);
             $result = $val == null ? [] : [$val];
@@ -347,26 +352,40 @@ class formula_calc
     }
 
     /**
-     * the same selection as the backend (formula::fill_list_element_group): all stored values that
-     * name the operand and the context, without a second number of the same fact
+     * the same selection as the backend (formula::list_numbers): all values and results that name the operand and
+     * the context or a kind of it (phrase_kinds) e.g. the walk rows of LISP for the stocks, without a second number
+     * of the same fact and never a result of the formula that is calculated,
+     * because its stored number is the result before this calculation; a value and a result of the same phrases are
+     * never both in the list, because the list keeps one number per phrase group (value_list::add_results)
      *
      * @param array $names the phrase names of one operand
      * @param array $ctx the phrase names of the context of the result
+     * @param result $res the result that is calculated
      * @param value_list $val_lst the values and results of the page
-     * @return array the values of the list
+     * @return array the values and results of the list
      */
-    private function list_values(array $names, array $ctx, value_list $val_lst): array
+    private function list_values(array $names, array $ctx, result $res, value_list $val_lst): array
     {
         $result = [];
         foreach ($val_lst->lst() as $val) {
             $phr_names = $this->phrase_names($val);
-            $has_all = array_diff([...$names, ...$ctx], $phr_names) == [];
+            $has_all = $this->knd->has_all($phr_names, [...$names, ...$ctx]);
             $is_excluded = array_intersect($phr_names, words::LIST_FUNCTION_EXCLUDED) != [];
-            if ($val instanceof value and $has_all and !$is_excluded) {
+            if ($has_all and !$is_excluded and !$this->is_same_formula($val, $res)) {
                 $result[] = $val;
             }
         }
         return $result;
+    }
+
+    /**
+     * @param value|result $val a number of the page
+     * @param result $res the result that is calculated
+     * @return bool true if the number is a result of the formula of the result
+     */
+    private function is_same_formula(value|result $val, result $res): bool
+    {
+        return ($val instanceof result and $val->frm?->id() == $res->frm?->id());
     }
 
     /**

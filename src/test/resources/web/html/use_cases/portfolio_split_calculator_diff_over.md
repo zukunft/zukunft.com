@@ -4,12 +4,8 @@ Change the generated page portfolio_split_calculator_js.html#over so that it sho
 
 ## Missing in the generated page (0)
 
-## Different (58)
+## Different (54)
 
-- field: Exchange rate, tag: the sample shows "measured" and the generated page ""
-- field: Exchange rate, unit: the sample shows "CHF per DKK" and the generated page ""
-- field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report"
-- field: Exchange rate, value: the sample shows "0.1304" and the generated page ""
 - row: Realised / Stocks, cells: the sample shows "0 | 4'884'250 | 4'884'250 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
 - row: Realised / Bonds, cells: the sample shows "0 | 3'002'250 | 3'002'250 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
 - row: Realised / Cash, cells: the sample shows "0 | 1'918'950 | 1'918'950 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"

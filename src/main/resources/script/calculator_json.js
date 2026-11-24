@@ -149,11 +149,11 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the acronym of a phrase e.g. Jan of January, the first one like calculator::acronym
     const acronyms = new Map();
     (seed.words || []).forEach(function (w) {
-        phrases.set(w.name, {name: w.name, id: String(w.id), type: w.type || '', description: w.description || ''});
+        phrases.set(w.name, {name: w.name, id: String(w.id), type: w.type || '', description: w.description || '', impact: Number(w.impact) || 0});
     });
     (seed.triples || []).forEach(function (t) {
         const name = t.name || generatedName(t);
-        const trp = {name: name, id: '-' + t.id, type: t.type || '', from: t.from, verb: t.verb, to: t.to, description: t.description || ''};
+        const trp = {name: name, id: '-' + t.id, type: t.type || '', from: t.from, verb: t.verb, to: t.to, description: t.description || '', impact: Number(t.impact) || 0};
         phrases.set(name, trp);
         if (!children.has(t.from)) {
             children.set(t.from, []);
@@ -531,8 +531,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     }
 
     /* the value of a field: the operand of a result of the page first, so that a changed field changes the results, then with the page phrase
-       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
-    function fieldEntry(name) {
+       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value);
+       onlyOneNumber true for no value if the values that rank the same have different numbers, else the first in the preferred order */
+    function fieldEntry(name, onlyOneNumber) {
         const props = FIELD_PROPERTIES;
         const parts = [page.from, page.to].filter(function (p) {
             return p;
@@ -562,7 +563,35 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 }
             }
         });
-        return onlyOne(best, name);
+        // e.g. the six exchange rates of the same rank, of which the page without javascript shows CHF per DKK
+        const sorted = sortedEntries(best);
+        const result = onlyOneNumber ? onlyOne(sorted, name) : (sorted[0] || null);
+        return result;
+    }
+
+    /* the numbers in the preferred order: the bigger impact first, then by the unit, the bigger number and the phrase names (sandbox_value::sorted) */
+    function sortedEntries(entries) {
+        const result = entries.slice().sort(function (a, b) {
+            return impactOf(b) - impactOf(a)
+                || textCompare(unitKey(a), unitKey(b))
+                || Number(b.number) - Number(a.number)
+                || textCompare(a.words.slice().sort().join(', '), b.words.slice().sort().join(', '));
+        });
+        return result;
+    }
+
+    /* the biggest impact of the phrases of a number, 0 for a phrase without one (sandbox_value::impact) */
+    function impactOf(entry) {
+        const result = entry.words.reduce(function (max, w) {
+            return Math.max(max, (phrases.get(w) || {impact: 0}).impact);
+        }, 0);
+        return result;
+    }
+
+    /* -1, 0 or 1 like strcmp, because the preferred order must not depend on the language of the browser */
+    function textCompare(a, b) {
+        const result = a < b ? -1 : (a > b ? 1 : 0);
+        return result;
     }
 
     function compareRank(a, b) {
@@ -838,14 +867,51 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return phr !== null && priorOf(phr) === null;
     }
 
-    /* the stored values with all names of the operand and the context of the result (formula_calc::list_values) */
+    /* the values and results with all names of the operand and the context of the result or a kind of them e.g. the walk rows
+       of LISP for the stocks, without a second number of the same fact, so a result of the phrases of a value only once,
+       which the pool lists first, and never a result of the formula that is calculated, because its stored number is the
+       result before this calculation (formula_calc::list_values) */
     function listEntries(names, res) {
-        const result = pool.filter(function (e) {
+        const selected = priorSelect(names, res.context);
+        const wanted = selected.names.concat(selected.context);
+        const result = [];
+        pool.forEach(function (e) {
             const isExcluded = e.words.some(function (w) {
                 return LIST_EXCLUDED.indexOf(w) >= 0;
             });
-            return !e.result && !isExcluded && hasAll(e, [...names, ...res.context]);
+            const isOwn = e.result === true && e.formula === res.formula;
+            const isKnown = result.some(function (r) {
+                return r.id === e.id;
+            });
+            if (!isExcluded && !isOwn && !isKnown && hasAllKinds(e, wanted)) {
+                result.push(e);
+            }
         });
+        return result;
+    }
+
+    /* each wanted phrase is a phrase of the number or a phrase that one of them is a kind of (phrase_kinds::has_all) */
+    function hasAllKinds(entry, wanted) {
+        const known = withKinds(entry.words);
+        const result = wanted.every(function (w) {
+            return known.indexOf(w) >= 0;
+        });
+        return result;
+    }
+
+    /* the names and every phrase that they are a kind of over all levels, each once, so that a loop of links ends
+       e.g. LISP, stock and holding (phrase_kinds::with_kinds) */
+    function withKinds(names) {
+        const result = names.slice();
+        const open = names.slice();
+        while (open.length > 0) {
+            (children.get(open.shift()) || []).forEach(function (t) {
+                if (t.verb === VERB.is && result.indexOf(t.to) < 0) {
+                    result.push(t.to);
+                    open.push(t.to);
+                }
+            });
+        }
         return result;
     }
 
@@ -898,8 +964,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             let missing = false;
             const text = calculation(res).replace(OPERAND_PATTERN, function (term, start, all) {
                 if (LIST_ARGUMENT_START.test(all.slice(0, start))) {
+                    // a result of the list is calculated again like one operand, so that a sum follows the walk of the inputs
                     const nums = listEntries(operandNames(term), res).map(function (e) {
-                        return Number(e.number).toFixed(12);
+                        return operandNumber(e, done, open).toFixed(12);
                     });
                     missing = missing || nums.length === 0;
                     return nums.length === 0 ? '0' : nums.join(FUNC_ARG_SEPARATOR);
@@ -1640,8 +1707,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return block('div', '<label for="' + field + '">' + text + '</label>' + input, STYLE.field);
     }
 
+    /* several numbers of the option phrase are numbers of other phrases e.g. the lot value per holding, so none is the
+       number of the option (ui_list::calculator_option_value) */
     function optionEntry(name, option) {
-        return cellEntry([name, option]) || fieldEntry(option);
+        return cellEntry([name, option]) || fieldEntry(option, true);
     }
 
     /* true for a number with a unit, which a selector option names with its source (ui_list::calculator_option_text) */

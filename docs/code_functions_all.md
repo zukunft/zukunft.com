@@ -57,6 +57,7 @@
     \-- list_symbols - section for function list_symbols not yet defined that it should be calc in /formula/formula.php
     \-- fill_list_element_group - section for function fill_list_element_group not yet defined that it should be calc in
              /formula/formula.php
+    \-- list_numbers - section for function list_numbers not yet defined that it should be calc in /formula/formula.php
     \-- fill_element_group - section for function fill_element_group not yet defined that it should be calc in /formula/
             formula.php
     \-- fill_results_with_one_figure - section for function fill_results_with_one_figure not yet defined that it should 
@@ -1102,6 +1103,9 @@
     \-- fill_list_element_group
         \-- formula - replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)"
                 :
+    \-- list_numbers
+        \-- formula - the numbers of a list function: the values, then each result whose phrases no value has,
+                 because the value wins
     \-- fill_element_group
         \-- formula - replace one element group's symbol with the matching figure number(s) in the result list
     \-- fill_results_with_one_figure
@@ -7230,6 +7234,7 @@
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
     \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
+    \-- kind_names - section for function kind_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
     \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
@@ -10171,6 +10176,8 @@
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
     \-- prior_names
         \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
+    \-- kind_names
+        \-- ui_list - @param data_object|null $dto the data cache of the page with the phrases
     \-- value_input_fields
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
     \-- input_fields

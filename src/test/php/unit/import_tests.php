@@ -679,6 +679,59 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match the result 100');
 
+        // a list function sums the values and the checked results of its operand like the page and the backend
+        // (formula::list_numbers), e.g. the value of the apple and the checked weight of the pear
+        $test_name = 'JSON import calc validation sums a value and a checked result';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_LIST_RESULT . test_files::JSON);
+        $json_list = json_decode($json_str, true);
+        $imp->get_data_object($json_list, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        // negative: a result that the file has not checked before is no number of the list
+        $test_name = '... but only a result that the file has checked before';
+        $msg = new user_message($t->usr1);
+        $json_unchecked = $json_list;
+        $json_unchecked[json_fields::CALC_VALIDATION] = [$json_list[json_fields::CALC_VALIDATION][1]];
+        $imp->get_data_object($json_unchecked, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match the result 2');
+        // negative: a checked result of the formula that is checked is never a number of its own list
+        $test_name = '... and never a result of the formula that is checked';
+        $msg = new user_message($t->usr1);
+        $json_again = $json_list;
+        $json_again[json_fields::CALC_VALIDATION][] = $json_list[json_fields::CALC_VALIDATION][1];
+        $imp->get_data_object($json_again, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        // negative: a calculation inside a list function would need pairs of numbers, so the import refuses it like the backend
+        $test_name = 'JSON import calc validation refuses a calculation inside a list function';
+        $msg = new user_message($t->usr1);
+        $json_calc = $json_list;
+        $json_calc[json_fields::FORMULAS][1][json_fields::EXPRESSION] = '"total","weight" = sum( "weight" * 2 )';
+        $imp->get_data_object($json_calc, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'cannot be calculated');
+        // negative: the numbers of a list replace every use of the operand, so it cannot also be used outside the list
+        $test_name = '... and an operand inside and outside a list function';
+        $msg = new user_message($t->usr1);
+        $json_outside = $json_list;
+        $json_outside[json_fields::FORMULAS][1][json_fields::EXPRESSION] = '"total","weight" = sum( "weight" ) / "weight"';
+        $imp->get_data_object($json_outside, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'cannot be calculated');
+
+        // a list takes the numbers of a kind of a phrase of its context over several levels of is a, e.g. the cherry is a
+        // stone fruit, which is a fruit, like the walk rows of LISP for the stocks of the portfolio split
+        $test_name = 'JSON import calc validation sums the numbers of the kinds of a phrase';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_LIST_KIND . test_files::JSON);
+        $json_kind = json_decode($json_str, true);
+        $imp->get_data_object($json_kind, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        // negative: without the is a triples no number of the file names the fruit, so the list has no number
+        $test_name = '... but only by the is a triples of the file';
+        $msg = new user_message($t->usr1);
+        $json_no_kind = $json_kind;
+        $json_no_kind[json_fields::TRIPLES] = [];
+        $imp->get_data_object($json_no_kind, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'the value for "weight"');
+
         $test_name = 'JSON import calc validation reports a result mismatch';
         $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);

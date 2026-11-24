@@ -127,6 +127,16 @@ class arithmetic
     }
 
     /**
+     * @param string $before the expression before an operand e.g. 'sum( '
+     * @return bool true if the operand is an argument of a list function and stands for all its numbers
+     */
+    static function is_list_argument(string $before): bool
+    {
+        $names = implode('|', chars::FUNC_LIST);
+        return preg_match('/\b(?:' . $names . ')\s*\([^()]*$/', $before) === 1;
+    }
+
+    /**
      * the power, also used by the backend calculation (service/math/calc_internal.php)
      *
      * @param float $base the number that is raised

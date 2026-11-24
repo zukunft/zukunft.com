@@ -40,6 +40,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
@@ -51,7 +53,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -69,7 +74,9 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -348,6 +355,50 @@ class formula_tests
         $ratio_names = $res_ratio->grp()->phrase_list()->names();
         $t->assert_contains_not($test_name, $ratio_names, [word_names::GRAM]);
         $msg->reset();
+
+        // a list function also sums the results of its operand e.g. the value that a beneficiary receives per row of a walk
+        $t->subheader($ts . 'list numbers');
+        $test_name = 'a list function takes the values and the results of its operand';
+        $t_val = new test_values($t);
+        $t_res = new test_results($t);
+        $frm_sum = $t_frm->formula();
+        $frm_other = new formula($t->usr1);
+        $frm_other->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $val_lst = new value_list($t->usr1);
+        $val_lst->add($t_val->value_for_phrases([$zh, $inh], 10));
+        $res_lst = new result_list($t->usr1);
+        $res_other = $t_res->result_for_phrases([$zh, $inh, $t_wrd->word_mayor()->phrase()], 20);
+        $res_other->set_formula($frm_other);
+        $res_lst->add($res_other);
+        $no_kinds = new phrase_kinds();
+        $wanted = array_map('strval', [$zh->id(), $inh->id()]);
+        $nums = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted));
+        $t->assert($test_name, $nums, [10.0, 20.0]);
+        // negative: a result of the phrases of a value is the same fact, and the value wins like for one operand
+        $test_name = '... but not a result of the same phrases as a value';
+        $res_lst->add($t_res->result_for_phrases([$zh, $inh], 30));
+        $nums_fact = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted));
+        $t->assert($test_name, $nums_fact, [10.0, 20.0]);
+        // negative: the stored number of the formula that is calculated is its result before this calculation
+        $test_name = '... and never a result of the formula that is calculated';
+        $res_own = $t_res->result_for_phrases([$zh, $inh, $t_wrd->word_minor()->phrase()], 40);
+        $res_own->set_formula($frm_sum);
+        $res_lst->add($res_own);
+        $nums_own = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted));
+        $t->assert($test_name, $nums_own, [10.0, 20.0]);
+        // a number of a kind of a wanted phrase e.g. the walk row of LISP for the stocks, here Zurich for the cities
+        $test_name = 'a list function takes the numbers of a kind of a wanted phrase';
+        $city_id = (string)$t_wrd->word_city()->phrase()->id();
+        $knd = new phrase_kinds(phrase_kinds::with_link([], (string)$zh->id(), $city_id));
+        $wanted_city = [$city_id, (string)$inh->id()];
+        $nums_kind = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $knd, $wanted_city));
+        $t->assert($test_name, $nums_kind, [10.0, 20.0]);
+        // negative: without the is a link no number names the city
+        $test_name = '... but only by an is a link';
+        $nums_no_kind = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted_city));
+        $t->assert($test_name, $nums_no_kind, []);
 
         $t->subheader($ts . 'stored expression check');
         // both texts of a formula are stored, so a reference text that the expression does not give any more is reported

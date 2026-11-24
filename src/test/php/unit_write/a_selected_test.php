@@ -139,6 +139,7 @@ use Zukunft\ZukunftCom\test\php\unit\horizontal_tests;
 use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit\ip_range_tests;
 use Zukunft\ZukunftCom\test\php\unit\job_tests;
+use Zukunft\ZukunftCom\test\php\unit\math_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\phrase_tests;
 use Zukunft\ZukunftCom\test\php\unit\ref_tests;
@@ -346,7 +347,7 @@ class a_selected_test extends all_unit_tests
         $ui_unit = new frontend('unit tests');
         $ui_unit->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
         //new lib_tests()->run(new all_tests());
-        //new math_tests()->run($this);
+        new math_tests()->run($this);
         //new system_tests()->run($this);
         //new config_tests()->run($this);
         new ip_range_tests()->run($this);
@@ -664,7 +665,10 @@ class a_selected_test extends all_unit_tests
              * user interface
              */
 
-            // the html ui tests in the order of all_ui_tests::run
+            // the html ui tests in the order of all_ui_tests::run and with its request cache of the unit tests,
+            // because the cache that the api loaded above has the names of the database e.g. of the formulas
+            $tl->ui_test_cache($this->usr_dev, $this, $msg_ui);
+            $u_env->init_unit_tests($this->usr1);
             //new base_ui_tests()->run($this);
             //new user_ui_tests()->run($this);
             new horizontal_ui_tests()->run($this, $ui);

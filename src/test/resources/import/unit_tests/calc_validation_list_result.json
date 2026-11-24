@@ -1,0 +1,89 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-11-24 18:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message where a list function sums a value and a result that the file has checked before"
+  ],
+  "words": [
+    {
+      "name": "fruit basket"
+    },
+    {
+      "name": "apple"
+    },
+    {
+      "name": "pear"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "kg",
+      "type": "measure_unit"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "weight of the pear",
+      "description": "the pear weighs one and a half times the apple",
+      "expression": "\"pear\",\"weight\" = \"apple\",\"weight\" * 1.5",
+      "assigned_word": "weight"
+    },
+    {
+      "name": "weight of the basket",
+      "description": "the weight of the basket is the sum of the weights of its fruits",
+      "expression": "\"total\",\"weight\" = sum( \"weight\" )",
+      "assigned_word": "weight"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "fruit basket",
+        "apple",
+        "weight",
+        "kg"
+      ],
+      "number": "2"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "fruit basket",
+        "apple",
+        "weight",
+        "kg"
+      ],
+      "formula": "weight of the pear",
+      "words": [
+        "fruit basket",
+        "pear",
+        "weight",
+        "kg"
+      ],
+      "number": "3"
+    },
+    {
+      "context": [
+        "fruit basket",
+        "weight",
+        "kg"
+      ],
+      "formula": "weight of the basket",
+      "words": [
+        "fruit basket",
+        "total",
+        "weight",
+        "kg"
+      ],
+      "number": "5",
+      "note": "the sum of the value of the apple and the checked result of the pear"
+    }
+  ]
+}

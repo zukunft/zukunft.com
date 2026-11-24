@@ -124,7 +124,7 @@ component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_digits, $cfg_none, $cfg_sys, $sys_cfg
 controller: $ctrl
 csv_table_diff: $ctd
-data_object: $cac, $cac_sys, $cache_dto, $cfg, $ctg_dto, $dto, $dto_as, $dto_base_ui, $dto_calc, $dto_col, $dto_conf, $dto_ctx, $dto_empty, $dto_frm, $dto_in, $dto_lst, $dto_no, $dto_no_frm, $dto_no_links, $dto_no_reasons, $dto_off, $dto_prio, $dto_reasons, $dto_res, $dto_row, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_style, $dto_ui, $dto_vp, $dto_width, $pre_dto, $pre_dto_empty, $res_cfg, $steps_dto, $vrb_dto
+data_object: $cac, $cac_sys, $cache_dto, $cfg, $ctg_dto, $dto, $dto_as, $dto_base_ui, $dto_calc, $dto_col, $dto_conf, $dto_ctx, $dto_empty, $dto_frm, $dto_in, $dto_knd, $dto_lst, $dto_no, $dto_no_frm, $dto_no_links, $dto_no_reasons, $dto_off, $dto_prio, $dto_reasons, $dto_res, $dto_row, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_style, $dto_ui, $dto_vp, $dto_width, $pre_dto, $pre_dto_empty, $res_cfg, $steps_dto, $vrb_dto
 db_cache: $cac, $cac_cfg, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -178,7 +178,8 @@ number_format: $fmt, $no_cnv, $noise_fmt
 pdf_writer: $pdf
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $both_lst, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $def_lst, $dest_phr_lst, $effort_lst, $empty_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $id_lst, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $no_suggestions, $no_time_lst, $none_lst, $one_lst, $opr_lst, $own_tbl_lst, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $todo_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
+phrase_kinds: $knd, $knd_loop, $no_kinds
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $both_lst, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $def_lst, $dest_phr_lst, $effort_lst, $empty_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $id_lst, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $no_suggestions, $no_time_lst, $none_lst, $one_lst, $open, $opr_lst, $own_tbl_lst, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $todo_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ, $phr_typ_map
@@ -195,7 +196,7 @@ ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
-result_list: $lst, $old_lst, $once_lst, $res_all_lst, $res_cell_lst, $res_del_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst, $ro_res_lst, $row_res_lst
+result_list: $lst, $old_lst, $once_lst, $opr_res_lst, $res_all_lst, $res_cell_lst, $res_del_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst, $ro_res_lst, $row_res_lst
 sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst
