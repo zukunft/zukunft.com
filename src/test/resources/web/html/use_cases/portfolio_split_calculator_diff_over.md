@@ -6,12 +6,12 @@ Change the generated page portfolio_split_calculator_js.html#over so that it sho
 
 ## Different (54)
 
-- row: Realised / Stocks, cells: the sample shows "0 | 4'884'250 | 4'884'250 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
-- row: Realised / Bonds, cells: the sample shows "0 | 3'002'250 | 3'002'250 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
-- row: Realised / Cash, cells: the sample shows "0 | 1'918'950 | 1'918'950 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
-- row: Realised / Portfolio value, cells: the sample shows "0 | 9'805'450 | 9'805'450 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
-- row: Realised / Realised weight, cells: the sample shows "0.000 % | 50.000 % | 50.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "+3'922'180.00 | -1'961'090.00 | -1'961'090.00 | 0.00" and the generated page "+9'805'450.00 | -4'902'725.00 | -4'902'725.00 | 0.00"
+- row: Realised / Stocks, cells: the sample shows "0 | 4'884'250 | 4'884'250 | 9'768'500" and the generated page "-1'953'700 | 5'861'100 | 5'861'100 | 9'768'500"
+- row: Realised / Bonds, cells: the sample shows "0 | 3'002'250 | 3'002'250 | 6'004'500" and the generated page "-1'200'900 | 3'602'700 | 3'602'700 | 6'004'500"
+- row: Realised / Cash, cells: the sample shows "0 | 1'918'950 | 1'918'950 | 3'837'900" and the generated page "-767'580 | 2'302'740 | 2'302'740 | 3'837'900"
+- row: Realised / Portfolio value, cells: the sample shows "0 | 9'805'450 | 9'805'450 | 19'610'900" and the generated page "-3'922'180 | 11'766'540 | 11'766'540 | 19'610'900"
+- row: Realised / Realised weight, cells: the sample shows "0.000 % | 50.000 % | 50.000 % | " and the generated page "-20.000 % | 60.000 % | 60.000 % | "
+- row: Realised / Deviation from target, cells: the sample shows "+3'922'180.00 | -1'961'090.00 | -1'961'090.00 | 0.00" and the generated page "0.00 | 0.00 | 0.00 | 0.00"
 - row: Value / LISN share, first child portfolio, cells: the sample shows "9 | 20 | differs" and the generated page "9 | 24 | differs"
 - row: Value / LISN share, parent portfolio, cells: the sample shows "22 | 0 | differs" and the generated page "22 | -8 | differs"
 - row: Value / LISN share, second child portfolio, cells: the sample shows "9 | 20 | differs" and the generated page "9 | 24 | differs"
