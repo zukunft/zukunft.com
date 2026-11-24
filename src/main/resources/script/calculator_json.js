@@ -651,9 +651,11 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6] (ui_list::field_source_refs) */
+    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6], and of a result the
+       ones of its operands, because a result has no source of its own (ui_list::field_source_refs) */
     function fieldSourceRefs(name, entry) {
-        const refs = [sourceRef(entry)].concat(basisEntries(name, entry).map(sourceRef));
+        const basis = entry !== null && entry.result ? resultOperands(entry) : basisEntries(name, entry);
+        const refs = [sourceRef(entry)].concat(basis.map(sourceRef));
         const result = refs.filter(function (r, i) {
             return refs.indexOf(r) === i;
         }).join('');
@@ -755,14 +757,24 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the value or result with all names of the operand, all of whose phrases are in the context of the result (formula_calc::value_of) */
+    /* the value or result with all names of the operand, all of whose phrases are in the context of the result,
+       with the fewest phrases that neither the operand nor the result names and on a tie the first (formula_calc::value_of) */
     function operandEntry(names, res) {
         const selected = priorSelect(names, res.context);
-        const result = pool.find(function (e) {
-            return e !== res && hasAll(e, selected.names) && e.words.every(function (w) {
+        let result = null;
+        let fewestForeign = Infinity;
+        pool.forEach(function (e) {
+            const matches = e !== res && hasAll(e, selected.names) && e.words.every(function (w) {
                 return selected.context.indexOf(w) >= 0;
             });
-        }) || null;
+            const foreign = e.words.filter(function (w) {
+                return selected.names.indexOf(w) < 0 && res.words.indexOf(w) < 0;
+            }).length;
+            if (matches && foreign < fewestForeign) {
+                result = e;
+                fewestForeign = foreign;
+            }
+        });
         return result;
     }
 
@@ -843,24 +855,35 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return !LIST_FUNCTION.test(rest);
     }
 
-    /* the values and results that the results of the page use, each once (formula_calc::operands) */
+    /* the values and results that the results of the page use, each once */
     function operandValues() {
         const result = [];
         pageResults.forEach(function (res) {
-            const exp = calculation(res);
-            let found = OPERAND_PATTERN.exec(exp);
-            while (found !== null) {
-                const names = operandNames(found[0]);
-                const entry = operandEntry(names, res);
-                const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
-                entries.filter(function (e) {
-                    return result.indexOf(e) < 0;
-                }).forEach(function (e) {
-                    result.push(e);
-                });
-                found = OPERAND_PATTERN.exec(exp);
-            }
+            resultOperands(res).filter(function (e) {
+                return result.indexOf(e) < 0;
+            }).forEach(function (e) {
+                result.push(e);
+            });
         });
+        return result;
+    }
+
+    /* the values and results that the calculation of one result uses, each once (formula_calc::operands) */
+    function resultOperands(res) {
+        const result = [];
+        const exp = calculation(res);
+        let found = OPERAND_PATTERN.exec(exp);
+        while (found !== null) {
+            const names = operandNames(found[0]);
+            const entry = operandEntry(names, res);
+            const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
+            entries.filter(function (e) {
+                return result.indexOf(e) < 0;
+            }).forEach(function (e) {
+                result.push(e);
+            });
+            found = OPERAND_PATTERN.exec(exp);
+        }
         return result;
     }
 
@@ -1197,8 +1220,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function percentText(entry, decimals) {
         const word = entry.words.find(isPercent);
         const percent = Number(entry.number) * 100;
-        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares
-        const scale = Math.abs(percent) >= 10 ? 1 : Math.pow(10, FMT.percent_decimals);
+        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares;
+        // a stored value keeps the percent decimals like sandbox_value::val_formatted, e.g. a bond price of 100.5 %
+        const scale = Math.abs(percent) >= 10 && entry.result ? 1 : Math.pow(10, FMT.percent_decimals);
         const num = decimals === null ? String(Math.round(percent * scale) / scale) : formatNumber(percent, decimals);
         const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
         const result = num + (sym === '' ? '' : FMT.unit_sep + sym);
@@ -1669,13 +1693,36 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* a number that a user cannot change e.g. the target weight of the parent (ui_list::calculator_read_only) */
+    /* a number that a user cannot change e.g. the target weight of the parent, which the page calculates from the
+       inputs of the children if it has no value (ui_list::calculator_read_only) */
     function readOnlyField(item, name) {
-        const entry = fieldEntry(name);
+        const entry = fieldEntry(name) || readOnlyResult(name);
         const number = entry === null ? '' : roughText(entry, 1);
         const result = block('div', '<label>' + esc(label(item)) + '</label>' + block('div', esc(number), STYLE.readOnly)
             + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field, item.name);
         return result;
+    }
+
+    /* the one result with the phrase of a read only field and its field value phrases, null if there is none or several,
+       because a field shows one number and never picks one by the list order (ui_list::calculator_read_only_result) */
+    function readOnlyResult(name) {
+        const found = pool.filter(function (e) {
+            return e.result && e.words.indexOf(name) >= 0 && hasFieldValuePhrases(name, e);
+        });
+        const result = found.length === 1 ? found[0] : null;
+        return result;
+    }
+
+    /* the read only fields again with the numbers of the inputs, because a field can show a result */
+    function redrawReadOnlyFields() {
+        items(KW.input).concat(items(KW.assumption)).filter(function (item) {
+            return hasFlag(item, KW.read_only);
+        }).forEach(function (item) {
+            const field = host.querySelector('[' + PART_ATTR + '="' + CSS.escape(item.name) + '"]');
+            if (field !== null) {
+                field.outerHTML = readOnlyField(item, item.to);
+            }
+        });
     }
 
     /* checked is the number 1 and unchecked 0, which the hidden field sends, because a browser sends no unchecked checkbox (ui_list::calculator_checkbox) */
@@ -2450,6 +2497,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 return d.open;
             });
             panel.outerHTML = resultPanel();
+            redrawReadOnlyFields();
             host.querySelector('div.' + STYLE.warnings).innerHTML = warningTexts();
             host.querySelectorAll('.' + STYLE.grid + ' > section.' + STYLE.panel + ' details').forEach(function (d, i) {
                 d.open = open[i] === true;

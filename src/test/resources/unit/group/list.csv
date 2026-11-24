@@ -165,13 +165,13 @@ group_id,user_id,group_name,description
 1a-1Q-1b+3M+4N+,1,,"the share by which the Delphi method reduces the decisions taken on biased information; the word decisions keeps this value out of the probability range of the ranking cells, which name the Delphi method and biased information as well"
 1a+2d+3k+4N+,1,,"the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
 1a+2d+3p+3r+3t+,1,,"the world GDP of solution_prio.json in billion EUR (see the value in trillion EUR above), the divisor of the annual damage share from the reasons of global warming, which are stated in billion EUR too"
-1a+2Y+3t+6f+9n+9u+di+,1,,the profit of the AHV over the two years 2024 and 2025 the VPOD names
-1a+2Y+4N+6f+di+e1+e8+,1,,the AHV expenditure of 2035 at prices of 2025
-1a+2Y+6f+9u+di+e8+,1,,about 53 billion CHF: the income of gut 55 billion minus the pay-as-you-go surplus of 1.8 billion
-1a+4D+6f+9u+di+,1,,"the income of the AHV in 2025, gut 55 Milliarden Franken"
+1a+2Y+3t+6f+9n+9u+dj+,1,,the profit of the AHV over the two years 2024 and 2025 the VPOD names
+1a+2Y+4N+6f+dj+e2+e9+,1,,the AHV expenditure of 2035 at prices of 2025
+1a+2Y+6f+9u+dj+e9+,1,,about 53 billion CHF: the income of gut 55 billion minus the pay-as-you-go surplus of 1.8 billion
+1a+4D+6f+9u+dj+,1,,"the income of the AHV in 2025, gut 55 Milliarden Franken"
 1a+6R+8s+H3+Z0+,1,,the 13 to 14 billion USD of debt the CFO sees if the leverage rises toward 2 times EBITA; the middle of the range
 1b-1O-1b+4N+JR+,1,,"the share of the demand lost by the wealth concentration that the basic income restores; no source states it, so the share is an own assumption with low confidence"
-1b+2Y+2w+Fj+di+,1,,"nine of ten people get more out of the AHV than they pay in, according to Samira Marti"
+1b+2Y+2w+Fj+dj+,1,,"nine of ten people get more out of the AHV than they pay in, according to Samira Marti"
 1b+39+3q+3r+4N+,1,,"the share of the world GDP that populism costs per year: the measured -1.04 percent GDP per year over 15 years compounds to about -14 percent in level, applied to the roughly one quarter of the world GDP governed by populist leaders; tuned so that the calculated loss matches the number that the start page has used until now"
 1b+3P+3q+3r+4N+,1,,"about 5 percent of the world GDP: lost labour input and avoidable treatment cost, scaled from the production function effect of Bloom, Canning & Sevilla (2004); tuned so that the calculated loss matches the number that the start page has used until now"
 1b+3q+3r+3u+4N+,1,,"the share of the world GDP that disinformation costs per year: the assumed 20 percent of the public discourse, valued through its effect on the quality of political decisions; tuned so that the calculated loss matches the number that the start page has used until now"
@@ -229,7 +229,7 @@ group_id,user_id,group_name,description
 2M-2J-1b+3M+4N+,1,,"the share by which public AI reduces the wrong decisions taken on black-box AI output; the word decisions keeps this value out of the probability range of the ranking cells, which name public AI and black-box AI as well"
 2N-1P-1b+4N+JZ+,1,,"the share of the deadweight loss of the markups that the market share tax removes; no source states it, so the share is an own assumption with low confidence"
 2Y+3p+3r+9v+,1,,884940e6 USD at the ECB 2023 average of 1.0813 USD per EUR
-2Y+Do+bi+dr+,1,,the votes of the VPOD base for the no
+2Y+Do+bi+ds+,1,,the votes of the VPOD base for the no
 3G-1b+4N+4Q+,1,,"the default confidence of a randomized controlled trial where neither the participants nor the researchers know the groups; lower it for a small trial, which can deserve less confidence than a large observational cohort"
 3p+3r+5N+9v+,1,,4456081e6 USD at the ECB 2023 average of 1.0813 USD per EUR
 3p+3r+6P+Fr+,1,,25744.1e9 USD at the ECB 2022 average of 1.0530 USD per EUR
@@ -240,7 +240,7 @@ group_id,user_id,group_name,description
 3p+9v+Fr+Fu+,1,,3051.1e9 USD at the ECB 2023 average of 1.0813 USD per EUR
 //5-2T+Ji+ba+,1,,filed on 6 October 2026; 50000 were needed
 5h-46-4N+9u+,1,,"rounded average rate of 2025; the social cost of carbon is in 2020 dollars, so the conversion ignores five years of inflation on purpose and errs low"
-5l-46-1u+9t+e0+fF+,1,,"0.827 on 15 October 2026, rounded; converts the USD figures of the company into the CHF of the share"
+5l-46-1u+9t+e1+fG+,1,,"0.827 on 15 October 2026, rounded; converts the USD figures of the company into the CHF of the share"
 /5R-/3N-2v+cv+,1,,"LISP share, parent portfolio"
 /5R-/3N-2v+cw+,1,,"LISN share, parent portfolio"
 //5-yE-4N+CH+,1,,below this difference of the average cost the cost argument is called undecided; about 11 CHF per year for an H4 household
@@ -258,52 +258,52 @@ group_id,user_id,group_name,description
 /63-/3Y-4d+6f+cJ+,1,,the deviations of all beneficiaries together: the split conserves the original portfolio value
 /63-/4h-/3N-1b+4d+,1,,the realised value of the parent divided by the original portfolio value
 /9b-1Z+2Y+9t+Do+Fj+,1,,the people who receive an AHV pension
-/9d-1b+1u+2Y+9t+e.+eI+eJ+,1,,60 percent against in the Leewas survey cited by cash.ch
+/9d-1b+1u+2Y+9t+e/+eJ+eK+,1,,60 percent against in the Leewas survey cited by cash.ch
 /9d-VI-2Y+3t+,1,,the increase the Federal Council proposed in its message of 16 October 2024
-/9e-1b+2Y+9r+dj+,1,,the normal VAT rate from 2028 if the decree is accepted
-/9e-1b+2Y+9t+dj+,1,,the normal VAT rate since 2024
-/9f-1b+2Y+dj+,1,,unchanged by the decree
+/9e-1b+2Y+9r+dk+,1,,the normal VAT rate from 2028 if the decree is accepted
+/9e-1b+2Y+9t+dk+,1,,the normal VAT rate since 2024
+/9f-1b+2Y+dk+,1,,unchanged by the decree
 /9l-/9j-1a+2Y+,1,,the revenue of one point of the normal rate for the AHV: 1.4 billion CHF for 0.4 points from 2029
-/9m-1b+4F+9u+di+,1,,the share of the contributions of the insured and the employers in the AHV income of 2025
-/9m-/W+1b+di+,1,,"the AHV contribution rate on wages, 8.7 percent shared by employee and employer"
-/9n-1b+2Y+di+,1,,the share of the AHV expenditure the Confederation pays by law; the proposed cut to 19.5 percent was rejected
+/9m-1b+4F+9u+dj+,1,,the share of the contributions of the insured and the employers in the AHV income of 2025
+/9m-/W+1b+dj+,1,,"the AHV contribution rate on wages, 8.7 percent shared by employee and employer"
+/9n-1b+2Y+dj+,1,,the share of the AHV expenditure the Confederation pays by law; the proposed cut to 19.5 percent was rejected
 /9o-1a+2Y+6f+9t+,1,,the Confederation's expenditure the FDP says must suffice
 /9p-1a+2Y+6f+9u+,1,,"the AHV's share of the compenswiss assets at the end of 2025, including the 10.3 billion owed by the IV"
-/9p-1a+2Y+6f+dr+,1,,the record fortune the VPOD names
-/9q-1a+2Y+6f+9p+di+,1,,the reference scenario without extra financing at prices of 2025
+/9p-1a+2Y+6f+ds+,1,,the record fortune the VPOD names
+/9q-1a+2Y+6f+9p+dj+,1,,the reference scenario without extra financing at prices of 2025
 /9r-1b+4N+4Q+N/+,1,,"the ESTV gives the total income, the wage part is a guess"
 /9r-/9h-4N+N/+,1,,the second input of the page: the gross wages of all earners of the household; the ESTV average household has 9'900 CHF of income including pensions
-/9s-/9h-2Y+4D+dn+,1,,the income of the ESTV average household
-/9s-/9i-/9d-2Y+4O+e/+,1,,"the cost per household and year the FDP cites from the BAK study, including the direct VAT"
-/9u-/9p-1b+2Y+dm+e1+,1,,"the fund at the end of 2035 with the VAT increase, just under 70 percent"
-/9u-/9q-1a+2Y+6f+9p+di+dm+,1,,"the BSV figure with 0.4 points of VAT from 2028, the check of the deficit yes formula"
-/9u-/9q-1a+2Y+6f+di+dm+e1+,1,,about 3 instead of 5 billion CHF with the VAT increase
-/9v-/9p-1b+2Y+dm+e1+,1,,"the fund at the end of 2035 without extra financing as a share of a year's expenditure, about 50 percent"
-/9y-/9r-/9h-dn+,1,,the ESTV estimate for the average household
+/9s-/9h-2Y+4D+do+,1,,the income of the ESTV average household
+/9s-/9i-/9d-2Y+4O+e0+,1,,"the cost per household and year the FDP cites from the BAK study, including the direct VAT"
+/9u-/9p-1b+2Y+dn+e2+,1,,"the fund at the end of 2035 with the VAT increase, just under 70 percent"
+/9u-/9q-1a+2Y+6f+9p+dj+dn+,1,,"the BSV figure with 0.4 points of VAT from 2028, the check of the deficit yes formula"
+/9u-/9q-1a+2Y+6f+dj+dn+e2+,1,,about 3 instead of 5 billion CHF with the VAT increase
+/9v-/9p-1b+2Y+dn+e2+,1,,"the fund at the end of 2035 without extra financing as a share of a year's expenditure, about 50 percent"
+/9y-/9r-/9h-do+,1,,the ESTV estimate for the average household
 /9z-/9r-1b+4N+4Q+,1,,the BAK study for the FDP sees about 90 CHF per household and year of lost output after ten years
 /9z-/9r-/9i-4N+,1,,the indirect economic cost per household and year; 0 counts only the direct VAT
 a2-1T-1J-3l+3p+4N+5H+,1,,"the potential loss of the GDP mismeasurement is the steering error of the understated GDP that a revision of the national accounts corrects (problem_gdp_mismeasurement.json), so this reason causes the whole loss: 0.22718 percent of the world GDP of 110.047 trillion EUR"
 /A4-/9t-1b+2Y+4N+,1,,the share of the normal-rate consumption of Switzerland that pensioner households make
 /A4-/9t-1b+2Y+4N+4Q+,1,,"the ESTV gives the burden per pensioner household, not the share of all consumption"
 A6-1Z+5R+6f+8u+90+,1,,"the sales of the category prepared dishes and cooking aids (note 3.2); the former 6512 was only the frozen and chilled part of it (Nestlé Annual Review 2016, page 48)"
-/A8-/9d-2Y+Do+bh+dl+,1,,the final vote of 19 June 2026
+/A8-/9d-2Y+Do+bh+dm+,1,,the final vote of 19 June 2026
 /Aa-/9i-1a+2Y+9q+,1,,"from 2029, the figure of the BSV"
 /Aa-/9i-1a+2Y+9r+,1,,the first year of the increase
-/AB-/9p-1b+2Y+ds+,1,,the fund level below which the FDP's mechanism raises the VAT by 0.5 points and the reference age by six months
+/AB-/9p-1b+2Y+dt+,1,,the fund level below which the FDP's mechanism raises the VAT by 0.5 points and the reference age by six months
 /Ab-/AX-1b+4N+,1,,the fourth input of the page: the share of the extra VAT revenue that payroll contributions replace on the no path
 /Ab-/AX-1b+4N+4Q+,1,,"the Council of States wanted a mix, the National Council none; the shape of a no is open"
-/AC-/9d-1a+2Y+6f+e/+,1,,the loss of output after ten years according to the BAK Economics study for the FDP
+/AC-/9d-1a+2Y+6f+e0+,1,,the loss of output after ten years according to the BAK Economics study for the FDP
 /Ac-/AX-1b+4N+,1,,the fifth input of the page: the share of the extra VAT revenue that federal savings replace on the no path
 /AD-/9i-1a+2Y+,1,,more than 10 billion CHF a year
 /Ad-/AX-1b+4N+,1,,"the sixth input of the page: a franc missing in the fund counts in full, because the next reform has to raise it"
 /Ad-/AX-1b+4N+4Q+,1,,whether and when the gap is closed depends on the reform AHV 2030
-/AE-/9y-/9h-2Y+2n+dn+,1,,households with an income up to 4'600 CHF
-/AE-/9y-/9h-2Y+2o+dn+,1,,households with an income above 13'400 CHF
-/AE-/9y-/9h-2Y+dn+eW+,1,,"the middle class, 6'700 to 9'400 CHF"
+/AE-/9y-/9h-2Y+2n+do+,1,,households with an income up to 4'600 CHF
+/AE-/9y-/9h-2Y+2o+do+,1,,households with an income above 13'400 CHF
+/AE-/9y-/9h-2Y+do+eX+,1,,"the middle class, 6'700 to 9'400 CHF"
 /Ah-/A9-VI-2Y+9u+,1,,the payroll contribution increase the Council of States wanted next to 0.4 points of VAT
 /Ai-/9r-/9h-4N+,1,,"the first input of the page: the spending of the ESTV average household at the normal rate, derived from its 15 CHF a month of extra VAT: 15 times 108.1 divided by 0.4 divided by 12 equals about 4'050"
 aI-aD-a5-1b+2d+,1,,"the change of the value of the global marine fish stocks; attributed by the source to the poor management and the overfishing, not to the GDP mismeasurement"
-/AJ-/9d-1b+2Y+dz+eI+,1,,the share that finds the VAT fair because all generations contribute
+/AJ-/9d-1b+2Y+e.+eJ+,1,,the share that finds the VAT fair because all generations contribute
 aJ-aF-aD-1b+EK+,1,,"the change of the forest wealth per capita of the low- and middle-income countries; attributed by the source to the deforestation, not to the GDP mismeasurement"
 aK-a0-1a+3p+5R+LL+,1,,1.24 trillion GBP of unpaid household service work at the ECB 2023 average of 0.86979 GBP per EUR
 aK-a0-1a+3p+5S+Fr+,1,,"4516.1 billion USD, the difference of the GDP with and without the household production, at the ECB 2023 average of 1.0813 USD per EUR"
@@ -327,7 +327,7 @@ aN-aG-Zy-0o-1b+Fr+,1,,the gross external damages are 0.8 times the value added u
 aN-Zy-1b+Eg+Fr+,1,,the ratio of the gross external damages to the value added
 aO-a9-J7-3p+3q+,1,,"the median compensation of 3'648 USD to go without digital maps for a year, at the ECB 2023 average of 1.0813 USD per EUR"
 /Ao-/AW-/9i-2Y+4i+,1,,"the maximum 13th pension of a single pensioner, one monthly maximum pension"
-/Ao-/AW-/9i-2Y+e9+,1,,"the maximum 13th pension of a couple, one monthly maximum couple pension"
+/Ao-/AW-/9i-2Y+eA+,1,,"the maximum 13th pension of a couple, one monthly maximum couple pension"
 aO-J7-3p+3q+C.+,1,,"the median compensation of 8'414 USD to lose access to email for a year, at the ECB 2023 average of 1.0813 USD per EUR"
 aO-J7-Iy-3p+3q+,1,,"the median compensation of 17'530 USD to forgo search engines for a year, at the ECB 2023 average of 1.0813 USD per EUR"
 Ap-0f-I+2e+AW+Ar+As+,1,,initial delay in seconds for the first connection retry
@@ -341,12 +341,12 @@ Av-Au-0f-2e+2g+6.+AO+B.+,1,,maximal number of changes that an user without login
 /AW-1a+2Y+4O+6f+9t+,1,,the cost of the first payment in December 2026
 /AW-1b+2Y+3t+Jc+PX+,1,,the share of yes votes for the initiative for a 13th AHV pension on 3 March 2024
 /AW-2E+2Y+3t+Do+Jc+,1,,"the cantons that accepted the initiative, of 26"
-/AX-1b+4N+4Q+eA+,1,,"the 2024 increase was passed on almost fully, retailers under price pressure may absorb part"
-/AX-1b+4N+eA+,1,,the seventh input of the page: the ESTV assumes that firms pass the increase on in full
+/AX-1b+4N+4Q+eB+,1,,"the 2024 increase was passed on almost fully, retailers under price pressure may absorb part"
+/AX-1b+4N+eB+,1,,the seventh input of the page: the ESTV assumes that firms pass the increase on in full
 /AX-/9v-vy-4N+AX+,1,,the years after 2028 without a replacement financing if the decree is rejected
 /AX-/A/-1b+4N+,1,,the share of a payroll contribution that the employee bears in the end
 /AX-/A/-1b+4N+4Q+,1,,"formally half, the shifting of the employer's half to wages is a matter of years"
-/AX-/A2-4d+eE+,1,,"1 if the replacement financing of the no path is in force in 2030, 0 if not: with the start year 2028 plus a delay of 4 years the replacement starts in 2032, so 0; the comparison needs a condition that the formulas do not have, so the flag is stored as a modelled value"
+/AX-/A2-4d+eF+,1,,"1 if the replacement financing of the no path is in force in 2030, 0 if not: with the start year 2028 plus a delay of 4 years the replacement starts in 2032, so 0; the comparison needs a condition that the formulas do not have, so the flag is stored as a modelled value"
 /AX-/A6-/9i-4N+,1,,below this cost difference the cost argument is called undecided
 Ax-Aw-0f-I+M+2e+AR+,1,,the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block
 /AZ-/AX-/9j-1a+4N+,1,,"the revenue of one point of payroll contributions as the page uses it, rounded from the 2025 figures"
@@ -542,7 +542,7 @@ Bv-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the text of the live page in the dark mode
 Bv-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,"the text of the live page of the calculator editor, which looks like the page in the light mode"
 Bw-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the label e.g. of a field of the live page in the dark mode
 Bw-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the label e.g. of a field or a link of the live page
-/BW-1a+2Y+6f+9p+dl+,1,,over 900 million CHF the Confederation pays of the 13th pension in 2030
+/BW-1a+2Y+6f+9p+dm+,1,,over 900 million CHF the Confederation pays of the 13th pension in 2030
 Bx-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the grey text of the live page in the dark mode
 Bx-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the grey text e.g. of a header or a hint of the live page
 BX-0f-I+2V+2e+B.+C2+,1,,the max number of years that a personal user account is expected to be active
@@ -789,21 +789,21 @@ fY-N4-0n-1b+3q+CY+Gk+,1,,"the additional GDP per year if the open-source contrib
 fY-N4-0o-1b+3q+CY+Gk+,1,,"the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"
 ga-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the calculation methods and the training
 ga-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because the hidden later costs become visible at the time of the decision"
-/GB-1b+1u+9t+fE+g0+,1,,the discount of the price to the fair value of the discounted cash flow model of Simply Wall St
-/GB-1e+9u+fj+,1,,the price-earnings ratio on the 2025 earnings as shown by finanzen.ch
-/GB-1u+5w+6f+9t+fI+,1,,"the closing price on SIX of 28 October 2026, the first input of the page"
+/GB-1b+1u+9t+fF+g1+,1,,the discount of the price to the fair value of the discounted cash flow model of Simply Wall St
+/GB-1e+9u+fk+,1,,the price-earnings ratio on the 2025 earnings as shown by finanzen.ch
+/GB-1u+5w+6f+9t+fJ+,1,,"the closing price on SIX of 28 October 2026, the first input of the page"
 /GB-3t+6f+IK+,1,,the dividend per share paid for 2024
 /GB-6f+9u+IK+,1,,the dividend per share paid for 2025
 /Gb-/GB-4Y+6f+9s+,1,,the one-year target estimate shown by Yahoo Finance
-/Gb-/GB-6f+9t+f5+,1,,"Neutral, 13 October 2026"
-/Gb-/GB-6f+9t+f6+,1,,"Sector Perform, 9 October 2026"
-/Gb-/GB-6f+9t+f7+,1,,"Hold, 22 October 2026"
-/Gb-/GB-6f+9t+f8+,1,,"Market-Perform, 21 October 2026"
-/Gb-/GB-6f+9t+f9+,1,,"Neutral, 9 July 2026"
-/Gb-/GB-6f+9t+fA+,1,,"Hold, 21 October 2026"
-/Gb-/GB-6f+9t+fB+,1,,"Equal Weight, 29 June 2026"
-/Gb-/GB-6f+9t+fC+,1,,"Neutral, 8 July 2026"
-/Gb-/GB-6f+9t+fD+,1,,"Hold, 7 May 2026"
+/Gb-/GB-6f+9t+f6+,1,,"Neutral, 13 October 2026"
+/Gb-/GB-6f+9t+f7+,1,,"Sector Perform, 9 October 2026"
+/Gb-/GB-6f+9t+f8+,1,,"Hold, 22 October 2026"
+/Gb-/GB-6f+9t+f9+,1,,"Market-Perform, 21 October 2026"
+/Gb-/GB-6f+9t+fA+,1,,"Neutral, 9 July 2026"
+/Gb-/GB-6f+9t+fB+,1,,"Hold, 21 October 2026"
+/Gb-/GB-6f+9t+fC+,1,,"Equal Weight, 29 June 2026"
+/Gb-/GB-6f+9t+fD+,1,,"Neutral, 8 July 2026"
+/Gb-/GB-6f+9t+fE+,1,,"Hold, 7 May 2026"
 gd-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of fixing the build tools and running the verification servers
 gd-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it adds verifiability to software that is already open"
 ge-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the tools and the processes at the vendors
@@ -812,20 +812,20 @@ gf-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the re
 /Gf-/Gb-/GB-1u+6f+9t+,1,,"the average of the nine analyst targets, the eighth input of the page; the median is 80 CHF"
 gf-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because it avoids the forced replacement of hardware that still works"
 gg-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the laws, the spare part rules and the unlocked boot loaders"
-/GG-6R+8s+9u+fJ+,1,,basic earnings per share of the full year 2025
+/GG-6R+8s+9u+fK+,1,,basic earnings per share of the full year 2025
 gg-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it extends the life of the hardware against the planned obsolescence"
 gh-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the regulation and of the migration interfaces at the providers
-/GH-6R+8s+9t+fJ+,1,,basic earnings per share of the first nine months of 2026
-/GH-6R+8s+9u+fJ+,1,,basic earnings per share of the first nine months of 2025
+/GH-6R+8s+9t+fK+,1,,basic earnings per share of the first nine months of 2026
+/GH-6R+8s+9u+fK+,1,,basic earnings per share of the first nine months of 2025
 gh-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because the lock-in moves from the licence to the cloud subscription"
-/GI-1a+31+6R+8s+9t+fr+,1,,the non-cash unrealised loss of the deal-contingent FX hedge for the Rotork acquisition
-/GI-1a+6R+8s+9t+fn+,1,,"record orders of Q3 2026, up 40 %"
+/GI-1a+31+6R+8s+9t+fs+,1,,the non-cash unrealised loss of the deal-contingent FX hedge for the Rotork acquisition
+/GI-1a+6R+8s+9t+fo+,1,,"record orders of Q3 2026, up 40 %"
 /GI-1a+6R+8s+9t+JV+,1,,"revenues of Q3 2026, up 14 %"
-/GI-1e+8s+9t+fq+,1,,orders divided by revenues in Q3 2026
+/GI-1e+8s+9t+fr+,1,,orders divided by revenues in Q3 2026
 gi-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of stronger competition authorities with software expertise
-/GI-6R+8s+9t+fJ+,1,,"basic EPS of Q3 2026, down 2 %"
+/GI-6R+8s+9t+fK+,1,,"basic EPS of Q3 2026, down 2 %"
 gi-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because it limits the monopoly prices of the dominant vendors"
-/GJ-1a+6R+8s+9t+fc+,1,,"the free cash flow the CFO expects for 2026, 'near 5 billion', the fourth input of the page"
+/GJ-1a+6R+8s+9t+fd+,1,,"the free cash flow the CFO expects for 2026, 'near 5 billion', the fourth input of the page"
 gj-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the legal procedures
 /Gj-/GB-1a+1u+6f+9t+,1,,the market capitalisation shown by finanzen.ch on 28 October 2026; 72.88 CHF times 1.808 billion shares gives 131.8
 /GJ-/GH-1a+6R+8s+9t+,1,,up 22 %
@@ -987,7 +987,7 @@ gT-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution
 gU-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of changing the procurement law and guidelines
 Gu-1j-1h-4N+,1,,"coal still supplies about a third of global electricity; the phase-out is the single largest hardware lever and overlaps with solar and wind, which replace it"
 gU-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: the biggest share of the compared solutions, because it shifts every new purchase away from the licence model"
-/Gu-/GT-1a+6R+f1+,1,,the price of the Robotics division
+/Gu-/GT-1a+6R+f2+,1,,the price of the Robotics division
 Gv-1j-1h-4N+,1,,"oil and gas leak repair, coal mine methane, landfill gas and manure management; the fastest lever on near-term warming"
 /Gv-/Gu-1a+6R+9t+,1,,"expected in Q4 2026, excluded from the guidance"
 gw-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of converting the templates and adapting the document workflows
@@ -1094,7 +1094,7 @@ HW-Go-1U-0o-,1,,"the loss is stated as a negative share, so the bigger share is 
 HW-Go-2J-0n-,1,,"the loss is stated as a negative share, so the smaller share is the numerically higher bound"
 HW-Go-2J-0o-,1,,"the loss is stated as a negative share, so the bigger share is the numerically lower bound"
 /HX-/GI-1b+8s+9t+,1,,"a record Q3 margin, up 1.6 points"
-/HX-/GI-1b+8s+9t+g1+,1,,"the margin of the Motion business area, diluted by about 40 basis points by Gamesa Electric"
+/HX-/GI-1b+8s+9t+g2+,1,,"the margin of the Motion business area, diluted by about 40 basis points by Gamesa Electric"
 hX-hP-1b+2d+,1,,"the share of the global offshore financial wealth that still evades taxation in the central scenario of the report of October 2023, down by a factor of about three in less than 10 years"
 HY-14-1e+4N+,1,,"how much bigger the loss in happy time points is than the loss in GDP, because htp counts the healthy life years that a warming costs and the GDP does not (concept paper: htp extends the lower two levels of Maslow by the DALY index); tuned so that the calculated share matches the number that the start page has used until now"
 HY-1e+39+4N+,1,,how much the loss in happy time points differs from the loss in GDP; tuned so that the calculated share matches the number that the start page has used until now

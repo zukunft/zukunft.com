@@ -4,10 +4,12 @@ Change the generated page portfolio_split_calculator_no_js.html so that it shows
 
 ## Missing in the generated page (0)
 
-## Different (2)
+## Different (4)
 
-- row: Target / Target value, cells: the sample shows "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
-- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
+- field: Target weight first child, hint: the sample shows "[1]" and the generated page "[2]"
+- field: Target weight second child, hint: the sample shows "[1]" and the generated page "[2]"
+- field: Target weight parent, hint: the sample shows "The parent keeps the remainder of every position [1]" and the generated page "The parent keeps the remainder of every position [2]"
+- field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report [1]"
 
 ## Only in the generated page (0)
 

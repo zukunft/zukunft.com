@@ -104,6 +104,8 @@ class url_test_base
     const string ID_LIST_PATTERN = '/(?<=[="])-?\d+(?:(?:,|%2C)-?\d+)+(?=[&"\s]|$)/';
     // the separator of the ids in such a list, kept by the split, so that the list keeps its form
     const string ID_LIST_SEPARATOR = '/(,|%2C)/';
+    // a view field e.g. 'm=71', '9m=71' or 'dm=71' names a view and never the workflow object (see normalize_url_id)
+    const string NO_VIEW_FIELD_BEFORE = '(?<![^a-z]' . url_var::MASK . '|^' . url_var::MASK . '|' . url_var::VIEW_CHILD . ')';
 
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
     protected test_cleanup $t;         // the test environment
@@ -482,12 +484,7 @@ class url_test_base
             // a fixed id a replacement would erase a real id with a zero; a negative id is the
             // phrase id of a triple (see phrase_norm_ids)
             if ($db_id != 0 and $fixed_id != 0 and $db_id != $fixed_id) {
-                // the url form only up to a word boundary, so that e.g. the id 15 does not
-                // corrupt the unrelated id=159 of another link on the same page
-                $content = preg_replace(
-                    '/' . url_var::EQ . $db_id . '\b/',
-                    url_var::EQ . $fixed_id,
-                    $content);
+                $content = $this->normalize_url_id($content, $db_id, $fixed_id);
                 $content = str_replace('"' . $db_id . '"', '"' . $fixed_id . '"', $content);
                 // ... and the id in the plain text of a user message e.g. 'the triple with id 809
                 // cannot be found' (msg_id::OBJECT_NOT_FOUND); the word boundary prevents that
@@ -499,6 +496,23 @@ class url_test_base
             }
         }
         return $content;
+    }
+
+    /**
+     * replace a db id in the url form e.g. 'id=809' by its fixed test id, but not the number of a view field
+     * e.g. 'm=71', because the db id of the workflow object can be the same number as the id of a view
+     * public only so that the unit tests can check it (see coding_rule_tests)
+     *
+     * @param string $content the url lines or the html of a workflow step
+     * @param int $db_id the volatile db id that is replaced
+     * @param int $fixed_id the fixed test id that the snapshot shows instead
+     * @return string the content with the db id of each object field replaced by the fixed test id
+     */
+    function normalize_url_id(string $content, int $db_id, int $fixed_id): string
+    {
+        // only up to a word boundary, so that e.g. the id 15 does not corrupt the unrelated id=159 of another link
+        $pattern = '/' . self::NO_VIEW_FIELD_BEFORE . url_var::EQ . $db_id . '\b/';
+        return preg_replace($pattern, url_var::EQ . $fixed_id, $content);
     }
 
     /**

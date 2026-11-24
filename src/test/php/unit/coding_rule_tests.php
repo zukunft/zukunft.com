@@ -53,6 +53,7 @@ include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'languages.php';
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -535,6 +537,17 @@ class coding_rule_tests
         // negative: a single id is no list, so it is left to the replacement of normalize_ids
         $test_name = 'a single id is kept';
         $t->assert($test_name, $wf->normalize_id_lists('id=3271&pl=3272', $norm_ids), 'id=3271&pl=3272');
+
+        // the db id of the test verb can be the same number as the id of the verb edit view
+        $vrb_id = views::VERB_EDIT_ID;
+        $test_name = 'the db id of an object field of an url is replaced by its fixed id';
+        $content = 'id=' . $vrb_id . '&9id=' . $vrb_id . '&amp;8id=' . $vrb_id;
+        $expected = 'id=' . verbs::TEST_ADD_ID . '&9id=' . verbs::TEST_ADD_ID . '&amp;8id=' . verbs::TEST_ADD_ID;
+        $t->assert($test_name, $wf->normalize_url_id($content, $vrb_id, verbs::TEST_ADD_ID), $expected);
+        // negative: a view field names a view and never the workflow object
+        $test_name = '... but the same number of a view field is kept';
+        $content = 'view.php?m=' . $vrb_id . '&9m=' . $vrb_id . '&amp;dm=' . $vrb_id;
+        $t->assert($test_name, $wf->normalize_url_id($content, $vrb_id, verbs::TEST_ADD_ID), $content);
 
         // the group id of a new value is built from the db ids of its test words, so the add value workflows
         // map it to the group id of the fixed test ids (value_url_tests::set_value_norm_id)

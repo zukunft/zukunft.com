@@ -4,21 +4,18 @@ Change the generated page portfolio_split_calculator_js.html#over so that it sho
 
 ## Missing in the generated page (0)
 
-## Different (63)
+## Different (58)
 
-- field: Target weight parent, value: the sample shows "-20 %" and the generated page "30 %"
 - field: Exchange rate, tag: the sample shows "measured" and the generated page ""
 - field: Exchange rate, unit: the sample shows "CHF per DKK" and the generated page ""
 - field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report"
 - field: Exchange rate, value: the sample shows "0.1304" and the generated page ""
-- row: Target / Target weight, cells: the sample shows "-20.0 % | 60.0 % | 60.0 % | 100.0 %" and the generated page "30.0 % | 60.0 % | 60.0 % | 100.0 %"
-- row: Target / Target value, cells: the sample shows "-3'922'180 | 11'766'540 | 11'766'540 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
 - row: Realised / Stocks, cells: the sample shows "0 | 4'884'250 | 4'884'250 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
 - row: Realised / Bonds, cells: the sample shows "0 | 3'002'250 | 3'002'250 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
 - row: Realised / Cash, cells: the sample shows "0 | 1'918'950 | 1'918'950 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
 - row: Realised / Portfolio value, cells: the sample shows "0 | 9'805'450 | 9'805'450 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
 - row: Realised / Realised weight, cells: the sample shows "0.000 % | 50.000 % | 50.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "+3'922'180.00 | -1'961'090.00 | -1'961'090.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
+- row: Realised / Deviation from target, cells: the sample shows "+3'922'180.00 | -1'961'090.00 | -1'961'090.00 | 0.00" and the generated page "+9'805'450.00 | -4'902'725.00 | -4'902'725.00 | 0.00"
 - row: Value / LISN share, first child portfolio, cells: the sample shows "9 | 20 | differs" and the generated page "9 | 24 | differs"
 - row: Value / LISN share, parent portfolio, cells: the sample shows "22 | 0 | differs" and the generated page "22 | -8 | differs"
 - row: Value / LISN share, second child portfolio, cells: the sample shows "9 | 20 | differs" and the generated page "9 | 24 | differs"
@@ -67,8 +64,6 @@ Change the generated page portfolio_split_calculator_js.html#over so that it sho
 - row: # / 40, cells: the sample shows "cash DKK Cash DKK | 1'000'000.00 DKK | 0.0013 | 15'333'895.706 | 500'000.00 | 500'000.00 | 0.00 | -1'934'340.00" and the generated page "cash DKK Cash DKK | 1'000'000.00 DKK | 0.0013 | 600'000.000 | 600'000.00 | 600'000.00 | -200'000.00 | 0.00"
 - row: # / 41, cells: the sample shows "cash SEK Cash SEK | 1'000'000.00 SEK | 0.0009 | 22'706'742.857 | 500'000.00 | 500'000.00 | 0.00 | -1'943'090.00" and the generated page "cash SEK Cash SEK | 1'000'000.00 SEK | 0.0009 | 600'000.000 | 600'000.00 | 600'000.00 | -200'000.00 | 0.00"
 - row: # / 42, cells: the sample shows "cash JPY Cash JPY | 30'000'000.00 JPY | 0.0001 | 341'848'333.333 | 15'000'000.00 | 15'000'000.00 | 0.00 | -1'961'090.00" and the generated page "cash JPY Cash JPY | 30'000'000.00 JPY | 0.0001 | 18'000'000.000 | 18'000'000.00 | 18'000'000.00 | -6'000'000.00 | 0.00"
-- row: Position / ConfedBond30, cells: the sample shows "CHF | 1'500'000 | 100.5 % | 5'000" and the generated page "CHF | 1'500'000 | 100 % | 5'000"
-- row: Position / NestleBond27, cells: the sample shows "CHF | 1'500'000 | 99.8 % | 5'000" and the generated page "CHF | 1'500'000 | 100 % | 5'000"
 
 ## Only in the generated page (0)
 

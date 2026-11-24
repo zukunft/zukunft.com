@@ -4,21 +4,18 @@ Change the generated page portfolio_split_calculator_js.html#high so that it sho
 
 ## Missing in the generated page (0)
 
-## Different (48)
+## Different (43)
 
-- field: Target weight parent, value: the sample shows "10 %" and the generated page "30 %"
 - field: Exchange rate, tag: the sample shows "measured" and the generated page ""
 - field: Exchange rate, unit: the sample shows "CHF per DKK" and the generated page ""
 - field: Exchange rate, hint: the sample shows "CHF per unit of currency, bank report [2]" and the generated page "CHF per unit of currency, bank report"
 - field: Exchange rate, value: the sample shows "0.1304" and the generated page ""
-- row: Target / Target weight, cells: the sample shows "10.0 % | 45.0 % | 45.0 % | 100.0 %" and the generated page "30.0 % | 45.0 % | 45.0 % | 100.0 %"
-- row: Target / Target value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 | 19'610'900 | 19'610'900 | 19'610'900"
 - row: Realised / Stocks, cells: the sample shows "976'876 | 4'395'812 | 4'395'812 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
 - row: Realised / Bonds, cells: the sample shows "600'450 | 2'702'025 | 2'702'025 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
 - row: Realised / Cash, cells: the sample shows "383'764 | 1'727'068 | 1'727'068 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
 - row: Realised / Portfolio value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
 - row: Realised / Realised weight, cells: the sample shows "10.000 % | 45.000 % | 45.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -12'747'085.00 | -12'747'085.00 | 0.00"
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "+3'922'180.00 | -1'961'090.00 | -1'961'090.00 | 0.00"
 - row: # / 3, cells: the sample shows "GIVN Givaudan SA | 100 shares | 3'700.00 | 44.054 | 44 | 44 | 12 | -200.00" and the generated page "ConfedBond30 Swiss Confederation 1.25% 2030 | 1'500'000 CHF | 5'025.00 | 671'517.413 | 670'000 | 670'000 | 160'000 | -1'525.00"
 - row: # / 4, cells: the sample shows "PGHN Partners Group Holding AG | 250 shares | 1'200.00 | 112.667 | 113 | 113 | 24 | +400.00" and the generated page "NestleBond27 Nestlé Holdings 0.875% 2027 | 1'500'000 CHF | 4'990.00 | 676'528.056 | 675'000 | 675'000 | 150'000 | -1'525.00"
 - row: # / 5, cells: the sample shows "GEBN Geberit AG | 500 shares | 590.00 | 224.322 | 224 | 224 | 52 | -190.00" and the generated page "RocheBond28 Roche Holdings 1.0% 2028 | 1'000'000 CHF | 4'950.00 | 451'540.404 | 450'000 | 450'000 | 100'000 | -1'525.00"
@@ -52,8 +49,6 @@ Change the generated page portfolio_split_calculator_js.html#high so that it sho
 - row: # / 33, cells: the sample shows "RocheBond28 Roche Holdings 1.0% 2028 | 1'000'000 CHF | 4'950.00 | 450'013.131 | 450'000 | 450'000 | 100'000 | -13.00" and the generated page "SDZ Sandoz Group AG | 7'000 shares | 38.00 | 3'149.342 | 3'149 | 3'149 | 702 | -13.00"
 - row: # / 34, cells: the sample shows "BundDE30 Bund 0% 2030 | 1'000'000 EUR | 940.80 | 450'013.818 | 450'000 | 450'000 | 100'000 | -13.00" and the generated page "ADEN Adecco Group AG | 9'000 shares | 30.00 | 4'050.433 | 4'050 | 4'050 | 900 | -13.00"
 - row: # / 35, cells: the sample shows "TreasuryUS27 US Treasury 2.5% 2027 | 1'200'000 USD | 891.00 | 540'014.590 | 540'000 | 540'000 | 120'000 | -13.00" and the generated page "UBSG UBS Group AG | 10'000 shares | 28.00 | 4'500.464 | 4'500 | 4'500 | 1'000 | -13.00"
-- row: Position / ConfedBond30, cells: the sample shows "CHF | 1'500'000 | 100.5 % | 5'000" and the generated page "CHF | 1'500'000 | 100 % | 5'000"
-- row: Position / NestleBond27, cells: the sample shows "CHF | 1'500'000 | 99.8 % | 5'000" and the generated page "CHF | 1'500'000 | 100 % | 5'000"
 
 ## Only in the generated page (0)
 

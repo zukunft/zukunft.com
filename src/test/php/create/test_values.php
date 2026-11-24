@@ -1748,6 +1748,31 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the operand choice test (formula_calc::value_of): two values of the operand city of Zurich
+     * within the context of result_zh_sum_ui, of which only the second has the phrase Zurich of the result, like
+     * the target share of a child and the one of the whole portfolio, and a value with the phrase inhabitants of
+     * the result, which is outside the context
+     *
+     * @param bool $incl_result_phrase true to add the value in the context with the phrase Zurich of the result
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_operand_choice_ui(bool $incl_result_phrase): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $city = $t_trp->zh_city_low_impact()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->company_zurich_high_impact()->phrase(), $city], 10));
+        if ($incl_result_phrase) {
+            $lst->add($this->value_for_phrases([$zh, $city], 20));
+        }
+        $lst->add($this->value_for_phrases([$zh, $t_wrd->word_inhabitant()->phrase(), $city], 30));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the values of the confidence test (ui_list::assumption_tag): an assumedvalue in kWh with its
      * confidence in percent, and an assumed value of another phrase without a confidence
      *

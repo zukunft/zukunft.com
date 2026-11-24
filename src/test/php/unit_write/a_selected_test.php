@@ -94,6 +94,7 @@ include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'triple_ui_tests.php';
+include_once test_paths::UNIT_UI . 'use_case_ui_tests.php';
 include_once test_paths::UNIT_UI . 'value_ui_tests.php';
 include_once test_paths::UNIT_UI . 'verb_ui_tests.php';
 include_once test_paths::UNIT_UI . 'view_ui_tests.php';
@@ -125,13 +126,16 @@ use Zukunft\ZukunftCom\test\php\unit\component_tests;
 use Zukunft\ZukunftCom\test\php\unit\db_cache_tests;
 use Zukunft\ZukunftCom\test\php\unit\element_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\element_tests;
+use Zukunft\ZukunftCom\test\php\unit\expression_tests;
 use Zukunft\ZukunftCom\test\php\unit\figure_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\figure_tests;
+use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
 use Zukunft\ZukunftCom\test\php\unit\formula_link_tests;
 use Zukunft\ZukunftCom\test\php\unit\formula_tests;
 use Zukunft\ZukunftCom\test\php\unit\formula_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_list_tests;
 use Zukunft\ZukunftCom\test\php\unit\group_tests;
+use Zukunft\ZukunftCom\test\php\unit\horizontal_tests;
 use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit\ip_range_tests;
 use Zukunft\ZukunftCom\test\php\unit\job_tests;
@@ -197,6 +201,7 @@ use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\word_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\change_log_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\job_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\reference_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\component_ui_tests;
@@ -205,6 +210,7 @@ use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\result_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\triple_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\use_case_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\value_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\verb_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\view_ui_tests;
@@ -565,7 +571,9 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             //new system_read_tests()->run($this);
-            new system_views_read_tests()->run($this);
+            // the object for the single sections below, if the whole run is switched off
+            $msk_tests = new system_views_read_tests();
+            $msk_tests->run($this);
             // the start page steps up to the results of the initial effort, after which the page stops
             //$msk_tests->run_start_page_steps($this);
             //$cfg = $msk_tests->context($this);
@@ -690,7 +698,7 @@ class a_selected_test extends all_unit_tests
             new component_ui_tests()->run($this);
             //new component_list_ui_tests()->run($this);
             //new process_catch_ui_tests()->run($this);
-            //new use_case_ui_tests()->run($this);
+            new use_case_ui_tests()->run($this);
             //new phrase_data_ui_tests()->run($this);
             //new language_ui_tests()->run($this);
             //new change_log_ui_tests()->run($this);

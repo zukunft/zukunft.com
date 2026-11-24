@@ -485,9 +485,14 @@ mistyped input is caught at import time. Same shape as a stored `result`, and
 additionally routed through `validate_results` — a mismatch is reported as a
 failed validation and stops the import, never saved as a value.
 
-An operand is looked up in the `values` of the file first and, if the file states
-no value for it, in the entries of `calc-validation` that have **already been
-reproduced**. Entries are checked in file order, so a file can calculate a target
+An operand is looked up in the `values` of the file and in the entries of
+`calc-validation` that have **already been reproduced**. If several numbers in the
+`context` match, the one with the fewest phrases that neither the operand nor the
+checked result names is taken and on a tie the value of the file, the same rule as the
+page (`formula_calc::value_of`), e.g. the target share of the parent and not the one of
+the whole portfolio, and the lifetime of the PV installation and not its gross avoided
+emission over the lifetime. Entries are
+checked in file order, so a file can calculate a target
 value first and its probability range from that target afterwards. A result that
 did not reproduce is never an operand, else a wrong number would confirm the next
 one instead of being reported.

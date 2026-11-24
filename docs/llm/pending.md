@@ -2,7 +2,7 @@
 
 ## Calculator editor
 
-### Swiss NPP
+### portfolio split page compared with its sample
 
 **Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
 `portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
@@ -18,10 +18,67 @@
 - phase 3, two agents in parallel: agent fields with part 5 of step 9 (the number fields of the holdings) and agent
   child with step 3 (add child and remove, the warnings by the instances)
 
-### portfolio split page compared with its sample
-
 The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
 and the related reports.
+
+#### check
+
+Differences remaining
+
+- Button icons: these belong to step 7.
+- Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
+- Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
+- Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
+- Exchange rate field of the js page: the field `exchange rate` has six values of the same rank (one per currency);
+  `ui_list::calculator_value` picks one by `sandbox_value::sorted` (CHF per DKK, like the sample), but
+  `calculator_json.js::fieldEntry` refuses the tie by `onlyOne` and shows the field without value, unit, tag and source
+  ref. Decide first: let `fieldEntry` pick like `sandbox_value::sorted` (needs the impact of each value in the phrase
+  data, and changes every calculator page with a tied field), or show one field per currency like the rate list of the
+  sample below the field
+
+#### step 2: add a "Add child" and remove
+
+Add an add two children and remove one child test case similar to the high and low test cases 
+so that all main test cases are covered
+
+#### step 3: the input fields (1), (2), (3), (4)
+
+- the formulas of the warnings name the first and the second child: 
+  a new child needs a sum over the instances, so update them with the add child task
+
+The buttons "Add child" and remove are a separate task after step 9, 
+because a new child has no allocation before the walk is calculated: 
+a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
+and the page needs the remove button per field. The button stays without a function until then.
+
+#### step 4: the result table (9), (17)
+
+- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
+
+#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+
+- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
+- the colours of the walk cells and the hint below the holdings
+
+#### step 7: the buttons (13)
+
+- the buttons "Download", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the icons of the sample
+
+#### step 8: decide what the generated page keeps
+
+- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
+- which the generated page shows at the assumptions and the holdings
+
+#### step 9: calculate the split again in the browser (18)
+
+The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
+
+1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
+2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
+3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
+4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
+5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
 #### import
 
@@ -108,62 +165,9 @@ so create the csv file and as a unit test result create or update a zukunft.com 
 
 create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
 
-#### check
+### Swiss NPP
 
-Differences remaining
-
-- Button colours: the generated page uses the site's grey filled buttons, while the sample shows blue outlines. Those button rules are shared across the whole site and the sample doesn't load the site's stylesheet, so changing them here would affect every page.
-- Font: it differs for the same reason.
-- Button icons: these belong to step 7.
-- Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
-- Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
-- Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
-
-#### step 2: add a "Add child" and remove
-
-Add an add two children and remove one child test case similar to the high and low test cases 
-so that all main test cases are covered
-
-#### step 3: the input fields (1), (2), (3), (4)
-
-- the formulas of the warnings name the first and the second child: 
-  a new child needs a sum over the instances, so update them with the add child task
-
-The buttons "Add child" and remove are a separate task after step 9, 
-because a new child has no allocation before the walk is calculated: 
-a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
-and the page needs the remove button per field. The button stays without a function until then.
-
-#### step 4: the result table (9), (17)
-
-- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
-
-#### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
-
-- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
-- the colours of the walk cells and the hint below the holdings
-
-#### step 7: the buttons (13)
-
-- the buttons "Download", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
-- the icons of the sample
-
-#### step 8: decide what the generated page keeps
-
-- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
-- which the generated page shows at the assumptions and the holdings
-
-#### step 9: calculate the split again in the browser (18)
-
-The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
-
-1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
-2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
-3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, the second child without mirroring: `first child` and `second child` are named in the formulas, so a new child needs a formula by the instances, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
-4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
-5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
-
-### add costs of CO2-eq reduction to the npp
+#### add costs of CO2-eq reduction to the npp
 
 ### add to the calculator a 'Share assumptions and vote' button
 

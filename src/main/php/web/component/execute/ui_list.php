@@ -3497,11 +3497,37 @@ class ui_list extends ui_base
     {
         $html = new html_base();
         $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        // a number that the page calculates e.g. the target weight of the parent as what the children leave
+        if ($val == null) {
+            $val = $this->calculator_read_only_result($phr, $dto, $msg);
+        }
         $number = $val == null ? '' : $this->calculator_rough_text($val, $msg, 1);
         $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
         return $html->div($html->label_no_for($html->esc($calc->label($item)))
             . $html->div($html->esc($number), styles::INPUT_READ_ONLY)
             . $this->calculator_hint($calc->hint($item), $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the read only field e.g. parent portfolio
+     * @param data_object $dto the request cache with the results and the field triples
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return result|null the one result of the page with the phrase and the field value phrases, null if there is
+     *                     none or several, because a field shows one number and never picks one by the list order
+     */
+    private function calculator_read_only_result(phrase $phr, data_object $dto, user_message $msg): ?result
+    {
+        $found = [];
+        foreach ($dto->res_lst->lst() as $res) {
+            if ($res->has_phrase($phr, $msg) and $this->has_field_value_phrases($phr, $res, $dto, $msg)) {
+                $found[] = $res;
+            }
+        }
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
+        }
+        return $result;
     }
 
     /**
@@ -3613,10 +3639,29 @@ class ui_list extends ui_base
     private function field_source_refs(phrase $phr, ?sandbox_value $val, data_object $dto, array $src_ids, user_message $msg): string
     {
         $refs = [$this->source_ref($val, $src_ids)];
-        foreach ($this->calculator_basis_values($phr, $val, $dto, $msg) as $basis) {
+        foreach ($this->calculator_field_basis($phr, $val, $dto, $msg) as $basis) {
             $refs[] = $this->source_ref($basis, $src_ids);
         }
         return implode('', array_unique($refs));
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field
+     * @param sandbox_value|null $val the value or the result that the field shows
+     * @param data_object $dto the request cache with the values, the results and the formulas
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the numbers whose sources the field names: the operands of a result, because a result has no
+     *               source of its own, else the measured values that an assumed value is based on
+     */
+    private function calculator_field_basis(phrase $phr, ?sandbox_value $val, data_object $dto, user_message $msg): array
+    {
+        if ($val instanceof result) {
+            $calc = new formula_calc($this->prior_names($dto));
+            $result = $calc->operands($val, $this->values_and_results($dto, $msg), $dto->formula_list());
+        } else {
+            $result = $this->calculator_basis_values($phr, $val, $dto, $msg);
+        }
+        return $result;
     }
 
     /**

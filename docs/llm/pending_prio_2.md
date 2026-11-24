@@ -3421,3 +3421,25 @@ Added on 2026-11-23 with the unit that a formula names on the left side (`"annua
 alone left of the `=`, so a formula that also names its unit is never taken for a row phrase. Let both take the first
 term of the left side as the phrase if the other terms are units, with a unit test of `calculates_phrase` for a left
 side with a unit, and negative: a left side with two phrases that are no units is still not the result of one phrase.
+
+## the views_by_object snapshots named without the pinned id
+
+Added on 2026-11-23: `test_base::assert_view` names the snapshot of a view with an object by `<class>_<id>`, and the
+callers pass pinned seed ids, so every new seed object before them renames the snapshots at each re-pin, e.g. with the
+units of `units.json` `formula/formula_default_formula_21` and `_27` became `_46` and `_52`, and the eight page states
+of `triple/entry_view_triple_139` became `_170`; the first run after the re-pin reports each new name as "does not
+exist". `system_view_ui_tests::view_id_to_file_info` already names the `views_by_id` snapshots of result, group and
+the table view without the id (`SNAPSHOT_WITHOUT_ID_CLASSES`, `SNAPSHOT_WITHOUT_ID_VIEWS`). Let `assert_view` name a
+snapshot by a stable name instead, e.g. the code id of the object or a name that the caller passes, and keep the id
+only for test objects with a fixed id e.g. `word_1`; with a test that two callers of the same view and class still get
+two different snapshot names.
+
+## a page unit test of the operand with the fewest foreign phrases
+
+Added on 2026-11-24: `formula_calc::value_of` and `calculator_json.js::operandEntry` take the number with the fewest
+phrases that neither the operand nor the result names, like `data_object::number_by_names` of the import, which
+`calc_validation_operand_choice.json` tests. On the page only `use_case_ui_tests` covers two numbers in the context
+(`test_values::value_list_operand_choice_ui`) and the PV payback snapshot the case that a number names the operand but
+is about something else (the gross avoided emission over the lifetime); `result_zh_sum_ui` has no context phrase of
+the result outside `zh`, so add a result with such a phrase and a unit test that a number with more phrases of the
+result but a foreign phrase loses against the plain value, and negative: on a tie the first number of the list.

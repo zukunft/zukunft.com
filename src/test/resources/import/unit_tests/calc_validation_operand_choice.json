@@ -1,0 +1,119 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-11-24 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message where two numbers in the context match an operand and the one with more phrases of the result is used"
+  ],
+  "words": [
+    {
+      "name": "fruit basket"
+    },
+    {
+      "name": "whole"
+    },
+    {
+      "name": "apple"
+    },
+    {
+      "name": "pear"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "CHF",
+      "type": "measure_unit"
+    },
+    {
+      "name": "percent",
+      "type": "percent"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "share of the pear",
+      "description": "the pear keeps what the apple leaves of the whole basket",
+      "expression": "\"pear\",\"share\" = \"whole\" - \"apple\"",
+      "assigned_word": "share"
+    },
+    {
+      "name": "value of a fruit",
+      "description": "the value of a fruit is the value of the whole basket times the share of the fruit",
+      "expression": "\"value\" = \"whole\",\"value\" * \"share\"",
+      "assigned_word": "share"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "fruit basket",
+        "whole",
+        "share",
+        "percent"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "fruit basket",
+        "apple",
+        "share",
+        "percent"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "fruit basket",
+        "whole",
+        "value",
+        "CHF"
+      ],
+      "number": "100"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "fruit basket",
+        "whole",
+        "apple",
+        "share",
+        "percent"
+      ],
+      "formula": "share of the pear",
+      "words": [
+        "fruit basket",
+        "pear",
+        "share",
+        "percent"
+      ],
+      "number": "0.6"
+    },
+    {
+      "context": [
+        "fruit basket",
+        "whole",
+        "value",
+        "CHF",
+        "pear",
+        "share",
+        "percent"
+      ],
+      "formula": "value of a fruit",
+      "words": [
+        "fruit basket",
+        "pear",
+        "value",
+        "CHF"
+      ],
+      "number": "60",
+      "note": "the share of the whole basket is a value and in the context too, but the checked share of the pear has more phrases of the result"
+    }
+  ]
+}

@@ -662,6 +662,23 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'the value for "total,CHF"');
 
+        // of two numbers in the context the one with fewer phrases that neither the operand nor the result names is
+        // the operand, like the page calculates it (formula_calc::value_of), e.g. the share of the pear and not the
+        // one of the whole basket, also if the share of the pear is a checked result and the other one a value
+        $test_name = 'JSON import calc validation takes the operand with the fewest foreign phrases';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_OPERAND_CHOICE . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        // negative: a number with fewer foreign phrases is no operand if it is outside the context
+        $test_name = '... but never one outside the context';
+        $msg = new user_message($t->usr1);
+        $ctx = $json_array[json_fields::CALC_VALIDATION][1][json_fields::CONTEXT];
+        $json_array[json_fields::CALC_VALIDATION][1][json_fields::CONTEXT] = array_values(array_diff($ctx, ['pear']));
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match the result 100');
+
         $test_name = 'JSON import calc validation reports a result mismatch';
         $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);

@@ -472,18 +472,28 @@ class formula_calc
      * @param array $ctx the phrase names of the context of the result
      * @param result $res the result that is calculated
      * @param value_list $val_lst the values and results of the page
-     * @return value|result|null the matching value or result, the values before the results like in the import validation
+     * @return value|result|null the matching value or result with the fewest phrases that neither the operand nor the
+     *                           result names, because the context can hold the phrases of several operands (e.g. the
+     *                           target share of a child and the one of the whole portfolio) and a number can name the
+     *                           operand but be about something else (e.g. the gross avoided emission over the
+     *                           lifetime); on a tie the first, so the values before the results like in the import
+     *                           validation (data_object::number_by_names)
      */
     private function value_of(array $names, array $ctx, result $res, value_list $val_lst): value|result|null
     {
+        $result = null;
+        $fewest_foreign = PHP_INT_MAX;
+        $res_names = $this->phrase_names($res);
         foreach ($val_lst->lst() as $val) {
             $phr_names = $this->phrase_names($val);
             $matches = (array_diff($names, $phr_names) == [] and array_diff($phr_names, $ctx) == []);
-            if ($val->id() != $res->id() and $matches) {
-                return $val;
+            $foreign = count(array_diff($phr_names, $names, $res_names));
+            if ($val->id() != $res->id() and $matches and $foreign < $fewest_foreign) {
+                $result = $val;
+                $fewest_foreign = $foreign;
             }
         }
-        return null;
+        return $result;
     }
 
     /**

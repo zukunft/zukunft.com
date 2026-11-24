@@ -4,8 +4,8 @@
             "pageid": 5869,
             "ns": 0,
             "title": "Q4917",
-            "lastrevid": 2557623321,
-            "modified": "2026-10-16T09:11:53Z",
+            "lastrevid": 2574372120,
+            "modified": "2026-11-24T09:54:51Z",
             "type": "item",
             "id": "Q4917",
             "labels": {
@@ -31,7 +31,7 @@
                 },
                 "ar": {
                     "language": "ar",
-                    "value": "دولار للولايات المتحدة"
+                    "value": "دولار أمريكي"
                 },
                 "arz": {
                     "language": "arz",
@@ -2026,15 +2026,15 @@
                 "ar": [
                     {
                         "language": "ar",
-                        "value": "دولار أمريكي"
-                    },
-                    {
-                        "language": "ar",
                         "value": "دولار الأمريكي"
                     },
                     {
                         "language": "ar",
                         "value": "دولار الامريكي"
+                    },
+                    {
+                        "language": "ar",
+                        "value": "دولار امريكي"
                     }
                 ],
                 "mzn": [
@@ -7388,6 +7388,12 @@
                     "title": "Dolar merecan",
                     "badges": [],
                     "url": "https://fur.wikipedia.org/wiki/Dolar_merecan"
+                },
+                "lezwiki": {
+                    "site": "lezwiki",
+                    "title": "Доллар АСШ",
+                    "badges": [],
+                    "url": "https://lez.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BB%D0%B0%D1%80_%D0%90%D0%A1%D0%A8"
                 }
             }
         }

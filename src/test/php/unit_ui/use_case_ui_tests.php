@@ -273,6 +273,20 @@ class use_case_ui_tests
         $frm_be_lst->add($frm_be, $msg);
         $num_be = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst);
         $t->assert_null($test_name, $num_be);
+        // of two values within the context the one with a phrase of the result is the operand, whatever the order
+        // of the page list, e.g. the target share of a child and not the one of the whole portfolio
+        $test_name = 'of two values in the context the one with a phrase of the result is the operand';
+        $frm_city = new formula_ui();
+        $frm_city->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_city->set_usr_text('"total" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_city_lst = new formula_list_ui();
+        $frm_city_lst->add($frm_city, $msg);
+        $num_city = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(true), $frm_city_lst);
+        $t->assert($test_name, $num_city, 20.0);
+        // negative: a phrase of the result never takes a value outside the context
+        $test_name = '... but a value with more phrases of the result outside the context is no operand';
+        $num_ctx = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(false), $frm_city_lst);
+        $t->assert($test_name, $num_ctx, 10.0);
         // a calculator page repeats the calculation in the browser, so the expression is given as
         // tokens with the html id of each operand instead of the formula text, which the browser
         // never runs as code
@@ -1003,6 +1017,24 @@ class use_case_ui_tests
         $ro_number = $this->read_only_number($fld_html);
         $ro_url_number = $this->read_only_number($ro_url_html);
         $t->assert($test_name, $ro_url_number, $ro_number);
+        // a read only number that the page calculates e.g. the target weight of the parent as what the children leave
+        $test_name = 'a read only field without a value shows the one result of its phrase';
+        $dto_ro_res = clone $dto_fld;
+        $dto_ro_res->val_lst = new value_list_ui();
+        $ro_res_lst = new result_list_ui();
+        $ro_res_lst->add($t_res->result_zh_sum_ui(1.0), $msg);
+        $dto_ro_res->set_result_list($ro_res_lst);
+        $ro_res_html = $page->calculator_input($zh_city, $msg, $dto_ro_res, $form, views::CALCULATOR, []);
+        $ro_res_number = $this->read_only_number($ro_res_html);
+        $t->assert($test_name, $ro_res_number, '1');
+        // negative: of two results the field never picks one by the order of the list
+        $test_name = '... but no number if two results have its phrase';
+        $ro_two_lst = clone $ro_res_lst;
+        $ro_two_lst->add($t_res->result_zh_canton_ui(2.0), $msg);
+        $dto_ro_res->set_result_list($ro_two_lst);
+        $ro_two_html = $page->calculator_input($zh_city, $msg, $dto_ro_res, $form, views::CALCULATOR, []);
+        $ro_two_number = $this->read_only_number($ro_two_html);
+        $t->assert($test_name, $ro_two_number, '');
         $test_name = 'a checkbox sends 0 by its hidden field if it is unchecked';
         $chk_name = url_var::NUMERIC_VALUE . $dto_fld->phr_lst->get_by_name(word_names::YEAR_2019, $msg)->id();
         $chk_html = $html->input_checkbox($chk_name, true, $form);

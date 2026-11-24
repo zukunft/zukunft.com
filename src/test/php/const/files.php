@@ -400,6 +400,8 @@ class files
     CONST string IMPORT_CALC_VALIDATION_GROUP = test_paths::IMPORT_UNIT . 'calc_validation_phrase_group';
     // a validation whose operand is the result that the validation before has reproduced
     CONST string IMPORT_CALC_VALIDATION_CHAIN = test_paths::IMPORT_UNIT . 'calc_validation_chain';
+    // a validation with two numbers in the context for one operand, of which a checked result has more phrases of the result
+    CONST string IMPORT_CALC_VALIDATION_OPERAND_CHOICE = test_paths::IMPORT_UNIT . 'calc_validation_operand_choice';
     // the three sample files for the data object merge test and the expected merge result
     CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';
     CONST string IMPORT_MERGE_2 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online2';
