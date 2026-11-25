@@ -85,6 +85,10 @@ class verbs
     const string FOLLOW_NAME = "is follower of";
     const int FOLLOW_ID = 33;
     const string FOLLOW_COM = "the order of two phrases: the time order e.g. 2025 is follower of 2024 or the order of the items of a list e.g. the inputs of a calculator page; for the table column order use 'is next main column after' or 'is explaining column for'";
+    const string ALTERNATIVE_FOLLOW = "alternative_follow"; // a second order of the same phrases e.g. the bank report order of the holdings
+    const string ALTERNATIVE_FOLLOW_NAME = "is alternative follower of";
+    const int ALTERNATIVE_FOLLOW_ID = 62;
+    const string ALTERNATIVE_FOLLOW_COM = "the second order of phrases that have an 'is follower of' order e.g. the bank report order of the holdings next to the order of their lot value; a phrase without an alternative follower triple keeps its 'is follower of' triple in the second order";
     const string MEASURE = "measure_type";
     const string MEASURE_NAME = "is measure type for";
     const int MEASURE_ID = 29;
@@ -473,7 +477,7 @@ class verbs
 
     // the verbs of the calculator triples (docs/llm/new_view_sample_pv_balance.md rules 3, 6, 7 and 9),
     // the only triples that the from walk of the data of a phrase (see phrase_data) follows
-    const array CALCULATOR_VERBS = [self::HAS, self::WITH, self::FOLLOW, self::CAN_BE, self::USES, self::RANK];
+    const array CALCULATOR_VERBS = [self::HAS, self::WITH, self::FOLLOW, self::ALTERNATIVE_FOLLOW, self::CAN_BE, self::USES, self::RANK];
 
     // ordered list of the verbs that connect an argument to the claim it is about;
     // ordering goes from the strongest backing to the weakest, so a renderer that

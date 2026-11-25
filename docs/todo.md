@@ -48,6 +48,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
     TODO create a backend server structure with load balancer, static cache servers, webservers, db balancers (read and write) and database servers as described in docs/server_structure.md
 
+    TODO create a phrase order table as a data saving replacement for a triple chain with the verb 'is follower of' and 'is alternative follower of'; the phrase order should have a name, description, share and protection like the other user sandbox objects
     TODO the user settings should have some (config.yaml) quick settings 
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
     TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   

@@ -298,6 +298,10 @@ These phrases have one description and one ref, but some import files use them i
 
 A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.
 
+## alternative order only on the javascript page
+
+Only `calculator_json.js` walks the `is alternative follower of` triples of an option with `calculator alternative order` (`docs/llm/log/alternative_order_2026-11-24.md`). The page without javascript (`calculator.php` `sorted` and `previous_in_list`, `ui_list::prior_names` and `ranked_rows`, which reach the six callers of `ui_list::page_calc` without the calculator reader), the backend (`element_group::prior_names`), the import check (`data_object::prior_names`) and `formula_editor.js` walk only the `is follower of` chain. So a page that `uses` the alternative option, or a saved case that has chosen it, shows the main order there, and the backend job of a save calculates the walk of the main order, which the double calculation check reports as a difference. Give these readers the chosen order of the page, each with a positive and a negative test; the stored results need the phrase of the order in their group, so that both walks can be stored.
+
 ## calculator scripts without a browser test of a checkbox
 
 No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.

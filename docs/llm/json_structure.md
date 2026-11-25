@@ -671,6 +671,7 @@ at the moment:
 | `is term jump for` | `term_jump` | the default term jump |
 | `is measure type for` | `measure_type` | the default measure type |
 | `is follower of` | `follow` | ordering: the successor in time (2025 is follower of 2024) or in a list (the next input of a calculator page) |
+| `is alternative follower of` | `alternative_follow` | a second order of the same phrases (the bank report order of the holdings); a phrase without it keeps its `is follower of` step |
 | `is next main column after` | `before` | **table column** ordering: this main column follows the other main column and all columns explaining it |
 | `is explaining column for` | `after` | **table column** ordering: this column explains the other one, so it is shown between its main column and the next main column |
 | `term type needed` | `term_needed` | the formula needs the linked term type |

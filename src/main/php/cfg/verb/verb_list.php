@@ -331,6 +331,11 @@ class verb_list extends type_list
         $vrb->set_code_id_db(verbs::FOLLOW);
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->id = verbs::ALTERNATIVE_FOLLOW_ID;
+        $vrb->set_name(verbs::ALTERNATIVE_FOLLOW_NAME);
+        $vrb->set_code_id_db(verbs::ALTERNATIVE_FOLLOW);
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->id = verbs::USES_ID;
         $vrb->set_name(verbs::USES_NAME);
         $vrb->set_code_id_db(verbs::USES);

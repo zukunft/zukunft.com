@@ -13,15 +13,15 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 5793
+                "id": 5801
             },
             {
                 "class": "triple",
-                "id": 5799
+                "id": 5807
             },
             {
                 "class": "triple",
-                "id": 5754
+                "id": 5762
             }
         ]
     }

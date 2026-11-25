@@ -626,6 +626,9 @@ class triples
     const string CALCULATOR_COPY_CODE_ID = 'system_calculator_copy';
     const string CALCULATOR_CASE = 'calculator case';
     const string CALCULATOR_CASE_CODE_ID = 'system_calculator_case';
+    // a selector option that walks the "is alternative follower of" order e.g. the bank report order of the holdings
+    const string CALCULATOR_ALTERNATIVE_ORDER = 'calculator alternative order';
+    const string CALCULATOR_ALTERNATIVE_ORDER_CODE_ID = 'system_calculator_alternative_order';
     // the buttons of a calculator list or table by their code id
     const array CALCULATOR_BUTTONS = [
         self::CALCULATOR_FILE_IMPORT => self::CALCULATOR_FILE_IMPORT_CODE_ID,
@@ -727,6 +730,7 @@ class triples
         ...triples::CALCULATOR_PROPOSED,
         ...triples::CALCULATOR_BUTTONS,
         self::CALCULATOR_CASE => self::CALCULATOR_CASE_CODE_ID,
+        self::CALCULATOR_ALTERNATIVE_ORDER => self::CALCULATOR_ALTERNATIVE_ORDER_CODE_ID,
         self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
         self::CALCULATOR_RESULT_WIDTH => self::CALCULATOR_RESULT_WIDTH_CODE_ID,
     ];

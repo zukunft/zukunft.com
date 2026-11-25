@@ -187,6 +187,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const base = page.from === undefined ? null : page.from;
     // the number that each input field sets by the name of the field, which an input changes
     const inputEntries = new Map();
+    // per field of an order selector true if its chosen option walks the alternative order, and the same per option value (see walksAlternative)
+    const chosenOrders = new Map();
+    const orderOptions = new Map();
     // the names of the sources of the page in the order of their number (see sourceNames)
     let pageSources = [];
     // per name of a number field its phrase, which a preset sets
@@ -420,6 +423,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* true if the chosen option of a selector has the flag alternative order e.g. the bank statement of the walk order */
+    function walksAlternative() {
+        const result = Array.from(chosenOrders.values()).indexOf(true) >= 0;
+        return result;
+    }
+
+    /* true if the option of the selector phrase has the flag alternative order */
+    function isAlternativeOption(name, opt) {
+        const item = subItems(name, VERB.has).find(function (t) {
+            return t.to === opt;
+        });
+        const result = item !== undefined && hasFlag(item, KW.alternative_order);
+        return result;
+    }
+
+    /* the follower triples of a phrase: its alternative follower triples instead while the page walks the alternative order and the phrase has one */
+    function followTriples(name) {
+        const ofVerb = function (verb) {
+            return triplesFrom(name).filter(function (t) {
+                return t.verb === verb;
+            });
+        };
+        const alternative = walksAlternative() ? ofVerb(VERB.alternative) : [];
+        const result = alternative.length > 0 ? alternative : ofVerb(VERB.follow);
+        return result;
+    }
+
     /* the longest follower chain first, then the other items by their label (calculator::sorted) */
     /* the nearest phrase of the list before the phrase in its follower chain, also over phrases of other lists, null if there is none (calculator::previous_in_list) */
     function previousInList(name, keys) {
@@ -427,8 +457,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         let cur = name;
         let result = null;
         while (cur !== null && result === null) {
-            const trp = triplesFrom(cur).filter(function (t) {
-                return t.verb === VERB.follow && seen.indexOf(t.to) < 0;
+            const trp = followTriples(cur).filter(function (t) {
+                return seen.indexOf(t.to) < 0;
             }).pop();
             cur = trp === undefined ? null : trp.to;
             if (cur !== null && keys.indexOf(cur) >= 0) {
@@ -446,8 +476,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         const keys = list.map(keyOf);
         const next = new Map();
         list.forEach(function (x) {
-            triplesFrom(keyOf(x)).forEach(function (t) {
-                if (t.verb === VERB.follow && keys.indexOf(t.to) >= 0) {
+            followTriples(keyOf(x)).forEach(function (t) {
+                if (keys.indexOf(t.to) >= 0) {
                     next.set(t.to, keyOf(x));
                 }
             });
@@ -836,11 +866,19 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return trp === undefined ? null : trp.to;
     }
 
-    /* the triples of the follower chains */
+    /* the triples of the follower chains, for a phrase with an alternative follower triple the one of the order that the page walks */
     function followerLinks() {
-        return Array.from(phrases.values()).filter(function (p) {
-            return p.verb === VERB.follow;
+        const chainVerbs = [VERB.follow, VERB.alternative];
+        const froms = new Set(Array.from(phrases.values()).filter(function (p) {
+            return p.from !== undefined && chainVerbs.indexOf(p.verb) >= 0;
+        }).map(function (p) {
+            return p.from;
+        }));
+        let result = [];
+        froms.forEach(function (name) {
+            result = result.concat(followTriples(name));
         });
+        return result;
     }
 
     /* the names and the context that select the number of an operand (prior_operand::select) */
@@ -1728,6 +1766,22 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* a selector with an option of the flag alternative order is an order selector: its chosen option decides the
+       follower triples of the rows and of prior (walksAlternative), starting with the option that the page uses */
+    function addOrderSelector(field, name, opts, usedOpt) {
+        const alternatives = opts.filter(function (o) {
+            return isAlternativeOption(name, o[0]);
+        }).map(function (o) {
+            return o[0];
+        });
+        if (alternatives.length > 0) {
+            opts.forEach(function (o) {
+                orderOptions.set(OPTION_PHRASE + idOf(o[0]), alternatives.indexOf(o[0]) >= 0);
+            });
+            chosenOrders.set(field, alternatives.indexOf(usedOpt) >= 0);
+        }
+    }
+
     function selectorField(item, name) {
         const field = NUMBER_VAR + idOf(name);
         const domId = field + SELECT_ID_SUFFIX;
@@ -1735,6 +1789,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         const usedOpt = used(opts.map(function (o) {
             return o[0];
         }));
+        addOrderSelector(field, name, opts, usedOpt);
         const html = opts.map(function (o) {
             const entry = optionEntry(name, o[0]);
             const sel = o[0] === usedOpt ? ' selected' : '';
@@ -2194,7 +2249,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function rankedRows(tbl) {
         const result = rowPhrases(tbl.to, []);
         const rank = subItems(tbl.name, VERB.rank)[0];
-        if (rank !== undefined) {
+        // the ranking orders the main follower chain, so the alternative order keeps the order of its own chain
+        if (rank !== undefined && !walksAlternative()) {
             // the one stored value of the row, else its one result; a row without one number is the last row (ui_list::rank_number)
             const numberOf = function (row) {
                 const results = pool.filter(function (e) {
@@ -2528,7 +2584,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the changed input for the next calculation; true if it has a number */
+    /* the changed input for the next calculation; true if it has a number or chooses an order */
     function applyInput(changed) {
         let input = changed;
         // a slider and its number field show the same number
@@ -2548,7 +2604,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         if (hasNumber) {
             entry.number = value;
         }
-        return hasNumber;
+        // an option of an order selector sets no number, but the order of the rows and of prior
+        const isOrder = orderOptions.has(input.value);
+        if (isOrder) {
+            chosenOrders.set(input.name, orderOptions.get(input.value));
+        }
+        return hasNumber || isOrder;
     }
 
     function refreshResults(event) {

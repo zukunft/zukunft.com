@@ -46,3 +46,10 @@ afterwards and is part of the second change, because it is the same selection of
 |---|---|---|---|
 
 ## Lessons learned by llm (2026-11-24)
+
+- After the case runner fix in `src/test/js/use_case_cases.js`, the report of the standard case went from 38
+  differences to 0 and the report of the low case from 33 to 0. The cause was not the formulas. The runner found an
+  option by its text and then set the text as the value of the select. No option has that value, so the select was
+  empty and the sample walked in the order of the bank report. When a diff report shows the same holdings with
+  shifted rows, first check that the case runner sets each input of the case, before changing a formula or the
+  renderer.

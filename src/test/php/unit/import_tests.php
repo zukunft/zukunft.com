@@ -385,7 +385,8 @@ class import_tests
             ...triples::CALCULATOR_BUTTONS,
             ...triples::CALCULATOR_PROPOSED,
             triples::CALCULATOR_DECIMALS => triples::CALCULATOR_DECIMALS_CODE_ID,
-            triples::CALCULATOR_RESULT_WIDTH => triples::CALCULATOR_RESULT_WIDTH_CODE_ID
+            triples::CALCULATOR_RESULT_WIDTH => triples::CALCULATOR_RESULT_WIDTH_CODE_ID,
+            triples::CALCULATOR_ALTERNATIVE_ORDER => triples::CALCULATOR_ALTERNATIVE_ORDER_CODE_ID
         ];
         foreach ($by_code_id as $name => $code_id) {
             $test_name = 'the import sets the code id of the calculator keyword ' . $name;

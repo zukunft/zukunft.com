@@ -60,3 +60,4 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 59,is analogous to,analogous,to state that two phrases share the same structure without one causing the other e.g. one dilemma is analogous to another,,,are analogous to,are analogous to,is analogous to,,
 60,is single attempt in,single_attempt,to state that one try is one of the attempts an ensemble rate is computed from,,,have the single attempts,are single attempts in,has the single attempt,,
 61,term type needed,term_needed,the formula needs the linked term type,,,,,,,
+62,is alternative follower of,alternative_follow,the second order of phrases that have an 'is follower of' order e.g. the bank report order of the holdings next to the order of their lot value; a phrase without an alternative follower triple keeps its 'is follower of' triple in the second order,,,are alternatively followed by,are alternative followers of,is alternatively followed by,,
